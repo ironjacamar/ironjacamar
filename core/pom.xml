@@ -1,0 +1,163 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>jboss</groupId>
+  <artifactId>jca-core</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1.SNAPSHOT</version>
+  <name>JBoss JCA Core</name>
+  <url>http://www.jboss.org</url>
+  <description>This would contain the core JBoss JCA classes</description>
+  <licenses>
+   <license>
+      <name>lgpl</name>
+      <url>http://repository.jboss.com/licenses/lgpl.txt</url>
+   </license>
+  </licenses>
+  <organization>
+    <name>JBoss, a division of Red Hat, Inc.</name>
+    <url>http://www.jboss.org</url>
+  </organization>
+ 
+  <repositories>
+    <repository>
+      <id>jboss</id>
+      <name>JBoss Inc. Repository</name>
+      <layout>default</layout>
+      <url>http://repository.jboss.com/maven2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>snapshots.jboss.org</id>
+      <name>JBoss Snapshots Repository</name>
+      <layout>default</layout>
+      <url>http://snapshots.jboss.org/maven2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  
+  <scm>
+	<connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/</connection>
+	<developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/</developerConnection>
+	<url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/jboss-jca/trunk/</url>
+  </scm>
+  
+  <build>
+    <sourceDirectory>src/main</sourceDirectory>
+    <testSourceDirectory>src/tests</testSourceDirectory>
+    <outputDirectory>output</outputDirectory>
+    <testOutputDirectory>output</testOutputDirectory>
+    
+    <testResources>
+      <testResource>
+        <directory>src/resources/tests</directory>
+      </testResource>
+    </testResources>
+    
+    <plugins>
+
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0</version>
+          <configuration>
+              <optimize>true</optimize>
+              <source>1.5</source>
+              <target>1.5</target>
+          </configuration>
+      </plugin>
+              
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <inherited>true</inherited>
+       <executions>
+        <execution>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+      </plugin>
+     
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>	   	   
+       
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          <includes>
+            <include>org/jboss/test/**/*TestCase.java</include>
+          </includes>
+          <skip>false</skip>
+        </configuration>  
+      </plugin>
+	  
+    </plugins>
+    
+  </build>
+  
+  <dependencies>
+    <dependency>
+      	<groupId>jboss</groupId>
+      	<artifactId>jboss-j2ee</artifactId>
+      	<version>SNAPSHOT</version>
+    </dependency>
+    <dependency>
+		<groupId>jboss</groupId>
+		<artifactId>jboss-common-core</artifactId>
+		<version>2.0.2.GA</version>
+	</dependency>
+	<dependency>
+      	<groupId>jboss</groupId>
+      	<artifactId>jboss-aop</artifactId>
+      	<version>2.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+		<groupId>jboss</groupId>
+		<artifactId>jboss-transaction</artifactId>
+		<version>5.0-SNAPSHOT</version>
+		<!-- scope>runtime</scope -->
+	</dependency>
+	<dependency>
+      	<groupId>jboss</groupId>
+      	<artifactId>jboss-test</artifactId>
+      	<version>1.0.3.GA</version>
+    </dependency>
+    <!-- This is AS dependency and should go off -->
+    <dependency>
+      	<groupId>jboss</groupId>
+      	<artifactId>jboss-system</artifactId>
+      	<version>5.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      	<groupId>org.jboss.microcontainer</groupId>
+      	<artifactId>jboss-kernel</artifactId>
+      	<version>2.0.0-SNAPSHOT</version>
+    </dependency>  
+    <dependency>
+      	<groupId>org.jboss.microcontainer</groupId>
+      	<artifactId>jboss-aop-mc-int</artifactId>
+      	<version>2.0.0-SNAPSHOT</version>
+    </dependency>
+     
+  </dependencies>  
+  
+</project>

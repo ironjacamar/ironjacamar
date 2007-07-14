@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+   
+   <bean name="PersistenceManager" class="org.jboss.mq.pm.none.PersistenceManager"/>
+   
+   <bean name="StateManager" class="org.jboss.mq.sm.none.NullStateManager"/>
+   
+   <bean name="MessageCache" class="org.jboss.mq.kernel.MessageCache">
+      <property name="persistenceManager"><inject bean="PersistenceManager"/></property>
+   </bean>
+   
+   <bean name="DestinationManager" class="org.jboss.mq.kernel.DestinationManager">
+      <property name="persistenceManagerInstance"><inject bean="PersistenceManager"/></property>
+      <property name="stateManagerInstance"><inject bean="StateManager"/></property>
+      <property name="messageCacheInstance"><inject bean="MessageCache"/></property>
+   </bean>
+
+   <bean name="JMSServer">
+      <constructor factoryMethod="getInterceptor">
+         <factory bean="DestinationManager"/>
+      </constructor>
+   </bean>
+   
+   <bean name="Invoker" class="org.jboss.mq.server.JMSServerInvoker">
+      <property name="next"><inject bean="JMSServer"/></property>
+   </bean>
+   
+   <bean name="ServerIL" class="org.jboss.mq.il.jvm.JVMServerIL">
+      <constructor>
+         <parameter><inject bean="Invoker"/></parameter>
+      </constructor>
+   </bean>
+   
+   <bean name="GCF" class="org.jboss.mq.GenericConnectionFactory">
+      <constructor>
+         <parameter><inject bean="ServerIL"/></parameter>
+         <parameter>
+         ClientILService=org.jboss.mq.il.jvm.JVMClientILService
+         </parameter>
+      </constructor>
+   </bean>
+
+   <bean name="Queue" class="org.jboss.mq.SpyQueue">
+      <constructor>
+         <parameter>testQueue</parameter>
+      </constructor>
+   </bean>
+   
+   <bean name="RealQueue" class="org.jboss.mq.server.JMSQueue">
+      <constructor>
+         <parameter><inject bean="Queue"/></parameter>
+         <parameter><null/></parameter>
+         <parameter><inject bean="JMSServer"/></parameter>
+         <parameter><inject bean="JMSServer" property="parameters"/></parameter>
+      </constructor>
+      <install bean="JMSServer" method="addDestination">
+         <parameter><this/></parameter>
+      </install>
+      <uninstall bean="JMSServer" method="closeDestination">
+         <parameter><inject bean="Queue"/></parameter>
+      </uninstall>
+   </bean>
+   
+   <bean name="QueueConnectionFactory" class="org.jboss.mq.SpyConnectionFactory">
+      <constructor>
+         <parameter class="org.jboss.mq.GenericConnectionFactory"><inject bean="GCF"/></parameter>
+      </constructor>
+   </bean>
+   
+   <bean name="ManagedConnectionFactory" class="org.jboss.rars.generic.mcf.jms.JMSManagedConnectionFactory">
+      <property name="user">guest</property>
+      <property name="password">guest</property>
+      <property name="connectionFactory"><inject bean="QueueConnectionFactory"/></property>
+   </bean>
+
+   <bean name="AspectManager">
+      <constructor factoryClass="org.jboss.aop.AspectManager" factoryMethod="instance"/>
+   </bean>
+   
+   <beanfactory name="TraceAdvice" class="org.jboss.rars.advice.TraceAdvice"/>
+   
+   <bean name="TraceAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="TraceAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <beanfactory name="WrapperErrorAdvice" class="org.jboss.rars.generic.wrapper.WrapperErrorAdvice"/>
+   
+   <bean name="WrapperErrorAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="WrapperErrorAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <beanfactory name="ConnectionFactoryAdvice" class="org.jboss.rars.generic.cf.ConnectionFactoryAdvice"/>
+   
+   <bean name="ConnectionFactoryAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="ConnectionFactoryAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <bean name="ConnectionFactoryBinding" class="org.jboss.aop.microcontainer.beans.StackBinding">
+      <property name="pointcut">execution(* $instanceof{org.jboss.rars.generic.mcf.indirect.IndirectConnectionFactory}->*(..))</property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="advices">
+         <list>
+            <inject bean="TraceAspect" property="definition"/>
+            <inject bean="WrapperErrorAspect" property="definition"/>
+            <inject bean="ConnectionFactoryAspect" property="definition"/>
+         </list>
+      </property>
+   </bean>
+   
+   <beanfactory name="WrapperAdvice" class="org.jboss.rars.generic.wrapper.WrapperAdvice"/>
+   
+   <bean name="WrapperAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="WrapperAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <beanfactory name="ParentChildAdvice" class="org.jboss.rars.generic.wrapper.ParentChildAdvice"/>
+   
+   <bean name="ParentChildAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="ParentChildAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <beanfactory name="ClosedAdvice" class="org.jboss.rars.generic.wrapper.ClosedAdvice"/>
+   
+   <bean name="ClosedAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="ClosedAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <beanfactory name="IndirectConnectionAdvice" class="org.jboss.rars.generic.mcf.indirect.IndirectConnectionAdvice"/>
+   
+   <bean name="IndirectConnectionAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="IndirectConnectionAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <bean name="ConnectionBinding" class="org.jboss.aop.microcontainer.beans.StackBinding">
+      <property name="pointcut">execution(* $instanceof{org.jboss.rars.generic.mcf.indirect.IndirectConnection}->*(..))</property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="advices">
+         <list>
+            <inject bean="TraceAspect" property="definition"/>
+            <inject bean="WrapperErrorAspect" property="definition"/>
+            <inject bean="ClosedAspect" property="definition"/>
+            <inject bean="ParentChildAspect" property="definition"/>
+            <inject bean="WrapperAspect" property="definition"/>
+            <inject bean="IndirectConnectionAspect" property="definition"/>
+         </list>
+      </property>
+   </bean>
+   
+   <bean name="WrapperBinding" class="org.jboss.aop.microcontainer.beans.StackBinding">
+      <property name="pointcut">execution(* $instanceof{org.jboss.rars.generic.wrapper.GenericHandle}->*(..))</property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="advices">
+         <list>
+            <inject bean="TraceAspect" property="definition"/>
+            <inject bean="WrapperErrorAspect" property="definition"/>
+            <inject bean="ClosedAspect" property="definition"/>
+            <inject bean="ParentChildAspect" property="definition"/>
+            <inject bean="WrapperAspect" property="definition"/>
+         </list>
+      </property>
+   </bean>
+   
+   <bean name="ConnectionManager" class="org.jboss.rars.cm.pooling.PoolingConnectionManager"/>
+   
+   <bean name="ConnectionFactory">
+      <constructor factoryMethod="createConnectionFactory">
+         <factory bean="ManagedConnectionFactory"/>
+         <parameter><inject bean="ConnectionManager"/></parameter>
+      </constructor>
+   </bean>
+      
+</deployment>

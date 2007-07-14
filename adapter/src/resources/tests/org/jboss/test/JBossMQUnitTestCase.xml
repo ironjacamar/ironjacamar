@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+   
+   <bean name="PersistenceManager" class="org.jboss.mq.pm.none.PersistenceManager"/>
+   
+   <bean name="StateManager" class="org.jboss.mq.sm.none.NullStateManager"/>
+   
+   <bean name="MessageCache" class="org.jboss.mq.kernel.MessageCache">
+      <property name="persistenceManager"><inject bean="PersistenceManager"/></property>
+   </bean>
+   
+   <bean name="DestinationManager" class="org.jboss.mq.kernel.DestinationManager">
+      <property name="persistenceManagerInstance"><inject bean="PersistenceManager"/></property>
+      <property name="stateManagerInstance"><inject bean="StateManager"/></property>
+      <property name="messageCacheInstance"><inject bean="MessageCache"/></property>
+   </bean>
+
+   <bean name="JMSServer">
+      <constructor factoryMethod="getInterceptor">
+         <factory bean="DestinationManager"/>
+      </constructor>
+   </bean>
+   
+   <bean name="Invoker" class="org.jboss.mq.server.JMSServerInvoker">
+      <property name="next"><inject bean="JMSServer"/></property>
+   </bean>
+   
+   <bean name="ServerIL" class="org.jboss.mq.il.jvm.JVMServerIL">
+      <constructor>
+         <parameter><inject bean="Invoker"/></parameter>
+      </constructor>
+   </bean>
+   
+   <bean name="GCF" class="org.jboss.mq.GenericConnectionFactory">
+      <constructor>
+         <parameter><inject bean="ServerIL"/></parameter>
+         <parameter>
+         ClientILService=org.jboss.mq.il.jvm.JVMClientILService
+         </parameter>
+      </constructor>
+   </bean>
+
+   <bean name="Queue" class="org.jboss.mq.SpyQueue">
+      <constructor>
+         <parameter>testQueue</parameter>
+      </constructor>
+   </bean>
+   
+   <bean name="RealQueue" class="org.jboss.mq.server.JMSQueue">
+      <constructor>
+         <parameter><inject bean="Queue"/></parameter>
+         <parameter><null/></parameter>
+         <parameter><inject bean="JMSServer"/></parameter>
+         <parameter><inject bean="JMSServer" property="parameters"/></parameter>
+      </constructor>
+      <install bean="JMSServer" method="addDestination">
+         <parameter><this/></parameter>
+      </install>
+      <uninstall bean="JMSServer" method="closeDestination">
+         <parameter><inject bean="Queue"/></parameter>
+      </uninstall>
+   </bean>
+   
+   <bean name="ConnectionFactory" class="org.jboss.mq.SpyConnectionFactory">
+      <constructor>
+         <parameter class="org.jboss.mq.GenericConnectionFactory"><inject bean="GCF"/></parameter>
+      </constructor>
+   </bean>
+      
+</deployment>

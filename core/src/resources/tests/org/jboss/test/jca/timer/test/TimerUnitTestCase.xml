@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:jboss:bean-deployer bean-deployer_1_0.xsd"
+            xmlns="urn:jboss:bean-deployer">
+
+   <bean name="TimerFactory" class="org.jboss.jca.plugins.rar.timer.JDKTimerFactory"/>
+
+   <bean name="BootstrapContextFactory" class="org.jboss.jca.spi.rar.BootstrapContextFactory">
+      <property name="timerFactory"><inject bean="TimerFactory"/></property>
+   </bean>
+
+   <bean name="TestRAR" class="org.jboss.test.jca.rar.support.TestResourceAdapter">
+      <start method="start">
+         <parameter><inject bean="BootstrapContextFactory" property="bootstrapContext"/></parameter>
+      </start>
+   </bean>
+      
+</deployment>

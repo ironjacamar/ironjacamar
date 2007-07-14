@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:jboss:bean-deployer bean-deployer_1_0.xsd"
+            xmlns="urn:jboss:bean-deployer">
+
+   <bean name="BootstrapContextFactory" class="org.jboss.jca.spi.rar.BootstrapContextFactory"/>
+
+   <bean name="AspectManager" class="org.jboss.aop.AspectManager">
+      <constructor factoryClass="org.jboss.aop.AspectManager" factoryMethod="instance"/>
+   </bean>
+   
+   <beanfactory name="TraceAdvice" class="org.jboss.jca.plugins.cm.TraceAdvice"/>
+   
+   <bean name="TraceAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="TraceAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <beanfactory name="ExceptionAdvice" class="org.jboss.jca.plugins.cm.ConnectionManagerExceptionAdvice"/>
+   
+   <bean name="ExceptionAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="ExceptionAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <beanfactory name="SecurityAdvice" class="org.jboss.jca.plugins.cm.security.SecurityAdvice"/>
+   
+   <bean name="SecurityAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="SecurityAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="scope">PER_INSTANCE</property>
+   </bean>
+   
+   <bean name="PoolFactory" class="org.jboss.jca.plugins.cm.pool.simple.SimplePoolFactory"/>
+   
+   <beanfactory name="PoolAdvice" class="org.jboss.jca.plugins.cm.pool.PoolAdvice">
+      <constructor><parameter><inject bean="PoolFactory"/></parameter></constructor>
+   </beanfactory>
+   
+   <bean name="PoolAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="PoolAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="scope">PER_INSTANCE</property>
+   </bean>
+   
+   <bean name="ManagedConnectionContextManager" class="org.jboss.jca.spi.cm.ManagedConnectionContextManager"/>
+   
+   <beanfactory name="ListenerAdvice" class="org.jboss.jca.plugins.cm.listener.ListenerAdvice">
+      <property name="contextManager"><inject bean="ManagedConnectionContextManager"/></property>
+   </beanfactory>
+   
+   <bean name="ListenerAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="ListenerAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="scope">PER_INSTANCE</property>
+   </bean>
+   
+   <bean name="ConnectionManagerBinding" class="org.jboss.aop.microcontainer.beans.StackBinding">
+      <property name="pointcut">execution(* $instanceof{javax.resource.spi.ConnectionManager}->*(..))</property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="advices">
+         <list>
+            <inject bean="TraceAspect" property="definition"/>
+            <inject bean="ExceptionAspect" property="definition"/>
+            <inject bean="SecurityAspect" property="definition"/>
+            <inject bean="PoolAspect" property="definition"/>
+            <inject bean="ListenerAspect" property="definition"/>
+         </list>
+      </property>
+   </bean>
+
+   <bean name="TestRAR" class="org.jboss.test.jca.rar.support.TestResourceAdapter">
+      <start method="start">
+         <parameter><inject bean="BootstrapContextFactory" property="bootstrapContext"/></parameter>
+      </start>
+   </bean>
+   
+   <bean name="ManagedConnectionFactory" class="org.jboss.test.jca.rar.support.TestManagedConnectionFactory">
+      <property name="resourceAdapter"><inject bean="TestRAR"/></property>
+   </bean>
+   
+   <bean name="ConnectionManager" class="org.jboss.jca.plugins.cm.ConnectionManagerFactory">
+      <property name="managedConnectionFactory"><inject bean="ManagedConnectionFactory"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+   
+   <bean name="ConnectionFactory" class="java.lang.Object">
+      <constructor factoryMethod="getConnectionFactory">
+         <factory bean="ConnectionManager"/>
+      </constructor>
+   </bean>
+      
+</deployment>

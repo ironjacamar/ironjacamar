@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:jboss:bean-deployer bean-deployer_1_0.xsd"
+            xmlns="urn:jboss:bean-deployer">
+
+   <bean name="BootstrapContextFactory" class="org.jboss.jca.spi.rar.BootstrapContextFactory"/>
+
+   <bean name="AspectManager" class="org.jboss.aop.AspectManager">
+      <constructor factoryClass="org.jboss.aop.AspectManager" factoryMethod="instance"/>
+   </bean>
+      
+   <beanfactory name="MessageEndpointAdvice" class="org.jboss.jca.plugins.endpoint.POJOMessageEndpointAdvice"/>
+   
+   <bean name="MessageEndpointAspect" class="org.jboss.aop.microcontainer.beans.Aspect">
+      <property name="advice"><inject bean="MessageEndpointAdvice"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="scope">PER_INSTANCE</property>
+   </bean>
+   
+   <bean name="MessageEndpointBinding" class="org.jboss.aop.microcontainer.beans.AspectBinding">
+      <property name="pointcut">execution(* $instanceof{javax.resource.spi.endpoint.MessageEndpoint}->*(..))</property>
+      <property name="aspect"><inject bean="MessageEndpointAspect" property="definition"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+   </bean>
+
+   <bean name="TestRAR" class="org.jboss.test.jca.rar.support.TestResourceAdapter">
+      <start method="start">
+         <parameter><inject bean="BootstrapContextFactory" property="bootstrapContext"/></parameter>
+      </start>
+   </bean>
+   
+   <bean name="ActivationSpec" class="org.jboss.test.jca.rar.support.TestActivationSpec">
+      <property name="name">testInflow</property>
+      <property name="anInt">10</property>
+      <property name="anInteger">50</property>
+      <property name="localhost">localhost</property>
+      <property name="props">message=hello</property>
+   </bean>
+   
+   <bean name="Target" class="org.jboss.test.jca.rar.support.TestMessageListenerImpl"/>
+   
+   <bean name="MessageEndpointFactory" class="org.jboss.jca.plugins.endpoint.POJOMessageEndpointFactory">
+      <property name="target"><inject bean="Target"/></property>
+      <property name="manager"><inject bean="AspectManager"/></property>
+      <property name="messageListener">org.jboss.test.jca.rar.support.TestMessageListener</property>
+   </bean>
+   
+   <bean name="Activation" class="org.jboss.jca.plugins.endpoint.Activation">
+      <property name="resourceAdapter"><inject bean="TestRAR"/></property>
+      <property name="activationSpec"><inject bean="ActivationSpec"/></property>
+      <property name="messageEndpointFactory"><inject bean="MessageEndpointFactory"/></property>
+   </bean>
+      
+</deployment>
