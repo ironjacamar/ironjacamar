@@ -458,7 +458,7 @@ public class ManagedConnectionContext extends JBossObject implements ConnectionE
     * Change the state
     * 
     * @param newState the new state
-    * @param the previous value
+    * @return the previous value
     */
    private int changeState(int newState)
    {
