@@ -8,6 +8,7 @@
   <name>JBoss JCA Aggregrator</name>
   <url>http://www.jboss.org</url>
   <description>The Jboss JCA Container project.</description>
+
   
   <modules>
     <module>adapter</module>
