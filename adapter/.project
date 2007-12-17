@@ -1,0 +1,13 @@
+<projectDescription>
+  <name>jboss-adapter</name>
+  <comment>This would contain the Jboss RA classes independent of the JbossAS</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
