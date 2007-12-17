@@ -41,7 +41,7 @@ public class ParentChildAdvice extends AbstractRARInterceptor
       GenericWrapper wrapper = (GenericWrapper) mi.getMetaData(GenericWrapper.METADATA_KEY, GenericWrapper.METADATA_KEY);
 
       Method method = mi.getMethod();
-      Class returnType = method.getReturnType();
+      Class<?> returnType = method.getReturnType();
       boolean checkResult = (returnType != Void.class);
 
       Object result;

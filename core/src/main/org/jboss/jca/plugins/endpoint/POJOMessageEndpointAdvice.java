@@ -22,6 +22,7 @@
 package org.jboss.jca.plugins.endpoint;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.endpoint.MessageEndpoint;
@@ -29,8 +30,6 @@ import javax.resource.spi.endpoint.MessageEndpoint;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.jca.plugins.advice.AbstractJCAInterceptor;
-
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedBoolean;
 
 /**
  * Implements the message endpoint requirements.
@@ -48,13 +47,13 @@ public class POJOMessageEndpointAdvice extends AbstractJCAInterceptor
    private String cachedProxyString = null;
    
    /** Whether this proxy has had before invoked */
-   protected SynchronizedBoolean beforeInvoked = new SynchronizedBoolean(false);
+   protected AtomicBoolean beforeInvoked = new AtomicBoolean(false);
    
    /** Whether this proxy has been released */
-   protected SynchronizedBoolean released = new SynchronizedBoolean(false);
+   protected AtomicBoolean released = new AtomicBoolean(false);
    
    /** Whether we have delivered a message */
-   protected SynchronizedBoolean delivered = new SynchronizedBoolean(false);
+   protected AtomicBoolean delivered = new AtomicBoolean(false);
    
    /** The in use thread */
    protected Thread inUseThread = null;

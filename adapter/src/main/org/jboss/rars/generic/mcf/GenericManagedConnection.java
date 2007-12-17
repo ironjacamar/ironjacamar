@@ -22,10 +22,13 @@
 package org.jboss.rars.generic.mcf;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
@@ -41,11 +44,6 @@ import javax.transaction.xa.XAResource;
 import org.jboss.logging.Logger;
 import org.jboss.rars.generic.wrapper.GenericConnection;
 import org.jboss.rars.generic.wrapper.GenericHandle;
-import org.jboss.util.collection.CollectionsFactory;
-import org.jboss.util.JBossStringBuilder;
-import org.jboss.util.Strings;
-
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedBoolean;
 
 /**
  * GenericManagedConnection.
@@ -71,22 +69,21 @@ public class GenericManagedConnection implements ManagedConnection
    private Object requestID;
    
    /** Whether the managed connection is destroyed */
-   protected SynchronizedBoolean destroyed = new SynchronizedBoolean(false);
+   protected AtomicBoolean destroyed = new AtomicBoolean(false);
 
    /** The associated connection handles */
-   private Set associated = CollectionsFactory.createCopyOnWriteSet();
+   private Set<GenericConnection> associated = new CopyOnWriteArraySet<GenericConnection>();
    
    /** The listeners */
-   private List listeners = CollectionsFactory.createCopyOnWriteList(); 
+   private List<ConnectionEventListener> listeners = new CopyOnWriteArrayList<ConnectionEventListener>(); 
 
    /** The connections by handle */
-   private Map connectionsByHandle = CollectionsFactory.createConcurrentReaderMap();
+   private Map<GenericHandle, GenericConnection> connectionsByHandle = new ConcurrentHashMap<GenericHandle, GenericConnection>();
    
    /**
     * Create a new GenericManagedConnection.
     * 
     * @param mcf the managed connection factory
-    * @param connection the real connection
     * @param requestID the request id
     */
    protected GenericManagedConnection(GenericManagedConnectionFactory mcf, Object requestID)
@@ -126,7 +123,7 @@ public class GenericManagedConnection implements ManagedConnection
    public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
       GenericConnection impl = mcf.createGenericConnection(this, subject, cxRequestInfo);
-      Class[] interfaces = mcf.getConnectionInterfaces(impl);
+      Class<?>[] interfaces = mcf.getConnectionInterfaces(impl);
       GenericHandle handle = impl.createHandle(interfaces);
       connectionsByHandle.put(handle, impl);
       associateConnection(impl);
@@ -135,7 +132,7 @@ public class GenericManagedConnection implements ManagedConnection
    
    public void associateConnection(Object connection) throws ResourceException
    {
-      GenericConnection wrapper = (GenericConnection) connectionsByHandle.get(connection);
+      GenericConnection wrapper = connectionsByHandle.get(connection);
       if (wrapper == null)
          throw new ResourceAdapterInternalException("Unknown connnection handle " + connection);
       associateConnection(wrapper);
@@ -189,11 +186,8 @@ public class GenericManagedConnection implements ManagedConnection
 
    public void cleanup() throws ResourceException
    {
-      for (Iterator i = associated.iterator(); i.hasNext();)
-      {
-         GenericConnection wrapper = (GenericConnection) i.next();
+      for (GenericConnection wrapper : associated)
          disassociateConnection(wrapper);
-      }
    }
 
    public void safeDestroy()
@@ -213,7 +207,7 @@ public class GenericManagedConnection implements ManagedConnection
       log.debug(this + " DESTROY");
       cleanup();
       listeners.clear();
-      if (destroyed.set(true))
+      if (destroyed.getAndSet(true))
       {
          log.debug(this + " already destroyed");
          return;
@@ -318,9 +312,8 @@ public class GenericManagedConnection implements ManagedConnection
       if (listeners.size() == 0)
          return;
       
-      for (Iterator i = listeners.iterator(); i.hasNext();)
+      for (ConnectionEventListener listener : listeners)
       {
-         ConnectionEventListener listener = (ConnectionEventListener) i.next();
          try
          {
             switch (event.getId())
@@ -400,8 +393,8 @@ public class GenericManagedConnection implements ManagedConnection
 
    public String toString()
    {
-      JBossStringBuilder buffer = new JBossStringBuilder();
-      Strings.defaultToString(buffer, this);
+      StringBuilder buffer = new StringBuilder();
+      buffer.append(getClass().getSimpleName()).append('@').append(System.identityHashCode(this));
       buffer.append('[').append(getRealConnection()).append(']');
       return buffer.toString();
    }

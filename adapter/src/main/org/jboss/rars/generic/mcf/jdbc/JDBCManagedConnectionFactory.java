@@ -49,7 +49,7 @@ public abstract class JDBCManagedConnectionFactory extends DirectGenericManagedC
       return e;
    }
 
-   protected void addConnectionFactoryInterfaces(GenericConnectionFactory impl, Set interfaces)
+   protected void addConnectionFactoryInterfaces(GenericConnectionFactory impl, Set<Class<?>> interfaces)
    {
       interfaces.add(DataSource.class);
    }

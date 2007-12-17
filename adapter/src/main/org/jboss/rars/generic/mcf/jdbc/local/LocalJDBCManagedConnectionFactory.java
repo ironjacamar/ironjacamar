@@ -303,7 +303,7 @@ public class LocalJDBCManagedConnectionFactory extends JDBCManagedConnectionFact
       }
    }
 
-   static class SubjectActions implements PrivilegedAction
+   static class SubjectActions implements PrivilegedAction<Boolean>
    {
       Subject subject;
 
@@ -318,9 +318,9 @@ public class LocalJDBCManagedConnectionFactory extends JDBCManagedConnectionFact
          this.mcf = mcf;
       }
 
-      public Object run()
+      public Boolean run()
       {
-         Iterator i = subject.getPrivateCredentials().iterator();
+         Iterator<Object> i = subject.getPrivateCredentials().iterator();
          while (i.hasNext())
          {
             Object o = i.next();
@@ -342,7 +342,7 @@ public class LocalJDBCManagedConnectionFactory extends JDBCManagedConnectionFact
       static boolean addMatchingProperties(Subject subject, Properties props, ManagedConnectionFactory mcf)
       {
          SubjectActions action = new SubjectActions(subject, props, mcf);
-         Boolean matched = (Boolean) AccessController.doPrivileged(action);
+         Boolean matched = AccessController.doPrivileged(action);
          return matched.booleanValue();
       }
    }

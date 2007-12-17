@@ -35,7 +35,7 @@ public interface ResourceErrorHandler
     * @param context the context
     * @param t the throwable
     * @return never
-    * @throws the correct error
+    * @throws Throwable the correct error
     */
    Throwable throwError(Object context, Throwable t) throws Throwable;
 }

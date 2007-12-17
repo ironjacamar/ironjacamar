@@ -42,9 +42,9 @@ public class TestManagedConnectionFactory extends DirectGenericManagedConnection
    /** The serialVersionUID */
    private static final long serialVersionUID = 1155075489153266482L;
    
-   private static final Class CONNECTION_FACTORY_CLASS = TestConnectionFactory.class;
+   private static final Class<?> CONNECTION_FACTORY_CLASS = TestConnectionFactory.class;
 
-   protected void addConnectionFactoryInterfaces(GenericConnectionFactory impl, Set interfaces)
+   protected void addConnectionFactoryInterfaces(GenericConnectionFactory impl, Set<Class<?>> interfaces)
    {
       interfaces.add(CONNECTION_FACTORY_CLASS);
    }

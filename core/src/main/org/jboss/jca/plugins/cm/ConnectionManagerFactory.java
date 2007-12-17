@@ -103,7 +103,7 @@ public class ConnectionManagerFactory
       if (manager == null)
          throw new IllegalStateException("Null manager");
       
-      Class[] interfaces = new Class[] { ConnectionManager.class }; 
+      Class<?>[] interfaces = new Class<?>[] { ConnectionManager.class }; 
       
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
       params.setProxiedClass(Object.class);

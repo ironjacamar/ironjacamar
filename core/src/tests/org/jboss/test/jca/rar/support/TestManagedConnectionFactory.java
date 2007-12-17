@@ -53,6 +53,7 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory, R
       return new TestManagedConnection();
    }
 
+   @SuppressWarnings("unchecked")
    public ManagedConnection matchManagedConnections(Set connectionSet, Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
       // TODO FIXME

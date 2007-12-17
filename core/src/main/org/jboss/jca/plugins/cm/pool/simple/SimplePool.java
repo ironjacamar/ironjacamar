@@ -44,7 +44,7 @@ public class SimplePool implements ManagedConnectionContextPool
    private static final Logger log = Logger.getLogger(SimplePool.class);
    
    /** The pool */
-   private List pool = new ArrayList(); 
+   private List<ManagedConnectionContext> pool = new ArrayList<ManagedConnectionContext>(); 
    
    public ManagedConnectionContext getManagedConnectonContext(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
@@ -56,7 +56,7 @@ public class SimplePool implements ManagedConnectionContextPool
             int size = pool.size();
             if (size == 0)
                return null;
-            context = (ManagedConnectionContext) pool.remove(size-1);
+            context = pool.remove(size-1);
          }
          
          if (context.match(subject, cri))

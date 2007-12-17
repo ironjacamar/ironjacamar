@@ -22,8 +22,9 @@
 package org.jboss.test.jca.rar.support;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
@@ -36,9 +37,6 @@ import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;
-import org.jboss.util.collection.CollectionsFactory;
-
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedBoolean;
 
 /**
  * TestManagedConnection.
@@ -50,11 +48,11 @@ public class TestManagedConnection implements ManagedConnection
 {
    private static final Logger log = Logger.getLogger(TestManagedConnection.class);
    
-   protected SynchronizedBoolean destroyed = new SynchronizedBoolean(false);
+   protected AtomicBoolean destroyed = new AtomicBoolean(false);
    
-   protected Set handles = CollectionsFactory.createCopyOnWriteSet(); 
+   protected Set<TestConnectionImpl> handles = new CopyOnWriteArraySet<TestConnectionImpl>(); 
    
-   protected Set listeners = CollectionsFactory.createCopyOnWriteSet();
+   protected Set<ConnectionEventListener> listeners = new CopyOnWriteArraySet<ConnectionEventListener>();
    
    public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
@@ -89,11 +87,8 @@ public class TestManagedConnection implements ManagedConnection
    
    public void cleanup() throws ResourceException
    {
-      for (Iterator i = handles.iterator(); i.hasNext();)
-      {
-         TestConnectionImpl handle = (TestConnectionImpl) i.next();
+      for (TestConnectionImpl handle : handles)
          handle.setManagedConnection(null);
-      }
       handles.clear();
    }
 
@@ -118,9 +113,8 @@ public class TestManagedConnection implements ManagedConnection
 
    protected void broadcastEvent(ConnectionEvent event)
    {
-      for (Iterator i = listeners.iterator(); i.hasNext();)
+      for (ConnectionEventListener listener : listeners)
       {
-         ConnectionEventListener listener = (ConnectionEventListener) i.next();
          try
          {
             switch (event.getId())

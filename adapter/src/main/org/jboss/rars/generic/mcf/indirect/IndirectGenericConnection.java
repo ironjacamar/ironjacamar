@@ -31,7 +31,6 @@ import javax.resource.spi.IllegalStateException;
 
 import org.jboss.logging.Logger;
 import org.jboss.rars.generic.wrapper.GenericWrapper;
-import org.jboss.util.JBossStringBuilder;
 
 /**
  * IndirectGenericConnection.
@@ -57,6 +56,7 @@ public class IndirectGenericConnection extends GenericWrapper
     * Create a new IndirectGenericConnection.
     * 
     * @param mcf the managed connection factory
+    * @param cm the connection manager
     * @param cri the connection request info
     */
    public IndirectGenericConnection(IndirectGenericManagedConnectionFactory mcf, ConnectionManager cm, ConnectionRequestInfo cri)
@@ -132,7 +132,7 @@ public class IndirectGenericConnection extends GenericWrapper
       }
    }
 
-   protected void toString(JBossStringBuilder buffer)
+   protected void toString(StringBuilder buffer)
    {
       buffer.append(cri);
    }

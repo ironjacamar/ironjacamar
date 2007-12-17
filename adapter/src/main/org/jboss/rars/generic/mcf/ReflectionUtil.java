@@ -25,8 +25,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import org.jboss.util.JBossStringBuilder;
-
 /**
  * ReflectionUtil.
  *
@@ -73,15 +71,15 @@ class ReflectionUtil
       {
          if (target == null)
             throw new IllegalArgumentException("Null target for method " + method);
-         Class methodClass = method.getClass();
-         Class targetClass = target.getClass();
+         Class<?> methodClass = method.getClass();
+         Class<?> targetClass = target.getClass();
          if (methodClass.isAssignableFrom(targetClass) == false)
             throw new IllegalArgumentException("Wrong target. " + targetClass + " for " + method);
-         ArrayList expected = new ArrayList();
-         Class[] parameterTypes = method.getParameterTypes();
+         ArrayList<String> expected = new ArrayList<String>();
+         Class<?>[] parameterTypes = method.getParameterTypes();
          for (int i = 0; i < parameterTypes.length; ++i)
             expected.add(parameterTypes[i].getName());
-         ArrayList actual = new ArrayList();
+         ArrayList<String> actual = new ArrayList<String>();
          if (arguments != null)
          {
             for (int i = 0; i < arguments.length; ++i)
@@ -101,13 +99,13 @@ class ReflectionUtil
       throw t;
    }
    
-   protected static void format(JBossStringBuilder buffer, String context, Method method, Object target)
+   protected static void format(StringBuilder buffer, String context, Method method, Object target)
    {
       buffer.append(context);
       buffer.append("[method=").append(method.getDeclaringClass().getName());
       buffer.append('.').append(method.getName());
       buffer.append('(');
-      Class[] parameters = method.getParameterTypes();
+      Class<?>[] parameters = method.getParameterTypes();
       for (int i = 0; i < parameters.length; ++i)
       {
          if (i > 0)
@@ -119,16 +117,16 @@ class ReflectionUtil
       buffer.append(']');
    }
    
-   protected static JBossStringBuilder format(String context, Method method, Object target)
+   protected static StringBuilder format(String context, Method method, Object target)
    {
-      JBossStringBuilder buffer = new JBossStringBuilder();
+      StringBuilder buffer = new StringBuilder();
       format(buffer, context, method, target);
       return buffer;
    }
    
-   protected static JBossStringBuilder format(String context, Method method, Object target, Object result)
+   protected static StringBuilder format(String context, Method method, Object target, Object result)
    {
-      JBossStringBuilder buffer = new JBossStringBuilder();
+      StringBuilder buffer = new StringBuilder();
       format(buffer, context, method, target);
       buffer.append(" RESULT=").append(result);
       return buffer;

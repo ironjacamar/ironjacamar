@@ -49,8 +49,8 @@ public class WrapperAdvice extends AbstractRARInterceptor
       
       // Is this a straight forward invocation?
       Object target = mi.getTargetObject();
-      Class targetClass = target.getClass();
-      Class declaringClass = method.getDeclaringClass();
+      Class<?> targetClass = target.getClass();
+      Class<?> declaringClass = method.getDeclaringClass();
       if (declaringClass.isAssignableFrom(targetClass))
          return invocation.invokeNext();
       

@@ -28,7 +28,6 @@ import javax.resource.spi.ResourceAdapterInternalException;
 
 import org.jboss.logging.Logger;
 import org.jboss.rars.generic.mcf.GenericManagedConnection;
-import org.jboss.util.JBossStringBuilder;
 
 /**
  * GenericConnection.
@@ -106,7 +105,7 @@ public class GenericConnection extends GenericWrapper implements GenericHandle
       managedConnection.close(this);
    }
    
-   protected void toString(JBossStringBuilder buffer)
+   protected void toString(StringBuilder buffer)
    {
       GenericManagedConnection managedConnection = getManagedConnection();
       if (managedConnection == null)

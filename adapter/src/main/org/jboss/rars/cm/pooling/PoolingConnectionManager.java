@@ -21,8 +21,8 @@
 */
 package org.jboss.rars.cm.pooling;
 
-import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
@@ -33,7 +33,6 @@ import javax.resource.spi.ResourceAdapterInternalException;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
-import org.jboss.util.collection.CollectionsFactory;
 
 /**
  * PoolingConnectionManager.
@@ -50,10 +49,10 @@ public class PoolingConnectionManager implements ConnectionManager
    private static final Logger log = Logger.getLogger(PoolingConnectionManager.class); 
    
    /** The pool */
-   private Set pool = CollectionsFactory.createCopyOnWriteSet();  
+   private Set<ManagedConnection> pool = new CopyOnWriteArraySet<ManagedConnection>();  
    
    /** The checked out connectins */
-   private Set checkedOut = CollectionsFactory.createCopyOnWriteSet();
+   private Set<ManagedConnection> checkedOut = new CopyOnWriteArraySet<ManagedConnection>();
    
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
@@ -90,9 +89,8 @@ public class PoolingConnectionManager implements ConnectionManager
    {
       if (pool.size() != 0)
       {
-         for (Iterator i = pool.iterator(); i.hasNext();)
+         for (ManagedConnection mc : pool)
          {
-            ManagedConnection mc = (ManagedConnection) i.next();
             try
             {
                mc.destroy();
@@ -112,6 +110,7 @@ public class PoolingConnectionManager implements ConnectionManager
     * @param subject the subject
     * @param cri the connection request info
     * @return the managed connection
+    * @throws ResourceException for any error
     */
    protected synchronized ManagedConnection getManagedConnection(ManagedConnectionFactory mcf, Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {

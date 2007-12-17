@@ -51,7 +51,7 @@ public class POJOMessageEndpointFactory implements MessageEndpointFactory
    protected AspectManager manager;
    
    /** The message listener class */
-   protected Class messageListener;
+   protected Class<?> messageListener;
 
    /**
     * Get the manager.
@@ -78,7 +78,7 @@ public class POJOMessageEndpointFactory implements MessageEndpointFactory
     * 
     * @return the messageListener.
     */
-   public Class getMessageListener()
+   public Class<?> getMessageListener()
    {
       return messageListener;
    }
@@ -88,7 +88,7 @@ public class POJOMessageEndpointFactory implements MessageEndpointFactory
     * 
     * @param messageListener The messageListener to set.
     */
-   public void setMessageListener(Class messageListener)
+   public void setMessageListener(Class<?> messageListener)
    {
       this.messageListener = messageListener;
    }
@@ -122,7 +122,7 @@ public class POJOMessageEndpointFactory implements MessageEndpointFactory
       if (messageListener == null)
          throw new IllegalStateException("Null messageListener");
       
-      Class[] interfaces = new Class[] { messageListener, MessageEndpoint.class }; 
+      Class<?>[] interfaces = new Class<?>[] { messageListener, MessageEndpoint.class }; 
       
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
       params.setInterfaces(interfaces);

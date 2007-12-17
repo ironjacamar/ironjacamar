@@ -27,7 +27,6 @@ import javax.resource.ResourceException;
 
 import org.jboss.logging.Logger;
 import org.jboss.rars.generic.mcf.GenericManagedConnectionFactory;
-import org.jboss.util.JBossStringBuilder;
 
 /**
  * GenericChild.
@@ -72,7 +71,7 @@ public class GenericChild extends GenericWrapper implements GenericHandle
       getManagedConnectionFactory().invokeClose(this, method, false);
    }
    
-   protected void toString(JBossStringBuilder buffer)
+   protected void toString(StringBuilder buffer)
    {
       buffer.append(target);
    }

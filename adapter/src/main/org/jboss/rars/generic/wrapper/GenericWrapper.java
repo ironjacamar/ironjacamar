@@ -22,8 +22,9 @@
 package org.jboss.rars.generic.wrapper;
 
 import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 
@@ -31,11 +32,6 @@ import org.jboss.aop.metadata.SimpleMetaData;
 import org.jboss.logging.Logger;
 import org.jboss.rars.generic.mcf.GenericManagedConnectionFactory;
 import org.jboss.rars.generic.ra.ResourceErrorHandler;
-import org.jboss.util.collection.CollectionsFactory;
-import org.jboss.util.JBossStringBuilder;
-import org.jboss.util.Strings;
-
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedBoolean;
 
 /**
  * GenericWrapper.
@@ -61,13 +57,13 @@ public abstract class GenericWrapper implements ResourceErrorHandler
    private Object proxy;
    
    /** Whether we are closed */
-   private SynchronizedBoolean closed = new SynchronizedBoolean(false);
+   private AtomicBoolean closed = new AtomicBoolean(false);
 
    /** The parent */
    private GenericWrapper parent;
    
    /** The children */
-   private Set children = CollectionsFactory.createCopyOnWriteSet();
+   private Set<GenericWrapper> children = new CopyOnWriteArraySet<GenericWrapper>();
    
    /**
     * Create a new GenericWrapper.
@@ -154,16 +150,15 @@ public abstract class GenericWrapper implements ResourceErrorHandler
     */
    public void closeWrapper(Method method)
    {
-      if (closed.set(true) == false)
+      if (closed.getAndSet(true) == false)
       {
          if (trace)
             log.trace(this + " CLOSED");
-         Set children = getChildren();
+         Set<GenericWrapper> children = getChildren();
          if (children != null && children.size() > 0)
          {
-            for (Iterator i = children.iterator(); i.hasNext();)
+            for (GenericWrapper child : children)
             {
-               GenericWrapper child = (GenericWrapper) i.next();
                removeChild(child);
                child.setParent(null);
                child.invokeClose(null);
@@ -232,7 +227,7 @@ public abstract class GenericWrapper implements ResourceErrorHandler
     * @param context the context
     * @param t the throwable
     * @return never
-    * @throws the correct error
+    * @throws Throwable the correct error
     */
    public Throwable throwError(Object context, Throwable t) throws Throwable
    {
@@ -288,7 +283,7 @@ public abstract class GenericWrapper implements ResourceErrorHandler
     * 
     * @return the children
     */
-   protected Set getChildren()
+   protected Set<GenericWrapper> getChildren()
    {
       return children;
    }
@@ -331,13 +326,12 @@ public abstract class GenericWrapper implements ResourceErrorHandler
    /**
     * Create a handle
     * 
-    * @param interfaces the interfaces
     * @return the handle
     * @throws ResourceException for any error
     */
    protected GenericHandle createHandle() throws ResourceException
    {
-      Class[] interfaces = mcf.getWrappedInterfaces(this);
+      Class<?>[] interfaces = mcf.getWrappedInterfaces(this);
       return createHandle(interfaces);
    }
 
@@ -346,8 +340,9 @@ public abstract class GenericWrapper implements ResourceErrorHandler
     * 
     * @param interfaces the interfaces
     * @return the handle
+    * @throws ResourceException for any error
     */
-   public GenericHandle createHandle(Class[] interfaces) throws ResourceException
+   public GenericHandle createHandle(Class<?>[] interfaces) throws ResourceException
    {
       return (GenericHandle) createProxy(interfaces, getWrappedObject());
    }
@@ -358,8 +353,9 @@ public abstract class GenericWrapper implements ResourceErrorHandler
     * @param interfaces the interfaces
     * @param impl the implementation
     * @return the proxy
+    * @throws ResourceException for any error
     */
-   public Object createProxy(Class[] interfaces, Object impl) throws ResourceException
+   public Object createProxy(Class<?>[] interfaces, Object impl) throws ResourceException
    {
       SimpleMetaData metaData = new SimpleMetaData();
       metaData.addMetaData(GenericWrapper.METADATA_KEY, GenericWrapper.METADATA_KEY, this);
@@ -371,8 +367,8 @@ public abstract class GenericWrapper implements ResourceErrorHandler
 
    public String toString()
    {
-      JBossStringBuilder buffer = new JBossStringBuilder();
-      Strings.defaultToString(buffer, this);
+      StringBuilder buffer = new StringBuilder();
+      buffer.append(getClass().getSimpleName()).append('@').append(System.identityHashCode(this));
       buffer.append('[');
       toString(buffer);
       buffer.append(']');
@@ -384,5 +380,5 @@ public abstract class GenericWrapper implements ResourceErrorHandler
     * 
     * @param buffer the buffer
     */
-   protected abstract void toString(JBossStringBuilder buffer);
+   protected abstract void toString(StringBuilder buffer);
 }

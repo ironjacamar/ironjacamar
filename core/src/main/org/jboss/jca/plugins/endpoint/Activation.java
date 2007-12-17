@@ -81,7 +81,7 @@ public class Activation
    /**
     * Set the endpointFactory.
     * 
-    * @param endpointFactory The messageEndpointFactory to set.
+    * @param messageEndpointFactory The messageEndpointFactory to set.
     */
    public void setMessageEndpointFactory(MessageEndpointFactory messageEndpointFactory)
    {

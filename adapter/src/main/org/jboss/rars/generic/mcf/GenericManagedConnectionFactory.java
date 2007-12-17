@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
@@ -53,7 +54,6 @@ import org.jboss.rars.generic.wrapper.GenericChild;
 import org.jboss.rars.generic.wrapper.GenericConnection;
 import org.jboss.rars.generic.wrapper.GenericHandle;
 import org.jboss.rars.generic.wrapper.GenericWrapper;
-import org.jboss.util.collection.CollectionsFactory;
 
 /**
  * GenericManagedConnectionFactory.
@@ -76,7 +76,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
    private static final Object NO_CLOSE_METHOD = new Object();
    
    /** Cache of close methods Map<class name, method> */
-   private Map closeMethodCache = CollectionsFactory.createConcurrentReaderMap();
+   private Map<String, Object> closeMethodCache = new ConcurrentHashMap<String, Object>();
    
    /** The writer */
    private transient PrintWriter writer;
@@ -85,13 +85,13 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
    private transient GenericResourceAdapter ra;
 
    /** The connection factory interfaces cache */
-   private transient Class[] connectionFactoryInterfaces;
+   private transient Class<?>[] connectionFactoryInterfaces;
 
    /** The connection interfaces cache */
-   private transient Class[] connectionInterfaces;
+   private transient Class<?>[] connectionInterfaces;
    
    /** The wrapped interfaces cache */
-   private transient Map wrappedInterfaces = CollectionsFactory.createConcurrentReaderMap();
+   private transient Map<Class<?>, Class<?>[]> wrappedInterfaces = new ConcurrentHashMap<Class<?>, Class<?>[]>();
    
    public Object createConnectionFactory() throws ResourceException
    {
@@ -103,7 +103,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
    {
       GenericConnectionFactory impl = createGenericConnectionFactory(cxManager);
 
-      Class[] interfaces = getConnectionFactoryInterfaces(impl);
+      Class<?>[] interfaces = getConnectionFactoryInterfaces(impl);
       
       Object connectionFactory = createProxy(interfaces, impl, null);
       log.debug(this + " CREATED " + connectionFactory);
@@ -117,14 +117,14 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @return the interfaces
     * @throws ResourceException for any error
     */
-   private Class[] getConnectionFactoryInterfaces(GenericConnectionFactory impl) throws ResourceException
+   private Class<?>[] getConnectionFactoryInterfaces(GenericConnectionFactory impl) throws ResourceException
    {
       if (connectionFactoryInterfaces == null)
       {
-         Set interfaces = new HashSet();
+         Set<Class<?>> interfaces = new HashSet<Class<?>>();
          addConnectionFactoryInterfaces(impl, interfaces);
          addGenericConnectionFactoryInterfaces(impl, interfaces);
-         connectionFactoryInterfaces = (Class[]) interfaces.toArray(new Class[interfaces.size()]);
+         connectionFactoryInterfaces = interfaces.toArray(new Class[interfaces.size()]);
       }
       return connectionFactoryInterfaces;
    }
@@ -144,7 +144,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @param impl the generic connection factory
     * @param interfaces add the interfaces to this set
     */
-   protected abstract void addConnectionFactoryInterfaces(GenericConnectionFactory impl, Set interfaces);
+   protected abstract void addConnectionFactoryInterfaces(GenericConnectionFactory impl, Set<Class<?>> interfaces);
 
    /**
     * Add the generic connection factory interfaces
@@ -153,9 +153,9 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @param interfaces add the interfaces to this set
     * @throws ResourceException for any error
     */
-   protected void addGenericConnectionFactoryInterfaces(GenericConnectionFactory impl, Set interfaces) throws ResourceException
+   protected void addGenericConnectionFactoryInterfaces(GenericConnectionFactory impl, Set<Class<?>> interfaces) throws ResourceException
    {
-      Class clazz = impl.getClass();
+      Class<?> clazz = impl.getClass();
       addInterfaces(clazz, interfaces);
    }
 
@@ -168,14 +168,15 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
       return mc;
    }
 
+   @SuppressWarnings("unchecked")
    public ManagedConnection matchManagedConnections(Set connectionSet, Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
       if (connectionSet != null && connectionSet.size() >= 0)
       {
          Object requestID = getRequestID(subject, cxRequestInfo);
-         for (Iterator i = connectionSet.iterator(); i.hasNext();)
+         for (Iterator<GenericManagedConnection> i = connectionSet.iterator(); i.hasNext();)
          {
-            GenericManagedConnection managedConnection = (GenericManagedConnection) i.next();
+            GenericManagedConnection managedConnection = i.next();
             if (managedConnection.matches(requestID))
                return managedConnection;
          }
@@ -220,7 +221,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @param clazz the clazz
     * @return the method or null when not found
     */
-   protected Method findCloseMethod(Class clazz)
+   protected Method findCloseMethod(Class<?> clazz)
    {
       if (clazz.isInterface())
       {
@@ -232,7 +233,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
          {
          }
       }
-      Class[] interfaces = clazz.getInterfaces();
+      Class<?>[] interfaces = clazz.getInterfaces();
       for (int i = 0; i < interfaces.length; ++i)
       {
          Method method = findCloseMethod(interfaces[i]);
@@ -268,7 +269,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
          return;
       }
 
-      Class clazz = object.getClass();
+      Class<?> clazz = object.getClass();
       Object closeMethod = closeMethodCache.get(clazz.getName());
       if (closeMethod == null)
       {
@@ -317,14 +318,14 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * Whether this result is the parent
     * 
     * @param method the method
-    * @param parent the parent wrapper
+    * @param parentWrapper the parent wrapper
     * @param child the target child of the method
     * @return true when result is parent
     * @throws ResourceException for any error
     */
    public boolean isParent(Method method, GenericWrapper parentWrapper, GenericWrapper child) throws ResourceException
    {
-      Class returnType = method.getReturnType();
+      Class<?> returnType = method.getReturnType();
       Object parent = parentWrapper.getWrappedTarget();
       return returnType.isInstance(parent);
    }
@@ -338,7 +339,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     */
    public boolean isChild(Method method, Object object)
    {
-      Class returnType = method.getReturnType();
+      Class<?> returnType = method.getReturnType();
       if (ignoreChild(method, object, returnType))
          return false;
       return isChild(method, object, returnType);
@@ -352,7 +353,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @param type the type
     * @return true when it should be ignored
     */
-   protected boolean ignoreChild(Method method, Object object, Class type)
+   protected boolean ignoreChild(Method method, Object object, Class<?> type)
    {
       if (Collection.class.isAssignableFrom(type))
          return true;
@@ -373,7 +374,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @param type the type
     * @return true when it is a child
     */
-   protected boolean isChild(Method method, Object object, Class type)
+   protected boolean isChild(Method method, Object object, Class<?> type)
    {
       return type.isInterface();
    }
@@ -397,7 +398,7 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * Map an error
     * 
     * @param context the context
-    * @param e the error
+    * @param t the error
     * @return the mapped error
     */
    public Throwable error(Object context, Throwable t)
@@ -454,7 +455,8 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
    
    /**
     * Get the connection request info
-    * 
+    *
+    * @param cf the connection factory
     * @param method the method
     * @param args the arguments
     * @return the connection request info
@@ -486,14 +488,14 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @return the interfaces
     * @throws ResourceException for any error
     */
-   protected Class[] getConnectionInterfaces(GenericConnection impl) throws ResourceException
+   protected Class<?>[] getConnectionInterfaces(GenericConnection impl) throws ResourceException
    {
       if (connectionInterfaces == null)
       {
-         Set interfaces = new HashSet();
+         Set<Class<?>> interfaces = new HashSet<Class<?>>();
          addConnectionInterfaces(impl, interfaces);
          interfaces.add(GenericHandle.class);
-         connectionInterfaces = (Class[]) interfaces.toArray(new Class[interfaces.size()]);
+         connectionInterfaces = interfaces.toArray(new Class[interfaces.size()]);
       }
       return connectionInterfaces;
    }
@@ -517,10 +519,10 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @param interfaces add the interfaces to this set
     * @throws ResourceException for any error
     */
-   protected void addConnectionInterfaces(GenericConnection connection, Set interfaces) throws ResourceException
+   protected void addConnectionInterfaces(GenericConnection connection, Set<Class<?>> interfaces) throws ResourceException
    {
       Object object = connection.getWrappedTarget();
-      Class clazz = object.getClass();
+      Class<?> clazz = object.getClass();
       addInterfaces(clazz, interfaces);
    }
 
@@ -531,17 +533,17 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @return the interfaces
     * @throws ResourceException for any error
     */
-   public Class[] getWrappedInterfaces(GenericWrapper wrapper) throws ResourceException
+   public Class<?>[] getWrappedInterfaces(GenericWrapper wrapper) throws ResourceException
    {
       Object object = wrapper.getWrappedTarget();
-      Class clazz = object.getClass();
-      Class[] result = (Class[]) wrappedInterfaces.get(clazz);
+      Class<?> clazz = object.getClass();
+      Class<?>[] result = wrappedInterfaces.get(clazz);
       if (result == null)
       {
-         Set interfaces = new HashSet();
+         Set<Class<?>> interfaces = new HashSet<Class<?>>();
          addInterfaces(clazz, interfaces);
          interfaces.add(GenericHandle.class);
-         result = (Class[]) interfaces.toArray(new Class[interfaces.size()]);
+         result = interfaces.toArray(new Class[interfaces.size()]);
          wrappedInterfaces.put(clazz, result);
       }
       return result;
@@ -554,11 +556,11 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * @param interfaces add the interfaces to this set
     * @throws ResourceException for any error
     */
-   private void addInterfaces(Class clazz, Set interfaces) throws ResourceException
+   private void addInterfaces(Class<?> clazz, Set<Class<?>> interfaces) throws ResourceException
    {
       if (clazz == null)
          return;
-      Class[] intfs = clazz.getInterfaces();
+      Class<?>[] intfs = clazz.getInterfaces();
       for (int i = 0; i < intfs.length; ++i)
          interfaces.add(intfs[i]);
       addInterfaces(clazz.getSuperclass(), interfaces);
@@ -569,9 +571,10 @@ public abstract class GenericManagedConnectionFactory implements ManagedConnecti
     * 
     * @param interfaces the interfaces
     * @param impl the implementation
+    * @param metaData the metadata
     * @return the proxy
     */
-   public Object createProxy(Class[] interfaces, Object impl, SimpleMetaData metaData)
+   public Object createProxy(Class<?>[] interfaces, Object impl, SimpleMetaData metaData)
    {
       AOPProxyFactoryParameters params = new AOPProxyFactoryParameters();
       params.setObjectAsSuperClass(true);

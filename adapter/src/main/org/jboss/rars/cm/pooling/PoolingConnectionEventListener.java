@@ -49,6 +49,7 @@ public class PoolingConnectionEventListener implements ConnectionEventListener
    /**
     * Create a new PoolingConnectionEventListener.
     * 
+    * @param cm the connection manager
     * @param mc the managed connection
     */
    public PoolingConnectionEventListener(PoolingConnectionManager cm, ManagedConnection mc)

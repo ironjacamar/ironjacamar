@@ -21,7 +21,7 @@
 */
 package org.jboss.test.rars.generic.mcf.support;
 
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedBoolean;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * TestConnectionImpl.
@@ -31,7 +31,7 @@ import EDU.oswego.cs.dl.util.concurrent.SynchronizedBoolean;
  */
 public class TestConnectionImpl implements TestConnection
 {
-   private SynchronizedBoolean closed = new SynchronizedBoolean(false);
+   private AtomicBoolean closed = new AtomicBoolean(false);
 
    public void close()
    {

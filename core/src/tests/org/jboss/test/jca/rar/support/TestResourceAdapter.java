@@ -21,9 +21,9 @@
 */
 package org.jboss.test.jca.rar.support;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Timer;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
@@ -37,8 +37,6 @@ import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.xa.XAResource;
 
-import org.jboss.util.collection.CollectionsFactory;
-
 /**
  * A TestResourceAdapter.
  * 
@@ -49,7 +47,7 @@ public class TestResourceAdapter implements ResourceAdapter
 {
    protected BootstrapContext ctx;
 
-   protected Map endpoints = CollectionsFactory.createConcurrentReaderMap();
+   protected Map<TestActivationSpec, MessageEndpoint> endpoints = new ConcurrentHashMap<TestActivationSpec, MessageEndpoint>();
 
    public void start(BootstrapContext ctx) throws ResourceAdapterInternalException
    {
@@ -59,40 +57,37 @@ public class TestResourceAdapter implements ResourceAdapter
    public void stop()
    {
       
-      for (Iterator i = endpoints.entrySet().iterator(); i.hasNext();)
+      for (Map.Entry<TestActivationSpec, MessageEndpoint> entry : endpoints.entrySet())
       {
-         Map.Entry entry = (Map.Entry) i.next();
-         MessageEndpoint endpoint = (MessageEndpoint) entry.getValue();
+         MessageEndpoint endpoint = entry.getValue();
          if (endpoint != null)
-         {
             endpoint.release();
-            i.remove();
-         }
+         endpoints.clear();
       }
       ctx = null;
    }
    
    public MessageEndpoint getEndpoint(String name) throws Exception
    {
-      for (Iterator i = endpoints.entrySet().iterator(); i.hasNext();)
+      for (Map.Entry<TestActivationSpec, MessageEndpoint> entry : endpoints.entrySet())
       {
-         Map.Entry entry = (Map.Entry) i.next();
-         TestActivationSpec spec = (TestActivationSpec) entry.getKey();
+         TestActivationSpec spec = entry.getKey();
          if (name.equals(spec.getName()))
-            return (MessageEndpoint) entry.getValue();
+            return entry.getValue();
       }
       throw new Exception("MessageEndpoint not found for name: " + name);      
    }
 
    public void endpointActivation(MessageEndpointFactory endpointFactory, ActivationSpec spec) throws ResourceException
    {
+      TestActivationSpec test = TestActivationSpec.class.cast(spec);
       MessageEndpoint endpoint = endpointFactory.createEndpoint(null);
-      endpoints.put(spec, endpoint);
+      endpoints.put(test, endpoint);
    }
 
    public void endpointDeactivation(MessageEndpointFactory endpointFactory, ActivationSpec spec)
    {
-      MessageEndpoint endpoint = (MessageEndpoint) endpoints.remove(spec);
+      MessageEndpoint endpoint = endpoints.remove(spec);
       if (endpoint != null)
          endpoint.release();
    }

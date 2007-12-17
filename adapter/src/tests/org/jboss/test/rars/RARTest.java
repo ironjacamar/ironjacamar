@@ -42,7 +42,7 @@ public class RARTest extends MicrocontainerTest
       super(name);
    }
 
-   public static AbstractTestDelegate getDelegate(Class clazz) throws Exception
+   public static AbstractTestDelegate getDelegate(Class<?> clazz) throws Exception
    {
       AbstractTestDelegate delegate = MicrocontainerTest.getDelegate(clazz);
       //delegate.enableSecurity = true;

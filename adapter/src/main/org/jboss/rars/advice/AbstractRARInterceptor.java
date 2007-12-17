@@ -27,7 +27,6 @@ import org.jboss.aop.advice.Interceptor;
 import org.jboss.aop.joinpoint.Invocation;
 import org.jboss.aop.joinpoint.MethodInvocation;
 import org.jboss.logging.Logger;
-import org.jboss.util.JBossStringBuilder;
 
 /**
  * AbstractRARInterceptor.
@@ -47,12 +46,12 @@ public abstract class AbstractRARInterceptor implements Interceptor
 
    protected static String format(Invocation invocation)
    {
-      JBossStringBuilder buffer = new JBossStringBuilder();
+      StringBuilder buffer = new StringBuilder();
       format(buffer, invocation);
       return buffer.toString();
    }
    
-   protected static void format(JBossStringBuilder buffer, Invocation invocation)
+   protected static void format(StringBuilder buffer, Invocation invocation)
    {
       if (invocation instanceof MethodInvocation)
       {
@@ -61,7 +60,7 @@ public abstract class AbstractRARInterceptor implements Interceptor
          buffer.append("[method=").append(method.getDeclaringClass().getName());
          buffer.append('.').append(method.getName());
          buffer.append('(');
-         Class[] parameters = method.getParameterTypes();
+         Class<?>[] parameters = method.getParameterTypes();
          for (int i = 0; i < parameters.length; ++i)
          {
             if (i > 0)

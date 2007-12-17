@@ -50,7 +50,7 @@ public abstract class IndirectGenericManagedConnectionFactory extends GenericMan
    private static final Method CLOSE_FROM_INDIRECT_CONNECTION;
 
    /** The indirect connection interfaces */
-   private Class[] indirectConnectionInterfaces;
+   private Class<?>[] indirectConnectionInterfaces;
    
    static
    {
@@ -81,7 +81,7 @@ public abstract class IndirectGenericManagedConnectionFactory extends GenericMan
    {
       IndirectGenericConnection impl = new IndirectGenericConnection(this, cm, cri);
 
-      Class[] interfaces = getIndirectConnectionInterfaces(impl);
+      Class<?>[] interfaces = getIndirectConnectionInterfaces(impl);
       Object connection = impl.createProxy(interfaces, impl);
       return connection;
    }
@@ -93,14 +93,14 @@ public abstract class IndirectGenericManagedConnectionFactory extends GenericMan
     * @return the interfaces
     * @throws ResourceException for any error
     */
-   private Class[] getIndirectConnectionInterfaces(IndirectGenericConnection impl) throws ResourceException
+   private Class<?>[] getIndirectConnectionInterfaces(IndirectGenericConnection impl) throws ResourceException
    {
       if (indirectConnectionInterfaces == null)
       {
-         Set interfaces = new HashSet();
+         Set<Class<?>> interfaces = new HashSet<Class<?>>();
          addIndirectConnectionInterfaces(impl, interfaces);
          interfaces.add(IndirectConnection.class);
-         indirectConnectionInterfaces = (Class[]) interfaces.toArray(new Class[interfaces.size()]);
+         indirectConnectionInterfaces = interfaces.toArray(new Class[interfaces.size()]);
       }
       return indirectConnectionInterfaces;
    }
@@ -111,9 +111,9 @@ public abstract class IndirectGenericManagedConnectionFactory extends GenericMan
     * @param connection the connection 
     * @param interfaces the interfaces
     */
-   protected abstract void addIndirectConnectionInterfaces(IndirectGenericConnection connection, Set interfaces);
+   protected abstract void addIndirectConnectionInterfaces(IndirectGenericConnection connection, Set<Class<?>> interfaces);
    
-   protected void addConnectionInterfaces(GenericConnection connection, Set interfaces) throws ResourceException
+   protected void addConnectionInterfaces(GenericConnection connection, Set<Class<?>> interfaces) throws ResourceException
    {
       interfaces.add(RealConnection.class);
       super.addConnectionInterfaces(connection, interfaces);

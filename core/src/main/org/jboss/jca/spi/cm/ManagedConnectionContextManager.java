@@ -22,13 +22,13 @@
 package org.jboss.jca.spi.cm;
 
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 
 import org.jboss.logging.Logger;
-import org.jboss.util.collection.CollectionsFactory;
 
 /**
  * A ManagedConnectionContextManager.
@@ -42,7 +42,7 @@ public class ManagedConnectionContextManager
    private static final Logger log = Logger.getLogger(ManagedConnectionContextManager.class);
    
    /** The contexts */
-   private Set contexts = CollectionsFactory.createCopyOnWriteSet();
+   private Set<ManagedConnectionContext> contexts = new CopyOnWriteArraySet<ManagedConnectionContext>();
    
    /**
     * Create a new managed connection context

@@ -94,7 +94,7 @@ public abstract class GenericConnectionFactory implements ResourceErrorHandler
     * 
     * @param cri the connection request info
     * @return the connection
-    * @throws Exception for any error
+    * @throws ResourceException for any error
     */
    public Object allocateConnection(ConnectionRequestInfo cri) throws ResourceException
    {
@@ -109,7 +109,7 @@ public abstract class GenericConnectionFactory implements ResourceErrorHandler
     * @param context the context
     * @param t the throwable
     * @return never
-    * @throws the correct error
+    * @throws Throwable the correct error
     */
    public Throwable throwError(Object context, Throwable t) throws Throwable
    {

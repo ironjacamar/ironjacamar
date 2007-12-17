@@ -22,7 +22,6 @@
 package org.jboss.rars.advice;
 
 import org.jboss.aop.joinpoint.Invocation;
-import org.jboss.util.JBossStringBuilder;
 
 /**
  * Trace advice.
@@ -62,13 +61,13 @@ public class TraceAdvice extends AbstractRARInterceptor
       }
    }
    
-   protected static void format(JBossStringBuilder buffer, String context, Invocation invocation)
+   protected static void format(StringBuilder buffer, String context, Invocation invocation)
    {
       buffer.append(context);
       format(buffer, invocation);
    }
    
-   protected static void format(JBossStringBuilder buffer, String context, Invocation invocation, long time)
+   protected static void format(StringBuilder buffer, String context, Invocation invocation, long time)
    {
       if (time > 10)
          buffer.append("-------> ");
@@ -76,23 +75,23 @@ public class TraceAdvice extends AbstractRARInterceptor
       buffer.append(" time=").append(time).append("ms");
    }
    
-   protected static JBossStringBuilder format(String context, Invocation invocation)
+   protected static StringBuilder format(String context, Invocation invocation)
    {
-      JBossStringBuilder buffer = new JBossStringBuilder();
+      StringBuilder buffer = new StringBuilder();
       format(buffer, context, invocation);
       return buffer;
    }
    
-   protected static JBossStringBuilder format(String context, Invocation invocation, long time)
+   protected static StringBuilder format(String context, Invocation invocation, long time)
    {
-      JBossStringBuilder buffer = new JBossStringBuilder();
+      StringBuilder buffer = new StringBuilder();
       format(buffer, context, invocation, time);
       return buffer;
    }
    
-   protected static JBossStringBuilder format(String context, Invocation invocation, long time, Object result)
+   protected static StringBuilder format(String context, Invocation invocation, long time, Object result)
    {
-      JBossStringBuilder buffer = new JBossStringBuilder();
+      StringBuilder buffer = new StringBuilder();
       format(buffer, context, invocation, time);
       buffer.append(" RESULT=").append(result);
       return buffer;

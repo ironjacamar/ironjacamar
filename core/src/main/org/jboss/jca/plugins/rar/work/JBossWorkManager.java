@@ -236,7 +236,6 @@ public class JBossWorkManager
     * End work
     * 
     * @param wrapper the work wrapper
-    * @throws WorkException for any error 
     */
    protected void endWork(WorkWrapper wrapper)
    {
@@ -260,7 +259,6 @@ public class JBossWorkManager
     * Cancel work
     * 
     * @param wrapper the work wrapper
-    * @throws WorkException for any error 
     */
    protected void cancelWork(WorkWrapper wrapper)
    {

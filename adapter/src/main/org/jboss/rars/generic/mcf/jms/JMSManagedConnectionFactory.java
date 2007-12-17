@@ -126,7 +126,7 @@ public class JMSManagedConnectionFactory extends IndirectGenericManagedConnectio
       this.connectionFactory = connectionFactory;
    }
 
-   protected void addConnectionFactoryInterfaces(GenericConnectionFactory impl, Set interfaces)
+   protected void addConnectionFactoryInterfaces(GenericConnectionFactory impl, Set<Class<?>> interfaces)
    {
       interfaces.add(ConnectionFactory.class);
       interfaces.add(QueueConnectionFactory.class);
@@ -134,7 +134,7 @@ public class JMSManagedConnectionFactory extends IndirectGenericManagedConnectio
       interfaces.add(Serializable.class);
    }
 
-   protected void addIndirectConnectionInterfaces(IndirectGenericConnection connection, Set interfaces)
+   protected void addIndirectConnectionInterfaces(IndirectGenericConnection connection, Set<Class<?>> interfaces)
    {
       interfaces.add(Connection.class);
       interfaces.add(QueueConnection.class);
@@ -193,7 +193,7 @@ public class JMSManagedConnectionFactory extends IndirectGenericManagedConnectio
       }
    }
 
-   protected boolean ignoreChild(Method method, Object object, Class type)
+   protected boolean ignoreChild(Method method, Object object, Class<?> type)
    {
       if (Message.class.isAssignableFrom(type))
          return true;

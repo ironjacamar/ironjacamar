@@ -23,6 +23,8 @@ package org.jboss.jca.spi.cm;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ApplicationServerInternalException;
@@ -37,11 +39,8 @@ import javax.security.auth.Subject;
 import org.jboss.jca.spi.ResourceExceptionUtil;
 import org.jboss.jca.spi.pool.ManagedConnectionContextPool;
 import org.jboss.logging.Logger;
-import org.jboss.util.collection.CollectionsFactory;
 import org.jboss.util.JBossObject;
 import org.jboss.util.JBossStringBuilder;
-
-import EDU.oswego.cs.dl.util.concurrent.SynchronizedInt;
 
 /**
  * A ManagedConnectionContext.
@@ -85,13 +84,13 @@ public class ManagedConnectionContext extends JBossObject implements ConnectionE
    protected ManagedConnectionContextPool pool;
    
    /** The state */
-   private SynchronizedInt state = new SynchronizedInt(INITIALIZING); 
+   private AtomicInteger state = new AtomicInteger(INITIALIZING); 
    
    /** The connection handles */
-   protected Set handles = CollectionsFactory.createCopyOnWriteSet(); 
+   protected Set<Object> handles = new CopyOnWriteArraySet<Object>(); 
    
    /** Any cached connection set */
-   protected Set connectionSet;
+   protected Set<ManagedConnection> connectionSet;
    
    /**
     * Safely destroy a managed connecton
@@ -120,6 +119,7 @@ public class ManagedConnectionContext extends JBossObject implements ConnectionE
     * Create a new ManagedConnectionContext.
     * 
     * @param contextManager the context manager
+    * @param managedConnectionFactory the managed connection factory
     * @param managedConnection the managed connection
     * @throws ResourceException for any error
     */
@@ -162,6 +162,9 @@ public class ManagedConnectionContext extends JBossObject implements ConnectionE
    
    /**
     * Set the context in use
+    * 
+    * @param pool the pool
+    * @throws ResourceException for any error
     */
    public void setInUse(ManagedConnectionContextPool pool) throws ResourceException
    {
@@ -462,7 +465,7 @@ public class ManagedConnectionContext extends JBossObject implements ConnectionE
     */
    private int changeState(int newState)
    {
-      return state.set(newState);
+      return state.getAndSet(newState);
    }
    
    /**
