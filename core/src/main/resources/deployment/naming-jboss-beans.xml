@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    JBoss JCA
+-->
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <!-- Naming -->
+  <bean name="NamingServer" class="org.jnp.server.SingletonNamingServer"/>
+
+  <!-- java:comp -->
+  <bean name="JavaCompInitializer" class="org.jboss.jca.test.core.common.JavaCompInitializer">
+    <depends>NamingServer</depends>
+  </bean>
+
+</deployment>

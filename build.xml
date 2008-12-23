@@ -1,0 +1,171 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="jboss-jca" 
+         default="jars" 
+         basedir="." 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
+  <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
+
+  <!-- ================================= 
+       Repositories              
+       ================================= -->
+  <property name="central.repo" value="http://repo1.maven.org/maven2"/>
+  <property name="jboss.repo" value="http://repository.jboss.org/maven2"/>
+  <property name="snapshots.repo" value="http://snapshots.jboss.org/maven2"/>
+  
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="lib.dir" value="${basedir}/lib" />
+  <property name="build.dir" value="${basedir}/build" />
+  <property name="target.dir" value="${basedir}/target" />
+  <property name="reports.dir" value="${basedir}/reports" />
+  <property name="test.dir" value="${reports.dir}" />
+
+  <property name="javac.debug" value="on" />
+  <property name="javac.deprecation" value="on" />
+  <property name="javac.optimize" value="off" />
+
+  <property name="junit.printsummary" value="yes" />
+  <property name="junit.haltonerror" value="no" />
+  <property name="junit.haltonfailure" value="no" />
+  <property name="junit.fork" value="yes" />
+  <property name="junit.timeout" value="60000" />
+  <property name="junit.jvm" value="" />
+  <property name="junit.jvm.options" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m" />
+  <property name="junit.batchtest.haltonerror" value="no" />
+  <property name="junit.batchtest.haltonfailure" value="no" />
+  <property name="junit.batchtest.fork" value="yes" />
+      
+  <!-- ================================= 
+       Versions              
+       ================================= -->
+  <property name="version.apache-log4j" value="1.2.14"/>
+  <property name="version.apache-logging" value="1.1.0.jboss"/>
+  <property name="version.javassist" value="3.9.0.GA"/>
+  <property name="version.jaxb.api" value="2.0"/>
+  <property name="version.jaxb.impl" value="2.1"/>
+  <property name="version.jboss.aop" value="2.0.0.SP1"/>
+  <property name="version.jboss.common" value="2.2.10.GA"/>
+  <property name="version.jboss.ejb3.test" value="1.0.0-Beta2"/>
+  <property name="version.jboss.integration" value="5.0.3.GA"/>
+  <property name="version.jboss.logging" value="2.0.5.GA"/>
+  <property name="version.jboss.managed" value="2.0.0.GA"/>
+  <property name="version.jboss.mc.aop-int" value="2.0.2.GA"/>
+  <property name="version.jboss.mc.dependency" value="2.0.2.GA"/>
+  <property name="version.jboss.mc.kernel" value="2.0.2.GA"/>
+  <property name="version.jboss.mdr" value="2.0.1.GA"/>
+  <property name="version.jboss.metadata" value="1.0.0.CR12"/>
+  <property name="version.jboss.naming" value="5.0.0.SP1"/>
+  <property name="version.jboss.reflect" value="2.0.2.GA"/>
+  <property name="version.jboss.ts" value="4.4.0.GA"/>
+  <property name="version.jboss.xb" value="2.0.0.GA"/>
+  <property name="version.junit" value="4.4"/>
+  <property name="version.oswego-concurrent" value="1.3.4-jboss-update1"/>
+  <property name="version.transaction.api" value="1.0.1.GA"/>
+  <property name="version.trove" value="2.1.1"/>
+
+  <!-- ================================= 
+       Paths              
+       ================================= -->
+  <path id="lib.path.id">
+    <fileset dir="${lib.dir}"/>
+    <fileset dir="${target.dir}"/>
+  </path>
+
+  <!-- ================================= 
+       Target: init              
+       ================================= -->
+  <target name="init">
+    <ivy:settings file="${basedir}/ivy.settings.xml"/>
+
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${target.dir}" />
+  </target>
+
+  <!-- ================================= 
+       Target: resolve              
+       ================================= -->
+  <target name="resolve" depends="init">
+    <ivy:retrieve/>
+  </target>
+  
+  <!-- ================================= 
+       Target: report              
+       ================================= -->
+  <target name="report" depends="resolve">
+    <ivy:report todir="${target.dir}"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: jars
+       ================================= -->
+  <target name="jars" depends="resolve">
+    <ant dir="api" inheritRefs="true" target="jars"/>
+    <ant dir="common" inheritRefs="true" target="jars"/>
+    <ant dir="core" inheritRefs="true" target="jars"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs" depends="jars">
+    <ant dir="api" inheritRefs="true" target="docs"/>
+    <ant dir="common" inheritRefs="true" target="docs"/>
+    <ant dir="core" inheritRefs="true" target="docs"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: test
+       ================================= -->
+  <target name="test" depends="jars">
+    <ant dir="core" inheritRefs="true" target="test"/>
+  </target>
+
+  <!-- ================================= 
+       Target: clean              
+       ================================= -->
+  <target name="clean">
+    <delete>
+      <fileset dir="${basedir}" defaultexcludes="no">
+        <include name="**/*~"/>
+        <include name="**/*.bak"/>
+      </fileset>
+    </delete>
+    <delete>
+      <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </delete>
+    <delete dir="${build.dir}"/>
+    <delete dir="${target.dir}"/>
+    <delete dir="${reports.dir}"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: clean-cache              
+       ================================= -->
+  <target name="clean-cache">
+    <ivy:cleancache />
+  </target>
+
+</project>

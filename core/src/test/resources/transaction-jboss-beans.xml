@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    JBoss JCA
+-->
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <!-- JMX -->
+  <bean name="JMX" class="org.jboss.jca.test.core.common.JMX"/>
+
+  <!-- Transaction manager -->
+  <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
+    <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+    <property name="transactionTimeout">300</property>
+    <property name="objectStoreDir">${test.dir}/tx-object-store</property>
+    <property name="mbeanServer"><inject bean="JMX" property="mbeanServer"/></property>
+    <property name="transactionStatusManagerInetAddress">localhost</property>
+    <property name="transactionStatusManagerPort">4713</property>
+    <property name="recoveryInetAddress">localhost</property>
+    <property name="recoveryPort">4712</property>
+    <property name="socketProcessIdPort">0</property>    
+
+    <depends>JMX</depends>
+    <depends>NamingServer</depends>
+  </bean>
+
+</deployment>

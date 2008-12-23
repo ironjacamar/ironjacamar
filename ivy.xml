@@ -1,0 +1,66 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<ivy-module version="2.0" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+  <info organisation="org.jboss" 
+        module="jboss-jca">
+    <license name="lgpl" url="http://repository.jboss.org/licenses/lgpl.txt"/>
+    <repository name="jboss" url="http://repository.jboss.org"/>
+  </info>
+
+  <configurations>
+    <conf name="standalone" transitive="false"/>
+  </configurations>
+
+  <dependencies>
+    <dependency org="apache-log4j" name="log4j" rev="${version.apache-log4j}"/>
+    <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}"/>
+    <dependency org="javassist" name="javassist" rev="${version.javassist}"/>
+    <dependency org="javax.xml" name="jaxb-api" rev="${version.jaxb.api}"/>
+    <dependency org="javax.xml" name="jaxb-impl" rev="${version.jaxb.impl}"/>
+    <dependency org="jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}"/>
+    <dependency org="jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}"/>
+    <dependency org="jboss.jbossts" name="jbossts-common" rev="${version.jboss.ts}"/>
+    <dependency org="junit" name="junit" rev="${version.junit}"/>
+    <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}"/>
+    <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}"/>
+    <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}"/>
+    <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}"/>
+    <dependency org="org.jboss.aop" name="jboss-aop" rev="${version.jboss.aop}"/>
+    <dependency org="org.jboss.ejb3" name="jboss-ejb3-test" rev="${version.jboss.ejb3.test}"/>
+    <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}"/>
+    <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging}"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-spi" rev="${version.jboss.logging}"/>
+    <dependency org="org.jboss.man" name="jboss-managed" rev="${version.jboss.managed}"/>
+    <dependency org="org.jboss.metadata" name="jboss-metadata" rev="${version.jboss.metadata}"/>
+    <dependency org="org.jboss.microcontainer" name="jboss-aop-mc-int" rev="${version.jboss.mc.aop-int}"/>
+    <dependency org="org.jboss.microcontainer" name="jboss-dependency" rev="${version.jboss.mc.dependency}"/>
+    <dependency org="org.jboss.microcontainer" name="jboss-kernel" rev="${version.jboss.mc.kernel}"/>
+    <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}"/>
+    <dependency org="oswego-concurrent" name="concurrent" rev="${version.oswego-concurrent}"/>
+    <dependency org="trove" name="trove" rev="${version.trove}"/>
+  </dependencies>
+
+</ivy-module>

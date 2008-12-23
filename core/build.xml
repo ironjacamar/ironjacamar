@@ -1,0 +1,140 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="jboss-jca-core" 
+         default="compile" 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.core.dir" value="${build.dir}/core" />
+
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile">
+    <mkdir dir="${build.core.dir}" />
+    <mkdir dir="${build.core.dir}/impl" />
+
+    <javac srcdir="src/main"
+           destdir="${build.core.dir}/impl"
+           classpathref="lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+  </target>
+
+  <!-- ================================= 
+       Target: jars 
+       ================================= -->
+  <target name="jars" depends="compile">
+    <jar destfile="${target.dir}/jboss-jca-core-api.jar"
+         manifest="src/main/resources/api-manifest.mf"
+         basedir="${build.core.dir}/impl"
+         includes="**/api/**"/>
+
+    <jar destfile="${target.dir}/jboss-jca-core-impl.jar"
+         manifest="src/main/resources/impl-manifest.mf"
+         basedir="${build.core.dir}/impl"
+         excludes="**/*.java, **/api/**"/>
+  </target>
+
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs">
+    <mkdir dir="${target.dir}/docs/core"/>
+    <javadoc packagenames="org.*"
+             sourcepath="src/main/java"
+             destdir="${target.dir}/docs/core"
+             author="true"
+             version="true"
+             windowtitle="JBoss JCA Common"
+             doctitle="JBoss JCA Common"
+             use="true"
+             classpathref="lib.path.id"
+             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+  </target>
+
+  <!-- ================================= 
+       Target: test
+       ================================= -->
+  <target name="test" depends="jars, prepare-test">
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${reports.dir}/core"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      
+      <classpath>
+        <pathelement location="${build.core.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}" includes="*.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      
+      <batchtest todir="${reports.dir}/core"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.core.dir}/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+    
+  </target>
+
+  <target name="prepare-test">
+    <mkdir dir="${build.core.dir}" />
+    <mkdir dir="${build.core.dir}/test" />
+
+    <javac srcdir="src/test"
+           destdir="${build.core.dir}/test"
+           classpathref="lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
+    <copy todir="${build.core.dir}/test">
+      <fileset dir="src/test/resources"/>
+    </copy>
+
+  </target>
+
+</project>

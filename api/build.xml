@@ -1,0 +1,75 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="jboss-jca-spec-api" 
+         default="compile" 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.api.dir" value="${build.dir}/api" />
+
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile">
+    <mkdir dir="${build.api.dir}" />
+
+    <javac srcdir="src"
+           destdir="${build.api.dir}"
+           classpathref="lib.path.id"
+           debug="${javac.debug}">
+      <!-- <compilerarg value="-Xlint"/> -->
+    </javac> 
+
+  </target>
+
+  <!-- ================================= 
+       Target: jars
+       ================================= -->
+  <target name="jars" depends="compile">
+    <jar destfile="${target.dir}/javax-resource-spec-api.jar"
+         manifest="src/main/resources/manifest.mf"
+         basedir="${build.api.dir}"
+         excludes="**/*.java"/>
+  </target>
+
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs">
+    <mkdir dir="${target.dir}/docs/spec"/>
+    <javadoc packagenames="javax.*"
+             sourcepath="src/main/java"
+             destdir="${target.dir}/docs/spec"
+             author="true"
+             version="true"
+             windowtitle="JCA 1.6 specification"
+             doctitle="JCA 1.6 specification"
+             use="true"
+             classpathref="lib.path.id"
+             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+  </target>
+
+</project>

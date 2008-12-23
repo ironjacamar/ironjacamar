@@ -1,0 +1,80 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="jboss-common" 
+         default="compile" 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.common.dir" value="${build.dir}/common" />
+
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile">
+    <mkdir dir="${build.common.dir}" />
+
+    <javac srcdir="src"
+           destdir="${build.common.dir}"
+           classpathref="lib.path.id"
+           debug="${javac.debug}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
+  </target>
+
+  <!-- ================================= 
+       Target: jars
+       ================================= -->
+  <target name="jars" depends="compile">
+    <jar destfile="${target.dir}/jboss-jca-common-api.jar"
+         manifest="src/main/resources/api-manifest.mf"
+         basedir="${build.common.dir}"
+         includes="**/api/**"
+         excludes="**/*.java"/>
+    <jar destfile="${target.dir}/jboss-jca-common-impl.jar"
+         manifest="src/main/resources/impl-manifest.mf"
+         basedir="${build.common.dir}"
+         excludes="**/api/**, **/*.java"/>
+  </target>
+
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs">
+    <mkdir dir="${target.dir}/docs/common"/>
+    <javadoc packagenames="org.*"
+             sourcepath="src/main/java"
+             destdir="${target.dir}/docs/common"
+             author="true"
+             version="true"
+             windowtitle="JBoss JCA Common"
+             doctitle="JBoss JCA Common"
+             use="true"
+             classpathref="lib.path.id"
+             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+  </target>
+
+</project>

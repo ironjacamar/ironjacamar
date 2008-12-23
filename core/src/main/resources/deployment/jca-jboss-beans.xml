@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    JBoss JCA
+-->
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <!-- Work Manager thread pool -->
+  <bean name="WorkManagerThreadPool" interface="org.jboss.jca.common.threadpool.ThreadPool" class="org.jboss.jca.common.threadpool.ThreadPoolImpl">
+    <!-- The name that appears in thread names -->
+    <property name="name">WorkManager</property>
+
+    <!-- The maximum amount of work in the queue -->
+    <property name="maximumQueueSize">1024</property>
+    
+    <!-- The maximum number of active threads -->
+    <property name="maximumPoolSize">100</property>
+    
+    <!-- How long to keep threads alive after their last work (default one minute) -->
+    <property name="keepAliveTime">60000</property>
+  </bean>
+
+  <!-- Work Manager -->
+  <bean name="WorkManager" interface="org.jboss.jca.core.api.WorkManager" class="org.jboss.jca.core.workmanager.WorkManagerImpl">
+    <!-- The thread pool -->
+    <property name="threadPool"><inject bean="WorkManagerThreadPool"/></property>
+
+    <!-- The XA terminator -->
+    <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
+  </bean>
+  
+  <!-- Connection Manager -->
+  <bean name="ConnectionManager" interface="org.jboss.jca.core.api.ConnectionManager" class="org.jboss.jca.core.connectionmanager.ConnectionManagerImpl">
+  </bean>
+  
+</deployment>
