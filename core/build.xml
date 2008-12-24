@@ -70,8 +70,8 @@
              destdir="${target.dir}/docs/core"
              author="true"
              version="true"
-             windowtitle="JBoss JCA Common"
-             doctitle="JBoss JCA Common"
+             windowtitle="JBoss JCA Core"
+             doctitle="JBoss JCA Core"
              use="true"
              classpathref="lib.path.id"
              bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
