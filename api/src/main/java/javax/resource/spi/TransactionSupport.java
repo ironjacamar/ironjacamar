@@ -58,7 +58,7 @@ public interface TransactionSupport extends java.io.Serializable
        * by implementing the <code>LocalTransaction</code> interface.
        * @since 1.6
        */
-      LocalTansaction, 
+      LocalTransaction, 
 
       /**
        * The resource adapter supports both resource manager local 
