@@ -136,6 +136,10 @@ public interface ManagedConnection
     *  application-level connection handle with a ManagedConneciton 
     *  instance. The container should find the right ManagedConnection 
     *  instance and call the associateConnection method.
+    *  In order to set a Connection Handle as the active connection 
+    *  handle, the container may also use the <code>associateConnection</code> 
+    *  method to set the same <code>ManagedConnection</code> associated 
+    *  with the Connection handle.
     *
     *  <p>The resource adapter is required to implement the associateConnection
     *  method. The method implementation for a ManagedConnection should 

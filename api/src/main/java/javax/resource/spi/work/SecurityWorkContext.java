@@ -78,12 +78,17 @@ import javax.security.auth.callback.CallbackHandler;
 
 public abstract class SecurityWorkContext implements WorkContext 
 {
+   /**
+    * Determines if a deserialized instance of this class
+    * is compatible with this class.
+    */
+   private static final long serialVersionUID = 7730296651802712658L;
    
    /**
     * {@inheritDoc}
     */
    public String getDescription() {
-      return "Security Inflow Context";
+      return "Security Work Context";
    }
    
    /**

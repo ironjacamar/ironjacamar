@@ -38,8 +38,18 @@ import java.util.HashMap;
 
 public class HintsWorkContext implements WorkContext 
 {
-   String description = "Hints Inflow Context";
-   String name = "HintsWorkContext";
+
+   /**
+    * Determines if a deserialized instance of this class
+    * is compatible with this class.
+    */
+   private static final long serialVersionUID = 7956353628297167255L;
+   
+   public static final String NAME_HINT = "javax.resource.Name";
+   public static final String LONGRUNNING_HINT = "javax.resource.LongRunning";
+   
+   protected String description = "Hints Work Context";
+   protected String name = "HintsWorkContext";
    
    /**
     * {@inheritDoc}

@@ -52,6 +52,30 @@ public interface MessageEndpointFactory
       throws UnavailableException;
    
    /**
+    * This is used to create a message endpoint. The message endpoint is
+    * expected to implement the correct message listener type.
+    *
+    * @param xaResource an optional <code>XAResource</code> 
+    * instance used to get transaction notifications when the message delivery
+    * is transacted.
+    * 
+    * @param timout an optional value used to specify the time duration
+    * (in milliseconds) within which the message endpoint needs to be
+    * created by the <code>MessageEndpointFactory</code>. Otherwise, the
+    * <code>MessageEndpointFactory</code> rejects the creation of the
+    * <code>MessageEndpoint</code> with an UnavailableException.  Note, this
+    * does not offer real-time guarantees.
+    * 
+    * @return a message endpoint instance.
+    *
+    * @throws UnavailableException indicates a transient failure
+    * in creating a message endpoint. Subsequent attempts to create a message
+    * endpoint might succeed.
+    */
+   MessageEndpoint createEndpoint(XAResource xaResource, long timeout)
+      throws UnavailableException;
+
+   /**
     * This is used to find out whether message deliveries to a target method
     * on a message listener interface that is implemented by a message 
     * endpoint will be transacted or not. 

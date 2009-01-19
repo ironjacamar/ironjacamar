@@ -22,13 +22,8 @@
 
 package javax.resource.spi.work;
 
-import java.lang.Object;
-import java.lang.Runnable;
-import java.lang.Exception;
-import java.lang.Throwable;
-
-import javax.transaction.xa.Xid;
 import javax.resource.NotSupportedException;
+import javax.transaction.xa.Xid;
 
 /**
  * This class models an execution context (transaction, security, etc) 
@@ -50,8 +45,8 @@ import javax.resource.NotSupportedException;
  *
  * Note: Resource adapters that are developed for Connectors 1.6 specification
  * compliant application servers and above, are recommended to use
- * the <code>TransactionInflowContext</code> interface instead of this 
- * class. See Chapter.11 Generic Inflow Context in the Connectors 1.6
+ * the <code>TransactionWorkContext</code> interface instead of this 
+ * class. See Chapter.11 Generic Work Context in the Connectors 1.6
  * specification for more details.
  *
  * @version 1.0

@@ -73,27 +73,27 @@ public interface BootstrapContext
    
    /**
     * A resource adapter can check an application server’s support 
-    * for a particular InflowContext type through this method. 
+    * for a particular WorkContext type through this method. 
     * This mechanism enables a resource adapter developer to
-    * dynamically change the InflowContexts submitted with a Work instance 
+    * dynamically change the WorkContexts submitted with a Work instance 
     * based on the support provided by the application server.
     *
     * The application server must employ an exact type equality check (that is
     * <code>java.lang.Class.equals(java.lang.Class)</code> check) in
-    * this method, to check if it supports the InflowContext type provided
+    * this method, to check if it supports the WorkContext type provided
     * by the resource adapter. This method must be idempotent, that is all 
     * calls to this method by a resource adapter for a particular 
-    * <code>InflowContext</code> type must return the same boolean value 
+    * <code>WorkContext</code> type must return the same boolean value 
     * throughout the lifecycle of that resource adapter instance.
     *
-    * @return true if the <code>inflowContextClass</code> is supported
-    * by the application server. false if the <code>inflowContextClass</code>
+    * @param workContextClass The work context class
+    * @return true if the <code>workContextClass</code> is supported
+    * by the application server. false if the <code>workContextClass</code>
     * is unsupported or unknown to the application server.
     *
     * @since 1.6
     */
-   
-   boolean isContextSupported(Class<? extends WorkContext> inflowContextClass);
+   boolean isContextSupported(Class<? extends WorkContext> workContextClass);
    
    /**
     * Provides a handle to a <code>TransactionSynchronization</code> instance. The

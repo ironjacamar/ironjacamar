@@ -44,10 +44,18 @@ import javax.resource.spi.work.WorkContext;
 public @interface Connector 
 {
    
+   /**
+    * Describes the resource adapter module.
+    */
    String[] description() default {};
    
+   /**
+    * An optional short name, providing information about the
+    * resource adapter module,  that is intended to be displayed 
+    * by tools.
+    */
    String[] displayName() default {};
-   
+ 
    /**
     * Specifies the file name for small GIF or JPEG icon images that are 
     * used to represent the resource adapter in a GUI tool. 
@@ -138,8 +146,8 @@ public @interface Connector
    
    /**
     * Specifies a list of fully qualified classes that implements the
-    * {@link WorkContext InflowContext} interface that a resource adapter
+    * {@link WorkContext WorkContext} interface that a resource adapter
     * requires the application server to support.
     */
-   Class<? extends WorkContext>[] requiredInflowContexts() default {};
+   Class<? extends WorkContext>[] requiredWorkContexts() default {};
 }

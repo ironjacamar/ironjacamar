@@ -41,10 +41,16 @@ package javax.resource.spi.work;
 public class TransactionWorkContext extends ExecutionContext implements WorkContext 
 {
    /**
+    * Determines if a deserialized instance of this class
+    * is compatible with this class.
+    */
+   private static final long serialVersionUID = 6205067498708597824L;
+
+   /**
     * {@inheritDoc}
     */
    public String getDescription() {
-      return "Transaction Inflow Context";
+      return "Transaction Work Context";
    }
 
    /**

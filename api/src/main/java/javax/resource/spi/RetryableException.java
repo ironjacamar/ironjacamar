@@ -20,18 +20,19 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package javax.resource.spi.work;
+package javax.resource.spi;
 
 import java.io.Serializable;
 
 /**
- * This models a <code>Work</code> instance that would be distributed by a 
- * <code>DistributableWorkManager</code> for execution in a remote 
- * <code>DistributableWorkManager</code>
- *
+ * A marker interface indicating that the Exception is transient. It is used
+ * in situations where a previously failed operation might be able to succeed 
+ * if the resource adapter performs some recovery steps and retries the
+ * operation.
+ * 
  * @since 1.6
  * @version JSR322-PublicReview
  */
-public interface DistributableWork extends Work, Serializable 
+public interface RetryableException extends Serializable 
 {
 }

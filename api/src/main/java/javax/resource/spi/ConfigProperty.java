@@ -60,4 +60,18 @@ public @interface ConfigProperty
     * Property during auto-discovery of Configuration properties.
     */
    boolean ignore() default false;
+
+   /**
+    * Indicates that the configuration property supports
+    * dynamic updates to its value during the lifetime of
+    * the JavaBean
+    */
+   boolean supportsDynamicUpdates() default false;
+   
+   /**
+    * Indicates that the configuration property is confidential and
+    * recommends application server's configuration tools to 
+    * use special visual aids for editing them. 
+    */
+   boolean confidential() default false;
 }

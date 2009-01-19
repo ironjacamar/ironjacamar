@@ -45,9 +45,10 @@ public interface DissociatableManagedConnection
     *
     * @throws ResourceAdapterInternalException
     *            resource adapter internal error condition
-    * @throws IllegalStateException Illegal state for calling connection
-    *            cleanup. Example - if a localtransaction is in progress 
-    *            that doesn't allow connection cleanup.
+    * @throws IllegalStateException
+    *         Illegal state for dissociating a
+    *         <code>ManagedConnection</code> from all of its connection
+    *         handles.
     */
    void dissociateConnections() throws ResourceException;
 }
