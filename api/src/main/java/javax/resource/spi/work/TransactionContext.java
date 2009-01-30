@@ -29,7 +29,7 @@ package javax.resource.spi.work;
  * 
  * This class extends <code>ExecutionContext</code> so that a resource adapter
  * developer could migrate their existing code from
- * <code>ExecutionContext</code> to <code>TransactionWorkContext</code>
+ * <code>ExecutionContext</code> to <code>TransactionContext</code>
  * easily.<p>
  * 
  * @since 1.6
@@ -38,7 +38,7 @@ package javax.resource.spi.work;
  * @version JSR322-EarlyDraft
  */
 
-public class TransactionWorkContext extends ExecutionContext implements WorkContext 
+public class TransactionContext extends ExecutionContext implements WorkContext 
 {
    /**
     * Determines if a deserialized instance of this class
@@ -50,13 +50,13 @@ public class TransactionWorkContext extends ExecutionContext implements WorkCont
     * {@inheritDoc}
     */
    public String getDescription() {
-      return "Transaction Work Context";
+      return "Transaction Context";
    }
 
    /**
     * {@inheritDoc}
     */
    public String getName() {
-      return "TransactionWorkContext";
+      return "TransactionContext";
    }
 }

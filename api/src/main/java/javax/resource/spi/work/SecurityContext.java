@@ -43,7 +43,7 @@ import javax.security.auth.callback.CallbackHandler;
  * to be run in a specified security execution context by submitting a Work
  * instance that implements WorkContextProvider interface and ensuring that
  * the List of WorkContexts for that Work instance contains an instance of its
- * subclass of SecurityWorkContext.
+ * subclass of SecurityContext.
  * <p>
  * 
  * 
@@ -76,7 +76,7 @@ import javax.security.auth.callback.CallbackHandler;
  * @version JSR322-EarlyDraft
  */
 
-public abstract class SecurityWorkContext implements WorkContext 
+public abstract class SecurityContext implements WorkContext 
 {
    /**
     * Determines if a deserialized instance of this class
@@ -88,14 +88,14 @@ public abstract class SecurityWorkContext implements WorkContext
     * {@inheritDoc}
     */
    public String getDescription() {
-      return "Security Work Context";
+      return "Security Context";
    }
    
    /**
     * {@inheritDoc}
     */
    public String getName() {
-      return "SecurityWorkContext";
+      return "SecurityContext";
    }
    
    /**

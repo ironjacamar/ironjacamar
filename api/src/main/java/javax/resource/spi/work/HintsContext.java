@@ -36,7 +36,7 @@ import java.util.HashMap;
  * @version JSR322-PublicReview
  */
 
-public class HintsWorkContext implements WorkContext 
+public class HintsContext implements WorkContext 
 {
 
    /**
@@ -48,8 +48,8 @@ public class HintsWorkContext implements WorkContext
    public static final String NAME_HINT = "javax.resource.Name";
    public static final String LONGRUNNING_HINT = "javax.resource.LongRunning";
    
-   protected String description = "Hints Work Context";
-   protected String name = "HintsWorkContext";
+   protected String description = "Hints Context";
+   protected String name = "HintsContext";
    
    /**
     * {@inheritDoc}
@@ -69,7 +69,7 @@ public class HintsWorkContext implements WorkContext
    
    /**
     * Set a brief description of the role played by the instance of
-    * HintsWorkContext and any other related debugging information.
+    * HintsContext and any other related debugging information.
     *
     * This could be used by the resource adapter and the WorkManager
     * for logging and debugging purposes.
@@ -80,7 +80,7 @@ public class HintsWorkContext implements WorkContext
    }
    
    /**
-    * Set the associated name of the HintsWorkContext. This
+    * Set the associated name of the HintsContext. This
     * could be used by the resource adapter and the WorkManager
     * for logging and debugging purposes.
     */
