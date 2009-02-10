@@ -103,6 +103,7 @@
       </classpath>
       
       <formatter type="plain"/>
+      <formatter type="xml"/>
       
       <batchtest todir="${reports.dir}/core"
                  haltonerror="${junit.batchtest.haltonerror}"
