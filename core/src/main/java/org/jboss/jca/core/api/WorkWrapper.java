@@ -198,12 +198,12 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
    }
 
    /**
-    * Get the completion timeout
+    * Get the completion timeout in milliseconds
     * @return The completion timeout
     */
    public long getCompletionTimeout()
    {
-      return executionContext.getTransactionTimeout();
+      return executionContext.getTransactionTimeout() * 1000L;
    }
 
    /**
