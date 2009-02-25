@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.ThreadPool;
 import org.junit.AfterClass;
 import static org.junit.Assert.* ;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -54,6 +55,34 @@ public class ManageThreadTestCase
          bootstrap.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
       ThreadPool threadPool = workManager.getThreadPool();
       assertNotNull(threadPool);
+   }
+
+   /**
+    * Test for paragraph 4 : bullet 1
+    */
+   @Ignore
+   public void testRaSharingThreadPool() throws Throwable
+   {
+      //TODO reuse them efficiently across different resource adapters deployed in its runtime environment
+   }
+   
+   /**
+    * Test for paragraph 4 : bullet 4
+    */
+   @Ignore
+   public void testCheckWorkByIntercept() throws Throwable
+   {
+      //TODO may need to enforce control over the runtime behavior of its system components
+      //an application server may choose to intercept operations on a thread object, perform checks, and enforce correct behavior.
+   }
+   
+   /**
+    * Test for paragraph 4 : bullet 5
+    */
+   @Ignore
+   public void testAsDisallowRaCreateThread() throws Throwable
+   {
+      //TODO An application server may disallow resource adapters from creating their own threads based on its security policy setting, enforced by a security manager.
    }
    
    // --------------------------------------------------------------------------------||
