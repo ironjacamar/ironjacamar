@@ -115,5 +115,16 @@ public class WorkManagerInterfaceTestCase
    public void testScheduleWorkMethod() throws Throwable
    {
    }
+   
+   /**
+    * Test for paragraph 6
+    * The optional startTimeout parameter specifies a time duration in milliseconds within which 
+    *      the execution of the Work instance must start. Otherwise, the Work instance 
+    *      is rejected with a WorkRejectedException set to an appropriate error code (WorkException.START_TIMED_OUT).
+    */
+   @Ignore
+   public void testStartTimeoutThrowWorkRejectedException() throws Throwable
+   {
+   }
 }
 
