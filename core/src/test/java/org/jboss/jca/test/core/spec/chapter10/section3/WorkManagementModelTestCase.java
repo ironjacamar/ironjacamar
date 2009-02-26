@@ -41,6 +41,8 @@ public class WorkManagementModelTestCase
    
    /**
     * Test for paragraph 1
+    * A resource adapter obtains a WorkManager instance from the BootstrapContext
+    *            instance provided by the application server during its deployment.
     */
    @Test
    public void testGetWorkManagerFromBootstrapConext() throws Throwable
@@ -50,6 +52,9 @@ public class WorkManagementModelTestCase
 
    /**
     * Test for paragraph 2
+    * When a Work instance is submitted, one of the free threads picks up the
+    *            Work instance, sets up an appropriate execution context and 
+    *            calls the run method on the Work instance. 
     */
    @Ignore
    public void testOneThreadPickWorkInstance() throws Throwable
@@ -57,7 +62,9 @@ public class WorkManagementModelTestCase
    }
    
    /**
-    * Test for paragraph@Test 2
+    * Test for paragraph2
+    * There is no restriction on the NUMBER of Work instances submitted by a 
+    *            resource adapter or when Work instances may be submitted.
     */
    @Ignore
    public void testManyWorkInstancesSubmitted() throws Throwable
@@ -66,6 +73,8 @@ public class WorkManagementModelTestCase
    
    /**
     * Test for paragraph 2
+    * There is no restriction on the number of Work instances submitted by a 
+    *            resource adapter or WHEN Work instances may be submitted.
     */
    @Ignore
    public void testAnytimeWorkInstanceSubmitted() throws Throwable
@@ -74,6 +83,8 @@ public class WorkManagementModelTestCase
    
    /**
     * Test for paragraph 2
+    * When the run method on the Work instance completes, the application 
+    *            server reuses the thread.
     */
    @Ignore
    public void testThreadBackPoolWhenWorkDone() throws Throwable
@@ -82,6 +93,7 @@ public class WorkManagementModelTestCase
    
    /**
     * Test for paragraph 3
+    * The application server may decide to reclaim active threads based on load conditions. 
     */
    @Ignore
    public void testAsActiveThreadOnLoadCondition() throws Throwable
@@ -90,6 +102,8 @@ public class WorkManagementModelTestCase
    
    /**
     * Test for paragraph 3
+    * he resource adapter should periodically monitor such hints and do the 
+    *            necessary internal cleanup to avoid any inconsistencies. 
     */
    @Ignore
    public void testRaPeriodicalReleaseWorkResource() throws Throwable
@@ -98,6 +112,8 @@ public class WorkManagementModelTestCase
    
    /**
     * Test for paragraph 4
+    * the application server must use threads of the same thread priority level to
+    *            process Work instances submitted by a specific resource adapter. 
     */
    @Ignore
    public void testAsUseThreadSamePriorityLevel() throws Throwable
