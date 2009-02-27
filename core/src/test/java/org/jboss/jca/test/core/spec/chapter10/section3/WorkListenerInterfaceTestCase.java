@@ -42,7 +42,7 @@ public class WorkListenerInterfaceTestCase
     * Test for paragraph 1 Section 3.3.1
     * 
     */
-   @Test
+   @Ignore
    public void testWorkSubmitStatus() throws Throwable
    {
    }   
@@ -83,9 +83,12 @@ public class WorkListenerInterfaceTestCase
     * Test for bullet 1 paragraph 2 Section 3.4
     * The WorkEvent instance provides The event type.
     */
-   @Ignore
+   @Test
    public void testWorkEventInheritEventObject() throws Throwable
    {
+      javax.resource.spi.work.WorkEvent workEvent = 
+         new javax.resource.spi.work.WorkEvent(new Object(), 0, null, null);
+      assertTrue(workEvent instanceof java.util.EventObject);
    }   
    
    /**
@@ -119,9 +122,12 @@ public class WorkListenerInterfaceTestCase
     * Test for paragraph 4 Section 3.4
     * The WorkAdapter class is provided as a convenience for easily creating
     */
-   @Ignore
+   @Test
    public void testWorkAdapter() throws Throwable
    {
+      javax.resource.spi.work.WorkAdapter workAdapter = 
+         new javax.resource.spi.work.WorkAdapter();
+      assertTrue(workAdapter instanceof javax.resource.spi.work.WorkListener);
    }
    
    /**

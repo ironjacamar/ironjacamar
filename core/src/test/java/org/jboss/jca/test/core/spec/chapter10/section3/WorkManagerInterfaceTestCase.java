@@ -43,7 +43,7 @@ public class WorkManagerInterfaceTestCase
     * Test for paragraph 1
     * WorkManager instance can be obtained by calling the getWorkManager method of the BootstrapContext instance.
     */
-   @Test
+   @Ignore
    public void testGetWorkManagerFromBootstrapConext() throws Throwable
    {
       
@@ -131,9 +131,11 @@ public class WorkManagerInterfaceTestCase
     * Test for bullet 1 Section 3.3.6
     * The application server must implement the WorkManager interface
     */
-   @Ignore
+   @Test
    public void testAsImplementWorkManagerInterface() throws Throwable
    {
+      org.jboss.jca.core.workmanager.WorkManagerImpl wm = new org.jboss.jca.core.workmanager.WorkManagerImpl();
+      assertTrue(wm instanceof javax.resource.spi.work.WorkManager);
    }   
    
    /**
