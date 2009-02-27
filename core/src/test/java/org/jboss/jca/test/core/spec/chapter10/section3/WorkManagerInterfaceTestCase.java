@@ -126,5 +126,34 @@ public class WorkManagerInterfaceTestCase
    public void testStartTimeoutThrowWorkRejectedException() throws Throwable
    {
    }
+   
+   /**
+    * Test for bullet 1 Section 3.3.6
+    * The application server must implement the WorkManager interface
+    */
+   @Ignore
+   public void testAsImplementWorkManagerInterface() throws Throwable
+   {
+   }   
+   
+   /**
+    * Test for bullet 2 Section 3.3.6
+    * The application server must allow nested Work submissions.
+    */
+   @Ignore
+   public void testAllowNestedWork() throws Throwable
+   {
+   }
+   
+   /**
+    * Test for bullet 4 Section 3.3.6
+    * When the application server is unable to recreate an execution context if it is  
+    *                      specified for the submitted Work instance, it must throw a
+    *                      WorkCompletedException set to an appropriate error code.
+    */
+   @Ignore
+   public void testThrowWorkCompletedException() throws Throwable
+   {
+   }
 }
 
