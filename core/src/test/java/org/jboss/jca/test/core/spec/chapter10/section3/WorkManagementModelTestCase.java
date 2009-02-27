@@ -94,6 +94,7 @@ public class WorkManagementModelTestCase
    /**
     * Test for paragraph 3
     * The application server may decide to reclaim active threads based on load conditions. 
+    * @see https://jira.jboss.org/jira/browse/JBJCA-42
     */
    @Ignore
    public void testAsActiveThreadOnLoadCondition() throws Throwable
@@ -102,8 +103,9 @@ public class WorkManagementModelTestCase
    
    /**
     * Test for paragraph 3
-    * he resource adapter should periodically monitor such hints and do the 
+    * The resource adapter should periodically monitor such hints and do the 
     *            necessary internal cleanup to avoid any inconsistencies. 
+    * @see https://jira.jboss.org/jira/browse/JBJCA-43
     */
    @Ignore
    public void testRaPeriodicalReleaseWorkResource() throws Throwable

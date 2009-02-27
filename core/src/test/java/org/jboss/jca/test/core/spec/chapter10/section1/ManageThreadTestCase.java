@@ -68,6 +68,7 @@ public class ManageThreadTestCase
    
    /**
     * Test for paragraph 4 : bullet 4
+    * @see https://jira.jboss.org/jira/browse/JBJCA-40
     */
    @Ignore
    public void testCheckWorkByIntercept() throws Throwable
@@ -78,6 +79,7 @@ public class ManageThreadTestCase
    
    /**
     * Test for paragraph 4 : bullet 5
+    * @see https://jira.jboss.org/jira/browse/JBJCA-41
     */
    @Ignore
    public void testAsDisallowRaCreateThread() throws Throwable
