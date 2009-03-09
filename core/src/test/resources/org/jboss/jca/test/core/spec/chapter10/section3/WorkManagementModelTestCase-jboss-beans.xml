@@ -5,7 +5,7 @@
 -->
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="WorkManagerThreadPool" interface="org.jboss.jca.common.api.ThreadPool" class="org.jboss.jca.common.threadpool.ThreadPoolImpl">
+  <bean name="WorkManagerThreadPool" interface="org.jboss.jca.common.threadpool.ThreadPool" class="org.jboss.jca.common.threadpool.ThreadPoolImpl">
     <!-- The name that appears in thread names -->
     <property name="name">WorkManager</property>
 
