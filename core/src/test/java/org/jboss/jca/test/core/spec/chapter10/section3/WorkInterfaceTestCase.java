@@ -149,8 +149,9 @@ public class WorkInterfaceTestCase
    public void testCannotDeclaredSynchronized() throws Throwable
    {
       //In SimpleWork class, both in run() and release(), there are synchronization synchronization
-      assertFalse(Modifier.isSynchronized(SimpleWork.class.getMethod("run", null).getModifiers()));
-      assertFalse(Modifier.isSynchronized(SimpleWork.class.getMethod("release", null).getModifiers()));
+      Class[] types = new Class[] {};
+      assertFalse(Modifier.isSynchronized(SimpleWork.class.getMethod("run", types).getModifiers()));
+      assertFalse(Modifier.isSynchronized(SimpleWork.class.getMethod("release", types).getModifiers()));
    }
    
    // --------------------------------------------------------------------------------||
