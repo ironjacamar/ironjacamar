@@ -169,7 +169,7 @@
     <mkdir dir="${reports.dir}/checkstyle" />
 
     <checkstyle config="${tools.dir}/checkstyle/checkstyle.xml"
-                failOnViolation="true"
+                failOnViolation="false"
                 classpathref="qe.lib.path.id">
       <fileset dir="${basedir}"
                includes="**/*.java"/>
