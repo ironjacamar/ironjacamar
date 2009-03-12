@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -76,6 +76,7 @@ public interface TransactionSupport extends java.io.Serializable
     * <code>TransactionSupportLevel</code> enum is equal to or lesser than
     * the resource adapter's transaction support classification.
     *
+    * @return The transaction support level
     * @since 1.6
     */
    public TransactionSupportLevel getTransactionSupport();

@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -21,11 +21,6 @@
  */
 
 package javax.resource.spi.work;
-
-import java.lang.Object;
-import java.lang.Runnable;
-import java.lang.Exception;
-import java.lang.Throwable;
 
 /**
  * This interface models a <code>WorkManager</code> which provides a facility
@@ -112,6 +107,8 @@ public interface WorkManager
     * @param work The unit of work to be done.  
     * Could be long or short-lived.
     *
+    * @throws WorkException Thrown if an error occurs
+    *
     * @throws WorkRejectedException indicates that a 
     * <code>Work</code> instance has been rejected from further processing.
     * This can occur due to internal factors.
@@ -144,6 +141,8 @@ public interface WorkManager
     * when the various <code>Work</code> processing events (work accepted, 
     * work rejected, work started, work completed) occur.
     *
+    * @throws WorkException Thrown if an error occurs
+    *
     * @throws WorkRejectedException indicates that a 
     * <code>Work</code> instance has been rejected from further processing.
     * This can occur due to internal factors or start timeout expiration.
@@ -172,6 +171,8 @@ public interface WorkManager
     * acceptance until start of execution. Note, this does not offer 
     * real-time guarantees. It is valid to return -1, if the actual start 
     * delay duration is unknown.
+    *
+    * @throws WorkException Thrown if an error occurs
     *
     * @throws WorkRejectedException indicates that a 
     * <code>Work</code> instance has been rejected from further processing.
@@ -210,6 +211,8 @@ public interface WorkManager
     * real-time guarantees. It is valid to return -1, if the actual start 
     * delay duration is unknown.
     *
+    * @throws WorkException Thrown if an error occurs
+    *
     * @throws WorkRejectedException indicates that a 
     * <code>Work</code> instance has been rejected from further processing.
     * This can occur due to internal factors or start timeout expiration.
@@ -230,6 +233,8 @@ public interface WorkManager
     *
     * @param work The unit of work to be done.  
     * Could be long or short-lived.
+    *
+    * @throws WorkException Thrown if an error occurs
     *
     * @throws WorkRejectedException indicates that a 
     * <code>Work</code> instance has been rejected from further processing.
@@ -260,6 +265,8 @@ public interface WorkManager
     * @param workListener an object which would be notified
     * when the various <code>Work</code> processing events (work accepted, 
     * work rejected, work started, work completed) occur.
+    *
+    * @throws WorkException Thrown if an error occurs
     *
     * @throws WorkRejectedException indicates that a 
     * <code>Work</code> instance has been rejected from further processing.

@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,6 @@
 
 package javax.resource.spi.work;
 
-import java.lang.Object;
-import java.lang.Runnable;
-import java.lang.Exception;
-import java.lang.Throwable;
-
 /**
  * This class is provided as a convenience for easily creating 
  * <code>WorkListener</code> instances by extending this class
@@ -40,6 +35,7 @@ public class WorkAdapter implements WorkListener
    
    /** 
     * Invoked when a <code>Work</code> instance has been accepted.
+    * @param e The work event
     */
    public void workAccepted(WorkEvent e) 
    {
@@ -47,6 +43,7 @@ public class WorkAdapter implements WorkListener
    
    /** 
     * Invoked when a <code>Work</code> instance has been rejected.
+    * @param e The work event
     */
    public void workRejected(WorkEvent e) 
    {
@@ -55,6 +52,7 @@ public class WorkAdapter implements WorkListener
    /** 
     * Invoked when a <code>Work</code> instance has started execution.
     * This only means that a thread has been allocated.
+    * @param e The work event
     */
    public void workStarted(WorkEvent e) 
    {
@@ -62,6 +60,7 @@ public class WorkAdapter implements WorkListener
    
    /** 
     * Invoked when a <code>Work</code> instance has completed execution.
+    * @param e The work event
     */
    public void workCompleted(WorkEvent e) 
    {

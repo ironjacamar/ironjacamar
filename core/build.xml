@@ -37,7 +37,7 @@
 
     <javac srcdir="src/main"
            destdir="${build.core.dir}/impl"
-           classpathref="lib.path.id"
+           classpathref="standalone.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}">
@@ -73,8 +73,8 @@
              windowtitle="JBoss JCA Core"
              doctitle="JBoss JCA Core"
              use="true"
-             classpathref="lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             classpathref="standalone.lib.path.id"
+             bottom="Copyright &#169; 2008-2009 Red Hat Middleware LLC (http://www.jboss.com/)">
       <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
   </target>
@@ -99,7 +99,7 @@
       <classpath>
         <pathelement location="${build.core.dir}/test"/>
         <fileset dir="${target.dir}" includes="*.jar"/>
-        <fileset dir="${lib.dir}" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
       
       <formatter type="plain"/>
@@ -125,7 +125,7 @@
 
     <javac srcdir="src/test"
            destdir="${build.core.dir}/test"
-           classpathref="lib.path.id"
+           classpathref="test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}">

@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,9 +22,8 @@
 
 package javax.resource.spi.endpoint;
 
-import java.lang.NoSuchMethodException;
-import javax.transaction.xa.XAResource;
 import javax.resource.spi.UnavailableException;
+import javax.transaction.xa.XAResource;
 
 /**
  * This serves as a factory for creating message endpoints.
@@ -59,7 +58,7 @@ public interface MessageEndpointFactory
     * instance used to get transaction notifications when the message delivery
     * is transacted.
     * 
-    * @param timout an optional value used to specify the time duration
+    * @param timeout an optional value used to specify the time duration
     * (in milliseconds) within which the message endpoint needs to be
     * created by the <code>MessageEndpointFactory</code>. Otherwise, the
     * <code>MessageEndpointFactory</code> rejects the creation of the

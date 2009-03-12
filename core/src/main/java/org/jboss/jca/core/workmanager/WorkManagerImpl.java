@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,15 +22,16 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.common.api.ThreadPool;
+import org.jboss.jca.core.api.WorkManager;
+import org.jboss.jca.core.api.WorkWrapper;
+
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
 import javax.transaction.xa.Xid;
 
-import org.jboss.jca.common.api.ThreadPool;
-import org.jboss.jca.core.api.WorkManager;
-import org.jboss.jca.core.api.WorkWrapper;
 import org.jboss.logging.Logger;
 import org.jboss.tm.JBossXATerminator;
 import org.jboss.util.threadpool.Task;
@@ -41,7 +42,7 @@ import org.jboss.util.threadpool.Task;
 public class WorkManagerImpl implements WorkManager
 {
    /** The logger */
-   private static final Logger log = Logger.getLogger(WorkManagerImpl.class);
+   private static Logger log = Logger.getLogger(WorkManagerImpl.class);
 
    /** Whether trace is enabled */
    private boolean trace = log.isTraceEnabled();
@@ -114,7 +115,8 @@ public class WorkManagerImpl implements WorkManager
    {
       if (execContext == null)
          execContext = new ExecutionContext();
-      WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_FOR_COMPLETE, startTimeout, execContext, workListener);
+      WorkWrapper wrapper = 
+         new WorkWrapper(this, work, Task.WAIT_FOR_COMPLETE, startTimeout, execContext, workListener);
       importWork(wrapper);
       executeWork(wrapper);
       if (wrapper.getWorkException() != null)

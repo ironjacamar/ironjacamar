@@ -40,6 +40,7 @@
   <property name="lib.dir" value="${basedir}/lib" />
   <property name="build.dir" value="${basedir}/build" />
   <property name="target.dir" value="${basedir}/target" />
+  <property name="tools.dir" value="${basedir}/tools" />
   <property name="reports.dir" value="${basedir}/reports" />
   <property name="test.dir" value="${reports.dir}" />
 
@@ -57,40 +58,55 @@
   <property name="junit.batchtest.haltonerror" value="no" />
   <property name="junit.batchtest.haltonfailure" value="no" />
   <property name="junit.batchtest.fork" value="yes" />
-      
+
   <!-- ================================= 
        Versions              
        ================================= -->
+  <property name="version.antlr" value="2.7.6"/>
   <property name="version.apache-log4j" value="1.2.14"/>
   <property name="version.apache-logging" value="1.1.0.jboss"/>
-  <property name="version.javassist" value="3.9.0.GA"/>
+  <property name="version.checkstyle" value="5.0-beta01"/>
+  <property name="version.commons-beanutils" value="1.7.0"/>
+  <property name="version.commons-cli" value="1.1"/>
+  <property name="version.commons-logging" value="1.0.3"/>
+  <property name="version.google-collect" value="snapshot-20080321"/>
+  <property name="version.javassist" value="3.10.0.GA"/>
   <property name="version.jaxb.api" value="2.0"/>
   <property name="version.jaxb.impl" value="2.1"/>
-  <property name="version.jboss.aop" value="2.0.0.SP1"/>
-  <property name="version.jboss.common" value="2.2.10.GA"/>
-  <property name="version.jboss.ejb3.test" value="1.0.0-Beta2"/>
-  <property name="version.jboss.integration" value="5.0.3.GA"/>
+  <property name="version.jboss.aop" value="2.0.1.GA"/>
+  <property name="version.jboss.common" value="2.2.11.GA"/>
+  <property name="version.jboss.ejb3.test" value="1.0.0"/>
+  <property name="version.jboss.integration" value="5.1.0.CR1"/>
   <property name="version.jboss.logging" value="2.0.5.GA"/>
-  <property name="version.jboss.managed" value="2.0.0.GA"/>
-  <property name="version.jboss.mc.aop-int" value="2.0.2.GA"/>
-  <property name="version.jboss.mc.dependency" value="2.0.2.GA"/>
-  <property name="version.jboss.mc.kernel" value="2.0.2.GA"/>
+  <property name="version.jboss.managed" value="2.1.0.CR4"/>
+  <property name="version.jboss.mc.aop-int" value="2.0.4.GA"/>
+  <property name="version.jboss.mc.dependency" value="2.0.4.GA"/>
+  <property name="version.jboss.mc.kernel" value="2.0.4.GA"/>
   <property name="version.jboss.mdr" value="2.0.1.GA"/>
   <property name="version.jboss.metadata" value="1.0.0.CR16"/>
-  <property name="version.jboss.naming" value="5.0.0.SP1"/>
+  <property name="version.jboss.naming" value="5.0.1.GA"/>
   <property name="version.jboss.reflect" value="2.0.2.GA"/>
   <property name="version.jboss.ts" value="4.4.0.GA"/>
-  <property name="version.jboss.xb" value="2.0.0.GA"/>
-  <property name="version.junit" value="4.4"/>
-  <property name="version.oswego-concurrent" value="1.3.4-jboss-update1"/>
+  <property name="version.jboss.xb" value="2.0.1.Beta2"/>
+  <property name="version.junit" value="4.5"/>
   <property name="version.transaction.api" value="1.0.1.GA"/>
   <property name="version.trove" value="2.1.1"/>
 
   <!-- ================================= 
        Paths              
        ================================= -->
-  <path id="lib.path.id">
-    <fileset dir="${lib.dir}"/>
+  <path id="standalone.lib.path.id">
+    <fileset dir="${lib.dir}/standalone"/>
+    <fileset dir="${target.dir}"/>
+  </path>
+
+  <path id="test.lib.path.id">
+    <fileset dir="${lib.dir}/test"/>
+    <fileset dir="${target.dir}"/>
+  </path>
+
+  <path id="qe.lib.path.id">
+    <fileset dir="${lib.dir}/qe"/>
     <fileset dir="${target.dir}"/>
   </path>
 
@@ -108,7 +124,7 @@
        Target: resolve              
        ================================= -->
   <target name="resolve" depends="init">
-    <ivy:retrieve/>
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" sync="true"/>
   </target>
   
   <!-- ================================= 
@@ -141,6 +157,21 @@
        ================================= -->
   <target name="test" depends="jars">
     <ant dir="core" inheritRefs="true" target="test"/>
+  </target>
+
+  <!-- ================================= 
+       Target: checkstyle
+       ================================= -->
+  <target name="checkstyle" depends="resolve">
+    <taskdef name="checkstyle"
+             classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
+             classpathref="qe.lib.path.id"/>
+    <checkstyle config="${tools.dir}/checkstyle/checkstyle.xml"
+                failOnViolation="true"
+                classpathref="qe.lib.path.id">
+      <fileset dir="${basedir}"
+               includes="**/*.java"/>
+    </checkstyle>
   </target>
 
   <!-- ================================= 

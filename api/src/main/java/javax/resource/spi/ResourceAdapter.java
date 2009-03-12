@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,11 +22,9 @@
 
 package javax.resource.spi;
 
-import javax.resource.ResourceException;
 import javax.resource.NotSupportedException;
-import javax.resource.spi.ActivationSpec;
+import javax.resource.ResourceException;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
-
 import javax.transaction.xa.XAResource;
 
 /**
@@ -95,6 +93,7 @@ public interface ResourceAdapter
     *
     * @param spec an activation spec JavaBean instance.
     *
+    * @throws ResourceException Thrown if an error occurs
     * @throws NotSupportedException indicates message endpoint 
     * activation rejection due to incorrect activation 
     * setup information.
@@ -139,11 +138,11 @@ public interface ResourceAdapter
     * which corresponds to an deployed endpoint application that was 
     * active prior to the system crash.
     *
-    * @throws ResourceException generic exception if operation fails due to an
-    * error condition.
-    *
     * @return an array of <code>XAResource</code> objects each of which 
     * represents a unique resource manager.
+    *
+    * @throws ResourceException generic exception if operation fails due to an
+    * error condition.
     */
    XAResource[] getXAResources(ActivationSpec[] specs) 
       throws ResourceException;

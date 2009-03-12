@@ -39,7 +39,7 @@ public class JMX
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
-   private static final Logger log = Logger.getLogger(JMX.class);
+   private static Logger log = Logger.getLogger(JMX.class);
 
    private MBeanServer mbeanServer;
 
@@ -47,6 +47,9 @@ public class JMX
    // Constructors -------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
+   /**
+    * Constructor
+    */
    public JMX()
    {
       mbeanServer = MBeanServerFactory.createMBeanServer();

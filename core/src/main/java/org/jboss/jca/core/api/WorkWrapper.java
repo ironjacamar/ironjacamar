@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -45,7 +45,7 @@ import org.jboss.util.threadpool.Task;
 public class WorkWrapper extends BasicTaskWrapper implements Task
 {
    /** The log */
-   private static final Logger log = Logger.getLogger(WorkWrapper.class);
+   private static Logger log = Logger.getLogger(WorkWrapper.class);
 
    /** Whether we are tracing */
    private boolean trace = log.isTraceEnabled();
@@ -80,6 +80,7 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
     * @param workManager the work manager
     * @param work the work
     * @param waitType the waitType
+    * @param startTimeout the start timeout
     * @param executionContext the execution context
     * @param workListener the WorkListener
     * @throws IllegalArgumentException for null work, execution context or a negative start timeout

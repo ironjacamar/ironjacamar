@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,9 +22,9 @@
 
 package javax.resource.cci;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.IOException;
 
 /** 
  *  Streamable interface enables a resource adapter to extract data from
@@ -44,22 +44,23 @@ import java.io.IOException;
 **/
 public interface Streamable 
 {
-  /** 
-   *  Read data from an InputStream and initialize fields of a 
-   *  Streamable object. 
-   *
-   *  @param  istream   InputStream that represents a resource
-   *                    adapter specific internal representation
-   *                    of fields of a Streamable object
-  **/
-  public void read(InputStream istream) throws IOException;
+   /** 
+    *  Read data from an InputStream and initialize fields of a 
+    *  Streamable object. 
+    *
+    *  @param  istream   InputStream that represents a resource
+    *                    adapter specific internal representation
+    *                    of fields of a Streamable object
+    *  @exception IOException If an error occurs
+    **/
+   public void read(InputStream istream) throws IOException;
   
-
-  /** 
-   *  Write fields of a Streamable object to an OutputStream
-   *  @param  ostream   OutputStream that holds value of a
-   *                    Streamable object
-  **/
-  public void write(OutputStream ostream) throws IOException;
+   /** 
+    *  Write fields of a Streamable object to an OutputStream
+    *  @param  ostream   OutputStream that holds value of a
+    *                    Streamable object
+    *  @exception IOException If an error occurs
+    **/
+   public void write(OutputStream ostream) throws IOException;
 }
 

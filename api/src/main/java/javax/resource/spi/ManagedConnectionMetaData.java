@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -44,6 +44,7 @@ public interface ManagedConnectionMetaData
     *  through the ManagedConnection.
     *
     *  @return  Product name of the EIS instance.
+    *  @exception ResourceException Thrown if an error occurs
     **/
    public String getEISProductName() throws ResourceException;
    
@@ -51,6 +52,7 @@ public interface ManagedConnectionMetaData
     *  through the ManagedConnection.
     *
     *  @return  Product version of the EIS instance
+    *  @exception ResourceException Thrown if an error occurs
     **/
    public String getEISProductVersion() throws ResourceException;
    
@@ -60,6 +62,7 @@ public interface ManagedConnectionMetaData
     *  returns a 0.
     *
     *  @return  Maximum limit for number of active concurrent connections
+    *  @exception ResourceException Thrown if an error occurs
     **/
    public int getMaxConnections() throws ResourceException;
   
@@ -69,6 +72,7 @@ public interface ManagedConnectionMetaData
     *  established.
     *
     *  @return  name of the user
+    *  @exception ResourceException Thrown if an error occurs
     **/
    public String getUserName() throws ResourceException;
 }

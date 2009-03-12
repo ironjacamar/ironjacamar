@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2008, JBoss Inc., and individual contributors as indicated
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -22,10 +22,11 @@
 
 package javax.resource.spi;
 
-import javax.security.auth.Subject;
 import java.util.Set;
-import javax.resource.ResourceException;
+
 import javax.resource.NotSupportedException;
+import javax.resource.ResourceException;
+import javax.security.auth.Subject;
 
 /** 
  * ManagedConnectionFactory instance is a factory of both ManagedConnection
@@ -189,7 +190,7 @@ public interface ManagedConnectionFactory extends java.io.Serializable
    /** 
     * Check if this ManagedConnectionFactory is equal to another
     * ManagedConnectionFactory.
-    *
+    *  @param other The other object
     *  @return  true if two instances are equal
     */
    public boolean equals(Object other);

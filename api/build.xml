@@ -36,7 +36,7 @@
 
     <javac srcdir="src"
            destdir="${build.api.dir}"
-           classpathref="lib.path.id"
+           classpathref="standalone.lib.path.id"
            debug="${javac.debug}">
       <!-- <compilerarg value="-Xlint"/> -->
     </javac> 
@@ -66,7 +66,7 @@
              windowtitle="JCA 1.6 specification"
              doctitle="JCA 1.6 specification"
              use="true"
-             classpathref="lib.path.id"
+             classpathref="standalone.lib.path.id"
              bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
       <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>

@@ -35,12 +35,15 @@ import org.jboss.logging.Logger;
  */
 public class JavaCompInitializer extends org.jboss.naming.JavaCompInitializer
 {
-   private static final Logger log = Logger.getLogger(JavaCompInitializer.class);
+   private static Logger log = Logger.getLogger(JavaCompInitializer.class);
    
+   /**
+    * Stop
+    */
    public void stop()
    {
       InitialContext ctx = getIniCtx();
-      if(ctx == null)
+      if (ctx == null)
          return;
       
       try
