@@ -165,11 +165,16 @@
     <taskdef name="checkstyle"
              classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
              classpathref="qe.lib.path.id"/>
+
+    <mkdir dir="${reports.dir}/checkstyle" />
+
     <checkstyle config="${tools.dir}/checkstyle/checkstyle.xml"
                 failOnViolation="true"
                 classpathref="qe.lib.path.id">
       <fileset dir="${basedir}"
                includes="**/*.java"/>
+      <formatter type="plain"/>
+      <formatter type="xml" toFile="${reports.dir}/checkstyle/checkstyle-result.xml"/>
     </checkstyle>
   </target>
 
