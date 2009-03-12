@@ -38,11 +38,10 @@
   <dependencies>
     <dependency org="antlr" name="antlr" rev="${version.antlr}" conf="qe->default"/>
     <dependency org="apache-log4j" name="log4j" rev="${version.apache-log4j}" conf="standalone->default"/>
-    <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="standalone->default"/>
+    <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="*"/>
     <dependency org="checkstyle" name="checkstyle" rev="${version.checkstyle}" conf="qe->default"/>
     <dependency org="commons-beanutils" name="commons-beanutils-core" rev="${version.commons-beanutils}" conf="qe->default"/>
     <dependency org="commons-cli" name="commons-cli" rev="${version.commons-cli}" conf="qe->default"/>
-    <dependency org="commons-logging" name="commons-logging" rev="${version.commons-logging}" conf="qe->default"/>
     <dependency org="com.google.code.google-collections" name="google-collect" rev="${version.google-collect}" conf="qe->default"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="standalone->default"/>
     <dependency org="javax.xml" name="jaxb-api" rev="${version.jaxb.api}" conf="standalone->default"/>

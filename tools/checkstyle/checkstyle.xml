@@ -70,9 +70,6 @@
     <module name="JavadocType">
       <property name="scope" value="package"/>
     </module>
-    <module name="JavadocPackage">
-      <property name="allowLegacy" value="true"/>
-    </module>
 
     <!-- JLS -->
     <module name="ModifierOrder"/>
@@ -158,7 +155,9 @@
   </module>
 
   <!-- Enforce package documentation -->
-  <!-- <module name="PackageHtml"/> -->
+  <module name="JavadocPackage">
+    <property name="allowLegacy" value="true"/>
+  </module>
 
   <!-- NewlineAtEndOfFile -->
   <module name="NewlineAtEndOfFile">

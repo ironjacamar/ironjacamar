@@ -68,7 +68,6 @@
   <property name="version.checkstyle" value="5.0-beta01"/>
   <property name="version.commons-beanutils" value="1.7.0"/>
   <property name="version.commons-cli" value="1.1"/>
-  <property name="version.commons-logging" value="1.0.3"/>
   <property name="version.google-collect" value="snapshot-20080321"/>
   <property name="version.javassist" value="3.10.0.GA"/>
   <property name="version.jaxb.api" value="2.0"/>
@@ -162,7 +161,7 @@
   <!-- ================================= 
        Target: checkstyle
        ================================= -->
-  <target name="checkstyle" depends="resolve">
+  <target name="checkstyle" depends="jars">
     <taskdef name="checkstyle"
              classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
              classpathref="qe.lib.path.id"/>
