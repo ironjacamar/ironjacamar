@@ -179,6 +179,33 @@
   </target>
 
   <!-- ================================= 
+       Target: findbugs
+       ================================= -->
+  <target name="findbugs" depends="jars">
+    <taskdef name="findbugs"
+             classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+             classpath="${basedir}/tools/findbugs/lib/*.jar"/>
+
+    <mkdir dir="${reports.dir}/findbugs" />
+
+    <findbugs home="${basedir}/tools/findbugs/lib/"
+              output="xml:withMessages"
+              outputFile="${reports.dir}/findbugs/report.xml" >
+      <auxClasspath>
+        <fileset dir="${lib.dir}/standalone">
+          <include name="*.jar"/>
+        </fileset>
+      </auxClasspath>
+      <sourcePath path="${basedir}" />
+      <class location="${target.dir}/javax-resource-spec-api.jar" />
+      <class location="${target.dir}/jboss-jca-common-api.jar" />
+      <class location="${target.dir}/jboss-jca-common-impl.jar" />
+      <class location="${target.dir}/jboss-jca-core-api.jar" />
+      <class location="${target.dir}/jboss-jca-core-impl.jar" />
+    </findbugs>
+  </target>
+
+  <!-- ================================= 
        Target: clean              
        ================================= -->
   <target name="clean">
