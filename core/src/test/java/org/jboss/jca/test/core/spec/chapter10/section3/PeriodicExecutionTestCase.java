@@ -22,10 +22,10 @@
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
 import org.junit.AfterClass;
-import static org.junit.Assert.* ;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * PeriodicExecutionTestCase.
@@ -42,6 +42,7 @@ public class PeriodicExecutionTestCase
    /**
     * Test for paragraph 1
     * A resource adapter may need to periodically execute Work instances.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testPeriodicExecution() throws Throwable
@@ -53,6 +54,7 @@ public class PeriodicExecutionTestCase
     * Test for paragraph 3
     * The application server must throw an UnavailableException if a Timer instance is unavailable; the resource
     *        adapter may retry later.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testThrowUnavailableException() throws Throwable
@@ -61,7 +63,9 @@ public class PeriodicExecutionTestCase
    
    /**
     * Test for paragraph 3
-    *  The application server must throw an java.lang.UnsupportedOperationException, if it does not support the Timer service.
+    *  The application server must throw an java.lang.UnsupportedOperationException, if it does not 
+    *  support the Timer service.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testThrowUnsupportedOperationException() throws Throwable

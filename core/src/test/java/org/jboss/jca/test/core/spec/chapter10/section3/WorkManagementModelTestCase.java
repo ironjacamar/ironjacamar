@@ -21,23 +21,24 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkManager;
-
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 import org.jboss.jca.common.api.ThreadPool;
 import org.jboss.jca.common.threadpool.ThreadPoolImpl;
 
 import org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext;
 import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
 
-import org.junit.AfterClass;
-import static org.junit.Assert.* ;
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkManager;
 
+import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.*;
+
 
 /**
  * WorkManagementModelTestCase.
@@ -58,6 +59,7 @@ public class WorkManagementModelTestCase
     * Test for paragraph 1
     * A resource adapter obtains a WorkManager instance from the BootstrapContext
     *            instance provided by the application server during its deployment.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testGetWorkManagerFromBootstrapConext() throws Throwable
@@ -73,6 +75,7 @@ public class WorkManagementModelTestCase
     * When a Work instance is submitted, one of the free threads picks up the
     *            Work instance, sets up an appropriate execution context and 
     *            calls the run method on the Work instance. 
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testOneThreadPickWorkInstance() throws Throwable
@@ -96,6 +99,7 @@ public class WorkManagementModelTestCase
     * Test for paragraph2
     * There is no restriction on the NUMBER of Work instances submitted by a 
     *            resource adapter or when Work instances may be submitted.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testManyWorkInstancesSubmitted() throws Throwable
@@ -127,6 +131,7 @@ public class WorkManagementModelTestCase
     * Test for paragraph 2
     * There is no restriction on the number of Work instances submitted by a 
     *            resource adapter or WHEN Work instances may be submitted.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testAnytimeWorkInstanceSubmitted() throws Throwable
@@ -156,6 +161,7 @@ public class WorkManagementModelTestCase
     * Test for paragraph 2
     * When the run method on the Work instance completes, the application 
     *            server reuses the thread.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testThreadBackPoolWhenWorkDone() throws Throwable
@@ -180,6 +186,7 @@ public class WorkManagementModelTestCase
     * Test for paragraph 3
     * The application server may decide to reclaim active threads based on load conditions. 
     * @see https://jira.jboss.org/jira/browse/JBJCA-42
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testAsActiveThreadOnLoadCondition() throws Throwable
@@ -191,6 +198,7 @@ public class WorkManagementModelTestCase
     * The resource adapter should periodically monitor such hints and do the 
     *            necessary internal cleanup to avoid any inconsistencies. 
     * @see https://jira.jboss.org/jira/browse/JBJCA-43
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testRaPeriodicalReleaseWorkResource() throws Throwable
@@ -201,6 +209,7 @@ public class WorkManagementModelTestCase
     * Test for paragraph 4
     * the application server must use threads of the same thread priority level to
     *            process Work instances submitted by a specific resource adapter. 
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testAsUseThreadSamePriorityLevel() throws Throwable
@@ -212,6 +221,7 @@ public class WorkManagementModelTestCase
    // --------------------------------------------------------------------------------||
    /**
     * Lifecycle start, before the suite is executed
+    * @throws Throwable throwable exception 
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -229,6 +239,7 @@ public class WorkManagementModelTestCase
 
    /**
     * Lifecycle stop, after the suite is executed
+    * @throws Throwable throwable exception 
     */
    @AfterClass
    public static void afterClass() throws Throwable

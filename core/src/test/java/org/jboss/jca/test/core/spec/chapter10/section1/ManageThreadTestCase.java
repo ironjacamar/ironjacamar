@@ -21,14 +21,15 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section1;
 
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 import org.jboss.jca.common.api.ThreadPool;
 
+import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
+
 import org.junit.AfterClass;
-import static org.junit.Assert.* ;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * ManageThreadTestCase.
@@ -47,6 +48,7 @@ public class ManageThreadTestCase
    
    /**
     * Test for paragraph 4 : bullet 1
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testWorkManagerHasThreadPool() throws Throwable
@@ -59,6 +61,7 @@ public class ManageThreadTestCase
 
    /**
     * Test for paragraph 4 : bullet 1
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testRaSharingThreadPool() throws Throwable
@@ -69,22 +72,26 @@ public class ManageThreadTestCase
    /**
     * Test for paragraph 4 : bullet 4
     * @see https://jira.jboss.org/jira/browse/JBJCA-40
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testCheckWorkByIntercept() throws Throwable
    {
       //TODO may need to enforce control over the runtime behavior of its system components
-      //an application server may choose to intercept operations on a thread object, perform checks, and enforce correct behavior.
+      //an application server may choose to intercept operations on a thread object, perform checks, 
+      //and enforce correct behavior.
    }
    
    /**
     * Test for paragraph 4 : bullet 5
     * @see https://jira.jboss.org/jira/browse/JBJCA-41
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testAsDisallowRaCreateThread() throws Throwable
    {
-      //TODO An application server may disallow resource adapters from creating their own threads based on its security policy setting, enforced by a security manager.
+      //TODO An application server may disallow resource adapters from creating their own threads based 
+      //on its security policy setting, enforced by a security manager.
    }
    
    // --------------------------------------------------------------------------------||
@@ -93,6 +100,7 @@ public class ManageThreadTestCase
 
    /**
     * Lifecycle start, before the suite is executed
+    * @throws Throwable throwable exception 
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -110,6 +118,7 @@ public class ManageThreadTestCase
 
    /**
     * Lifecycle stop, after the suite is executed
+    * @throws Throwable throwable exception 
     */
    @AfterClass
    public static void afterClass() throws Throwable

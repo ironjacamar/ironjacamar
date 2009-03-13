@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -28,9 +28,9 @@ import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 import org.jboss.logging.Logger;
 
 import org.junit.AfterClass;
-import static org.junit.Assert.* ;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * WorkManagerTestCase.
@@ -47,7 +47,7 @@ public class WorkManagerTestCase
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
-   private static final Logger log = Logger.getLogger(WorkManagerTestCase.class);
+   private static final Logger LOG = Logger.getLogger(WorkManagerTestCase.class);
 
    /*
     * Bootstrap (MC Facade)
@@ -61,6 +61,7 @@ public class WorkManagerTestCase
    /**
     * Test that the installed work manager is an instance of the 
     * <code>javax.resource.spi.work.WorkManager</code> interface
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testInstanceOf() throws Throwable
@@ -73,6 +74,7 @@ public class WorkManagerTestCase
 
    /**
     * Test that the installed work manager has a thread pool instance
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testThreadPool() throws Throwable
@@ -86,6 +88,7 @@ public class WorkManagerTestCase
 
    /**
     * Test that the installed work manager has an XA terminator instance
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testXATerminator() throws Throwable
@@ -103,6 +106,7 @@ public class WorkManagerTestCase
 
    /**
     * Lifecycle start, before the suite is executed
+    * @throws Throwable throwable exception 
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -120,6 +124,7 @@ public class WorkManagerTestCase
 
    /**
     * Lifecycle stop, after the suite is executed
+    * @throws Throwable throwable exception 
     */
    @AfterClass
    public static void afterClass() throws Throwable

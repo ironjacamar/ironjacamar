@@ -21,20 +21,20 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
+import org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext;
+import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
+
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkManager;
 
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
-import org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext;
-import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
 
 import org.junit.AfterClass;
-import static org.junit.Assert.* ;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * WorkManagerInterfaceTestCase.
@@ -55,6 +55,7 @@ public class WorkManagerInterfaceTestCase
    /**
     * Test for paragraph 1
     * WorkManager instance can be obtained by calling the getWorkManager method of the BootstrapContext instance.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testGetWorkManagerFromBootstrapConext() throws Throwable
@@ -69,6 +70,7 @@ public class WorkManagerInterfaceTestCase
    /**
     * Test for paragraph 3
     * doWork method: This call blocks until the Work instance completes execution.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testDoWorkMethod() throws Throwable
@@ -86,6 +88,7 @@ public class WorkManagerInterfaceTestCase
     * Test for paragraph 3
     * doWork method: this provides a first in, first out (FIFO) execution start 
     *      ordering and last in, first out (LIFO) execution completion ordering guarantee.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testFifoStartLifoFinish() throws Throwable
@@ -107,6 +110,7 @@ public class WorkManagerInterfaceTestCase
     * Test for paragraph 4
     * startWork method: This call blocks until the Work instance starts execution but
     *       not until its completion.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testStartWorkMethod() throws Throwable
@@ -125,7 +129,9 @@ public class WorkManagerInterfaceTestCase
    
    /**
     * Test for paragraph 4
-    * startWork method: This returns the time elapsed in milliseconds from Work acceptance until the start of execution.
+    * startWork method: This returns the time elapsed in milliseconds from Work acceptance until 
+    * the start of execution.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testReturnTimeBeforeStart() throws Throwable
@@ -135,7 +141,9 @@ public class WorkManagerInterfaceTestCase
    
    /**
     * Test for paragraph 4
-    * startWork method: A value of -1 (WorkManager.UNKNOWN) must be returned, if the actual start delay duration is unknown.
+    * startWork method: A value of -1 (WorkManager.UNKNOWN) must be returned, if the actual start 
+    * delay duration is unknown.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testUnknownReturnedIfDonotKnowDelay() throws Throwable
@@ -147,6 +155,7 @@ public class WorkManagerInterfaceTestCase
     * Test for paragraph 4
     * startWork method: this provides a FIFO execution start ordering guarantee, 
     *                 but no execution completion ordering guarantee.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testFifoStart() throws Throwable
@@ -169,6 +178,7 @@ public class WorkManagerInterfaceTestCase
     * Test for paragraph 5
     * scheduleWork method: This call does not block and returns immediately once a
     *                Work instance has been accepted for processing.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testScheduleWorkMethod() throws Throwable
@@ -190,6 +200,7 @@ public class WorkManagerInterfaceTestCase
     * The optional startTimeout parameter specifies a time duration in milliseconds within which 
     *      the execution of the Work instance must start. Otherwise, the Work instance 
     *      is rejected with a WorkRejectedException set to an appropriate error code (WorkException.START_TIMED_OUT).
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testStartTimeoutThrowWorkRejectedException() throws Throwable
@@ -199,6 +210,7 @@ public class WorkManagerInterfaceTestCase
    /**
     * Test for bullet 1 Section 3.3.6
     * The application server must implement the WorkManager interface
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testAsImplementWorkManagerInterface() throws Throwable
@@ -210,6 +222,7 @@ public class WorkManagerInterfaceTestCase
    /**
     * Test for bullet 2 Section 3.3.6
     * The application server must allow nested Work submissions.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testAllowNestedWork() throws Throwable
@@ -230,6 +243,7 @@ public class WorkManagerInterfaceTestCase
     * When the application server is unable to recreate an execution context if it is  
     *                      specified for the submitted Work instance, it must throw a
     *                      WorkCompletedException set to an appropriate error code.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testThrowWorkCompletedException() throws Throwable
@@ -241,6 +255,7 @@ public class WorkManagerInterfaceTestCase
    // --------------------------------------------------------------------------------||
    /**
     * Lifecycle start, before the suite is executed
+    * @throws Throwable throwable exception 
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -258,6 +273,7 @@ public class WorkManagerInterfaceTestCase
 
    /**
     * Lifecycle stop, after the suite is executed
+    * @throws Throwable throwable exception 
     */
    @AfterClass
    public static void afterClass() throws Throwable

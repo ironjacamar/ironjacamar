@@ -22,10 +22,10 @@
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
 import org.junit.AfterClass;
-import static org.junit.Assert.* ;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * WorkListenerInterfaceTestCase.
@@ -40,7 +40,7 @@ public class WorkListenerInterfaceTestCase
 
    /**
     * Test for paragraph 1 Section 3.3.1
-    * 
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testWorkSubmitStatus() throws Throwable
@@ -49,6 +49,7 @@ public class WorkListenerInterfaceTestCase
 
    /**
     * Test for paragraph 1 Section 3.3.2
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testWorkAcceptedStatus() throws Throwable
@@ -57,6 +58,7 @@ public class WorkListenerInterfaceTestCase
    
    /**
     * Test for paragraph 1 Section 3.3.3
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testWorkRejectedStatus() throws Throwable
@@ -65,6 +67,7 @@ public class WorkListenerInterfaceTestCase
    
    /**
     * Test for paragraph 1 Section 3.3.4
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testWorkStartedStatus() throws Throwable
@@ -73,6 +76,7 @@ public class WorkListenerInterfaceTestCase
    
    /**
     * Test for paragraph 1 Section 3.3.5
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testWorkCompletedStatus() throws Throwable
@@ -82,6 +86,7 @@ public class WorkListenerInterfaceTestCase
    /**
     * Test for bullet 1 paragraph 2 Section 3.4
     * The WorkEvent instance provides The event type.
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testWorkEventInheritEventObject() throws Throwable
@@ -94,6 +99,7 @@ public class WorkListenerInterfaceTestCase
    /**
     * Test for bullet 2 paragraph 2 Section 3.4
     * The source object, that is, the Work instance, on which the event initially occurred.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testSourceObjectIsInitial() throws Throwable
@@ -103,6 +109,7 @@ public class WorkListenerInterfaceTestCase
    /**
     * Test for bullet 3 paragraph 2 Section 3.4
     * A handle to the associated Work instance.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testHandleAssociatedWork() throws Throwable
@@ -112,6 +119,7 @@ public class WorkListenerInterfaceTestCase
    /**
     * Test for bullet 4 paragraph 2 Section 3.4
     * An optional start delay duration in millisecond.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testStartDelayDuration() throws Throwable
@@ -121,6 +129,7 @@ public class WorkListenerInterfaceTestCase
    /**
     * Test for paragraph 4 Section 3.4
     * The WorkAdapter class is provided as a convenience for easily creating
+    * @throws Throwable throwable exception 
     */
    @Test
    public void testWorkAdapter() throws Throwable
@@ -133,6 +142,7 @@ public class WorkListenerInterfaceTestCase
    /**
     * Test for bullet 1 Section 3.4.1
     * The WorkListener instance must not make any thread assumptions and must be thread-safe
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testWorkListenerThreadSafe() throws Throwable
@@ -142,6 +152,7 @@ public class WorkListenerInterfaceTestCase
    /**
     * Test for bullet 3 Section 3.4.1
     * The WorkListener implementation must not make any assumptions on the ordering of notifications.
+    * @throws Throwable throwable exception 
     */
    @Ignore
    public void testNotificationWithoutOrder() throws Throwable
