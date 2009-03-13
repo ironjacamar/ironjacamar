@@ -118,7 +118,7 @@ public class WorkManagerInterfaceTestCase
       assertFalse(work.isCallRun());
       workManager.startWork(work);
       assertFalse(work.isCallRun());
-      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.Follow_TIME);
+      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.FOLLOW_TIME);
       assertTrue(work.isCallRun());
       work = null;
    }
@@ -160,7 +160,7 @@ public class WorkManagerInterfaceTestCase
       workA.resetStringBuffer();
       workManager.startWork(workA);
 
-      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.Follow_TIME);
+      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.FOLLOW_TIME);
       assertEquals(workA.getStringBuffer(), "AB");
       workA = null;
    }
@@ -180,7 +180,7 @@ public class WorkManagerInterfaceTestCase
       assertFalse(work.isCallRun());
       workManager.scheduleWork(work);
       assertFalse(work.isCallRun());
-      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.Follow_TIME);
+      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.FOLLOW_TIME);
       assertTrue(work.isCallRun());
       work = null;
    }

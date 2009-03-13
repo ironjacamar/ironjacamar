@@ -25,10 +25,22 @@ import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;
 
+/**
+ * SimpleWork.
+
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @version $Revision: $
+ */
 public class SimpleWork implements Work
 {
-   public static int BLOCK_TIME = 100;
-   public static int Follow_TIME = 50;
+   /**
+    * block time
+    */
+   public static final int BLOCK_TIME = 100;
+   /**
+    * follow time
+    */
+   public static final int FOLLOW_TIME = 50;
    
    private static StringBuffer buf = new StringBuffer();
    private static WorkManager workManager = null;
@@ -41,24 +53,42 @@ public class SimpleWork implements Work
    private boolean nestDoWork = false;
    private boolean nestStartWork = false;
 
-
+   /**
+    * SimpleWork.
+    */
    public SimpleWork()
    {
    }
    
+   /**
+    * SimpleWork.
+    * @param name test name
+    */
    public SimpleWork(String name)
    {
       this.name = name;
    }
 
+   /**
+    * The <code>WorkManager</code> might call this method to hint the
+    * active <code>Work</code> instance to complete execution as soon as 
+    * possible. This would be called on a seperate thread other than the
+    * one currently executing the <code>Work</code> instance.
+    */
    public void release()
    {
-      synchronized(this)
+      synchronized (this)
       {
          callRelease = true;
       }
    }
 
+   /**
+    * When an object implementing interface <code>Runnable</code> is used 
+    * to create a thread, 
+    *
+    * @see     java.lang.Thread#run()
+    */
    public void run()
    {
 
@@ -72,7 +102,8 @@ public class SimpleWork implements Work
          try
          {
             workManager.doWork(workB);
-         } catch (WorkException e)
+         } 
+         catch (WorkException e)
          {
             e.printStackTrace();
          }
@@ -84,7 +115,8 @@ public class SimpleWork implements Work
          try
          {
             workManager.startWork(workB);
-         } catch (WorkException e)
+         } 
+         catch (WorkException e)
          {
             e.printStackTrace();
          }
@@ -94,11 +126,13 @@ public class SimpleWork implements Work
          try
          {
             Thread.currentThread().sleep(BLOCK_TIME);
-         } catch (InterruptedException e)
+         } 
+         catch (InterruptedException e)
          {
+            e.printStackTrace();
          }
       }
-      synchronized(this)
+      synchronized (this)
       {
          callRun = true;
       }
@@ -106,50 +140,89 @@ public class SimpleWork implements Work
       buf.append(name);
    }
 
+   /**
+    * setWorkManager.
+    * @param workManager work manager
+    */
    public static void setWorkManager(WorkManager workManager)
    {
       SimpleWork.workManager = workManager;
    }
 
+   /**
+    * call run.
+    * @return boolean
+    */   
    public boolean isCallRun()
    {
       return callRun;
    }
 
+   /**
+    * setWorkManager.
+    * @param throwWorkAException if throw WorkAException
+    */
    public void setThrowWorkAException(boolean throwWorkAException)
    {
       this.throwWorkAException = throwWorkAException;
    }
 
+   /**
+    * call release
+    * @return boolean
+    */   
    public boolean isCallRelease()
    {
       return callRelease;
    }
 
+   /**
+    * setBlockRun.
+    * @param blockRun if block
+    */
    public void setBlockRun(boolean blockRun)
    {
       this.blockRun = blockRun;
    }
    
+   /**
+    * setNestDoWork.
+    * @param nestDoWork if nest doWork
+    */
    public void setNestDoWork(boolean nestDoWork)
    {
       this.nestDoWork = nestDoWork;
    }
    
+   /**
+    * setNestStartWork.
+    * @param nestStartWork if nest startWork
+    */
    public void setNestStartWork(boolean nestStartWork)
    {
       this.nestStartWork = nestStartWork;
    }
    
+   /**
+    * get string buffer
+    * @return String buffer
+    */  
    public String getStringBuffer()
    {
       return buf.toString();
    }
+   
+   /**
+    * reset string buffer
+    */  
    public void resetStringBuffer()
    {
       buf = new StringBuffer();
    }
 
+   /**
+    * WorkAException
+    */  
    public class WorkAException extends RuntimeException
    {
       private static final long serialVersionUID = 1L;

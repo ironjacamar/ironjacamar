@@ -114,7 +114,7 @@ public class WorkManagementModelTestCase
       workManager.startWork(work1);
       workManager.startWork(work2);
       workManager.startWork(work3);
-      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.Follow_TIME);
+      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.FOLLOW_TIME);
       assertTrue(work1.isCallRun());
       assertTrue(work2.isCallRun());
       assertTrue(work3.isCallRun());
@@ -141,10 +141,10 @@ public class WorkManagementModelTestCase
       assertFalse(work2.isCallRun());
 
       workManager.startWork(work1);
-      Thread.currentThread().sleep(SimpleWork.Follow_TIME);
+      Thread.currentThread().sleep(SimpleWork.FOLLOW_TIME);
       workManager.startWork(work2);
 
-      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.Follow_TIME);
+      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.FOLLOW_TIME);
       assertTrue(work1.isCallRun());
       assertTrue(work2.isCallRun());
 

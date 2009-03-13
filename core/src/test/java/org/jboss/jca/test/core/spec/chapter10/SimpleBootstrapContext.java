@@ -41,36 +41,76 @@ public class SimpleBootstrapContext implements BootstrapContext
    private WorkManager workManager;
    private XATerminator xATerminator;
 
+   /**
+    * Creates a new <code>java.util.Timer</code> instance. 
+    *
+    * @throws UnavailableException UnavailableException
+    *
+    * @return a new <code>Timer</code> instance.
+    */
    public Timer createTimer() throws UnavailableException
    {
       return null;
    }
 
+   /**
+    * Provides a handle to a <code>TransactionSynchronization</code> instance.
+    *
+    * @return a <code>TransactionSynchronizationRegistry</code> instance.
+    */
    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
    {
       return null;
    }
 
+   /**
+    * Provides a handle to a <code>WorkManager</code> instance.
+    *
+    * @return a <code>WorkManager</code> instance.
+    */
    public WorkManager getWorkManager()
    {
       return workManager;
    }
-   
+
+   /**
+    * Provides a handle to a <code>WorkManager</code> instance.
+    *
+    * @param workManager instance
+    */
    public void setWorkManager(WorkManager workManager)
    {
       this.workManager = workManager;
    }
    
+   /**
+    * Provides a handle to a <code>XATerminator</code> instance.
+    * 
+    * @return a <code>XATerminator</code> instance.
+    */
    public XATerminator getXATerminator()
    {
       return xATerminator;
    }
 
+   /**
+    * Provides a handle to a <code>XATerminator</code> instance.
+    * 
+    * @param terminator instance
+    */
    public void setXATerminator(XATerminator terminator)
    {
       xATerminator = terminator;
    }
 
+   /**
+    * A resource adapter can check an application server’s support 
+    * for a particular InflowContext type through this method. 
+    *
+    * @param inflowContextClass inflowContextClass
+    * @return true if the <code>inflowContextClass</code> is supported
+    * by the application server. 
+    */
    public boolean isContextSupported(
          Class<? extends WorkContext> inflowContextClass)
    {

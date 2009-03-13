@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.test.core.spec.chapter10;
 
+import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
@@ -38,6 +39,17 @@ import javax.transaction.xa.XAResource;
 public class SimpleResourceAdapter implements ResourceAdapter
 {
 
+   /**
+    * This is called during the activation of a message endpoint. 
+    *
+    * @param endpointFactory a message endpoint factory instance.
+    *
+    * @param spec an activation spec JavaBean instance.
+    *
+    * @throws ResourceException indicates message endpoint 
+    * activation rejection due to incorrect activation 
+    * setup information.
+    */
    public void endpointActivation(MessageEndpointFactory endpointFactory,
          ActivationSpec spec) throws ResourceException
    {
@@ -45,6 +57,13 @@ public class SimpleResourceAdapter implements ResourceAdapter
 
    }
 
+   /**
+    * This is called when a message endpoint is deactivated. 
+    *
+    * @param endpointFactory a message endpoint factory instance.
+    *
+    * @param spec an activation spec JavaBean instance.
+    */
    public void endpointDeactivation(MessageEndpointFactory endpointFactory,
          ActivationSpec spec)
    {
@@ -52,20 +71,44 @@ public class SimpleResourceAdapter implements ResourceAdapter
 
    }
 
+   /**
+    * This method is called by the application server during crash recovery.
+    * 
+    * @param specs an array of <code>ActivationSpec</code> JavaBeans each of 
+    * which corresponds to an deployed endpoint application that was 
+    * active prior to the system crash.
+    *
+    * @throws ResourceException generic exception if operation fails due to an
+    * error condition.
+    *
+    * @return an array of <code>XAResource</code> objects each of which 
+    * represents a unique resource manager.
+    */
    public XAResource[] getXAResources(ActivationSpec[] specs)
-         throws ResourceException
+      throws ResourceException
    {
       // TODO Auto-generated method stub
       return null;
    }
 
+   /**
+    * This is called when a resource adapter instance is bootstrapped. 
+    *
+    * @param ctx a bootstrap context containing references to
+    *
+    * @throws ResourceAdapterInternalException indicates bootstrap failure.
+    */
    public void start(BootstrapContext ctx)
-         throws ResourceAdapterInternalException
+      throws ResourceAdapterInternalException
    {
       // TODO Auto-generated method stub
 
    }
 
+   /**
+    * This is called when a resource adapter instance is undeployed or
+    * during application server shutdown. 
+    */
    public void stop()
    {
       // TODO Auto-generated method stub
