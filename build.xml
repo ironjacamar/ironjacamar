@@ -109,6 +109,10 @@
     <fileset dir="${target.dir}"/>
   </path>
 
+  <path id="findbugs.lib.path.id">
+    <fileset dir="${tools.dir}/findbugs/lib"/>
+  </path>
+
   <!-- ================================= 
        Target: init              
        ================================= -->
@@ -184,7 +188,7 @@
   <target name="findbugs" depends="jars">
     <taskdef name="findbugs"
              classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
-             classpath="${basedir}/tools/findbugs/lib/*.jar"/>
+             classpathref="findbugs.lib.path.id"/>
 
     <mkdir dir="${reports.dir}/findbugs" />
 
