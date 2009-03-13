@@ -1,0 +1,37 @@
+<FindBugsFilter>
+
+  <!-- javax.resource filter -->
+  <Match>
+    <Class name="javax.resource.Referenceable"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="javax.resource.cci.ResultSet"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="javax.resource.spi.InvalidPropertyException"/>
+    <Bug code="EI,EI2"/>
+  </Match>
+  <Match>
+    <Class name="javax.resource.spi.security.PasswordCredential"/>
+    <Bug code="EI"/>
+  </Match>
+
+  <!--  org.jboss.jca.common filter -->
+  <Match>
+    <Class name="org.jboss.jca.common.api.ThreadPool"/>
+    <Bug code="Nm"/>
+  </Match>
+
+  <!--  org.jboss.jca.core filter -->
+  <Match>
+    <Class name="org.jboss.jca.core.api.ConnectionManager"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.api.WorkManager"/>
+    <Bug code="Nm"/>
+  </Match>
+
+</FindBugsFilter>

@@ -190,13 +190,13 @@
 
     <findbugs home="${basedir}/tools/findbugs/lib/"
               output="xml:withMessages"
-              outputFile="${reports.dir}/findbugs/findbugs.xml" >
+              outputFile="${reports.dir}/findbugs/findbugs.xml" 
+              excludeFilter="${basedir}/tools/findbugs/filter.xml">
       <auxClasspath>
         <fileset dir="${lib.dir}/standalone">
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
-      <sourcePath path="${basedir}" />
       <class location="${target.dir}/javax-resource-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-common-api.jar" />
       <class location="${target.dir}/jboss-jca-common-impl.jar" />
