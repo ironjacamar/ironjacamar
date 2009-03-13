@@ -190,7 +190,7 @@
 
     <findbugs home="${basedir}/tools/findbugs/lib/"
               output="xml:withMessages"
-              outputFile="${reports.dir}/findbugs/report.xml" >
+              outputFile="${reports.dir}/findbugs/findbugs.xml" >
       <auxClasspath>
         <fileset dir="${lib.dir}/standalone">
           <include name="*.jar"/>
