@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
+        "../../../tools/docbook/support/docbook-dtd/docbookx.dtd" [
+        <!ENTITY about SYSTEM "modules/about.xml">
+        <!ENTITY introduction SYSTEM "modules/introduction.xml">
+        <!ENTITY gettingstarted SYSTEM "modules/gettingstarted.xml">
+        <!ENTITY nc_installation SYSTEM "modules/installation.xml">
+        <!ENTITY configuration SYSTEM "modules/configuration.xml">
+        <!ENTITY troubleshooting SYSTEM "modules/troubleshooting.xml">
+        ]>
+<book lang="en">
+   <bookinfo>
+      <title>JBoss JCA 1.0 User's Guide</title>
+
+      <subtitle>Connecting your Enterprise Information Systems</subtitle>
+
+   </bookinfo>
+
+   <toc></toc>
+
+   &about;
+
+   &introduction;
+
+   &gettingstarted;
+
+   &nc_installation;
+
+   &configuration;
+
+   &troubleshooting;
+
+</book>
