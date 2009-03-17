@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
+        "../../../tools/docbook/support/docbook-dtd/docbookx.dtd" [
+        <!ENTITY about SYSTEM "modules/about.xml">
+        <!ENTITY building SYSTEM "modules/building.xml">
+        <!ENTITY testing SYSTEM "modules/testing.xml">
+        <!ENTITY metadata SYSTEM "modules/metadata.xml">
+        ]>
+<book lang="en">
+   <bookinfo>
+      <title>JBoss JCA 1.0 Developer's Guide</title>
+
+      <subtitle>Connecting your Enterprise Information Systems</subtitle>
+
+   </bookinfo>
+
+   <toc></toc>
+
+   &about;
+
+   &building;
+
+   &testing;
+
+   &metadata;
+
+</book>
