@@ -43,6 +43,8 @@
     <dependency org="commons-beanutils" name="commons-beanutils-core" rev="${version.commons-beanutils}" conf="qe->default"/>
     <dependency org="commons-cli" name="commons-cli" rev="${version.commons-cli}" conf="qe->default"/>
     <dependency org="com.google.code.google-collections" name="google-collect" rev="${version.google-collect}" conf="qe->default"/>
+    <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
+    <dependency org="org.easymock" name="easymockclassextension" rev="${version.easymock}" conf="test->default"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="standalone->default"/>
     <dependency org="javax.xml" name="jaxb-api" rev="${version.jaxb.api}" conf="standalone->default"/>
     <dependency org="javax.xml" name="jaxb-impl" rev="${version.jaxb.impl}" conf="standalone->default"/>
