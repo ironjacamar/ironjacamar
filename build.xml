@@ -96,18 +96,30 @@
        Paths              
        ================================= -->
   <path id="standalone.lib.path.id">
-    <fileset dir="${lib.dir}/standalone"/>
-    <fileset dir="${target.dir}"/>
+    <fileset dir="${lib.dir}/standalone">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${target.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
   </path>
 
   <path id="test.lib.path.id">
-    <fileset dir="${lib.dir}/test"/>
-    <fileset dir="${target.dir}"/>
-  </path>
+    <fileset dir="${lib.dir}/test">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${target.dir}">
+       <include name="**/*.jar"/>
+    </fileset>
+ </path>
 
   <path id="qe.lib.path.id">
-    <fileset dir="${lib.dir}/qe"/>
-    <fileset dir="${target.dir}"/>
+    <fileset dir="${lib.dir}/qe">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${target.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
   </path>
 
   <path id="findbugs.lib.path.id">
