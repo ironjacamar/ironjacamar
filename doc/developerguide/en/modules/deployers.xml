@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="deployers">
+  <title>Deployers</title>
+
+  <section id="rardeployer">
+    <title>RAR Deployer</title>
+
+  </section>
+
+  <section id="dsdeployer">
+    <title>DataSource Deployer</title>
+
+  </section>
+</chapter>

@@ -9,9 +9,19 @@
     <antcall target="lang.all"><param name="lang" value="en"/></antcall>
   </target>
 
-  <target name="html.doc" description="creates the html docs only and opens a browser">
+  <target name="pdf">
+    <mkdir dir="en/images" />
+    <antcall target="lang.docpdf"><param name="lang" value="en"/></antcall>
+  </target>
+
+  <target name="html">
     <mkdir dir="en/images" />
     <antcall target="lang.dochtml"><param name="lang" value="en"/></antcall>
+  </target>
+
+  <target name="htmlsingle">
+    <mkdir dir="en/images" />
+    <antcall target="lang.dochtmlsingle"><param name="lang" value="en"/></antcall>
   </target>
 
 </project>

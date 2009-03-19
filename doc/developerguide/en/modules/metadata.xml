@@ -1,4 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="metadata">
    <title>Metadata</title>
+
+  <section id="coremetadata">
+    <title>Core Metadata</title>
+    <para>The metadata for the JBoss JCA project is split up into the following areas</para>
+
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para>Java Connector Architecture Metadata</para>
+      </listitem>
+      <listitem>
+        <para>JBoss Metadata</para>
+      </listitem>
+      <listitem>
+        <para>DataSource Metadata</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>The implementation of these areas is done in the JBoss Metadata (JBMETA) project, which is a common
+    project for all metadata inside JBoss.</para>
+
+    <para>The issue tracking system for JBoss Metadata is located here: <ulink url="https://jira.jboss.org/jira/browse/JBMETA"/>.</para>
+
+    <section id="jcametadata">
+      <title>Java Connector Architecture Metadata</title>
+      <para>The Java Connector Architecture (JCA) metadata implement the metadata defined in the JCA specifications.
+        We have metadata representing the following standards:</para>
+      
+      <itemizedlist spacing="compact">
+        <listitem>
+          <para>Java Connector Architecture 1.0</para>
+        </listitem>
+        <listitem>
+          <para>Java Connector Architecture 1.5</para>
+        </listitem>
+        <listitem>
+          <para>Java Connector Architecture 1.6</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>These metadata versions have a common super class</para>
+      <programlisting>
+org.jboss.metadata.rar.spec.ConnectorMetaData
+      </programlisting>
+      <para>which allow the developer to for example query the version of the metadata.</para>
+
+      <para>The metadata is part of the</para>
+      <programlisting>
+org.jboss.metadata.rar.jboss.RARDeploymentMetaData
+      </programlisting>
+      <para>structure.</para>
+
+    </section>
+
+    <section id="jbossmetadata">
+      <title>JBoss Metadata</title>
+      <para>The JBoss metadata implement JBoss specific extensions to the standard Java Connector Architecture
+      metadata. We have metadata representing:</para>
+
+      <itemizedlist spacing="compact">
+        <listitem>
+          <para>JBoss RA 1.0</para>
+        </listitem>
+      </itemizedlist>
+      
+      <para>The metadata can be found in:</para>
+      <programlisting>
+org.jboss.metadata.rar.jboss.JBossRAMetaData
+      </programlisting>
+
+      <para>The metadata is part of the</para>
+      <programlisting>
+org.jboss.metadata.rar.jboss.RARDeploymentMetaData
+      </programlisting>
+      <para>structure.</para>
+
+    </section>
+
+    <section id="datasourcemetadata">
+      <title>DataSource Metadata</title>
+      <para>TODO</para>
+   
+    </section>
+
+  </section>
+
+  <section id="metadatarepository">
+    <title>Metadata Repository</title>
+    <para>The metadata repository serves as a central point for all the metadata in the systems.</para>
+
+    <section id="mdrinterface">
+      <title>Interface</title>
+      <para>The interface of the metadata repository is located in:</para>
+      <programlisting>
+org.jboss.jca.core.api.MetaDataRepository
+      </programlisting>
+      <para>providing methods to query and update the repository.</para>
+    </section>
+
+    <section id="mdrbean">
+      <title>Bean</title>
+      <para>The JBoss Microcontainer bean for the metadata repository can be defined as:</para>
+      <programlisting>
+&lt;bean name="MetaDataRepository" 
+      interface="org.jboss.jca.core.api.MetaDataRepository" 
+      class="org.jboss.jca.core.mdr.MetaDataRepositoryImpl"&gt;
+&lt;/bean&gt;
+      </programlisting>
+    </section>
+
+
+  </section>
 </chapter>

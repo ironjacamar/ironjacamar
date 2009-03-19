@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
         "../../../tools/docbook/support/docbook-dtd/docbookx.dtd" [
-        <!ENTITY about SYSTEM "modules/about.xml">
+        <!ENTITY about SYSTEM "../../userguide/en/modules/about.xml">
+        <!ENTITY introduction SYSTEM "../../userguide/en/modules/introduction.xml">
         <!ENTITY building SYSTEM "modules/building.xml">
         <!ENTITY testing SYSTEM "modules/testing.xml">
         <!ENTITY metadata SYSTEM "modules/metadata.xml">
+        <!ENTITY deployers SYSTEM "modules/deployers.xml">
         ]>
 <book lang="en">
    <bookinfo>
@@ -18,10 +20,14 @@
 
    &about;
 
+   &introduction;
+
    &building;
 
    &testing;
 
    &metadata;
+
+   &deployers;
 
 </book>
