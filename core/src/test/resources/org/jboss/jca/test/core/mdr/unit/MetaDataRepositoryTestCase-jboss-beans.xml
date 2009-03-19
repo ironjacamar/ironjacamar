@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    JBoss JCA
+-->
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <bean name="MetaDataRepository" interface="org.jboss.jca.core.api.MetaDataRepository" class="org.jboss.jca.core.mdr.MetaDataRepositoryImpl">
+  </bean>
+  
+</deployment>
