@@ -28,8 +28,8 @@ import java.net.URL;
 
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 import org.jboss.logging.Logger;
+import org.jboss.metadata.rar.jboss.RARDeploymentMetaData;
 import org.jboss.metadata.rar.jboss.mcf.ManagedConnectionFactoryDeploymentGroup;
-import org.jboss.metadata.rar.spec.ConnectorMetaData;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -77,11 +77,11 @@ public class MetaDataRepositoryTestCase
    }
 
    /**
-    * Test null name for addConnectorMetaData
+    * Test null name for addRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testAddConnectorMetaDataNullName() throws Throwable
+   public void testAddRARDeploymentMetaDataNullName() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
@@ -90,7 +90,7 @@ public class MetaDataRepositoryTestCase
 
       try
       {
-         ConnectorMetaData cmd = mdr.addConnectorMetaData(null, null);
+         RARDeploymentMetaData rdmd = mdr.addRARDeploymentMetaData(null, null);
          fail("Null name");
       }
       catch (Throwable t)
@@ -100,11 +100,11 @@ public class MetaDataRepositoryTestCase
    }
 
    /**
-    * Test null cmd for addConnectorMetaData
+    * Test null rdmd for addRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testAddConnectorMetaDataNullCMD() throws Throwable
+   public void testAddRARDeploymentMetaDataNullRDMD() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
@@ -113,8 +113,8 @@ public class MetaDataRepositoryTestCase
 
       try
       {
-         ConnectorMetaData cmd = mdr.addConnectorMetaData("test", null);
-         fail("Null cmd");
+         RARDeploymentMetaData rdmd = mdr.addRARDeploymentMetaData("test", null);
+         fail("Null rdmd");
       }
       catch (Throwable t)
       {
@@ -123,29 +123,29 @@ public class MetaDataRepositoryTestCase
    }
 
    /**
-    * Test for addConnectorMetaData
+    * Test for addRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testAddConnectorMetaData() throws Throwable
+   public void testAddRARDeploymentMetaData() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
-      ConnectorMetaData cmd = new ConnectorMetaData();
-      cmd = mdr.addConnectorMetaData("test", cmd);
+      RARDeploymentMetaData rdmd = new RARDeploymentMetaData();
+      rdmd = mdr.addRARDeploymentMetaData("test", rdmd);
 
-      mdr.removeConnectorMetaData("test");
+      mdr.removeRARDeploymentMetaData("test");
    }
 
    /**
-    * Test null name for getConnectorMetaData
+    * Test null name for getRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testGetConnectorMetaDataNullName() throws Throwable
+   public void testGetRARDeploymentMetaDataNullName() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
@@ -154,7 +154,7 @@ public class MetaDataRepositoryTestCase
 
       try
       {
-         ConnectorMetaData cmd = mdr.getConnectorMetaData(null);
+         RARDeploymentMetaData rdmd = mdr.getRARDeploymentMetaData(null);
          fail("Null name");
       }
       catch (Throwable t)
@@ -164,50 +164,50 @@ public class MetaDataRepositoryTestCase
    }
 
    /**
-    * Test undefined name for getConnectorMetaData
+    * Test undefined name for getRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testGetConnectorMetaDataUndefinedName() throws Throwable
+   public void testGetRARDeploymentMetaDataUndefinedName() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
-      ConnectorMetaData cmd = mdr.getConnectorMetaData("test");
-      assertNull(cmd);
+      RARDeploymentMetaData rdmd = mdr.getRARDeploymentMetaData("test");
+      assertNull(rdmd);
    }
 
    /**
-    * Test for getConnectorMetaData
+    * Test for getRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testGetConnectorMetaData() throws Throwable
+   public void testGetRARDeploymentMetaData() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
-      ConnectorMetaData cmd1 = new ConnectorMetaData();
-      mdr.addConnectorMetaData("test", cmd1);
+      RARDeploymentMetaData rdmd1 = new RARDeploymentMetaData();
+      mdr.addRARDeploymentMetaData("test", rdmd1);
 
-      ConnectorMetaData cmd2 = mdr.getConnectorMetaData("test");
-      assertNotNull(cmd2);
+      RARDeploymentMetaData rdmd2 = mdr.getRARDeploymentMetaData("test");
+      assertNotNull(rdmd2);
 
-      assertEquals("Objects are not the same", cmd1, cmd2);
+      assertEquals("Objects are not the same", rdmd1, rdmd2);
 
-      mdr.removeConnectorMetaData("test");
+      mdr.removeRARDeploymentMetaData("test");
    }
 
    /**
-    * Test null name for removeConnectorMetaData
+    * Test null name for removeRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testRemoveConnectorMetaDataNullName() throws Throwable
+   public void testRemoveRARDeploymentMetaDataNullName() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
@@ -216,7 +216,7 @@ public class MetaDataRepositoryTestCase
 
       try
       {
-         boolean result = mdr.removeConnectorMetaData(null);
+         boolean result = mdr.removeRARDeploymentMetaData(null);
          fail("Null name");
       }
       catch (Throwable t)
@@ -226,36 +226,36 @@ public class MetaDataRepositoryTestCase
    }
 
    /**
-    * Test undefined name for removeConnectorMetaData
+    * Test undefined name for removeRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testRemoveConnectorMetaDataUndefinedName() throws Throwable
+   public void testRemoveRARDeploymentMetaDataUndefinedName() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
-      assertFalse(mdr.removeConnectorMetaData("test"));
+      assertFalse(mdr.removeRARDeploymentMetaData("test"));
    }
 
    /**
-    * Test for removeConnectorMetaData
+    * Test for removeRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testRemoveConnectorMetaData() throws Throwable
+   public void testRemoveRARDeploymentMetaData() throws Throwable
    {
       MetaDataRepository mdr =
          bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
-      ConnectorMetaData cmd = new ConnectorMetaData();
-      mdr.addConnectorMetaData("test", cmd);
+      RARDeploymentMetaData rdmd = new RARDeploymentMetaData();
+      mdr.addRARDeploymentMetaData("test", rdmd);
 
-      assertTrue(mdr.removeConnectorMetaData("test"));
+      assertTrue(mdr.removeRARDeploymentMetaData("test"));
    }
 
    /**
@@ -272,7 +272,7 @@ public class MetaDataRepositoryTestCase
 
       try
       {
-         ManagedConnectionFactoryDeploymentGroup cmd = mdr.addManagedConnectionFactoryDeploymentGroup(null, null);
+         ManagedConnectionFactoryDeploymentGroup group = mdr.addManagedConnectionFactoryDeploymentGroup(null, null);
          fail("Null name");
       }
       catch (Throwable t)

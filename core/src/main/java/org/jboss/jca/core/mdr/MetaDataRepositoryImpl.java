@@ -27,8 +27,8 @@ import org.jboss.jca.core.api.MetaDataRepository;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.plugins.loader.memory.MemoryMetaDataLoader;
 import org.jboss.metadata.plugins.repository.basic.BasicMetaDataRepository;
+import org.jboss.metadata.rar.jboss.RARDeploymentMetaData;
 import org.jboss.metadata.rar.jboss.mcf.ManagedConnectionFactoryDeploymentGroup;
-import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.spi.loader.MutableMetaDataLoader;
 import org.jboss.metadata.spi.repository.MutableMetaDataRepository;
 import org.jboss.metadata.spi.retrieval.MetaDataRetrieval;
@@ -60,12 +60,12 @@ public class MetaDataRepositoryImpl implements MetaDataRepository
    }
 
    /**
-    * Add connector metadata
+    * Add RAR deployment metadata
     * @param name The name
-    * @param cmd The connector metadata
+    * @param cmd The RAR deployment metadata
     * @return The previous value
     */
-   public ConnectorMetaData addConnectorMetaData(String name, ConnectorMetaData cmd)
+   public RARDeploymentMetaData addRARDeploymentMetaData(String name, RARDeploymentMetaData cmd)
    {
       if (name == null)
          throw new IllegalArgumentException("Null name");
@@ -75,25 +75,25 @@ public class MetaDataRepositoryImpl implements MetaDataRepository
 
       ScopeKey scopeKey = new ScopeKey(CommonLevels.JVM, name);
       MutableMetaDataLoader loader = new MemoryMetaDataLoader(scopeKey);
-      loader.addMetaData(cmd, ConnectorMetaData.class);
+      loader.addMetaData(cmd, RARDeploymentMetaData.class);
 
       MetaDataRetrieval r = mdr.addMetaDataRetrieval(loader);
 
       if (r != null)
       {
          MetaDataRetrievalToMetaDataBridge b = new MetaDataRetrievalToMetaDataBridge(r);
-         return b.getMetaData(ConnectorMetaData.class);
+         return b.getMetaData(RARDeploymentMetaData.class);
       }
 
       return null;
    }
 
    /**
-    * Get connector metadata
+    * Get RAR deployment metadata
     * @param name The name
-    * @return The connector metadata
+    * @return The RAR deployment metadata
     */
-   public ConnectorMetaData getConnectorMetaData(String name)
+   public RARDeploymentMetaData getRARDeploymentMetaData(String name)
    {
       if (name == null)
          throw new IllegalArgumentException("Null name");
@@ -104,18 +104,18 @@ public class MetaDataRepositoryImpl implements MetaDataRepository
       if (r != null)
       {
          MetaDataRetrievalToMetaDataBridge b = new MetaDataRetrievalToMetaDataBridge(r);
-         return b.getMetaData(ConnectorMetaData.class);
+         return b.getMetaData(RARDeploymentMetaData.class);
       }
 
       return null;
    }
 
    /**
-    * Remove connector metadata
+    * Remove RAR deployment metadata
     * @param name The name
-    * @return True if the metadata was removed; otherwise
+    * @return True if the metadata was removed; otherwise false
     */
-   public boolean removeConnectorMetaData(String name)
+   public boolean removeRARDeploymentMetaData(String name)
    {
       if (name == null)
          throw new IllegalArgumentException("Null name");
@@ -181,7 +181,7 @@ public class MetaDataRepositoryImpl implements MetaDataRepository
    /**
     * Remove managed connection metadata
     * @param name The name
-    * @return True if the metadata was added; otherwise
+    * @return True if the metadata was added; otherwise false
     */
    public boolean removeManagedConnectionFactoryDeploymentGroup(String name)
    {

@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.api;
 
+import org.jboss.metadata.rar.jboss.RARDeploymentMetaData;
 import org.jboss.metadata.rar.jboss.mcf.ManagedConnectionFactoryDeploymentGroup;
-import org.jboss.metadata.rar.spec.ConnectorMetaData;
 
 /**
  * MetaDataRepository API
@@ -35,26 +35,26 @@ import org.jboss.metadata.rar.spec.ConnectorMetaData;
 public interface MetaDataRepository
 {
    /**
-    * Add connector metadata
+    * Add RAR deployment metadata
     * @param name The name
-    * @param cmd The connector metadata
+    * @param rdmd The RAR deployment metadata
     * @return The previous value
     */
-   public ConnectorMetaData addConnectorMetaData(String name, ConnectorMetaData cmd);
+   public RARDeploymentMetaData addRARDeploymentMetaData(String name, RARDeploymentMetaData rdmd);
 
    /**
-    * Get connector metadata
+    * Get RAR deployment metadata
     * @param name The name
-    * @return The connector metadata
+    * @return The RAR deployment metadata
     */
-   public ConnectorMetaData getConnectorMetaData(String name);
+   public RARDeploymentMetaData getRARDeploymentMetaData(String name);
 
    /**
-    * Remove connector metadata
+    * Remove RAR deployment metadata
     * @param name The name
-    * @return True if the metadata was removed; otherwise
+    * @return True if the metadata was removed; otherwise false
     */
-   public boolean removeConnectorMetaData(String name);
+   public boolean removeRARDeploymentMetaData(String name);
 
    /**
     * Add managed connecton metadata
@@ -75,7 +75,7 @@ public interface MetaDataRepository
    /**
     * Remove managed connection metadata
     * @param name The name
-    * @return True if the metadata was removed; otherwise
+    * @return True if the metadata was removed; otherwise false
     */
    public boolean removeManagedConnectionFactoryDeploymentGroup(String name);
 }
