@@ -204,7 +204,7 @@ public class MetaDataRepositoryTestCase
 
 
    /**
-    * Test for getRARDeploymentMetaData
+    * Test for testMultiAddGetRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
    @Test
@@ -415,7 +415,38 @@ public class MetaDataRepositoryTestCase
 
       mdr.removeManagedConnectionFactoryDeploymentGroup("test");
    }
+   
+   /**
+    * Test for testMultiAddGetMCFDG
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testMultiAddGetMCFDG() throws Throwable
+   {
+      MetaDataRepository mdr =
+         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
 
+      assertNotNull(mdr);
+
+      ManagedConnectionFactoryDeploymentGroup group11 = new ManagedConnectionFactoryDeploymentGroup();
+      mdr.addManagedConnectionFactoryDeploymentGroup("test1", group11);
+
+      ManagedConnectionFactoryDeploymentGroup group21 = new ManagedConnectionFactoryDeploymentGroup();
+      mdr.addManagedConnectionFactoryDeploymentGroup("test2", group21);
+      
+      ManagedConnectionFactoryDeploymentGroup group12 = mdr.getManagedConnectionFactoryDeploymentGroup("test1");
+      assertNotNull(group12);
+      
+      ManagedConnectionFactoryDeploymentGroup group22 = mdr.getManagedConnectionFactoryDeploymentGroup("test2");
+      assertNotNull(group22);
+      
+      assertEquals("Objects are not the same", group11, group12);
+      assertEquals("Objects are not the same", group21, group22);
+
+      mdr.removeManagedConnectionFactoryDeploymentGroup("test1");
+      mdr.removeManagedConnectionFactoryDeploymentGroup("test2");
+   }
+   
    /**
     * Test null name for removeMCFDG
     * @throws Throwable throwable exception 
