@@ -21,6 +21,16 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
+import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
+
+import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkAdapter;
+import javax.resource.spi.work.WorkEvent;
+import javax.resource.spi.work.WorkListener;
+import javax.resource.spi.work.WorkManager;
+
+import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -37,7 +47,11 @@ import static org.junit.Assert.*;
  */
 public class WorkListenerInterfaceTestCase
 {
-
+   /*
+    * Bootstrap (MC Facade)
+    */
+   private static EmbeddedTestMcBootstrap bootstrap;
+   
    /**
     * Test for paragraph 1 Section 3.3.1
     * @throws Throwable throwable exception 
@@ -51,9 +65,29 @@ public class WorkListenerInterfaceTestCase
     * Test for paragraph 1 Section 3.3.2
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testWorkAcceptedStatus() throws Throwable
    {
+      final Called called = new Called();
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      SimpleWork work1 = new SimpleWork();
+      SimpleWork work2 = new SimpleWork();
+      SimpleWork work3 = new SimpleWork();
+      
+      WorkListener wl1 = new WorkAdapter(){
+         public void workAccepted(WorkEvent e) 
+         {
+            assertEquals(e.getType(), WorkEvent.WORK_ACCEPTED);
+            synchronized (this) {
+               called.accept_count ++;
+            }
+         }
+      };
+      workManager.doWork(work1, 0, null, wl1);
+      workManager.startWork(work2, 0, null, wl1);
+      workManager.scheduleWork(work3, 0, null, wl1);
+      assertEquals("should be same", called.accept_count , 3);
    }   
    
    /**
@@ -72,15 +106,74 @@ public class WorkListenerInterfaceTestCase
    @Ignore
    public void testWorkStartedStatus() throws Throwable
    {
+      final Called called = new Called();
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      SimpleWork work1 = new SimpleWork();
+      SimpleWork work2 = new SimpleWork();
+      SimpleWork work3 = new SimpleWork();
+      work3.setBlockRun(true);
+      
+      WorkListener wl1 = new WorkAdapter(){
+         public void workAccepted(WorkEvent e) 
+         {
+            assertEquals(e.getType(), WorkEvent.WORK_ACCEPTED);
+            synchronized (this) {
+               called.accept_count ++;
+            }
+         }
+         public void workStarted(WorkEvent e) 
+         {
+            assertEquals(e.getType(), WorkEvent.WORK_STARTED);
+            synchronized (this) {
+               called.start_count ++;
+            }
+         }
+      };
+      workManager.doWork(work1, SimpleWork.BLOCK_TIME, null, wl1);
+      workManager.startWork(work2, SimpleWork.BLOCK_TIME, null, wl1);
+      workManager.scheduleWork(work3, SimpleWork.BLOCK_TIME, null, wl1);
+      assertEquals("should be same", called.accept_count , 3);
+      assertEquals("should be same", called.start_count , 2);//TODO here maybe we have a bug
    }   
    
    /**
     * Test for paragraph 1 Section 3.3.5
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testWorkCompletedStatus() throws Throwable
    {
+      final Called called = new Called();
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      SimpleWork work1 = new SimpleWork();
+      SimpleWork work2 = new SimpleWork();
+      work2.setBlockRun(true);
+      SimpleWork work3 = new SimpleWork();
+      work3.setBlockRun(true);
+      
+      WorkListener wl1 = new WorkAdapter(){
+         public void workAccepted(WorkEvent e) 
+         {
+            assertEquals(e.getType(), WorkEvent.WORK_ACCEPTED);
+            synchronized (this) {
+               called.accept_count ++;
+            }
+         }
+         public void workCompleted(WorkEvent e) 
+         {
+            assertEquals(e.getType(), WorkEvent.WORK_COMPLETED);
+            synchronized (this) {
+               called.completed_count ++;
+            }
+         }
+      };
+      workManager.doWork(work1, SimpleWork.BLOCK_TIME, null, wl1);
+      workManager.startWork(work2, SimpleWork.BLOCK_TIME, null, wl1);
+      workManager.scheduleWork(work3, SimpleWork.BLOCK_TIME, null, wl1);
+      assertEquals("should be same", called.accept_count , 3);
+      assertEquals("should be same", called.completed_count , 1);
    }
    
    /**
@@ -101,9 +194,18 @@ public class WorkListenerInterfaceTestCase
     * The source object, that is, the Work instance, on which the event initially occurred.
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testSourceObjectIsInitial() throws Throwable
    {
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      SimpleWork work1 = new SimpleWork();
+     
+      MyWorkAdapter wl1 = new MyWorkAdapter();
+      
+      workManager.doWork(work1, 0, null, wl1);
+
+      assertEquals("should be same object", workManager , wl1.getSource());
    }   
    
    /**
@@ -111,9 +213,18 @@ public class WorkListenerInterfaceTestCase
     * A handle to the associated Work instance.
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testHandleAssociatedWork() throws Throwable
    {
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      SimpleWork work1 = new SimpleWork();
+     
+      MyWorkAdapter wl1 = new MyWorkAdapter();
+      
+      workManager.doWork(work1, 0, null, wl1);
+
+      assertEquals("should be same object", work1 , wl1.getWork());
    }   
    
    /**
@@ -124,6 +235,16 @@ public class WorkListenerInterfaceTestCase
    @Ignore
    public void testStartDelayDuration() throws Throwable
    {
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      SimpleWork work1 = new SimpleWork();
+     
+      MyWorkAdapter wl1 = new MyWorkAdapter();
+      
+      workManager.doWork(work1, 0, null, wl1);
+
+      assertTrue(wl1.getStartDuration() >= 0);
+      //TODO it seems we haven't impl this feture
    }   
    
    /**
@@ -154,8 +275,108 @@ public class WorkListenerInterfaceTestCase
     * The WorkListener implementation must not make any assumptions on the ordering of notifications.
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testNotificationWithoutOrder() throws Throwable
    {
+      final Called called = new Called();
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      SimpleWork work1 = new SimpleWork();
+      SimpleWork work2 = new SimpleWork();
+      
+      WorkListener wl1 = new WorkAdapter(){
+         public void workAccepted(WorkEvent e) 
+         {
+            synchronized (this) {
+               called.accept_count ++;
+            }
+         }
+      };
+      workManager.doWork(work1, 0, null, wl1);
+      workManager.startWork(work2, 0, null, wl1);
+      assertEquals("should be same", called.accept_count , 2);
+      
+      workManager.startWork(work1, 0, null, wl1);
+      workManager.doWork(work2, 0, null, wl1);
+      assertEquals("should be same", called.accept_count , 4);
+   }
+   
+   
+   // --------------------------------------------------------------------------------||
+   // Lifecycle Methods --------------------------------------------------------------||
+   // --------------------------------------------------------------------------------||
+   /**
+    * Lifecycle start, before the suite is executed
+    * @throws Throwable throwable exception 
+    */
+   @BeforeClass
+   public static void beforeClass() throws Throwable
+   {
+      // Create and set a new MC Bootstrap
+      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+
+      // Deploy Naming and Transaction
+      bootstrap.deploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      bootstrap.deploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      
+      // Deploy Beans
+      bootstrap.deploy(WorkManagerInterfaceTestCase.class);
+   }
+
+   /**
+    * Lifecycle stop, after the suite is executed
+    * @throws Throwable throwable exception 
+    */
+   @AfterClass
+   public static void afterClass() throws Throwable
+   {
+      // Undeploy Transaction and Naming
+      bootstrap.undeploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      bootstrap.undeploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+
+      // Undeploy Beans
+      bootstrap.undeploy(WorkManagerInterfaceTestCase.class);
+
+      // Shutdown MC
+      bootstrap.shutdown();
+
+      // Set Bootstrap to null
+      bootstrap = null;
+   }
+   
+   class Called
+   {
+      int accept_count;
+      int start_count;
+      int completed_count;
+   }
+   
+   class MyWorkAdapter extends WorkAdapter
+   {
+      private Object source;
+      private Work work;
+      private long startDuration;
+      
+      public void workAccepted(WorkEvent e) 
+      {
+         source = e.getSource();
+         work = e.getWork();
+         startDuration = e.getStartDuration();
+      }
+      
+      public Object getSource()
+      {
+         return source;
+      }
+      
+      public Work getWork()
+      {
+         return work;
+      }
+      
+      public long getStartDuration()
+      {
+         return startDuration;
+      }
    }
 }

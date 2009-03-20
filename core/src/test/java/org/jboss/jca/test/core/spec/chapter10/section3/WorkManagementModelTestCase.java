@@ -23,15 +23,20 @@ package org.jboss.jca.test.core.spec.chapter10.section3;
 
 import org.jboss.jca.common.api.ThreadPool;
 import org.jboss.jca.common.threadpool.ThreadPoolImpl;
+import org.jboss.jca.core.api.WorkManager;
+import org.jboss.jca.core.api.WorkWrapper;
 
 import org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext;
 import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
 
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkManager;
+import javax.resource.spi.work.WorkAdapter;
+import javax.resource.spi.work.WorkListener;
 
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
+import org.jboss.util.threadpool.Task;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -211,9 +216,22 @@ public class WorkManagementModelTestCase
     *            process Work instances submitted by a specific resource adapter. 
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testAsUseThreadSamePriorityLevel() throws Throwable
    {
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      SimpleWork work = new SimpleWork();
+      ExecutionContext ec = new ExecutionContext();
+      WorkListener wa = new WorkAdapter();
+      //define in WorkManagerImpl.doWork
+      WorkWrapper wrapper1 = new WorkWrapper(workManager, work, Task.WAIT_FOR_START, 0L, ec, wa);
+      //define in WorkManagerImpl.startWork
+      WorkWrapper wrapper2 = new WorkWrapper(workManager, work, Task.WAIT_FOR_START, 0L, ec, wa);
+      //define in WorkManagerImpl.scheduleWork
+      WorkWrapper wrapper3 = new WorkWrapper(workManager, work, Task.WAIT_NONE, 0L, ec, wa);
+
+      assertEquals("same priority", wrapper1.getPriority(), wrapper1.getPriority());
+      assertEquals("same priority", wrapper1.getPriority(), wrapper2.getPriority());
    }   
    
    // --------------------------------------------------------------------------------||
