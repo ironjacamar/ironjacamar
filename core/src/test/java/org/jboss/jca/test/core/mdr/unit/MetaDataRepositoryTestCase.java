@@ -202,6 +202,38 @@ public class MetaDataRepositoryTestCase
       mdr.removeRARDeploymentMetaData("test");
    }
 
+
+   /**
+    * Test for getRARDeploymentMetaData
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testMultiAddGetRARDeploymentMetaData() throws Throwable
+   {
+      MetaDataRepository mdr =
+         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+
+      assertNotNull(mdr);
+
+      RARDeploymentMetaData rdmd11 = new RARDeploymentMetaData();
+      mdr.addRARDeploymentMetaData("test1", rdmd11);
+
+      RARDeploymentMetaData rdmd21 = new RARDeploymentMetaData();
+      mdr.addRARDeploymentMetaData("test2", rdmd21);
+      
+      RARDeploymentMetaData rdmd12 = mdr.getRARDeploymentMetaData("test1");
+      assertNotNull(rdmd12);
+      
+      RARDeploymentMetaData rdmd22 = mdr.getRARDeploymentMetaData("test2");
+      assertNotNull(rdmd22);
+
+      assertEquals("Objects are not the same", rdmd11, rdmd12);
+      assertEquals("Objects are not the same", rdmd21, rdmd22);
+
+      mdr.removeRARDeploymentMetaData("test1");
+      mdr.removeRARDeploymentMetaData("test2");
+   }
+   
    /**
     * Test null name for removeRARDeploymentMetaData
     * @throws Throwable throwable exception 
