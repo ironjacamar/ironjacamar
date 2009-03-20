@@ -119,6 +119,40 @@
     
   </target>
 
+
+  <!-- ================================= 
+       Target: one-test
+       ================================= -->
+  <target name="one-test" depends="jars, prepare-test">
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${reports.dir}/core"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      
+      <classpath>
+        <pathelement location="${build.core.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <test todir="${reports.dir}/core" name="${test}"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}"/>
+    </junit>
+  </target>
+
   <target name="prepare-test">
     <mkdir dir="${build.core.dir}" />
     <mkdir dir="${build.core.dir}/test" />
