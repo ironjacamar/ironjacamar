@@ -58,6 +58,18 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager
    public void setXATerminator(JBossXATerminator xaTerminator);
 
    /**
+    * Is spec compliant
+    * @return True if spec compliant; otherwise false
+    */
+   public boolean isSpecCompliant();
+
+   /**
+    * Set spec compliant flag
+    * @param v The value
+    */
+   public void setSpecCompliant(boolean v);
+
+   /**
     * Start work
     * @param wrapper the work wrapper
     * @throws WorkException for any error 

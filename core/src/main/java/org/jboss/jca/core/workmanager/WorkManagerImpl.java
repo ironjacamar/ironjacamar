@@ -26,6 +26,8 @@ import org.jboss.jca.common.api.ThreadPool;
 import org.jboss.jca.core.api.WorkManager;
 import org.jboss.jca.core.api.WorkWrapper;
 
+import java.lang.reflect.Modifier;
+
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
@@ -47,6 +49,9 @@ public class WorkManagerImpl implements WorkManager
    /** Whether trace is enabled */
    private boolean trace = log.isTraceEnabled();
 
+   /** Running in spec compliant mode */
+   private boolean specCompliant;
+
    /** The thread pool */
    private ThreadPool threadPool;
 
@@ -58,6 +63,7 @@ public class WorkManagerImpl implements WorkManager
     */
    public WorkManagerImpl()
    {
+      specCompliant = true;
    }
 
    /**
@@ -97,6 +103,24 @@ public class WorkManagerImpl implements WorkManager
    }
 
    /**
+    * Is spec compliant
+    * @return True if spec compliant; otherwise false
+    */
+   public boolean isSpecCompliant()
+   {
+      return specCompliant;
+   }
+
+   /**
+    * Set spec compliant flag
+    * @param v The value
+    */
+   public void setSpecCompliant(boolean v)
+   {
+      specCompliant = v;
+   }
+
+   /**
     * {@inheritDoc}
     */
    public void doWork(Work work) throws WorkException
@@ -113,12 +137,21 @@ public class WorkManagerImpl implements WorkManager
                       WorkListener workListener) 
       throws WorkException
    {
+      if (work == null)
+         throw new WorkException("Null work");
+
+      if (specCompliant)
+         verifyWork(work);
+
       if (execContext == null)
          execContext = new ExecutionContext();
+
       WorkWrapper wrapper = 
          new WorkWrapper(this, work, Task.WAIT_FOR_COMPLETE, startTimeout, execContext, workListener);
+
       importWork(wrapper);
       executeWork(wrapper);
+
       if (wrapper.getWorkException() != null)
          throw wrapper.getWorkException();
    }
@@ -140,13 +173,23 @@ public class WorkManagerImpl implements WorkManager
                          WorkListener workListener) 
       throws WorkException
    {
+      if (work == null)
+         throw new WorkException("Null work");
+
+      if (specCompliant)
+         verifyWork(work);
+
       if (execContext == null)
          execContext = new ExecutionContext();
+
       WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_FOR_START, startTimeout, execContext, workListener);
+
       importWork(wrapper);
       executeWork(wrapper);
+
       if (wrapper.getWorkException() != null)
          throw wrapper.getWorkException();
+
       return wrapper.getBlockedElapsed();
    }
    
@@ -167,11 +210,20 @@ public class WorkManagerImpl implements WorkManager
                             WorkListener workListener) 
       throws WorkException
    {
+      if (work == null)
+         throw new WorkException("Null work");
+
+      if (specCompliant)
+         verifyWork(work);
+
       if (execContext == null)
          execContext = new ExecutionContext();
+
       WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_NONE, startTimeout, execContext, workListener);
+
       importWork(wrapper);
       executeWork(wrapper);
+
       if (wrapper.getWorkException() != null)
          throw wrapper.getWorkException();
    }
@@ -186,6 +238,9 @@ public class WorkManagerImpl implements WorkManager
       trace = log.isTraceEnabled();
       if (trace)
          log.trace("Importing work " + wrapper);
+
+      if (wrapper == null)
+         return;
       
       ExecutionContext ctx = wrapper.getExecutionContext();
       if (ctx != null)
@@ -212,6 +267,9 @@ public class WorkManagerImpl implements WorkManager
       if (trace)
          log.trace("Submitting work to thread pool " + wrapper);
 
+      if (wrapper == null)
+         return;
+
       threadPool.runTaskWrapper(wrapper);
 
       if (trace)
@@ -227,6 +285,9 @@ public class WorkManagerImpl implements WorkManager
    {
       if (trace)
          log.trace("Starting work " + wrapper);
+
+      if (wrapper == null)
+         return;
 
       ExecutionContext ctx = wrapper.getExecutionContext();
       if (ctx != null)
@@ -250,6 +311,9 @@ public class WorkManagerImpl implements WorkManager
       if (trace)
          log.trace("Ending work " + wrapper);
 
+      if (wrapper == null)
+         return;
+
       ExecutionContext ctx = wrapper.getExecutionContext();
       if (ctx != null)
       {
@@ -272,6 +336,9 @@ public class WorkManagerImpl implements WorkManager
       if (trace)
          log.trace("Cancel work " + wrapper);
 
+      if (wrapper == null)
+         return;
+
       ExecutionContext ctx = wrapper.getExecutionContext();
       if (ctx != null)
       {
@@ -283,5 +350,35 @@ public class WorkManagerImpl implements WorkManager
       }
       if (trace)
          log.trace("Canceled work " + wrapper);
+   }
+
+   /**
+    * Verify work
+    * @param work The work
+    * @throws WorkException Thrown if a spec compliant issue is found
+    */
+   private void verifyWork(Work work) throws WorkException
+   {
+      Class[] types = new Class[] {};
+
+      try
+      {
+         if (Modifier.isSynchronized(work.getClass().getMethod("run", types).getModifiers()))
+            throw new WorkException(work.getClass().getName() + ": Run method is synchronized");
+      }
+      catch (NoSuchMethodException nsme)
+      {
+         throw new WorkException(work.getClass().getName() + ": Run method is not defined");
+      }
+
+      try
+      {
+         if (Modifier.isSynchronized(work.getClass().getMethod("release", types).getModifiers()))
+            throw new WorkException(work.getClass().getName() + ": Release method is synchronized");
+      }
+      catch (NoSuchMethodException nsme)
+      {
+         throw new WorkException(work.getClass().getName() + ": Release method is not defined");
+      }
    }
 }

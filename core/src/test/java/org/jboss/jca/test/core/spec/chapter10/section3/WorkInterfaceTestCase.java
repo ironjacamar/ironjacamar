@@ -25,8 +25,8 @@ import org.jboss.jca.common.api.ThreadPool;
 import org.jboss.jca.common.threadpool.ThreadPoolImpl;
 
 import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
-
-import java.lang.reflect.Modifier;
+import org.jboss.jca.test.core.spec.chapter10.common.SynchronizedWork;
+import org.jboss.jca.test.core.spec.chapter10.common.UnsynchronizedWork;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
@@ -155,12 +155,35 @@ public class WorkInterfaceTestCase
     * @throws Throwable throwable exception 
     */
    @Test
-   public void testCannotDeclaredSynchronized() throws Throwable
+   public void testCannotDeclaredSynchronizedSynchronizedWork() throws Throwable
    {
-      //In SimpleWork class, both in run() and release(), there are synchronization synchronization
-      Class[] types = new Class[] {};
-      assertFalse(Modifier.isSynchronized(SimpleWork.class.getMethod("run", types).getModifiers()));
-      assertFalse(Modifier.isSynchronized(SimpleWork.class.getMethod("release", types).getModifiers()));
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      try
+      {
+         SynchronizedWork sw = new SynchronizedWork();
+         workManager.doWork(sw);
+         fail("Synchronized methods not catched");
+      }
+      catch (WorkException we)
+      {
+         // Expected
+      }
+   }
+   
+   /**
+    * Test for paragraph 5
+    * Both the run and release methods in the Work implementation may contain synchronization 
+    *            synchronization but they must not be declared as synchronized methods.
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testCannotDeclaredSynchronizedUnsynchronizedWork() throws Throwable
+   {
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+
+      UnsynchronizedWork usw = new UnsynchronizedWork();
+      workManager.doWork(usw);
    }
    
    // --------------------------------------------------------------------------------||
