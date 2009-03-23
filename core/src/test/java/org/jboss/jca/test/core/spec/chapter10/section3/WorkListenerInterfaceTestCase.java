@@ -75,19 +75,21 @@ public class WorkListenerInterfaceTestCase
       SimpleWork work2 = new SimpleWork();
       SimpleWork work3 = new SimpleWork();
       
-      WorkListener wl1 = new WorkAdapter(){
+      WorkListener wl1 = new WorkAdapter()
+      {
          public void workAccepted(WorkEvent e) 
          {
             assertEquals(e.getType(), WorkEvent.WORK_ACCEPTED);
-            synchronized (this) {
-               called.accept_count ++;
+            synchronized (this) 
+            {
+               called.acceptCount++;
             }
          }
       };
       workManager.doWork(work1, 0, null, wl1);
       workManager.startWork(work2, 0, null, wl1);
       workManager.scheduleWork(work3, 0, null, wl1);
-      assertEquals("should be same", called.accept_count , 3);
+      assertEquals("should be same", called.acceptCount, 3);
    }   
    
    /**
@@ -114,27 +116,31 @@ public class WorkListenerInterfaceTestCase
       SimpleWork work3 = new SimpleWork();
       work3.setBlockRun(true);
       
-      WorkListener wl1 = new WorkAdapter(){
+      WorkListener wl1 = new WorkAdapter()
+      {
          public void workAccepted(WorkEvent e) 
          {
             assertEquals(e.getType(), WorkEvent.WORK_ACCEPTED);
-            synchronized (this) {
-               called.accept_count ++;
+            synchronized (this) 
+            {
+               called.acceptCount++;
             }
          }
          public void workStarted(WorkEvent e) 
          {
             assertEquals(e.getType(), WorkEvent.WORK_STARTED);
-            synchronized (this) {
-               called.start_count ++;
+            synchronized (this) 
+            {
+               called.startCount++;
             }
          }
       };
       workManager.doWork(work1, SimpleWork.BLOCK_TIME, null, wl1);
       workManager.startWork(work2, SimpleWork.BLOCK_TIME, null, wl1);
       workManager.scheduleWork(work3, SimpleWork.BLOCK_TIME, null, wl1);
-      assertEquals("should be same", called.accept_count , 3);
-      assertEquals("should be same", called.start_count , 2);//TODO here maybe we have a bug
+      assertEquals("should be same", called.acceptCount, 3);
+      assertEquals("should be same", called.startCount, 2);
+      //TODO here maybe we have a bug
    }   
    
    /**
@@ -153,27 +159,30 @@ public class WorkListenerInterfaceTestCase
       SimpleWork work3 = new SimpleWork();
       work3.setBlockRun(true);
       
-      WorkListener wl1 = new WorkAdapter(){
+      WorkListener wl1 = new WorkAdapter()
+      {
          public void workAccepted(WorkEvent e) 
          {
             assertEquals(e.getType(), WorkEvent.WORK_ACCEPTED);
-            synchronized (this) {
-               called.accept_count ++;
+            synchronized (this) 
+            {
+               called.acceptCount++;
             }
          }
          public void workCompleted(WorkEvent e) 
          {
             assertEquals(e.getType(), WorkEvent.WORK_COMPLETED);
-            synchronized (this) {
-               called.completed_count ++;
+            synchronized (this) 
+            {
+               called.completedCount++;
             }
          }
       };
       workManager.doWork(work1, SimpleWork.BLOCK_TIME, null, wl1);
       workManager.startWork(work2, SimpleWork.BLOCK_TIME, null, wl1);
       workManager.scheduleWork(work3, SimpleWork.BLOCK_TIME, null, wl1);
-      assertEquals("should be same", called.accept_count , 3);
-      assertEquals("should be same", called.completed_count , 1);
+      assertEquals("should be same", called.acceptCount, 3);
+      assertEquals("should be same", called.completedCount, 1);
    }
    
    /**
@@ -284,21 +293,23 @@ public class WorkListenerInterfaceTestCase
       SimpleWork work1 = new SimpleWork();
       SimpleWork work2 = new SimpleWork();
       
-      WorkListener wl1 = new WorkAdapter(){
+      WorkListener wl1 = new WorkAdapter()
+      {
          public void workAccepted(WorkEvent e) 
          {
-            synchronized (this) {
-               called.accept_count ++;
+            synchronized (this) 
+            {
+               called.acceptCount++;
             }
          }
       };
       workManager.doWork(work1, 0, null, wl1);
       workManager.startWork(work2, 0, null, wl1);
-      assertEquals("should be same", called.accept_count , 2);
+      assertEquals("should be same", called.acceptCount , 2);
       
       workManager.startWork(work1, 0, null, wl1);
       workManager.doWork(work2, 0, null, wl1);
-      assertEquals("should be same", called.accept_count , 4);
+      assertEquals("should be same", called.acceptCount , 4);
    }
    
    
@@ -344,19 +355,36 @@ public class WorkListenerInterfaceTestCase
       bootstrap = null;
    }
    
+   /**
+    * class for count called times
+    */
    class Called
    {
-      int accept_count;
-      int start_count;
-      int completed_count;
+      /** count accept times */
+      int acceptCount;
+      /** count start times */
+      int startCount;
+      /** count completed times */
+      int completedCount;
    }
    
+   /**
+    * MyWorkAdapter
+    */
    class MyWorkAdapter extends WorkAdapter
    {
+      /** event source */
       private Object source;
+      /** event work */
       private Work work;
+      /** start duration time */
       private long startDuration;
       
+      /**
+       * accept work 
+       *
+       * @param e workEvent
+       */
       public void workAccepted(WorkEvent e) 
       {
          source = e.getSource();
@@ -364,16 +392,31 @@ public class WorkListenerInterfaceTestCase
          startDuration = e.getStartDuration();
       }
       
+      /**
+       * get event source
+       *
+       * @return Object source
+       */
       public Object getSource()
       {
          return source;
       }
       
+      /**
+       * get event work
+       *
+       * @return Work work reference
+       */
       public Work getWork()
       {
          return work;
       }
       
+      /**
+       * get start duration time
+       *
+       * @return long duration time
+       */
       public long getStartDuration()
       {
          return startDuration;
