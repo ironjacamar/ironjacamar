@@ -153,6 +153,9 @@
     </junit>
   </target>
 
+  <!-- ================================= 
+       Target: prepare-test
+       ================================= -->
   <target name="prepare-test">
     <mkdir dir="${build.core.dir}" />
     <mkdir dir="${build.core.dir}/test" />

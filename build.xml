@@ -126,6 +126,10 @@
     <fileset dir="${tools.dir}/findbugs/lib"/>
   </path>
 
+  <path id="cobertura.lib.path.id">
+    <fileset dir="${tools.dir}/cobertura/lib"/>
+  </path>
+
   <!-- ================================= 
        Target: init              
        ================================= -->
@@ -169,9 +173,16 @@
   </target>
   
   <!-- ================================= 
+       Target: prepare test
+       ================================= -->
+  <target name="prepare-test" depends="jars">
+    <ant dir="core" inheritRefs="true" target="prepare-test"/>
+  </target>
+  
+  <!-- ================================= 
        Target: test
        ================================= -->
-  <target name="test" depends="jars">
+  <target name="test" depends="prepare-test">
     <ant dir="core" inheritRefs="true" target="test"/>
   </target>
   
@@ -227,6 +238,73 @@
       <class location="${target.dir}/jboss-jca-core-api.jar" />
       <class location="${target.dir}/jboss-jca-core-impl.jar" />
     </findbugs>
+  </target>
+
+  <!-- ================================= 
+       Target: cobertura
+       ================================= -->
+  <target name="cobertura" depends="prepare-test">
+    <taskdef resource="tasks.properties"
+             classpathref="cobertura.lib.path.id"/>
+
+    <mkdir dir="${reports.dir}/cobertura" />
+    <mkdir dir="${reports.dir}/cobertura/xml" />
+
+    <delete file="${reports.dir}/cobertura/cobertura.ser"/>
+    <delete dir="${build.dir}/instrumented"/>
+    
+    <mkdir dir="${build.dir}/instrumented" />
+    <copy todir="${build.dir}/instrumented">
+      <fileset dir="${target.dir}"/>
+    </copy>
+
+    <cobertura-instrument todir="${build.dir}/instrumented"
+                          datafile="${reports.dir}/cobertura/cobertura.ser">
+      <fileset dir="${target.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </cobertura-instrument>
+
+    <junit dir="core/src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="yes"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
+
+      <classpath>
+        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+        <pathelement location="${build.dir}/core/test"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      <classpath refid="cobertura.lib.path.id" />
+      
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/cobertura/xml">
+        <fileset dir="${build.dir}/core/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <cobertura-report format="html" 
+                      destdir="${reports.dir}/cobertura/html" 
+                      datafile="${reports.dir}/cobertura/cobertura.ser">
+      <fileset dir="api/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="common/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="core/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+    </cobertura-report>
   </target>
 
   <!-- ================================= 
