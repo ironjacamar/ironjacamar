@@ -141,6 +141,29 @@ public class MetaDataRepositoryTestCase
    }
 
    /**
+    * Test for addRARDeploymentMetaData with previous value
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testAddRARDeploymentMetaDataPreviousValue() throws Throwable
+   {
+      MetaDataRepository mdr =
+         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+
+      assertNotNull(mdr);
+
+      RARDeploymentMetaData rdmd = new RARDeploymentMetaData();
+
+      RARDeploymentMetaData r1 = mdr.addRARDeploymentMetaData("test", rdmd);
+      assertNull(r1);
+
+      RARDeploymentMetaData r2 = mdr.addRARDeploymentMetaData("test", rdmd);
+      assertNotNull(r2);
+
+      mdr.removeRARDeploymentMetaData("test");
+   }
+
+   /**
     * Test null name for getRARDeploymentMetaData
     * @throws Throwable throwable exception 
     */
@@ -350,6 +373,29 @@ public class MetaDataRepositoryTestCase
 
       ManagedConnectionFactoryDeploymentGroup group = new ManagedConnectionFactoryDeploymentGroup();
       mdr.addManagedConnectionFactoryDeploymentGroup("test", group);
+
+      mdr.removeManagedConnectionFactoryDeploymentGroup("test");
+   }
+
+   /**
+    * Test for addMCFDG with previous value
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testAddMCFDGPreviousValue() throws Throwable
+   {
+      MetaDataRepository mdr =
+         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+
+      assertNotNull(mdr);
+
+      ManagedConnectionFactoryDeploymentGroup group = new ManagedConnectionFactoryDeploymentGroup();
+
+      ManagedConnectionFactoryDeploymentGroup g1 = mdr.addManagedConnectionFactoryDeploymentGroup("test", group);
+      assertNull(g1);
+
+      ManagedConnectionFactoryDeploymentGroup g2 = mdr.addManagedConnectionFactoryDeploymentGroup("test", group);
+      assertNotNull(g2);
 
       mdr.removeManagedConnectionFactoryDeploymentGroup("test");
    }
