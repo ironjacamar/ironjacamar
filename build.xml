@@ -248,7 +248,7 @@
              classpathref="cobertura.lib.path.id"/>
 
     <mkdir dir="${reports.dir}/cobertura" />
-    <mkdir dir="${reports.dir}/cobertura/xml" />
+    <mkdir dir="${reports.dir}/cobertura/tests" />
 
     <delete file="${reports.dir}/cobertura/cobertura.ser"/>
     <delete dir="${build.dir}/instrumented"/>
@@ -285,7 +285,7 @@
       
       <formatter type="xml"/>
       
-      <batchtest todir="${reports.dir}/cobertura/xml">
+      <batchtest todir="${reports.dir}/cobertura/tests">
         <fileset dir="${build.dir}/core/test">
           <include name="**/*TestCase.class"/>
         </fileset>
@@ -294,6 +294,20 @@
 
     <cobertura-report format="html" 
                       destdir="${reports.dir}/cobertura/html" 
+                      datafile="${reports.dir}/cobertura/cobertura.ser">
+      <fileset dir="api/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="common/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="core/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+    </cobertura-report>
+
+    <cobertura-report format="xml" 
+                      destdir="${reports.dir}/cobertura/xml" 
                       datafile="${reports.dir}/cobertura/cobertura.ser">
       <fileset dir="api/src/main/java">
         <include name="**/*.java" />
