@@ -2,4 +2,45 @@
 <chapter id="testing">
   <title>Testing</title>
 
+  <section id="qa">
+    <title>Quality Assurance</title>
+    <para>In addition to the test suite the JBoss JCA project deploys various
+      tools to increase the stability of the project.</para>
+    <para>The following sections will describe each of these tools.</para>
+
+    <section id="checkstyle">
+      <title>Checkstyle</title>
+      <para>Checkstyle is a tool that verifies that the formatting of the source
+        code in the project is consistent.</para>
+
+      <para>This allows for easier readability and a consistent feel of the project.</para>
+
+      <para>The home of checkstyle is located here: <ulink url="http://checkstyle.sourceforge.net/"/>.</para>
+
+    </section>
+
+    <section id="findbugs">
+      <title>Findbugs</title>
+      <para>Findbugs is a tool that scans your project for bugs and provides reports based on its
+        findings.</para>
+
+      <para>This tool helps lower of the number of bugs found in the JBoss JCA project.</para>
+
+      <para>The home of findbugs is located here: <ulink url="http://findbugs.sourceforge.net/"/>.</para>
+
+    </section>
+
+    <section id="cobertura">
+      <title>Cobertura</title>
+      <para>Cobertura generates a test suite matrix for your project which helps you identify
+        where you need additional test coverage.</para>
+
+      <para>The reports that the tool provides makes sure that the JBoss JCA project has the correct test coverage.</para>
+
+      <para>The home of Cobertura is located here: <ulink url="http://cobertura.sourceforge.net/"/>.</para>
+
+    </section>
+
+  </section>
+
 </chapter>
