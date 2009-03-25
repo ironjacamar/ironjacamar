@@ -2,6 +2,80 @@
 <chapter id="testing">
   <title>Testing</title>
 
+  <section id="testinggoals">
+    <title>Overall goals</title>
+    <para>The overall goals of our test environment is to execute tests that ensures that
+    we have full coverage of the JCA specification as well as our implementation.</para>
+
+    <section id="spectest">
+      <title>Specification</title>
+      <para>The purpose of the specification tests is to test our implementation against the
+      actual specification text.</para>
+      <para>Each test can only depend on:</para>
+      <itemizedlist spacing="compact">
+         <listitem>
+            <para>The official Java Connector Architecture API (javax.resource)</para>
+         </listitem>
+         <listitem>
+            <para>Interfaces and classes in the test suite that extends/implements 
+            the official API</para>
+         </listitem>
+      </itemizedlist>
+      <para>The test cases should be created in such a way such that they are easily identified
+        by chapter, section and paragraph. For example:</para>
+      <programlisting>
+org.jboss.jca.test.core.spec.chaper10.section3
+      </programlisting>
+    </section>
+
+    <section id="jbinterfacetest">
+      <title>JBoss specific interfaces</title>
+      <para>The purpose of the JBoss specific interfaces tests is to test our specific interfaces.</para>
+      <para>Each test can depend on:</para>
+      <itemizedlist spacing="compact">
+         <listitem>
+            <para>The official Java Connector Architecture API (javax.resource)</para>
+         </listitem>
+         <listitem>
+            <para>The JBoss JCA specific APIs (org.jboss.jca.xxx.api)</para>
+         </listitem>
+         <listitem>
+            <para>Interfaces and classes in the test suite that extends/implements these APIs</para>
+         </listitem>
+      </itemizedlist>
+      <para>The test cases lives in a package that have a meaningful name of the component it tests. For example:</para>
+      <programlisting>
+org.jboss.jca.test.core.workmanager
+      </programlisting>
+    </section>
+
+    <section id="jbimpltest">
+      <title>JBoss specific implementation</title>
+      <para>The purpose of the JBoss specific implementation tests is to test our specific implementation.
+      These tests should cover all methods are not exposed through the interface.</para>
+      <para>Each test can depend on:</para>
+      <itemizedlist spacing="compact">
+         <listitem>
+            <para>The official Java Connector Architecture API (javax.resource)</para>
+         </listitem>
+         <listitem>
+            <para>The JBoss JCA specific APIs (org.jboss.jca.xxx.api)</para>
+         </listitem>
+         <listitem>
+            <para>The JBoss JCA specific implementation (org.jboss.jca.xxx.yyy)</para>
+         </listitem>
+         <listitem>
+            <para>Interfaces and classes in the test suite</para>
+         </listitem>
+      </itemizedlist>
+      <para>The test cases lives in a package that have a meaningful name of the component it tests. For example:</para>
+      <programlisting>
+org.jboss.jca.test.core.workmanager
+      </programlisting>
+    </section>
+
+  </section>
+
   <section id="qa">
     <title>Quality Assurance</title>
     <para>In addition to the test suite the JBoss JCA project deploys various
