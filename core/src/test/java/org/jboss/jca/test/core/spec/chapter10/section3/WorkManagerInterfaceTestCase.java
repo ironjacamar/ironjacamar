@@ -22,7 +22,12 @@
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
 import org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext;
-import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
+import org.jboss.jca.test.core.spec.chapter10.common.BlockRunningWork;
+import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
+import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
+import org.jboss.jca.test.core.spec.chapter10.common.NestCharWork;
+
+import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.work.Work;
@@ -76,14 +81,154 @@ public class WorkManagerInterfaceTestCase
    public void testDoWorkMethod() throws Throwable
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-      SimpleWork work = new SimpleWork();
-      work.setBlockRun(true);
       
-      assertFalse(work.isCallRun());
-      workManager.doWork(work);
-      assertTrue(work.isCallRun());
+      final CountDownLatch before = new CountDownLatch(1);
+      final CountDownLatch hold = new CountDownLatch(1);
+      final CountDownLatch start = new CountDownLatch(1);
+      final CountDownLatch done = new CountDownLatch(1);
+
+      BlockRunningWork mw = new BlockRunningWork(before, hold, start, done);
+
+      assertFalse(mw.hasPreRun());
+      assertFalse(mw.hasPostRun());
+
+      before.countDown();
+      start.countDown();
+      workManager.doWork(mw);
+      hold.await();
+      done.await();
+
+      assertTrue(mw.hasPreRun());
+      assertTrue(mw.hasPostRun());
    }
    
+   /**
+    * doWork method: throws WorkException Thrown if an error occurs
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testDoWorkMethodThrowWorkException() throws Throwable
+   {
+      //TODO
+   }
+   
+   /**
+    * doWork method: throws WorkCompletedException indicates that a Workinstance has completed 
+    * execution with an exception.
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testDoWorkMethodThrowWorkCompletedException() throws Throwable
+   {
+      //TODO
+   }
+   
+   /**
+    * doWork method: throws WorkRejectedException indicates that a Work instance has been 
+    * rejected from further processing.
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testDoWorkMethodThrowWorkRejectedException() throws Throwable
+   {
+      //TODO
+   }
+   
+   /**
+    * doWork method: This call blocks until the Work instance completes execution. test defalut 
+    * param A maximum timeout value indicates that an action be performed arbitrarily without any time constraint.
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testDoWorkMethodWithDefaultParams() throws Throwable
+   {
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      
+      final CountDownLatch before = new CountDownLatch(1);
+      final CountDownLatch hold = new CountDownLatch(1);
+      final CountDownLatch start = new CountDownLatch(1);
+      final CountDownLatch done = new CountDownLatch(1);
+
+      BlockRunningWork mw = new BlockRunningWork(before, hold, start, done);
+
+      assertFalse(mw.hasPreRun());
+      assertFalse(mw.hasPostRun());
+
+      before.countDown();
+      start.countDown();
+      workManager.doWork(mw, WorkManager.INDEFINITE, null, null);
+      hold.await();
+      done.await();
+
+      assertTrue(mw.hasPreRun());
+      assertTrue(mw.hasPostRun());
+   }
+   
+   /**
+    * doWork method: This call blocks until the Work instance completes execution. test IMMEDIATE 
+    * param A zero timeout value indicates an action be performed immediately. The WorkManager implementation
+    *  must timeout the action as soon as possible.
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testDoWorkMethodWithImmediateStart() throws Throwable
+   {
+      //TODO
+   }
+   
+   /**
+    * doWork method: This call blocks until the Work instance completes execution. test UNKNOWN param A constant 
+    * to indicate an unknown start delay duration or other unknown values.
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testDoWorkMethodWithUnknowStart() throws Throwable
+   {
+      //TODO
+   }
+   /**
+    * doWork method: This call blocks until the Work instance completes execution. test ExecutionContext paraman. 
+    * object containing the execution context with which the submitted Work instance must be executed.
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testDoWorkMethodWithExecutionContextParams() throws Throwable
+   {
+      //TODO
+   }
+   /**
+    * doWork method: This call blocks until the Work instance completes execution. test WorkListener param 
+    * workListener an object which would be notified when the various Work processing events
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testDoWorkMethodWithWorkListenerParams() throws Throwable
+   {
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      
+      final CountDownLatch before = new CountDownLatch(1);
+      final CountDownLatch hold = new CountDownLatch(1);
+      final CountDownLatch start = new CountDownLatch(1);
+      final CountDownLatch done = new CountDownLatch(1);
+
+      BlockRunningWork mw = new BlockRunningWork(before, hold, start, done);
+      MyWorkAdapter wa = new MyWorkAdapter();
+      CallbackCount callbackCount = new CallbackCount();
+      wa.setCallbackCount(callbackCount);
+
+      assertFalse(mw.hasPreRun());
+      assertFalse(mw.hasPostRun());
+
+      before.countDown();
+      start.countDown();
+      workManager.doWork(mw, WorkManager.INDEFINITE, null, wa);
+      hold.await();
+      done.await();
+
+      assertEquals(1, callbackCount.getAcceptCount());
+      assertTrue(mw.hasPreRun());
+      assertTrue(mw.hasPostRun());
+   }
    /**
     * Test for paragraph 3
     * doWork method: this provides a first in, first out (FIFO) execution start 
@@ -94,16 +239,26 @@ public class WorkManagerInterfaceTestCase
    public void testFifoStartLifoFinish() throws Throwable
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-      SimpleWork workA = new SimpleWork("A");
-      workA.setWorkManager(workManager);
+      final CountDownLatch startA = new CountDownLatch(1);
+      final CountDownLatch doneA = new CountDownLatch(1);
+      NestCharWork workA = new NestCharWork("A", startA, doneA);
       
-      assertFalse(workA.isCallRun());
-      workA.setNestDoWork(true);
-      workA.resetStringBuffer();
+      final CountDownLatch startB = new CountDownLatch(1);
+      final CountDownLatch doneB = new CountDownLatch(1);
+      NestCharWork workB = new NestCharWork("B", startB, doneB);
+      
+      workA.emptyBuffer();
+      workA.setNestDo(true);
+      workA.setWorkManager(workManager);
+      workA.setWorkManager(workB);
+      startA.countDown();
+      startB.countDown();
       workManager.doWork(workA);
-      assertTrue(workA.isCallRun());
-      assertEquals(workA.getStringBuffer(), "BA");
-      workA = null;
+
+      doneA.await();
+      doneB.await();
+
+      assertEquals(workA.getBuffer(), "BA");
    }
    
    /**
@@ -116,15 +271,28 @@ public class WorkManagerInterfaceTestCase
    public void testStartWorkMethod() throws Throwable
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-      SimpleWork work = new SimpleWork();
-      work.setBlockRun(true);
       
-      assertFalse(work.isCallRun());
-      workManager.startWork(work);
-      assertFalse(work.isCallRun());
-      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.FOLLOW_TIME);
-      assertTrue(work.isCallRun());
-      work = null;
+      final CountDownLatch before = new CountDownLatch(1);
+      final CountDownLatch hold = new CountDownLatch(1);
+      final CountDownLatch start = new CountDownLatch(1);
+      final CountDownLatch done = new CountDownLatch(1);
+
+      BlockRunningWork mw = new BlockRunningWork(before, hold, start, done);
+
+      assertFalse(mw.hasPreRun());
+      assertFalse(mw.hasPostRun());
+
+      before.countDown();
+      workManager.startWork(mw);
+      hold.await();
+      assertTrue(mw.hasPreRun());
+      assertFalse(mw.hasPostRun());
+      
+      start.countDown();
+      done.await();
+
+      assertTrue(mw.hasPreRun());
+      assertTrue(mw.hasPostRun());      
    }
    
    /**
@@ -161,17 +329,26 @@ public class WorkManagerInterfaceTestCase
    public void testFifoStart() throws Throwable
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-      SimpleWork workA = new SimpleWork("A");
-      workA.setWorkManager(workManager);
+      final CountDownLatch startA = new CountDownLatch(1);
+      final CountDownLatch doneA = new CountDownLatch(1);
+      NestCharWork workA = new NestCharWork("A", startA, doneA);
       
-      assertFalse(workA.isCallRun());
-      workA.setNestStartWork(true);
-      workA.resetStringBuffer();
+      final CountDownLatch startB = new CountDownLatch(1);
+      final CountDownLatch doneB = new CountDownLatch(1);
+      NestCharWork workB = new NestCharWork("B", startB, doneB);
+      
+      workA.emptyBuffer();
+      workA.setWorkManager(workManager);
+      workA.setWorkManager(workB);
+      startA.countDown();
+      startB.countDown();
       workManager.startWork(workA);
+      workManager.startWork(workB);
 
-      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.FOLLOW_TIME);
-      assertEquals(workA.getStringBuffer(), "AB");
-      workA = null;
+      doneA.await();
+      doneB.await();
+
+      assertEquals(workA.getBuffer(), "AB");
    }
    
    /**
@@ -184,15 +361,28 @@ public class WorkManagerInterfaceTestCase
    public void testScheduleWorkMethod() throws Throwable
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-      SimpleWork work = new SimpleWork();
-      work.setBlockRun(true);
       
-      assertFalse(work.isCallRun());
-      workManager.scheduleWork(work);
-      assertFalse(work.isCallRun());
-      Thread.currentThread().sleep(SimpleWork.BLOCK_TIME + SimpleWork.FOLLOW_TIME);
-      assertTrue(work.isCallRun());
-      work = null;
+      final CountDownLatch before = new CountDownLatch(1);
+      final CountDownLatch hold = new CountDownLatch(1);
+      final CountDownLatch start = new CountDownLatch(1);
+      final CountDownLatch done = new CountDownLatch(1);
+
+      BlockRunningWork mw = new BlockRunningWork(before, hold, start, done);
+
+      assertFalse(mw.hasPreRun());
+      assertFalse(mw.hasPostRun());
+
+      workManager.scheduleWork(mw);
+      before.countDown();
+      hold.await();
+      assertTrue(mw.hasPreRun());
+      assertFalse(mw.hasPostRun());
+      
+      start.countDown();
+      done.await();
+
+      assertTrue(mw.hasPreRun());
+      assertTrue(mw.hasPostRun()); 
    }
    
    /**
@@ -215,8 +405,8 @@ public class WorkManagerInterfaceTestCase
    @Test
    public void testAsImplementWorkManagerInterface() throws Throwable
    {
-      org.jboss.jca.core.workmanager.WorkManagerImpl wm = new org.jboss.jca.core.workmanager.WorkManagerImpl();
-      assertTrue(wm instanceof javax.resource.spi.work.WorkManager);
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      assertNotNull(workManager);
    }   
    
    /**
@@ -228,14 +418,26 @@ public class WorkManagerInterfaceTestCase
    public void testAllowNestedWork() throws Throwable
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-      SimpleWork workA = new SimpleWork("A");
-      workA.setWorkManager(workManager);
+      final CountDownLatch startA = new CountDownLatch(1);
+      final CountDownLatch doneA = new CountDownLatch(1);
+      NestCharWork workA = new NestCharWork("A", startA, doneA);
       
-      assertFalse(workA.isCallRun());
-      workA.setNestDoWork(true);
+      final CountDownLatch startB = new CountDownLatch(1);
+      final CountDownLatch doneB = new CountDownLatch(1);
+      NestCharWork workB = new NestCharWork("B", startB, doneB);
+      
+      workA.emptyBuffer();
+      workA.setNestDo(true);
+      workA.setWorkManager(workManager);
+      workA.setWorkManager(workB);
+      startA.countDown();
+      startB.countDown();
       workManager.doWork(workA);
-      assertTrue(workA.isCallRun());
-      workA = null;
+
+      doneA.await();
+      doneB.await();
+
+      assertEquals(workA.getBuffer(), "BA");
    }
    
    /**
