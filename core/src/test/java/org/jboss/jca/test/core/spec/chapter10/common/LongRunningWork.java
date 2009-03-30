@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.common;
 
+import java.util.concurrent.CountDownLatch;
+
 import javax.resource.spi.work.Work;
 
 /**
@@ -31,12 +33,27 @@ public class LongRunningWork implements Work
 {
    private boolean wasReleased;
    private long releaseThread;
+   private boolean postRun;
+   private CountDownLatch start;
+   private CountDownLatch done;
+   private long threadId;
    
    /**
     * Constructor.
     */
    public LongRunningWork()
    {
+   }
+   
+   /**
+    * Constructor.
+    * @param start Latch when enter run method
+    * @param done Latch when leave run method
+    */
+   public LongRunningWork(CountDownLatch start, CountDownLatch done) 
+   {
+      this.start = start;
+      this.done = done;
    }
    
    /**
@@ -53,6 +70,17 @@ public class LongRunningWork implements Work
     */
    public void run()
    {
+      try
+      {
+         start.await();
+      } 
+      catch (InterruptedException e)
+      {
+         e.printStackTrace();
+      }
+      threadId = Thread.currentThread().getId();
+      postRun = true;
+      done.countDown(); 
    }
    
    /**
@@ -71,6 +99,22 @@ public class LongRunningWork implements Work
    public long getReleaseThread()
    {
       return releaseThread;
+   }
+
+   /**
+    * @return long current thread id
+    */
+   public long getThreadId()
+   {
+      return threadId;
+   }
+   
+   /**
+    * @return boolean if enter run method, has executed
+    */
+   public boolean hasPostRun()
+   {
+      return postRun;
    }
 }
 

@@ -24,19 +24,17 @@ package org.jboss.jca.test.core.spec.chapter10.common;
 import javax.resource.spi.work.Work;
 
 /**
- * ShortRunningWork
+ * PriorityWork
  * @version $Revision: $
  */
-public class ShortRunningWork implements Work
+public class PriorityWork implements Work
 {
-   private boolean wasReleased;
-   private boolean callRun;
-   private boolean throwTestWorkException;
+   private int threadPriority;
    
    /**
     * Constructor.
     */
-   public ShortRunningWork()
+   public PriorityWork()
    {
    }
    
@@ -45,7 +43,7 @@ public class ShortRunningWork implements Work
     */
    public void release()
    {
-      wasReleased = true;
+
    }
 
    /**
@@ -53,36 +51,15 @@ public class ShortRunningWork implements Work
     */
    public void run()
    {
-      if (throwTestWorkException)
-         throw new TestWorkException();
-      callRun = true;
+      threadPriority = Thread.currentThread().getPriority();
    }
-   
+
    /**
-    * run method
-    * @return boolean wasReleased
+    * @return thread priority
     */
-   public boolean getWasReleased()
+   public int getThreadPriority()
    {
-      return wasReleased;
-   }
-   
-   /**
-    * call run.
-    * @return boolean
-    */   
-   public boolean hasCallRun()
-   {
-      return callRun;
-   }
-   
-   /**
-    * setWorkManager.
-    * @param throwWorkException if throw TestWorkException
-    */
-   public void setThrowWorkException(boolean throwWorkException)
-   {
-      this.throwTestWorkException = throwWorkException;
+      return threadPriority;
    }
 }
 

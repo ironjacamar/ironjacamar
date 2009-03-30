@@ -21,9 +21,6 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
-import org.jboss.jca.common.api.ThreadPool;
-import org.jboss.jca.common.threadpool.ThreadPoolImpl;
-
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.SynchronizedWork;
