@@ -57,7 +57,7 @@
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="standalone->default"/>
     <dependency org="org.jboss.aop" name="jboss-aop" rev="${version.jboss.aop}" conf="standalone->default"/>
-    <dependency org="org.jboss.ejb3" name="jboss-ejb3-test" rev="${version.jboss.ejb3.test}" conf="standalone->default"/>
+    <dependency org="org.jboss.ejb3" name="jboss-ejb3-test" rev="${version.jboss.ejb3.test}" conf="test->default"/>
     <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}" conf="standalone->default"/>
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="standalone->default"/>
     <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging}" conf="standalone->default"/>
