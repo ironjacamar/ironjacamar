@@ -24,7 +24,8 @@ package org.jboss.jca.test.core.spec.chapter10.section3;
 import org.jboss.jca.common.api.ThreadPool;
 import org.jboss.jca.common.threadpool.ThreadPoolImpl;
 
-import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
+import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
+import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.SynchronizedWork;
 import org.jboss.jca.test.core.spec.chapter10.common.UnsynchronizedWork;
 
@@ -66,11 +67,11 @@ public class WorkInterfaceTestCase
    public void testCallRunMethod() throws Throwable
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-      SimpleWork work = new SimpleWork();
+      ShortRunningWork work = new ShortRunningWork();
       
-      assertFalse(work.isCallRun());
+      assertFalse(work.hasCallRun());
       workManager.doWork(work);
-      assertTrue(work.isCallRun());
+      assertTrue(work.hasCallRun());
    }
 
    /**
@@ -86,8 +87,8 @@ public class WorkInterfaceTestCase
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
 
-      SimpleWork work = new SimpleWork();
-      work.setThrowWorkAException(true);
+      ShortRunningWork work = new ShortRunningWork();
+      work.setThrowWorkException(true);
       
       try
       {
@@ -98,7 +99,7 @@ public class WorkInterfaceTestCase
       {
          assertNotNull(e);
          assertTrue(e instanceof WorkCompletedException);
-         assertTrue(e.getMessage().indexOf("WorkAException") > 0);
+         assertTrue(e.getMessage().indexOf("TestWorkException") > 0);
       }
    }
    
@@ -108,21 +109,18 @@ public class WorkInterfaceTestCase
     *            instance to complete execution as soon as possible. 
     * @throws Throwable throwable exception 
     */
-   @Ignore
-   public void testReleaseMethod() throws Throwable
+   @Test
+   public void testCallReleaseMethod() throws Throwable
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-      ThreadPool tp = bootstrap.lookup("WorkManagerThreadPool", ThreadPoolImpl.class);
-
-      SimpleWork work = new SimpleWork();
-      work.setBlockRun(true);
-      assertFalse(work.isCallRelease());
       
-      workManager.startWork(work, WorkManager.IMMEDIATE, null, null);
-      tp.stop(false);
-      Thread.currentThread().sleep(3000);
-      //assertTrue(work.isCallRelease());
-      //TODO test fail here
+      ShortRunningWork shortWork = new ShortRunningWork();
+      workManager.startWork(shortWork);
+      assertFalse(shortWork.getWasReleased());
+      ShortRunningWork longWork = new ShortRunningWork();
+      workManager.startWork(longWork);
+      //TODO we should impl call release()
+      //assertTrue(longWork.getWasReleased();
 
    }
    
@@ -131,9 +129,16 @@ public class WorkInterfaceTestCase
     * This would be called on a separate thread than the one currently executing the Work instance.
     * @throws Throwable throwable exception 
     */
-   @Ignore
-   public void testCalledBySeparateThread() throws Throwable
+   @Test
+   public void testCallReleaseWithOtherThread() throws Throwable
    {
+      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      
+      LongRunningWork longWork = new LongRunningWork();
+      workManager.startWork(longWork);
+      long currentThread = Thread.currentThread().getId();
+      //TODO we should impl call release()
+      //assertNotSame(currentThread, longWork.getReleaseThread())
    }
    
    /**
