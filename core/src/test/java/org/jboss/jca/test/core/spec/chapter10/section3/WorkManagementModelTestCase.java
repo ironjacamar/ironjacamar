@@ -261,7 +261,7 @@ public class WorkManagementModelTestCase
       {
          pwork = new PriorityWork();
          listWorks.add(pwork);
-         workManager.startWork(pwork);
+         workManager.doWork(pwork);
       }
       int threadPriortity = -1;
       for (PriorityWork work : listWorks)
