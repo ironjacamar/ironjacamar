@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
+import java.util.concurrent.CountDownLatch;
+
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.SynchronizedWork;
@@ -131,7 +133,10 @@ public class WorkInterfaceTestCase
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
       
-      LongRunningWork longWork = new LongRunningWork();
+      final CountDownLatch start = new CountDownLatch(1);
+      final CountDownLatch done = new CountDownLatch(1);
+      
+      LongRunningWork longWork = new LongRunningWork(start, done);
       workManager.startWork(longWork);
       long currentThread = Thread.currentThread().getId();
       //TODO we should impl call release()
