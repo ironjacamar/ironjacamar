@@ -21,12 +21,12 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
-import java.util.concurrent.CountDownLatch;
-
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.SynchronizedWork;
 import org.jboss.jca.test.core.spec.chapter10.common.UnsynchronizedWork;
+
+import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
