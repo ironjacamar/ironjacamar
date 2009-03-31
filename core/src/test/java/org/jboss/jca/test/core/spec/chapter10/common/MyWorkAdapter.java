@@ -30,6 +30,7 @@ import javax.resource.spi.work.WorkEvent;
  */
 public class MyWorkAdapter extends WorkAdapter
 {
+
    /** event source */
    private Object source;
    /** event work */
@@ -44,14 +45,49 @@ public class MyWorkAdapter extends WorkAdapter
     *
     * @param e workEvent
     */
+   @Override
    public void workAccepted(WorkEvent e) 
    {
       source = e.getSource();
       work = e.getWork();
       startDuration = e.getStartDuration();
-      callbackCount.setAcceptCount(callbackCount.getAcceptCount() + 1);
+      synchronized (this) 
+      {
+         callbackCount.setAcceptCount(callbackCount.getAcceptCount() + 1);
+      }
+      super.workCompleted(e);
+   }
+
+   /**
+    * start work 
+    *
+    * @param e workEvent
+    */
+   @Override
+   public void workStarted(WorkEvent e)
+   {
+      synchronized (this) 
+      {
+         callbackCount.setStartCount(callbackCount.getStartCount() + 1);
+      }
+      super.workStarted(e);
    }
    
+   /**
+    * complete work 
+    *
+    * @param e workEvent
+    */
+   @Override
+   public void workCompleted(WorkEvent e)
+   {
+      synchronized (this) 
+      {
+         callbackCount.setCompletedCount(callbackCount.getCompletedCount() + 1);
+      }
+      super.workCompleted(e);
+   }
+
    /**
     * get event source
     *

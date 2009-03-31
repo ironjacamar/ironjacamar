@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
-import org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext;
 import org.jboss.jca.test.core.spec.chapter10.common.BlockRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
@@ -66,8 +65,7 @@ public class WorkManagerInterfaceTestCase
    public void testGetWorkManagerFromBootstrapConext() throws Throwable
    {
       
-      BootstrapContext bootstrapContext = bootstrap.lookup("SimpleBootstrapContext", SimpleBootstrapContext.class);
-      assertTrue(bootstrapContext instanceof SimpleBootstrapContext);
+      BootstrapContext bootstrapContext = bootstrap.lookup("SimpleBootstrapContext", BootstrapContext.class);
 
       assertNotNull(bootstrapContext.getWorkManager());
    }
