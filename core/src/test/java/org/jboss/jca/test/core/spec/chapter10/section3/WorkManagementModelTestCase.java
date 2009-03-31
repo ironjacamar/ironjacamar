@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
-import org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext;
-import org.jboss.jca.test.core.spec.chapter10.SimpleWork;
 import org.jboss.jca.test.core.spec.chapter10.common.BlockRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.PriorityWork;
@@ -39,7 +37,6 @@ import javax.resource.spi.work.WorkListener;
 import javax.resource.spi.work.WorkManager;
 
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
-import org.jboss.util.threadpool.Task;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -72,8 +69,7 @@ public class WorkManagementModelTestCase
    @Test
    public void testGetWorkManagerFromBootstrapConext() throws Throwable
    {
-      BootstrapContext bootstrapContext = bootstrap.lookup("SimpleBootstrapContext", SimpleBootstrapContext.class);
-      assertTrue(bootstrapContext instanceof SimpleBootstrapContext);
+      BootstrapContext bootstrapContext = bootstrap.lookup("SimpleBootstrapContext", BootstrapContext.class);
 
       assertNotNull(bootstrapContext.getWorkManager());
    }
