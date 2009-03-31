@@ -86,29 +86,22 @@ public class WorkManagementModelTestCase
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
       
-      final CountDownLatch startA = new CountDownLatch(1);
-      final CountDownLatch doneA = new CountDownLatch(1);
-      final CountDownLatch startB = new CountDownLatch(1);
-      final CountDownLatch doneB = new CountDownLatch(1);
-      long threadIdA;
-      long threadIdB;
+      CountDownLatch start = new CountDownLatch(1);
+      CountDownLatch done = new CountDownLatch(2);
 
-      LongRunningWork mwA = new LongRunningWork(startA, doneA);
-      LongRunningWork mwB = new LongRunningWork(startB, doneB);
+      LongRunningWork mwA = new LongRunningWork(start, done);
+      LongRunningWork mwB = new LongRunningWork(start, done);
 
-      startA.countDown();
       workManager.startWork(mwA);
-      threadIdA = mwA.getThreadId();
-      
-      startB.countDown();
       workManager.startWork(mwB);
-      threadIdB = mwB.getThreadId();
-      
-      doneA.await();
-      doneB.await();
-      
-      assertNotSame(threadIdA, threadIdB);
 
+      start.countDown();
+
+      done.await();
+
+      assertFalse(mwA.getThreadId() == mwB.getThreadId());
+      assertTrue(mwA.hasPostRun());
+      assertTrue(mwB.hasPostRun());
    }
    
    /**
