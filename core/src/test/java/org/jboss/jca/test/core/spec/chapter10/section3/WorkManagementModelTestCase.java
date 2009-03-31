@@ -256,13 +256,19 @@ public class WorkManagementModelTestCase
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
       
       List<PriorityWork> listWorks = new ArrayList<PriorityWork>();
-      PriorityWork pwork;
-      for (int i = 0; i < 3; i++)
+
+      int number = 3;
+      CountDownLatch done = new CountDownLatch(number);
+
+      for (int i = 0; i < number; i++)
       {
-         pwork = new PriorityWork();
+         PriorityWork pwork = new PriorityWork(done);
          listWorks.add(pwork);
          workManager.doWork(pwork);
       }
+
+      done.await();
+
       int threadPriortity = -1;
       for (PriorityWork work : listWorks)
       {

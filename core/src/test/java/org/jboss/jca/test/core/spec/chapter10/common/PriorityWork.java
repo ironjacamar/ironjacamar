@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.common;
 
+import java.util.concurrent.CountDownLatch;
+
 import javax.resource.spi.work.Work;
 
 /**
@@ -30,12 +32,15 @@ import javax.resource.spi.work.Work;
 public class PriorityWork implements Work
 {
    private int threadPriority;
-   
+   private CountDownLatch done;
+
    /**
     * Constructor.
+    * @param done The done signal count down latch
     */
-   public PriorityWork()
+   public PriorityWork(CountDownLatch done)
    {
+      this.done = done;
    }
    
    /**
@@ -43,7 +48,6 @@ public class PriorityWork implements Work
     */
    public void release()
    {
-
    }
 
    /**
@@ -52,6 +56,7 @@ public class PriorityWork implements Work
    public void run()
    {
       threadPriority = Thread.currentThread().getPriority();
+      done.countDown();
    }
 
    /**
@@ -62,4 +67,3 @@ public class PriorityWork implements Work
       return threadPriority;
    }
 }
-
