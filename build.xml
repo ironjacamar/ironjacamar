@@ -74,10 +74,15 @@
   <property name="version.jaxb.api" value="2.0"/>
   <property name="version.jaxb.impl" value="2.1"/>
   <property name="version.jboss.aop" value="2.0.1.GA"/>
+  <property name="version.jboss.bootstrap" value="1.0.0-Beta-3"/>
+  <property name="version.jboss.classloading" value="2.0.4.GA"/>
   <property name="version.jboss.common" value="2.2.11.GA"/>
   <property name="version.jboss.ejb3.test" value="1.0.0"/>
   <property name="version.jboss.integration" value="5.1.0.CR1"/>
+  <property name="version.jboss.logbridge" value="1.0.0.CR4"/>
   <property name="version.jboss.logging" value="2.0.5.GA"/>
+  <property name="version.jboss.logging.log4j" value="2.0.6.GA"/>
+  <property name="version.jboss.logmanager" value="1.0.0.CR3"/>
   <property name="version.jboss.managed" value="2.1.0.CR4"/>
   <property name="version.jboss.mc.aop-int" value="2.0.4.GA"/>
   <property name="version.jboss.mc.dependency" value="2.0.4.GA"/>
@@ -87,6 +92,7 @@
   <property name="version.jboss.naming" value="5.0.1.GA"/>
   <property name="version.jboss.reflect" value="2.0.2.GA"/>
   <property name="version.jboss.ts" value="4.4.0.GA"/>
+  <property name="version.jboss.vfs" value="2.1.0.GA"/>
   <property name="version.jboss.xb" value="2.0.1.Beta2"/>
   <property name="version.junit" value="4.5"/>
   <property name="version.transaction.api" value="1.0.1.GA"/>
@@ -161,6 +167,7 @@
     <ant dir="api" inheritRefs="true" target="jars"/>
     <ant dir="common" inheritRefs="true" target="jars"/>
     <ant dir="core" inheritRefs="true" target="jars"/>
+    <ant dir="standalone" inheritRefs="true" target="jars"/>
   </target>
   
   <!-- ================================= 
@@ -170,6 +177,7 @@
     <ant dir="api" inheritRefs="true" target="docs"/>
     <ant dir="common" inheritRefs="true" target="docs"/>
     <ant dir="core" inheritRefs="true" target="docs"/>
+    <ant dir="standalone" inheritRefs="true" target="docs"/>
   </target>
   
   <!-- ================================= 
@@ -191,6 +199,13 @@
        ================================= -->
   <target name="one-test" depends="jars">
     <ant dir="core" inheritRefs="true" target="one-test"/>
+  </target>
+
+  <!-- ================================= 
+       Target: standalone
+       ================================= -->
+  <target name="standalone" depends="jars">
+    <ant dir="standalone" inheritRefs="true" target="standalone"/>
   </target>
 
   <!-- ================================= 
@@ -237,6 +252,7 @@
       <class location="${target.dir}/jboss-jca-common-impl.jar" />
       <class location="${target.dir}/jboss-jca-core-api.jar" />
       <class location="${target.dir}/jboss-jca-core-impl.jar" />
+      <class location="${target.dir}/jboss-jca-standalone.jar" />
     </findbugs>
   </target>
 

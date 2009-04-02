@@ -1,0 +1,5 @@
+Main-Class: org.jboss.jca.standalone.Main
+Implementation-Title: JBoss JCA Standalone
+Implementation-Vendor: Red Hat Middleware LLC
+Implementation-Vendor-Id: org.jboss
+Implementation-Version: 0.1

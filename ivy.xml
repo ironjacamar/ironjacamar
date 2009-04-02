@@ -55,13 +55,21 @@
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="standalone->default"/>
+    <dependency org="org.jboss" name="jboss-vfs" rev="${version.jboss.vfs}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="standalone->default"/>
     <dependency org="org.jboss.aop" name="jboss-aop" rev="${version.jboss.aop}" conf="standalone->default"/>
+    <dependency org="org.jboss.bootstrap" name="jboss-bootstrap" rev="${version.jboss.bootstrap}" conf="standalone->default"/>
+    <dependency org="org.jboss.cl" name="jboss-classloader" rev="${version.jboss.classloading}" conf="standalone->default"/>
+    <dependency org="org.jboss.cl" name="jboss-classloading" rev="${version.jboss.classloading}" conf="standalone->default"/>
+    <dependency org="org.jboss.cl" name="jboss-classloading-vfs" rev="${version.jboss.classloading}" conf="standalone->default"/>
     <dependency org="org.jboss.ejb3" name="jboss-ejb3-test" rev="${version.jboss.ejb3.test}" conf="test->default"/>
     <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}" conf="standalone->default"/>
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="standalone->default"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging}" conf="standalone->default"/>
+    <dependency org="org.jboss.logbridge" name="jboss-logbridge" rev="${version.jboss.logbridge}" conf="standalone->default"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-jdk" rev="${version.jboss.logging}" conf="standalone->default"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging.log4j}" conf="standalone->default"/>
     <dependency org="org.jboss.logging" name="jboss-logging-spi" rev="${version.jboss.logging}" conf="standalone->default"/>
+    <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="standalone->default"/>
     <dependency org="org.jboss.man" name="jboss-managed" rev="${version.jboss.managed}" conf="standalone->default"/>
     <dependency org="org.jboss.metadata" name="jboss-metadata" rev="${version.jboss.metadata}" conf="standalone->default"/>
     <dependency org="org.jboss.microcontainer" name="jboss-aop-mc-int" rev="${version.jboss.mc.aop-int}" conf="standalone->default"/>
