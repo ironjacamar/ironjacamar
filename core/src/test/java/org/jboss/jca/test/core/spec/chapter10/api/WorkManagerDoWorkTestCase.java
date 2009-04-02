@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
 /**
  * WorkManagerInterfaceTestCase.
  * 
- * Tests for the JCA specific Chapter 10 Section 3.3
+ * Tests for the JCA specific API about WorkManager
  * 
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
@@ -78,6 +78,7 @@ public class WorkManagerDoWorkTestCase
    
    /**
     * doWork method: This call blocks until the Work instance completes execution.
+    * Negative test against Null Work 
     * @throws Throwable throwable exception 
     */
    @Test(expected = WorkException.class)
@@ -101,7 +102,7 @@ public class WorkManagerDoWorkTestCase
    }
    
    /**
-    * doWork method: throws WorkCompletedException indicates that a Workinstance has completed 
+    * doWork method: throws WorkCompletedException indicates that a Work instance has completed 
     * execution with an exception.
     * @throws Throwable throwable exception 
     */
@@ -123,8 +124,8 @@ public class WorkManagerDoWorkTestCase
    }
    
    /**
-    * doWork method: This call blocks until the Work instance completes execution. test defalut 
-    * param A maximum timeout value indicates that an action be performed arbitrarily without any time constraint.
+    * doWork method: This call blocks until the Work instance completes execution. test default 
+    * parameter A maximum timeout value indicates that an action be performed arbitrarily without any time constraint.
     * @throws Throwable throwable exception 
     */
    @Test
@@ -140,8 +141,8 @@ public class WorkManagerDoWorkTestCase
    }
    
    /**
-    * doWork method: This call blocks until the Work instance completes execution. test defalut 
-    * param A maximum timeout value indicates that an action be performed arbitrarily without any time constraint.
+    * doWork method: This call blocks until the Work instance completes execution. 
+    * Negative test against Null Work 
     * @throws Throwable throwable exception 
     */
    @Test(expected = WorkException.class)
@@ -154,8 +155,8 @@ public class WorkManagerDoWorkTestCase
    }
    
    /**
-    * doWork method: This call blocks until the Work instance completes execution. test defalut 
-    * param A maximum timeout value indicates that an action be performed arbitrarily without any time constraint.
+    * doWork method: This call blocks until the Work instance completes execution. test default 
+    * parameter A maximum timeout value indicates that an action be performed arbitrarily without any time constraint.
     * @throws Throwable throwable exception 
     */
    @Test
@@ -172,7 +173,7 @@ public class WorkManagerDoWorkTestCase
    
    /**
     * doWork method: This call blocks until the Work instance completes execution. test IMMEDIATE 
-    * param A zero timeout value indicates an action be performed immediately. The WorkManager implementation
+    * parameter A zero timeout value indicates an action be performed immediately. The WorkManager implementation
     *  must timeout the action as soon as possible.
     * @throws Throwable throwable exception 
     */
@@ -293,7 +294,7 @@ public class WorkManagerDoWorkTestCase
    }
    
    /**
-    * doWork method: throws WorkCompletedException indicates that a Workinstance has completed 
+    * doWork method: throws WorkCompletedException indicates that a Work instance has completed 
     * execution with an exception.
     * @throws Throwable throwable exception 
     */
