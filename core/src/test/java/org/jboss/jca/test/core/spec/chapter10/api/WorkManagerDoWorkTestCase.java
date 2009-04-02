@@ -189,26 +189,8 @@ public class WorkManagerDoWorkTestCase
    }
    
    /**
-    * doWork method: This call blocks until the Work instance completes execution. test UNKNOWN param A constant 
-    * to indicate an unknown start delay duration or other unknown values.
-    * @throws Throwable throwable exception 
-    */
-   @Test(expected = IllegalArgumentException.class)
-   public void testDoWorkFullSpecWithUnknowStartTimeout() throws Throwable
-   {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
-
-      ShortRunningWork work = new ShortRunningWork();
-      assertFalse(work.hasCallRun());
-
-      workManager.doWork(work, WorkManager.UNKNOWN, null, null);
-      assertTrue(work.hasCallRun());
-   }
-   
-   
-   /**
-    * doWork method: This call blocks until the Work instance completes execution. test UNKNOWN param A constant 
-    * to indicate an unknown start delay duration or other unknown values.
+    * doWork method: This call blocks until the Work instance completes execution. test negative parameter constant 
+    * to indicate an negative value start delay duration
     * @throws Throwable throwable exception 
     */
    @Test(expected = IllegalArgumentException.class)
@@ -237,7 +219,7 @@ public class WorkManagerDoWorkTestCase
       ShortRunningWork work = new ShortRunningWork();
       assertFalse(work.hasCallRun());
 
-      workManager.doWork(work, WorkManager.INDEFINITE, null, null);
+      workManager.doWork(work, WorkManager.INDEFINITE, ec, null);
       assertTrue(work.hasCallRun());
    }
       
@@ -251,7 +233,6 @@ public class WorkManagerDoWorkTestCase
    {
       WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
 
-      ExecutionContext ec = new ExecutionContext();
       ShortRunningWork work = new ShortRunningWork();
       assertFalse(work.hasCallRun());
 
