@@ -77,6 +77,7 @@
   <property name="version.jboss.bootstrap" value="1.0.0-Beta-3"/>
   <property name="version.jboss.classloading" value="2.0.4.GA"/>
   <property name="version.jboss.common" value="2.2.11.GA"/>
+  <property name="version.jboss.deployers" value="2.0.5.GA"/>
   <property name="version.jboss.ejb3.test" value="1.0.0"/>
   <property name="version.jboss.integration" value="5.1.0.CR1"/>
   <property name="version.jboss.logbridge" value="1.0.0.CR4"/>

@@ -40,11 +40,9 @@
     <dependency org="apache-log4j" name="log4j" rev="${version.apache-log4j}" conf="standalone->default"/>
     <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="*"/>
     <dependency org="checkstyle" name="checkstyle" rev="${version.checkstyle}" conf="qe->default"/>
+    <dependency org="com.google.code.google-collections" name="google-collect" rev="${version.google-collect}" conf="qe->default"/>
     <dependency org="commons-beanutils" name="commons-beanutils-core" rev="${version.commons-beanutils}" conf="qe->default"/>
     <dependency org="commons-cli" name="commons-cli" rev="${version.commons-cli}" conf="qe->default"/>
-    <dependency org="com.google.code.google-collections" name="google-collect" rev="${version.google-collect}" conf="qe->default"/>
-    <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
-    <dependency org="org.easymock" name="easymockclassextension" rev="${version.easymock}" conf="test->default"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="standalone->default"/>
     <dependency org="javax.xml" name="jaxb-api" rev="${version.jaxb.api}" conf="standalone->default"/>
     <dependency org="javax.xml" name="jaxb-impl" rev="${version.jaxb.impl}" conf="standalone->default"/>
@@ -52,6 +50,8 @@
     <dependency org="jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="standalone->default"/>
     <dependency org="jboss.jbossts" name="jbossts-common" rev="${version.jboss.ts}" conf="standalone->default"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test->default"/>
+    <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
+    <dependency org="org.easymock" name="easymockclassextension" rev="${version.easymock}" conf="test->default"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="standalone->default"/>
@@ -62,6 +62,15 @@
     <dependency org="org.jboss.cl" name="jboss-classloader" rev="${version.jboss.classloading}" conf="standalone->default"/>
     <dependency org="org.jboss.cl" name="jboss-classloading" rev="${version.jboss.classloading}" conf="standalone->default"/>
     <dependency org="org.jboss.cl" name="jboss-classloading-vfs" rev="${version.jboss.classloading}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-client" rev="${version.jboss.deployers}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-client-spi" rev="${version.jboss.deployers}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-core" rev="${version.jboss.deployers}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-core-spi" rev="${version.jboss.deployers}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-impl" rev="${version.jboss.deployers}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-spi" rev="${version.jboss.deployers}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-structure-spi" rev="${version.jboss.deployers}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-vfs" rev="${version.jboss.deployers}" conf="standalone->default"/>
+    <dependency org="org.jboss.deployers" name="jboss-deployers-vfs-spi" rev="${version.jboss.deployers}" conf="standalone->default"/>
     <dependency org="org.jboss.ejb3" name="jboss-ejb3-test" rev="${version.jboss.ejb3.test}" conf="test->default"/>
     <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}" conf="standalone->default"/>
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="standalone->default"/>
