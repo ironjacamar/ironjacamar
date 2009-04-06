@@ -38,6 +38,7 @@ import java.util.Properties;
 
 /**
  * The main class for JBoss JCA standalone
+ * @author <a hef="mailto:jesper.pedersen">Jesper Pedersen</a>
  */
 public class Main
 {
@@ -59,19 +60,31 @@ public class Main
    {
       try
       {
-         String currentDirectory = new File(".").toURI().toURL().toString();
+         String home = SecurityActions.getSystemProperty("jboss.jca.home");
+         File root = null;
 
-         File root = new File(new URI(currentDirectory.substring(0, currentDirectory.lastIndexOf("bin"))));
+         if (home != null)
+         {
+            root = new File(new URI(home));
+         }
+         else
+         {
+            home = new File(".").toURI().toURL().toString();
+            root = new File(new URI(home.substring(0, home.lastIndexOf("bin"))));
+         }
 
-         ClassLoader parent = Thread.currentThread().getContextClassLoader();
+         File libDirectory = new File(root, "/lib/");
+         File configDirectory = new File(root, "/server/jca/conf/");
 
-         URL[] libUrls = getUrls(new File(root, "/lib/"));
-         URL[] confUrls = getUrls(new File(root, "/server/jca/conf/"));
+         ClassLoader parent = SecurityActions.getThreadContextClassLoader();
+
+         URL[] libUrls = getUrls(libDirectory);
+         URL[] confUrls = getUrls(configDirectory);
 
          URL[] urls = mergeUrls(libUrls, confUrls);
 
          URLClassLoader classLoader = new URLClassLoader(urls, parent);
-         Thread.currentThread().setContextClassLoader(classLoader);
+         SecurityActions.setThreadContextClassLoader(classLoader);
 
          Class serverLoaderClass = Class.forName("org.jboss.bootstrap.ServerLoader", true, classLoader);
          Method serverLoaderMethodLoad = serverLoaderClass.getDeclaredMethod("load", ClassLoader.class); 
@@ -85,16 +98,18 @@ public class Main
          Field serverConfigFieldHomeDir = serverConfigClass.getDeclaredField("HOME_DIR");
          Field serverConfigFieldServerName = serverConfigClass.getDeclaredField("SERVER_NAME");
 
-         Properties props = new Properties(System.getProperties());
+         SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
+
+         Properties props = new Properties(SecurityActions.getSystemProperties());
          props.put((String)serverConfigFieldHomeUrl.get(null), root.toURI().toURL().toString());
          props.put((String)serverConfigFieldHomeDir.get(null), root.getAbsolutePath());
          props.put((String)serverConfigFieldServerName.get(null), "jca");
 
-         System.setProperty("jboss.lib.url", root.toURI().toURL().toString());
+         props.put("jboss.lib.url", libDirectory.toURI().toURL().toString());
 
-         String loggingManager = System.getProperty("java.util.logging.manager");
+         String loggingManager = props.getProperty("java.util.logging.manager");
          if (loggingManager == null)
-            System.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+            props.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
 
          Constructor serverLoaderConstructor = serverLoaderClass.getDeclaredConstructor(Properties.class); 
          Object serverLoader = serverLoaderConstructor.newInstance(props);
