@@ -2,4 +2,7 @@
 
 <bootstrap xmlns="urn:jboss:bootstrap:1.0">
 
+  <url>bootstrap/classloader.xml</url>
+  <url>bootstrap/deployers.xml</url>
+
 </bootstrap> 

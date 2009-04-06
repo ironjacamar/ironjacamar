@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+   The base deployers
+-->
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+   <classloader><inject bean="deployers-classloader:0.0.0"/></classloader>
+
+   <classloader name="deployers-classloader" xmlns="urn:jboss:classloader:1.0" export-all="NON_EMPTY" import-all="true">
+      <root>${jboss.lib.url}jboss-deployers-core-spi.jar</root>
+      <root>${jboss.lib.url}jboss-deployers-core.jar</root>
+      <root>${jboss.lib.url}jboss-deployers-client-spi.jar</root>
+      <root>${jboss.lib.url}jboss-deployers-client.jar</root>
+      <root>${jboss.lib.url}jboss-deployers-structure-spi.jar</root>
+      <root>${jboss.lib.url}jboss-deployers-spi.jar</root>
+      <root>${jboss.lib.url}jboss-deployers-impl.jar</root>
+      <root>${jboss.lib.url}jboss-deployers-vfs-spi.jar</root>
+      <root>${jboss.lib.url}jboss-deployers-vfs.jar</root>
+      <root>${jboss.lib.url}jboss-dependency.jar</root>
+      <root>${jboss.lib.url}jboss-kernel.jar</root>
+      <root>${jboss.lib.url}jaxb-impl.jar</root>
+   </classloader>
+
+   <!-- Default deployment ordering -->
+   <bean name="topContextComparator">
+     <constructor factoryClass="org.jboss.deployers.structure.spi.helpers.DefaultDeploymentContextComparator" factoryMethod="getInstance"/>
+   </bean>
+
+   <!-- MetaValueFactory -->
+   <bean name="MetaValueFactory" >
+      <constructor factoryClass="org.jboss.metatype.api.values.MetaValueFactory" factoryMethod="getInstance"/>      
+   </bean>
+
+   <!-- The ManagedObjectFactory -->
+   <bean name="ManagedObjectFactory">
+      <constructor factoryClass="org.jboss.managed.api.factory.ManagedObjectFactory" factoryMethod="getInstance"/>
+      <!-- Accept any implementor of InstanceClassFactory -->
+      <incallback method="addInstanceClassFactory"/>
+      <uncallback method="removeInstanceClassFactory"/>
+     <!-- Accept any ManagedObjectDefinition -->
+      <incallback method="addManagedObjectDefinition"/>
+      <uncallback method="removeManagedObjectDefinition"/>
+      <property name="metaValueFactory"><inject bean="MetaValueFactory"/></property>
+   </bean>
+
+   <!-- The ManagedObjectCreator implementation -->
+   <bean name="ManagedObjectCreator" class="org.jboss.deployers.spi.deployer.helpers.DefaultManagedObjectCreator">
+      <property name="mof"><inject bean="ManagedObjectFactory"/></property>
+   </bean>
+
+   <!-- The MainDeployer -->
+   <bean name="MainDeployer" class="org.jboss.deployers.plugins.main.MainDeployerImpl">
+      <property name="structuralDeployers"><inject bean="StructuralDeployers"/></property>
+      <property name="deployers"><inject bean="Deployers"/></property>
+      <property name="mgtDeploymentCreator"><inject bean="ManagedDeploymentCreator"/></property>
+      <property name="comparator"><inject bean="topContextComparator"/></property>
+   </bean>
+
+   <!-- The ManagedDeploymentCreator implementation that supports mapping attachment types to ManagedDeployment#getTypes
+        Was: org.jboss.deployers.plugins.managed.TypedManagedDeploymentCreator
+   -->
+   <bean name="ManagedDeploymentCreator" class="org.jboss.deployers.plugins.managed.DefaultManagedDeploymentCreator" />
+
+   <!-- ModificationType structure processor -->
+   <bean name="ModificationTypeStructureProcessor" class="org.jboss.deployers.vfs.plugins.structure.modify.ModificationTypeStructureProcessor">
+     <incallback method="addMatcher"/>
+     <uncallback method="removeMatcher"/>
+   </bean>
+
+   <!-- The holder for deployers that determine structure -->
+   <bean name="StructuralDeployers" class="org.jboss.deployers.vfs.plugins.structure.VFSStructuralDeployersImpl">
+      <property name="structureBuilder">
+         <!-- The consolidator of the structure information -->
+         <bean name="StructureBuilder" class="org.jboss.deployers.vfs.plugins.structure.VFSStructureBuilder">
+           <property name="structureProcessor"><inject bean="ModificationTypeStructureProcessor"/></property>
+         </bean>
+      </property>
+      <!-- Accept any implementor of structure deployer -->
+      <incallback method="addDeployer"/>
+      <uncallback method="removeDeployer"/>
+   </bean>
+
+   <!-- The holder for deployers that do real deployment -->
+   <bean name="Deployers" class="org.jboss.deployers.plugins.deployers.DeployersImpl">
+      <!-- <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss.deployment:service=DeployersImpl", exposedInterface=org.jboss.deployers.plugins.deployers.DeployersImplMBean.class, registerDirectly=true)</annotation> -->
+      <constructor><parameter><inject bean="jboss.kernel:service=KernelController"/></parameter></constructor>
+      <!-- Accept any implementor of deployer -->
+      <incallback method="addDeployer"/>
+      <uncallback method="removeDeployer"/>
+      <property name="mgtObjectCreator"><inject bean="ManagedObjectCreator"/></property>
+   </bean>
+
+</deployment>
