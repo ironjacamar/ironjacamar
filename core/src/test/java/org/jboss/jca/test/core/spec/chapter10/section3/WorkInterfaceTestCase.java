@@ -116,7 +116,11 @@ public class WorkInterfaceTestCase
       ShortRunningWork shortWork = new ShortRunningWork();
       workManager.startWork(shortWork);
       assertFalse(shortWork.getWasReleased());
-      ShortRunningWork longWork = new ShortRunningWork();
+      
+      final CountDownLatch start = new CountDownLatch(1);
+      final CountDownLatch done = new CountDownLatch(1);
+      
+      LongRunningWork longWork = new LongRunningWork(start, done);
       workManager.startWork(longWork);
       //TODO we should impl call release()
       //assertTrue(longWork.getWasReleased();
