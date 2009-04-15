@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   The JBossVFS initializer configuration.
+-->
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <bean name="VFSCache">
+    <constructor factoryClass="org.jboss.virtual.spi.cache.VFSCacheFactory" factoryMethod="getInstance">
+      <!-- Use the CombinedVFSCache implementation -->
+      <parameter>org.jboss.virtual.plugins.cache.CombinedVFSCache</parameter>
+    </constructor>
+    <start ignored="true"/>
+    <property name="permanentRoots">
+      <map keyClass="java.net.URL" valueClass="org.jboss.virtual.spi.ExceptionHandler">
+        <entry>
+          <key>${jboss.lib.url}</key>
+          <value><null/></value>
+        </entry>
+      </map>
+    </property>
+    <property name="realCache">
+      <bean class="org.jboss.virtual.plugins.cache.IterableTimedVFSCache"/>
+    </property>
+  </bean>
+
+</deployment>

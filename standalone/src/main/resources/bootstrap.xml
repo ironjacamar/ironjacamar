@@ -2,7 +2,10 @@
 
 <bootstrap xmlns="urn:jboss:bootstrap:1.0">
 
+  <url>bootstrap/logging.xml</url>
+  <url>bootstrap/vfs.xml</url>
   <url>bootstrap/classloader.xml</url>
+  <url>bootstrap/aop.xml</url>
   <url>bootstrap/deployers.xml</url>
 
 </bootstrap> 
