@@ -75,9 +75,9 @@
   <property name="version.jaxb.impl" value="2.1"/>
   <property name="version.jboss.aop" value="2.1.0.CR3"/>
   <property name="version.jboss.bootstrap" value="1.0.0-Beta-3"/>
-  <property name="version.jboss.classloading" value="2.2.0.M3"/>
+  <property name="version.jboss.classloading" value="2.2.0.M4"/>
   <property name="version.jboss.common" value="2.2.12.GA"/>
-  <property name="version.jboss.deployers" value="2.2.0.M1"/>
+  <property name="version.jboss.deployers" value="2.2.0.M2"/>
   <property name="version.jboss.ejb3.test" value="1.0.0"/>
   <property name="version.jboss.integration" value="5.1.0.CR1"/>
   <property name="version.jboss.logbridge" value="1.0.0.CR4"/>
@@ -93,8 +93,8 @@
   <property name="version.jboss.naming" value="5.0.1.GA"/>
   <property name="version.jboss.reflect" value="2.0.2.GA"/>
   <property name="version.jboss.ts" value="4.4.0.GA"/>
-  <property name="version.jboss.vfs" value="2.2.0.M1"/>
-  <property name="version.jboss.xb" value="2.0.1.Beta3"/>
+  <property name="version.jboss.vfs" value="2.2.0.M2"/>
+  <property name="version.jboss.xb" value="2.0.1.CR2"/>
   <property name="version.junit" value="4.5"/>
   <property name="version.transaction.api" value="1.0.1.GA"/>
   <property name="version.trove" value="2.1.1"/>
