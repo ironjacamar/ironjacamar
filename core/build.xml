@@ -137,6 +137,7 @@
       
       <jvmarg line="${junit.jvm.options}"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       
       <classpath>
         <pathelement location="${build.core.dir}/test"/>
