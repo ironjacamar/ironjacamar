@@ -128,19 +128,8 @@
       <property name="tokens" value="CTOR_DEF"/>
       <property name="max" value="150"/>
     </module>
-    <module name="FileLength">
-      <property name="max" value="10000"/>
-    </module>
     <module name="ParameterNumber">
       <property name="max" value="20"/>
-    </module>
-
-    <!-- Don't allow tabs -->
-    <module name="TabCharacter"/>
-
-    <!-- Enforce License Header -->
-    <module name="RegexpHeader">
-      <property name="headerFile" value="${basedir}/tools/checkstyle/HEADER"/>
     </module>
 
     <!-- Indentation -->
@@ -152,6 +141,21 @@
     <!-- StringLiteralEquality -->
     <module name="StringLiteralEquality"/>
 
+  </module>
+
+  <!-- Enforce License Header -->
+  <module name="RegexpHeader">
+    <property name="headerFile" value="${basedir}/tools/checkstyle/HEADER"/>
+  </module>
+
+  <!-- Enforce file length -->
+  <module name="FileLength">
+    <property name="max" value="10000"/>
+  </module>
+
+  <!-- Don't allow tabs -->
+  <module name="FileTabCharacter">
+    <property name="eachLine" value="true"/>
   </module>
 
   <!-- Enforce package documentation -->

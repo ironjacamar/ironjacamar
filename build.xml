@@ -62,14 +62,9 @@
   <!-- ================================= 
        Versions              
        ================================= -->
-  <property name="version.antlr" value="2.7.6"/>
   <property name="version.apache-log4j" value="1.2.14"/>
   <property name="version.apache-logging" value="1.1.0.jboss"/>
-  <property name="version.checkstyle" value="5.0-beta01"/>
-  <property name="version.commons-beanutils" value="1.7.0"/>
-  <property name="version.commons-cli" value="1.1"/>
   <property name="version.easymock" value="2.4"/>
-  <property name="version.google-collect" value="snapshot-20080321"/>
   <property name="version.javassist" value="3.10.0.GA"/>
   <property name="version.jaxb.api" value="2.0"/>
   <property name="version.jaxb.impl" value="2.1"/>
@@ -120,10 +115,8 @@
     </fileset>
  </path>
 
-  <path id="qe.lib.path.id">
-    <fileset dir="${lib.dir}/qe">
-      <include name="**/*.jar"/>
-    </fileset>
+  <path id="checkstyle.lib.path.id">
+    <fileset dir="${tools.dir}/checkstyle/lib"/>
     <fileset dir="${target.dir}">
       <include name="**/*.jar"/>
     </fileset>
@@ -215,13 +208,13 @@
   <target name="checkstyle" depends="jars">
     <taskdef name="checkstyle"
              classname="com.puppycrawl.tools.checkstyle.CheckStyleTask"
-             classpathref="qe.lib.path.id"/>
+             classpathref="checkstyle.lib.path.id"/>
 
     <mkdir dir="${reports.dir}/checkstyle" />
 
     <checkstyle config="${tools.dir}/checkstyle/checkstyle.xml"
                 failOnViolation="false"
-                classpathref="qe.lib.path.id">
+                classpathref="checkstyle.lib.path.id">
       <fileset dir="${basedir}"
                includes="**/*.java"/>
       <formatter type="plain"/>
