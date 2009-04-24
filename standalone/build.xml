@@ -81,6 +81,7 @@
     <mkdir dir="${target.dir}/standalone"/>
     <mkdir dir="${target.dir}/standalone/bin"/>
     <mkdir dir="${target.dir}/standalone/lib"/>
+    <mkdir dir="${target.dir}/standalone/lib/endorsed"/>
     <mkdir dir="${target.dir}/standalone/server"/>
     <mkdir dir="${target.dir}/standalone/server/jca"/>
     <mkdir dir="${target.dir}/standalone/server/jca/conf"/>
@@ -113,6 +114,15 @@
     <copy todir="${target.dir}/standalone/lib">
       <fileset dir="${lib.dir}/standalone">
         <include name="*.jar"/>
+        <exclude name="jaxb-api.jar"/>
+        <exclude name="xercesImpl.jar"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/standalone/lib/endorsed">
+      <fileset dir="${lib.dir}/standalone">
+        <include name="jaxb-api.jar"/>
+        <include name="xercesImpl.jar"/>
       </fileset>
     </copy>
 

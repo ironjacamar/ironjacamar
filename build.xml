@@ -64,6 +64,7 @@
        ================================= -->
   <property name="version.apache-log4j" value="1.2.14"/>
   <property name="version.apache-logging" value="1.1.0.jboss"/>
+  <property name="version.apache-xerces" value="2.9.1"/>
   <property name="version.easymock" value="2.4"/>
   <property name="version.javassist" value="3.10.0.GA"/>
   <property name="version.jaxb.api" value="2.0"/>

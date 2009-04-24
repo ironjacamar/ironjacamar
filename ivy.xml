@@ -85,6 +85,7 @@
     <dependency org="org.jboss.microcontainer" name="jboss-kernel" rev="${version.jboss.mc.kernel}" conf="standalone->default"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="standalone->default"/>
     <dependency org="trove" name="trove" rev="${version.trove}" conf="standalone->default"/>
+    <dependency org="xerces" name="xercesImpl" rev="${version.apache-xerces}" conf="standalone->default"/>
   </dependencies>
 
 </ivy-module>
