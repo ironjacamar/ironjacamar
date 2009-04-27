@@ -19,24 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-core" 
+<project name="jboss-jca-deployers" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <!-- ================================= 
        Properties              
        ================================= -->
-  <property name="build.core.dir" value="${build.dir}/core" />
+  <property name="build.deployers.dir" value="${build.dir}/deployers" />
 
   <!-- ================================= 
        Target: compile
        ================================= -->
   <target name="compile">
-    <mkdir dir="${build.core.dir}" />
-    <mkdir dir="${build.core.dir}/impl" />
+    <mkdir dir="${build.deployers.dir}" />
+    <mkdir dir="${build.deployers.dir}/impl" />
 
     <javac srcdir="src/main"
-           destdir="${build.core.dir}/impl"
+           destdir="${build.deployers.dir}/impl"
            classpathref="standalone.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
@@ -49,37 +49,31 @@
        Target: jars 
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/jboss-jca-core-api.jar"
-         manifest="src/main/resources/api-manifest.mf"
-         basedir="${build.core.dir}/impl"
-         includes="**/api/**"/>
+    <jar destfile="${target.dir}/jboss-jca-deployers-main.jar"
+         manifest="src/main/resources/main-manifest.mf"
+         basedir="${build.deployers.dir}/impl"
+         includes="**/hack/**"
+         excludes="**/*.java"/>
 
-    <jar destfile="${target.dir}/jboss-jca-core-impl.jar"
-         manifest="src/main/resources/impl-manifest.mf"
-         basedir="${build.core.dir}/impl"
-         excludes="**/*.java, **/api/**"/>
-
-    <mkdir dir="${target.dir}/deploy"/>
-    <copy todir="${target.dir}/deploy">
-      <fileset dir="src/main/resources/deployment">
-        <include name="**/*.xml"/>
-      </fileset>
-    </copy>
-
+    <jar destfile="${target.dir}/jboss-jca-deployers-rar.jar"
+         manifest="src/main/resources/rar-manifest.mf"
+         basedir="${build.deployers.dir}/impl"
+         includes="**/rar/**"
+         excludes="**/*.java"/>
   </target>
 
   <!-- ================================= 
        Target: docs
        ================================= -->
   <target name="docs">
-    <mkdir dir="${target.dir}/docs/core"/>
+    <mkdir dir="${target.dir}/docs/deployers"/>
     <javadoc packagenames="org.*"
              sourcepath="src/main/java"
-             destdir="${target.dir}/docs/core"
+             destdir="${target.dir}/docs/deployers"
              author="true"
              version="true"
-             windowtitle="JBoss JCA Core"
-             doctitle="JBoss JCA Core"
+             windowtitle="JBoss JCA Deployers"
+             doctitle="JBoss JCA Deployers"
              use="true"
              classpathref="standalone.lib.path.id"
              bottom="Copyright &#169; 2008-2009 Red Hat Middleware LLC (http://www.jboss.com/)">
@@ -92,7 +86,7 @@
        ================================= -->
   <target name="test" depends="jars, prepare-test">
     <mkdir dir="${reports.dir}"/>
-    <mkdir dir="${reports.dir}/core"/>
+    <mkdir dir="${reports.dir}/deployers"/>
 
     <junit dir="src/test"
            printsummary="${junit.printsummary}"
@@ -103,10 +97,9 @@
       
       <jvmarg line="${junit.jvm.options}"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       
       <classpath>
-        <pathelement location="${build.core.dir}/test"/>
+        <pathelement location="${build.deployers.dir}/test"/>
         <fileset dir="${target.dir}" includes="*.jar"/>
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
@@ -114,12 +107,12 @@
       <formatter type="plain"/>
       <formatter type="xml"/>
       
-      <batchtest todir="${reports.dir}/core"
+      <batchtest todir="${reports.dir}/deployers"
                  haltonerror="${junit.batchtest.haltonerror}"
                  haltonfailure="${junit.batchtest.haltonfailure}"
                  fork="${junit.batchtest.fork}">
         
-        <fileset dir="${build.core.dir}/test">
+        <fileset dir="${build.deployers.dir}/test">
           <include name="**/*TestCase.class"/>
         </fileset>
       </batchtest>
@@ -134,7 +127,7 @@
        ================================= -->
   <target name="one-test" depends="jars, prepare-test">
     <mkdir dir="${reports.dir}"/>
-    <mkdir dir="${reports.dir}/core"/>
+    <mkdir dir="${reports.dir}/deployers"/>
 
     <junit dir="src/test"
            printsummary="${junit.printsummary}"
@@ -145,10 +138,9 @@
       
       <jvmarg line="${junit.jvm.options}"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       
       <classpath>
-        <pathelement location="${build.core.dir}/test"/>
+        <pathelement location="${build.deployers.dir}/test"/>
         <fileset dir="${target.dir}" includes="*.jar"/>
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
@@ -156,7 +148,7 @@
       <formatter type="plain"/>
       <formatter type="xml"/>
       
-      <test todir="${reports.dir}/core" name="${test}"
+      <test todir="${reports.dir}/deployers" name="${test}"
                  haltonerror="${junit.batchtest.haltonerror}"
                  haltonfailure="${junit.batchtest.haltonfailure}"
                  fork="${junit.batchtest.fork}"/>
@@ -167,11 +159,11 @@
        Target: prepare-test
        ================================= -->
   <target name="prepare-test">
-    <mkdir dir="${build.core.dir}" />
-    <mkdir dir="${build.core.dir}/test" />
+    <mkdir dir="${build.deployers.dir}" />
+    <mkdir dir="${build.deployers.dir}/test" />
 
     <javac srcdir="src/test"
-           destdir="${build.core.dir}/test"
+           destdir="${build.deployers.dir}/test"
            classpathref="test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
@@ -179,7 +171,7 @@
       <compilerarg value="-Xlint"/>
     </javac> 
 
-    <copy todir="${build.core.dir}/test">
+    <copy todir="${build.deployers.dir}/test">
       <fileset dir="src/test/resources"/>
     </copy>
 

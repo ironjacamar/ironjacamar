@@ -95,6 +95,55 @@
       <property name="suffix">jboss-beans.xml</property>
    </bean>
 
+   <!-- A declared structure descriptor deployer -->
+   <bean name="DeclaredStructure" class="org.jboss.deployers.vfs.plugins.structure.explicit.DeclaredStructure"/>
+
+    <!-- JAR Structure -->
+    <bean name="JARStructure" class="org.jboss.deployers.vfs.plugins.structure.jar.JARStructure">
+       <!-- Unless specified the default list of suffixes is .zip, .ear, .jar, ,.rar, .war, .sar, .har, .aop -->
+       <constructor>
+          <parameter>
+             <set elementClass="java.lang.String">
+                <value>.zip</value>
+                <value>.jar</value>
+                <value>.rar</value>
+             </set>
+          </parameter>
+       </constructor>
+       <property name="candidateStructureVisitorFactory">
+          <!-- Any file that is not an ordinary directory is a candidate -->
+          <bean name="JARStructureCandidates" class="org.jboss.deployers.vfs.spi.structure.helpers.DefaultCandidateStructureVisitorFactory">
+             <!-- A filter to exclude some obvious non-subdeployments -->
+             <property name="filter">
+                <bean name="JARFilter" class="org.jboss.virtual.plugins.vfs.helpers.SuffixesExcludeFilter">
+                   <constructor><parameter>
+                      <list elementClass="java.lang.String">
+                         <!-- Exclude class files as subdeployments -->
+                         <value>.class</value>
+                      </list>
+                   </parameter></constructor>
+                </bean>
+             </property>
+          </bean>
+       </property>
+    </bean>
+
+    <!-- File Structure -->
+    <bean name="FileStructure" class="org.jboss.deployers.vfs.plugins.structure.file.FileStructure">
+       <!-- Unless specified the default list of suffixes is -service.xml, -beans.xml, -ds.xml, -aop.xml -->
+       <constructor>
+          <parameter>
+             <set elementClass="java.lang.String">
+                <value>-service.xml</value>
+                <value>-beans.xml</value>
+                <value>-ds.xml</value>
+                <value>-aop.xml</value>
+             </set>
+          </parameter>
+       </constructor>
+    </bean>
+
+   <!-- AOP -->
    <bean name="AOPXMLMetaDataParserDeployer" class="org.jboss.deployers.vfs.spi.deployer.SchemaResolverDeployer">
       <constructor>
          <parameter>org.jboss.aop.microcontainer.beans.metadata.AOPDeployment</parameter>
@@ -116,6 +165,29 @@
    <bean name="BeansDeploymentAopMetaDataDeployer" class="org.jboss.aop.asintegration.jboss5.BeansDeploymentAopMetaDataDeployer">
       <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
       <property name="aspectManager"><inject bean="AspectManager" property="aspectManager"/></property>
+   </bean>
+
+   <!-- Classloading -->
+   <bean name="ClassLoadingMetaDataParser" class="org.jboss.deployers.vfs.spi.deployer.SchemaResolverDeployer">
+      <constructor>
+         <parameter>org.jboss.classloading.spi.metadata.ClassLoadingMetaData</parameter>
+      </constructor>
+      <property name="name">jboss-classloading.xml</property>
+      <property name="buildManagedObject">true</property>
+   </bean>
+   <bean name="ClassLoadingDefaultDeployer" class="org.jboss.deployers.plugins.classloading.ClassLoadingDefaultDeployer">
+      <property name="defaultMetaData">
+         <classloading xmlns="urn:jboss:classloading:1.0" export-all="NON_EMPTY" import-all="true"/>
+      </property>
+   </bean>
+   <bean name="InMemoryClassesDeployer" class="org.jboss.deployers.vfs.plugins.classloader.InMemoryClassesDeployer"/>
+   <bean name="ClassLoaderClassPathDeployer" class="org.jboss.deployers.vfs.plugins.classloader.VFSClassLoaderClassPathDeployer"/>
+   <bean name="ClassLoaderDescribeDeployer" class="org.jboss.deployers.vfs.plugins.classloader.VFSClassLoaderDescribeDeployer">
+      <property name="classLoading"><inject bean="ClassLoading"/></property>
+   </bean>
+   <bean name="ClassLoaderDeployer" class="org.jboss.deployers.plugins.classloading.AbstractLevelClassLoaderSystemDeployer">
+      <property name="classLoading"><inject bean="ClassLoading"/></property>
+      <property name="system"><inject bean="ClassLoaderSystem"/></property>
    </bean>
 
 </deployment>

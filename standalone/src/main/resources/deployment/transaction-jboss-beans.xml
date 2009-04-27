@@ -6,11 +6,11 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
   <!-- JMX -->
-  <bean name="JMX" class="org.jboss.jca.test.core.common.JMX"/>
+  <bean name="JMX" class="org.jboss.jca.standalone.hack.JMX"/>
 
   <!-- Transaction manager -->
   <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
-    <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation>
+<!--    <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation> -->
     <property name="transactionTimeout">300</property>
     <property name="objectStoreDir">tx-object-store</property>
     <property name="mbeanServer"><inject bean="JMX" property="mbeanServer"/></property>

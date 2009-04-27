@@ -9,7 +9,7 @@
   <bean name="NamingServer" class="org.jnp.server.SingletonNamingServer"/>
 
   <!-- java:comp -->
-  <bean name="JavaCompInitializer" class="org.jboss.jca.test.core.common.JavaCompInitializer">
+  <bean name="JavaCompInitializer" class="org.jboss.jca.standalone.hack.JavaCompInitializer">
     <depends>NamingServer</depends>
   </bean>
 

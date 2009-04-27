@@ -118,6 +118,9 @@
 
   <path id="checkstyle.lib.path.id">
     <fileset dir="${tools.dir}/checkstyle/lib"/>
+    <fileset dir="${lib.dir}/standalone">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${target.dir}">
       <include name="**/*.jar"/>
     </fileset>
@@ -162,6 +165,7 @@
     <ant dir="api" inheritRefs="true" target="jars"/>
     <ant dir="common" inheritRefs="true" target="jars"/>
     <ant dir="core" inheritRefs="true" target="jars"/>
+    <ant dir="deployers" inheritRefs="true" target="jars"/>
     <ant dir="standalone" inheritRefs="true" target="jars"/>
   </target>
   
@@ -172,6 +176,7 @@
     <ant dir="api" inheritRefs="true" target="docs"/>
     <ant dir="common" inheritRefs="true" target="docs"/>
     <ant dir="core" inheritRefs="true" target="docs"/>
+    <ant dir="deployers" inheritRefs="true" target="docs"/>
     <ant dir="standalone" inheritRefs="true" target="docs"/>
   </target>
   
@@ -180,6 +185,7 @@
        ================================= -->
   <target name="prepare-test" depends="jars">
     <ant dir="core" inheritRefs="true" target="prepare-test"/>
+    <ant dir="deployers" inheritRefs="true" target="prepare-test"/>
   </target>
   
   <!-- ================================= 
@@ -187,6 +193,7 @@
        ================================= -->
   <target name="test" depends="prepare-test">
     <ant dir="core" inheritRefs="true" target="test"/>
+    <ant dir="deployers" inheritRefs="true" target="test"/>
   </target>
   
   <!-- ================================= 
@@ -247,6 +254,8 @@
       <class location="${target.dir}/jboss-jca-common-impl.jar" />
       <class location="${target.dir}/jboss-jca-core-api.jar" />
       <class location="${target.dir}/jboss-jca-core-impl.jar" />
+      <class location="${target.dir}/jboss-jca-deployers-main.jar" />
+      <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
     </findbugs>
   </target>
@@ -304,6 +313,33 @@
       </batchtest>
     </junit>
 
+    <junit dir="deployers/src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="yes"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
+
+      <classpath>
+        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+        <pathelement location="${build.dir}/deployers/test"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      <classpath refid="cobertura.lib.path.id" />
+      
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/cobertura/tests">
+        <fileset dir="${build.dir}/deployers/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
     <cobertura-report format="html" 
                       destdir="${reports.dir}/cobertura/html" 
                       datafile="${reports.dir}/cobertura/cobertura.ser">
@@ -314,6 +350,9 @@
         <include name="**/*.java" />
       </fileset>
       <fileset dir="core/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="deployers/src/main/java">
         <include name="**/*.java" />
       </fileset>
     </cobertura-report>
@@ -328,6 +367,9 @@
         <include name="**/*.java" />
       </fileset>
       <fileset dir="core/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="deployers/src/main/java">
         <include name="**/*.java" />
       </fileset>
     </cobertura-report>

@@ -20,25 +20,50 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.standalone;
+package org.jboss.jca.standalone.hack;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.jboss.logging.Logger;
 
 /**
- * Jar filter
- * @author <a hef="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * A JavaCompInitializer that can be stopped.
+ * 
+ * @author <a href="mailto:cdewolf@redhat.com">Carlo de Wolf</a>
+ * @version $Revision: $
  */
-public class JarFilter implements FilenameFilter
+public class JavaCompInitializer extends org.jboss.naming.JavaCompInitializer
 {
+   private static Logger log = Logger.getLogger(JavaCompInitializer.class);
+   
    /**
-    * Accept
-    * @param dir The directory
-    * @param name The name
-    * @return True if accepts; otherwise false
+    * Stop
     */
-   public boolean accept(File dir, String name)
+   public void stop()
    {
-      return name.endsWith(".jar");
+      InitialContext ctx = getIniCtx();
+      if (ctx == null)
+         return;
+      
+      try
+      {
+         ctx.unbind("java:comp");
+      }
+      catch (NamingException e)
+      {
+         log.debug("Failed to unbind 'java:comp'", e);
+      }
+      
+      try
+      {
+         ctx.close();
+      }
+      catch (NamingException e)
+      {
+         log.debug("Failed to close InitialContext " + ctx, e);
+      }
+      
+      setIniCtx(null);
    }
 }

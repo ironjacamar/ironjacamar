@@ -38,12 +38,15 @@ import java.util.Properties;
 
 /**
  * The main class for JBoss JCA standalone
- * @author <a hef="mailto:jesper.pedersen">Jesper Pedersen</a>
+ * @author <a hef="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class Main
 {
    /** The server */
    private Object server;
+
+   /** The main deployer */
+   private Object mainScanner;
 
    /**
     * Default constructor
@@ -75,6 +78,7 @@ public class Main
 
          File libDirectory = new File(root, "/lib/");
          File configDirectory = new File(root, "/server/jca/conf/");
+         URL deployDirectory = new File(root, "/server/jca/deploy/").toURI().toURL();
 
          ClassLoader parent = SecurityActions.getThreadContextClassLoader();
 
@@ -118,6 +122,15 @@ public class Main
          serverMethodInit.invoke(server, props, null);
 
          serverMethodStart.invoke(server);
+
+         // Start the main scanner
+         Class mainScannerClass = Class.forName("org.jboss.jca.deployers.hack.MainScanner", true, classLoader);
+         Constructor mainScannerConstructor = mainScannerClass.getDeclaredConstructor(Object.class, URL.class);
+         mainScanner = mainScannerConstructor.newInstance(server, deployDirectory);
+
+         Method  mainScannerMethodStart = mainScannerClass.getDeclaredMethod("start"); 
+
+         mainScannerMethodStart.invoke(mainScanner);
       }
       catch (Throwable t)
       {
@@ -130,6 +143,19 @@ public class Main
     */
    private void shutdown()
    {
+      try
+      {
+         if (mainScanner != null)
+         {
+            Method mainScannerMethodStop = mainScanner.getClass().getDeclaredMethod("stop"); 
+            mainScannerMethodStop.invoke(mainScanner);
+         }
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace(System.err);
+      }
+
       try
       {
          if (server != null)

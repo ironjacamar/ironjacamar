@@ -85,6 +85,8 @@
     <mkdir dir="${target.dir}/standalone/server"/>
     <mkdir dir="${target.dir}/standalone/server/jca"/>
     <mkdir dir="${target.dir}/standalone/server/jca/conf"/>
+    <mkdir dir="${target.dir}/standalone/server/jca/conf/bootstrap"/>
+    <mkdir dir="${target.dir}/standalone/server/jca/deploy"/>
 
     <copy todir="${target.dir}/standalone/bin">
       <fileset dir="src/main/resources/">
@@ -99,7 +101,31 @@
     </copy>
 
     <copy todir="${target.dir}/standalone/server/jca/conf">
+      <fileset dir="src/main/resources">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/standalone/server/jca/conf/bootstrap">
+      <fileset dir="src/main/resources/bootstrap">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/standalone/server/jca/conf">
       <fileset dir="src/main/resources/">
+        <include name="*.properties"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/standalone/server/jca/deploy">
+      <fileset dir="${target.dir}/deploy">
+        <include name="**/*.xml"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/standalone/server/jca/deploy">
+      <fileset dir="src/main/resources/deployment">
         <include name="**/*.xml"/>
       </fileset>
     </copy>
