@@ -563,8 +563,8 @@ public class MetaDataRepositoryTestCase
       // Create and set a new MC Bootstrap
       bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
 
-      // Deploy Beans
-      bootstrap.deploy(MetaDataRepositoryTestCase.class);
+      // Deploy MDR
+      bootstrap.deploy(MetaDataRepositoryTestCase.class.getClassLoader(), "mdr-jboss-beans.xml");
    }
 
    /**
@@ -574,8 +574,8 @@ public class MetaDataRepositoryTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
-      // Undeploy Beans
-      bootstrap.undeploy(MetaDataRepositoryTestCase.class);
+      // Undeploy MDR
+      bootstrap.undeploy(MetaDataRepositoryTestCase.class.getClassLoader(), "mdr-jboss-beans.xml");
 
       // Shutdown MC
       bootstrap.shutdown();
