@@ -26,12 +26,5 @@
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
   </bean>
-  
-  <bean name="SimpleBootstrapContext" interface="javax.resource.spi.BootstrapContext" class="org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext">
-    <!-- The work manager -->
-    <property name="workManager"><inject bean="WorkManager"/></property>
 
-    <!-- The XA terminator -->
-    <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
-  </bean>
 </deployment>

@@ -114,12 +114,10 @@ public class WorkManagerTestCase
       // Create and set a new MC Bootstrap
       bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
 
-      // Deploy Naming and Transaction
+      // Deploy Naming, Transaction and WorkManager
       bootstrap.deploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
       bootstrap.deploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      
-      // Deploy Beans
-      bootstrap.deploy(WorkManagerTestCase.class);
+      bootstrap.deploy(WorkManagerTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
    }
 
    /**
@@ -129,12 +127,10 @@ public class WorkManagerTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
-      // Undeploy Transaction and Naming
+      // Undeploy WorkManager, Transaction and Naming
+      bootstrap.undeploy(WorkManagerTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
       bootstrap.undeploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
       bootstrap.undeploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-
-      // Undeploy Beans
-      bootstrap.undeploy(WorkManagerTestCase.class);
 
       // Shutdown MC
       bootstrap.shutdown();

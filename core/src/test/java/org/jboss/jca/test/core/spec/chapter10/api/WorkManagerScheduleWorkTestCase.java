@@ -31,7 +31,6 @@ import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
@@ -406,12 +405,10 @@ public class WorkManagerScheduleWorkTestCase
       // Create and set a new MC Bootstrap
       bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
 
-      // Deploy Naming and Transaction
+      // Deploy Naming, Transaction and WorkManager
       bootstrap.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
       bootstrap.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      
-      // Deploy Beans
-      bootstrap.deploy(WorkManagerScheduleWorkTestCase.class);
+      bootstrap.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
    }
 
    /**
@@ -421,12 +418,10 @@ public class WorkManagerScheduleWorkTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
-      // Undeploy Transaction and Naming
+      // Undeploy WorkManager, Transaction and Naming
+      bootstrap.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
       bootstrap.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
       bootstrap.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-
-      // Undeploy Beans
-      bootstrap.undeploy(WorkManagerScheduleWorkTestCase.class);
 
       // Shutdown MC
       bootstrap.shutdown();
