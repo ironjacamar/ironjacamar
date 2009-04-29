@@ -27,7 +27,7 @@ import java.io.FilenameFilter;
 
 /**
  * Jar filter
- * @author <a hef="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class JarFilter implements FilenameFilter
 {

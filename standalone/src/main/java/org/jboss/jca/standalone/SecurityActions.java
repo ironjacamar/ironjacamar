@@ -28,7 +28,7 @@ import java.util.Properties;
 
 /**
  * Privileged Blocks
- * @author <a hef="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 class SecurityActions
 { 

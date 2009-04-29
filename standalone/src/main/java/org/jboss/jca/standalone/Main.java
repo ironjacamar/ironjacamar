@@ -38,7 +38,7 @@ import java.util.Properties;
 
 /**
  * The main class for JBoss JCA standalone
- * @author <a hef="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class Main
 {
