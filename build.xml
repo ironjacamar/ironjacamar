@@ -186,6 +186,7 @@
   <target name="prepare-test" depends="jars">
     <ant dir="core" inheritRefs="true" target="prepare-test"/>
     <ant dir="deployers" inheritRefs="true" target="prepare-test"/>
+    <ant dir="deployers" inheritRefs="true" target="test-jars"/>
   </target>
   
   <!-- ================================= 
