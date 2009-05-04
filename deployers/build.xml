@@ -68,9 +68,12 @@
        ================================= -->
   <target name="test-jars">
     <jar destfile="${build.deployers.dir}/ra15outbound.rar"
-         manifest="src/main/resources/rar-manifest.mf"
-    	 basedir="src/test/resources/ra15outbound.rar"
-         includes="**"/>
+         manifest="src/main/resources/rar-manifest.mf">
+      <fileset dir="${build.deployers.dir}/test"
+    	  includes="org/**"
+          excludes="**/*16*"/>
+      <fileset dir="src/test/resources/ra15outbound.rar"/>
+    </jar>
   </target>
 
   <!-- ================================= 
