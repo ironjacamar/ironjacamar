@@ -45,9 +45,6 @@ public class Main
    /** The server */
    private Object server;
 
-   /** The main deployer */
-   private Object mainScanner;
-
    /**
     * Default constructor
     */
@@ -103,12 +100,14 @@ public class Main
          Field serverConfigFieldServerName = serverConfigClass.getDeclaredField("SERVER_NAME");
 
          SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
+         SecurityActions.setSystemProperty("jboss.deploy.url", deployDirectory.toURI().toURL().toString());
 
          Properties props = new Properties(SecurityActions.getSystemProperties());
          props.put((String)serverConfigFieldHomeUrl.get(null), root.toURI().toURL().toString());
          props.put((String)serverConfigFieldHomeDir.get(null), root.getAbsolutePath());
          props.put((String)serverConfigFieldServerName.get(null), "jca");
 
+         props.put("jboss.deploy.url", deployDirectory.toURI().toURL().toString());
          props.put("jboss.lib.url", libDirectory.toURI().toURL().toString());
 
          String loggingManager = props.getProperty("java.util.logging.manager");
@@ -122,15 +121,6 @@ public class Main
          serverMethodInit.invoke(server, props, null);
 
          serverMethodStart.invoke(server);
-
-         // Start the main scanner
-         Class mainScannerClass = Class.forName("org.jboss.jca.deployers.hack.MainScanner", true, classLoader);
-         Constructor mainScannerConstructor = mainScannerClass.getDeclaredConstructor(Object.class, URL.class);
-         mainScanner = mainScannerConstructor.newInstance(server, deployDirectory);
-
-         Method  mainScannerMethodStart = mainScannerClass.getDeclaredMethod("start"); 
-
-         mainScannerMethodStart.invoke(mainScanner);
       }
       catch (Throwable t)
       {
@@ -143,19 +133,6 @@ public class Main
     */
    private void shutdown()
    {
-      try
-      {
-         if (mainScanner != null)
-         {
-            Method mainScannerMethodStop = mainScanner.getClass().getDeclaredMethod("stop"); 
-            mainScannerMethodStop.invoke(mainScanner);
-         }
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace(System.err);
-      }
-
       try
       {
          if (server != null)

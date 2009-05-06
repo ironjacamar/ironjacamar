@@ -7,5 +7,6 @@
   <url>bootstrap/classloader.xml</url>
   <url>bootstrap/aop.xml</url>
   <url>bootstrap/deployers.xml</url>
+  <url>bootstrap/hdscanner.xml</url>
 
 </bootstrap> 

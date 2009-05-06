@@ -25,6 +25,7 @@ package org.jboss.jca.deployers.hack;
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -33,15 +34,11 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.jboss.bootstrap.spi.Server;
-import org.jboss.bootstrap.spi.microcontainer.MCServer;
-import org.jboss.dependency.spi.ControllerState;
 import org.jboss.deployers.client.spi.Deployment;
 import org.jboss.deployers.client.spi.main.MainDeployer;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
-import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
@@ -66,28 +63,52 @@ public class MainScanner
 
    /**
     * Constructor
-    * @param server The server
-    * @param deployDirectory The deploy directory that needs to be scanned
     */
-   public MainScanner(Object server, URL deployDirectory)
+   public MainScanner()
    {
-      if (server == null)
-         throw new IllegalArgumentException("Server is null");
+   }
 
-      if (deployDirectory == null)
-         throw new IllegalArgumentException("DeployDirectory is null");
+   /**
+    * Set the main deployer instance
+    * @param md The instance
+    */
+   public void setMainDeployer(MainDeployer md)
+   {
+      mainDeployer = md;
+   }
 
-      if (!(server instanceof MCServer))
-         throw new IllegalArgumentException("Server is not a MCServer instance");
+   /**
+    * Set the main deployer instance
+    * @param md The instance
+    */
+   public MainDeployer getMainDeployer()
+   {
+      return mainDeployer;
+   }
 
-      MCServer mcServer = (MCServer)server;
-      Kernel kernel = mcServer.getKernel();
+   /**
+    * Set the deploy directory
+    * @param deploy The instance
+    */
+   public void setDeployDirectory(String deploy)
+   {
+      try
+      {
+         deployDirectory = new URL(deploy);
+      }
+      catch (MalformedURLException mue)
+      {
+         // Ignore for now
+      }
+   }
 
-      this.mainDeployer = 
-         (MainDeployer)kernel.getController().getContext("MainDeployer", ControllerState.INSTALLED).getTarget();
-      this.deployDirectory = deployDirectory;
-
-      log.debug("MainScanner created.");
+   /**
+    * Set the deploy directory
+    * @param deploy The instance
+    */
+   public String getDeployDirectory()
+   {
+      return deployDirectory.toString();
    }
 
    /**
@@ -97,6 +118,12 @@ public class MainScanner
    public void start() throws Exception 
    {
       log.debug("MainScanner starting.");
+
+      if (mainDeployer == null)
+         throw new IllegalArgumentException("MainDeployer is null");
+
+      if (deployDirectory == null)
+         throw new IllegalArgumentException("DeployDirectory is null");
 
       ClassLoader tccl = Thread.currentThread().getContextClassLoader();
 
@@ -116,8 +143,6 @@ public class MainScanner
 
       deployDirectory(deployDirectory);
       
-      mainDeployer.checkComplete();
-
       log.debug("MainScanner started.");
    }
 
