@@ -5,12 +5,13 @@
 -->
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+  <classloader><inject bean="naming-classloader:0.0.0"/></classloader>
+
+  <classloader name="naming-classloader" xmlns="urn:jboss:classloader:1.0" export-all="NON_EMPTY" import-all="true">
+    <root>${jboss.lib.url}jnpserver.jar</root>
+  </classloader>
+
   <!-- Naming -->
   <bean name="NamingServer" class="org.jnp.server.SingletonNamingServer"/>
-
-  <!-- java:comp -->
-  <bean name="JavaCompInitializer" class="org.jboss.jca.standalone.hack.JavaCompInitializer">
-    <depends>NamingServer</depends>
-  </bean>
 
 </deployment>

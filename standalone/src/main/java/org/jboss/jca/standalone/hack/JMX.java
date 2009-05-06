@@ -25,8 +25,6 @@ package org.jboss.jca.standalone.hack;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 
-import org.jboss.logging.Logger;
-
 /**
  * JMX.
  * 
@@ -38,8 +36,6 @@ public class JMX
    // --------------------------------------------------------------------------------||
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
-
-   private static Logger log = Logger.getLogger(JMX.class);
 
    private MBeanServer mbeanServer;
 

@@ -49,17 +49,35 @@
        Target: jars 
        ================================= -->
   <target name="jars" depends="compile">
+    <mkdir dir="${build.deployers.dir}/jars" />
+
+    <!-- Main -->
+    <mkdir dir="${build.deployers.dir}/jars/main" />
+
+    <copy todir="${build.deployers.dir}/jars/main">
+      <fileset dir="${build.deployers.dir}/impl"
+               includes="**/hack/**"/>
+    </copy>
+
     <jar destfile="${target.dir}/jboss-jca-deployers-main.jar"
          manifest="src/main/resources/main-manifest.mf"
-         basedir="${build.deployers.dir}/impl"
-         includes="**/hack/**"
-         excludes="**/*.java"/>
+         basedir="${build.deployers.dir}/jars/main"/>
+
+    <!-- RAR -->
+    <mkdir dir="${build.deployers.dir}/jars/rar" />
+    <mkdir dir="${build.deployers.dir}/jars/rar/META-INF" />
+
+    <copy todir="${build.deployers.dir}/jars/rar">
+      <fileset dir="${build.deployers.dir}/impl"
+               includes="**/rar/**"/>
+    </copy>
+
+    <copy file="src/main/resources/jca-deployers-jboss-beans.xml" 
+          tofile="${build.deployers.dir}/jars/rar/META-INF/jboss-beans.xml"/>
 
     <jar destfile="${target.dir}/jboss-jca-deployers-rar.jar"
          manifest="src/main/resources/rar-manifest.mf"
-         basedir="${build.deployers.dir}/impl"
-         includes="**/rar/**"
-         excludes="**/*.java"/>
+         basedir="${build.deployers.dir}/jars/rar"/>
   </target>
 
 
@@ -188,6 +206,8 @@
     <copy todir="${build.deployers.dir}/test">
       <fileset dir="src/test/resources"/>
     </copy>
+
+    <ant target="test-jars"/>
 
   </target>
 

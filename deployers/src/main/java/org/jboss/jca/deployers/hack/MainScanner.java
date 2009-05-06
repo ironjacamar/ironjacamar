@@ -28,6 +28,7 @@ import java.net.JarURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -35,6 +36,7 @@ import java.util.Properties;
 import org.jboss.bootstrap.spi.Server;
 import org.jboss.bootstrap.spi.microcontainer.MCServer;
 import org.jboss.dependency.spi.ControllerState;
+import org.jboss.deployers.client.spi.Deployment;
 import org.jboss.deployers.client.spi.main.MainDeployer;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
@@ -111,14 +113,10 @@ public class MainScanner
          URL jarFileURL = connection.getJarFileURL();
          deploy(jarFileURL);
       }
-      
-      VirtualFile deployDir = VFS.getRoot(deployDirectory);
-      List<VirtualFile> candidates = deployDir.getChildren();
 
-      for (VirtualFile candidate : candidates)
-      {
-         deploy(candidate.toURL());
-      }
+      deployDirectory(deployDirectory);
+      
+      mainDeployer.checkComplete();
 
       log.debug("MainScanner started.");
    }
@@ -147,8 +145,26 @@ public class MainScanner
       VirtualFile root = VFS.getRoot(url);
       VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(root);
       mainDeployer.deploy(deployment);
-      mainDeployer.checkComplete(deployment);
 
       log.info("Deployed: " + url);
+   }
+
+   /**
+    * Deploy directory
+    * @param url The URL
+    * @exception DeploymentException Thrown if a deploy error occurs
+    * @exception IOException Thrown if an I/O error occurs
+    */
+   protected void deployDirectory(URL url) throws DeploymentException, IOException
+   {
+      List<Deployment> deployments = new ArrayList<Deployment>();
+      VirtualFile deployDir = VFS.getRoot(url);
+      for(VirtualFile child : deployDir.getChildren())
+      {
+         VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(child);
+         log.info("Deploying " + deployment.getName());
+         deployments.add(deployment);
+      }
+      mainDeployer.deploy(deployments.toArray(new Deployment[0]));
    }
 }

@@ -91,10 +91,6 @@
       <property name="mgtObjectCreator"><inject bean="ManagedObjectCreator"/></property>
    </bean>
 
-   <bean name="BeanDeployer" class="org.jboss.deployers.vfs.deployer.kernel.BeanDeployer">
-      <property name="suffix">jboss-beans.xml</property>
-   </bean>
-
    <!-- A declared structure descriptor deployer -->
    <bean name="DeclaredStructure" class="org.jboss.deployers.vfs.plugins.structure.explicit.DeclaredStructure"/>
 
@@ -165,6 +161,15 @@
    <bean name="BeansDeploymentAopMetaDataDeployer" class="org.jboss.aop.asintegration.jboss5.BeansDeploymentAopMetaDataDeployer">
       <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
       <property name="aspectManager"><inject bean="AspectManager" property="aspectManager"/></property>
+   </bean>
+
+   <!-- POJO Deployment -->
+   <bean name="BeanDeployer" class="org.jboss.deployers.vfs.deployer.kernel.BeanDeployer">
+      <property name="suffix">jboss-beans.xml</property>
+   </bean>
+   <bean name="KernelDeploymentDeployer" class="org.jboss.deployers.vfs.deployer.kernel.KernelDeploymentDeployer"/>
+   <bean name="BeanMetaDataDeployer" class="org.jboss.deployers.vfs.deployer.kernel.BeanMetaDataDeployer">
+      <constructor><parameter class="org.jboss.kernel.Kernel"><inject bean="jboss.kernel:service=Kernel"/></parameter></constructor>
    </bean>
 
    <!-- Classloading -->
