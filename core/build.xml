@@ -59,8 +59,8 @@
          basedir="${build.core.dir}/impl"
          excludes="**/*.java, **/api/**"/>
 
-    <mkdir dir="${target.dir}/deploy"/>
-    <copy todir="${target.dir}/deploy">
+    <mkdir dir="${target.dir}/bootstrap"/>
+    <copy todir="${target.dir}/bootstrap">
       <fileset dir="src/main/resources/deployment">
         <include name="**/*.xml"/>
       </fileset>

@@ -112,15 +112,15 @@
       </fileset>
     </copy>
 
-    <copy todir="${target.dir}/standalone/server/jca/conf">
-      <fileset dir="src/main/resources/">
-        <include name="*.properties"/>
+    <copy todir="${target.dir}/standalone/server/jca/conf/bootstrap">
+      <fileset dir="${target.dir}/bootstrap">
+        <include name="**/*.xml"/>
       </fileset>
     </copy>
 
-    <copy todir="${target.dir}/standalone/server/jca/deploy">
-      <fileset dir="${target.dir}/deploy">
-        <include name="**/*.xml"/>
+    <copy todir="${target.dir}/standalone/server/jca/conf">
+      <fileset dir="src/main/resources/">
+        <include name="*.properties"/>
       </fileset>
     </copy>
 
