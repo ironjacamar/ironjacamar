@@ -33,14 +33,14 @@ import javax.transaction.xa.XAResource;
 import org.jboss.logging.Logger;
 
 /**
- * Test15ResourceAdapter
+ * BaseResourceAdapter
  *
  * @author  <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>.
  * @version $Revision: $
  */
-public class Test15ResourceAdapter implements ResourceAdapter
+public class BaseResourceAdapter implements ResourceAdapter
 {
-   private static Logger log = Logger.getLogger(Test15ResourceAdapter.class);
+   private static Logger log = Logger.getLogger(BaseResourceAdapter.class);
    
    /**
     * This is called during the activation of a message endpoint. 

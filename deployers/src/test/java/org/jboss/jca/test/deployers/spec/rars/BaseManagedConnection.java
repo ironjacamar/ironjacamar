@@ -40,13 +40,13 @@ import javax.transaction.xa.XAResource;
 import org.jboss.logging.Logger;
 
 /**
- * Test15ManagedConnection
+ * BaseManagedConnection
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
-public class Test15ManagedConnection implements ManagedConnection
+public class BaseManagedConnection implements ManagedConnection
 {
-   private static Logger log = Logger.getLogger(Test15ManagedConnection.class);
+   private static Logger log = Logger.getLogger(BaseManagedConnection.class);
 
    /** Adds a connection event listener to the ManagedConnection 
     *  instance.

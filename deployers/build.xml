@@ -85,12 +85,21 @@
        Target: test-jars 
        ================================= -->
   <target name="test-jars">
-    <jar destfile="${build.deployers.dir}/ra15outbound.rar"
+    <jar destfile="${build.deployers.dir}/ra15out.rar"
          manifest="src/main/resources/rar-manifest.mf">
       <fileset dir="${build.deployers.dir}/test"
-    	  includes="org/**"
-          excludes="**/*16*"/>
-      <fileset dir="src/test/resources/ra15outbound.rar"/>
+    	  includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+      <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/ra15out/*.class"/>
+      <fileset dir="src/test/resources/ra15out.rar"/>
+    </jar>
+    <jar destfile="${build.deployers.dir}/ra15inout.rar"
+         manifest="src/main/resources/rar-manifest.mf">
+      <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+      <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/ra15inout/*.class"/>
+      <fileset dir="src/test/resources/ra15inout.rar"/>
     </jar>
   </target>
 

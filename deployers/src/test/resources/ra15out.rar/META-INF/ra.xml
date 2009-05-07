@@ -13,14 +13,14 @@
    <resourceadapter-version>0.1</resourceadapter-version>
 
    <resourceadapter>
-      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.Test15ResourceAdapter</resourceadapter-class>
+      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra15out.TestResourceAdapter</resourceadapter-class>
 
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.Test15ManagedConnectionFactory</managedconnectionfactory-class>
+            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra15out.TestManagedConnectionFactory</managedconnectionfactory-class>
 
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
-            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.Test15ManagedConnection</connectionfactory-impl-class>
+            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra15out.TestManagedConnection</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
             <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.TestConnection</connection-impl-class>
          </connection-definition>

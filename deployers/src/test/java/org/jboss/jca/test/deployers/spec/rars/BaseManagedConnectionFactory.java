@@ -39,16 +39,16 @@ import javax.security.auth.Subject;
 import org.jboss.logging.Logger;
 
 /**
- * Test15ManagedConnectionFactory
+ * BaseManagedConnectionFactory
  *
  * @author  <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>.
  * @version $Revision: $
  */
-public class Test15ManagedConnectionFactory implements
+public class BaseManagedConnectionFactory implements
       ManagedConnectionFactory
 {
    private static final long serialVersionUID = 1L;
-   private static Logger log = Logger.getLogger(Test15ManagedConnectionFactory.class);
+   private static Logger log = Logger.getLogger(BaseManagedConnectionFactory.class);
 
    /**
     * Creates a Connection Factory instance. 
