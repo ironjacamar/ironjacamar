@@ -78,8 +78,8 @@ public class MainScanner
    }
 
    /**
-    * Set the main deployer instance
-    * @param md The instance
+    * Get the main deployer instance
+    * @return The instance
     */
    public MainDeployer getMainDeployer()
    {
@@ -103,8 +103,8 @@ public class MainScanner
    }
 
    /**
-    * Set the deploy directory
-    * @param deploy The instance
+    * Get the deploy directory
+    * @return The directory
     */
    public String getDeployDirectory()
    {
@@ -184,7 +184,7 @@ public class MainScanner
    {
       List<Deployment> deployments = new ArrayList<Deployment>();
       VirtualFile deployDir = VFS.getRoot(url);
-      for(VirtualFile child : deployDir.getChildren())
+      for (VirtualFile child : deployDir.getChildren())
       {
          VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(child);
          log.info("Deploying " + deployment.getName());
