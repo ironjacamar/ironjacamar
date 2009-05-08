@@ -69,7 +69,7 @@
   <property name="version.javassist" value="3.10.0.GA"/>
   <property name="version.jaxb.api" value="2.0"/>
   <property name="version.jaxb.impl" value="2.1"/>
-  <property name="version.jboss.aop" value="2.1.0.CR3"/>
+  <property name="version.jboss.aop" value="2.1.1.GA"/>
   <property name="version.jboss.bootstrap" value="1.0.0-Beta-3"/>
   <property name="version.jboss.classloading" value="2.2.0.M4"/>
   <property name="version.jboss.common" value="2.2.13.GA"/>
