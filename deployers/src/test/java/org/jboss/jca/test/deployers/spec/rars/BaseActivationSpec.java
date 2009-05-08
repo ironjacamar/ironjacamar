@@ -45,9 +45,8 @@ public class BaseActivationSpec implements ActivationSpec
     * 
     * @throws InvalidPropertyException indicates invalid
     *         configuration property settings.
-    *         
-    * @deprecated As of Java EE Connectors 1.6 specification
     */
+   @SuppressWarnings(value={"deprecation"})
    public void validate() throws InvalidPropertyException
    {
       log.debug("call validate");

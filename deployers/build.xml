@@ -87,19 +87,35 @@
   <target name="test-jars">
     <jar destfile="${build.deployers.dir}/ra15out.rar"
          manifest="src/main/resources/rar-manifest.mf">
-      <fileset dir="${build.deployers.dir}/test"
-    	  includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-      <fileset dir="${build.deployers.dir}/test"
+       <fileset dir="${build.deployers.dir}/test"
+    	    includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+       <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra15out/*.class"/>
-      <fileset dir="src/test/resources/ra15out.rar"/>
+       <fileset dir="src/test/resources/ra15out.rar"/>
     </jar>
     <jar destfile="${build.deployers.dir}/ra15inout.rar"
          manifest="src/main/resources/rar-manifest.mf">
-      <fileset dir="${build.deployers.dir}/test"
+       <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-      <fileset dir="${build.deployers.dir}/test"
+       <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra15inout/*.class"/>
-      <fileset dir="src/test/resources/ra15inout.rar"/>
+       <fileset dir="src/test/resources/ra15inout.rar"/>
+    </jar>
+    <jar destfile="${build.deployers.dir}/ra15outjbossra.rar"
+         manifest="src/main/resources/rar-manifest.mf">
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/ra15outjbossra/*.class"/>
+       <fileset dir="src/test/resources/ra15outjbossra.rar"/>
+    </jar>
+    <jar destfile="${build.deployers.dir}/ra15inoutjbossra.rar"
+         manifest="src/main/resources/rar-manifest.mf">
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/ra15inoutjbossra/*.class"/>
+       <fileset dir="src/test/resources/ra15inoutjbossra.rar"/>
     </jar>
   </target>
 
