@@ -141,6 +141,13 @@
     <!-- StringLiteralEquality -->
     <module name="StringLiteralEquality"/>
 
+    <!-- Annotations -->
+    <module name="AnnotationUseStyle">
+      <property name="elementStyle" value="ignore"/>
+      <property name="trailingArrayComma" value="never"/>
+      <property name="closingParens" value="ignore"/>
+    </module>
+
   </module>
 
   <!-- Enforce License Header -->

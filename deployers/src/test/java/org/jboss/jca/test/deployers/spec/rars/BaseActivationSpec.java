@@ -46,7 +46,7 @@ public class BaseActivationSpec implements ActivationSpec
     * @throws InvalidPropertyException indicates invalid
     *         configuration property settings.
     */
-   @SuppressWarnings(value={"deprecation"})
+   @SuppressWarnings(value = { "deprecation" })
    public void validate() throws InvalidPropertyException
    {
       log.debug("call validate");
