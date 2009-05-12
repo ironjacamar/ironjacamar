@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    MetaData configuration
+-->
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <!-- The schema location to JBossXB binding class mappings. We specify the dtd/xsd name
+       of the schema as the location to work with legacy dtd as well as namespace based
+       documents.
+    -->
+  <bean name="SchemaResolverConfig" class="org.jboss.xb.binding.sunday.unmarshalling.SchemaResolverConfig">
+    
+    <!-- schemaLocation to JBossXBuilder binding classes -->
+    <property name="bindingClassesByLocations">
+      <map keyClass="java.lang.String" valueClass="java.lang.String">
+        <entry>
+          <key>connector_1_0.dtd</key>
+          <value>org.jboss.metadata.rar.spec.JCA15MetaData</value>
+        </entry>
+        <entry>
+          <key>connector_1_5.dtd</key>
+               <value>org.jboss.metadata.rar.spec.JCA15MetaData</value>
+        </entry>
+        <entry>
+          <key>connector_1_5.xsd</key>
+          <value>org.jboss.metadata.rar.spec.JCA15MetaData</value>
+        </entry>
+        <entry>
+          <key>connector_1_6.dtd</key>
+          <value>org.jboss.metadata.rar.spec.JCA16MetaData</value>
+        </entry>
+        <entry>
+          <key>connector_1_6.xsd</key>
+          <value>org.jboss.metadata.rar.spec.JCA16MetaData</value>
+        </entry>
+        <entry>
+          <key>jboss-ra_1_0.xsd</key>
+          <value>org.jboss.metadata.rar.jboss.JBossRAMetaData</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+  
+</deployment>

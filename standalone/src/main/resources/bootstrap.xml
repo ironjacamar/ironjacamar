@@ -9,6 +9,7 @@
   <url>bootstrap/deployers.xml</url>
   <url>bootstrap/naming.xml</url>
   <url>bootstrap/transaction.xml</url>
+  <url>bootstrap/metadata.xml</url>
   <url>bootstrap/jca.xml</url>
   <url>bootstrap/hdscanner.xml</url>
 
