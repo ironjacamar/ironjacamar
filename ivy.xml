@@ -32,21 +32,24 @@
   <configurations>
     <conf name="standalone" transitive="false"/>
     <conf name="test" extends="standalone" transitive="false"/>
+    <conf name="sjc" transitive="false"/>
   </configurations>
 
   <dependencies>
-    <dependency org="apache-log4j" name="log4j" rev="${version.apache-log4j}" conf="standalone->default"/>
+    <dependency org="apache-log4j" name="log4j" rev="${version.apache-log4j}" conf="standalone->default;sjc->*"/>
     <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="*"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="standalone->default"/>
-    <dependency org="javax.xml" name="jaxb-api" rev="${version.jaxb.api}" conf="standalone->default"/>
-    <dependency org="javax.xml" name="jaxb-impl" rev="${version.jaxb.impl}" conf="standalone->default"/>
-    <dependency org="jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}" conf="standalone->default"/>
-    <dependency org="jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="standalone->default"/>
-    <dependency org="jboss.jbossts" name="jbossts-common" rev="${version.jboss.ts}" conf="standalone->default"/>
+    <dependency org="javax.xml.bind" name="jaxb-api" rev="${version.jaxb.api}" conf="standalone->default;sjc->*"/>
+    <dependency org="javax.xml" name="jaxb-impl" rev="${version.jaxb.impl}" conf="standalone->default;sjc->*"/>
+    <dependency org="javax.activation" name="activation" rev="${version.activation}" conf="standalone->default;sjc->*"/>
+    <dependency org="com.sun.xml.bind" name="jaxb-xjc" rev="${version.jaxb.xjc}" conf="standalone->default;sjc->*"/>
+    <dependency org="jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
+    <dependency org="jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
+    <dependency org="jboss.jbossts" name="jbossts-common" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test->default"/>
     <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
     <dependency org="org.easymock" name="easymockclassextension" rev="${version.easymock}" conf="test->default"/>
-    <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="standalone->default"/>
+    <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jboss-vfs" rev="${version.jboss.vfs}" conf="standalone->default"/>
@@ -70,22 +73,23 @@
     <dependency org="org.jboss.deployers" name="jboss-deployers-vfs" rev="${version.jboss.deployers}" conf="standalone->default"/>
     <dependency org="org.jboss.deployers" name="jboss-deployers-vfs-spi" rev="${version.jboss.deployers}" conf="standalone->default"/>
     <dependency org="org.jboss.ejb3" name="jboss-ejb3-test" rev="${version.jboss.ejb3.test}" conf="test->default"/>
-    <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}" conf="standalone->default"/>
-    <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="standalone->default"/>
-    <dependency org="org.jboss.logbridge" name="jboss-logbridge" rev="${version.jboss.logbridge}" conf="standalone->default"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-jdk" rev="${version.jboss.logging}" conf="standalone->default"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging.log4j}" conf="standalone->default"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-spi" rev="${version.jboss.logging}" conf="standalone->default"/>
-    <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="standalone->default"/>
+    <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.logbridge" name="jboss-logbridge" rev="${version.jboss.logbridge}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-jdk" rev="${version.jboss.logging}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging.log4j}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-spi" rev="${version.jboss.logging}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.man" name="jboss-managed" rev="${version.jboss.managed}" conf="standalone->default"/>
     <dependency org="org.jboss.man" name="jboss-metatype" rev="${version.jboss.managed}" conf="standalone->default"/>
     <dependency org="org.jboss.metadata" name="jboss-metadata" rev="${version.jboss.metadata}" conf="standalone->default"/>
     <dependency org="org.jboss.microcontainer" name="jboss-aop-mc-int" rev="${version.jboss.mc.aop-int}" conf="standalone->default"/>
     <dependency org="org.jboss.microcontainer" name="jboss-dependency" rev="${version.jboss.mc.dependency}" conf="standalone->default"/>
     <dependency org="org.jboss.microcontainer" name="jboss-kernel" rev="${version.jboss.mc.kernel}" conf="standalone->default"/>
-    <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="standalone->default"/>
+    <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="standalone->default;sjc->*"/>
+    <dependency org="stax" name="stax-api" rev="${version.stax}" conf="standalone->default;sjc->*"/>
     <dependency org="trove" name="trove" rev="${version.trove}" conf="standalone->default"/>
-    <dependency org="xerces" name="xercesImpl" rev="${version.apache-xerces}" conf="standalone->default"/>
+    <dependency org="xerces" name="xercesImpl" rev="${version.apache-xerces}" conf="standalone->default;sjc->*"/>
   </dependencies>
 
 </ivy-module>

@@ -65,10 +65,12 @@
   <property name="version.apache-log4j" value="1.2.14"/>
   <property name="version.apache-logging" value="1.1.0.jboss"/>
   <property name="version.apache-xerces" value="2.9.1"/>
+  <property name="version.activation" value="1.1.1"/>
   <property name="version.easymock" value="2.4"/>
   <property name="version.javassist" value="3.10.0.GA"/>
-  <property name="version.jaxb.api" value="2.0"/>
+  <property name="version.jaxb.api" value="2.1"/>
   <property name="version.jaxb.impl" value="2.1"/>
+  <property name="version.jaxb.xjc" value="2.1.6"/>
   <property name="version.jboss.aop" value="2.1.1.GA"/>
   <property name="version.jboss.bootstrap" value="1.0.0-Beta-3"/>
   <property name="version.jboss.classloading" value="2.2.0.M4"/>
@@ -92,12 +94,22 @@
   <property name="version.jboss.vfs" value="2.2.0.M4"/>
   <property name="version.jboss.xb" value="2.0.1.GA"/>
   <property name="version.junit" value="4.5"/>
+  <property name="version.stax" value="1.0.1"/>
   <property name="version.transaction.api" value="1.0.1.GA"/>
   <property name="version.trove" value="2.1.1"/>
 
   <!-- ================================= 
        Paths              
        ================================= -->
+  <path id="sjc.lib.path.id">
+    <fileset dir="${lib.dir}/sjc">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${target.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
   <path id="standalone.lib.path.id">
     <fileset dir="${lib.dir}/standalone">
       <include name="**/*.jar"/>
@@ -166,6 +178,7 @@
     <ant dir="common" inheritRefs="true" target="jars"/>
     <ant dir="core" inheritRefs="true" target="jars"/>
     <ant dir="deployers" inheritRefs="true" target="jars"/>
+    <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="standalone" inheritRefs="true" target="jars"/>
   </target>
   
@@ -177,6 +190,7 @@
     <ant dir="common" inheritRefs="true" target="docs"/>
     <ant dir="core" inheritRefs="true" target="docs"/>
     <ant dir="deployers" inheritRefs="true" target="docs"/>
+    <ant dir="sjc" inheritRefs="true" target="docs"/>
     <ant dir="standalone" inheritRefs="true" target="docs"/>
   </target>
   
@@ -201,6 +215,13 @@
        ================================= -->
   <target name="one-test" depends="jars">
     <ant dir="core" inheritRefs="true" target="one-test"/>
+  </target>
+
+  <!-- ================================= 
+       Target: sjc
+       ================================= -->
+  <target name="sjc" depends="jars">
+    <ant dir="sjc" inheritRefs="true" target="sjc"/>
   </target>
 
   <!-- ================================= 
@@ -256,6 +277,7 @@
       <class location="${target.dir}/jboss-jca-core-impl.jar" />
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
+      <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
     </findbugs>
   </target>

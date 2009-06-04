@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Boot XML Schema
+-->
+<xsd:schema xmlns:boot="http://www.jboss.org/jca" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+   <xsd:complexType name="beanType">
+     <xsd:sequence>
+       <xsd:element name="property" type="propertyType" maxOccurs="unbounded" minOccurs="0"/>
+     </xsd:sequence>
+     <xsd:attribute name="name" type="xsd:token" use="required"/>
+     <xsd:attribute name="interface" type="xsd:token"/>
+     <xsd:attribute name="class" type="xsd:token" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="propertyType" mixed="true">
+     <xsd:sequence>
+       <xsd:element name="inject" type="injectType" maxOccurs="1" minOccurs="0"/>
+     </xsd:sequence>
+     <xsd:attribute name="name" type="xsd:token" use="required"/>
+     <xsd:attribute name="class" type="xsd:token"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="injectType">
+     <xsd:simpleContent>
+       <xsd:extension base="xsd:token">
+         <xsd:attribute name="bean" type="xsd:token" use="required"/>
+         <xsd:attribute name="property" type="xsd:token"/>
+       </xsd:extension>
+     </xsd:simpleContent>
+   </xsd:complexType>
+
+  <xsd:element name="deployment">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="bean" type="beanType" maxOccurs="unbounded" minOccurs="0"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>
