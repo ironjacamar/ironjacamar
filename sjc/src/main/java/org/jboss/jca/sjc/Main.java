@@ -27,10 +27,10 @@ import org.jboss.jca.sjc.boot.InjectType;
 import org.jboss.jca.sjc.boot.PropertyType;
 import org.jboss.jca.sjc.deployers.Deployer;
 
-import java.lang.reflect.Method;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -362,10 +362,21 @@ public class Main
 
          if (it.getProperty() != null)
          {
-            String getMethodName = "get" + it.getProperty().substring(0, 1).toUpperCase() + it.getProperty().substring(1);
-            Method getMethod = injectionObject.getClass().getMethod(getMethodName, (Class[])null);
+            Method method = null;
+            try
+            {
+               String getMethodName = "get" + 
+                  it.getProperty().substring(0, 1).toUpperCase() + it.getProperty().substring(1);
+               method = injectionObject.getClass().getMethod(getMethodName, (Class[])null);
+            }
+            catch (NoSuchMethodException nsme)
+            {
+               String isMethodName = "is" + 
+                  it.getProperty().substring(0, 1).toUpperCase() + it.getProperty().substring(1);
+               method = injectionObject.getClass().getMethod(isMethodName, (Class[])null);
+            }
 
-            parameterValue = getMethod.invoke(injectionObject, (Object[])null);
+            parameterValue = method.invoke(injectionObject, (Object[])null);
          }
          else
          {
@@ -504,6 +515,7 @@ public class Main
             }
             catch (InterruptedException ignore)
             {
+               //
             }
          }
       }
