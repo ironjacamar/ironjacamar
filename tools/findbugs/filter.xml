@@ -34,4 +34,14 @@
     <Bug code="Nm"/>
   </Match>
 
+  <!--  org.jboss.jca.sjc filter -->
+  <Match>
+    <Class name="org.jboss.jca.sjc.Main$LifeThread"/>
+    <Bug code="UW"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.sjc.Main$LifeThread"/>
+    <Bug code="Wa"/>
+  </Match>
+
 </FindBugsFilter>
