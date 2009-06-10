@@ -24,7 +24,7 @@
    <appender name="FILE" class="org.jboss.logging.appender.DailyRollingFileAppender">
       <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
       <param name="File" value="${jboss.jca.home}/log/server.log"/>
-      <param name="Append" value="true"/>
+      <param name="Append" value="false"/>
       <!-- In AS 5.0.x the server log threshold was set by a system
            property. In 5.1 and later we are instead using the system
            property to set the priority on the root logger (see <root/> below)
@@ -206,11 +206,20 @@
       <priority value="INFO"/>
    </category>
    
-   <!-- Limit JBoss categories
+   <!-- Limit JBoss JCA categories -->
+   <category name="org.jboss.jca">
+      <priority value="DEBUG"/>
+   </category>
+
+   <!-- Limit JBoss categories -->
    <category name="org.jboss">
       <priority value="INFO"/>
    </category>
-   -->
+
+   <!-- Limit Arjuna -->
+   <category name="com.arjuna">
+      <priority value="INFO"/>
+   </category>
 
    <!-- Limit the JSR77 categories -->
    <category name="org.jboss.management">

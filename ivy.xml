@@ -50,10 +50,10 @@
     <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
     <dependency org="org.easymock" name="easymockclassextension" rev="${version.easymock}" conf="test->default"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="standalone->default;sjc->*"/>
-    <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="standalone->default"/>
-    <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="standalone->default"/>
+    <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-vfs" rev="${version.jboss.vfs}" conf="standalone->default"/>
-    <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="standalone->default"/>
+    <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.aop" name="jboss-aop" rev="${version.jboss.aop}" conf="standalone->default"/>
     <dependency org="org.jboss.aop" name="jboss-aop-asintegration-core" rev="${version.jboss.aop}" conf="standalone->default"/>
     <dependency org="org.jboss.aop" name="jboss-aop-asintegration-jmx" rev="${version.jboss.aop}" conf="standalone->default"/>
@@ -82,7 +82,7 @@
     <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.man" name="jboss-managed" rev="${version.jboss.managed}" conf="standalone->default"/>
     <dependency org="org.jboss.man" name="jboss-metatype" rev="${version.jboss.managed}" conf="standalone->default"/>
-    <dependency org="org.jboss.metadata" name="jboss-metadata" rev="${version.jboss.metadata}" conf="standalone->default"/>
+    <dependency org="org.jboss.metadata" name="jboss-metadata" rev="${version.jboss.metadata}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.microcontainer" name="jboss-aop-mc-int" rev="${version.jboss.mc.aop-int}" conf="standalone->default"/>
     <dependency org="org.jboss.microcontainer" name="jboss-dependency" rev="${version.jboss.mc.dependency}" conf="standalone->default"/>
     <dependency org="org.jboss.microcontainer" name="jboss-kernel" rev="${version.jboss.mc.kernel}" conf="standalone->default"/>

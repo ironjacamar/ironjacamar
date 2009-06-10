@@ -59,6 +59,9 @@ public class Main
    /** Services */
    private static Map<String, Object> services = new HashMap<String, Object>();
 
+   /** Logging */
+   private static Object logging;
+
    /**
     * Default constructor
     */
@@ -102,6 +105,8 @@ public class Main
          URLClassLoader classLoader = new URLClassLoader(urls, parent);
          SecurityActions.setThreadContextClassLoader(classLoader);
 
+         initLogging(classLoader);
+
          SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
          SecurityActions.setSystemProperty("jboss.deploy.url", deployDirectory.toURI().toURL().toString());
          SecurityActions.setSystemProperty("jboss.lib.url", libDirectory.toURI().toURL().toString());
@@ -125,7 +130,7 @@ public class Main
                }
                else
                {
-                  System.out.println("Warning: A service with name " + bt.getName() + " already exists");
+                  warn("Warning: A service with name " + bt.getName() + " already exists");
                }
             }
          }
@@ -169,7 +174,7 @@ public class Main
          }
       }
 
-      System.out.println("Shutdown complete");
+      info("Shutdown complete");
    }
 
    /**
@@ -264,12 +269,13 @@ public class Main
       {
          try
          {
-            Method deployMethod = clz.getMethod("deploy", new Class[] {File.class});
+            Method deployMethod = clz.getMethod("deploy", new Class[] {File.class, ClassLoader.class});
 
             for (File f : deployDirectory.listFiles())
             {
+               Object[] parameters = new Object[] {f, cl};
                org.jboss.jca.sjc.deployers.Deployment deployment = 
-                  (org.jboss.jca.sjc.deployers.Deployment)deployMethod.invoke(instance, new Object[] {f});
+                  (org.jboss.jca.sjc.deployers.Deployment)deployMethod.invoke(instance, parameters);
                if (deployment != null)
                {
                   if (services.get(deployment.getName()) == null)
@@ -279,14 +285,14 @@ public class Main
                   }
                   else
                   {
-                     System.out.println("Warning: A deployment with name " + deployment.getName() + " already exists");
+                     warn("Warning: A deployment with name " + deployment.getName() + " already exists");
                   }
                }
             }
          }
          catch (Exception e)
          {
-            e.printStackTrace(System.err);
+            error("Exception during createBean()", e);
          }
       }
 
@@ -439,6 +445,104 @@ public class Main
    }
 
    /**
+    * Init logging
+    * @param cl The classloader to load from
+    */
+   private static void initLogging(ClassLoader cl)
+   {
+      try
+      {
+         Class clz = Class.forName("org.jboss.logging.Logger", true, cl);
+         
+         Method mGetLogger = clz.getMethod("getLogger", String.class);
+
+         logging = mGetLogger.invoke((Object)null, new Object[] { "Main" });
+      }
+      catch (Exception e)
+      {
+         // Nothing we can do
+      }
+   }
+
+   /**
+    * Logging: ERROR
+    * @param s The string
+    * @param t The throwable
+    */
+   private static void error(String s, Throwable t)
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mError = clz.getMethod("error", Object.class, Throwable.class);
+            mError.invoke(logging, new Object[] { s, t });
+         }
+         catch (Exception e)
+         {
+            // Nothing we can do
+         }
+      }
+      else
+      {
+         System.out.println(s);
+         t.printStackTrace(System.out);
+      }
+   }
+
+   /**
+    * Logging: WARN
+    * @param s The string
+    */
+   private static void warn(String s)
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mWarn = clz.getMethod("warn", Object.class);
+            mWarn.invoke(logging, new Object[] { s });
+         }
+         catch (Exception e)
+         {
+            // Nothing we can do
+         }
+      }
+      else
+      {
+         System.out.println(s);
+      }
+   }
+
+   /**
+    * Logging: INFO
+    * @param s The string
+    */
+   private static void info(String s)
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mInfo = clz.getMethod("info", Object.class);
+            mInfo.invoke(logging, new Object[] { s });
+         }
+         catch (Exception e)
+         {
+            // Nothing we can do
+         }
+      }
+      else
+      {
+         System.out.println(s);
+      }
+   }
+
+
+   /**
     * Main
     * @param args The arguments
     */
@@ -460,8 +564,7 @@ public class Main
                }
                catch (Exception e)
                {
-                  System.err.println("Failed to boot JBoss JCA:");
-                  e.printStackTrace();
+                  error("Failed to boot JBoss JCA", e);
                }
             }
          };
@@ -484,11 +587,11 @@ public class Main
          });
 
          long l2 = System.currentTimeMillis();
-         System.out.println("Server started in " + (l2 - l1) + "ms");
+         info("Server started in " + (l2 - l1) + "ms");
       }
       catch (Exception e)
       {
-         e.printStackTrace(System.err);
+         error("Exception during main()", e);
       }
    }
 

@@ -20,33 +20,48 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc.deployers;
+package org.jboss.jca.sjc.deployers.ra;
 
-import java.io.File;
+import org.jboss.jca.sjc.deployers.Deployment;
 
 /**
- * The RAR deployer for JCA/SJC
+ * A resource adapter deployment for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class RarDeployer implements Deployer
+public class RADeployment implements Deployment
 {
+   /** The name */
+   private String name;
+
+   /** The classloader */
+   private ClassLoader cl;
+
    /**
     * Constructor
+    * @param name The name of the deployment
+    * @param cl The classloader for the deployment
     */
-   public RarDeployer()
+   public RADeployment(String name, ClassLoader cl)
    {
+      this.name = name;
+      this.cl = cl;
    }
 
    /**
-    * Deploy
-    * @param f The file
-    * @return The deployment
-    * @exception Exception Thrown if an error occurs
+    * Get the name
+    * @return The name
     */
-   public Deployment deploy(File f) throws Exception
+   public String getName()
    {
-      System.out.println("Deploying: " + f.getAbsolutePath());
+      return name;
+   }
 
-      return null;
+   /**
+    * Get the classloader
+    * @return The classloader
+    */
+   public ClassLoader getClassLoader()
+   {
+      return cl;
    }
 }

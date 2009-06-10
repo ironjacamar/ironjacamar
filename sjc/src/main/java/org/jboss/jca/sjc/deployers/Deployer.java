@@ -33,8 +33,9 @@ public interface Deployer
    /**
     * Deploy
     * @param f The file
+    * @param parent The parent classloader
     * @return The deployment; or null if no deployment was made
     * @exception Exception Thrown if an error occurs
     */
-   public Deployment deploy(File f) throws Exception;
+   public Deployment deploy(File f, ClassLoader parent) throws Exception;
 }

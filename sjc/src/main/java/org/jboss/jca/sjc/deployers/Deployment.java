@@ -33,4 +33,10 @@ public interface Deployment
     * @return The name
     */
    public String getName();
+
+   /**
+    * Get the classloader
+    * @return The classloader
+    */
+   public ClassLoader getClassLoader();
 }

@@ -82,6 +82,11 @@
     <jar destfile="${target.dir}/jboss-jca-sjc.jar"
          manifest="src/main/resources/sjc-manifest.mf"
          basedir="${build.sjc.dir}/impl"
+         excludes="**/*.java,**/ra/**"/>
+    <jar destfile="${target.dir}/jboss-jca-sjc-ra-deployer.jar"
+         manifest="src/main/resources/sjc-ra-manifest.mf"
+         basedir="${build.sjc.dir}/impl"
+         includes="**/ra/**"
          excludes="**/*.java"/>
   </target>
 
@@ -145,6 +150,7 @@
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
         <exclude name="*sjc.jar"/>
+        <exclude name="jboss-jca-deployers*.jar"/>
       </fileset>
     </copy>
 
