@@ -36,6 +36,14 @@
 
   <!--  org.jboss.jca.sjc filter -->
   <Match>
+    <Class name="org.jboss.jca.sjc.Main"/>
+    <Bug code="DE"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.sjc.Main"/>
+    <Bug code="REC"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.sjc.Main$LifeThread"/>
     <Bug code="UW"/>
   </Match>
@@ -43,5 +51,12 @@
     <Class name="org.jboss.jca.sjc.Main$LifeThread"/>
     <Bug code="Wa"/>
   </Match>
-
+  <Match>
+    <Class name="org.jboss.jca.sjc.deployers.ra.ExtractUtil"/>
+    <Bug code="RV"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.sjc.deployers.ra.RADeployer"/>
+    <Bug code="DLS"/>
+  </Match>
 </FindBugsFilter>

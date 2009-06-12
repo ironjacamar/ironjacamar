@@ -278,6 +278,7 @@
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
+      <class location="${target.dir}/jboss-jca-sjc-ra-deployer.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
     </findbugs>
   </target>

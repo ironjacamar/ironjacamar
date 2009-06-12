@@ -27,6 +27,7 @@ import org.jboss.jca.sjc.boot.InjectType;
 import org.jboss.jca.sjc.boot.PropertyType;
 import org.jboss.jca.sjc.deployers.Deployer;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -58,6 +59,9 @@ public class Main
 
    /** Services */
    private static Map<String, Object> services = new HashMap<String, Object>();
+
+   /** Container classloader */
+   private static URLClassLoader containerClassLoader;
 
    /** Logging */
    private static Object logging;
@@ -102,10 +106,10 @@ public class Main
 
          URL[] urls = mergeUrls(libUrls, confUrls);
 
-         URLClassLoader classLoader = new URLClassLoader(urls, parent);
-         SecurityActions.setThreadContextClassLoader(classLoader);
+         containerClassLoader = new URLClassLoader(urls, parent);
+         SecurityActions.setThreadContextClassLoader(containerClassLoader);
 
-         initLogging(classLoader);
+         initLogging(containerClassLoader);
 
          SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
          SecurityActions.setSystemProperty("jboss.deploy.url", deployDirectory.toURI().toURL().toString());
@@ -124,7 +128,7 @@ public class Main
             {
                if (services.get(bt.getName()) == null)
                {
-                  Object bean = createBean(bt, classLoader, deployDirectory);
+                  Object bean = createBean(bt, containerClassLoader, deployDirectory);
                   startup.add(bt.getName());
                   services.put(bt.getName(), bean);
                }
@@ -146,6 +150,8 @@ public class Main
     */
    private static void shutdown()
    {
+      SecurityActions.setThreadContextClassLoader(containerClassLoader);
+
       List<String> shutdown = new LinkedList<String>(startup);
       Collections.reverse(shutdown);
 
@@ -419,6 +425,14 @@ public class Main
 
             parameterValue = s;
          }
+         else if (parameterClass.equals(byte.class) || parameterClass.equals(Byte.class))
+         {
+            parameterValue = Byte.valueOf((String)element);
+         }
+         else if (parameterClass.equals(short.class) || parameterClass.equals(Short.class))
+         {
+            parameterValue = Short.valueOf((String)element);
+         }
          else if (parameterClass.equals(int.class) || parameterClass.equals(Integer.class))
          {
             parameterValue = Integer.valueOf((String)element);
@@ -427,9 +441,21 @@ public class Main
          {
             parameterValue = Long.valueOf((String)element);
          }
+         else if (parameterClass.equals(float.class) || parameterClass.equals(Float.class))
+         {
+            parameterValue = Float.valueOf((String)element);
+         }
+         else if (parameterClass.equals(double.class) || parameterClass.equals(Double.class))
+         {
+            parameterValue = Double.valueOf((String)element);
+         }
          else if (parameterClass.equals(boolean.class) || parameterClass.equals(Boolean.class))
          {
             parameterValue = Boolean.valueOf((String)element);
+         }
+         else if (parameterClass.equals(char.class) || parameterClass.equals(Character.class))
+         {
+            parameterValue = Character.valueOf(((String)element).charAt(0));
          }
          else if (parameterClass.equals(InetAddress.class))
          {
@@ -456,7 +482,7 @@ public class Main
          
          Method mGetLogger = clz.getMethod("getLogger", String.class);
 
-         logging = mGetLogger.invoke((Object)null, new Object[] { "Main" });
+         logging = mGetLogger.invoke((Object)null, new Object[] {"Main"});
       }
       catch (Exception e)
       {
@@ -477,7 +503,7 @@ public class Main
          {
             Class clz = logging.getClass();
             Method mError = clz.getMethod("error", Object.class, Throwable.class);
-            mError.invoke(logging, new Object[] { s, t });
+            mError.invoke(logging, new Object[] {s, t});
          }
          catch (Exception e)
          {
@@ -503,7 +529,7 @@ public class Main
          {
             Class clz = logging.getClass();
             Method mWarn = clz.getMethod("warn", Object.class);
-            mWarn.invoke(logging, new Object[] { s });
+            mWarn.invoke(logging, new Object[] {s});
          }
          catch (Exception e)
          {
@@ -528,7 +554,7 @@ public class Main
          {
             Class clz = logging.getClass();
             Method mInfo = clz.getMethod("info", Object.class);
-            mInfo.invoke(logging, new Object[] { s });
+            mInfo.invoke(logging, new Object[] {s});
          }
          catch (Exception e)
          {
@@ -583,6 +609,18 @@ public class Main
             public void run()
             {
                Main.shutdown();
+
+               if (containerClassLoader != null && containerClassLoader instanceof Closeable)
+               {
+                  try
+                  {
+                     ((Closeable)containerClassLoader).close();
+                  }
+                  catch (IOException ioe)
+                  {
+                     // Swallow
+                  }
+               }
             }
          });
 
