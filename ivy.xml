@@ -43,8 +43,8 @@
     <dependency org="javax.xml" name="jaxb-impl" rev="${version.jaxb.impl}" conf="standalone->default;sjc->*"/>
     <dependency org="javax.activation" name="activation" rev="${version.activation}" conf="standalone->default;sjc->*"/>
     <dependency org="com.sun.xml.bind" name="jaxb-xjc" rev="${version.jaxb.xjc}" conf="standalone->default;sjc->*"/>
-    <dependency org="jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
-    <dependency org="jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
+    <dependency org="jboss.jbossts" name="jbossjts" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
+    <dependency org="jboss.jbossts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
     <dependency org="jboss.jbossts" name="jbossts-common" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test->default"/>
     <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
