@@ -31,11 +31,13 @@ import java.net.URL;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
+import org.jboss.metadata.rar.spec.JCA15MetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.xb.binding.Unmarshaller;
 import org.jboss.xb.binding.UnmarshallerFactory;
 import org.jboss.xb.binding.resolver.MultiClassSchemaResolver;
 import org.jboss.xb.binding.resolver.MutableSchemaResolver;
+import org.jboss.xb.binding.sunday.unmarshalling.SingletonSchemaResolverFactory;
 
 /**
  * The RA deployer for JCA/SJC
@@ -97,8 +99,9 @@ public class RADeployer implements Deployer
       UnmarshallerFactory unmarshallerFactory = UnmarshallerFactory.newInstance();
       Unmarshaller unmarshaller = unmarshallerFactory.newUnmarshaller();
 
-      MutableSchemaResolver resolver = new MultiClassSchemaResolver();
+      MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
       resolver.mapLocationToClass("http://java.sun.com/xml/ns/j2ee/connector_1_6.xsd", JCA16MetaData.class);
+      resolver.mapLocationToClass("http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd", JCA15MetaData.class);
 
       File metadataFile = new File(root, "/META-INF/ra.xml");
 
@@ -109,9 +112,10 @@ public class RADeployer implements Deployer
          {
             long start = System.currentTimeMillis();
 
-            result = (JCA16MetaData)unmarshaller.unmarshal(url, resolver);
+            result = (ConnectorMetaData)unmarshaller.unmarshal(url, resolver);
             
             log.debug("Total parse for " + url + " took " + (System.currentTimeMillis() - start) + "ms");
+            log.info(result);
          }
          catch (Exception e)
          {
@@ -136,7 +140,7 @@ public class RADeployer implements Deployer
       UnmarshallerFactory unmarshallerFactory = UnmarshallerFactory.newInstance();
       Unmarshaller unmarshaller = unmarshallerFactory.newUnmarshaller();
 
-      MutableSchemaResolver resolver = new MultiClassSchemaResolver();
+      MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
       resolver.mapLocationToClass("http://www.jboss.org/schema/jboss-ra_1_0.xsd", JBossRAMetaData.class);
 
       File metadataFile = new File(root, "/META-INF/jboss-ra.xml");
