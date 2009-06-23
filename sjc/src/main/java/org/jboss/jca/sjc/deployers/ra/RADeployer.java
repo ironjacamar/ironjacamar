@@ -35,7 +35,6 @@ import org.jboss.metadata.rar.spec.JCA15MetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.xb.binding.Unmarshaller;
 import org.jboss.xb.binding.UnmarshallerFactory;
-import org.jboss.xb.binding.resolver.MultiClassSchemaResolver;
 import org.jboss.xb.binding.resolver.MutableSchemaResolver;
 import org.jboss.xb.binding.sunday.unmarshalling.SingletonSchemaResolverFactory;
 
@@ -46,6 +45,8 @@ import org.jboss.xb.binding.sunday.unmarshalling.SingletonSchemaResolverFactory;
 public class RADeployer implements Deployer
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
+
+   private static boolean trace = log.isTraceEnabled();
 
    /**
     * Constructor
@@ -115,7 +116,9 @@ public class RADeployer implements Deployer
             result = (ConnectorMetaData)unmarshaller.unmarshal(url, resolver);
             
             log.debug("Total parse for " + url + " took " + (System.currentTimeMillis() - start) + "ms");
-            log.info(result);
+
+            if (trace)
+               log.trace(result);
          }
          catch (Exception e)
          {
@@ -155,6 +158,9 @@ public class RADeployer implements Deployer
             result = (JBossRAMetaData)unmarshaller.unmarshal(url, resolver);
             
             log.debug("Total parse for " + url + " took " + (System.currentTimeMillis() - start) + "ms");
+
+            if (trace)
+               log.trace(result);
          }
          catch (Exception e)
          {
