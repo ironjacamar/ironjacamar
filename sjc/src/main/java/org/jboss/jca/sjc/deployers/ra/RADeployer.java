@@ -29,9 +29,12 @@ import java.io.File;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
+import org.jboss.metadata.rar.jboss.JBossRA10DefaultNSMetaData;
+import org.jboss.metadata.rar.jboss.JBossRA10MetaData;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.JCA15MetaData;
+import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.xb.binding.Unmarshaller;
 import org.jboss.xb.binding.UnmarshallerFactory;
@@ -103,6 +106,7 @@ public class RADeployer implements Deployer
       MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
       resolver.mapLocationToClass("http://java.sun.com/xml/ns/j2ee/connector_1_6.xsd", JCA16MetaData.class);
       resolver.mapLocationToClass("http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd", JCA15MetaData.class);
+      resolver.mapLocationToClass("connector", JCA16DefaultNSMetaData.class);
 
       File metadataFile = new File(root, "/META-INF/ra.xml");
 
@@ -147,7 +151,8 @@ public class RADeployer implements Deployer
       Unmarshaller unmarshaller = unmarshallerFactory.newUnmarshaller();
 
       MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
-      resolver.mapLocationToClass("http://www.jboss.org/schema/jboss-ra_1_0.xsd", JBossRAMetaData.class);
+      resolver.mapLocationToClass("http://www.jboss.org/schema/jboss-ra_1_0.xsd", JBossRA10MetaData.class);
+      resolver.mapLocationToClass("jboss-ra", JBossRA10DefaultNSMetaData.class);
 
       File metadataFile = new File(root, "/META-INF/jboss-ra.xml");
 
