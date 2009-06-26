@@ -82,11 +82,8 @@
     <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.man" name="jboss-managed" rev="${version.jboss.managed}" conf="standalone->default"/>
     <dependency org="org.jboss.man" name="jboss-metatype" rev="${version.jboss.managed}" conf="standalone->default"/>
-<!--
-    <dependency org="org.jboss.metadata" name="jboss-metadata" rev="${version.jboss.metadata}" conf="standalone->default;sjc->*"/>
--->
-    <dependency org="org.jboss.metadata" name="metadata-common" rev="${version.jboss.metadata.common}" conf="standalone->default;sjc->*"/>
-    <dependency org="org.jboss.metadata" name="metadata-rar" rev="${version.jboss.metadata.rar}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.metadata" name="metadata-common" rev="${version.jboss.metadata}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.metadata" name="metadata-rar" rev="${version.jboss.metadata}" conf="standalone->default;sjc->*"/>
 
     <dependency org="org.jboss.microcontainer" name="jboss-aop-mc-int" rev="${version.jboss.mc.aop-int}" conf="standalone->default"/>
     <dependency org="org.jboss.microcontainer" name="jboss-dependency" rev="${version.jboss.mc.dependency}" conf="standalone->default"/>

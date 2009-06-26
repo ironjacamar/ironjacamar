@@ -87,11 +87,7 @@
   <property name="version.jboss.mc.dependency" value="2.2.0.M1"/>
   <property name="version.jboss.mc.kernel" value="2.2.0.M1"/>
   <property name="version.jboss.mdr" value="2.0.1.GA"/>
-<!--
-  <property name="version.jboss.metadata" value="1.0.2.Beta1"/>
--->
-  <property name="version.jboss.metadata.common" value="2.0.0-SNAPSHOT"/>
-  <property name="version.jboss.metadata.rar" value="2.0.0-SNAPSHOT"/>
+  <property name="version.jboss.metadata" value="2.0.0-SNAPSHOT"/>
   <property name="version.jboss.naming" value="5.0.3.GA"/>
   <property name="version.jboss.reflect" value="2.0.2.GA"/>
   <property name="version.jboss.ts" value="4.6.1.GA"/>
