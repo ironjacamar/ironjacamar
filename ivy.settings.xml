@@ -31,8 +31,8 @@
     </filesystem>
     <ibiblio name="jboss" m2compatible="true" usepoms="false" root="${jboss.repo}"
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
-    <ibiblio name="snapshots" m2compatible="true" usepoms="false" root="${snapshots.repo}"
-             pattern="[organisation]/[module]/[revision]/[artifact]-[snapshotrevision](-[classifier]).[ext]"/>
+    <ibiblio name="snapshots" m2compatible="true" usepoms="false" root="${snapshots.repo}" useMavenMetadata="true"
+             pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     <ibiblio name="central" m2compatible="true" usepoms="false" root="${central.repo}"
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     <chain name="default" returnFirst="true">

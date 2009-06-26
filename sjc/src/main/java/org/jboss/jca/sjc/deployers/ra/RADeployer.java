@@ -118,7 +118,10 @@ public class RADeployer implements Deployer
             log.debug("Total parse for " + url + " took " + (System.currentTimeMillis() - start) + "ms");
 
             if (trace)
-               log.trace(result);
+            {
+               log.trace("successful parse " + result.getVersion() + " rar package " + result);
+            }
+               
          }
          catch (Exception e)
          {
