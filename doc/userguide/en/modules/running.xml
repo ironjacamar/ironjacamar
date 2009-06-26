@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="running">
+   <title>Running</title>
+
+   <section id="startingthecontainer">
+      <title>Starting the container</title>
+
+      <para>The JBoss JCA container is started by entering the bin/ directory</para>
+
+     <programlisting>
+cd jboss-jca-1.0.0/bin
+     </programlisting>
+
+     <para>and executing</para>
+
+     <programlisting>
+./run.sh
+     </programlisting>
+
+     <para>on a Un*x based system or</para>
+
+     <programlisting>
+run.bat
+     </programlisting>
+
+     <para>on Windows.</para>
+
+     <para>Once the container has started you should see a log entry like</para>
+
+     <programlisting>
+13:33:10,999 INFO  [Main] Server started in 1192ms
+     </programlisting>
+
+     <para>in the console where the command was executed.</para>
+
+   </section>
+
+
+</chapter>

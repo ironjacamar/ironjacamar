@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="troubleshooting">
    <title>Troubleshooting</title>
+
+   <section id="ithinkihavefoundabug">
+      <title>I think I have found a bug</title>
+
+      <para>If you think you have found a bug you should verify this by posting to our forum first.</para>
+
+      <para>Our forum is located at <ulink url="http://www.jboss.org/index.html?module=bb&amp;op=viewforum&amp;f=136">http://www.jboss.org/index.html?module=bb&amp;op=viewforum&amp;f=136</ulink></para>
+
+      <para>You can also search our issue tracking system located at <ulink url="https://jira.jboss.org/jira/browse/JBJCA">https://jira.jboss.org/jira/browse/JBJCA</ulink></para>
+
+   </section>
+
+   <section id="howdoi">
+      <title>How do I ?</title>
+
+      <para>We can't cover every single issue in this guide, so feel free to drop by our forums to see if a solution
+        has already been provided. Otherwise feel free to ask your question there.</para>
+
+      <para>Our forum is located at <ulink url="http://www.jboss.org/index.html?module=bb&amp;op=viewforum&amp;f=136">http://www.jboss.org/index.html?module=bb&amp;op=viewforum&amp;f=136</ulink></para>
+
+   </section>
+
    
 </chapter>

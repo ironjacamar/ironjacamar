@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="about">
-   <title>About JBoss JCA</title>
+  <title>About JBoss JCA</title>
+
+  <para>The goal of the JBoss JCA project is to provide an implementation of the Java Connector
+    Architecture 1.6 specification.</para>
+
+  <para>The specification can be found here: <ulink url="http://www.jcp.org/en/jsr/detail?id=322">http://www.jcp.org/en/jsr/detail?id=322</ulink>.</para>
+
+  <section id="theteam">
+    <title>The team</title>
+
+    <para>Jesper Pedersen acts as the lead for the JBoss JCA project. He can be reached at jesper (dot) pedersen (at) jboss (dot) org.</para>
+    
+    <para>Jeff Zhang is a core developer on the JBoss JCA project. He can be reached at jizhang (at) redhat (dot) com.</para>
+
+  </section>
+
+  <section id="thanksto">
+    <title>Thanks to</title>
+
+    <para>
+      Dimitris Andreadis, Carlo de Wolf, Jason Green, Jonathan Halliday, Vicky Kak,  
+      Alexey Loubyansky, Patrick MacDonald, Andrig Miller,
+      Sacha Labourey, Andrew Lee Rubinger, Anil Saldhana and Scott Stark.
+    </para>
+    
+    <para>And a special thanks goes to Adrian Brock and Ales Justin for their continuous support of this project.</para>
+
+  </section>
+
 </chapter>

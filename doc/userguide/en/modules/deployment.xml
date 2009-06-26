@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="deployment">
+   <title>Deployment</title>
+
+   <para>The JBoss JCA distribution contains a deploy/ directory where all deployments
+     should be deployed to.</para>
+
+   <section id="deployingrar">
+      <title>Deploying resource adapters</title>
+
+      <para>Resource adapters (.rar) are deployed by copying the resource adapters into the 
+        deploy/ directory</para>
+
+     <programlisting>
+cp example.rar jboss-jca-1.0.0/deploy
+     </programlisting>
+
+     <para>on a Un*x based system or</para>
+
+     <programlisting>
+copy example.rar jboss-jca-1.0.0\deploy
+     </programlisting>
+
+     <para>on Windows.</para>
+
+   </section>
+
+</chapter>

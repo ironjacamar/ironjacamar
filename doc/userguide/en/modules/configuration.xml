@@ -2,4 +2,41 @@
 <chapter id="configuration">
    <title>Configuration</title>
 
+   <para>The configuration for the JBoss JCA container is located in the config/ directory.</para>
+
+   <section id="logging">
+      <title>Logging service</title>
+
+      <para>The JBoss JCA container uses JBoss Logging and the Apache Log4J framework as the implementation.</para>
+
+      <para>The configuration is done in the</para>
+
+      <programlisting>
+config/log4j.xml
+      </programlisting>
+
+      <para>file.</para>
+
+      <para>Consult the Apache Log4J documentation on how the service can be configured.</para>
+
+   </section>
+
+   <section id="transaction">
+      <title>Transaction service</title>
+
+      <para>The JBoss JCA container uses the JBoss Transaction Manager as its transaction implementation.</para>
+
+      <para>The configuration is done in the</para>
+
+      <programlisting>
+config/jbossts-properties.xml
+      </programlisting>
+
+      <para>file.</para>
+
+      <para>Consult the JBoss Transaction documentation on how the service can be configured.</para>
+
+   </section>
+
+
 </chapter>

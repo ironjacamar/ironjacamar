@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="gettingstarted">
+   <title>Download</title>
+   <para>The official JBoss JCA project page is <ulink
+   url="http://www.jboss.org/jca/">http://www.jboss.org/jca/</ulink> where you can download the software.</para>
+
+   <section id="download">
+      <title>Download</title>
+
+      <para>The download location is zone: <ulink url="http://www.jboss.org/jca/downloads/">http://www.jboss.org/jca/downloads/</ulink></para>
+
+      <para>Each release is labelled with a version number and an identifier.</para>
+
+      <programlisting>
+jboss-jca-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
+      </programlisting>
+
+      <para>where</para>
+
+      <itemizedlist spacing="compact">
+         <listitem>
+           Major: The major version number. Signifies major changes in the implementation.
+         </listitem>
+         <listitem>
+           Minor: The minor version number. Signifies functional changes to a major version.
+         </listitem>
+         <listitem>
+           Patch: The patch version number. Signifies a binary compatible change to a minor version.
+         </listitem>
+         <listitem>
+           Identifier: The identifier. Identifies the level of the quality of the release.
+           <itemizedlist spacing="compact">
+             <listitem>
+               None / GA: Stable release
+             </listitem>
+             <listitem>
+               CR: Candidate for Release quality. The implementation is functional complete.
+             </listitem>
+             <listitem>
+               Beta: Beta quality. The implementation is almost functional complete.
+             </listitem>
+             <listitem>
+               Alpha: Alpha quality. The implementation is a snapshot of the development.
+             </listitem>
+           </itemizedlist>
+         </listitem>
+      </itemizedlist>
+
+      <para>An example</para>
+
+      <programlisting>
+jboss-jca-1.0.0.tar.gz
+      </programlisting>
+
+      <para>which is the first stable release of the project.</para>
+
+   </section>
+
+   <section id="SVN">
+      <title>SVN Access</title>
+      <para>If you want to experiment with the latest developments you may
+        checkout the latest code from SVN trunk. Be aware that the
+        information provided in this manual might then not be accurate.</para>
+
+      <para>The anonymous SVN repository is located under:</para>
+
+      <programlisting>
+svn co http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ jbossjca-trunk
+      </programlisting>
+
+      <para>You can find additional information about this in the developer guide.</para>
+
+   </section>
+</chapter>

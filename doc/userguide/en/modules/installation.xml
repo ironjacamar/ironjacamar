@@ -2,4 +2,73 @@
 <chapter id="installation">
    <title>Installation</title>
 
+   <para>Once you have downloaded the distribution you need to install it in a location of your choice.</para>
+
+   <section id="installtargz">
+     <title>Compressed Tape Archive (.tar.gz)</title>
+
+     <para>Extract the distribution using</para>
+
+     <programlisting>
+tar xzf jboss-jca-1.0.0.tar.gz
+     </programlisting>
+
+     <para>The distribution will be located in a directory named</para>
+
+     <programlisting>
+jboss-jca-1.0.0
+     </programlisting>
+
+   </section>
+
+   <section id="installzip">
+     <title>Zip Archive (.zip)</title>
+
+     <para>Extract the distribution using</para>
+
+     <programlisting>
+unzip jboss-jca-1.0.0.tar.gz
+     </programlisting>
+
+     <para>or any program capable of handling Zip archives such as WinZip and WinRar.</para>
+
+     <para>The distribution will be located in a directory named</para>
+
+     <programlisting>
+jboss-jca-1.0.0
+     </programlisting>
+
+   </section>
+
+   <section id="directorystructure">
+     <title>Directory structure</title>
+
+     <para>The JBoss JCA container has the following directory structure:</para>
+
+    <itemizedlist spacing="compact">
+      <listitem>
+        bin: Contains the scripts that starts the container.
+      </listitem>
+      <listitem>
+        config: Contains the configuration of the container.
+      </listitem>
+      <listitem>
+        deploy: Contains user deployments.
+      </listitem>
+      <listitem>
+        doc: Contains the documentation.
+      </listitem>
+      <listitem>
+        lib: Contains all the libraries needed by the container.
+      </listitem>
+      <listitem>
+        log: Contains the log files for the container.
+      </listitem>
+      <listitem>
+        tmp: Contains temporary files.
+      </listitem>
+    </itemizedlist>
+
+   </section>
+
 </chapter>

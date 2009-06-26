@@ -3,9 +3,12 @@
         "../../../tools/docbook/support/docbook-dtd/docbookx.dtd" [
         <!ENTITY about SYSTEM "modules/about.xml">
         <!ENTITY introduction SYSTEM "modules/introduction.xml">
-        <!ENTITY gettingstarted SYSTEM "modules/gettingstarted.xml">
+        <!ENTITY download SYSTEM "modules/download.xml">
         <!ENTITY nc_installation SYSTEM "modules/installation.xml">
         <!ENTITY configuration SYSTEM "modules/configuration.xml">
+        <!ENTITY deployment SYSTEM "modules/deployment.xml">
+        <!ENTITY running SYSTEM "modules/running.xml">
+        <!ENTITY community SYSTEM "modules/community.xml">
         <!ENTITY troubleshooting SYSTEM "modules/troubleshooting.xml">
         ]>
 <book lang="en">
@@ -22,11 +25,17 @@
 
    &introduction;
 
-   &gettingstarted;
+   &download;
 
    &nc_installation;
 
    &configuration;
+
+   &deployment;
+
+   &running;
+
+   &community;
 
    &troubleshooting;
 
