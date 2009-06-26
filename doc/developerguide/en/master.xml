@@ -4,6 +4,7 @@
         <!ENTITY about SYSTEM "../../userguide/en/modules/about.xml">
         <!ENTITY introduction SYSTEM "../../userguide/en/modules/introduction.xml">
         <!ENTITY building SYSTEM "modules/building.xml">
+        <!ENTITY issuetracking SYSTEM "modules/issuetracking.xml">
         <!ENTITY testing SYSTEM "modules/testing.xml">
         <!ENTITY metadata SYSTEM "modules/metadata.xml">
         <!ENTITY deployers SYSTEM "modules/deployers.xml">
@@ -24,6 +25,8 @@
    &introduction;
 
    &building;
+
+   &issuetracking;
 
    &testing;
 
