@@ -294,6 +294,10 @@ public class Main
                      warn("Warning: A deployment with name " + deployment.getName() + " already exists");
                   }
                }
+               else
+               {
+                  warn("Ignoring deployment " + f.getName());
+               }
             }
          }
          catch (Exception e)
