@@ -124,6 +124,7 @@
     <copy todir="${target.dir}/sjc/bin">
       <fileset dir="src/main/resources/">
         <include name="**/*.sh"/>
+        <include name="**/*.bat"/>
       </fileset>
     </copy>
 
