@@ -28,6 +28,15 @@
   <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
 
   <!-- ================================= 
+       Project              
+       ================================= -->
+  <property name="name" value="jboss-jca"/>
+  <property name="major" value="1"/>
+  <property name="minor" value="0"/>
+  <property name="patch" value="0"/>
+  <property name="type" value="Alpha1"/>
+
+  <!-- ================================= 
        Repositories              
        ================================= -->
   <property name="central.repo" value="http://repo1.maven.org/maven2"/>
@@ -229,6 +238,47 @@
        ================================= -->
   <target name="standalone" depends="jars">
     <ant dir="standalone" inheritRefs="true" target="standalone"/>
+  </target>
+
+  <!-- ================================= 
+       Target: release
+       ================================= -->
+  <target name="release" depends="sjc">
+    <delete dir="${build.dir}"/>
+
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}" />
+    <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc" />
+
+    <ant dir="doc/userguide" target="pdf"/>
+    <ant dir="doc/developerguide" target="pdf"/>
+
+    <move flatten="true" todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc">
+      <fileset dir="${build.dir}">
+        <include name="**/*.pdf"/>
+      </fileset>
+    </move>
+
+    <delete dir="${build.dir}/en"/>
+    
+    <copy todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}">
+      <fileset dir="${target.dir}/sjc"/>
+    </copy>
+
+    <zip destfile="${name}-${major}.${minor}.${patch}.${type}.zip"
+         basedir="${build.dir}"/>
+    
+    <tar destfile="${name}-${major}.${minor}.${patch}.${type}.tar"
+         basedir="${build.dir}"/>
+    
+    <gzip zipfile="${name}-${major}.${minor}.${patch}.${type}.tar.gz" 
+          src="${name}-${major}.${minor}.${patch}.${type}.tar"/>
+    
+    <bzip2 zipfile="${name}-${major}.${minor}.${patch}.${type}.tar.bz2" 
+           src="${name}-${major}.${minor}.${patch}.${type}.tar"/>
+    
+    <delete file="${name}-${major}.${minor}.${patch}.${type}.tar"/>
+    
   </target>
 
   <!-- ================================= 
