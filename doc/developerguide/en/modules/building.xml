@@ -53,6 +53,14 @@ export PATH
 cp ivy.jar $ANT_HOME/lib
       </programlisting>
 
+      <para>If you have problems in building the JBoss JCA project checkout the Apache Ivy source code 
+        from trunk and build it yourself.</para>
+
+      <programlisting>
+svn co http://svn.apache.org/repos/asf/ant/ivy/core/trunk ivy
+ant jar
+      </programlisting>
+
     </section>
 
     <section id="subversion">
@@ -120,11 +128,26 @@ ant &lt;target&gt;
         <para>Builds the API documentation for the project.</para>
       </listitem>
       <listitem>
+        <para>standalone</para>
+        <para>Builds the standalone environment using JBoss Microcontainer.</para>
+      </listitem>
+      <listitem>
+        <para>sjc</para>
+        <para>Builds the standalone environment using JBoss JCA/SJC.</para>
+      </listitem>
+      <listitem>
         <para>clean</para>
         <para>Cleans the project of temporary files.</para>
       </listitem>
     </itemizedlist>
     <para>See the full list of targets in the main build.xml file.</para>
+
+    <para>An example to get the JBoss JCA/SJC built and running:</para>
+    <programlisting>
+ant clean sjc
+cd target/sjc/bin
+./run.sh
+    </programlisting>
 
   </section>
 </chapter>
