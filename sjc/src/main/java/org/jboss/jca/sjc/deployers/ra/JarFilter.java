@@ -22,67 +22,23 @@
 
 package org.jboss.jca.sjc.deployers.ra;
 
-import org.jboss.jca.sjc.deployers.Deployment;
-
-import java.io.Closeable;
-import java.io.IOException;
+import java.io.File;
+import java.io.FilenameFilter;
 
 /**
- * A resource adapter deployment for JCA/SJC
+ * Jar filter
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class RADeployment implements Deployment
+public class JarFilter implements FilenameFilter
 {
-   /** The name */
-   private String name;
-
-   /** The classloader */
-   private ClassLoader cl;
-
    /**
-    * Constructor
-    * @param name The name of the deployment
-    * @param cl The classloader for the deployment
+    * Accept
+    * @param dir The directory
+    * @param name The name
+    * @return True if accepts; otherwise false
     */
-   public RADeployment(String name, ClassLoader cl)
+   public boolean accept(File dir, String name)
    {
-      this.name = name;
-      this.cl = cl;
-   }
-
-   /**
-    * Get the name
-    * @return The name
-    */
-   public String getName()
-   {
-      return name;
-   }
-
-   /**
-    * Get the classloader
-    * @return The classloader
-    */
-   public ClassLoader getClassLoader()
-   {
-      return cl;
-   }
-
-   /**
-    * Destroy
-    */
-   public void destroy()
-   {
-      if (cl != null && cl instanceof Closeable)
-      {
-         try
-         {
-            ((Closeable)cl).close();
-         }
-         catch (IOException ioe)
-         {
-            // Swallow
-         }
-      }
+      return name.endsWith(".jar");
    }
 }

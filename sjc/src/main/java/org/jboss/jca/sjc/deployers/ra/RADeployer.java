@@ -26,7 +26,12 @@ import org.jboss.jca.sjc.deployers.Deployer;
 import org.jboss.jca.sjc.deployers.Deployment;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jboss.logging.Logger;
 import org.jboss.metadata.rar.jboss.JBossRA10DefaultNSMetaData;
@@ -84,10 +89,13 @@ public class RADeployer implements Deployer
          root = f;
       }
 
+      URL[] urls = getUrls(root);
+      URLClassLoader cl = new URLClassLoader(urls, parent);
+
       ConnectorMetaData cmd = getStandardMetaData(root);
       JBossRAMetaData jrmd = getJBossMetaData(root);
 
-      return null;
+      return new RADeployment(f.getName(), cl);
    }
 
    /**
@@ -178,5 +186,32 @@ public class RADeployer implements Deployer
       }
       
       return result;
+   }
+
+   /**
+    * Get the URLs for the directory and all libraries located in the directory
+    * @param directrory The directory
+    * @return The URLs
+    * @exception MalformedURLException MalformedURLException
+    * @exception IOException IOException
+    */
+   private static URL[] getUrls(File directory) throws MalformedURLException, IOException
+   {
+      List<URL> list = new LinkedList<URL>();
+
+      if (directory.exists() && directory.isDirectory())
+      {
+         // Add directory
+         list.add(directory.toURI().toURL());
+
+         // Add the contents of the directory too
+         File[] jars = directory.listFiles(new JarFilter());
+
+         for (int j = 0; jars != null && j < jars.length; j++)
+         {
+            list.add(jars[j].getCanonicalFile().toURI().toURL());
+         }
+      }
+      return list.toArray(new URL[list.size()]);      
    }
 }
