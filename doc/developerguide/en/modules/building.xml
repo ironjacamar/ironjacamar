@@ -47,7 +47,7 @@ export PATH
 
     <section id="ivy">
       <title>Apache Ivy</title>
-      <para>You must have Apache Ivy 2.0.0+ installed in your Apache Ant installation.</para>
+      <para>You must have Apache Ivy 2.1.0-RC2+ installed in your Apache Ant installation.</para>
 
       <programlisting>
 cp ivy.jar $ANT_HOME/lib
