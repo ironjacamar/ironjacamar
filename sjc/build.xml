@@ -152,6 +152,7 @@
         <include name="*.jar"/>
         <exclude name="*sjc.jar"/>
         <exclude name="jboss-jca-deployers*.jar"/>
+        <exclude name="jboss-jca-standalone*.jar"/>
       </fileset>
     </copy>
 
