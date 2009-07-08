@@ -114,8 +114,8 @@ public class RADeployer implements Deployer
       Unmarshaller unmarshaller = unmarshallerFactory.newUnmarshaller();
 
       MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
-      resolver.mapLocationToClass("http://java.sun.com/xml/ns/j2ee/connector_1_6.xsd", JCA16MetaData.class);
-      resolver.mapLocationToClass("http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd", JCA15MetaData.class);
+      resolver.mapLocationToClass("connector_1_6.xsd", JCA16MetaData.class);
+      resolver.mapLocationToClass("connector_1_5.xsd", JCA15MetaData.class);
       resolver.mapLocationToClass("connector_1_5.dtd", JCA15DTDMetaData.class);
       resolver.mapLocationToClass("connector_1_6.dtd", JCA16DTDMetaData.class);
       resolver.mapLocationToClass("connector", JCA16DefaultNSMetaData.class);
