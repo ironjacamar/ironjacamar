@@ -98,6 +98,12 @@ ${jboss.jca.home}
       </programlisting>
       <para>can be used.</para>
 
+      <para>There is support for accessing system properties using the "${property}" mechanism
+        with an optional default value</para>
+      <programlisting>
+${jboss.jca.host:localhost}
+      </programlisting>
+
       <para>A configuration example would be</para>
       <programlisting>
 &lt;!-- Transaction manager --&gt;
