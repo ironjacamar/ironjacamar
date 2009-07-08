@@ -403,67 +403,43 @@ public class Main
       {
          if (parameterClass.equals(String.class))
          {
-            String s = (String)element;
-
-            if (s.indexOf("${") != -1)
-            {
-               int from = s.indexOf("${");
-               int to = s.indexOf("}");
-
-               String systemProperty = SecurityActions.getSystemProperty(s.substring(from + 2, to));
-               String prefix = "";
-               String postfix = "";
-
-               if (from != 0)
-               {
-                  prefix = s.substring(0, from);
-               }
-
-               if (to + 1 < s.length() - 1)
-               {
-                  postfix = s.substring(to + 1);
-               }
-
-               s = prefix + systemProperty + postfix;
-            }
-
-            parameterValue = s;
+            parameterValue = getSubstitutionValue((String)element);
          }
          else if (parameterClass.equals(byte.class) || parameterClass.equals(Byte.class))
          {
-            parameterValue = Byte.valueOf((String)element);
+            parameterValue = Byte.valueOf(getSubstitutionValue((String)element));
          }
          else if (parameterClass.equals(short.class) || parameterClass.equals(Short.class))
          {
-            parameterValue = Short.valueOf((String)element);
+            parameterValue = Short.valueOf(getSubstitutionValue((String)element));
          }
          else if (parameterClass.equals(int.class) || parameterClass.equals(Integer.class))
          {
-            parameterValue = Integer.valueOf((String)element);
+            parameterValue = Integer.valueOf(getSubstitutionValue((String)element));
          }
          else if (parameterClass.equals(long.class) || parameterClass.equals(Long.class))
          {
-            parameterValue = Long.valueOf((String)element);
+            parameterValue = Long.valueOf(getSubstitutionValue((String)element));
          }
          else if (parameterClass.equals(float.class) || parameterClass.equals(Float.class))
          {
-            parameterValue = Float.valueOf((String)element);
+            parameterValue = Float.valueOf(getSubstitutionValue((String)element));
          }
          else if (parameterClass.equals(double.class) || parameterClass.equals(Double.class))
          {
-            parameterValue = Double.valueOf((String)element);
+            parameterValue = Double.valueOf(getSubstitutionValue((String)element));
          }
          else if (parameterClass.equals(boolean.class) || parameterClass.equals(Boolean.class))
          {
-            parameterValue = Boolean.valueOf((String)element);
+            parameterValue = Boolean.valueOf(getSubstitutionValue((String)element));
          }
          else if (parameterClass.equals(char.class) || parameterClass.equals(Character.class))
          {
-            parameterValue = Character.valueOf(((String)element).charAt(0));
+            parameterValue = Character.valueOf((getSubstitutionValue((String)element)).charAt(0));
          }
          else if (parameterClass.equals(InetAddress.class))
          {
-            parameterValue = InetAddress.getByName((String)element);
+            parameterValue = InetAddress.getByName(getSubstitutionValue((String)element));
          }
       }
 
@@ -472,6 +448,58 @@ public class Main
                              " value " + element);
 
       m.invoke(instance, parameterValue);
+   }
+
+   /**
+    * System property substitution
+    * @param input The input string
+    * @return The output
+    */
+   private static String getSubstitutionValue(String input)
+   {
+      if (input == null || input.trim().equals(""))
+         return input;
+
+      if (input.indexOf("${") != -1)
+      {
+         int from = input.indexOf("${");
+         int to = input.indexOf("}");
+         int dv = input.indexOf(":");
+         
+         String systemProperty = "";
+         String defaultValue = "";
+         if (dv == -1)
+         {
+            systemProperty = SecurityActions.getSystemProperty(input.substring(from + 2, to));
+         }
+         else
+         {
+            systemProperty = SecurityActions.getSystemProperty(input.substring(from + 2, dv));
+            defaultValue = input.substring(dv + 1, to);
+         }
+         String prefix = "";
+         String postfix = "";
+
+         if (from != 0)
+         {
+            prefix = input.substring(0, from);
+         }
+         
+         if (to + 1 < input.length() - 1)
+         {
+            postfix = input.substring(to + 1);
+         }
+
+         if (systemProperty != null && !systemProperty.trim().equals(""))
+         {
+            return prefix + systemProperty + postfix;
+         }
+         else if (defaultValue != null && !defaultValue.trim().equals(""))
+         {
+            return prefix + defaultValue + postfix;
+         }
+      }
+      return input;
    }
 
    /**
