@@ -89,6 +89,14 @@ $JBOSS_JCA_HOME/config/boot.xsd
           <code>&lt;inject&gt;</code>
           <para>injects a bean or a property from a bean.</para>
         </listitem>
+        <listitem>
+          <code>&lt;constructor&gt;</code>
+          <para>which defines the constructor method to use for a bean.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;parameter&gt;</code>
+          <para>defines a parameter value for a constructor.</para>
+        </listitem>
       </itemizedlist>
 
       <para>In order to define locations relative to the install root of the JBoss JCA

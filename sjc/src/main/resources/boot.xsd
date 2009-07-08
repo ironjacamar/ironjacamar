@@ -6,11 +6,12 @@
 
    <xsd:complexType name="beanType">
      <xsd:sequence>
+       <xsd:element name="constructor" type="constructorType" maxOccurs="1" minOccurs="0"/>
        <xsd:element name="property" type="propertyType" maxOccurs="unbounded" minOccurs="0"/>
      </xsd:sequence>
      <xsd:attribute name="name" type="xsd:token" use="required"/>
      <xsd:attribute name="interface" type="xsd:token"/>
-     <xsd:attribute name="class" type="xsd:token" use="required"/>
+     <xsd:attribute name="class" type="xsd:token"/>
    </xsd:complexType>
 
    <xsd:complexType name="propertyType" mixed="true">
@@ -30,12 +31,27 @@
      </xsd:simpleContent>
    </xsd:complexType>
 
-  <xsd:element name="deployment">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element name="bean" type="beanType" maxOccurs="unbounded" minOccurs="0"/>
-      </xsd:sequence>
-    </xsd:complexType>
-  </xsd:element>
+   <xsd:complexType name="constructorType">
+     <xsd:sequence>
+       <xsd:element name="parameter" type="parameterType" maxOccurs="unbounded" minOccurs="0"/>
+     </xsd:sequence>
+     <xsd:attribute name="factoryMethod" type="xsd:token" use="required"/>
+     <xsd:attribute name="factoryClass" type="xsd:token" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="parameterType">
+     <xsd:simpleContent>
+       <xsd:extension base="xsd:token">
+       </xsd:extension>
+     </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:element name="deployment">
+     <xsd:complexType>
+       <xsd:sequence>
+         <xsd:element name="bean" type="beanType" maxOccurs="unbounded" minOccurs="0"/>
+       </xsd:sequence>
+     </xsd:complexType>
+   </xsd:element>
 
 </xsd:schema>

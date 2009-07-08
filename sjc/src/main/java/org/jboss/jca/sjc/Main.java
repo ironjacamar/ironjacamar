@@ -23,7 +23,9 @@
 package org.jboss.jca.sjc;
 
 import org.jboss.jca.sjc.boot.BeanType;
+import org.jboss.jca.sjc.boot.ConstructorType;
 import org.jboss.jca.sjc.boot.InjectType;
+import org.jboss.jca.sjc.boot.ParameterType;
 import org.jboss.jca.sjc.boot.PropertyType;
 import org.jboss.jca.sjc.deployers.Deployer;
 
@@ -37,8 +39,10 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -240,8 +244,102 @@ public class Main
     */
    private static Object createBean(BeanType bt, ClassLoader cl, File deployDirectory) throws Exception
    {
-      Class<?> clz = Class.forName(bt.getClazz(), true, cl);
-      Object instance = clz.newInstance();
+      Class<?> clz = null;
+      Object instance = null;
+
+      if (bt.getClazz() != null)
+      {
+         clz = Class.forName(bt.getClazz(), true, cl);
+         instance = clz.newInstance();
+      }
+      else
+      {
+         ConstructorType ct = bt.getConstructor();
+         Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
+         Method factoryMethod = null;
+         Object[] args = null;
+
+         if (ct.getParameter() == null)
+         {
+            factoryMethod = factoryClass.getMethod(ct.getFactoryMethod(), (Class[])null);
+         }
+         else
+         {
+            Method[] factoryMethods = factoryClass.getMethods();
+            
+            List<Method> candidates = new ArrayList<Method>();
+
+            for (Method m : factoryMethods)
+            {
+               if (ct.getFactoryMethod().equals(m.getName()))
+               {
+                  if (ct.getParameter().size() == m.getParameterTypes().length)
+                  {
+                     boolean include = true;
+                     for (int i = 0; include && i < m.getParameterTypes().length; i++)
+                     {
+                        Class<?> parameterClass = m.getParameterTypes()[i];
+
+                        if (!(parameterClass.equals(String.class) ||
+                              parameterClass.equals(byte.class) || parameterClass.equals(Byte.class) ||
+                              parameterClass.equals(short.class) || parameterClass.equals(Short.class) ||
+                              parameterClass.equals(int.class) || parameterClass.equals(Integer.class) ||
+                              parameterClass.equals(long.class) || parameterClass.equals(Long.class) ||
+                              parameterClass.equals(float.class) || parameterClass.equals(Float.class) ||
+                              parameterClass.equals(double.class) || parameterClass.equals(Double.class) ||
+                              parameterClass.equals(boolean.class) || parameterClass.equals(Boolean.class) ||
+                              parameterClass.equals(char.class) || parameterClass.equals(Character.class) ||
+                              parameterClass.equals(InetAddress.class)))
+                        {
+                           include = false;
+                        }
+                     }
+
+                     if (include)
+                        candidates.add(m);
+                  }
+               }
+            }
+
+            if (candidates.size() == 1)
+            {
+               factoryMethod = candidates.get(0);
+               args = new Object[ct.getParameter().size()];
+               for (int i = 0; i < ct.getParameter().size(); i++)
+               {
+                  args[i] = getValue(ct.getParameter().get(i).getValue(), factoryMethod.getParameterTypes()[i]);
+               }
+            }
+            else
+            {
+               boolean found = false;
+               Iterator<Method> it = candidates.iterator();
+               while (!found && it.hasNext())
+               {
+                  try
+                  {
+                     Method m = it.next();
+                     args = new Object[ct.getParameter().size()];
+
+                     for (int i = 0; i < ct.getParameter().size(); i++)
+                     {
+                        args[i] = getValue(ct.getParameter().get(i).getValue(), factoryMethod.getParameterTypes()[i]);
+                     }
+
+                     factoryMethod = m;
+                     found = true;
+                  }
+                  catch (Throwable t)
+                  {
+                     // ok - not this one...
+                  }
+               }
+            }
+         }
+
+         instance = factoryMethod.invoke((Object)null, args);
+         clz = instance.getClass();
+      }
 
       if (bt.getProperty() != null)
       {
@@ -308,6 +406,60 @@ public class Main
 
       return instance;
    }
+
+   /**
+    * Get a value from a string
+    * @param s The string representation
+    * @param clz The class
+    * @return The value
+    * @exception Exception If the string cant be converted
+    */
+   private static Object getValue(String s, Class<?> clz) throws Exception
+   {
+      if (clz.equals(String.class))
+      {
+         return s;
+      }
+      else if (clz.equals(byte.class) || clz.equals(Byte.class))
+      {
+         return Byte.valueOf(s);
+      }
+      else if (clz.equals(short.class) || clz.equals(Short.class))
+      {
+         return Short.valueOf(s);
+      }
+      else if (clz.equals(int.class) || clz.equals(Integer.class))
+      {
+         return Integer.valueOf(s);
+      }
+      else if (clz.equals(long.class) || clz.equals(Long.class))
+      {
+         return Long.valueOf(s);
+      }
+      else if (clz.equals(float.class) || clz.equals(Float.class))
+      {
+         return Float.valueOf(s);
+      }
+      else if (clz.equals(double.class) || clz.equals(Double.class))
+      {
+         return Double.valueOf(s);
+      }
+      else if (clz.equals(boolean.class) || clz.equals(Boolean.class))
+      {
+         return Boolean.valueOf(s);
+      }
+      else if (clz.equals(char.class) || clz.equals(Character.class))
+      {
+         return Character.valueOf(s.charAt(0));
+      }
+      else if (clz.equals(InetAddress.class))
+      {
+         return InetAddress.getByName(s);
+      }
+
+      throw new Exception("Unknown class " + clz.getName() + " for " + s);
+   }
+
 
    /**
     * Set a property on an object instance
