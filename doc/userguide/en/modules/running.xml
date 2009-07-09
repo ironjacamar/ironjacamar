@@ -25,6 +25,12 @@ run.bat
 
      <para>on Windows.</para>
 
+     <para>The command takes an optional -b argument to define the binding address of the naming server</para>
+
+     <programlisting>
+./run.sh -b 192.168.0.199
+     </programlisting>
+
      <para>Once the container has started you should see a log entry like</para>
 
      <programlisting>

@@ -63,7 +63,7 @@ echo.
 :RESTART
 "%JAVA%" %JAVA_OPTS% ^
    -Djava.endorsed.dirs="%JBOSS_JCA_ENDORSED_DIRS%" ^
-   -jar jboss-jca-sjc.jar %*
+   -jar jboss-jca-standalone.jar %*
 
 if ERRORLEVEL 10 goto RESTART
 

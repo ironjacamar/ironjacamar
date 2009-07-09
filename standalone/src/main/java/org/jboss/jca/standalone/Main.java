@@ -73,6 +73,17 @@ public class Main
             root = new File(new URI(home.substring(0, home.lastIndexOf("bin"))));
          }
 
+         if (args != null && args.length > 0)
+         {
+            for (int i = 0; i < args.length; i++)
+            {
+               if ("-b".equals(args[i]))
+               {
+                  SecurityActions.setSystemProperty("jboss.jca.bindaddress", args[++i]);
+               }
+            }
+         }
+
          File libDirectory = new File(root, "/lib/");
          File configDirectory = new File(root, "/server/jca/conf/");
          URL deployDirectory = new File(root, "/server/jca/deploy/").toURI().toURL();

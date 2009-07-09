@@ -48,4 +48,4 @@ echo ""
 # Start JBoss JCA
 "$JAVA" $JAVA_OPTS \
     -Djava.endorsed.dirs="$JBOSS_JCA_ENDORSED_DIRS" \
-    -jar jboss-jca-sjc.jar
+    -jar jboss-jca-sjc.jar "$@"

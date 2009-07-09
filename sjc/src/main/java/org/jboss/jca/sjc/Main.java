@@ -99,6 +99,17 @@ public class Main
             SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
          }
 
+         if (args != null && args.length > 0)
+         {
+            for (int i = 0; i < args.length; i++)
+            {
+               if ("-b".equals(args[i]))
+               {
+                  SecurityActions.setSystemProperty("jboss.jca.bindaddress", args[++i]);
+               }
+            }
+         }
+
          File libDirectory = new File(root, "/lib/");
          File configDirectory = new File(root, "/config/");
          File deployDirectory = new File(root, "/deploy/");
