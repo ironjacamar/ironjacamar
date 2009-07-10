@@ -68,7 +68,7 @@ public class ExtractUtil
       File target = new File(directory, file.getName());
 
       if (target.exists())
-         target.delete();
+         recursiveDelete(target);
 
       target.mkdirs();
 
@@ -105,5 +105,32 @@ public class ExtractUtil
       }
 
       return target;
+   }
+
+   /**
+    * Recursive delete
+    * @param f The file handler
+    */
+   public static void recursiveDelete(File f)
+   {
+      if (f.exists())
+      {
+         File[] files = f.listFiles();
+         if (files != null)
+         {
+            for (int i = 0; i < files.length; i++)
+            {
+               if (files[i].isDirectory())
+               {
+                  recursiveDelete(files[i]);
+               } 
+               else
+               {
+                  files[i].delete();
+               }
+            }
+         }
+         f.delete();
+      }
    }
 }
