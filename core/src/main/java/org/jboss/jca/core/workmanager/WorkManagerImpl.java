@@ -27,11 +27,22 @@ import org.jboss.jca.core.api.WorkManager;
 import org.jboss.jca.core.api.WorkWrapper;
 
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.resource.spi.work.ExecutionContext;
+import javax.resource.spi.work.HintsContext;
+import javax.resource.spi.work.SecurityContext;
+import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkCompletedException;
+import javax.resource.spi.work.WorkContext;
+import javax.resource.spi.work.WorkContextErrorCodes;
+import javax.resource.spi.work.WorkContextProvider;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
+import javax.resource.spi.work.WorkRejectedException;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
@@ -45,6 +56,10 @@ public class WorkManagerImpl implements WorkManager
 {
    /** The logger */
    private static Logger log = Logger.getLogger(WorkManagerImpl.class);
+   
+   /**Supported work context set*/
+   private static final Set<Class<? extends WorkContext>> SUPPORTED_WORK_CONTEXT_CLASSES = 
+       new HashSet<Class<? extends WorkContext>>(); 
 
    /** Whether trace is enabled */
    private boolean trace = log.isTraceEnabled();
@@ -58,6 +73,14 @@ public class WorkManagerImpl implements WorkManager
    /** The XA terminator */
    private JBossXATerminator xaTerminator;
 
+   /**Default supported workcontext types*/
+   static
+   {
+      SUPPORTED_WORK_CONTEXT_CLASSES.add(TransactionContext.class);
+      SUPPORTED_WORK_CONTEXT_CLASSES.add(SecurityContext.class);
+      SUPPORTED_WORK_CONTEXT_CLASSES.add(HintsContext.class);
+   }
+   
    /**
     * Default constructor
     */
@@ -142,13 +165,32 @@ public class WorkManagerImpl implements WorkManager
 
       if (specCompliant)
          verifyWork(work);
-
+            
+      boolean isWorkContextProvider = false;      
+      if (work instanceof WorkContextProvider)
+      {
+          //Implements WorkContextProvider and not-null ExecutionContext
+         if (execContext != null)
+         {
+            throw new WorkRejectedException("Work execution context must be null because " +
+               "work instance implements WorkContextProvider!");
+         }
+          
+         isWorkContextProvider = true;
+      }
+                  
       if (execContext == null)
          execContext = new ExecutionContext();
 
       WorkWrapper wrapper = 
          new WorkWrapper(this, work, Task.WAIT_FOR_COMPLETE, startTimeout, execContext, workListener);
 
+      //Check workcontexts
+      if (isWorkContextProvider)
+      {
+         setupWorkContextProviders(wrapper);   
+      }
+      
       importWork(wrapper);
       executeWork(wrapper);
 
@@ -179,11 +221,29 @@ public class WorkManagerImpl implements WorkManager
       if (specCompliant)
          verifyWork(work);
 
+      boolean isWorkContextProvider = false;      
+      if (work instanceof WorkContextProvider)
+      {
+          //Implements WorkContextProvider and not-null ExecutionContext
+         if (execContext != null)
+         {
+            throw new WorkRejectedException("Work execution context must be null because " +
+                 "work instance implements WorkContextProvider!");
+         }
+          
+         isWorkContextProvider = true;
+      }
+                  
       if (execContext == null)
          execContext = new ExecutionContext();
 
       WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_FOR_START, startTimeout, execContext, workListener);
-
+      
+      if (isWorkContextProvider)
+      {
+         setupWorkContextProviders(wrapper);   
+      }
+      
       importWork(wrapper);
       executeWork(wrapper);
 
@@ -216,11 +276,30 @@ public class WorkManagerImpl implements WorkManager
       if (specCompliant)
          verifyWork(work);
 
+            
+      boolean isWorkContextProvider = false;      
+      if (work instanceof WorkContextProvider)
+      {
+          //Implements WorkContextProvider and not-null ExecutionContext
+         if (execContext != null)
+         {
+            throw new WorkRejectedException("Work execution context must be null " +
+                 "because work instance implements WorkContextProvider!");
+         }
+          
+         isWorkContextProvider = true;
+      }
+                  
       if (execContext == null)
          execContext = new ExecutionContext();
 
       WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_NONE, startTimeout, execContext, workListener);
-
+      
+      if (isWorkContextProvider)
+      {
+         setupWorkContextProviders(wrapper);   
+      }
+      
       importWork(wrapper);
       executeWork(wrapper);
 
@@ -359,7 +438,7 @@ public class WorkManagerImpl implements WorkManager
     */
    private void verifyWork(Work work) throws WorkException
    {
-      Class[] types = new Class[] {};
+      Class<?>[] types = new Class[] {};
 
       try
       {
@@ -380,5 +459,200 @@ public class WorkManagerImpl implements WorkManager
       {
          throw new WorkException(work.getClass().getName() + ": Release method is not defined");
       }
+      
    }
+   
+   /**
+    * Setup work context's of the given work instance.
+    * 
+    * @param work work instance
+    * @param executionContext execution context instance
+    * @throws WorkException if any exception occurs
+    */
+   private void setupWorkContextProviders(WorkWrapper wrapper) throws WorkException
+   {
+      if (trace)
+      {
+         log.trace("Starting checking work context providers");
+      }
+
+      Work work = wrapper.getWork();
+
+      WorkContextProvider wcProvider = (WorkContextProvider) work;
+      List<WorkContext> contexts = wcProvider.getWorkContexts();
+
+      if (contexts != null && contexts.size() > 0)
+      {
+         boolean isTransactionContext = false;
+         boolean isSecurityContext = false;
+         boolean isHintcontext = false;
+
+         for (WorkContext context : contexts)
+         {
+            Class<? extends WorkContext> contextType = null;
+
+            // Get supported work context class
+            contextType = getSupportedWorkContextClass(context.getClass());
+
+            // Not supported
+            if (contextType == null)
+            {
+               if (trace)
+               {
+                  log.trace("Not supported work context class : " + context.getClass());
+               }
+               throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass(), 
+                   WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+            }
+            // Duplicate checks
+            else
+            {
+               // TransactionContext duplicate
+               if (isTransactionContext(contextType))
+               {
+                  if (isTransactionContext)
+                  {
+                     if (trace)
+                     {
+                        log.trace("Duplicate transaction work context : " + context.getClass());
+                     }
+
+                     throw new WorkCompletedException("Duplicate TransactionWorkContext class : " + 
+                         context.getClass(), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                  }
+                  else
+                  {
+                     isTransactionContext = true;
+                  }
+               }
+               // SecurityContext duplicate
+               else if (isSecurityContext(contextType))
+               {
+                  if (isSecurityContext)
+                  {
+                     if (trace)
+                     {
+                        log.trace("Duplicate security work context : " + context.getClass());
+                     }
+
+                     throw new WorkCompletedException("Duplicate SecurityWorkContext class : " + context.getClass(), 
+                           WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                  }
+                  else
+                  {
+                     isSecurityContext = true;
+                  }
+               }
+               // HintContext duplicate
+               else if (isHintContext(contextType))
+               {
+                  if (isHintcontext)
+                  {
+                     if (trace)
+                     {
+                        log.trace("Duplicate hint work context : " + context.getClass());
+                     }
+
+                     throw new WorkCompletedException("Duplicate HintWorkContext class : " + context.getClass(), 
+                           WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                  }
+                  else
+                  {
+                     isHintcontext = true;
+                  }
+               }
+               // Normally, this must not be happened!i just safe check!
+               else
+               {
+                  throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass(), 
+                        WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+               }
+            }
+
+            // Add workcontext instance to the work
+            wrapper.addWorkContext(contextType, context);
+         }
+      }
+   }
+
+   /**
+    * Returns work context class if given work context is supported by server,
+    * returns null instance otherwise.
+    * 
+    * @param <T> work context class
+    * @param adaptorWorkContext adaptor supplied work context class
+    * @return work context class
+    */
+   @SuppressWarnings("unchecked")
+   private <T extends WorkContext> Class<T> getSupportedWorkContextClass(Class<T> adaptorWorkContext)
+   {
+      for (Class<? extends WorkContext> supportedWorkContext : SUPPORTED_WORK_CONTEXT_CLASSES)
+      {
+         // Assignable or not
+         if (supportedWorkContext.isAssignableFrom(adaptorWorkContext))
+         {
+            // Supported by the server
+            if (adaptorWorkContext.equals(supportedWorkContext))
+            {
+               return adaptorWorkContext;
+            }
+            else
+            {
+               // Fallback to super class
+               return (Class<T>) adaptorWorkContext.getSuperclass();
+            }
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Returns true if contexts is a transaction context.
+    * 
+    * @param workContextType context type
+    * @return true if contexts is a transaction context
+    */
+   private boolean isTransactionContext(Class<? extends WorkContext> workContextType)
+   {
+      if (workContextType.isAssignableFrom(TransactionContext.class))
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   /**
+    * Returns true if contexts is a security context.
+    * 
+    * @param workContextType context type
+    * @return true if contexts is a security context
+    */
+   private boolean isSecurityContext(Class<? extends WorkContext> workContextType)
+   {
+      if (workContextType.isAssignableFrom(SecurityContext.class))
+      {
+         return true;
+      }
+
+      return false;
+   }
+
+   /**
+    * Returns true if contexts is a hint context.
+    * 
+    * @param workContextType context type
+    * @return true if contexts is a hint context
+    */
+   private boolean isHintContext(Class<? extends WorkContext> workContextType)
+   {
+      if (workContextType.isAssignableFrom(HintsContext.class))
+      {
+         return true;
+      }
+
+      return false;
+   }
+
 }

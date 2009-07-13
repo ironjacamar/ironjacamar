@@ -22,9 +22,13 @@
 
 package org.jboss.jca.core.api;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
+import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkEvent;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
@@ -55,6 +59,10 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
 
    /** The execution context */
    private ExecutionContext executionContext;
+   
+   /**If work is an instance of WorkContextProvider, it may containt WorkContext instance*/
+   private Map<Class<? extends WorkContext>, WorkContext> workContexts = 
+      new HashMap<Class<? extends WorkContext>, WorkContext>();
 
    /** the work listener */
    private WorkListener workListener;
@@ -110,7 +118,28 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
 
       setTask(this);
    }
+   
+   /**
+    * Adds new work context.
+    * 
+    * @param workContext new work context
+    * @param workContextClass work context class
+    */
+   public void addWorkContext(Class<? extends WorkContext> workContextClass, WorkContext workContext)
+   {
+      if (workContextClass == null)
+      {
+         throw new IllegalArgumentException("Work context class is null");
+      }
 
+      if (workContext == null)
+      {
+         throw new IllegalArgumentException("Work context is null");
+      }
+
+      this.workContexts.put(workContextClass, workContext);
+   }
+   
    /**
     * Get the work manager
     *
@@ -149,6 +178,25 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
    public ExecutionContext getExecutionContext()
    {
       return executionContext;
+   }
+   
+   /**
+    * Returns work context instance.
+    * 
+    * @param <T> class type info
+    * @param workContextClass work context type
+    * @return work context instance
+    */
+   public <T> T getWorkContext(Class<T> workContextClass)
+   {
+      T instance = null;
+
+      if (this.workContexts.containsKey(workContextClass))
+      {
+         instance = workContextClass.cast(this.workContexts.get(workContextClass));
+      }
+
+      return instance;
    }
 
    /**
