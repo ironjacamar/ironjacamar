@@ -249,6 +249,7 @@
     <mkdir dir="${build.dir}" />
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}" />
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc" />
+    <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec" />
 
     <ant dir="doc/userguide" target="pdf"/>
     <ant dir="doc/developerguide" target="pdf"/>
@@ -261,6 +262,13 @@
 
     <delete dir="${build.dir}/en"/>
     
+    <ant dir="api" inheritRefs="true" target="docs"/>
+    <move todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec">
+      <fileset dir="${target.dir}/docs/spec">
+        <include name="**/*"/>
+      </fileset>
+    </move>
+
     <copy todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}">
       <fileset dir="${target.dir}/sjc"/>
     </copy>
