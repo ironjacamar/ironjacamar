@@ -24,16 +24,11 @@ package org.jboss.jca.test.deployers.spec.rars;
 import java.io.PrintWriter;
 import java.util.Set;
 
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.EISSystemException;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.ResourceAllocationException;
-import javax.resource.spi.SecurityException;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;

@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.test.deployers.spec.rars;
 
-import javax.resource.ResourceException;
-
 /**
  * MessageListener
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>

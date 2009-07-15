@@ -23,10 +23,8 @@ package org.jboss.jca.test.deployers.spec.rars;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.IllegalStateException;
 import javax.resource.spi.InvalidPropertyException;
 import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterInternalException;
 
 import org.jboss.logging.Logger;
 /**

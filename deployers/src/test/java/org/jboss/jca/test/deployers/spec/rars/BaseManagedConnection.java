@@ -24,16 +24,11 @@ package org.jboss.jca.test.deployers.spec.rars;
 import java.io.PrintWriter;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.CommException;
 import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.EISSystemException;
-import javax.resource.spi.IllegalStateException;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionMetaData;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.SecurityException;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 
