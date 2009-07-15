@@ -22,6 +22,8 @@
 
 package org.jboss.jca.sjc;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Properties;
@@ -114,6 +116,23 @@ class SecurityActions
          {
             System.setProperty(name, value);
             return null;
+         }
+      });
+   }
+
+   /**
+    * Create an URLClassLoader
+    * @param urls The urls
+    * @param parent The parent class loader
+    * @return The class loader
+    */
+   static URLClassLoader createURLCLassLoader(final URL[] urls, final ClassLoader parent)
+   {
+      return (URLClassLoader)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      {
+         public Object run()
+         {
+            return new URLClassLoader(urls, parent);
          }
       });
    }

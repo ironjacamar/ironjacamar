@@ -20,25 +20,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc.deployers.ra;
-
-import java.io.File;
-import java.io.FilenameFilter;
+package org.jboss.jca.sjc.deployers;
 
 /**
- * Jar filter
+ * The deploy exception for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class JarFilter implements FilenameFilter
+public class DeployException extends Exception
 {
+   /** Serial version UID */
+   static final long serialVersionUID = 3820032266224196804L;
+
    /**
-    * Accept
-    * @param dir The directory
-    * @param name The name
-    * @return True if accepts; otherwise false
+    * Constructs a new exception with the specified detail message.
+    * @param message The message
     */
-   public boolean accept(File dir, String name)
+   public DeployException(String message)
    {
-      return name.endsWith(".jar");
+      super(message);
+   }
+
+   /**
+    * Constructs a new exception with the specified detail message and cause.
+    * @param message The message
+    * @param cause The cause
+    */
+   public DeployException(String message, Throwable cause)
+   {
+      super(message, cause);
    }
 }

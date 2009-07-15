@@ -103,7 +103,7 @@
     <!-- Simplify your code -->
     <module name="AvoidStarImport"/>
     <module name="RedundantImport"/>
-    <!-- <module name="UnusedImports"/> -->
+    <module name="UnusedImports"/>
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
 

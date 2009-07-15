@@ -25,14 +25,12 @@ package org.jboss.jca.sjc;
 import org.jboss.jca.sjc.boot.BeanType;
 import org.jboss.jca.sjc.boot.ConstructorType;
 import org.jboss.jca.sjc.boot.InjectType;
-import org.jboss.jca.sjc.boot.ParameterType;
 import org.jboss.jca.sjc.boot.PropertyType;
 import org.jboss.jca.sjc.deployers.Deployer;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -121,7 +119,7 @@ public class Main
 
          URL[] urls = mergeUrls(libUrls, confUrls);
 
-         containerClassLoader = new URLClassLoader(urls, parent);
+         containerClassLoader = SecurityActions.createURLCLassLoader(urls, parent);
          SecurityActions.setThreadContextClassLoader(containerClassLoader);
 
          initLogging(containerClassLoader);

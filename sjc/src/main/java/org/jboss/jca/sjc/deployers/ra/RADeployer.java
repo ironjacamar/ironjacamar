@@ -22,8 +22,12 @@
 
 package org.jboss.jca.sjc.deployers.ra;
 
+import org.jboss.jca.sjc.annotationscanner.Annotation;
+import org.jboss.jca.sjc.annotationscanner.AnnotationScanner;
 import org.jboss.jca.sjc.deployers.Deployer;
 import org.jboss.jca.sjc.deployers.Deployment;
+import org.jboss.jca.sjc.util.ExtractUtil;
+import org.jboss.jca.sjc.util.JarFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,21 +36,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
-import org.jboss.metadata.rar.jboss.JBossRA10DefaultNSMetaData;
-import org.jboss.metadata.rar.jboss.JBossRA10MetaData;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
-import org.jboss.metadata.rar.spec.JCA15DTDMetaData;
-import org.jboss.metadata.rar.spec.JCA15MetaData;
 import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
-import org.jboss.xb.binding.Unmarshaller;
-import org.jboss.xb.binding.UnmarshallerFactory;
-import org.jboss.xb.binding.resolver.MutableSchemaResolver;
-import org.jboss.xb.binding.sunday.unmarshalling.SingletonSchemaResolverFactory;
 
 /**
  * The RA deployer for JCA/SJC
@@ -55,7 +52,6 @@ import org.jboss.xb.binding.sunday.unmarshalling.SingletonSchemaResolverFactory;
 public class RADeployer implements Deployer
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
-
    private static boolean trace = log.isTraceEnabled();
 
    /**
@@ -90,106 +86,57 @@ public class RADeployer implements Deployer
       {
          root = f;
       }
-
+      
+      // Create classloader
       URL[] urls = getUrls(root);
-      URLClassLoader cl = new URLClassLoader(urls, parent);
+      URLClassLoader cl = SecurityActions.createURLCLassLoader(urls, parent);
 
-      ConnectorMetaData cmd = getStandardMetaData(root);
-      JBossRAMetaData jrmd = getJBossMetaData(root);
+      // Parse metadata
+      ConnectorMetaData cmd = Metadata.getStandardMetaData(root);
+      JBossRAMetaData jrmd = Metadata.getJBossMetaData(root);
+
+      // Process annotations
+      if (cmd == null || cmd.is16())
+      {
+         Map<Class, List<Annotation>> annotations = AnnotationScanner.scan(cl.getURLs());
+
+         boolean isMetadataComplete = false;
+         if (cmd != null)
+         {
+            if (cmd instanceof JCA16MetaData)
+            {
+               JCA16MetaData jmd = (JCA16MetaData)cmd;
+               isMetadataComplete = jmd.isMetadataComplete();
+            }
+            else if (cmd instanceof JCA16DefaultNSMetaData)
+            {
+               JCA16DefaultNSMetaData jmd = (JCA16DefaultNSMetaData)cmd;
+               isMetadataComplete = jmd.isMetadataComplete();
+            }
+            else if (cmd instanceof JCA16DTDMetaData)
+            {
+               JCA16DTDMetaData jmd = (JCA16DTDMetaData)cmd;
+               isMetadataComplete = jmd.isMetadataComplete();
+            }
+         }
+
+         if (cmd == null || !isMetadataComplete)
+            cmd = Annotations.process(cmd, annotations);
+      }
+
+      // Merge metadata
+
+      // Validate metadata
+
+      // Create objects
+
+      // Inject values
+
+      // Bean validation
+
+      // Activate deployment
 
       return new RADeployment(f.getName(), cl);
-   }
-
-   /**
-    * Get the JCA standard metadata
-    * @param root The root of the deployment
-    * @return The metadata
-    * @exception Exception Thrown if an error occurs
-    */
-   private ConnectorMetaData getStandardMetaData(File root) throws Exception
-   {
-      ConnectorMetaData result = null;
-
-      UnmarshallerFactory unmarshallerFactory = UnmarshallerFactory.newInstance();
-      Unmarshaller unmarshaller = unmarshallerFactory.newUnmarshaller();
-
-      MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
-      resolver.mapLocationToClass("connector_1_6.xsd", JCA16MetaData.class);
-      resolver.mapLocationToClass("connector_1_5.xsd", JCA15MetaData.class);
-      resolver.mapLocationToClass("connector_1_5.dtd", JCA15DTDMetaData.class);
-      resolver.mapLocationToClass("connector_1_6.dtd", JCA16DTDMetaData.class);
-      resolver.mapLocationToClass("connector", JCA16DefaultNSMetaData.class);
-
-      File metadataFile = new File(root, "/META-INF/ra.xml");
-
-      if (metadataFile.exists())
-      {
-         String url = metadataFile.getAbsolutePath();
-         try
-         {
-            long start = System.currentTimeMillis();
-
-            result = (ConnectorMetaData)unmarshaller.unmarshal(url, resolver);
-            
-            log.debug("Total parse for " + url + " took " + (System.currentTimeMillis() - start) + "ms");
-
-            if (trace)
-            {
-               log.trace("successful parse " + result.getVersion() + " rar package " + result);
-            }
-               
-         }
-         catch (Exception e)
-         {
-            log.error("Error during parsing: " + url, e);
-            throw e;
-         }
-      }
-      
-      return result;
-   }
-
-   /**
-    * Get the JBoss specific metadata
-    * @param root The root of the deployment
-    * @return The metadata
-    * @exception Exception Thrown if an error occurs
-    */
-   private JBossRAMetaData getJBossMetaData(File root) throws Exception
-   {
-      JBossRAMetaData result = null;
-
-      UnmarshallerFactory unmarshallerFactory = UnmarshallerFactory.newInstance();
-      Unmarshaller unmarshaller = unmarshallerFactory.newUnmarshaller();
-
-      MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
-      resolver.mapLocationToClass("http://www.jboss.org/schema/jboss-ra_1_0.xsd", JBossRA10MetaData.class);
-      resolver.mapLocationToClass("jboss-ra", JBossRA10DefaultNSMetaData.class);
-
-      File metadataFile = new File(root, "/META-INF/jboss-ra.xml");
-
-      if (metadataFile.exists())
-      {
-         String url = metadataFile.getAbsolutePath();
-         try
-         {
-            long start = System.currentTimeMillis();
-
-            result = (JBossRAMetaData)unmarshaller.unmarshal(url, resolver);
-            
-            log.debug("Total parse for " + url + " took " + (System.currentTimeMillis() - start) + "ms");
-
-            if (trace)
-               log.trace(result);
-         }
-         catch (Exception e)
-         {
-            log.error("Error during parsing: " + url, e);
-            throw e;
-         }
-      }
-      
-      return result;
    }
 
    /**
@@ -199,7 +146,7 @@ public class RADeployer implements Deployer
     * @exception MalformedURLException MalformedURLException
     * @exception IOException IOException
     */
-   private static URL[] getUrls(File directory) throws MalformedURLException, IOException
+   private URL[] getUrls(File directory) throws MalformedURLException, IOException
    {
       List<URL> list = new LinkedList<URL>();
 

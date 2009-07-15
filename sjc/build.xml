@@ -82,7 +82,12 @@
     <jar destfile="${target.dir}/jboss-jca-sjc.jar"
          manifest="src/main/resources/sjc-manifest.mf"
          basedir="${build.sjc.dir}/impl"
-         excludes="**/*.java,**/ra/**"/>
+         excludes="**/*.java,**/annotationscanner/**,,**/hack/**,**/ra/**,**/util/**"/>
+    <jar destfile="${target.dir}/jboss-jca-sjc-services.jar"
+         manifest="src/main/resources/sjc-services-manifest.mf"
+         basedir="${build.sjc.dir}/impl"
+         includes="**/annotationscanner/**,**/hack/**,**/util/**"
+         excludes="**/*.java"/>
     <jar destfile="${target.dir}/jboss-jca-sjc-ra-deployer.jar"
          manifest="src/main/resources/sjc-ra-manifest.mf"
          basedir="${build.sjc.dir}/impl"
