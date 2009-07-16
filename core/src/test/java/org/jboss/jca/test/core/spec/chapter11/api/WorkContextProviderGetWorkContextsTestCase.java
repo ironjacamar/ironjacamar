@@ -24,8 +24,6 @@ package org.jboss.jca.test.core.spec.chapter11.api;
 
 import org.jboss.jca.test.core.spec.chapter11.section4.subsection3.WorkContextHandlingAssignmentTestCase;
 
-import javax.resource.spi.work.WorkContextProvider;
-
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 
 import junit.framework.Assert;

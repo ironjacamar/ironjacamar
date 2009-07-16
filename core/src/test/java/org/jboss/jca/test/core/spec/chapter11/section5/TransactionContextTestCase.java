@@ -26,7 +26,6 @@ import org.jboss.jca.test.core.spec.chapter11.common.TransactionContextWork;
 import org.jboss.jca.test.core.spec.chapter11.section4.subsection3.WorkContextHandlingAssignmentTestCase;
 
 import javax.resource.spi.work.ExecutionContext;
-import javax.resource.spi.work.WorkContextProvider;
 import javax.resource.spi.work.WorkManager;
 import javax.resource.spi.work.WorkRejectedException;
 

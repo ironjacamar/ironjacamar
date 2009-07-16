@@ -39,14 +39,32 @@ public class TransactionContextWork implements Work, WorkContextProvider
    /** Serial version uid */
    private static final long serialVersionUID = 2855367727578670465L;
 
+   /**
+    * The <code>WorkManager</code> might call this method to hint the
+    * active <code>Work</code> instance to complete execution as soon as 
+    * possible. 
+    */
    public void release()
    {
    }
 
+   /**
+    * When an object implementing interface <code>Runnable</code> is used 
+    * to create a thread, starting the thread causes the object's 
+    * <code>run</code> method to be called in that separately executing 
+    * thread. 
+    */
    public void run()
    {
    }
 
+   /**
+    * Gets an instance of <code>WorkContexts</code> that needs to be used
+    * by the <code>WorkManager</code> to set up the execution context while
+    * executing a <code>Work</code> instance.
+    * 
+    * @return an <code>List</code> of <code>WorkContext</code> instances.
+    */
    public List<WorkContext> getWorkContexts()
    {
       List<WorkContext> ctxts = new ArrayList<WorkContext>();
