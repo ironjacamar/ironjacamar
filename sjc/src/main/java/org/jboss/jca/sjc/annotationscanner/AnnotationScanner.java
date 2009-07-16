@@ -65,14 +65,32 @@ public class AnnotationScanner
     */
    public static Map<Class, List<Annotation>> scan(URL[] urls)
    {
+      return scan(urls, (ClassLoader)null);
+   }
+
+   /**
+    * Scan
+    * @param urls The URLs with class files
+    * @param cls Additional class loaders
+    * @return The map of annotations
+    */
+   public static Map<Class, List<Annotation>> scan(URL[] urls, ClassLoader... cls)
+   {
       Map<Class, List<Annotation>> result = new HashMap<Class, List<Annotation>>();
 
       long start = System.currentTimeMillis();
 
-      URLClassLoader cl = new URLClassLoader(urls, null);
+      URLClassLoader cl = SecurityActions.createURLCLassLoader(urls, null);
 
       ClassPool cp = new ClassPool();
       cp.appendClassPath(new LoaderClassPath(cl));
+      if (cls != null)
+      {
+         for (ClassLoader c : cls)
+         {
+            cp.appendClassPath(new LoaderClassPath(c));
+         }
+      }
 
       List<String> classes = getClassNames(urls);
       if (classes != null)

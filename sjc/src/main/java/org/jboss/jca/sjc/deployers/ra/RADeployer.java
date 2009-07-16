@@ -75,68 +75,77 @@ public class RADeployer implements Deployer
 
       log.info("Deploying: " + f.getAbsolutePath());
 
-      File root = null;
-
-      if (f.isFile())
+      ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
+      try
       {
-         File destination = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
-         root = ExtractUtil.extract(f, destination);
-      }
-      else
-      {
-         root = f;
-      }
-      
-      // Create classloader
-      URL[] urls = getUrls(root);
-      URLClassLoader cl = SecurityActions.createURLCLassLoader(urls, parent);
+         File root = null;
 
-      // Parse metadata
-      ConnectorMetaData cmd = Metadata.getStandardMetaData(root);
-      JBossRAMetaData jrmd = Metadata.getJBossMetaData(root);
-
-      // Process annotations
-      if (cmd == null || cmd.is16())
-      {
-         Map<Class, List<Annotation>> annotations = AnnotationScanner.scan(cl.getURLs());
-
-         boolean isMetadataComplete = false;
-         if (cmd != null)
+         if (f.isFile())
          {
-            if (cmd instanceof JCA16MetaData)
-            {
-               JCA16MetaData jmd = (JCA16MetaData)cmd;
-               isMetadataComplete = jmd.isMetadataComplete();
-            }
-            else if (cmd instanceof JCA16DefaultNSMetaData)
-            {
-               JCA16DefaultNSMetaData jmd = (JCA16DefaultNSMetaData)cmd;
-               isMetadataComplete = jmd.isMetadataComplete();
-            }
-            else if (cmd instanceof JCA16DTDMetaData)
-            {
-               JCA16DTDMetaData jmd = (JCA16DTDMetaData)cmd;
-               isMetadataComplete = jmd.isMetadataComplete();
-            }
+            File destination = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
+            root = ExtractUtil.extract(f, destination);
          }
+         else
+         {
+            root = f;
+         }
+      
+         // Create classloader
+         URL[] urls = getUrls(root);
+         URLClassLoader cl = SecurityActions.createURLCLassLoader(urls, parent);
+         SecurityActions.setThreadContextClassLoader(cl);
 
-         if (cmd == null || !isMetadataComplete)
-            cmd = Annotations.process(cmd, annotations);
+         // Parse metadata
+         ConnectorMetaData cmd = Metadata.getStandardMetaData(root);
+         JBossRAMetaData jrmd = Metadata.getJBossMetaData(root);
+
+         // Process annotations
+         if (cmd == null || cmd.is16())
+         {
+            Map<Class, List<Annotation>> annotations = AnnotationScanner.scan(cl.getURLs(), cl);
+
+            boolean isMetadataComplete = false;
+            if (cmd != null)
+            {
+               if (cmd instanceof JCA16MetaData)
+               {
+                  JCA16MetaData jmd = (JCA16MetaData)cmd;
+                  isMetadataComplete = jmd.isMetadataComplete();
+               }
+               else if (cmd instanceof JCA16DefaultNSMetaData)
+               {
+                  JCA16DefaultNSMetaData jmd = (JCA16DefaultNSMetaData)cmd;
+                  isMetadataComplete = jmd.isMetadataComplete();
+               }
+               else if (cmd instanceof JCA16DTDMetaData)
+               {
+                  JCA16DTDMetaData jmd = (JCA16DTDMetaData)cmd;
+                  isMetadataComplete = jmd.isMetadataComplete();
+               }
+            }
+            
+            if (cmd == null || !isMetadataComplete)
+               cmd = Annotations.process(cmd, annotations);
+         }
+         
+         // Merge metadata
+         
+         // Validate metadata
+         
+         // Create objects
+         
+         // Inject values
+
+         // Bean validation
+         
+         // Activate deployment
+
+         return new RADeployment(f.getName(), cl);
       }
-
-      // Merge metadata
-
-      // Validate metadata
-
-      // Create objects
-
-      // Inject values
-
-      // Bean validation
-
-      // Activate deployment
-
-      return new RADeployment(f.getName(), cl);
+      finally
+      {
+         SecurityActions.setThreadContextClassLoader(oldTCCL);
+      }
    }
 
    /**
