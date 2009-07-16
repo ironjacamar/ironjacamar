@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
-import org.jboss.jca.test.core.spec.chapter10.common.BlockRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
@@ -30,9 +29,6 @@ import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkAdapter;
-import javax.resource.spi.work.WorkEvent;
-import javax.resource.spi.work.WorkListener;
 import javax.resource.spi.work.WorkManager;
 
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;

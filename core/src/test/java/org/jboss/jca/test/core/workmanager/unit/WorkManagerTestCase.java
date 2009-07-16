@@ -22,8 +22,6 @@
 
 package org.jboss.jca.test.core.workmanager.unit;
 
-import java.net.URL;
-
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 import org.jboss.logging.Logger;
 

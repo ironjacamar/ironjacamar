@@ -21,13 +21,9 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.api;
 
-import org.jboss.jca.test.core.spec.chapter10.common.BlockRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
-import org.jboss.jca.test.core.spec.chapter10.common.NestCharWork;
-import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
-
 
 import java.util.concurrent.CountDownLatch;
 

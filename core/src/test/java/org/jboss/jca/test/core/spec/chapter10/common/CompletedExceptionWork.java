@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.common;
 
-import javax.resource.spi.work.WorkCompletedException;
-
 /**
  * ShortRunningWork
  * @version $Revision: $

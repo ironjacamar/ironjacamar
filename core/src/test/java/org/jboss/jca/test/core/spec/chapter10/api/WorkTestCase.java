@@ -26,14 +26,12 @@ import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkManager;
 
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

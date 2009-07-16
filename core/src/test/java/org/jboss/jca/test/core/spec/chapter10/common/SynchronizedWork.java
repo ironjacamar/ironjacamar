@@ -22,8 +22,6 @@
 package org.jboss.jca.test.core.spec.chapter10.common;
 
 import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkException;
-import javax.resource.spi.work.WorkManager;
 
 /**
  * Synchronized work instance.

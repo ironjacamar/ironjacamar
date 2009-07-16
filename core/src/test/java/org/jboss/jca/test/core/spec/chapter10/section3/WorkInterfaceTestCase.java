@@ -28,7 +28,6 @@ import org.jboss.jca.test.core.spec.chapter10.common.UnsynchronizedWork;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;

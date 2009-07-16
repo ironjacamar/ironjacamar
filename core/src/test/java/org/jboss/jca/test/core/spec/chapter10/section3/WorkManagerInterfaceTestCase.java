@@ -22,14 +22,12 @@
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
 import org.jboss.jca.test.core.spec.chapter10.common.BlockRunningWork;
-import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
-import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
 import org.jboss.jca.test.core.spec.chapter10.common.NestCharWork;
 
 import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.work.Work;
+
 import javax.resource.spi.work.WorkManager;
 
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;

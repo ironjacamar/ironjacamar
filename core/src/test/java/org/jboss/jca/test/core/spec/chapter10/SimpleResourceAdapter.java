@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.test.core.spec.chapter10;
 
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;

@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;

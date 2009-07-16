@@ -24,8 +24,6 @@ package org.jboss.jca.test.core.mdr.unit;
 
 import org.jboss.jca.core.api.MetaDataRepository;
 
-import java.net.URL;
-
 import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.rar.jboss.RARDeploymentMetaData;
