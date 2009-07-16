@@ -25,6 +25,7 @@ package org.jboss.jca.sjc.deployers.ra;
 import org.jboss.jca.sjc.annotationscanner.Annotation;
 import org.jboss.jca.sjc.deployers.DeployException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,11 +37,18 @@ import javax.resource.spi.ConnectionDefinition;
 import javax.resource.spi.ConnectionDefinitions;
 import javax.resource.spi.Connector;
 import javax.resource.spi.SecurityPermission;
+import javax.resource.spi.TransactionSupport;
+import javax.resource.spi.work.WorkContext;
 
 import org.jboss.logging.Logger;
 
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
+import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
+import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
+import org.jboss.metadata.rar.spec.LicenseMetaData;
+import org.jboss.metadata.rar.spec.ResourceAdapterMetaData;
+import org.jboss.metadata.rar.spec.SecurityPermissionMetaData;
 
 /**
  * The annotation processor for JCA 1.6
@@ -81,7 +89,11 @@ public class Annotations
       */
 
       if (md == null)
-         md = new JCA16MetaData();
+      {
+         JCA16MetaData jmd = new JCA16MetaData();
+         jmd.setMetadataComplete(false);
+         md = jmd;
+      }
 
       // @Connector
       md = processConnector(md, annotations);
@@ -147,7 +159,162 @@ public class Annotations
    private static ConnectorMetaData attachConnector(ConnectorMetaData md, Connector c)
       throws Exception
    {
+      // AuthenticationMechanism
+      AuthenticationMechanism[] authMechanisms = c.authMechanisms();
+      if (authMechanisms != null)
+      {
+         for (AuthenticationMechanism authMechanism : authMechanisms)
+         {
+            attachAuthenticationMechanism(md, authMechanism);
+         }
+      }
+
+      // Description
+      String[] description = c.description();
+      if (description != null)
+      {
+         // TODO
+      }
+
+      // Display name
+      String[] displayName = c.displayName();
+      if (displayName != null)
+      {
+         // TODO
+      }
+
+      // EIS type
+      String eisType = c.eisType();
+      if (eisType != null)
+      {
+         if (md.getEISType() == null)
+            md.setEISType(eisType);
+      }
+
+      // Large icon
+      String[] largeIcon = c.largeIcon();
+      if (largeIcon != null)
+      {
+         // TODO
+      }
+
+      // License description
+      String[] licenseDescription = c.licenseDescription();
+      if (licenseDescription != null)
+      {
+         if (md.getLicense() == null)
+            md.setLicense(new LicenseMetaData());
+
+         // TODO
+      }
+
+      // License required
+      boolean licenseRequired = c.licenseRequired();
+      if (md.getLicense() == null)
+         md.setLicense(new LicenseMetaData());
+      md.getLicense().setRequired(licenseRequired);
+
+      // Reauthentication support
+      boolean reauthenticationSupport = c.reauthenticationSupport();
+      // TODO
+
+      // RequiredWorkContext
+      Class<? extends WorkContext>[] requiredWorkContexts = c.requiredWorkContexts();
+      if (requiredWorkContexts != null)
+      {
+         for (Class<? extends WorkContext> requiredWorkContext : requiredWorkContexts)
+         {
+            if (md instanceof JCA16MetaData)
+            {
+               JCA16MetaData jmd = (JCA16MetaData)md;
+               if (jmd.getRequiredWorkContexts() == null)
+                  jmd.setRequiredWorkContexts(new ArrayList<String>());
+
+               if (!jmd.getRequiredWorkContexts().contains(requiredWorkContext.getName()))
+               {
+                  if (trace)
+                     log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
+
+                  jmd.getRequiredWorkContexts().add(requiredWorkContext.getName());
+               }
+            }
+            else if (md instanceof JCA16DefaultNSMetaData)
+            {
+               JCA16DefaultNSMetaData jmd = (JCA16DefaultNSMetaData)md;
+               if (jmd.getRequiredWorkContexts() == null)
+                  jmd.setRequiredWorkContexts(new ArrayList<String>());
+
+               if (!jmd.getRequiredWorkContexts().contains(requiredWorkContext.getName()))
+               {
+                  if (trace)
+                     log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
+
+                  jmd.getRequiredWorkContexts().add(requiredWorkContext.getName());
+               }
+            }
+            else if (md instanceof JCA16DTDMetaData)
+            {
+               JCA16DTDMetaData jmd = (JCA16DTDMetaData)md;
+               if (jmd.getRequiredWorkContexts() == null)
+                  jmd.setRequiredWorkContexts(new ArrayList<String>());
+
+               if (!jmd.getRequiredWorkContexts().contains(requiredWorkContext.getName()))
+               {
+                  if (trace)
+                     log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
+
+                  jmd.getRequiredWorkContexts().add(requiredWorkContext.getName());
+               }
+            }
+         }
+      }
+
+      // Security permission
       SecurityPermission[] securityPermissions = c.securityPermissions();
+      if (securityPermissions != null)
+      {
+         if (md.getRa() == null)
+            md.setRa(new ResourceAdapterMetaData());
+
+         if (md.getRa().getSecurityPermissions() == null)
+            md.getRa().setSecurityPermissions(new ArrayList<SecurityPermissionMetaData>());
+
+         for (SecurityPermission securityPermission : securityPermissions)
+         {
+            // TODO
+         }
+      }
+
+      // Small icon
+      String[] smallIcon = c.smallIcon();
+      if (smallIcon != null)
+      {
+         // TODO
+      }
+
+      // Spec version
+      String specVersion = c.specVersion();
+      md.setVersion("1.6");
+
+      // Transaction support
+      TransactionSupport.TransactionSupportLevel transactionSupport = c.transactionSupport();
+      // TODO
+
+      // Vendor name
+      String vendorName = c.vendorName();
+      if (vendorName != null)
+      {
+         if (md.getVendorName() == null)
+            md.setVendorName(vendorName);
+      }
+
+      // Version
+      String version = c.version();
+      if (version != null)
+      {
+         if (md.getRAVersion() == null)
+            md.setRAVersion(version);
+      }
 
       return md;
    }
