@@ -49,6 +49,7 @@
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test->default"/>
     <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
     <dependency org="org.easymock" name="easymockclassextension" rev="${version.easymock}" conf="test->default"/>
+    <dependency org="org.hibernate" name="hibernate-validator" rev="${version.hibernate-validator}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="standalone->default;sjc->*"/>
