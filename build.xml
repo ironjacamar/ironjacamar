@@ -77,7 +77,7 @@
   <property name="version.activation" value="1.1.1"/>
   <property name="version.easymock" value="2.4"/>
   <property name="version.javassist" value="3.11.0.GA"/>
-  <property name="version.hibernate-validator" value="4.0.0.Beta1"/>
+  <property name="version.hibernate-validator" value="4.0.0.Beta2"/>
   <property name="version.jaxb.api" value="2.1"/>
   <property name="version.jaxb.impl" value="2.1"/>
   <property name="version.jaxb.xjc" value="2.1.6"/>
