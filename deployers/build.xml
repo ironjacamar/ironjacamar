@@ -212,7 +212,23 @@
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16standard303/*.class"/>
       <fileset dir="src/test/resources/ra16standard303.rar"/>
-   </jar>   
+   </jar>
+   <jar destfile="${build.deployers.dir}/ra16user303.rar"
+        manifest="src/main/resources/rar-manifest.mf">
+      <fileset dir="${build.deployers.dir}/test"
+         includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+      <fileset dir="${build.deployers.dir}/test"
+         includes="org/jboss/jca/test/deployers/spec/rars/ra16user303/*.class"/>
+      <fileset dir="src/test/resources/ra16user303.rar"/>
+   </jar>
+   <jar destfile="${build.deployers.dir}/ra16user303jbossra.rar"
+        manifest="src/main/resources/rar-manifest.mf">
+      <fileset dir="${build.deployers.dir}/test"
+         includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+      <fileset dir="${build.deployers.dir}/test"
+         includes="org/jboss/jca/test/deployers/spec/rars/ra16user303jbossra/*.class"/>
+      <fileset dir="src/test/resources/ra16user303jbossra.rar"/>
+   </jar>
   </target>
 
   <!-- ================================= 

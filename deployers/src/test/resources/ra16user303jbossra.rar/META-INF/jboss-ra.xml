@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id $ -->
+
+<jboss-ra xmlns="http://www.jboss.org/schema/ra"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.jboss.org/schema/ra
+          http://www.jboss.org/schema/jboss-ra_1_0.xsd">
+   <ra-config-property>
+      <ra-config-property-name>myStringProperty</ra-config-property-name>
+      <ra-config-property-type>java.lang.String</ra-config-property-type>
+      <ra-config-property-value>Jeff</ra-config-property-value>
+   </ra-config-property>
+</jboss-ra>
