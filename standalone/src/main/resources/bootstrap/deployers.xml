@@ -96,7 +96,7 @@
 
     <!-- JAR Structure -->
     <bean name="JARStructure" class="org.jboss.deployers.vfs.plugins.structure.jar.JARStructure">
-       <!-- Unless specified the default list of suffixes is .zip, .ear, .jar, ,.rar, .war, .sar, .har, .aop -->
+       <!-- Unless specified the default list of suffixes is .zip, .jar, ,.rar, -->
        <constructor>
           <parameter>
              <set elementClass="java.lang.String">
@@ -126,42 +126,17 @@
 
     <!-- File Structure -->
     <bean name="FileStructure" class="org.jboss.deployers.vfs.plugins.structure.file.FileStructure">
-       <!-- Unless specified the default list of suffixes is -service.xml, -beans.xml, -ds.xml, -aop.xml -->
+       <!-- Unless specified the default list of suffixes is -service.xml, -beans.xml, -ds.xml -->
        <constructor>
           <parameter>
              <set elementClass="java.lang.String">
                 <value>-service.xml</value>
                 <value>-beans.xml</value>
                 <value>-ds.xml</value>
-                <value>-aop.xml</value>
              </set>
           </parameter>
        </constructor>
     </bean>
-
-   <!-- AOP -->
-   <bean name="AOPXMLMetaDataParserDeployer" class="org.jboss.deployers.vfs.spi.deployer.SchemaResolverDeployer">
-      <constructor>
-         <parameter>org.jboss.aop.microcontainer.beans.metadata.AOPDeployment</parameter>
-      </constructor>
-      <property name="suffix">-aop.xml</property>
-   </bean>
-   <bean name="AOPAnnotationMetaDataParserDeployer" class="org.jboss.aop.asintegration.jboss5.AOPAnnotationMetaDataParserDeployer">
-      <constructor>
-         <parameter><inject bean="AOPXMLMetaDataParserDeployer" property="relativeOrder"/></parameter>
-      </constructor>
-   </bean>
-   <bean name="AOPClassLoaderDeployer" class="org.jboss.aop.asintegration.jboss5.AOPClassLoaderDeployer">
-      <property name="aspectManager"><inject bean="AspectManager" property="aspectManager"/></property>
-   </bean>
-   <bean name="AOPDeploymentAopMetaDataDeployer" class="org.jboss.aop.asintegration.jboss5.AOPDeploymentAopMetaDataDeployer">
-      <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
-      <property name="aspectManager"><inject bean="AspectManager" property="aspectManager"/></property>
-   </bean>
-   <bean name="BeansDeploymentAopMetaDataDeployer" class="org.jboss.aop.asintegration.jboss5.BeansDeploymentAopMetaDataDeployer">
-      <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
-      <property name="aspectManager"><inject bean="AspectManager" property="aspectManager"/></property>
-   </bean>
 
    <!-- POJO Deployment -->
    <bean name="BeanDeployer" class="org.jboss.deployers.vfs.deployer.kernel.BeanDeployer">
