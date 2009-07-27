@@ -22,6 +22,9 @@
 
 package org.jboss.jca.common.util;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 /**
  * Utility for class related operations.
  * 
@@ -29,6 +32,9 @@ package org.jboss.jca.common.util;
  */
 public final class ClassUtil
 {
+   /** Empty class array */
+   private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
+
    // Not-instantiate me
    private ClassUtil()
    {
@@ -57,4 +63,43 @@ public final class ClassUtil
       return to.isAssignableFrom(from);
    }
 
+   /**
+    * Returns true if <b>synchronized</b> keyword exists, false otherwise.
+    * 
+    * @param modifiers member modifieres
+    * @return true if <b>synchronized</b> keyword exists, false otherwise
+    */
+   public static boolean modifiersHasSynchronizedKeyword(int modifiers)
+   {
+      return Modifier.isSynchronized(modifiers);
+   }
+
+   /**
+    * Gets class' method with given name and parameter types.
+    * @param clazz class
+    * @param methodName method name
+    * @param parameterTypes parameter types
+    * @return method
+    * @throws NoSuchMethodException if not method exist
+    */
+   public static Method getClassMethod(Class<?> clazz, String methodName, 
+         Class<?>[] parameterTypes) throws NoSuchMethodException
+   {
+      if (clazz == null)
+      {
+         throw new IllegalArgumentException("Class is null");
+      }
+
+      if (methodName == null || methodName.equals(""))
+      {
+         throw new IllegalArgumentException("Method name is null or empty");
+      }
+
+      if (parameterTypes == null)
+      {
+         parameterTypes = EMPTY_CLASS_ARRAY;
+      }
+
+      return clazz.getDeclaredMethod(methodName, parameterTypes);
+   }
 }

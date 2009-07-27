@@ -65,7 +65,7 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
       new HashMap<Class<? extends WorkContext>, WorkContext>();
 
    /** the work listener */
-   private WorkListener workListener;
+   private WorkListener workListener;   
 
    /** The start timeout */
    private long startTimeout;
@@ -261,26 +261,29 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
    public void execute()
    {
       if (trace)
-         log.trace("Executing work " + this);
+      {
+         log.trace("Starting work " + this);  
+      }
+      
       try
       {
          workManager.startWork(this);
+         work.run();
+
       }
       catch (WorkException e)
       {
-         taskRejected(new NestedRuntimeException(e));
-         return;
-      }
-      try
-      {
-         work.run();
-      }
+         taskCompleted(new NestedRuntimeException(e));
+      }      
       finally
       {
          workManager.endWork(this);
       }
+      
       if (trace)
-         log.trace("Executed work " + this);
+      {
+         log.trace("Executed work " + this);  
+      }
    }
 
    /**
@@ -289,13 +292,15 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
    public void stop()
    {
       if (trace)
-         log.trace("Stopping work " + this);
+      {
+         log.trace("Stopping work " + this);  
+      }
 
       work.release();
    }
 
    /**
-    * Accepted
+    * Work is accepted.
     * @param time The blocked time
     */
    public void accepted(long time)
@@ -303,7 +308,9 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
       blockedTime = time;
 
       if (trace)
-         log.trace("Accepted work " + this);
+      {
+         log.trace("Accepted work " + this);  
+      }
 
       if (workListener != null)
       {
@@ -313,7 +320,7 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
    }
 
    /**
-    * Rejected
+    * Work is rejected.
     * @param time The blocked time
     * @param throwable The throwable
     */
@@ -324,23 +331,29 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
       if (trace)
       {
          if (throwable != null)
-            log.trace("Rejecting work " + this, throwable);
+         {
+            log.trace("Rejecting work " + this, throwable);  
+         }
          else
-            log.trace("Rejecting work " + this);
+         {
+            log.trace("Rejecting work " + this);  
+         }
       }
 
       if (throwable != null)
       {
          exception = new WorkRejectedException(throwable);
          if (throwable instanceof StartTimeoutException)
-            exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);
+         {
+            exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);  
+         }
       }
       
       workManager.cancelWork(this);
       
       if (workListener != null)
       {
-         WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_ACCEPTED, work, exception);
+         WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_REJECTED, work, exception);
          workListener.workRejected(event);
       }
    }
@@ -352,7 +365,9 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
    public void started(long time)
    {
       if (waitType != WAIT_NONE)
-         blockedTime = time;
+      {
+         blockedTime = time;  
+      }
 
       if (workListener != null)
       {
@@ -369,13 +384,19 @@ public class WorkWrapper extends BasicTaskWrapper implements Task
    public void completed(long time, Throwable throwable)
    {
       if (waitType == WAIT_FOR_COMPLETE)
-         blockedTime = time;
+      {
+         blockedTime = time;  
+      }
 
       if (throwable != null)
-         exception = new WorkCompletedException(throwable);
+      {
+         exception = new WorkCompletedException(throwable);  
+      }
 
       if (trace)
-         log.trace("Completed work " + this);
+      {
+         log.trace("Completed work " + this);  
+      }
 
       if (workListener != null)
       {

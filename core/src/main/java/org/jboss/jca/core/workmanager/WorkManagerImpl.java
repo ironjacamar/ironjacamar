@@ -23,10 +23,11 @@
 package org.jboss.jca.core.workmanager;
 
 import org.jboss.jca.common.api.ThreadPool;
+import org.jboss.jca.common.util.ClassUtil;
 import org.jboss.jca.core.api.WorkManager;
 import org.jboss.jca.core.api.WorkWrapper;
 
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,6 +40,7 @@ import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkContextErrorCodes;
+import javax.resource.spi.work.WorkContextLifecycleListener;
 import javax.resource.spi.work.WorkContextProvider;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
@@ -50,7 +52,10 @@ import org.jboss.tm.JBossXATerminator;
 import org.jboss.util.threadpool.Task;
 
 /**
- * The work manager implementation
+ * The work manager implementation.
+ * 
+ * @author gurkanerdogdu
+ * @version $Rev$ $Date$
  */
 public class WorkManagerImpl implements WorkManager
 {
@@ -72,6 +77,13 @@ public class WorkManagerImpl implements WorkManager
 
    /** The XA terminator */
    private JBossXATerminator xaTerminator;
+   
+   /**Work run method name*/
+   private static final String RUN_METHOD_NAME = "run";
+   
+   /**Work release method name*/
+   private static final String RELEASE_METHOD_NAME = "release";
+   
 
    /**Default supported workcontext types*/
    static
@@ -82,13 +94,16 @@ public class WorkManagerImpl implements WorkManager
    }
    
    /**
-    * Default constructor
+    * Default constructor.
+    * <p>
+    * Defines a default spec compliant.
+    * </p>
     */
    public WorkManagerImpl()
    {
       specCompliant = true;
    }
-
+   
    /**
     * Retrieve the thread pool
     * @return the thread pool
@@ -160,42 +175,22 @@ public class WorkManagerImpl implements WorkManager
                       WorkListener workListener) 
       throws WorkException
    {
-      if (work == null)
-         throw new WorkException("Null work");
-
-      if (specCompliant)
-         verifyWork(work);
-            
-      boolean isWorkContextProvider = false;      
-      if (work instanceof WorkContextProvider)
-      {
-          //Implements WorkContextProvider and not-null ExecutionContext
-         if (execContext != null)
-         {
-            throw new WorkRejectedException("Work execution context must be null because " +
-               "work instance implements WorkContextProvider!");
-         }
-          
-         isWorkContextProvider = true;
-      }
-                  
+      checkAndVerifyWork(work, execContext);
+      
       if (execContext == null)
-         execContext = new ExecutionContext();
+      {
+         execContext = new ExecutionContext();  
+      }
 
       WorkWrapper wrapper = 
          new WorkWrapper(this, work, Task.WAIT_FOR_COMPLETE, startTimeout, execContext, workListener);
 
-      //Check workcontexts
-      if (isWorkContextProvider)
-      {
-         setupWorkContextProviders(wrapper);   
-      }
+      //Submit Work Instance
+      submitWork(wrapper);
       
-      importWork(wrapper);
-      executeWork(wrapper);
+      //Check Result
+      checkWorkCompletionException(wrapper);
 
-      if (wrapper.getWorkException() != null)
-         throw wrapper.getWorkException();
    }
    
    /**
@@ -215,40 +210,20 @@ public class WorkManagerImpl implements WorkManager
                          WorkListener workListener) 
       throws WorkException
    {
-      if (work == null)
-         throw new WorkException("Null work");
-
-      if (specCompliant)
-         verifyWork(work);
-
-      boolean isWorkContextProvider = false;      
-      if (work instanceof WorkContextProvider)
-      {
-          //Implements WorkContextProvider and not-null ExecutionContext
-         if (execContext != null)
-         {
-            throw new WorkRejectedException("Work execution context must be null because " +
-                 "work instance implements WorkContextProvider!");
-         }
-          
-         isWorkContextProvider = true;
-      }
-                  
+      checkAndVerifyWork(work, execContext);
+      
       if (execContext == null)
-         execContext = new ExecutionContext();
+      {
+         execContext = new ExecutionContext();  
+      }
 
       WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_FOR_START, startTimeout, execContext, workListener);
       
-      if (isWorkContextProvider)
-      {
-         setupWorkContextProviders(wrapper);   
-      }
+      //Submit Work Instance
+      submitWork(wrapper);
       
-      importWork(wrapper);
-      executeWork(wrapper);
-
-      if (wrapper.getWorkException() != null)
-         throw wrapper.getWorkException();
+      //Check Result
+      checkWorkCompletionException(wrapper);
 
       return wrapper.getBlockedElapsed();
    }
@@ -270,58 +245,47 @@ public class WorkManagerImpl implements WorkManager
                             WorkListener workListener) 
       throws WorkException
    {
-      if (work == null)
-         throw new WorkException("Null work");
-
-      if (specCompliant)
-         verifyWork(work);
-
-            
-      boolean isWorkContextProvider = false;      
-      if (work instanceof WorkContextProvider)
-      {
-          //Implements WorkContextProvider and not-null ExecutionContext
-         if (execContext != null)
-         {
-            throw new WorkRejectedException("Work execution context must be null " +
-                 "because work instance implements WorkContextProvider!");
-         }
-          
-         isWorkContextProvider = true;
-      }
-                  
+      checkAndVerifyWork(work, execContext);
+      
       if (execContext == null)
-         execContext = new ExecutionContext();
+      {
+         execContext = new ExecutionContext();  
+      }
 
       WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_NONE, startTimeout, execContext, workListener);
       
-      if (isWorkContextProvider)
-      {
-         setupWorkContextProviders(wrapper);   
-      }
+      //Submit Work Instance
+      submitWork(wrapper);
       
-      importWork(wrapper);
-      executeWork(wrapper);
-
-      if (wrapper.getWorkException() != null)
-         throw wrapper.getWorkException();
+      //Check Result
+      checkWorkCompletionException(wrapper);
    }
 
    /**
-    * Import any work
+    * Imports any work.
     * @param wrapper the work wrapper
     * @throws WorkException for any error 
     */
    protected void importWork(WorkWrapper wrapper) throws WorkException
    {
-      trace = log.isTraceEnabled();
-      if (trace)
-         log.trace("Importing work " + wrapper);
-
       if (wrapper == null)
-         return;
+      {
+         return;  
+      }
+            
+      trace = log.isTraceEnabled();
       
-      ExecutionContext ctx = wrapper.getExecutionContext();
+      if (trace)
+      {
+         log.trace("Importing work " + wrapper);  
+      }
+
+      ExecutionContext ctx = wrapper.getWorkContext(TransactionContext.class);
+      if (ctx == null)
+      {
+         ctx = wrapper.getExecutionContext();
+      }
+      
       if (ctx != null)
       {
          Xid xid = ctx.getXid();
@@ -332,43 +296,80 @@ public class WorkManagerImpl implements WorkManager
             xaTerminator.registerWork(wrapper.getWork(), xid, timeout);
          }
       }
+      
+      //Fires Context setup complete
+      fireWorkContextSetupComplete(ctx);
+      
       if (trace)
-         log.trace("Imported work " + wrapper);
+      {
+         log.trace("Imported work " + wrapper);  
+      }
    }
    
    /**
-    * Execute the work
+    * Submit the given work instance for executing by the thread pool.
     * @param wrapper the work wrapper
     * @throws WorkException for any error 
     */
-   protected void executeWork(WorkWrapper wrapper) throws WorkException
+   protected void submitWork(WorkWrapper wrapper) throws WorkException
    {
-      if (trace)
-         log.trace("Submitting work to thread pool " + wrapper);
-
       if (wrapper == null)
-         return;
+      {
+         return;  
+      }
+      
+      if (trace)
+      {
+         log.trace("Submitting work to thread pool " + wrapper);  
+      }
 
       threadPool.runTaskWrapper(wrapper);
 
       if (trace)
-         log.trace("Submitted work to thread pool " + wrapper);
+      {
+         log.trace("Submitted work to thread pool " + wrapper);  
+      }
    }
 
    /**
-    * Start work
+    * Starts given work instance.
     * @param wrapper the work wrapper
     * @throws WorkException for any error 
     */
    public void startWork(WorkWrapper wrapper) throws WorkException
    {
-      if (trace)
-         log.trace("Starting work " + wrapper);
-
       if (wrapper == null)
-         return;
+      {
+         return;  
+      }      
 
-      ExecutionContext ctx = wrapper.getExecutionContext();
+      if (trace)
+      {
+         log.trace("Setting up work contexts " + wrapper);  
+      }
+      
+      //Setting up WorkContexts if an exist
+      setupWorkContextProviders(wrapper);
+      
+      if (trace)
+      {
+         log.trace("Setted up work contexts " + wrapper);  
+      }
+      
+      //Import work instance
+      importWork(wrapper);
+            
+      if (trace)
+      {
+         log.trace("Starting work " + wrapper);  
+      }
+
+      ExecutionContext ctx = wrapper.getWorkContext(TransactionContext.class);
+      if (ctx == null)
+      {
+         ctx = wrapper.getExecutionContext();
+      }
+      
       if (ctx != null)
       {
          Xid xid = ctx.getXid();
@@ -378,22 +379,33 @@ public class WorkManagerImpl implements WorkManager
          }
       }
       if (trace)
-         log.trace("Started work " + wrapper);
+      {
+         log.trace("Started work " + wrapper);  
+      }
    }
 
    /**
-    * End work
+    * Ends given work instance.
     * @param wrapper the work wrapper
     */
    public void endWork(WorkWrapper wrapper)
    {
-      if (trace)
-         log.trace("Ending work " + wrapper);
-
       if (wrapper == null)
-         return;
+      {
+         return;  
+      }
+      
+      if (trace)
+      {
+         log.trace("Ending work " + wrapper);  
+      }
 
-      ExecutionContext ctx = wrapper.getExecutionContext();
+      ExecutionContext ctx = wrapper.getWorkContext(TransactionContext.class);
+      if (ctx == null)
+      {
+         ctx = wrapper.getExecutionContext();
+      }
+
       if (ctx != null)
       {
          Xid xid = ctx.getXid();
@@ -403,22 +415,33 @@ public class WorkManagerImpl implements WorkManager
          }
       }
       if (trace)
-         log.trace("Ended work " + wrapper);
+      {
+         log.trace("Ended work " + wrapper);  
+      }
    }
 
    /**
-    * Cancel work
+    * Cancels given work instance.
     * @param wrapper the work wrapper
     */
    public void cancelWork(WorkWrapper wrapper)
    {
-      if (trace)
-         log.trace("Cancel work " + wrapper);
-
       if (wrapper == null)
-         return;
+      {
+         return;  
+      }
+      
+      if (trace)
+      {
+         log.trace("Cancel work " + wrapper);  
+      }
 
-      ExecutionContext ctx = wrapper.getExecutionContext();
+      ExecutionContext ctx = wrapper.getWorkContext(TransactionContext.class);
+      if (ctx == null)
+      {
+         ctx = wrapper.getExecutionContext();
+      }
+
       if (ctx != null)
       {
          Xid xid = ctx.getXid();
@@ -428,45 +451,42 @@ public class WorkManagerImpl implements WorkManager
          }
       }
       if (trace)
-         log.trace("Canceled work " + wrapper);
+      {
+         log.trace("Canceled work " + wrapper);  
+      }
    }
 
    /**
-    * Verify work
+    * Verify the given work instance.
     * @param work The work
     * @throws WorkException Thrown if a spec compliant issue is found
     */
    private void verifyWork(Work work) throws WorkException
-   {
-      Class<?>[] types = new Class[] {};
-
-      try
+   {     
+      Class<?> workClass = work.getClass();
+      boolean result = false;
+      
+      result = verfiyWorkMethods(workClass, RUN_METHOD_NAME, null, workClass.getName() + 
+            ": Run method is not defined");
+     
+      if (!result)
       {
-         if (Modifier.isSynchronized(work.getClass().getMethod("run", types).getModifiers()))
-            throw new WorkException(work.getClass().getName() + ": Run method is synchronized");
-      }
-      catch (NoSuchMethodException nsme)
-      {
-         throw new WorkException(work.getClass().getName() + ": Run method is not defined");
-      }
-
-      try
-      {
-         if (Modifier.isSynchronized(work.getClass().getMethod("release", types).getModifiers()))
-            throw new WorkException(work.getClass().getName() + ": Release method is synchronized");
-      }
-      catch (NoSuchMethodException nsme)
-      {
-         throw new WorkException(work.getClass().getName() + ": Release method is not defined");
+         throw new WorkException(workClass.getName() + ": Run method is synchronized");
       }
       
+      result = verfiyWorkMethods(workClass, RELEASE_METHOD_NAME, null, workClass.getName() + 
+            ": Release method is not defined");
+      
+      if (!result)
+      {
+         throw new WorkException(workClass.getName() + ": Release method is synchronized");
+      }
    }
    
    /**
     * Setup work context's of the given work instance.
     * 
-    * @param work work instance
-    * @param executionContext execution context instance
+    * @param wrapper wrapper work instance
     * @throws WorkException if any exception occurs
     */
    private void setupWorkContextProviders(WorkWrapper wrapper) throws WorkException
@@ -478,101 +498,116 @@ public class WorkManagerImpl implements WorkManager
 
       Work work = wrapper.getWork();
 
-      WorkContextProvider wcProvider = (WorkContextProvider) work;
-      List<WorkContext> contexts = wcProvider.getWorkContexts();
-
-      if (contexts != null && contexts.size() > 0)
+      //If work is an instanceof WorkContextProvider
+      if (work instanceof WorkContextProvider)
       {
-         boolean isTransactionContext = false;
-         boolean isSecurityContext = false;
-         boolean isHintcontext = false;
+         WorkContextProvider wcProvider = (WorkContextProvider) work;
+         List<WorkContext> contexts = wcProvider.getWorkContexts();
 
-         for (WorkContext context : contexts)
+         if (contexts != null && contexts.size() > 0)
          {
-            Class<? extends WorkContext> contextType = null;
+            boolean isTransactionContext = false;
+            boolean isSecurityContext = false;
+            boolean isHintcontext = false;
 
-            // Get supported work context class
-            contextType = getSupportedWorkContextClass(context.getClass());
-
-            // Not supported
-            if (contextType == null)
+            for (WorkContext context : contexts)
             {
-               if (trace)
-               {
-                  log.trace("Not supported work context class : " + context.getClass());
-               }
-               throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass(), 
-                   WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
-            }
-            // Duplicate checks
-            else
-            {
-               // TransactionContext duplicate
-               if (isTransactionContext(contextType))
-               {
-                  if (isTransactionContext)
-                  {
-                     if (trace)
-                     {
-                        log.trace("Duplicate transaction work context : " + context.getClass());
-                     }
+               Class<? extends WorkContext> contextType = null;
 
-                     throw new WorkCompletedException("Duplicate TransactionWorkContext class : " + 
-                         context.getClass(), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
-                  }
-                  else
-                  {
-                     isTransactionContext = true;
-                  }
-               }
-               // SecurityContext duplicate
-               else if (isSecurityContext(contextType))
-               {
-                  if (isSecurityContext)
-                  {
-                     if (trace)
-                     {
-                        log.trace("Duplicate security work context : " + context.getClass());
-                     }
+               // Get supported work context class
+               contextType = getSupportedWorkContextClass(context.getClass());
 
-                     throw new WorkCompletedException("Duplicate SecurityWorkContext class : " + context.getClass(), 
-                           WorkContextErrorCodes.DUPLICATE_CONTEXTS);
-                  }
-                  else
-                  {
-                     isSecurityContext = true;
-                  }
-               }
-               // HintContext duplicate
-               else if (isHintContext(contextType))
+               // Not supported
+               if (contextType == null)
                {
-                  if (isHintcontext)
+                  if (trace)
                   {
-                     if (trace)
-                     {
-                        log.trace("Duplicate hint work context : " + context.getClass());
-                     }
-
-                     throw new WorkCompletedException("Duplicate HintWorkContext class : " + context.getClass(), 
-                           WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                     log.trace("Not supported work context class : " + context.getClass());
                   }
-                  else
-                  {
-                     isHintcontext = true;
-                  }
+                  
+                  fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+                  
+                  throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass(), 
+                      WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                }
-               // Normally, this must not be happened!i just safe check!
+               // Duplicate checks
                else
                {
-                  throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass(), 
-                        WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
-               }
-            }
+                  // TransactionContext duplicate
+                  if (isTransactionContext(contextType))
+                  {
+                     if (isTransactionContext)
+                     {
+                        if (trace)
+                        {
+                           log.trace("Duplicate transaction work context : " + context.getClass());
+                        }
 
-            // Add workcontext instance to the work
-            wrapper.addWorkContext(contextType, context);
-         }
-      }
+                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        
+                        throw new WorkCompletedException("Duplicate TransactionWorkContext class : " + 
+                            context.getClass(), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                     }
+                     else
+                     {
+                        isTransactionContext = true;
+                     }
+                  }
+                  // SecurityContext duplicate
+                  else if (isSecurityContext(contextType))
+                  {
+                     if (isSecurityContext)
+                     {
+                        if (trace)
+                        {
+                           log.trace("Duplicate security work context : " + context.getClass());
+                        }
+                        
+                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+
+                        throw new WorkCompletedException("Duplicate SecurityWorkContext class : " + context.getClass(), 
+                              WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                     }
+                     else
+                     {
+                        isSecurityContext = true;
+                     }
+                  }
+                  // HintContext duplicate
+                  else if (isHintContext(contextType))
+                  {
+                     if (isHintcontext)
+                     {
+                        if (trace)
+                        {
+                           log.trace("Duplicate hint work context : " + context.getClass());
+                        }
+
+                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        
+                        throw new WorkCompletedException("Duplicate HintWorkContext class : " + context.getClass(), 
+                              WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                     }
+                     else
+                     {
+                        isHintcontext = true;
+                     }
+                  }
+                  // Normally, this must not be happened!i just safe check!
+                  else
+                  {
+                     fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+                     
+                     throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass(), 
+                           WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+                  }
+               }
+
+               // Add workcontext instance to the work
+               wrapper.addWorkContext(contextType, context);
+            }
+         }         
+      }      
    }
 
    /**
@@ -654,5 +689,97 @@ public class WorkManagerImpl implements WorkManager
 
       return false;
    }
+   
+   /**
+    * Check and verfiy work before submitting.
+    * @param work the work instance
+    * @param executionContext any execution context that is passed by apadater
+    * @throws WorkException if any exception occurs
+    */
+   private void checkAndVerifyWork(Work work, ExecutionContext executionContext) throws WorkException
+   {
+      if (work == null)
+      {
+         throw new WorkException("Null work");  
+      }
 
+      if (specCompliant)
+      {
+         verifyWork(work);  
+      }   
+      
+      if (work instanceof WorkContextProvider)
+      {
+          //Implements WorkContextProvider and not-null ExecutionContext
+         if (executionContext != null)
+         {
+            throw new WorkRejectedException("Work execution context must be null because " +
+               "work instance implements WorkContextProvider!");
+         }          
+      }      
+   }
+   
+   /**
+    * Checks work completed status. 
+    * @param wrapper work wrapper instance
+    * @throws {@link WorkException} if work is completed with an exception
+    */
+   private void checkWorkCompletionException(WorkWrapper wrapper) throws WorkException
+   {
+      if (wrapper.getWorkException() != null)
+      {
+         throw wrapper.getWorkException();  
+      }      
+   }
+
+   private boolean verfiyWorkMethods(Class<?> workClass, String methodName, 
+         Class<?>[] parameterTypes, String errorMessage) throws WorkException
+   {
+      Method method = null;
+      try
+      {
+         method = ClassUtil.getClassMethod(workClass, methodName, null);
+         
+         if (ClassUtil.modifiersHasSynchronizedKeyword(method.getModifiers()))
+         {
+            return false;  
+         }
+      }
+      catch (NoSuchMethodException nsme)
+      {
+         throw new WorkException(errorMessage);
+      }
+      
+      return true;
+   }
+   
+   /**
+    * Calls listener with given error code.
+    * @param listener work context listener
+    * @param errorCode error code
+    */
+   private void fireWorkContextSetupFailed(Object workContext, String errorCode)
+   {
+      if (workContext instanceof WorkContextLifecycleListener)
+      {
+         WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
+         listener.contextSetupFailed(errorCode);   
+      }
+      
+   }
+   
+   /**
+    * Calls listener after work context is setted up.
+    * @param listener work context listener
+    */
+   private void fireWorkContextSetupComplete(Object workContext)
+   {
+      if (workContext instanceof WorkContextLifecycleListener)
+      {
+         WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
+         listener.contextSetupComplete();   
+      }
+      
+   }
+   
 }

@@ -23,18 +23,57 @@
 package org.jboss.jca.test.core.spec.chapter11.common;
 
 import javax.resource.spi.work.TransactionContext;
+import javax.resource.spi.work.WorkContextLifecycleListener;
 
 /**
  * TransactionContextCustom.
  * @version $Rev$ $Date$
  *
  */
-public class TransactionContextCustom extends TransactionContext
+public class TransactionContextCustom extends TransactionContext implements WorkContextLifecycleListener
 {
-
-   /**
-    * 
-    */
+   /** Serial version UID */
    private static final long serialVersionUID = -3841107265829832325L;
 
+   /**contextSetupComplete*/
+   private static boolean contextSetupComplete = false;
+
+   /**contextSetupFailedErrorCode*/
+   private static String contextSetupFailedErrorCode = "";
+   
+   /**
+    * isContextSetupComplete
+    * @return isContextSetupComplete
+    */
+   public static boolean isContextSetupComplete()
+   {
+      return contextSetupComplete;
+   }
+
+   /**
+    * getContextSetupFailedErrorCode
+    * @return getContextSetupFailedErrorCode
+    */
+   public static String getContextSetupFailedErrorCode()
+   {
+      return contextSetupFailedErrorCode;
+   }
+
+   /**
+    * Context setup complete
+    */
+   public void contextSetupComplete()
+   {
+      contextSetupComplete = true;
+   }
+
+   /**
+    * Context setup failed
+    * @param errorCode The error code
+    */
+   public void contextSetupFailed(String errorCode)
+   {
+      contextSetupFailedErrorCode = errorCode;
+      contextSetupComplete = false;
+   }
 }
