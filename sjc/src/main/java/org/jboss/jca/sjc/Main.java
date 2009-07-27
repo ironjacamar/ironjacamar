@@ -122,12 +122,12 @@ public class Main
          containerClassLoader = SecurityActions.createURLCLassLoader(urls, parent);
          SecurityActions.setThreadContextClassLoader(containerClassLoader);
 
-         initLogging(containerClassLoader);
-
          SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
          SecurityActions.setSystemProperty("jboss.deploy.url", deployDirectory.toURI().toURL().toString());
          SecurityActions.setSystemProperty("jboss.lib.url", libDirectory.toURI().toURL().toString());
          SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+
+         initLogging(containerClassLoader);
 
          File bootXml = new File(configDirectory, "boot.xml");
          JAXBContext bootJc = JAXBContext.newInstance("org.jboss.jca.sjc.boot");
@@ -669,6 +669,21 @@ public class Main
     */
    private static void initLogging(ClassLoader cl)
    {
+      try
+      {
+         Class clz = Class.forName("org.jboss.logmanager.log4j.BridgeRepositorySelector", true, cl);
+         Method mStart = clz.getMethod("start", (Class[])null);
+
+         Object brs = clz.newInstance();
+
+         logging = mStart.invoke(brs, (Object[])null);
+      }
+      catch (Exception e)
+      {
+         // Nothing we can do
+      }
+
+
       try
       {
          Class clz = Class.forName("org.jboss.logging.Logger", true, cl);

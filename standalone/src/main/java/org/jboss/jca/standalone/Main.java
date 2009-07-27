@@ -112,6 +112,8 @@ public class Main
 
          SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
          SecurityActions.setSystemProperty("jboss.deploy.url", deployDirectory.toURI().toURL().toString());
+         SecurityActions.setSystemProperty("jboss.lib.url", libDirectory.toURI().toURL().toString());
+         SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
 
          Properties props = new Properties(SecurityActions.getSystemProperties());
          props.put((String)serverConfigFieldHomeUrl.get(null), root.toURI().toURL().toString());

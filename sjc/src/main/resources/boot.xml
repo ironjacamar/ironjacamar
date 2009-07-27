@@ -1,8 +1,5 @@
 <deployment>
 
-  <!-- Logging bridge -->
-  <bean name="LogBridgeHandler" class="org.jboss.logbridge.LogBridgeHandler"/>
-
   <!-- Naming -->
   <bean name="LookupPool">
     <constructor factoryMethod="newFixedThreadPool"

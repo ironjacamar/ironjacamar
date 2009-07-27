@@ -63,6 +63,8 @@ echo.
 :RESTART
 "%JAVA%" %JAVA_OPTS% ^
    -Djava.endorsed.dirs="%JBOSS_JCA_ENDORSED_DIRS%" ^
+   -Dorg.jboss.logging.Logger.pluginClass=org.jboss.logging.logmanager.LoggerPluginImpl ^
+   -Dlog4j.defaultInitOverride=true ^
    -jar jboss-jca-sjc.jar %*
 
 if ERRORLEVEL 10 goto RESTART
