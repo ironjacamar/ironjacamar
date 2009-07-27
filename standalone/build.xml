@@ -135,6 +135,7 @@
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
         <exclude name="*standalone.jar"/>
+        <exclude name="jboss-jca-sjc*.jar"/>
       </fileset>
     </copy>
 
@@ -143,6 +144,8 @@
         <include name="*.jar"/>
         <exclude name="jaxb-api.jar"/>
         <exclude name="xercesImpl.jar"/>
+        <exclude name="*xjc.jar"/>
+        <exclude name="stax-api.jar"/>
       </fileset>
     </copy>
 
@@ -150,6 +153,7 @@
       <fileset dir="${lib.dir}/standalone">
         <include name="jaxb-api.jar"/>
         <include name="xercesImpl.jar"/>
+        <include name="stax-api.jar"/>
       </fileset>
     </copy>
 
