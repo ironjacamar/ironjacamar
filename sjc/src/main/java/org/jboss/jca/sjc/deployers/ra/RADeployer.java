@@ -24,6 +24,7 @@ package org.jboss.jca.sjc.deployers.ra;
 
 import org.jboss.jca.sjc.annotationscanner.Annotation;
 import org.jboss.jca.sjc.annotationscanner.AnnotationScanner;
+import org.jboss.jca.sjc.deployers.DeployException;
 import org.jboss.jca.sjc.deployers.Deployer;
 import org.jboss.jca.sjc.deployers.Deployment;
 import org.jboss.jca.sjc.util.ExtractUtil;
@@ -66,9 +67,9 @@ public class RADeployer implements Deployer
     * @param f The file
     * @param parent The parent classloader
     * @return The deployment
-    * @exception Exception Thrown if an error occurs
+    * @exception DeployException Thrown if an error occurs during deployment
     */
-   public Deployment deploy(File f, ClassLoader parent) throws Exception
+   public Deployment deploy(File f, ClassLoader parent) throws DeployException
    {
       if (f == null || !f.getAbsolutePath().endsWith(".rar"))
          return null;
@@ -141,6 +142,10 @@ public class RADeployer implements Deployer
          // Activate deployment
 
          return new RADeployment(f.getName(), cl);
+      }
+      catch (Throwable t)
+      {
+         throw new DeployException("Deployment " + f.getName() + " failed", t);
       }
       finally
       {

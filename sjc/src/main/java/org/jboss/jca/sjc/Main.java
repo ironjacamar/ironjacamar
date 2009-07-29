@@ -26,6 +26,7 @@ import org.jboss.jca.sjc.boot.BeanType;
 import org.jboss.jca.sjc.boot.ConstructorType;
 import org.jboss.jca.sjc.boot.InjectType;
 import org.jboss.jca.sjc.boot.PropertyType;
+import org.jboss.jca.sjc.deployers.DeployException;
 import org.jboss.jca.sjc.deployers.Deployer;
 
 import java.io.Closeable;
@@ -386,24 +387,31 @@ public class Main
 
             for (File f : deployDirectory.listFiles())
             {
-               Object[] parameters = new Object[] {f, cl};
-               org.jboss.jca.sjc.deployers.Deployment deployment = 
-                  (org.jboss.jca.sjc.deployers.Deployment)deployMethod.invoke(instance, parameters);
-               if (deployment != null)
+               try
                {
-                  if (services.get(deployment.getName()) == null)
+                  Object[] parameters = new Object[] {f, cl};
+                  org.jboss.jca.sjc.deployers.Deployment deployment = 
+                     (org.jboss.jca.sjc.deployers.Deployment)deployMethod.invoke(instance, parameters);
+                  if (deployment != null)
                   {
-                     startup.add(deployment.getName());
-                     services.put(deployment.getName(), deployment);
+                     if (services.get(deployment.getName()) == null)
+                     {
+                        startup.add(deployment.getName());
+                        services.put(deployment.getName(), deployment);
+                     }
+                     else
+                     {
+                        warn("Warning: A deployment with name " + deployment.getName() + " already exists");
+                     }
                   }
                   else
                   {
-                     warn("Warning: A deployment with name " + deployment.getName() + " already exists");
+                     warn("Ignoring deployment " + f.getName());
                   }
                }
-               else
+               catch (Exception de)
                {
-                  warn("Ignoring deployment " + f.getName());
+                  error("Deployment " + f.getName() + " failed.", de);
                }
             }
          }
