@@ -13,7 +13,7 @@
    <resourceadapter-version>0.1</resourceadapter-version>
 
    <resourceadapter>
-      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303.TestResourceAdapter</resourceadapter-class>
+      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.TestResourceAdapter</resourceadapter-class>
       
       <config-property>
          <config-property-name>myIntProperty</config-property-name>
@@ -23,10 +23,10 @@
       
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303.TestManagedConnectionFactory</managedconnectionfactory-class>
+            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.TestManagedConnectionFactory</managedconnectionfactory-class>
 
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
-            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303.TestManagedConnection</connectionfactory-impl-class>
+            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.TestManagedConnection</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
             <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.TestConnection</connection-impl-class>
          </connection-definition>

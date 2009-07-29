@@ -46,6 +46,7 @@ public class RaXmlParsingDeployer extends AbstractParsingDeployer
     */
    public RaXmlParsingDeployer()
    {
+      log.info("Constructing RaXmlParsingDeployer");
    }
 
    /**

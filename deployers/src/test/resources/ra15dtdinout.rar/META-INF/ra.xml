@@ -13,14 +13,14 @@
    <resourceadapter-version>0.1</resourceadapter-version>
 
    <resourceadapter>
-      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra15inout.TestResourceAdapter</resourceadapter-class>
+      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra15dtdinout.TestResourceAdapter</resourceadapter-class>
 
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra15inout.TestManagedConnectionFactory</managedconnectionfactory-class>
+            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra15dtdinout.TestManagedConnectionFactory</managedconnectionfactory-class>
 
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
-            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra15inout.TestManagedConnection</connectionfactory-impl-class>
+            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra15dtdinout.TestManagedConnection</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
             <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.TestConnection</connection-impl-class>
          </connection-definition>
@@ -32,7 +32,7 @@
             <messagelistener>
                <messagelistener-type>org.jboss.jca.test.deployers.spec.rars.MessageListener</messagelistener-type>
                <activationspec>
-                  <activationspec-class>org.jboss.jca.test.deployers.spec.rars.ra15inout.TestActivationSpec</activationspec-class>
+                  <activationspec-class>org.jboss.jca.test.deployers.spec.rars.ra15dtdinout.TestActivationSpec</activationspec-class>
                </activationspec>
             </messagelistener>
          </messageadapter>

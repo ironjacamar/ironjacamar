@@ -30,5 +30,21 @@ import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
  */
 public class TestResourceAdapter extends BaseResourceAdapter
 {
+   private String stringRar;
 
+   /**
+    * @param s The value
+    */
+   public void setStringRAR(String s)
+   {
+      this.stringRar = s;
+   }
+
+   /**
+    * @return the string rar
+    */
+   public String getStringRAR()
+   {
+      return stringRar;
+   }
 }

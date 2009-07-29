@@ -9,7 +9,7 @@
    <resourceadapter-version>0.1</resourceadapter-version>
 
    <resourceadapter>
-      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra16outjbossra.TestResourceAdapter</resourceadapter-class>
+      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra16outjbossradefaultns.TestResourceAdapter</resourceadapter-class>
       <config-property>
          <config-property-name>StringRAR</config-property-name>
          <config-property-type>java.lang.String</config-property-type>
@@ -17,10 +17,10 @@
       </config-property>
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra16outjbossra.TestManagedConnectionFactory</managedconnectionfactory-class>
+            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra16outjbossradefaultns.TestManagedConnectionFactory</managedconnectionfactory-class>
 
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
-            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra16outjbossra.TestManagedConnection</connectionfactory-impl-class>
+            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra16outjbossradefaultns.TestManagedConnection</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
             <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.TestConnection</connection-impl-class>
          </connection-definition>
