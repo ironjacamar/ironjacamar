@@ -28,6 +28,7 @@ import org.jboss.jca.sjc.deployers.DeployException;
 import org.jboss.jca.sjc.deployers.Deployer;
 import org.jboss.jca.sjc.deployers.Deployment;
 import org.jboss.jca.sjc.util.ExtractUtil;
+import org.jboss.jca.sjc.util.Injection;
 import org.jboss.jca.sjc.util.JarFilter;
 
 import java.io.File;
@@ -41,6 +42,7 @@ import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
+import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
@@ -136,8 +138,25 @@ public class RADeployer implements Deployer
          cmd = Metadata.merge(cmd, jrmd);
          
          // Create objects
-         
+         Object resourceAdapter = null;
+         if (cmd != null && cmd.getRa() != null && cmd.getRa().getRaClass() != null)
+         {
+            Class raClass = Class.forName(cmd.getRa().getRaClass(), true, cl);
+            resourceAdapter = raClass.newInstance();
+         }
+
          // Inject values
+         if (resourceAdapter != null && cmd != null && cmd.getRa() != null)
+         {
+            List<ConfigPropertyMetaData> l = cmd.getRa().getConfigProperty();
+            if (l != null)
+            {
+               for (ConfigPropertyMetaData cpmd : l)
+               {
+                  Injection.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), resourceAdapter);
+               }
+            }
+         }
 
          // Bean validation
          
