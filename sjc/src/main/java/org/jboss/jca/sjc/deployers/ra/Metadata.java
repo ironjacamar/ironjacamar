@@ -23,11 +23,16 @@
 package org.jboss.jca.sjc.deployers.ra;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jboss.logging.Logger;
 import org.jboss.metadata.rar.jboss.JBossRA10DefaultNSMetaData;
 import org.jboss.metadata.rar.jboss.JBossRA10MetaData;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
+import org.jboss.metadata.rar.jboss.RaConfigPropertyMetaData;
+import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.JCA15DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA15MetaData;
@@ -146,5 +151,72 @@ public class Metadata
       }
       
       return result;
+   }
+
+   /**
+    * Merge specification metadata with vendor metadata
+    * @param cmd The specification metadata
+    * @param jmd The vendor metadata
+    * @return The merged metadata
+    * @exception Exception Thrown if an error occurs
+    */
+   public static ConnectorMetaData merge(ConnectorMetaData cmd, JBossRAMetaData jmd) throws Exception
+   {
+      if (cmd != null && jmd != null)
+      {
+         List<RaConfigPropertyMetaData> props = jmd.getRaConfigProps();
+         List<ConfigPropertyMetaData> append = null;
+
+         if (props != null)
+         {
+            for (RaConfigPropertyMetaData rcmd : props)
+            {
+               List<ConfigPropertyMetaData> l = cmd.getRa().getConfigProperty();
+               boolean found = false;
+
+               if (l != null)
+               {
+                  Iterator<ConfigPropertyMetaData> it = l.iterator();
+                  
+                  while (!found && it.hasNext())
+                  {
+                     ConfigPropertyMetaData cpmd = it.next();
+                     if (cpmd.getName().equals(rcmd.getName()) &&
+                         cpmd.getType().equals(rcmd.getType()))
+                     {
+                        cpmd.setValue(rcmd.getValue());
+                        found = true;
+                     }
+                  }
+               }
+
+               if (!found)
+               {
+                  if (append == null)
+                     append = new ArrayList<ConfigPropertyMetaData>();
+
+                  ConfigPropertyMetaData cpmd = new ConfigPropertyMetaData();
+                  cpmd.setName(rcmd.getName());
+                  cpmd.setType(rcmd.getType());
+                  cpmd.setValue(rcmd.getValue());
+                  
+                  append.add(cpmd);
+               }
+            }
+
+            if (append != null)
+            {
+               if (cmd.getRa().getConfigProperty() == null)
+                  cmd.getRa().setConfigProperty(new ArrayList<ConfigPropertyMetaData>());
+
+               for (ConfigPropertyMetaData cpmd : append)
+               {
+                  cmd.getRa().getConfigProperty().add(cpmd);
+               }
+            }
+         }
+      }
+
+      return cmd;
    }
 }

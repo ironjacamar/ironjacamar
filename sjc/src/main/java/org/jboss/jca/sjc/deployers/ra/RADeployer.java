@@ -99,13 +99,14 @@ public class RADeployer implements Deployer
          // Parse metadata
          ConnectorMetaData cmd = Metadata.getStandardMetaData(root);
          JBossRAMetaData jrmd = Metadata.getJBossMetaData(root);
+         boolean isMetadataComplete = true;
 
          // Process annotations
          if (cmd == null || cmd.is16())
          {
             Map<Class, List<Annotation>> annotations = AnnotationScanner.scan(cl.getURLs(), cl);
 
-            boolean isMetadataComplete = false;
+            isMetadataComplete = false;
             if (cmd != null)
             {
                if (cmd instanceof JCA16MetaData)
@@ -129,9 +130,10 @@ public class RADeployer implements Deployer
                cmd = Annotations.process(cmd, annotations);
          }
          
-         // Merge metadata
-         
          // Validate metadata
+         
+         // Merge metadata
+         cmd = Metadata.merge(cmd, jrmd);
          
          // Create objects
          
