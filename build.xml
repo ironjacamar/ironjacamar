@@ -87,11 +87,9 @@
   <property name="version.jboss.deployers" value="2.0.8.GA"/>
   <property name="version.jboss.ejb3.test" value="1.0.0"/>
   <property name="version.jboss.integration" value="5.1.0.CR1"/>
-  <property name="version.jboss.logging" value="2.1.0.GA"/>
-  <property name="version.jboss.logging.log4j" value="2.1.0.GA"/>
-  <property name="version.jboss.logging.logmanager" value="1.0.0.CR2"/>
-  <property name="version.jboss.logging.metadata" value="1.0.0.CR1"/>
-  <property name="version.jboss.logmanager" value="1.1.0.CR4"/>
+  <property name="version.jboss.logging" value="2.2.0.CR1"/>
+  <property name="version.jboss.logging.metadata" value="1.0.0.CR3"/>
+  <property name="version.jboss.logmanager" value="1.1.0.CR6"/>
   <property name="version.jboss.logmanager.log4j" value="1.0.0.CR2"/>
   <property name="version.jboss.managed" value="2.1.0.CR7"/>
   <property name="version.jboss.mc.dependency" value="2.0.8.GA"/>
