@@ -323,6 +323,28 @@
     <mkdir dir="${reports.dir}/findbugs" />
 
     <findbugs home="${basedir}/tools/findbugs/lib/"
+              output="html"
+              outputFile="${reports.dir}/findbugs/findbugs.html" 
+              excludeFilter="${basedir}/tools/findbugs/filter.xml">
+      <auxClasspath>
+        <fileset dir="${lib.dir}/standalone">
+          <include name="*.jar"/>
+        </fileset>
+      </auxClasspath>
+      <class location="${target.dir}/javax-resource-spec-api.jar" />
+      <class location="${target.dir}/jboss-jca-common-api.jar" />
+      <class location="${target.dir}/jboss-jca-common-impl.jar" />
+      <class location="${target.dir}/jboss-jca-core-api.jar" />
+      <class location="${target.dir}/jboss-jca-core-impl.jar" />
+      <class location="${target.dir}/jboss-jca-deployers-main.jar" />
+      <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
+      <class location="${target.dir}/jboss-jca-sjc.jar" />
+      <class location="${target.dir}/jboss-jca-sjc-ra-deployer.jar" />
+      <class location="${target.dir}/jboss-jca-sjc-services.jar" />
+      <class location="${target.dir}/jboss-jca-standalone.jar" />
+    </findbugs>
+
+    <findbugs home="${basedir}/tools/findbugs/lib/"
               output="xml:withMessages"
               outputFile="${reports.dir}/findbugs/findbugs.xml" 
               excludeFilter="${basedir}/tools/findbugs/filter.xml">
@@ -340,6 +362,7 @@
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-sjc-ra-deployer.jar" />
+      <class location="${target.dir}/jboss-jca-sjc-services.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
     </findbugs>
   </target>
