@@ -28,6 +28,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.*;
 
 import javax.validation.Constraint;
+import javax.validation.ConstraintPayload;
 
 /**
  * 
@@ -52,4 +53,9 @@ public @interface CheckCase
     * value
     */
    CaseMode value();
+   /**
+    * payload
+    */
+   Class<? extends ConstraintPayload>[] payload() default { };
+
 }
