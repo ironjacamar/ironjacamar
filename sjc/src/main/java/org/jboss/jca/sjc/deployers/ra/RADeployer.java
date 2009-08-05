@@ -51,11 +51,17 @@ import org.jboss.metadata.rar.spec.JCA16MetaData;
 /**
  * The RA deployer for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  */
 public class RADeployer implements Deployer
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
    private static boolean trace = log.isTraceEnabled();
+   
+   /**
+    * validation optional
+    */
+   private boolean beanValidation = true;
 
    /**
     * Constructor
@@ -64,6 +70,24 @@ public class RADeployer implements Deployer
    {
    }
 
+   /**
+    * setBeanValidation
+    * @param value validation optional
+    */
+   public void setBeanValidation(boolean value)
+   {
+      beanValidation = value;
+   }
+   
+   /**
+    * getBeanValidation
+    * @return validation optional
+    */
+   public boolean getBeanValidation()
+   {
+      return beanValidation;
+   }
+   
    /**
     * Deploy
     * @param f The file
@@ -159,6 +183,10 @@ public class RADeployer implements Deployer
          }
 
          // Bean validation
+         if (beanValidation && resourceAdapter != null)
+         {
+            BeanValidation.validate(resourceAdapter);
+         }
          
          // Activate deployment
 
