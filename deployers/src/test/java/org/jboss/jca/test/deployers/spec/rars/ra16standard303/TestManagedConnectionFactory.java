@@ -23,6 +23,7 @@ package org.jboss.jca.test.deployers.spec.rars.ra16standard303;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
 
+import javax.validation.constraints.NotNull;
 /**
  * TestManagedConnectionFactory
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
@@ -31,4 +32,23 @@ import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
 public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
 {
    private static final long serialVersionUID = 1L;
+   
+   @NotNull
+   private String myStringProperty;
+
+   /**
+    * @param myStringProperty the myStringProperty to set
+    */
+   public void setMyStringProperty(String myStringProperty)
+   {
+      this.myStringProperty = myStringProperty;
+   }
+
+   /**
+    * @return the myStringProperty
+    */
+   public String getMyStringProperty()
+   {
+      return myStringProperty;
+   }
 }

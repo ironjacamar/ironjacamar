@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ import java.util.Map;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
 import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
+import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
@@ -160,32 +162,94 @@ public class RADeployer implements Deployer
          
          // Merge metadata
          cmd = Metadata.merge(cmd, jrmd);
-         
-         // Create objects
-         Object resourceAdapter = null;
-         if (cmd != null && cmd.getRa() != null && cmd.getRa().getRaClass() != null)
-         {
-            Class raClass = Class.forName(cmd.getRa().getRaClass(), true, cl);
-            resourceAdapter = raClass.newInstance();
-         }
 
+         // Create objects
+         // And
          // Inject values
-         if (resourceAdapter != null && cmd != null && cmd.getRa() != null)
+         Object resourceAdapter = null;
+         List<Object> mcfs = null;
+         if (cmd != null)
          {
-            List<ConfigPropertyMetaData> l = cmd.getRa().getConfigProperty();
-            if (l != null)
+            // ResourceAdapter
+            if (cmd.getRa() != null && cmd.getRa().getRaClass() != null)
             {
-               for (ConfigPropertyMetaData cpmd : l)
+               try 
                {
-                  Injection.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), resourceAdapter);
+                  Class raClass = Class.forName(cmd.getRa().getRaClass(), true, cl);
+                  resourceAdapter = raClass.newInstance();
+               }
+               catch (ClassNotFoundException e)
+               {
+                  log.trace("can't constractor " + cmd.getRa().getRaClass() + " class");
+               }
+               if (resourceAdapter != null)
+               {
+                  List<ConfigPropertyMetaData> l = cmd.getRa().getConfigProperty();
+                  if (l != null)
+                  {
+                     for (ConfigPropertyMetaData cpmd : l)
+                     {
+                        Injection.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), resourceAdapter);
+                     }
+                  }
                }
             }
+            
+            // ManagedConnectionFactory
+            if (cmd.getRa() != null && cmd.getRa().getOutboundRa() != null && 
+               cmd.getRa().getOutboundRa().getConDefs() != null)
+            {
+               List<ConnectionDefinitionMetaData> cdMetas = cmd.getRa().getOutboundRa().getConDefs();
+               if (cdMetas.size() > 0)
+               {
+                  mcfs = new ArrayList<Object>();
+                  for (ConnectionDefinitionMetaData cdMeta : cdMetas)
+                  {
+                     if (cdMeta.getManagedConnectionFactoryClass() != null)
+                     {
+                        Object mcf = null;
+                        try 
+                        {
+                           Class mcfClass = Class.forName(cdMeta.getManagedConnectionFactoryClass(), true, cl);
+                           mcf = mcfClass.newInstance();
+                           mcfs.add(mcf);
+                        } 
+                        catch (ClassNotFoundException e)
+                        {
+                           log.trace("can't constractor " + cdMeta.getManagedConnectionFactoryClass() + " class");
+                        }
+                        if (mcf != null)
+                        {
+                           List<ConfigPropertyMetaData> cpMetas = cdMeta.getConfigProps();
+                           if (cpMetas != null)
+                           {
+                              for (ConfigPropertyMetaData cpmd : cpMetas)
+                              {
+                                 Injection.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), mcf);
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+            
          }
 
          // Bean validation
-         if (beanValidation && resourceAdapter != null)
+         if (beanValidation)
          {
-            BeanValidation.validate(resourceAdapter);
+            if (resourceAdapter != null)
+            {
+               BeanValidation.validate(resourceAdapter);
+            }
+            if (mcfs != null && mcfs.size() > 0)
+            {
+               for (Object mcf : mcfs)
+               {
+                  BeanValidation.validate(mcf);
+               }
+            }
          }
          
          // Activate deployment

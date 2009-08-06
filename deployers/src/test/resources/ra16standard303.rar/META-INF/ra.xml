@@ -24,7 +24,11 @@
       <outbound-resourceadapter>
          <connection-definition>
             <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303.TestManagedConnectionFactory</managedconnectionfactory-class>
-
+	        <config-property>
+	           <config-property-name>myStringProperty</config-property-name>
+	           <config-property-type>java.lang.String</config-property-type>
+	           <config-property-value>MyJCA</config-property-value>
+	        </config-property>
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
             <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303.TestManagedConnection</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
