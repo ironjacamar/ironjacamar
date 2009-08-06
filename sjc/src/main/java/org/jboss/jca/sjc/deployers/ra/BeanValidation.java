@@ -23,6 +23,7 @@ package org.jboss.jca.sjc.deployers.ra;
 
 import java.util.Set;
 
+import javax.validation.Configuration;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -57,7 +58,9 @@ public class BeanValidation
          throw new IllegalArgumentException("Object is null");
       }
 
-      ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
+      Configuration configuration = Validation.byDefaultProvider().configure();
+      Configuration<?> conf = configuration.traversableResolver(new JCATraversableResolver());
+      ValidatorFactory vf = conf.buildValidatorFactory();
       Validator v = vf.getValidator();
 
       if (trace)
@@ -69,7 +72,7 @@ public class BeanValidation
       Set errors = v.validate(object, Default.class);
       if (errors != null && errors.size() > 0)
       {
-         log.info("Validated: " + errors.size() + " validate failing");
+         log.debug("Validated: " + errors.size() + " validate failing");
          throw new ConstraintViolationException(errors);
       }
    }
