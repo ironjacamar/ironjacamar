@@ -67,7 +67,9 @@ cd $JBOSS_JCA_HOME/bin
       <programlisting>
 $JBOSS_JCA_HOME/config/boot.xml
       </programlisting>
-      <para>file, where all the beans are initialized in the order they appear.</para>
+      <para>file, where all the beans are initialized in the order they appear when
+        the single threaded kernel is used. Otherwise the dependency resolution based
+        solution is used (&lt;depends&gt;).</para>
 
       <para>The layout of boot.xml is defined in</para>
       <programlisting>
@@ -87,7 +89,7 @@ $JBOSS_JCA_HOME/config/boot.xsd
         </listitem>
         <listitem>
           <code>&lt;inject&gt;</code>
-          <para>injects a bean or a property from a bean.</para>
+          <para>injects a bean or a property from a bean (defines an implicit dependency on the bean).</para>
         </listitem>
         <listitem>
           <code>&lt;constructor&gt;</code>
@@ -96,6 +98,10 @@ $JBOSS_JCA_HOME/config/boot.xsd
         <listitem>
           <code>&lt;parameter&gt;</code>
           <para>defines a parameter value for a constructor.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;depends&gt;</code>
+          <para>defines an explicit dependency to another bean.</para>
         </listitem>
       </itemizedlist>
 
@@ -119,11 +125,12 @@ ${jboss.jca.host:localhost}
    &lt;property name="transactionTimeout"&gt;300&lt;/property&gt;
    &lt;property name="objectStoreDir"&gt;${jboss.jca.home}/tmp/tx-object-store&lt;/property&gt;
    &lt;property name="mbeanServer"&gt;&lt;inject bean="JMX" property="mbeanServer"/&gt;&lt;/property&gt;
-   &lt;property name="transactionStatusManagerInetAddress"&gt;localhost&lt;/property&gt;
+   &lt;property name="transactionStatusManagerInetAddress"&gt;${jboss.jca.host:localhost}&lt;/property&gt;
    &lt;property name="transactionStatusManagerPort"&gt;4713&lt;/property&gt;
-   &lt;property name="recoveryInetAddress"&gt;localhost&lt;/property&gt;
+   &lt;property name="recoveryInetAddress"&gt;${jboss.jca.host:localhost}&lt;/property&gt;
    &lt;property name="recoveryPort"&gt;4712&lt;/property&gt;
    &lt;property name="socketProcessIdPort"&gt;0&lt;/property&gt;    
+   &lt;depends&gt;NamingServer&lt;/depends&gt;
  &lt;/bean&gt;
       </programlisting>
 
@@ -137,7 +144,7 @@ ${jboss.jca.host:localhost}
       <itemizedlist>
         <listitem>
           <code>public void create()</code>
-          <para>Called after a bean has been constructed using its default constructor.</para>
+          <para>Called after a bean has been constructed.</para>
         </listitem>
         <listitem>
           <code>public void start()</code>
@@ -172,6 +179,44 @@ ${jboss.jca.host:localhost}
       </itemizedlist>
     </section>
 
+    <section id="jcasjc_paralleldeployment">
+      <title>Parallel deployment and dependency resolution</title>
+
+      <para>JBoss JCA/SJC features a mode where multiple threads are used during 
+        the booting sequence. This mode is enabled by using the</para>
+
+      <programlisting>
+./run.sh -mt
+      </programlisting>
+
+      <para>startup parameter.</para>
+
+      <para>When multiple threads are used in the kernel a dependency mechanism between beans is
+        needed. The kernel keeps track of each bean deployment and assigns a status</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><code>NOT_STARTED</code></para>
+          <para>The bean hasn't started.</para>
+        </listitem>
+        <listitem>
+          <para><code>STARTING</code></para>
+          <para>The bean is starting.</para>
+        </listitem>
+        <listitem>
+          <para><code>STARTED</code></para>
+          <para>The bean has fully started.</para>
+        </listitem>
+        <listitem>
+          <para><code>STOPPING</code></para>
+          <para>The bean is stopping.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Caveats: The kernel currently doesn't detect cyclic dependencies between deployment units.</para>
+
+    </section>
+
     <section id="jcasjc_classloading">
       <title>Classloading</title>
 
@@ -202,7 +247,7 @@ ${jboss.jca.host:localhost}
       <para>JBoss JCA/SJC features a very simple deployers mechanism.</para>
 
       <para>Each deployer is defined as a bean in the boot.xml file and they
-        must implemenet the</para>
+        must implement the</para>
       <programlisting>
 org.jboss.jca.sjc.deployers.Deployer
       </programlisting>
@@ -215,9 +260,9 @@ org.jboss.jca.sjc.deployers.Deployer
  * @param f The file
  * @param parent The parent classloader
  * @return The deployment; or null if no deployment was made
- * @exception Exception Thrown if an error occurs
+ * @exception DeployException Thrown if an error occurs
  */
-public Deployment deploy(File f, ClassLoader parent) throws Exception;
+public Deployment deploy(File f, ClassLoader parent) throws DeployException;
       </programlisting>
       <para>method which is invoked once with each of the files in the
         $JBOSS_JCA_HOME/deploy/ directory.</para>

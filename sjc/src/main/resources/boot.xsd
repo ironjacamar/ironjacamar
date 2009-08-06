@@ -8,6 +8,7 @@
      <xsd:sequence>
        <xsd:element name="constructor" type="constructorType" maxOccurs="1" minOccurs="0"/>
        <xsd:element name="property" type="propertyType" maxOccurs="unbounded" minOccurs="0"/>
+       <xsd:element name="depends" type="dependsType" maxOccurs="unbounded" minOccurs="0"/>
      </xsd:sequence>
      <xsd:attribute name="name" type="xsd:token" use="required"/>
      <xsd:attribute name="interface" type="xsd:token"/>
@@ -40,6 +41,13 @@
    </xsd:complexType>
 
    <xsd:complexType name="parameterType">
+     <xsd:simpleContent>
+       <xsd:extension base="xsd:token">
+       </xsd:extension>
+     </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="dependsType">
      <xsd:simpleContent>
        <xsd:extension base="xsd:token">
        </xsd:extension>

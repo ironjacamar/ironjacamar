@@ -24,14 +24,16 @@ package org.jboss.jca.sjc;
 
 import org.jboss.jca.sjc.boot.BeanType;
 import org.jboss.jca.sjc.boot.ConstructorType;
+import org.jboss.jca.sjc.boot.DependsType;
 import org.jboss.jca.sjc.boot.InjectType;
 import org.jboss.jca.sjc.boot.PropertyType;
-import org.jboss.jca.sjc.deployers.DeployException;
 import org.jboss.jca.sjc.deployers.Deployer;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -40,12 +42,17 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -57,17 +64,50 @@ import javax.xml.bind.Unmarshaller;
  */
 public class Main
 {
+   /** Parallel startup */
+   private static boolean parallel = false;
+
    /** Startup list */
    private static List<String> startup = new LinkedList<String>();
 
    /** Services */
-   private static Map<String, Object> services = new HashMap<String, Object>();
+   private static ConcurrentMap<String, Object> services = new ConcurrentHashMap<String, Object>();
+
+   /** Services status */
+   private static ConcurrentMap<String, Status> servicesStatus = new ConcurrentHashMap<String, Status>();
+
+   /** Services latch */
+   private static CountDownLatch servicesLatch;
+
+   /** Executor service */
+   private static ExecutorService executorService;
 
    /** Container classloader */
    private static URLClassLoader containerClassLoader;
 
+   /** The deploy directory */
+   private static File deployDirectory;
+
    /** Logging */
    private static Object logging;
+
+   /**
+    * Status
+    */
+   enum Status
+   {
+      /** Services not started */
+      NOT_STARTED,
+
+      /** Services starting */
+      STARTING,
+
+      /** Services started */
+      STARTED,
+         
+      /** Services stopped */
+      STOPPING
+   }
 
    /**
     * Default constructor
@@ -79,8 +119,9 @@ public class Main
    /**
     * Boot
     * @param args The arguments
+    * @param tg The thread group used
     */
-   private static void boot(String[] args)
+   private static void boot(final String[] args, final ThreadGroup tg)
    {
       try
       {
@@ -106,12 +147,22 @@ public class Main
                {
                   SecurityActions.setSystemProperty("jboss.jca.bindaddress", args[++i]);
                }
+               else if ("-mt".equals(args[i]))
+               {
+                  parallel = true;
+               }
             }
+         }
+
+         if (parallel)
+         {
+            ThreadFactory tf = new SJCThreadFactory(tg);
+            executorService = Executors.newCachedThreadPool(tf);
          }
 
          File libDirectory = new File(root, "/lib/");
          File configDirectory = new File(root, "/config/");
-         File deployDirectory = new File(root, "/deploy/");
+         deployDirectory = new File(root, "/deploy/");
 
          ClassLoader parent = SecurityActions.getThreadContextClassLoader();
 
@@ -138,24 +189,223 @@ public class Main
 
          if (boot != null)
          {
+            if (parallel)
+               servicesLatch = new CountDownLatch(boot.getBean().size());
+
             for (BeanType bt : boot.getBean())
             {
-               if (services.get(bt.getName()) == null)
+               if (!parallel)
                {
-                  Object bean = createBean(bt, containerClassLoader, deployDirectory);
-                  startup.add(bt.getName());
-                  services.put(bt.getName(), bean);
+                  try
+                  {
+                     if (services.get(bt.getName()) == null)
+                     {
+                        setServiceStatus(bt.getName(), Status.STARTING);
+
+                        Object bean = createBean(bt, containerClassLoader, deployDirectory);
+                        startup.add(bt.getName());
+                        services.put(bt.getName(), bean);
+
+                        setServiceStatus(bt.getName(), Status.STARTED);
+                     }
+                     else
+                     {
+                        warn("Warning: A service with name " + bt.getName() + " already exists");
+                     }
+                  }
+                  catch (Throwable t)
+                  {
+                     error("Installing bean " + bt.getName(), t);
+                  }
                }
                else
                {
-                  warn("Warning: A service with name " + bt.getName() + " already exists");
+                  Runnable r = new ServiceRunnable(bt);
+                  executorService.execute(r);
                }
+            }
+
+            if (parallel)
+            {
+               servicesLatch.await();
+               executorService.shutdown();
             }
          }
       }
       catch (Throwable t)
       {
          t.printStackTrace(System.err);
+      }
+   }
+
+   /**
+    * Set service status
+    * @param name The service name
+    * @param status The service status
+    */
+   static void setServiceStatus(String name, Status status)
+   {
+      servicesStatus.put(name, status);
+   }
+
+   /**
+    * Service runnable
+    */
+   static class ServiceRunnable implements Runnable
+   {
+      /** The bean */
+      private BeanType bt;
+
+      /**
+       * Constructor
+       * @param bt The bean
+       */
+      public ServiceRunnable(BeanType bt)
+      {
+         this.bt = bt;
+      }
+
+      /**
+       * Run
+       */
+      public void run()
+      {
+         SecurityActions.setThreadContextClassLoader(containerClassLoader);
+
+         try
+         {
+            if (services.get(bt.getName()) == null)
+            {
+               setServiceStatus(bt.getName(), Status.NOT_STARTED);
+
+               Set<String> dependencies = getDependencies(bt);
+               int notStarted = getNotStarted(dependencies);
+
+               while (notStarted > 0)
+               {
+                  try
+                  {
+                     Thread.sleep(10);
+                     notStarted = getNotStarted(dependencies);
+                  }
+                  catch (InterruptedException ie)
+                  {
+                     Thread.interrupted();
+                  }
+               }
+
+               setServiceStatus(bt.getName(), Status.STARTING);
+
+               Object bean = createBean(bt, containerClassLoader, deployDirectory);
+               startup.add(bt.getName());
+               services.put(bt.getName(), bean);
+
+               setServiceStatus(bt.getName(), Status.STARTED);
+            }
+            else
+            {
+               warn("Warning: A service with name " + bt.getName() + " already exists");
+            }
+         }
+         catch (Throwable t)
+         {
+            error("Installing bean " + bt.getName(), t);
+         }
+
+         servicesLatch.countDown();
+      }
+
+      /**
+       * Get the depedencies for a bean
+       * @paran bt The bean type
+       * @return The set of dependencies; <code>null</code> if no dependencies
+       */
+      private Set<String> getDependencies(BeanType bt)
+      {
+         Set<String> result = null;
+
+         List<DependsType> dts = bt.getDepends();
+         if (dts != null)
+         {
+            result = new HashSet<String>();
+            for (DependsType dt : dts)
+            {
+               result.add(dt.getValue());
+            }
+         }
+
+         List<PropertyType> pts = bt.getProperty();
+         if (pts != null)
+         {
+            if (result == null)
+               result = new HashSet<String>();
+
+            for (PropertyType pt : pts)
+            {
+               Object e = pt.getContent().get(0);
+
+               if (e != null && e instanceof JAXBElement)
+               {
+                  Object element = ((JAXBElement)e).getValue();
+                  if (element instanceof InjectType)
+                  {
+                     InjectType it = (InjectType)element;
+                     result.add(it.getBean());
+                  }
+               }
+            }
+         }
+
+         return result;
+      }
+
+      /**
+       * Get the number of services that are not started yet
+       * @paran dependencies The dependencies for a service
+       * @return The number of not started services
+       */
+      private int getNotStarted(Set<String> dependencies)
+      {
+         if (dependencies == null || dependencies.size() == 0)
+            return 0;
+
+         int count = 0;
+         for (String dependency : dependencies)
+         {
+            Status dependencyStatus = servicesStatus.get(dependency);
+            if (dependencyStatus == null || dependencyStatus != Status.STARTED)
+               count += 1;
+         }
+
+         return count;
+      }
+   }
+
+   /**
+    * A thread factory for JCA/SJC
+    */
+   static class SJCThreadFactory implements ThreadFactory
+   {
+      /** The thread group */
+      private ThreadGroup tg;
+
+      /**
+       * Constructor
+       * @param tg The thread group
+       */
+      public SJCThreadFactory(ThreadGroup tg)
+      {
+         this.tg = tg;
+      }
+
+      /**
+       * Create a new thread
+       * @param r The runnable
+       * @return The thread
+       */
+      public Thread newThread(Runnable r)
+      {
+         return new Thread(tg, r);
       }
    }
 
@@ -171,6 +421,8 @@ public class Main
 
       for (String name : shutdown)
       {
+         setServiceStatus(name, Status.STOPPING);
+
          Object service = services.get(name);
 
          try
@@ -192,6 +444,8 @@ public class Main
          {
             // No destroy method
          }
+
+         setServiceStatus(name, Status.NOT_STARTED);
       }
 
       info("Shutdown complete");
@@ -698,7 +952,7 @@ public class Main
          
          Method mGetLogger = clz.getMethod("getLogger", String.class);
 
-         logging = mGetLogger.invoke((Object)null, new Object[] {"Main"});
+         logging = mGetLogger.invoke((Object)null, new Object[] {"org.jboss.jca.sjc.Main"});
       }
       catch (Exception e)
       {
@@ -783,6 +1037,52 @@ public class Main
       }
    }
 
+   /**
+    * Logging: Is DEBUG enabled
+    * @return True if debug is enabled; otherwise false
+    */
+   private static boolean isDebugEnabled()
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mIsDebugEnabled = clz.getMethod("isDebugEnabled", (Class[])null);
+            return ((Boolean)mIsDebugEnabled.invoke(logging, (Object[])null)).booleanValue();
+         }
+         catch (Exception e)
+         {
+            // Nothing we can do
+         }
+      }
+      return true;
+   }
+
+   /**
+    * Logging: DEBUG
+    * @param s The string
+    */
+   private static void debug(String s)
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mDebug = clz.getMethod("debug", Object.class);
+            mDebug.invoke(logging, new Object[] {s});
+         }
+         catch (Exception e)
+         {
+            // Nothing we can do
+         }
+      }
+      else
+      {
+         System.out.println(s);
+      }
+   }
 
    /**
     * Main
@@ -795,13 +1095,15 @@ public class Main
       {
          final CountDownLatch latch = new CountDownLatch(1);
 
+         final ThreadGroup threads = new ThreadGroup("jboss");
+
          Runnable worker = new Runnable()
          {
             public void run()
             {
                try
                {
-                  Main.boot(args);
+                  Main.boot(args, threads);
                   latch.countDown();
                }
                catch (Exception e)
@@ -811,7 +1113,6 @@ public class Main
             }
          };
          
-         ThreadGroup threads = new ThreadGroup("jboss");
          Thread bootThread = new Thread(threads, worker, "main");
          bootThread.start();
 
@@ -840,8 +1141,22 @@ public class Main
             }
          });
 
+         if (isDebugEnabled())
+         {
+            MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+            debug("Heap memory: " + memoryBean.getHeapMemoryUsage().toString());
+            debug("NonHeap memory: " + memoryBean.getNonHeapMemoryUsage().toString());
+         }
+
          long l2 = System.currentTimeMillis();
-         info("Server started in " + (l2 - l1) + "ms");
+         if (!parallel)
+         {
+            info("Server started in " + (l2 - l1) + "ms");
+         }
+         else
+         {
+            info("Server (MT mode) started in " + (l2 - l1) + "ms");
+         }
       }
       catch (Exception e)
       {

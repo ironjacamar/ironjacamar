@@ -59,6 +59,7 @@
     <property name="recoveryInetAddress">localhost</property>
     <property name="recoveryPort">4712</property>
     <property name="socketProcessIdPort">0</property>    
+    <depends>NamingServer</depends>
   </bean>
 
   <!-- Work Manager thread pool -->
@@ -94,6 +95,8 @@
 
   <!-- RA deployer -->
   <bean name="RADeployer" interface="org.jboss.jca.sjc.deployers.Deployer" class="org.jboss.jca.sjc.deployers.ra.RADeployer">
+    <depends>ConnectionManager</depends>
+    <depends>WorkManager</depends>
   </bean>
 
 </deployment>
