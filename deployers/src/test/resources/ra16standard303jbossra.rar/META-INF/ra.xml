@@ -24,7 +24,11 @@
       <outbound-resourceadapter>
          <connection-definition>
             <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.TestManagedConnectionFactory</managedconnectionfactory-class>
-
+            <config-property>
+               <config-property-name>myStringProperty</config-property-name>
+               <config-property-type>java.lang.String</config-property-type>
+               <config-property-value>MyJCA</config-property-value>
+            </config-property>
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
             <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.TestManagedConnection</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
@@ -33,5 +37,20 @@
          <transaction-support>LocalTransaction</transaction-support>
          <reauthentication-support>false</reauthentication-support>
       </outbound-resourceadapter>
+      <inbound-resourceadapter>
+         <messageadapter>        
+            <messagelistener>
+               <messagelistener-type>org.jboss.jca.test.deployers.spec.rars.MessageListener</messagelistener-type>
+               <activationspec>
+                  <activationspec-class>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.TestActivationSpec</activationspec-class>
+          <config-property>
+             <config-property-name>myBooleanProperty</config-property-name>
+             <config-property-type>java.lang.Boolean</config-property-type>
+             <config-property-value>true</config-property-value>
+          </config-property>
+               </activationspec>
+            </messagelistener>
+         </messageadapter>
+      </inbound-resourceadapter>
    </resourceadapter>
 </connector>

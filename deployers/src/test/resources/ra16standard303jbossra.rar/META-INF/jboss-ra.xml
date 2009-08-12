@@ -9,6 +9,18 @@
    <ra-config-property>
       <ra-config-property-name>myIntProperty</ra-config-property-name>
       <ra-config-property-type>java.lang.Integer</ra-config-property-type>
-      <ra-config-property-value>1</ra-config-property-value>
+      <ra-config-property-value>8</ra-config-property-value>
    </ra-config-property>
+   
+   <ra-config-property override-element="connection-definition">
+      <ra-config-property-name>myStringProperty</ra-config-property-name>
+      <ra-config-property-type>java.lang.String</ra-config-property-type>
+      <ra-config-property-value>newJCA</ra-config-property-value>
+   </ra-config-property>   
+   
+    <ra-config-property override-element="activationspec">
+       <ra-config-property-name>myBooleanProperty</ra-config-property-name>
+       <ra-config-property-type>java.lang.Boolean</ra-config-property-type>
+       <ra-config-property-value>false</ra-config-property-value>
+    </ra-config-property>
 </jboss-ra>

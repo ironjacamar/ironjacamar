@@ -28,8 +28,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.logging.Logger;
-import org.jboss.metadata.rar.jboss.JBossRA10DefaultNSMetaData;
+//import org.jboss.metadata.rar.jboss.JBossRA10DefaultNSMetaData;
 import org.jboss.metadata.rar.jboss.JBossRA10MetaData;
+import org.jboss.metadata.rar.jboss.JBossRA20DefaultNSMetaData;
+import org.jboss.metadata.rar.jboss.JBossRA20MetaData;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
 import org.jboss.metadata.rar.jboss.RaConfigPropertyMetaData;
 import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
@@ -125,7 +127,9 @@ public class Metadata
 
       MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
       resolver.mapLocationToClass("http://www.jboss.org/schema/jboss-ra_1_0.xsd", JBossRA10MetaData.class);
-      resolver.mapLocationToClass("jboss-ra", JBossRA10DefaultNSMetaData.class);
+      resolver.mapLocationToClass("http://www.jboss.org/schema/jboss-ra_2_0.xsd", JBossRA20MetaData.class);
+      //resolver.mapLocationToClass("jboss-ra", JBossRA10DefaultNSMetaData.class);
+      resolver.mapLocationToClass("jboss-ra", JBossRA20DefaultNSMetaData.class);
 
       File metadataFile = new File(root, "/META-INF/jboss-ra.xml");
 
@@ -164,19 +168,74 @@ public class Metadata
    {
       if (cmd != null && jmd != null)
       {
+         /*
+         <xs:restriction base="javaee:string">
+         <xs:enumeration value="connection-definition"/>
+         <xs:enumeration value="resourceadapter"/>
+         <xs:enumeration value="activationspec"/>
+         <xs:enumeration value="adminobject"/>
+         </xs:restriction>
+         */
+         
          List<RaConfigPropertyMetaData> props = jmd.getRaConfigProps();
+
          List<ConfigPropertyMetaData> append = null;
 
          if (props != null)
          {
             for (RaConfigPropertyMetaData rcmd : props)
             {
-               List<ConfigPropertyMetaData> l = cmd.getRa().getConfigProperty();
+               List<ConfigPropertyMetaData> listConfigProp = null;
+               String override = rcmd.getOverride();
+               if (override == null || override.equals("resourceadapter"))
+               {
+                  if (cmd.getRa() != null)
+                  {
+                     listConfigProp = cmd.getRa().getConfigProperty();
+                  }
+               }
+               else if (override.equals("connection-definition"))
+               {
+                  if (cmd.getRa() != null &&
+                     cmd.getRa().getOutboundRa() != null &&
+                     cmd.getRa().getOutboundRa().getConDefs() != null &&
+                     cmd.getRa().getOutboundRa().getConDefs().size() > 0 &&
+                     cmd.getRa().getOutboundRa().getConDefs().get(0) != null)
+                  {
+                     listConfigProp = cmd.getRa().getOutboundRa().getConDefs().get(0).getConfigProps();
+                  }
+               } 
+               else if (override.equals("activationspec"))
+               {
+                  if (cmd.getRa() != null &&
+                     cmd.getRa().getInboundRa() != null &&
+                     cmd.getRa().getInboundRa().getMessageAdapter() != null &&
+                     cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners() != null &&
+                     cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().size() > 0 &&
+                     cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().get(0) != null &&
+                     cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().get(0).
+                        getActivationSpecType() != null)
+                  {
+                     listConfigProp = cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().
+                        get(0).getActivationSpecType().getConfigProps();
+                  }
+               }
+               else if (override.equals("adminobject"))
+               {
+                  if (cmd.getRa() != null &&
+                     cmd.getRa().getAdminObjects() != null &&
+                     cmd.getRa().getAdminObjects().size() > 0 &&
+                     cmd.getRa().getAdminObjects().get(0) != null)
+                  {
+                     listConfigProp = cmd.getRa().getAdminObjects().get(0).getConfigProps();
+                  }
+               }
+               
                boolean found = false;
 
-               if (l != null)
+               if (listConfigProp != null)
                {
-                  Iterator<ConfigPropertyMetaData> it = l.iterator();
+                  Iterator<ConfigPropertyMetaData> it = listConfigProp.iterator();
                   
                   while (!found && it.hasNext())
                   {

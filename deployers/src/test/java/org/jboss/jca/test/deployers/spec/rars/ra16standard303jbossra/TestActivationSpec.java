@@ -21,35 +21,32 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra;
 
-import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
+import org.jboss.jca.test.deployers.spec.rars.BaseActivationSpec;
 
 import javax.validation.constraints.NotNull;
-
 /**
- * TestManagedConnectionFactory
+ * TestActivationSpec
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
-public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
+public class TestActivationSpec extends BaseActivationSpec
 {
-   private static final long serialVersionUID = 1L;
-   
    @NotNull
-   private String myStringProperty;
+   private Boolean myBooleanProperty;
 
    /**
-    * @param myStringProperty the myStringProperty to set
+    * @return the myBooleanProperty
     */
-   public void setMyStringProperty(String myStringProperty)
+   public Boolean isMyBooleanProperty()
    {
-      this.myStringProperty = myStringProperty;
+      return myBooleanProperty;
    }
 
    /**
-    * @return the myStringProperty
+    * @param myBooleanProperty the myBooleanProperty to set
     */
-   public String getMyStringProperty()
+   public void setMyBooleanProperty(Boolean myBooleanProperty)
    {
-      return myStringProperty;
+      this.myBooleanProperty = myBooleanProperty;
    }
 }
