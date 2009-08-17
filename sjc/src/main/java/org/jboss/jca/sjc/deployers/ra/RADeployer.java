@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
+import org.jboss.metadata.rar.jboss.BvGroupMetaData;
+import org.jboss.metadata.rar.jboss.JBossRA20Base;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
 import org.jboss.metadata.rar.spec.AdminObjectMetaData;
 import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
@@ -237,14 +239,31 @@ public class RADeployer implements Deployer
             }
          }
 
+
          // Bean validation
          if (beanValidation)
          {
+            JBossRA20Base jrmd20 = null;
+            List<Class> groupsClasses = null;
+            if (jrmd instanceof JBossRA20Base)
+            {
+               jrmd20 = (JBossRA20Base)jrmd;
+            }
+            if (jrmd20 != null && jrmd20.getBvGroupsList() != null && jrmd20.getBvGroupsList().size() > 0)
+            {
+               BvGroupMetaData bvGroups = jrmd20.getBvGroupsList().get(0);
+               groupsClasses = new ArrayList<Class>();
+               for (String group : bvGroups.getBvGroups())
+               {
+                  groupsClasses.add(Class.forName(group, true, cl));
+               }
+            }
+            
             if (objects != null && objects.size() > 0)
             {
                for (Object mcf : objects)
                {
-                  BeanValidation.validate(mcf);
+                  BeanValidation.validate(mcf, groupsClasses);
                }
             }
          }
@@ -282,7 +301,6 @@ public class RADeployer implements Deployer
          
          if (mcf != null)
          {
-            //List<ConfigPropertyMetaData> cpMetas = mlMeta.getActivationSpecType().getConfigProps();
             if (cpMetas != null)
             {
                for (ConfigPropertyMetaData cpmd : cpMetas)

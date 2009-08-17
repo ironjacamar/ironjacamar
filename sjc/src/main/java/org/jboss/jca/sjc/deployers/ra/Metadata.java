@@ -128,7 +128,6 @@ public class Metadata
       MutableSchemaResolver resolver = SingletonSchemaResolverFactory.getInstance().getSchemaBindingResolver();
       resolver.mapLocationToClass("http://www.jboss.org/schema/jboss-ra_1_0.xsd", JBossRA10MetaData.class);
       resolver.mapLocationToClass("http://www.jboss.org/schema/jboss-ra_2_0.xsd", JBossRA20MetaData.class);
-      //resolver.mapLocationToClass("jboss-ra", JBossRA10DefaultNSMetaData.class);
       resolver.mapLocationToClass("jboss-ra", JBossRA20DefaultNSMetaData.class);
 
       File metadataFile = new File(root, "/META-INF/jboss-ra.xml");

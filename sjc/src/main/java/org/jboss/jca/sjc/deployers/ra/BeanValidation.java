@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.sjc.deployers.ra;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.Configuration;
@@ -48,10 +49,11 @@ public class BeanValidation
     * Validate the object against the Bean Validation specification (JSR-303).
     * The object must be fully initialized
     * @param object The object that should be validated
+    * @param groupsClasses groups targeted for validation
     * @exception ConstraintViolationException Thrown if the object can't be validated
     */
    @SuppressWarnings("unchecked")
-   public static void validate(Object object) throws ConstraintViolationException
+   public static void validate(Object object, List<Class> groupsClasses) throws ConstraintViolationException
    {
       if (object == null)
       {
@@ -69,7 +71,16 @@ public class BeanValidation
                + Default.class.getName());
       }
 
-      Set errors = v.validate(object, Default.class);
+      Set errors = null;
+      if (groupsClasses == null)
+      {
+         v.validate(object, Default.class);
+      }
+      else
+      {
+         Class[] vargs = (Class[])groupsClasses.toArray(new Class[groupsClasses.size()]);
+         v.validate(object, vargs);
+      }
       if (errors != null && errors.size() > 0)
       {
          log.debug("Validated: " + errors.size() + " validate failing");

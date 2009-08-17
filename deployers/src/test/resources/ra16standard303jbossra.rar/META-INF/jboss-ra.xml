@@ -5,7 +5,7 @@
 <jboss-ra xmlns="http://www.jboss.org/schema/ra"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://www.jboss.org/schema/ra
-          http://www.jboss.org/schema/jboss-ra_1_0.xsd">
+          http://www.jboss.org/schema/jboss-ra_2_0.xsd">
    <ra-config-property>
       <ra-config-property-name>myIntProperty</ra-config-property-name>
       <ra-config-property-type>java.lang.Integer</ra-config-property-type>
@@ -23,4 +23,9 @@
        <ra-config-property-type>java.lang.Boolean</ra-config-property-type>
        <ra-config-property-value>false</ra-config-property-value>
     </ra-config-property>
+    
+ <bean-validation-groups>
+   <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.FirstStep</bean-validation-group>
+   <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.SecondStep</bean-validation-group>
+ </bean-validation-groups> 
 </jboss-ra>
