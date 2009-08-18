@@ -16,6 +16,9 @@
          <listitem>
             <para>Sun JDK 1.6.x</para>
          </listitem>
+         <listitem>
+            <para>Sun JDK 1.7.x</para>
+         </listitem>
       </itemizedlist>
 
       <para>Remember to ensure that "javac" and "java" are in your path (or symlinked).</para>
@@ -136,8 +139,16 @@ ant &lt;target&gt;
         <para>Builds the standalone environment using JBoss JCA/SJC.</para>
       </listitem>
       <listitem>
+        <para>release</para>
+        <para>Builds a release of the project.</para>
+      </listitem>
+      <listitem>
         <para>clean</para>
         <para>Cleans the project of temporary files.</para>
+      </listitem>
+      <listitem>
+        <para>clean-cache</para>
+        <para>Cleans the Apache Ivy repository.</para>
       </listitem>
     </itemizedlist>
     <para>See the full list of targets in the main build.xml file.</para>
