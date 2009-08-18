@@ -119,7 +119,7 @@ public class Injection
       }
 
       Method method = object.getClass().getMethod(methodName, parameterClass);
-      Object result = method.invoke(object, new Object[] {parameterValue});
+      method.invoke(object, new Object[] {parameterValue});
    }
 
    /**

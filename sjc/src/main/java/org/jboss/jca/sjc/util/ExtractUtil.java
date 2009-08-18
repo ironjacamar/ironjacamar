@@ -70,7 +70,8 @@ public class ExtractUtil
       if (target.exists())
          recursiveDelete(target);
 
-      target.mkdirs();
+      if (!target.mkdirs())
+         throw new IOException("Could not create " + target);
 
       JarFile jar = new JarFile(file);
       Enumeration<JarEntry> entries = jar.entries();
@@ -100,7 +101,8 @@ public class ExtractUtil
          }
          else
          {
-            copy.mkdirs();
+            if (!copy.mkdirs())
+               throw new IOException("Could not create " + copy);
          }
       }
 
@@ -110,8 +112,9 @@ public class ExtractUtil
    /**
     * Recursive delete
     * @param f The file handler
+    * @exception IOException Thrown if a file could not be deleted
     */
-   public static void recursiveDelete(File f)
+   public static void recursiveDelete(File f) throws IOException
    {
       if (f.exists())
       {
@@ -126,11 +129,13 @@ public class ExtractUtil
                } 
                else
                {
-                  files[i].delete();
+                  if (!files[i].delete())
+                     throw new IOException("Could not delete " + files[i]);
                }
             }
          }
-         f.delete();
+         if (!f.delete())
+            throw new IOException("Could not delete " + f);
       }
    }
 }

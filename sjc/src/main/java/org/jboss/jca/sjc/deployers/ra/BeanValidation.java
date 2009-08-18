@@ -74,12 +74,12 @@ public class BeanValidation
       Set errors = null;
       if (groupsClasses == null)
       {
-         v.validate(object, Default.class);
+         errors = v.validate(object, Default.class);
       }
       else
       {
          Class[] vargs = (Class[])groupsClasses.toArray(new Class[groupsClasses.size()]);
-         v.validate(object, vargs);
+         errors = v.validate(object, vargs);
       }
       if (errors != null && errors.size() > 0)
       {
