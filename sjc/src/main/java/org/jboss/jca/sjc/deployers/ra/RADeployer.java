@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
+
 import org.jboss.metadata.rar.jboss.BvGroupMetaData;
 import org.jboss.metadata.rar.jboss.JBossRA20Base;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;

@@ -25,6 +25,7 @@ package org.jboss.jca.sjc.deployers.ra;
 import org.jboss.jca.sjc.annotationscanner.Annotation;
 import org.jboss.jca.sjc.deployers.DeployException;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,23 +33,30 @@ import java.util.Map;
 import javax.resource.spi.Activation;
 import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.AuthenticationMechanism;
+import javax.resource.spi.AuthenticationMechanism.CredentialInterface;
 import javax.resource.spi.ConfigProperty;
 import javax.resource.spi.ConnectionDefinition;
 import javax.resource.spi.ConnectionDefinitions;
 import javax.resource.spi.Connector;
 import javax.resource.spi.SecurityPermission;
 import javax.resource.spi.TransactionSupport;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.resource.spi.work.WorkContext;
 
 import org.jboss.logging.Logger;
 
+import org.jboss.metadata.rar.spec.AdminObjectMetaData;
+import org.jboss.metadata.rar.spec.AuthenticationMechanismMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
+import org.jboss.metadata.rar.spec.InboundRaMetaData;
 import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.metadata.rar.spec.LicenseMetaData;
+import org.jboss.metadata.rar.spec.OutboundRaMetaData;
 import org.jboss.metadata.rar.spec.ResourceAdapterMetaData;
 import org.jboss.metadata.rar.spec.SecurityPermissionMetaData;
+import org.jboss.metadata.rar.spec.TransactionSupportMetaData;
 
 /**
  * The annotation processor for JCA 1.6
@@ -87,7 +95,7 @@ public class Annotations
          javax.resource.spi.Connector 
          javax.resource.spi.SecurityPermission
       */
-
+      
       if (md == null)
       {
          JCA16MetaData jmd = new JCA16MetaData();
@@ -115,6 +123,8 @@ public class Annotations
 
       // @Activation
       md = processActivation(md, annotations);
+
+      //log.debug("ConnectorMetadata " + md);
 
       return md;
    }
@@ -216,7 +226,7 @@ public class Annotations
 
       // Reauthentication support
       boolean reauthenticationSupport = c.reauthenticationSupport();
-      // TODO
+      md.getRa().getOutboundRa().setReAuthSupport(reauthenticationSupport);
 
       // RequiredWorkContext
       Class<? extends WorkContext>[] requiredWorkContexts = c.requiredWorkContexts();
@@ -281,7 +291,9 @@ public class Annotations
 
          for (SecurityPermission securityPermission : securityPermissions)
          {
-            // TODO
+            SecurityPermissionMetaData spmd = new SecurityPermissionMetaData();
+            spmd.setSecurityPermissionSpec(securityPermission.permissionSpec());
+            md.getRa().getSecurityPermissions().add(spmd);
          }
       }
 
@@ -298,8 +310,18 @@ public class Annotations
 
       // Transaction support
       TransactionSupport.TransactionSupportLevel transactionSupport = c.transactionSupport();
-      // TODO
-
+      if (transactionSupport.equals(TransactionSupportLevel.NoTransaction))
+      {
+         md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.NoTransaction);
+      }
+      else if (transactionSupport.equals(TransactionSupportLevel.XATransaction))
+      {
+         md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.XATransaction);
+      }
+      else if (transactionSupport.equals(TransactionSupportLevel.LocalTransaction))
+      {
+         md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.LocalTransaction);
+      }
       // Vendor name
       String vendorName = c.vendorName();
       if (vendorName != null)
@@ -487,6 +509,37 @@ public class Annotations
                                                                   AuthenticationMechanism authenticationmechanism)
       throws Exception
    {
+      if (md.getRa() == null)
+      {
+         md.setRa(new ResourceAdapterMetaData());
+      }
+      if (md.getRa().getOutboundRa() == null)
+      {
+         md.getRa().setOutboundRa(new OutboundRaMetaData());
+      }
+      if (md.getRa().getOutboundRa().getAuthMechanisms() == null)
+      {
+         md.getRa().getOutboundRa().setAuthMechanisms(new ArrayList<AuthenticationMechanismMetaData>());
+      }
+      AuthenticationMechanismMetaData ammd = new AuthenticationMechanismMetaData();
+      ammd.setAuthenticationMechanismType(authenticationmechanism.authMechanism());
+      
+      String credentialInterfaceClass = null;
+      if (authenticationmechanism.credentialInterface().equals(CredentialInterface.GenericCredential))
+      {
+         credentialInterfaceClass = "javax.resource.spi.security.GenericCredential";
+      }
+      else if (authenticationmechanism.credentialInterface().equals(CredentialInterface.GSSCredential))
+      {
+         credentialInterfaceClass = "org.ietf.jgss.GSSCredential";
+      }
+      else if (authenticationmechanism.credentialInterface().equals(CredentialInterface.PasswordCredential))
+      {
+         credentialInterfaceClass = "javax.resource.spi.security.PasswordCredential";
+      }
+      ammd.setCredentialInterfaceClass(credentialInterfaceClass);
+      md.getRa().getOutboundRa().getAuthMechanisms().add(ammd);
+
       return md;
    }
 
@@ -528,6 +581,22 @@ public class Annotations
    private static ConnectorMetaData attachAdministeredObject(ConnectorMetaData md, AdministeredObject a)
       throws Exception
    {
+      if (md.getRa() == null)
+      {
+         md.setRa(new ResourceAdapterMetaData());
+      }
+      if (md.getRa().getAdminObjects() == null)
+      {
+         md.getRa().setAdminObjects(new ArrayList<AdminObjectMetaData>());
+      }
+      String aoName = null;
+      if (a.adminObjectInterfaces().length > 0)
+      {
+         aoName = ((Class)Array.get(a.adminObjectInterfaces(), 0)).getName();
+      }
+      AdminObjectMetaData aomd = new AdminObjectMetaData();
+      aomd.setAdminObjectInterfaceClass(aoName);
+      md.getRa().getAdminObjects().add(aomd);
       return md;
    }
 
@@ -569,6 +638,15 @@ public class Annotations
    private static ConnectorMetaData attachActivation(ConnectorMetaData md, Activation activation)
       throws Exception
    {
+      if (md.getRa() == null)
+      {
+         md.setRa(new ResourceAdapterMetaData());
+      }
+      if (md.getRa().getInboundRa() == null)
+      {
+         md.getRa().setInboundRa(new InboundRaMetaData());
+      }
+      //TODO
       return md;
    }
 }
