@@ -108,7 +108,7 @@
   <property name="version.stax" value="1.0.1"/>
   <property name="version.transaction.api" value="1.0.1.GA"/>
   <property name="version.trove" value="2.1.1"/>
-  <property name="version.validation-api" value="1.0.CR3"/>
+  <property name="version.validation-api" value="1.0.CR4"/>
 
   <!-- ================================= 
        Paths              
