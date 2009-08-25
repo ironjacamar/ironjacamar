@@ -68,7 +68,7 @@ public class Main
    private static boolean parallel = false;
 
    /** Startup list */
-   private static List<String> startup = new LinkedList<String>();
+   private static List<String> startup = Collections.synchronizedList(new LinkedList<String>());
 
    /** Services */
    private static ConcurrentMap<String, Object> services = new ConcurrentHashMap<String, Object>();
@@ -234,7 +234,7 @@ public class Main
       }
       catch (Throwable t)
       {
-         t.printStackTrace(System.err);
+         error(t.getMessage(), t);
       }
    }
 
