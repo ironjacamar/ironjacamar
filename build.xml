@@ -95,7 +95,7 @@
   <property name="version.jboss.mc.dependency" value="2.0.8.GA"/>
   <property name="version.jboss.mc.kernel" value="2.0.8.GA"/>
   <property name="version.jboss.mdr" value="2.0.1.GA"/>
-  <property name="version.jboss.metadata" value="2.0.0-SNAPSHOT"/>
+  <property name="version.jboss.metadata" value="2.0.0.Alpha"/>
   <property name="version.jboss.naming" value="5.0.3.GA"/>
   <property name="version.jboss.reflect" value="2.0.2.GA"/>
   <property name="version.jboss.slf4j" value="1.0.2.GA"/>
