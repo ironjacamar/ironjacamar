@@ -26,6 +26,9 @@ import org.jboss.jca.sjc.deployers.Deployment;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.File;
+
+import org.jboss.logging.Logger;
 
 /**
  * A resource adapter deployment for JCA/SJC
@@ -33,20 +36,23 @@ import java.io.IOException;
  */
 public class RADeployment implements Deployment
 {
-   /** The name */
-   private String name;
+   private static Logger log = Logger.getLogger(RADeployer.class);
+   private static boolean trace = log.isTraceEnabled();
+
+   /** The resource adapter file */
+   private File adapter;
 
    /** The classloader */
    private ClassLoader cl;
 
    /**
     * Constructor
-    * @param name The name of the deployment
+    * @param adapter The adapter
     * @param cl The classloader for the deployment
     */
-   public RADeployment(String name, ClassLoader cl)
+   public RADeployment(File adapter, ClassLoader cl)
    {
-      this.name = name;
+      this.adapter = adapter;
       this.cl = cl;
    }
 
@@ -56,7 +62,7 @@ public class RADeployment implements Deployment
     */
    public String getName()
    {
-      return name;
+      return adapter.getName();
    }
 
    /**
@@ -73,6 +79,8 @@ public class RADeployment implements Deployment
     */
    public void destroy()
    {
+      log.info("Undeploying: " + adapter.getAbsolutePath());
+
       if (cl != null && cl instanceof Closeable)
       {
          try
