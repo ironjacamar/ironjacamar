@@ -28,7 +28,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.*;
 
 import javax.validation.Constraint;
-import javax.validation.ConstraintPayload;
+import javax.validation.Payload;
 
 /**
  * 
@@ -56,6 +56,6 @@ public @interface CheckCase
    /**
     * payload
     */
-   Class<? extends ConstraintPayload>[] payload() default { };
+   Class<? extends Payload>[] payload() default { };
 
 }
