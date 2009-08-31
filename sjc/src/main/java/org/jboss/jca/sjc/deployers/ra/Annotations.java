@@ -226,7 +226,10 @@ public class Annotations
 
       // Reauthentication support
       boolean reauthenticationSupport = c.reauthenticationSupport();
-      md.getRa().getOutboundRa().setReAuthSupport(reauthenticationSupport);
+      if (md.getRa() != null && md.getRa().getOutboundRa() != null)
+      {
+         md.getRa().getOutboundRa().setReAuthSupport(reauthenticationSupport);
+      }
 
       // RequiredWorkContext
       Class<? extends WorkContext>[] requiredWorkContexts = c.requiredWorkContexts();
@@ -310,18 +313,22 @@ public class Annotations
 
       // Transaction support
       TransactionSupport.TransactionSupportLevel transactionSupport = c.transactionSupport();
-      if (transactionSupport.equals(TransactionSupportLevel.NoTransaction))
+      if (md.getRa() != null && md.getRa().getOutboundRa() != null)
       {
-         md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.NoTransaction);
+         if (transactionSupport.equals(TransactionSupportLevel.NoTransaction))
+         {
+            md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.NoTransaction);
+         }
+         else if (transactionSupport.equals(TransactionSupportLevel.XATransaction))
+         {
+            md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.XATransaction);
+         }
+         else if (transactionSupport.equals(TransactionSupportLevel.LocalTransaction))
+         {
+            md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.LocalTransaction);
+         }
       }
-      else if (transactionSupport.equals(TransactionSupportLevel.XATransaction))
-      {
-         md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.XATransaction);
-      }
-      else if (transactionSupport.equals(TransactionSupportLevel.LocalTransaction))
-      {
-         md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.LocalTransaction);
-      }
+
       // Vendor name
       String vendorName = c.vendorName();
       if (vendorName != null)
