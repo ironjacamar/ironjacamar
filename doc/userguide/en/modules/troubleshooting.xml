@@ -13,6 +13,52 @@
 
    </section>
 
+   <section id="iwouldliketoimplementafeature">
+      <title>I would like to implement a feature</title>
+
+      <para>So you have found an area where you are missing a feature and would like to submit a patch for it, great !</para>
+
+      <para>There are a couple of steps to get a feature included</para>
+
+      <para>First, you should create a new thread in our development forum where you describe the feature and its design and
+        implementation.</para>
+
+      <para>Once there is an agreement on the feature and the design you should proceed with creating the patch.</para>
+
+      <para>To maximize your chances of getting the feature in the official build as soon as possible make sure that
+        you run through the following steps:</para>
+
+      <programlisting>
+ant clean test
+ant clean checkstyle
+ant clean findbugs
+ant clean cobertura
+      </programlisting>
+
+      <para>All these should show that,</para>
+
+      <orderedlist>
+        <listitem>
+          All your test cases for the feature is passing
+        </listitem>
+        <listitem>
+          Your code is correctly formatted accoording to project rules
+        </listitem>
+        <listitem>
+          There isn't any bug reports from the Findbugs environment
+        </listitem>
+        <listitem>
+          There is full code coverage based on the Cobertura report
+        </listitem>
+      </orderedlist>
+
+      <para>Then done, create a JIRA task (Patch) in our JIRA environment. See the developer guide for
+        additional details.</para>
+
+      <para>Happy Coding !</para>
+
+   </section>
+
    <section id="howdoi">
       <title>How do I ?</title>
 
