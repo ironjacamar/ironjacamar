@@ -47,6 +47,10 @@ org.jboss.jca.test.core.spec.chaper10.section3
       <programlisting>
 org.jboss.jca.test.core.workmanager
       </programlisting>
+
+      <para>These test cases can use both the embedded JCA environment or be implemented as standard POJO based
+        JUnit test cases.</para>
+
     </section>
 
     <section id="jbimpltest">
@@ -72,6 +76,10 @@ org.jboss.jca.test.core.workmanager
       <programlisting>
 org.jboss.jca.test.core.workmanager
       </programlisting>
+
+      <para>These test cases can use both the embedded JCA environment or be implemented as standard POJO based
+        JUnit test cases.</para>
+
     </section>
 
   </section>
@@ -91,6 +99,8 @@ org.jboss.jca.test.core.workmanager
 
       <para>The home of checkstyle is located here: <ulink url="http://checkstyle.sourceforge.net/"/>.</para>
 
+      <para>The goal is to have zero errors in the report.</para>
+
     </section>
 
     <section id="findbugs">
@@ -102,6 +112,8 @@ org.jboss.jca.test.core.workmanager
 
       <para>The home of findbugs is located here: <ulink url="http://findbugs.sourceforge.net/"/>.</para>
 
+      <para>The goal is to have zero errors in the report and as few exclusions in the filter as possible.</para>
+
     </section>
 
     <section id="cobertura">
@@ -112,6 +124,8 @@ org.jboss.jca.test.core.workmanager
       <para>The reports that the tool provides makes sure that the JBoss JCA project has the correct test coverage.</para>
 
       <para>The home of Cobertura is located here: <ulink url="http://cobertura.sourceforge.net/"/>.</para>
+
+      <para>The goal is to have as high code coverage as possible in all areas.</para>
 
     </section>
 
