@@ -39,10 +39,10 @@
     <dependency org="apache-log4j" name="log4j" rev="${version.apache-log4j}" conf="standalone->default;sjc->*"/>
     <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="*"/>
     <dependency org="com.sun.xml.bind" name="jaxb-xjc" rev="${version.jaxb.xjc}" conf="standalone->default;sjc->*"/>
+    <dependency org="com.sun.xml.bind" name="jaxb-impl" rev="${version.jaxb.impl}" conf="standalone->default;sjc->*"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="standalone->default;sjc->*"/>
     <dependency org="javax.activation" name="activation" rev="${version.activation}" conf="standalone->default;sjc->*"/>
     <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="standalone->default;sjc->*"/>
-    <dependency org="javax.xml" name="jaxb-impl" rev="${version.jaxb.impl}" conf="standalone->default;sjc->*"/>
     <dependency org="javax.xml.bind" name="jaxb-api" rev="${version.jaxb.api}" conf="standalone->default;sjc->*"/>
     <dependency org="jboss.jbossts" name="jbossjts" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
     <dependency org="jboss.jbossts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>

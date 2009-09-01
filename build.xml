@@ -79,8 +79,8 @@
   <property name="version.hibernate-validator" value="4.0.0.CR1"/>
   <property name="version.javassist" value="3.11.0.GA"/>
   <property name="version.jaxb.api" value="2.1"/>
-  <property name="version.jaxb.impl" value="2.1"/>
-  <property name="version.jaxb.xjc" value="2.1.6"/>
+  <property name="version.jaxb.impl" value="2.1.9"/>
+  <property name="version.jaxb.xjc" value="2.1.9"/>
   <property name="version.jboss.bootstrap" value="1.0.0-Beta-3"/>
   <property name="version.jboss.classloading" value="2.0.6.GA"/>
   <property name="version.jboss.common" value="2.2.15.GA"/>
