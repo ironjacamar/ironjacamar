@@ -22,8 +22,6 @@
 
 package javax.resource.cci;
 
-import javax.resource.ResourceException;
-
 /** The interface <code>javax.resource.cci.ResourceAdapterMetaData</code> 
  *  provides information about capabilities of a resource adapter 
  *  implementation. Note that this interface does not provide information 

@@ -22,7 +22,6 @@
 
 package javax.resource.spi;
 
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
@@ -191,7 +190,7 @@ public interface ManagedConnection
     *  @return     XAResource instance
     *
     *  @throws     ResourceException     generic exception if operation fails
-    *  @throws     NotSupportedException if the operation is not supported
+    *  @throws     javax.resource.NotSupportedException if the operation is not supported
     *  @throws     ResourceAdapterInternalException
     *                                    resource adapter internal error condition
     **/
@@ -204,7 +203,7 @@ public interface ManagedConnection
     *  @return     LocalTransaction instance
     *
     *  @throws     ResourceException     generic exception if operation fails
-    *  @throws     NotSupportedException if the operation is not supported
+    *  @throws     javax.resource.NotSupportedException if the operation is not supported
     *  @throws     ResourceAdapterInternalException
     *                                    resource adapter internal error condition
     **/
@@ -218,7 +217,7 @@ public interface ManagedConnection
     *  @return     ManagedConnectionMetaData instance
     *
     *  @throws     ResourceException     generic exception if operation fails
-    *  @throws     NotSupportedException if the operation is not supported
+    *  @throws     javax.resource.NotSupportedException if the operation is not supported
     **/
    public ManagedConnectionMetaData getMetaData() throws ResourceException;
 

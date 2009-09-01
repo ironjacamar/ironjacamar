@@ -22,7 +22,6 @@
 
 package javax.resource.spi;
 
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.xa.XAResource;
@@ -94,7 +93,7 @@ public interface ResourceAdapter
     * @param spec an activation spec JavaBean instance.
     *
     * @throws ResourceException Thrown if an error occurs
-    * @throws NotSupportedException indicates message endpoint 
+    * @throws javax.resource.NotSupportedException indicates message endpoint 
     * activation rejection due to incorrect activation 
     * setup information.
     */

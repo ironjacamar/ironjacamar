@@ -22,10 +22,6 @@
 
 package javax.resource.cci;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 
 
@@ -57,7 +53,7 @@ public interface RecordFactory
     *             <LI> Resource adapter internal error
     *             <LI> Failed to access metadata repository
     *          </UL>
-    *  @throws NotSupportedException Operation not supported          
+    *  @throws javax.resource.NotSupportedException Operation not supported          
     *                            
     **/
    public MappedRecord createMappedRecord(String recordName) 
@@ -78,7 +74,7 @@ public interface RecordFactory
     *             <LI> Resource adapter internal error
     *             <LI> Failed to access metadata repository
     *          </UL>
-    *  @throws NotSupportedException Operation not supported          
+    *  @throws javax.resource.NotSupportedException Operation not supported          
     **/
    public IndexedRecord createIndexedRecord(String recordName) 
       throws ResourceException;

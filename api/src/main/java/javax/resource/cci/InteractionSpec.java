@@ -75,7 +75,7 @@ import java.io.Serializable;
  *  @see     javax.resource.cci.Interaction
 **/
 
-public interface InteractionSpec extends java.io.Serializable 
+public interface InteractionSpec extends Serializable 
 {
   
    /**Interaction Verb type: The execution of an Interaction does only a 

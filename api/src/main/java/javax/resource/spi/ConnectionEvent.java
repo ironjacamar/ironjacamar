@@ -24,8 +24,6 @@ package javax.resource.spi;
 
 import java.util.EventObject;
 
-import javax.resource.ResourceException;
-
 /** The ConnectionEvent class provides information about the source of 
  *  a connection related event.A ConnectionEvent instance contains the 
  *  following information: 
@@ -55,7 +53,7 @@ import javax.resource.ResourceException;
  *  @see         javax.resource.spi.ConnectionEventListener
  */
 
-public class ConnectionEvent extends java.util.EventObject 
+public class ConnectionEvent extends EventObject 
 {
 
    /** Event notification that an application component has closed the 

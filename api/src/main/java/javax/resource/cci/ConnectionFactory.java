@@ -22,9 +22,6 @@
 
 package javax.resource.cci;
 
-import java.io.PrintWriter;
-
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 
 /** <code>ConnectionFactory</code> provides an interface for getting
@@ -118,7 +115,7 @@ public interface ConnectionFactory  extends java.io.Serializable, javax.resource
     *  @return RecordFactory         RecordFactory instance
     *
     *  @throws ResourceException     Failed to create a RecordFactory
-    *  @throws NotSupportedException Operation not supported
+    *  @throws javax.resource.NotSupportedException Operation not supported
     **/
    public RecordFactory getRecordFactory() throws ResourceException;
 

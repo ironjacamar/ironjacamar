@@ -22,7 +22,6 @@
 
 package javax.resource.cci;
 
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 
 
@@ -65,7 +64,7 @@ public interface Connection
     *  @throws   ResourceException   Failed to return a LocalTransaction
     *                                instance because of a resource
     *                                adapter error
-    *  @throws   NotSupportedException Demarcation of Resource manager 
+    *  @throws   javax.resource.NotSupportedException Demarcation of Resource manager 
     *                                local transactions is not supported
     *                                on this Connection
     *  @see javax.resource.cci.LocalTransaction
@@ -91,7 +90,7 @@ public interface Connection
     *  @return   ResultSetInfo instance
     *  @throws   ResourceException     Failed to get ResultSet related 
     *                                  information
-    *  @throws   NotSupportedException ResultSet functionality is not
+    *  @throws   javax.resource.NotSupportedException ResultSet functionality is not
     *                                  supported
     **/
    public ResultSetInfo getResultSetInfo() throws ResourceException;

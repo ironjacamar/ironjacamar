@@ -22,7 +22,6 @@
 
 package javax.resource.cci;
 
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 
 
@@ -98,7 +97,7 @@ public interface Interaction
     *           <LI> Invalid connection associated with this 
     *                Interaction
     *         </UL>
-    *  @throws NotSupportedException Operation not supported 
+    *  @throws javax.resource.NotSupportedException Operation not supported 
     *                             
     **/
    public boolean execute(InteractionSpec ispec, 
@@ -129,7 +128,7 @@ public interface Interaction
     *           <LI> Invalid connection associated with this 
     *                Interaction
     *         </UL>
-    *  @throws NotSupportedException Operation not supported 
+    *  @throws javax.resource.NotSupportedException Operation not supported 
     **/
    public Record execute(InteractionSpec ispec, 
                          Record input) 

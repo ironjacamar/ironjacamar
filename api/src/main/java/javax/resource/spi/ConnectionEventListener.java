@@ -24,8 +24,6 @@ package javax.resource.spi;
 
 import java.util.EventListener;
 
-import javax.resource.ResourceException;
-
 /**  The <code>ConnectionEventListener</code> interface provides an event
  *   callback mechanism to enable an application server to receive 
  *   notifications from a <code>ManagedConnection</code> instance. 
@@ -45,7 +43,7 @@ import javax.resource.ResourceException;
  *   @see         javax.resource.spi.ConnectionEvent
  **/
 
-public interface ConnectionEventListener extends java.util.EventListener 
+public interface ConnectionEventListener extends EventListener 
 {
    
    /** Notifies that an application component has closed the connection.

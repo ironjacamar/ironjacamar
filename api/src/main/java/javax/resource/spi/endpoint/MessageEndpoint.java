@@ -23,10 +23,6 @@
 package javax.resource.spi.endpoint;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ApplicationServerInternalException;
-import javax.resource.spi.IllegalStateException;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.resource.spi.UnavailableException;
 
 /**
  * This defines a contract for a message endpoint. This is implemented by an
@@ -53,15 +49,15 @@ public interface MessageEndpoint
     *
     * @throws ResourceException generic exception.
     *
-    * @throws ApplicationServerInternalException indicates an error 
+    * @throws javax.resource.spi.ApplicationServerInternalException indicates an error 
     * condition in the application server.
     *
-    * @throws IllegalStateException indicates that the endpoint is in an
+    * @throws javax.resource.spi.IllegalStateException indicates that the endpoint is in an
     * illegal state for the method invocation. For example, this occurs when
     * <code>beforeDelivery</code> and <code>afterDelivery</code> 
     * method calls are not paired.
     *
-    * @throws UnavailableException indicates that the endpoint is not 
+    * @throws javax.resource.spi.UnavailableException indicates that the endpoint is not 
     * available.
     */
    void beforeDelivery(java.lang.reflect.Method method)
@@ -72,14 +68,14 @@ public interface MessageEndpoint
     *
     * @throws ResourceException generic exception.
     *
-    * @throws ApplicationServerInternalException indicates an error 
+    * @throws javax.resource.spi.ApplicationServerInternalException indicates an error 
     * condition in the application server.
     *
-    * @throws IllegalStateException indicates that the endpoint is in an
+    * @throws javax.resource.spi.IllegalStateException indicates that the endpoint is in an
     * illegal state for the method invocation. For example, this occurs when
     * beforeDelivery and afterDelivery method calls are not paired.
     *
-    * @throws UnavailableException indicates that the endpoint is not 
+    * @throws javax.resource.spi.UnavailableException indicates that the endpoint is not 
     * available.
     */
    void afterDelivery() throws ResourceException;

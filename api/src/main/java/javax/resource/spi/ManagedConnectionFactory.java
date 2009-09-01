@@ -24,7 +24,6 @@ package javax.resource.spi;
 
 import java.util.Set;
 
-import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.security.auth.Subject;
 
@@ -126,7 +125,7 @@ public interface ManagedConnectionFactory extends java.io.Serializable
     *  @throws  SecurityException     security related error
     *  @throws  ResourceAdapterInternalException
     *                                 resource adapter related error condition
-    *  @throws  NotSupportedException if operation is not supported
+    *  @throws  javax.resource.NotSupportedException if operation is not supported
     *
     *  @return  ManagedConnection     if resource adapter finds an
     *                                 acceptable match otherwise null

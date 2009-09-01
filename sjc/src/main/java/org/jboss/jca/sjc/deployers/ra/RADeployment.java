@@ -25,8 +25,8 @@ package org.jboss.jca.sjc.deployers.ra;
 import org.jboss.jca.sjc.deployers.Deployment;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 
 import org.jboss.logging.Logger;
 
