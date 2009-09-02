@@ -20,39 +20,34 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.api;
-
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+package org.jboss.jca.core.connectionmanager;
 
 
 /**
- * The JBoss specific connection manager interface
+ * Idle remover.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * @version $Rev$ $Date$
+ *
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public class IdleRemover
 {
+
    /**
-    * Document Me!
-    * @param errorRollback errorRollback
-    * @return time left
-    * @throws RollbackException if exception occurs
+    * Register pool for idle removal.
+    * @param mcp pool instance
+    * @param interval interval for removal
     */
-   public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException;
+   public static void registerPool(IdleConnectionRemovalSupport mcp, long interval)
+   {
+      
+   }
    
    /**
-    * Document Me!
-    * @return transaction time out
-    * @throws SystemException if any exceptions
+    * Unregister pool for idle removal.
+    * @param mcp pool instance
     */
-   public int getTransactionTimeout() throws SystemException;
-   
-   /**
-    * Document Me!
-    * @throws RollbackException rollbacked exception
-    * @throws SystemException system exception
-    */
-   public void checkTransactionActive() throws RollbackException, SystemException;
-   
+   public static void unregisterPool(IdleConnectionRemovalSupport mcp)
+   {
+      
+   }
 }

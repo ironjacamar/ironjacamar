@@ -20,39 +20,16 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.api;
-
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-
+package org.jboss.jca.core.connectionmanager.tx;
 
 /**
- * The JBoss specific connection manager interface
+ * Transactional connection manager implementation.
+ * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * @version $Rev$ $Date$
+ *
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public class TxConnectionManager
 {
-   /**
-    * Document Me!
-    * @param errorRollback errorRollback
-    * @return time left
-    * @throws RollbackException if exception occurs
-    */
-   public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException;
-   
-   /**
-    * Document Me!
-    * @return transaction time out
-    * @throws SystemException if any exceptions
-    */
-   public int getTransactionTimeout() throws SystemException;
-   
-   /**
-    * Document Me!
-    * @throws RollbackException rollbacked exception
-    * @throws SystemException system exception
-    */
-   public void checkTransactionActive() throws RollbackException, SystemException;
-   
+
 }

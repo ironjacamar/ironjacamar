@@ -20,39 +20,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.api;
-
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
-
+package org.jboss.jca.core.connectionmanager.listener;
 
 /**
- * The JBoss specific connection manager interface
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * Connection listener status flag. Connections can be in three state
+ * <ul>
+ *    <li>NORMAL</li>
+ *    <li>DESTROY</li>
+ *    <li>DESTROYED</li>
+ * </ul>
+ * 
+ * @version $Rev$ $Date$
+ * @author gurkanerdogdu
+ *
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public enum ConnectionState
 {
-   /**
-    * Document Me!
-    * @param errorRollback errorRollback
-    * @return time left
-    * @throws RollbackException if exception occurs
-    */
-   public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException;
+   /**Normal state*/
+   NORMAL,
    
-   /**
-    * Document Me!
-    * @return transaction time out
-    * @throws SystemException if any exceptions
-    */
-   public int getTransactionTimeout() throws SystemException;
+   /**Destroy this connection*/
+   DESTROY,
    
-   /**
-    * Document Me!
-    * @throws RollbackException rollbacked exception
-    * @throws SystemException system exception
-    */
-   public void checkTransactionActive() throws RollbackException, SystemException;
-   
+   /**Connection is destroyed*/
+   DESTROYED;
+
 }

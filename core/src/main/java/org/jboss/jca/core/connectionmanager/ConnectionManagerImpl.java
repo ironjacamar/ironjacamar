@@ -27,6 +27,8 @@ import org.jboss.jca.core.api.ConnectionManager;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 
 /**
  * The JBoss specific connection manager interface
@@ -55,5 +57,32 @@ public class ConnectionManagerImpl implements ConnectionManager
       throws ResourceException
    {
       throw new ResourceException("NYI");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void checkTransactionActive() throws RollbackException, SystemException
+   {
+      // TODO Auto-generated method stub
+      
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException
+   {
+      // TODO Auto-generated method stub
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getTransactionTimeout() throws SystemException
+   {
+      // TODO Auto-generated method stub
+      return 0;
    }
 }

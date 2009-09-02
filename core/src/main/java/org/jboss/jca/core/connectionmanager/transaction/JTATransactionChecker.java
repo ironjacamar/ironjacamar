@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2006, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,40 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.jboss.jca.core.api;
+package org.jboss.jca.core.connectionmanager.transaction;
 
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
-
 /**
- * The JBoss specific connection manager interface
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * JTATransactionChecker.
+ * 
+ * @author <a href="adrian@jboss.com">Adrian Brock</a>
+ * @version $Revision: 85945 $
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface JTATransactionChecker
 {
    /**
-    * Document Me!
-    * @param errorRollback errorRollback
-    * @return time left
-    * @throws RollbackException if exception occurs
+    * Check whether a tranasction is active
+    * 
+    * @throws RollbackException if the transaction is not active, preparing, prepared or committing
+    * @throws SystemException for any error in the transaction manager
     */
-   public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException;
-   
-   /**
-    * Document Me!
-    * @return transaction time out
-    * @throws SystemException if any exceptions
-    */
-   public int getTransactionTimeout() throws SystemException;
-   
-   /**
-    * Document Me!
-    * @throws RollbackException rollbacked exception
-    * @throws SystemException system exception
-    */
-   public void checkTransactionActive() throws RollbackException, SystemException;
-   
+   void checkTransactionActive() throws RollbackException, SystemException;
 }
