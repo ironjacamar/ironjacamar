@@ -14,13 +14,15 @@
     
     <para>Jeff Zhang is a core developer on the JBoss JCA project. He can be reached at jizhang (at) redhat (dot) com.</para>
 
+    <para>Gurkan Erdogdu is a core developer on the JBoss JCA project. He can be reached at gurkanerdogdu (at) yahoo (dot) com.</para>
+
   </section>
 
   <section id="thanksto">
     <title>Thanks to</title>
 
     <para>
-      Dimitris Andreadis, Carlo de Wolf, Gurkan Erdogdu, Jason Green, Jonathan Halliday, Vicky Kak,  
+      Dimitris Andreadis, Carlo de Wolf, Jason Green, Jonathan Halliday, Vicky Kak,  
       Sacha Labourey, Alexey Loubyansky, Patrick MacDonald, Andrig Miller,
       Andrew Lee Rubinger, Anil Saldhana and Scott Stark.
     </para>
