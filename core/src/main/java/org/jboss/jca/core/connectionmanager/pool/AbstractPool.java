@@ -198,42 +198,35 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
    {
       if (pool != null)
       {
-         synchronized (this.subPools)
+         Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
+         SubPoolContext other = null;
+         while (itSubPoolContexts.hasNext())
          {
-            Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
-            SubPoolContext other = null;
-            while (itSubPoolContexts.hasNext())
+            other = itSubPoolContexts.next();
+            if (other.getSubPool() == pool && pool.isEmpty())
             {
-               other = itSubPoolContexts.next();
-               if (other.getSubPool() == pool && pool.isEmpty())
-               {
-                  pool.shutdown();
-                  itSubPoolContexts.remove();
-                  break;
-               }
-            }            
-         }         
+               pool.shutdown();
+               itSubPoolContexts.remove();
+               break;
+            }
+         }
       }
-      
    }
 
    /**
     * {@inheritDoc}
-    */   
+    */
    public void flush()
    {
-      synchronized (this.subPools)
+      Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
+      SubPoolContext subPoolContext = null;
+      while (itSubPoolContexts.hasNext())
       {
-         Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
-         SubPoolContext subPoolContext = null;
-         while (itSubPoolContexts.hasNext())
-         {
-            subPoolContext = itSubPoolContexts.next();
-            subPoolContext.getSubPool().flush();
-         }
-         
-         this.subPools.clear();
-      }            
+         subPoolContext = itSubPoolContexts.next();
+         subPoolContext.getSubPool().flush();
+      }
+
+      this.subPools.clear();
    }
 
    /**
@@ -565,22 +558,18 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
 
    /**
     * {@inheritDoc}
-    */   
+    */
    public void shutdown()
    {
-      synchronized (this.subPools)
+      Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
+      SubPoolContext subPoolContext = null;
+      while (itSubPoolContexts.hasNext())
       {
-         Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
-         SubPoolContext subPoolContext = null;
-         while (itSubPoolContexts.hasNext())
-         {
-            subPoolContext = itSubPoolContexts.next();
-            subPoolContext.getSubPool().shutdown();
-         }
-         
-         this.subPools.clear();
+         subPoolContext = itSubPoolContexts.next();
+         subPoolContext.getSubPool().shutdown();
       }
-      
+
+      this.subPools.clear();
    }
 
    /**
@@ -683,45 +672,42 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
    private long getCounts(PoolCounts countType)
    {
       long count = 0L;
-      
-      synchronized (this.subPools)
+
+      Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
+      SubPoolContext subPoolContext = null;
+      while (itSubPoolContexts.hasNext())
       {
-         Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
-         SubPoolContext subPoolContext = null;
-         while (itSubPoolContexts.hasNext())
+         subPoolContext = itSubPoolContexts.next();
+         if (countType.equals(PoolCounts.CONNECTION_COUNT))
          {
-            subPoolContext = itSubPoolContexts.next();
-            if (countType.equals(PoolCounts.CONNECTION_COUNT))
-            {
-               count += subPoolContext.getSubPool().getConnectionCount();
-            }
-            else if (countType.equals(PoolCounts.CONNECTION_IN_USE_COUNT))
-            {
-               count += subPoolContext.getSubPool().getConnectionInUseCount();
-            }            
-            else if (countType.equals(PoolCounts.CONNECTION_CREATED_COUNT))
-            {
-               count += subPoolContext.getSubPool().getConnectionCreatedCount();
-            }
-            else if (countType.equals(PoolCounts.CONNECTION_DESTROYED_COUNT))
-            {
-               count += subPoolContext.getSubPool().getConnectionDestroyedCount();  
-            }
-            else if (countType.equals(PoolCounts.CONNECTION_GET_AVAILABLE_COUNT))
-            {
-               count += subPoolContext.getSubPool().getAvailableConnections();
-            }
-            else if (countType.equals(PoolCounts.CONNECTION_GET_MAX_CONNECTIONS_IN_USE_COUNT))
-            {
-               count += subPoolContext.getSubPool().getMaxConnectionsInUseCount();
-            }
-            else
-            {
-               log.warn("Unknown count type : " + countType.toString());
-            }
+            count += subPoolContext.getSubPool().getConnectionCount();
+         }
+         else if (countType.equals(PoolCounts.CONNECTION_IN_USE_COUNT))
+         {
+            count += subPoolContext.getSubPool().getConnectionInUseCount();
+         }
+         else if (countType.equals(PoolCounts.CONNECTION_CREATED_COUNT))
+         {
+            count += subPoolContext.getSubPool().getConnectionCreatedCount();
+         }
+         else if (countType.equals(PoolCounts.CONNECTION_DESTROYED_COUNT))
+         {
+            count += subPoolContext.getSubPool().getConnectionDestroyedCount();
+         }
+         else if (countType.equals(PoolCounts.CONNECTION_GET_AVAILABLE_COUNT))
+         {
+            count += subPoolContext.getSubPool().getAvailableConnections();
+         }
+         else if (countType.equals(PoolCounts.CONNECTION_GET_MAX_CONNECTIONS_IN_USE_COUNT))
+         {
+            count += subPoolContext.getSubPool().getMaxConnectionsInUseCount();
+         }
+         else
+         {
+            log.warn("Unknown count type : " + countType.toString());
          }
       }
-      
+
       return count;
-   }   
+   }
 }

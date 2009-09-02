@@ -978,10 +978,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
                {
                   if (!destroyed)
                   {
-                     //synchronized (cls)
-                     //{
                      returnForFrequencyCheck(cl);
-                     //}
                   }
                }
             }
