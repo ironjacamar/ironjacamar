@@ -1,0 +1,19 @@
+<deployment>
+  
+  <!-- JMX -->
+  <bean name="JMX" class="org.jboss.jca.sjc.hack.JMX"/>
+
+  <!-- Transaction manager -->
+  <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
+    <property name="transactionTimeout">300</property>
+    <property name="objectStoreDir">${jboss.jca.home}/tmp/tx-object-store</property>
+    <property name="mbeanServer"><inject bean="JMX" property="mbeanServer"/></property>
+    <property name="transactionStatusManagerInetAddress">localhost</property>
+    <property name="transactionStatusManagerPort">4713</property>
+    <property name="recoveryInetAddress">localhost</property>
+    <property name="recoveryPort">4712</property>
+    <property name="socketProcessIdPort">0</property>    
+    <depends>NamingServer</depends>
+  </bean>
+
+</deployment>
