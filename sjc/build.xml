@@ -37,34 +37,9 @@
   </target>
 
   <!-- ================================= 
-       Target: compile boot.xsd
-       ================================= -->
-  <target name="compile-boot-xsd" depends="init">
-    <taskdef name="xjc"
-             classname="com.sun.tools.xjc.XJCTask"
-             classpathref="sjc.lib.path.id"/>
-    <xjc schema="src/main/resources/boot.xsd"
-         destdir="${build.sjc.dir}/impl"
-         package="org.jboss.jca.sjc.boot"/>
-    <javac srcdir="${build.sjc.dir}/impl"
-           destdir="${build.sjc.dir}/impl"
-           classpathref="sjc.lib.path.id"
-           debug="${javac.debug}"
-           deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
-      <compilerarg value="-Xlint"/>
-    </javac>
-    <delete>
-      <fileset dir="${build.sjc.dir}/impl">
-        <include name="**/*.java"/>
-      </fileset>
-    </delete>
-  </target>
-
-  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile" depends="compile-boot-xsd">
+  <target name="compile" depends="init">
     <javac srcdir="src/main"
            destdir="${build.sjc.dir}/impl"
            classpathref="sjc.lib.path.id"
@@ -136,6 +111,7 @@
     <copy todir="${target.dir}/sjc/bin">
       <fileset dir="${target.dir}">
         <include name="*sjc.jar"/>
+        <include name="*fungal.jar"/>
       </fileset>
     </copy>
 
@@ -155,6 +131,7 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
+        <exclude name="*fungal.jar"/>
         <exclude name="*sjc.jar"/>
         <exclude name="jboss-jca-deployers*.jar"/>
         <exclude name="jboss-jca-standalone*.jar"/>

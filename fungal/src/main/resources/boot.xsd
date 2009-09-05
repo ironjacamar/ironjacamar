@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Boot XML Schema
+-->
+<xsd:schema xmlns:boot="http://www.jboss.org/jca" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+   <xsd:element name="boot">
+     <xsd:complexType>
+       <xsd:sequence>
+         <xsd:element name="url" type="xsd:token" maxOccurs="unbounded" minOccurs="0"/>
+       </xsd:sequence>
+     </xsd:complexType>
+   </xsd:element>
+
+</xsd:schema>

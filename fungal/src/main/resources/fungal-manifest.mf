@@ -1,6 +1,4 @@
-Main-Class: org.jboss.jca.sjc.Main
-Class-Path: jboss-jca-fungal.jar
-Implementation-Title: JBoss JCA SJC
+Implementation-Title: JBoss JCA Fungal
 Implementation-Vendor: Red Hat Middleware LLC
 Implementation-Vendor-Id: org.jboss
 Implementation-Version: 0.1

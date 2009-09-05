@@ -22,7 +22,7 @@
 
 package org.jboss.jca.sjc.deployers.ra;
 
-import org.jboss.jca.sjc.deployers.Deployment;
+import org.jboss.jca.fungal.deployers.Deployment;
 
 import java.io.Closeable;
 import java.io.File;

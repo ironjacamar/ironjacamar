@@ -20,25 +20,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc.util;
+package org.jboss.jca.fungal.deployers;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.net.URL;
 
 /**
- * Jar filter
+ * The deployer interface for JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class JarFilter implements FilenameFilter
+public interface Deployer
 {
    /**
-    * Accept
-    * @param dir The directory
-    * @param name The name
-    * @return True if accepts; otherwise false
+    * Deploy
+    * @param url The URL
+    * @param parent The parent classloader
+    * @return The deployment; or null if no deployment was made
+    * @exception DeployException Thrown if an error occurs during deployment
     */
-   public boolean accept(File dir, String name)
-   {
-      return name.endsWith(".jar");
-   }
+   public Deployment deploy(URL url, ClassLoader parent) throws DeployException;
 }

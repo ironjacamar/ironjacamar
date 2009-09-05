@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc.util;
+package org.jboss.jca.fungal.impl;
 
 import java.net.URL;
 import java.net.URLClassLoader;

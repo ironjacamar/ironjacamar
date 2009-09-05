@@ -22,8 +22,8 @@
 
 package org.jboss.jca.sjc.deployers.ra;
 
+import org.jboss.jca.fungal.deployers.DeployException;
 import org.jboss.jca.sjc.annotationscanner.Annotation;
-import org.jboss.jca.sjc.deployers.DeployException;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;

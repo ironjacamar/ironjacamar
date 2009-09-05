@@ -1,0 +1,137 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="jboss-jca-fungal" 
+         default="compile" 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.fungal.dir" value="${build.dir}/fungal" />
+
+  <!-- ================================= 
+       Target: init
+       ================================= -->
+  <target name="init">
+    <mkdir dir="${build.fungal.dir}" />
+    <mkdir dir="${build.fungal.dir}/impl" />
+  </target>
+
+  <!-- ================================= 
+       Target: compile boot.xsd
+       ================================= -->
+  <target name="compile-boot-xsd" depends="init">
+    <taskdef name="xjc"
+             classname="com.sun.tools.xjc.XJCTask"
+             classpathref="fungal.lib.path.id"/>
+    <xjc schema="src/main/resources/boot.xsd"
+         destdir="${build.fungal.dir}/impl"
+         package="org.jboss.jca.fungal.boot"/>
+    <javac srcdir="${build.fungal.dir}/impl"
+           destdir="${build.fungal.dir}/impl"
+           classpathref="fungal.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac>
+    <delete>
+      <fileset dir="${build.fungal.dir}/impl">
+        <include name="**/*.java"/>
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- ================================= 
+       Target: compile deployment.xsd
+       ================================= -->
+  <target name="compile-deployment-xsd" depends="init">
+    <taskdef name="xjc"
+             classname="com.sun.tools.xjc.XJCTask"
+             classpathref="fungal.lib.path.id"/>
+    <xjc schema="src/main/resources/deployment.xsd"
+         destdir="${build.fungal.dir}/impl"
+         package="org.jboss.jca.fungal.deployment"/>
+    <javac srcdir="${build.fungal.dir}/impl"
+           destdir="${build.fungal.dir}/impl"
+           classpathref="fungal.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac>
+    <delete>
+      <fileset dir="${build.fungal.dir}/impl">
+        <include name="**/*.java"/>
+      </fileset>
+    </delete>
+  </target>
+
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile" depends="compile-boot-xsd,compile-deployment-xsd">
+    <javac srcdir="src/main"
+           destdir="${build.fungal.dir}/impl"
+           classpathref="fungal.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+  </target>
+
+  <!-- ================================= 
+       Target: jars 
+       ================================= -->
+  <target name="jars" depends="compile">
+    <jar destfile="${target.dir}/jboss-jca-fungal.jar"
+         manifest="src/main/resources/fungal-manifest.mf"
+         basedir="${build.fungal.dir}/impl"
+         excludes="**/*.java,**/annotationscanner/**,**/util/**"/>
+    <jar destfile="${target.dir}/jboss-jca-fungal-services.jar"
+         manifest="src/main/resources/fungal-services-manifest.mf"
+         basedir="${build.fungal.dir}/impl"
+         includes="**/annotationscanner/**,**/util/**"
+         excludes="**/*.java"/>
+  </target>
+
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs">
+    <mkdir dir="${target.dir}/docs/fungal"/>
+    <javadoc packagenames="org.*"
+             sourcepath="src/main/java"
+             destdir="${target.dir}/docs/fungal"
+             author="true"
+             version="true"
+             windowtitle="JBoss JCA Fungal"
+             doctitle="JBoss JCA Fungal"
+             use="true"
+             classpathref="fungal.lib.path.id"
+             bottom="Copyright &#169; 2008-2009 Red Hat Middleware LLC (http://www.jboss.com/)">
+      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+  </target>
+
+</project>

@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc.util;
+package org.jboss.jca.fungal.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

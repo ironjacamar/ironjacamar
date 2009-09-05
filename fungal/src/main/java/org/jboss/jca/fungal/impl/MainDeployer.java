@@ -20,78 +20,73 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc;
+package org.jboss.jca.fungal.impl;
 
-import org.jboss.jca.fungal.api.Kernel;
-import org.jboss.jca.fungal.impl.KernelConfiguration;
-import org.jboss.jca.fungal.impl.KernelImpl;
+import org.jboss.jca.fungal.deployers.Deployer;
+import org.jboss.jca.fungal.deployers.Deployment;
 
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.lang.reflect.Method;
-import java.net.URI;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * The main class for JBoss JCA SJC
+ * The main deployer for JBoss JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class Main
+public class MainDeployer
 {
-   /** Kernel */
-   private static Kernel kernel;
+   private KernelImpl kernel;
+   private List<Deployer> deployers;
 
    /** Logging */
    private static Object logging;
 
-   /**
-    * Default constructor
-    */
-   private Main()
+   static
    {
+      initLogging();
    }
 
    /**
-    * Boot
-    * @param args The arguments
-    * @param tg The thread group used
+    * Constructor
+    * @param kernel The kernel
     */
-   private static void boot(final String[] args, final ThreadGroup tg)
+   public MainDeployer(KernelImpl kernel)
    {
+      this.kernel = kernel;
+      this.deployers = new ArrayList<Deployer>();
+   }
+
+   /**
+    * Add deployer
+    * @param deployer The deployer
+    */
+   public void addDeployer(Deployer deployer)
+   {
+      deployers.add(deployer);
+   }
+
+   /**
+    * Deploy
+    * @param url The URL for the deployment
+    * @param classLoader The class loader
+    */
+   public void deploy(URL url, ClassLoader classLoader)
+   {
+      boolean done = false;
       try
       {
-         KernelConfiguration kernelConfiguration = new KernelConfiguration();
-
-         String home = SecurityActions.getSystemProperty("jboss.jca.home");
-         if (home != null)
+         for (int i = 0; !done && i < deployers.size(); i++)
          {
-            kernelConfiguration.home(new File(home).toURI().toURL());
-         }
-         else
-         {
-            home = new File(".").toURI().toURL().toString();
-            File root = new File(new URI(home.substring(0, home.lastIndexOf("bin"))));
-            kernelConfiguration.home(root.toURI().toURL());
-         }
-
-         if (args != null && args.length > 0)
-         {
-            for (int i = 0; i < args.length; i++)
+            Deployer deployer = deployers.get(i);
+            
+            Deployment deployment = deployer.deploy(url, classLoader);
+            if (deployment != null)
             {
-               if ("-b".equals(args[i]))
-               {
-                  kernelConfiguration.bindAddress(args[++i]);
-               }
+               kernel.registerDeployment(deployment);
+               done = true;
             }
          }
-
-         if (tg != null)
-            kernelConfiguration.threadGroup(tg);
-
-         kernel = new KernelImpl(kernelConfiguration);
-         kernel.startup();
-
-         initLogging(SecurityActions.getThreadContextClassLoader());
       }
       catch (Throwable t)
       {
@@ -101,32 +96,16 @@ public class Main
 
    /**
     * Init logging
-    * @param cl The classloader to load from
     */
-   private static void initLogging(ClassLoader cl)
+   private static void initLogging()
    {
       try
       {
-         Class clz = Class.forName("org.jboss.logmanager.log4j.BridgeRepositorySelector", true, cl);
-         Method mStart = clz.getMethod("start", (Class[])null);
-
-         Object brs = clz.newInstance();
-
-         logging = mStart.invoke(brs, (Object[])null);
-      }
-      catch (Throwable t)
-      {
-         // Nothing we can do
-      }
-
-
-      try
-      {
-         Class clz = Class.forName("org.jboss.logging.Logger", true, cl);
+         Class clz = Class.forName("org.jboss.logging.Logger");
          
          Method mGetLogger = clz.getMethod("getLogger", String.class);
 
-         logging = mGetLogger.invoke((Object)null, new Object[] {"org.jboss.jca.sjc.Main"});
+         logging = mGetLogger.invoke((Object)null, new Object[] {"org.jboss.jca.fungal.impl.MainDeployer"});
       }
       catch (Throwable t)
       {
@@ -255,76 +234,6 @@ public class Main
       else
       {
          System.out.println(s);
-      }
-   }
-
-   /**
-    * Main
-    * @param args The arguments
-    */
-   public static void main(final String[] args)
-   {
-      long l1 = System.currentTimeMillis();
-      try
-      {
-         final ThreadGroup threads = new ThreadGroup("jboss-jca");
-
-         Main.boot(args, threads);
-
-         LifeThread lifeThread = new LifeThread(threads);
-         lifeThread.start();
-
-         Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run()
-            {
-               if (kernel != null)
-                  kernel.shutdown();
-            }
-         });
-
-         if (isDebugEnabled())
-         {
-            MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
-            debug("Heap memory: " + memoryBean.getHeapMemoryUsage().toString());
-            debug("NonHeap memory: " + memoryBean.getNonHeapMemoryUsage().toString());
-         }
-
-         long l2 = System.currentTimeMillis();
-         info("Server started in " + (l2 - l1) + "ms");
-      }
-      catch (Exception e)
-      {
-         error("Exception during main()", e);
-      }
-   }
-
-   /** 
-    * A simple thread that keeps the vm alive in the event there are no
-    * other threads started.
-    */
-   private static class LifeThread extends Thread
-   {
-      private Object lock = new Object();
-
-      LifeThread(ThreadGroup tg)
-      {
-         super(tg, "JBossLifeThread");
-      }
-
-      public void run()
-      {
-         synchronized (lock)
-         {
-            try
-            {
-               lock.wait();
-            }
-            catch (InterruptedException ignore)
-            {
-               //
-            }
-         }
       }
    }
 }

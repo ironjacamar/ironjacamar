@@ -20,33 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc.deployers;
+package org.jboss.jca.fungal.deployers;
 
 /**
- * The deploy exception for JCA/SJC
+ * The deployment interface for JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class DeployException extends Exception
+public interface Deployment
 {
-   /** Serial version UID */
-   static final long serialVersionUID = 3820032266224196804L;
+   /**
+    * Get the name
+    * @return The name
+    */
+   public String getName();
 
    /**
-    * Constructs a new exception with the specified detail message.
-    * @param message The message
+    * Get the classloader
+    * @return The classloader
     */
-   public DeployException(String message)
-   {
-      super(message);
-   }
-
-   /**
-    * Constructs a new exception with the specified detail message and cause.
-    * @param message The message
-    * @param cause The cause
-    */
-   public DeployException(String message, Throwable cause)
-   {
-      super(message, cause);
-   }
+   public ClassLoader getClassLoader();
 }

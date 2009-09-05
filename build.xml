@@ -122,6 +122,15 @@
     </fileset>
   </path>
 
+  <path id="fungal.lib.path.id">
+    <fileset dir="${lib.dir}/sjc">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${target.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
   <path id="standalone.lib.path.id">
     <fileset dir="${lib.dir}/standalone">
       <include name="**/*.jar"/>
@@ -186,6 +195,7 @@
        Target: jars
        ================================= -->
   <target name="jars" depends="resolve">
+    <ant dir="fungal" inheritRefs="true" target="jars"/>
     <ant dir="api" inheritRefs="true" target="jars"/>
     <ant dir="common" inheritRefs="true" target="jars"/>
     <ant dir="core" inheritRefs="true" target="jars"/>
@@ -338,6 +348,8 @@
       <class location="${target.dir}/jboss-jca-core-impl.jar" />
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
+      <class location="${target.dir}/jboss-jca-fungal.jar" />
+      <class location="${target.dir}/jboss-jca-fungal-services.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-sjc-ra-deployer.jar" />
       <class location="${target.dir}/jboss-jca-sjc-services.jar" />
@@ -360,6 +372,8 @@
       <class location="${target.dir}/jboss-jca-core-impl.jar" />
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
+      <class location="${target.dir}/jboss-jca-fungal.jar" />
+      <class location="${target.dir}/jboss-jca-fungal-services.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-sjc-ra-deployer.jar" />
       <class location="${target.dir}/jboss-jca-sjc-services.jar" />

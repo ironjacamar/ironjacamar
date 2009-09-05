@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Boot XML Schema
+   Deployment XML Schema
 -->
 <xsd:schema xmlns:boot="http://www.jboss.org/jca" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 

@@ -22,14 +22,14 @@
 
 package org.jboss.jca.sjc.deployers.ra;
 
+import org.jboss.jca.fungal.deployers.DeployException;
+import org.jboss.jca.fungal.deployers.Deployer;
+import org.jboss.jca.fungal.deployers.Deployment;
+import org.jboss.jca.fungal.util.FileUtil;
+import org.jboss.jca.fungal.util.Injection;
+import org.jboss.jca.fungal.util.JarFilter;
 import org.jboss.jca.sjc.annotationscanner.Annotation;
 import org.jboss.jca.sjc.annotationscanner.AnnotationScanner;
-import org.jboss.jca.sjc.deployers.DeployException;
-import org.jboss.jca.sjc.deployers.Deployer;
-import org.jboss.jca.sjc.deployers.Deployment;
-import org.jboss.jca.sjc.util.ExtractUtil;
-import org.jboss.jca.sjc.util.Injection;
-import org.jboss.jca.sjc.util.JarFilter;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,27 +97,29 @@ public class RADeployer implements Deployer
    
    /**
     * Deploy
-    * @param f The file
+    * @param url The url
     * @param parent The parent classloader
     * @return The deployment
     * @exception DeployException Thrown if an error occurs during deployment
     */
-   public Deployment deploy(File f, ClassLoader parent) throws DeployException
+   public Deployment deploy(URL url, ClassLoader parent) throws DeployException
    {
-      if (f == null || !f.getAbsolutePath().endsWith(".rar"))
+      if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
          return null;
 
-      log.info("Deploying: " + f.getAbsolutePath());
+      log.info("Deploying: " + url.toExternalForm());
 
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
       try
       {
+         File f = new File(url.toURI());
+
          File root = null;
 
          if (f.isFile())
          {
             File destination = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
-            root = ExtractUtil.extract(f, destination);
+            root = FileUtil.extract(f, destination);
          }
          else
          {
@@ -275,7 +277,7 @@ public class RADeployer implements Deployer
       }
       catch (Throwable t)
       {
-         throw new DeployException("Deployment " + f.getName() + " failed", t);
+         throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
       }
       finally
       {

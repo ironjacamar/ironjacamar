@@ -20,34 +20,117 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc.util;
+package org.jboss.jca.fungal.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
+import java.util.logging.Logger;
 
-import org.jboss.logging.Logger;
 
 /**
- * An extract utility for JAR type files
+ * An utility for JAR type files
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class ExtractUtil
+public class FileUtil
 {
-   private static Logger log = Logger.getLogger(ExtractUtil.class);
+   private static Logger log = Logger.getLogger(FileUtil.class.getName());
 
    /**
     * Constructor
     */
-   private ExtractUtil()
+   private FileUtil()
    {
+   }
+
+   /**
+    * Compress a directory in a JAR layout to a file
+    * @param directory The directory
+    * @param target The JAR file
+    * @exception IOException Thrown if an error occurs
+    */
+   public static void compress(File directory, File target) throws IOException
+   {
+      if (directory == null)
+         throw new IllegalArgumentException("Directory is null");
+
+      if (target == null)
+         throw new IllegalArgumentException("Target is null");
+
+      if (target.exists())
+         recursiveDelete(target);
+
+      Manifest manifest = null;
+
+      File manifestFile = new File(directory, "META-INF/MANIFEST.MF");
+      if (manifestFile.exists())
+      {
+         FileInputStream fis = new FileInputStream(manifestFile);
+         manifest = new Manifest(fis);
+         fis.close();
+      }
+      else
+      {
+         log.fine("No META-INF/MANIFEST.MF found; creating one");
+         manifest = new Manifest();
+      }
+
+      FileOutputStream fos = new FileOutputStream(target);
+      JarOutputStream jos = new JarOutputStream(fos, manifest);
+
+      int bytesRead;
+      byte[] buffer = new byte[4096];
+
+      List<File> entries = findEntries(directory);
+
+      if (entries != null)
+      {
+         entries.remove(new File("META-INF/MANIFEST.MF"));
+
+         for (File file : entries)
+         {
+            File f = new File(directory, file.getPath());
+            JarEntry entry = new JarEntry(file.getPath());
+            jos.putNextEntry(entry);
+
+            FileInputStream in = null;
+            try
+            {
+               in = new FileInputStream(f);
+               while ((bytesRead = in.read(buffer)) != -1)
+                  jos.write(buffer, 0, bytesRead);
+            }
+            finally
+            {
+               if (in != null)
+               {
+                  try
+                  {
+                     in.close(); 
+                  }
+                  catch (IOException ioe)
+                  {
+                     // Ignore
+                  }
+               }
+            }
+         }
+      }
+
+      jos.flush();
+      jos.close();
    }
 
    /**
@@ -137,5 +220,57 @@ public class ExtractUtil
          if (!f.delete())
             throw new IOException("Could not delete " + f);
       }
+   }
+
+   /**
+    * Find all file entries for a directory
+    * @param file The root directory
+    * @return The list of files
+    */
+   private static List<File> findEntries(File root)
+   {
+      try
+      {
+         return getListing(root, root);
+      }
+      catch (Exception e)
+      {
+         log.severe(e.getMessage());
+      }
+
+      return null;
+   }
+
+   /**
+    * Recursively walk a directory tree and return a list of all files entries found
+    * @param root The root directory
+    * @param directory The current directory
+    * @return The list of files
+    * @exception Exception Thrown if an error occurs
+    */
+   private static List<File> getListing(File root, File directory) throws Exception 
+   {
+      List<File> result = new ArrayList<File>();
+
+      File[] filesAndDirs = directory.listFiles();
+
+      if (filesAndDirs != null)
+      {
+         for (File file : filesAndDirs) 
+         {
+            if (file.isDirectory()) 
+            {
+               List<File> deeperList = getListing(root, file);
+               result.addAll(deeperList);
+            }
+            else
+            {
+               String fileName = file.getPath().substring(root.getPath().length() + 1);
+               result.add(new File(fileName));
+            }
+         }
+      }
+
+      return result;
    }
 }
