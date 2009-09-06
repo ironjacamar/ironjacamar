@@ -23,7 +23,6 @@
 package org.jboss.jca.fungal.impl;
 
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Properties;
@@ -121,18 +120,18 @@ class SecurityActions
    }
 
    /**
-    * Create an URLClassLoader
+    * Create a kernel class loader
     * @param urls The urls
     * @param parent The parent class loader
     * @return The class loader
     */
-   static URLClassLoader createURLCLassLoader(final URL[] urls, final ClassLoader parent)
+   static KernelClassLoader createKernelClassLoader(final URL[] urls, final ClassLoader parent)
    {
-      return (URLClassLoader)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      return (KernelClassLoader)AccessController.doPrivileged(new PrivilegedAction<Object>() 
       {
          public Object run()
          {
-            return new URLClassLoader(urls, parent);
+            return new KernelClassLoader(urls, parent);
          }
       });
    }

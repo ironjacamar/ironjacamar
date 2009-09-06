@@ -158,7 +158,7 @@ public class DeploymentDeployer implements Deployer
          {
             if (kernel.getBean(bt.getName()) == null)
             {
-               kernel.setServiceStatus(bt.getName(), ServiceLifecycle.NOT_STARTED);
+               kernel.setBeanStatus(bt.getName(), ServiceLifecycle.NOT_STARTED);
 
                Set<String> dependencies = getDependencies(bt);
                int notStarted = getNotStarted(dependencies);
@@ -176,13 +176,13 @@ public class DeploymentDeployer implements Deployer
                   }
                }
 
-               kernel.setServiceStatus(bt.getName(), ServiceLifecycle.STARTING);
+               kernel.setBeanStatus(bt.getName(), ServiceLifecycle.STARTING);
 
                Object bean = createBean(bt, classLoader);
 
                kernel.addBean(bt.getName(), bean);
 
-               kernel.setServiceStatus(bt.getName(), ServiceLifecycle.STARTED);
+               kernel.setBeanStatus(bt.getName(), ServiceLifecycle.STARTED);
             }
             else
             {
@@ -254,7 +254,7 @@ public class DeploymentDeployer implements Deployer
          int count = 0;
          for (String dependency : dependencies)
          {
-            ServiceLifecycle dependencyStatus = kernel.getServiceStatus(dependency);
+            ServiceLifecycle dependencyStatus = kernel.getBeanStatus(dependency);
             if (dependencyStatus == null || dependencyStatus != ServiceLifecycle.STARTED)
                count += 1;
          }

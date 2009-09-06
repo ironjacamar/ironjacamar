@@ -208,6 +208,7 @@
        Target: docs
        ================================= -->
   <target name="docs" depends="jars">
+    <ant dir="fungal" inheritRefs="true" target="docs"/>
     <ant dir="api" inheritRefs="true" target="docs"/>
     <ant dir="common" inheritRefs="true" target="docs"/>
     <ant dir="core" inheritRefs="true" target="docs"/>

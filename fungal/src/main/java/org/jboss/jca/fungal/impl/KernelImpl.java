@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -71,8 +70,8 @@ public class KernelImpl implements Kernel
    /** The old class loader */
    private ClassLoader oldClassLoader;
 
-   /** Container class loader */
-   private URLClassLoader containerClassLoader;
+   /** Kernel class loader */
+   private KernelClassLoader kernelClassLoader;
 
    /** Main deployer */
    private MainDeployer mainDeployer;
@@ -122,8 +121,8 @@ public class KernelImpl implements Kernel
 
          URL[] urls = mergeUrls(libUrls, confUrls);
 
-         containerClassLoader = SecurityActions.createURLCLassLoader(urls, oldClassLoader);
-         SecurityActions.setThreadContextClassLoader(containerClassLoader);
+         kernelClassLoader = SecurityActions.createKernelClassLoader(urls, oldClassLoader);
+         SecurityActions.setThreadContextClassLoader(kernelClassLoader);
 
          SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
          SecurityActions.setSystemProperty("jboss.deploy.url", deployDirectory.toURI().toURL().toString());
@@ -131,7 +130,7 @@ public class KernelImpl implements Kernel
          SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
 
          // Init logging
-         initLogging(containerClassLoader);
+         initLogging(kernelClassLoader);
 
          // Main deployer
          mainDeployer = new MainDeployer(this);
@@ -156,7 +155,7 @@ public class KernelImpl implements Kernel
                if (isDebugEnabled())
                   debug("URL=" + fullPath.toString());
 
-               mainDeployer.deploy(fullPath, containerClassLoader);
+               mainDeployer.deploy(fullPath, kernelClassLoader);
             }
          }
 
@@ -168,7 +167,7 @@ public class KernelImpl implements Kernel
                if (isDebugEnabled())
                   debug("URL=" + f.toURI().toURL().toExternalForm());
 
-               mainDeployer.deploy(f.toURI().toURL(), containerClassLoader);
+               mainDeployer.deploy(f.toURI().toURL(), kernelClassLoader);
             }   
          }
       }
@@ -183,7 +182,7 @@ public class KernelImpl implements Kernel
     */
    public void shutdown()
    {
-      SecurityActions.setThreadContextClassLoader(containerClassLoader);
+      SecurityActions.setThreadContextClassLoader(kernelClassLoader);
 
       executorService.shutdown();
 
@@ -218,7 +217,7 @@ public class KernelImpl implements Kernel
 
       for (String name : shutdownServices)
       {
-         setServiceStatus(name, ServiceLifecycle.STOPPING);
+         setBeanStatus(name, ServiceLifecycle.STOPPING);
 
          Object service = services.get(name);
 
@@ -242,16 +241,16 @@ public class KernelImpl implements Kernel
             // No destroy method
          }
 
-         setServiceStatus(name, ServiceLifecycle.NOT_STARTED);
+         setBeanStatus(name, ServiceLifecycle.NOT_STARTED);
       }
 
       info("Shutdown complete");
 
-      if (containerClassLoader != null && containerClassLoader instanceof Closeable)
+      if (kernelClassLoader != null && kernelClassLoader instanceof Closeable)
       {
          try
          {
-            ((Closeable)containerClassLoader).close();
+            ((Closeable)kernelClassLoader).close();
          }
          catch (IOException ioe)
          {
@@ -272,21 +271,21 @@ public class KernelImpl implements Kernel
    }
 
    /**
-    * Get the service status
-    * @param name The service name
+    * Get the bean status
+    * @param name The bean name
     * @return The status
     */
-   public ServiceLifecycle getServiceStatus(String name)
+   public ServiceLifecycle getBeanStatus(String name)
    {
       return servicesStatus.get(name);
    }
 
    /**
-    * Set service status
-    * @param name The service name
-    * @param status The service status
+    * Set the bean status
+    * @param name The bean name
+    * @param status The status
     */
-   public void setServiceStatus(String name, ServiceLifecycle status)
+   public void setBeanStatus(String name, ServiceLifecycle status)
    {
       servicesStatus.put(name, status);
    }
@@ -296,7 +295,7 @@ public class KernelImpl implements Kernel
     * @param name The name of the bean
     * @param bean The bean
     */
-   public void addBean(String name, Object bean)
+   public synchronized void addBean(String name, Object bean)
    {
       startup.add(name);
       services.put(name, bean);
