@@ -108,12 +108,14 @@
       </fileset>
     </copy>
 
-    <copy todir="${target.dir}/sjc/bin">
-      <fileset dir="${target.dir}">
-        <include name="*sjc.jar"/>
-        <include name="*fungal.jar"/>
-      </fileset>
-    </copy>
+    <!-- Build a jboss-jca-sjc.jar containing all dependencies -->
+    <mkdir dir="${build.sjc.dir}/tmp"/>
+    <unjar src="${target.dir}/jboss-jca-fungal.jar" dest="${build.sjc.dir}/tmp"/>
+    <unjar src="${target.dir}/jboss-jca-sjc.jar" dest="${build.sjc.dir}/tmp"/>
+    <jar destfile="${target.dir}/sjc/bin/jboss-jca-sjc.jar"
+         manifest="${build.sjc.dir}/tmp/META-INF/MANIFEST.MF"
+         basedir="${build.sjc.dir}/tmp"/>
+    <delete dir="${build.sjc.dir}/tmp"/>
 
     <copy todir="${target.dir}/sjc/config">
       <fileset dir="src/main/resources">
