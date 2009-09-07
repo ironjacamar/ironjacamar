@@ -34,7 +34,7 @@ import java.util.List;
  * The main deployer for JBoss JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class MainDeployer
+public class MainDeployer implements MainDeployerMBean
 {
    private KernelImpl kernel;
    private List<Deployer> deployers;
@@ -64,6 +64,15 @@ public class MainDeployer
    public void addDeployer(Deployer deployer)
    {
       deployers.add(deployer);
+   }
+
+   /**
+    * Deploy
+    * @param url The URL for the deployment
+    */
+   public void deploy(URL url)
+   {
+      deploy(url, kernel.getKernelClassLoader());
    }
 
    /**

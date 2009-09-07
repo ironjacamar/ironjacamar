@@ -42,6 +42,7 @@ import java.util.concurrent.ThreadFactory;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
@@ -147,10 +148,12 @@ public class KernelImpl implements Kernel
          initLogging(kernelClassLoader);
 
          // Create MBeanServer
-         mbeanServer = MBeanServerFactory.createMBeanServer();
+         mbeanServer = MBeanServerFactory.createMBeanServer("jboss.jca");
 
          // Main deployer
          mainDeployer = new MainDeployer(this);
+         ObjectName mainDeployerObjectName = new ObjectName("jboss.jca:name=MainDeployer");
+         mbeanServer.registerMBean(mainDeployer, mainDeployerObjectName);
 
          // Add the deployment deployer
          mainDeployer.addDeployer(new DeploymentDeployer(this));
@@ -285,11 +288,20 @@ public class KernelImpl implements Kernel
       SecurityActions.setThreadContextClassLoader(oldClassLoader);
    }
 
+   /**
+    * Get the kernel class loader
+    * @return The class loader
+    */
+   KernelClassLoader getKernelClassLoader()
+   {
+      return kernelClassLoader;
+   }
+
    /** 
     * Get the executor service
     * @return The executor service
     */
-   public ExecutorService getExecutorService()
+   ExecutorService getExecutorService()
    {
       return executorService;
    }
@@ -299,7 +311,7 @@ public class KernelImpl implements Kernel
     * @param name The bean name
     * @return The status
     */
-   public ServiceLifecycle getBeanStatus(String name)
+   ServiceLifecycle getBeanStatus(String name)
    {
       return servicesStatus.get(name);
    }
@@ -309,7 +321,7 @@ public class KernelImpl implements Kernel
     * @param name The bean name
     * @param status The status
     */
-   public void setBeanStatus(String name, ServiceLifecycle status)
+   void setBeanStatus(String name, ServiceLifecycle status)
    {
       servicesStatus.put(name, status);
    }
@@ -319,7 +331,7 @@ public class KernelImpl implements Kernel
     * @param name The name of the bean
     * @param bean The bean
     */
-   public synchronized void addBean(String name, Object bean)
+   synchronized void addBean(String name, Object bean)
    {
       startup.add(name);
       services.put(name, bean);
@@ -330,7 +342,7 @@ public class KernelImpl implements Kernel
     * @param name The name of the bean
     * @return The bean
     */
-   public Object getBean(String name)
+   Object getBean(String name)
    {
       return services.get(name);
    }
@@ -339,7 +351,7 @@ public class KernelImpl implements Kernel
     * Register deployment
     * @param deployment The deployment
     */
-   public void registerDeployment(Deployment deployment)
+   void registerDeployment(Deployment deployment)
    {
       deployments.add(deployment);
    }
@@ -348,7 +360,7 @@ public class KernelImpl implements Kernel
     * Get the main deployer
     * @return The main deployer
     */
-   public MainDeployer getMainDeployer()
+   MainDeployer getMainDeployer()
    {
       return mainDeployer;
    }
