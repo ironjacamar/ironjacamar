@@ -40,6 +40,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
@@ -76,6 +78,9 @@ public class KernelImpl implements Kernel
    /** Main deployer */
    private MainDeployer mainDeployer;
 
+   /** MBeanServer */
+   private MBeanServer mbeanServer;
+
    /** Logging */
    private Object logging;
 
@@ -86,6 +91,15 @@ public class KernelImpl implements Kernel
    public KernelImpl(KernelConfiguration kc)
    {
       this.kernelConfiguration = kc;
+   }
+
+   /**
+    * Get the MBeanServer for the kernel
+    * @return The MBeanServer instance
+    */
+   public MBeanServer getMBeanServer()
+   {
+      return mbeanServer;
    }
 
    /**
@@ -132,11 +146,18 @@ public class KernelImpl implements Kernel
          // Init logging
          initLogging(kernelClassLoader);
 
+         // Create MBeanServer
+         mbeanServer = MBeanServerFactory.createMBeanServer();
+
          // Main deployer
          mainDeployer = new MainDeployer(this);
 
          // Add the deployment deployer
          mainDeployer.addDeployer(new DeploymentDeployer(this));
+
+         // Add the kernel bean reference
+         addBean("Kernel", this);
+         setBeanStatus("Kernel", ServiceLifecycle.STARTED);
 
          // Start all URLs defined in bootstrap.xml
          File bootXml = new File(configDirectory, "bootstrap.xml");
@@ -243,6 +264,9 @@ public class KernelImpl implements Kernel
 
          setBeanStatus(name, ServiceLifecycle.NOT_STARTED);
       }
+
+      // Release MBeanServer
+      MBeanServerFactory.releaseMBeanServer(mbeanServer);
 
       info("Shutdown complete");
 

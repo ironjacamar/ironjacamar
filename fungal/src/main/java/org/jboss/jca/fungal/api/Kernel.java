@@ -22,12 +22,20 @@
 
 package org.jboss.jca.fungal.api;
 
+import javax.management.MBeanServer;
+
 /**
  * The kernel API
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public interface Kernel
 {
+   /**
+    * Get the MBeanServer for the kernel
+    * @return The MBeanServer instance
+    */
+   public MBeanServer getMBeanServer();
+
    /**
     * Startup
     */
