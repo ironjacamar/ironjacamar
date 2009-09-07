@@ -37,15 +37,15 @@
   </target>
 
   <!-- ================================= 
-       Target: compile boot.xsd
+       Target: compile bootstrap.xsd
        ================================= -->
-  <target name="compile-boot-xsd" depends="init">
+  <target name="compile-bootstrap-xsd" depends="init">
     <taskdef name="xjc"
              classname="com.sun.tools.xjc.XJCTask"
              classpathref="fungal.lib.path.id"/>
-    <xjc schema="src/main/resources/boot.xsd"
+    <xjc schema="src/main/resources/bootstrap.xsd"
          destdir="${build.fungal.dir}/impl"
-         package="org.jboss.jca.fungal.boot"/>
+         package="org.jboss.jca.fungal.bootstrap"/>
     <javac srcdir="${build.fungal.dir}/impl"
            destdir="${build.fungal.dir}/impl"
            classpathref="fungal.lib.path.id"
@@ -89,7 +89,7 @@
   <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile" depends="compile-boot-xsd,compile-deployment-xsd">
+  <target name="compile" depends="compile-bootstrap-xsd,compile-deployment-xsd">
     <javac srcdir="src/main"
            destdir="${build.fungal.dir}/impl"
            classpathref="fungal.lib.path.id"

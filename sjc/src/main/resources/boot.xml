@@ -1,7 +1,0 @@
-<boot>
-
-  <url>naming.xml</url>
-  <url>transaction.xml</url>
-  <url>jca.xml</url>
-
-</boot>

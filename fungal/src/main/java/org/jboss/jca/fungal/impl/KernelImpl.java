@@ -138,12 +138,12 @@ public class KernelImpl implements Kernel
          // Add the deployment deployer
          mainDeployer.addDeployer(new DeploymentDeployer(this));
 
-         // Start all URLs defined in boot.xml
-         File bootXml = new File(configDirectory, "boot.xml");
-         JAXBContext bootJc = JAXBContext.newInstance("org.jboss.jca.fungal.boot");
+         // Start all URLs defined in bootstrap.xml
+         File bootXml = new File(configDirectory, "bootstrap.xml");
+         JAXBContext bootJc = JAXBContext.newInstance("org.jboss.jca.fungal.bootstrap");
          Unmarshaller bootU = bootJc.createUnmarshaller();
-         org.jboss.jca.fungal.boot.Boot boot = 
-            (org.jboss.jca.fungal.boot.Boot)bootU.unmarshal(bootXml);
+         org.jboss.jca.fungal.bootstrap.Bootstrap boot = 
+            (org.jboss.jca.fungal.bootstrap.Bootstrap)bootU.unmarshal(bootXml);
 
          // Boot urls
          if (boot != null)

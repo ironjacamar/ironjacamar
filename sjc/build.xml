@@ -96,6 +96,7 @@
     <mkdir dir="${target.dir}/sjc"/>
     <mkdir dir="${target.dir}/sjc/bin"/>
     <mkdir dir="${target.dir}/sjc/config"/>
+    <mkdir dir="${target.dir}/sjc/config/bootstrap"/>
     <mkdir dir="${target.dir}/sjc/lib"/>
     <mkdir dir="${target.dir}/sjc/lib/endorsed"/>
     <mkdir dir="${target.dir}/sjc/log"/>
@@ -127,6 +128,12 @@
     <copy todir="${target.dir}/sjc/config">
       <fileset dir="src/main/resources/">
         <include name="*.properties"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/config/bootstrap">
+      <fileset dir="src/main/resources/bootstrap">
+        <include name="*.xml"/>
       </fileset>
     </copy>
 
