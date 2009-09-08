@@ -145,7 +145,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       this.defaultCri = cri;
       this.poolParams = poolParams;
       this.maxSize = poolParams.getMaxSize();
-      this.permits = new Semaphore(this.maxSize);
+      this.permits = new Semaphore(this.maxSize, true);
   
       if (poolParams.isPrefill())
       {
