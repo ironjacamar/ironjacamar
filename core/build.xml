@@ -52,12 +52,12 @@
     <jar destfile="${target.dir}/jboss-jca-core-api.jar"
          manifest="src/main/resources/api-manifest.mf"
          basedir="${build.core.dir}/impl"
-         includes="**/api/**"/>
+         includes="**/core/api/**"/>
 
     <jar destfile="${target.dir}/jboss-jca-core-impl.jar"
          manifest="src/main/resources/impl-manifest.mf"
          basedir="${build.core.dir}/impl"
-         excludes="**/*.java, **/api/**"/>
+         excludes="**/*.java, **/core/api/**"/>
 
     <mkdir dir="${target.dir}/bootstrap"/>
     <copy todir="${target.dir}/bootstrap">
