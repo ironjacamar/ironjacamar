@@ -23,10 +23,10 @@
 package org.jboss.jca.sjc.deployers.ra;
 
 import org.jboss.jca.fungal.deployers.DeployException;
-import org.jboss.jca.sjc.annotationscanner.Annotation;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -57,6 +57,8 @@ import org.jboss.metadata.rar.spec.OutboundRaMetaData;
 import org.jboss.metadata.rar.spec.ResourceAdapterMetaData;
 import org.jboss.metadata.rar.spec.SecurityPermissionMetaData;
 import org.jboss.metadata.rar.spec.TransactionSupportMetaData;
+import org.jboss.papaki.Annotation;
+import org.jboss.papaki.AnnotationRepository;
 
 /**
  * The annotation processor for JCA 1.6
@@ -77,11 +79,11 @@ public class Annotations
    /**
     * Process annotations
     * @param md The metadata
-    * @param annotations The annotations
+    * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   public static ConnectorMetaData process(ConnectorMetaData md, Map<Class, List<Annotation>> annotations)
+   public static ConnectorMetaData process(ConnectorMetaData md, AnnotationRepository annotationRepository)
       throws Exception
    {
       /* Process
@@ -104,25 +106,25 @@ public class Annotations
       }
 
       // @Connector
-      md = processConnector(md, annotations);
+      md = processConnector(md, annotationRepository);
 
       // @ConnectionDefinitions
-      md = processConnectionDefinitions(md, annotations);
+      md = processConnectionDefinitions(md, annotationRepository);
 
       // @ConnectionDefinition (outside of @ConnectionDefinitions)
-      md = processConnectionDefinition(md, annotations);
+      md = processConnectionDefinition(md, annotationRepository);
 
       // @ConfigProperty
-      md = processConfigProperty(md, annotations);
+      md = processConfigProperty(md, annotationRepository);
 
       // @AuthenticationMechanism
-      md = processAuthenticationMechanism(md, annotations);
+      md = processAuthenticationMechanism(md, annotationRepository);
 
       // @AdministeredObject
-      md = processAdministeredObject(md, annotations);
+      md = processAdministeredObject(md, annotationRepository);
 
       // @Activation
-      md = processActivation(md, annotations);
+      md = processActivation(md, annotationRepository);
 
       //log.debug("ConnectorMetadata " + md);
 
@@ -132,19 +134,19 @@ public class Annotations
    /**
     * Process: @Connector
     * @param md The metadata
-    * @param annotations The annotations
+    * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData processConnector(ConnectorMetaData md, Map<Class, List<Annotation>> annotations)
+   private static ConnectorMetaData processConnector(ConnectorMetaData md, AnnotationRepository annotationRepository)
       throws Exception
    {
-      List<Annotation> values = annotations.get(Connector.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(Connector.class);
       if (values != null)
       {
          if (values.size() == 1)
          {
-            Annotation annotation = values.get(0);
+            Annotation annotation = values.iterator().next();
             Connector c = (Connector)annotation.getAnnotation();
 
             if (trace)
@@ -351,20 +353,20 @@ public class Annotations
    /**
     * Process: @ConnectionDefinitions
     * @param md The metadata
-    * @param annotations The annotations
+    * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private static ConnectorMetaData processConnectionDefinitions(ConnectorMetaData md, 
-                                                                 Map<Class, List<Annotation>> annotations)
+                                                                 AnnotationRepository annotationRepository)
       throws Exception
    {
-      List<Annotation> values = annotations.get(ConnectionDefinitions.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(ConnectionDefinitions.class);
       if (values != null)
       {
          if (values.size() == 1)
          {
-            Annotation annotation = values.get(0);
+            Annotation annotation = values.iterator().next();
             ConnectionDefinitions c = (ConnectionDefinitions)annotation.getAnnotation();
 
             if (trace)
@@ -396,15 +398,15 @@ public class Annotations
    /**
     * Process: @ConnectionDefinition
     * @param md The metadata
-    * @param annotations The annotations
+    * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private static ConnectorMetaData processConnectionDefinition(ConnectorMetaData md, 
-                                                                 Map<Class, List<Annotation>> annotations)
+                                                                AnnotationRepository annotationRepository)
       throws Exception
    {
-      List<Annotation> values = annotations.get(ConnectionDefinition.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(ConnectionDefinition.class);
       if (values != null)
       {
          for (Annotation annotation : values)
@@ -438,15 +440,15 @@ public class Annotations
    /**
     * Process: @ConfigProperty
     * @param md The metadata
-    * @param annotations The annotations
+    * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private static ConnectorMetaData processConfigProperty(ConnectorMetaData md, 
-                                                          Map<Class, List<Annotation>> annotations)
+                                                          AnnotationRepository annotationRepository)
       throws Exception
    {
-      List<Annotation> values = annotations.get(ConfigProperty.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(ConfigProperty.class);
       if (values != null)
       {
          for (Annotation annotation : values)
@@ -480,15 +482,15 @@ public class Annotations
    /**
     * Process: @AuthenticationMechanism
     * @param md The metadata
-    * @param annotations The annotations
+    * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private static ConnectorMetaData processAuthenticationMechanism(ConnectorMetaData md, 
-                                                                   Map<Class, List<Annotation>> annotations)
+                                                                   AnnotationRepository annotationRepository)
       throws Exception
    {
-      List<Annotation> values = annotations.get(AuthenticationMechanism.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(AuthenticationMechanism.class);
       if (values != null)
       {
          for (Annotation annotation : values)
@@ -553,15 +555,15 @@ public class Annotations
    /**
     * Process: @AdministeredObject
     * @param md The metadata
-    * @param annotations The annotations
+    * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private static ConnectorMetaData processAdministeredObject(ConnectorMetaData md, 
-                                                              Map<Class, List<Annotation>> annotations)
+                                                              AnnotationRepository annotationRepository)
       throws Exception
    {
-      List<Annotation> values = annotations.get(AdministeredObject.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(AdministeredObject.class);
       if (values != null)
       {
          for (Annotation annotation : values)
@@ -610,15 +612,15 @@ public class Annotations
    /**
     * Process: @Activation
     * @param md The metadata
-    * @param annotations The annotations
+    * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private static ConnectorMetaData processActivation(ConnectorMetaData md, 
-                                                      Map<Class, List<Annotation>> annotations)
+                                                      AnnotationRepository annotationRepository)
       throws Exception
    {
-      List<Annotation> values = annotations.get(Activation.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(Activation.class);
       if (values != null)
       {
          for (Annotation annotation : values)

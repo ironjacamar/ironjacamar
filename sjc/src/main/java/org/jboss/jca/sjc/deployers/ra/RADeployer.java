@@ -28,8 +28,6 @@ import org.jboss.jca.fungal.deployers.Deployment;
 import org.jboss.jca.fungal.util.FileUtil;
 import org.jboss.jca.fungal.util.Injection;
 import org.jboss.jca.fungal.util.JarFilter;
-import org.jboss.jca.sjc.annotationscanner.Annotation;
-import org.jboss.jca.sjc.annotationscanner.AnnotationScanner;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +52,10 @@ import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.metadata.rar.spec.MessageListenerMetaData;
+import org.jboss.papaki.Annotation;
+import org.jboss.papaki.AnnotationRepository;
+import org.jboss.papaki.AnnotationScanner;
+import org.jboss.papaki.AnnotationScannerFactory;
 
 /**
  * The RA deployer for JCA/SJC
@@ -139,7 +141,9 @@ public class RADeployer implements Deployer
          // Process annotations
          if (cmd == null || cmd.is16())
          {
-            Map<Class, List<Annotation>> annotations = AnnotationScanner.scan(cl.getURLs(), cl);
+            AnnotationScanner annotationScanner = 
+               AnnotationScannerFactory.getStrategy(AnnotationScannerFactory.JAVASSIST_INPUT_STREAM);
+            AnnotationRepository annotationRepository = annotationScanner.scan(cl.getURLs(), cl);
 
             isMetadataComplete = false;
             if (cmd != null)
@@ -162,7 +166,7 @@ public class RADeployer implements Deployer
             }
             
             if (cmd == null || !isMetadataComplete)
-               cmd = Annotations.process(cmd, annotations);
+               cmd = Annotations.process(cmd, annotationRepository);
          }
          
          // Validate metadata
