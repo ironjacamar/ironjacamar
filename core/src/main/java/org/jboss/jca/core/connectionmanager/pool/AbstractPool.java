@@ -266,7 +266,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
       
       if (trackByTransaction == null || trackByTx == null)
       {
-         cl = getSimpleConnection(subject, cri, separateNoTx);
+         cl = getSimpleConnection(subject, cri, subPoolContext);
       } //end of if trackByTransaction   
       
       //Transaction old connections
@@ -292,27 +292,21 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
     * @return connection listener
     * @throws ResourceException
     */
-   private ConnectionListener getSimpleConnection(Subject subject, ConnectionRequestInfo cri, boolean separateNoTx)
+   private ConnectionListener getSimpleConnection(final Subject subject, final ConnectionRequestInfo cri, 
+         final SubPoolContext subPoolContext)
       throws ResourceException
    {
       ConnectionListener cl = null;
-      SubPoolContext subPoolContext = null;
-      Object key = null;
       InternalManagedConnectionPool imcp = null;
       
       try
       {  
-         //Find key for pool
-         key = getKey(subject, cri, separateNoTx);
-         
-         //Get pool context from key
-         subPoolContext = getSubPool(key, subject, cri);
-         
          //Find internal managed pool
          imcp = subPoolContext.getSubPool();
          
          //Get connection from imcp
          cl = imcp.getConnection(subject, cri);
+         
          if (this.traceEnabled)
          {
             dump("Got connection from pool : " + cl);
@@ -329,7 +323,6 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          }
 
          // The IMCP is down - retry
-         subPoolContext = getSubPool(key, subject, cri);
          imcp = subPoolContext.getSubPool();
 
          // Make sure that IMCP is running

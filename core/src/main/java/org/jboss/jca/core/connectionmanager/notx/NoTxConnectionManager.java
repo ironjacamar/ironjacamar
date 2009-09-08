@@ -22,6 +22,14 @@
 
 package org.jboss.jca.core.connectionmanager.notx;
 
+import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.connectionmanager.listener.NoTxConnectionListener;
+
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
+
 /**
  * Non transactional connection manager implementation.
  * 
@@ -29,7 +37,27 @@ package org.jboss.jca.core.connectionmanager.notx;
  * @version $Rev$ $Date$
  *
  */
-public class NoTxConnectionManager
+public class NoTxConnectionManager extends AbstractConnectionManager
 {
+   /**
+    * Default constructor.
+    */
+   public NoTxConnectionManager()
+   {
+      
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, Object context) 
+      throws ResourceException
+   {
+      ConnectionListener cli = new NoTxConnectionListener(this, managedConnection, getPoolingStrategy(), context);
+      managedConnection.addConnectionEventListener(cli);
+      
+      return cli;
+
+   }
 
 }

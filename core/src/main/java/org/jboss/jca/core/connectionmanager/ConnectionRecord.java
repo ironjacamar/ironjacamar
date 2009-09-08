@@ -26,7 +26,7 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import javax.resource.spi.ConnectionRequestInfo;
 
 /**
- * Information about a connection
+ * Information about a connection.
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
@@ -35,7 +35,7 @@ import javax.resource.spi.ConnectionRequestInfo;
  */
 public class ConnectionRecord 
 {
-   private ConnectionListener cl;
+   private ConnectionListener connectionListener;
    private final Object connection;
    private final ConnectionRequestInfo cri;
    
@@ -49,7 +49,7 @@ public class ConnectionRecord
                             final Object connection, 
                             final ConnectionRequestInfo cri)
    {
-      this.cl = cl;
+      this.connectionListener = cl;
       this.connection = connection;
       this.cri = cri;
    }
@@ -57,23 +57,23 @@ public class ConnectionRecord
    /**
     * @return the cl
     */
-   ConnectionListener getCl()
+   public ConnectionListener getConnectionListener()
    {
-      return cl;
+      return connectionListener;
    }
 
    /**
     * @param cl the cl to set
     */
-   void setCl(ConnectionListener cl)
+   void setConnectionListener(ConnectionListener cl)
    {
-      this.cl = cl;
+      this.connectionListener = cl;
    }
 
    /**
     * @return the connection
     */
-   Object getConnection()
+   public Object getConnection()
    {
       return connection;
    }
@@ -81,7 +81,7 @@ public class ConnectionRecord
    /**
     * @return the cri
     */
-   ConnectionRequestInfo getCri()
+   public ConnectionRequestInfo getCri()
    {
       return cri;
    }

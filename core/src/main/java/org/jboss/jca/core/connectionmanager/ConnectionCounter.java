@@ -124,7 +124,7 @@ public class ConnectionCounter
     * Gets timed out connections.
     * @return timeout
     */
-   public int getTimedOut()
+   public int getTimedOutCount()
    {
       return timedOut;
    }
@@ -132,7 +132,7 @@ public class ConnectionCounter
    /**
     * Increment timeout connection.
     */
-   public void incTimedOut()
+   public void incTimedOutCount()
    {
       ++timedOut;
    }

@@ -22,37 +22,33 @@
 
 package org.jboss.jca.core.api;
 
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
 
+import java.io.Serializable;
+
+import org.jboss.tm.TransactionTimeoutConfiguration;
 
 /**
  * The JBoss specific connection manager interface
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @version $Rev$ $Date$
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
-{
+public interface ConnectionManager extends 
+   javax.resource.spi.ConnectionManager,
+   Serializable,
+   TransactionTimeoutConfiguration,
+   JTATransactionChecker
+{   
    /**
-    * Document Me!
-    * @param errorRollback errorRollback
-    * @return time left
-    * @throws RollbackException if exception occurs
+    * Sets real connection manager.
+    * @param realConnectionManager real connection manager
     */
-   public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException;
+   public void setRealConnectionManager(AbstractConnectionManager realConnectionManager);
    
    /**
-    * Document Me!
-    * @return transaction time out
-    * @throws SystemException if any exceptions
+    * Gets real connection manager instance.
+    * @return real connection manager
     */
-   public int getTransactionTimeout() throws SystemException;
-   
-   /**
-    * Document Me!
-    * @throws RollbackException rollbacked exception
-    * @throws SystemException system exception
-    */
-   public void checkTransactionActive() throws RollbackException, SystemException;
-   
+   public AbstractConnectionManager getRealConnectionManager();
 }

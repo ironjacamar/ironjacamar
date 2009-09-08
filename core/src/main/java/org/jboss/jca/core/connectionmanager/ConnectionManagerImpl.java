@@ -35,16 +35,20 @@ import javax.transaction.SystemException;
  */
 public class ConnectionManagerImpl implements ConnectionManager
 {
-   /** Serial version UID */
-   static final long serialVersionUID = 0L;
-
+   /**Serial version UID*/
+   private static final long serialVersionUID = 2843159124540746692L;
+ 
+   /**Real connection manager*/
+   private transient AbstractConnectionManager realConnectionManager;
+   
    /**
-    * Default constructor
+    * Creates a new instance of connection manager.
     */
    public ConnectionManagerImpl()
    {
+      
    }
-
+   
    /**
     * Allocate a connection
     * @param mcf The managed connection factory
@@ -56,7 +60,7 @@ public class ConnectionManagerImpl implements ConnectionManager
                                     ConnectionRequestInfo cxRequestInfo)
       throws ResourceException
    {
-      throw new ResourceException("NYI");
+      return this.realConnectionManager.allocateConnection(mcf, cxRequestInfo);
    }
 
    /**
@@ -64,8 +68,7 @@ public class ConnectionManagerImpl implements ConnectionManager
     */
    public void checkTransactionActive() throws RollbackException, SystemException
    {
-      // TODO Auto-generated method stub
-      
+      this.realConnectionManager.checkTransactionActive();
    }
 
    /**
@@ -73,8 +76,7 @@ public class ConnectionManagerImpl implements ConnectionManager
     */
    public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException
    {
-      // TODO Auto-generated method stub
-      return 0;
+      return this.realConnectionManager.getTimeLeftBeforeTransactionTimeout(errorRollback);
    }
 
    /**
@@ -82,7 +84,22 @@ public class ConnectionManagerImpl implements ConnectionManager
     */
    public int getTransactionTimeout() throws SystemException
    {
-      // TODO Auto-generated method stub
-      return 0;
+      return this.realConnectionManager.getTransactionTimeout();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public AbstractConnectionManager getRealConnectionManager()
+   {
+      return this.realConnectionManager;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setRealConnectionManager(AbstractConnectionManager realConnectionManager)
+   {
+      this.realConnectionManager = realConnectionManager;
    }
 }

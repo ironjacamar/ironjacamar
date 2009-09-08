@@ -452,7 +452,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          ConnectionListener cl = (ConnectionListener) cls.get(0);
          if (cl.isTimedOut(timeout) && shouldRemove())
          {
-            connectionCounter.incTimedOut();
+            connectionCounter.incTimedOutCount();
             // We need to destroy this one
             cls.remove(0);
             if (destroy == null)
@@ -687,9 +687,9 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
     * Gets timed out.
     * @return timed out
     */
-   public int getTimedOut()
+   public int getTimedOutCount()
    {
-      return this.connectionCounter.getTimedOut();
+      return this.connectionCounter.getTimedOutCount();
    }
    
    /**

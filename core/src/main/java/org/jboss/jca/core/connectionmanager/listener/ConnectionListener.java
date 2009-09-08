@@ -169,9 +169,9 @@ public interface ConnectionListener extends ConnectionEventListener
    /**
     * Set the last time, in milliseconds, that this connection was validated.
     * 
-    * @param interval the last time the connection was validated in
+    * @param lastValidated the last time the connection was validated in
     *           milliseconds.
     */
-   void setLastValidatedTime(long interval);
+   void setLastValidatedTime(long lastValidated);
 
 }
