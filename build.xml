@@ -104,6 +104,7 @@
   <property name="version.jboss.ts" value="4.6.1.GA"/>
   <property name="version.jboss.vfs" value="2.1.2.GA"/>
   <property name="version.jboss.xb" value="2.0.1.GA"/>
+  <property name="version.jboss.security" value="2.1.0.20090318"/>
   <property name="version.junit" value="4.7"/>
   <property name="version.slf4j" value="1.5.6"/>
   <property name="version.stax" value="1.0.1"/>
