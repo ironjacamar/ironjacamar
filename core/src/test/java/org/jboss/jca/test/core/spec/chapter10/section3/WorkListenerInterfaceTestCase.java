@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
+import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
@@ -30,8 +31,6 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkManager;
-
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -50,9 +49,9 @@ import static org.junit.Assert.*;
 public class WorkListenerInterfaceTestCase
 {
    /*
-    * Bootstrap (MC Facade)
+    * Embedded
     */
-   private static EmbeddedTestMcBootstrap bootstrap;
+   private static EmbeddedJCA embedded;
    
    /**
     * Test for paragraph 1 Section 3.3.1
@@ -70,7 +69,7 @@ public class WorkListenerInterfaceTestCase
    @Test
    public void testWorkAcceptedStatus() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       Work work1 = new ShortRunningWork();
       Work work2 = new ShortRunningWork();
@@ -103,7 +102,7 @@ public class WorkListenerInterfaceTestCase
    @Test
    public void testWorkStartedStatus() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -136,7 +135,7 @@ public class WorkListenerInterfaceTestCase
    @Test
    public void testWorkCompletedStatus() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start2 = new CountDownLatch(1);
       final CountDownLatch done2 = new CountDownLatch(1);
@@ -186,7 +185,7 @@ public class WorkListenerInterfaceTestCase
    @Test
    public void testSourceObjectIsInitial() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
       
       Work work = new ShortRunningWork();
       MyWorkAdapter wa = new MyWorkAdapter();
@@ -203,7 +202,7 @@ public class WorkListenerInterfaceTestCase
    @Test
    public void testHandleAssociatedWork() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       Work work = new ShortRunningWork();
       MyWorkAdapter wa = new MyWorkAdapter();
@@ -220,7 +219,7 @@ public class WorkListenerInterfaceTestCase
    @Test
    public void testStartDelayDuration() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       Work work = new ShortRunningWork();
       MyWorkAdapter wa = new MyWorkAdapter();
@@ -261,7 +260,7 @@ public class WorkListenerInterfaceTestCase
    @Test
    public void testNotificationWithoutOrder() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       Work work1 = new ShortRunningWork();
       Work work2 = new ShortRunningWork();
@@ -292,13 +291,16 @@ public class WorkListenerInterfaceTestCase
    @BeforeClass
    public static void beforeClass() throws Throwable
    {
-      // Create and set a new MC Bootstrap
-      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+      // Create and set an embedded JCA instance
+      embedded = new EmbeddedJCA(false);
+
+      // Startup
+      embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      bootstrap.deploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      bootstrap.deploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.deploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.deploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.deploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.deploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
    }
 
    /**
@@ -309,14 +311,14 @@ public class WorkListenerInterfaceTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      bootstrap.undeploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      bootstrap.undeploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.undeploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.undeploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.undeploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.undeploy(WorkManagerInterfaceTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
 
       // Shutdown MC
-      bootstrap.shutdown();
+      embedded.shutdown();
 
-      // Set Bootstrap to null
-      bootstrap = null;
+      // Set Embedded to null
+      embedded = null;
    }
 }

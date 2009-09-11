@@ -1,11 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-    JBoss JCA
--->
 <deployment>
 
-  <bean name="WorkManagerThreadPool" interface="org.jboss.jca.common.api.ThreadPool" class="org.jboss.jca.common.threadpool.ThreadPoolImpl">
+  <!-- Work Manager thread pool -->
+  <bean name="WorkManagerThreadPool" interface="org.jboss.jca.common.threadpool.ThreadPool" class="org.jboss.jca.common.threadpool.ThreadPoolImpl">
     <!-- The name that appears in thread names -->
     <property name="name">WorkManager</property>
 
@@ -19,12 +15,23 @@
     <property name="keepAliveTime">60000</property>
   </bean>
 
+  <!-- Work Manager -->
   <bean name="WorkManager" interface="org.jboss.jca.core.api.WorkManager" class="org.jboss.jca.core.workmanager.WorkManagerImpl">
     <!-- The thread pool -->
     <property name="threadPool"><inject bean="WorkManagerThreadPool"/></property>
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
+  </bean>
+  
+  <!-- Connection Manager -->
+  <bean name="ConnectionManager" interface="org.jboss.jca.core.api.ConnectionManager" class="org.jboss.jca.core.connectionmanager.ConnectionManagerImpl">
+  </bean>
+
+  <!-- RA deployer -->
+  <bean name="RADeployer" interface="org.jboss.jca.fungal.deployers.Deployer" class="org.jboss.jca.deployers.fungal.RADeployer">
+    <depends>ConnectionManager</depends>
+    <depends>WorkManager</depends>
   </bean>
 
 </deployment>

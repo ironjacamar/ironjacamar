@@ -22,6 +22,7 @@
 
 package org.jboss.jca.test.core.spec.chapter11.section4.subsection3;
 
+import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.test.core.spec.chapter11.common.DuplicateHintContextWork;
 import org.jboss.jca.test.core.spec.chapter11.common.DuplicateSecurityContextWork;
 import org.jboss.jca.test.core.spec.chapter11.common.DuplicateTransactionContextWork;
@@ -29,8 +30,6 @@ import org.jboss.jca.test.core.spec.chapter11.common.UnsupportedWork;
 
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkManager;
-
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -43,7 +42,10 @@ import org.junit.Test;
  */
 public class WorkContextHandlingAssignmentTestCase
 {
-   private static EmbeddedTestMcBootstrap bootstrap = null;
+   /*
+    * Embedded
+    */
+   private static EmbeddedJCA embedded;
 
    /**
     * Test unsupported context.
@@ -52,7 +54,7 @@ public class WorkContextHandlingAssignmentTestCase
    @Test(expected = WorkCompletedException.class)
    public void testUnsupportedType() throws Throwable
    {
-      WorkManager manager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager manager = embedded.lookup("WorkManager", WorkManager.class);
       manager.doWork(new UnsupportedWork());
    }
 
@@ -63,7 +65,7 @@ public class WorkContextHandlingAssignmentTestCase
    @Test(expected = WorkCompletedException.class)
    public void testTransactionContextDuplicate() throws Throwable
    {
-      WorkManager manager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager manager = embedded.lookup("WorkManager", WorkManager.class);
       manager.doWork(new DuplicateTransactionContextWork());
    }
 
@@ -74,7 +76,7 @@ public class WorkContextHandlingAssignmentTestCase
    @Test(expected = WorkCompletedException.class)
    public void testSecurityContextDuplicate() throws Throwable
    {
-      WorkManager manager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager manager = embedded.lookup("WorkManager", WorkManager.class);
       manager.doWork(new DuplicateSecurityContextWork());
    }
 
@@ -85,36 +87,42 @@ public class WorkContextHandlingAssignmentTestCase
    @Test(expected = WorkCompletedException.class)
    public void testHintContextDuplicate() throws Throwable
    {
-      WorkManager manager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager manager = embedded.lookup("WorkManager", WorkManager.class);
       manager.doWork(new DuplicateHintContextWork());
    }
 
    /**
     * Before class.
+    * @throws Throwable throwable exception 
     */
    @BeforeClass
-   public static void beforeClass()
+   public static void beforeClass() throws Throwable
    {
-      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+      // Create and set an embedded JCA instance
+      embedded = new EmbeddedJCA(false);
+
+      // Startup
+      embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      bootstrap.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      bootstrap.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
 
    }
 
    /**
     * After class.
+    * @throws Throwable throwable exception 
     */
    @AfterClass
-   public static void afterClass()
+   public static void afterClass() throws Throwable
    {
-      bootstrap.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      bootstrap.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      bootstrap.shutdown();
+      embedded.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.shutdown();
 
-      bootstrap = null;
+      embedded = null;
    }
 }

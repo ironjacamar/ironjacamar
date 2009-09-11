@@ -22,7 +22,8 @@
 
 package org.jboss.jca.test.core.workmanager.unit;
 
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
+import org.jboss.jca.embedded.EmbeddedJCA;
+
 import org.jboss.logging.Logger;
 
 import org.junit.AfterClass;
@@ -48,9 +49,9 @@ public class WorkManagerTestCase
    private static final Logger LOG = Logger.getLogger(WorkManagerTestCase.class);
 
    /*
-    * Bootstrap (MC Facade)
+    * Embedded
     */
-   private static EmbeddedTestMcBootstrap bootstrap;
+   private static EmbeddedJCA embedded;
 
    // --------------------------------------------------------------------------------||
    // Tests --------------------------------------------------------------------------||
@@ -65,8 +66,9 @@ public class WorkManagerTestCase
    public void testInstanceOf() throws Throwable
    {
       org.jboss.jca.core.api.WorkManager workManager = 
-         bootstrap.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
+         embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
 
+      assertNotNull(workManager);
       assertTrue(workManager instanceof javax.resource.spi.work.WorkManager);
    }
 
@@ -78,8 +80,9 @@ public class WorkManagerTestCase
    public void testThreadPool() throws Throwable
    {
       org.jboss.jca.core.api.WorkManager workManager = 
-         bootstrap.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
+         embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
 
+      assertNotNull(workManager);
       assertNotNull(workManager.getThreadPool());
       assertTrue(workManager.getThreadPool() instanceof org.jboss.jca.common.api.ThreadPool);
    }
@@ -92,8 +95,9 @@ public class WorkManagerTestCase
    public void testXATerminator() throws Throwable
    {
       org.jboss.jca.core.api.WorkManager workManager = 
-         bootstrap.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
+         embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
 
+      assertNotNull(workManager);
       assertNotNull(workManager.getXATerminator());
       assertTrue(workManager.getXATerminator() instanceof org.jboss.tm.JBossXATerminator);
    }
@@ -109,13 +113,16 @@ public class WorkManagerTestCase
    @BeforeClass
    public static void beforeClass() throws Throwable
    {
-      // Create and set a new MC Bootstrap
-      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+      // Create and set an embedded JCA instance
+      embedded = new EmbeddedJCA(false);
+
+      // Startup
+      embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      bootstrap.deploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      bootstrap.deploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.deploy(WorkManagerTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.deploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.deploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.deploy(WorkManagerTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
    }
 
    /**
@@ -126,14 +133,14 @@ public class WorkManagerTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      bootstrap.undeploy(WorkManagerTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      bootstrap.undeploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.undeploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.undeploy(WorkManagerTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.undeploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.undeploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
 
-      // Shutdown MC
-      bootstrap.shutdown();
+      // Shutdown embedded
+      embedded.shutdown();
 
-      // Set Bootstrap to null
-      bootstrap = null;
+      // Set embedded to null
+      embedded = null;
    }
 }

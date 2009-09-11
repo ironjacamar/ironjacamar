@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.api;
 
+import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
@@ -30,8 +31,6 @@ import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkManager;
-
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -50,10 +49,9 @@ import static org.junit.Assert.*;
 public class WorkAdapterTestCase
 {
    /*
-    * Bootstrap (MC Facade)
+    * Embedded
     */
-   private static EmbeddedTestMcBootstrap bootstrap;
-
+   private static EmbeddedJCA embedded;
 
    /**
     * workAccepted method
@@ -62,7 +60,7 @@ public class WorkAdapterTestCase
    @Test
    public void testWorkAcceptedStatus() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       Work work1 = new ShortRunningWork();
       Work work2 = new ShortRunningWork();
@@ -96,7 +94,7 @@ public class WorkAdapterTestCase
    @Test
    public void testWorkStartedStatus() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -129,7 +127,7 @@ public class WorkAdapterTestCase
    @Test
    public void testWorkCompletedStatus() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start2 = new CountDownLatch(1);
       final CountDownLatch done2 = new CountDownLatch(1);
@@ -169,13 +167,16 @@ public class WorkAdapterTestCase
    @BeforeClass
    public static void beforeClass() throws Throwable
    {
-      // Create and set a new MC Bootstrap
-      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+      // Create and set an embedded JCA instance
+      embedded = new EmbeddedJCA(false);
+
+      // Startup
+      embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      bootstrap.deploy(WorkAdapterTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      bootstrap.deploy(WorkAdapterTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.deploy(WorkAdapterTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.deploy(WorkAdapterTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.deploy(WorkAdapterTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.deploy(WorkAdapterTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
    }
 
    /**
@@ -186,14 +187,14 @@ public class WorkAdapterTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      bootstrap.undeploy(WorkAdapterTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      bootstrap.undeploy(WorkAdapterTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.undeploy(WorkAdapterTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.undeploy(WorkAdapterTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.undeploy(WorkAdapterTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.undeploy(WorkAdapterTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
 
-      // Shutdown MC
-      bootstrap.shutdown();
+      // Shutdown
+      embedded.shutdown();
 
-      // Set Bootstrap to null
-      bootstrap = null;
+      // Set embedded to null
+      embedded = null;
    }
 }

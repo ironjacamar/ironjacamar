@@ -110,24 +110,34 @@ public class KernelImpl implements Kernel
    {
       try
       {
-         // TODO - remove File dependency
-
-         File root = new File(kernelConfiguration.getHome().toURI());
-
-         SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
-
-         if (kernelConfiguration.getBindAddress() != null)
-            SecurityActions.setSystemProperty("jboss.jca.bindaddress", kernelConfiguration.getBindAddress().trim());
-            
          ThreadGroup tg = kernelConfiguration.getThreadGroup();
          if (tg == null)
             tg = new ThreadGroup("jboss");
          ThreadFactory tf = new FungalThreadFactory(tg);
          executorService = Executors.newCachedThreadPool(tf);
 
-         File libDirectory = new File(root, "/lib/");
-         File configDirectory = new File(root, "/config/");
-         File deployDirectory = new File(root, "/deploy/");
+         File root = null;
+
+         if (kernelConfiguration.getHome() != null)
+         {
+            root = new File(kernelConfiguration.getHome().toURI());
+            SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
+         }
+         else
+         {
+            // TODO
+         }
+
+         File libDirectory = null;
+         File configDirectory = null;
+         File deployDirectory = null;
+
+         if (root != null)
+         {
+            libDirectory = new File(root, "/lib/");
+            configDirectory = new File(root, "/config/");
+            deployDirectory = new File(root, "/deploy/");
+         }
 
          oldClassLoader = SecurityActions.getThreadContextClassLoader();
 
@@ -140,9 +150,10 @@ public class KernelImpl implements Kernel
          SecurityActions.setThreadContextClassLoader(kernelClassLoader);
 
          SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
-         SecurityActions.setSystemProperty("jboss.deploy.url", deployDirectory.toURI().toURL().toString());
-         SecurityActions.setSystemProperty("jboss.lib.url", libDirectory.toURI().toURL().toString());
          SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+
+         if (kernelConfiguration.getBindAddress() != null)
+            SecurityActions.setSystemProperty("jboss.jca.bindaddress", kernelConfiguration.getBindAddress().trim());
 
          // Init logging
          initLogging(kernelClassLoader);
@@ -163,23 +174,33 @@ public class KernelImpl implements Kernel
          setBeanStatus("Kernel", ServiceLifecycle.STARTED);
 
          // Start all URLs defined in bootstrap.xml
-         File bootXml = new File(configDirectory, "bootstrap.xml");
-         JAXBContext bootJc = JAXBContext.newInstance("org.jboss.jca.fungal.bootstrap");
-         Unmarshaller bootU = bootJc.createUnmarshaller();
-         org.jboss.jca.fungal.bootstrap.Bootstrap boot = 
-            (org.jboss.jca.fungal.bootstrap.Bootstrap)bootU.unmarshal(bootXml);
-
-         // Boot urls
-         if (boot != null)
+         if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory())
          {
-            for (String url : boot.getUrl())
+            File bootXml = new File(configDirectory, "bootstrap.xml");
+            JAXBContext bootJc = JAXBContext.newInstance("org.jboss.jca.fungal.bootstrap");
+            Unmarshaller bootU = bootJc.createUnmarshaller();
+            org.jboss.jca.fungal.bootstrap.Bootstrap boot = 
+               (org.jboss.jca.fungal.bootstrap.Bootstrap)bootU.unmarshal(bootXml);
+
+            // Boot urls
+            if (boot != null)
             {
-               URL fullPath = new URL(configDirectory.toURI().toURL().toExternalForm() + url);
+               for (String url : boot.getUrl())
+               {
+                  try
+                  {
+                     URL fullPath = new URL(configDirectory.toURI().toURL().toExternalForm() + url);
 
-               if (isDebugEnabled())
-                  debug("URL=" + fullPath.toString());
+                     if (isDebugEnabled())
+                        debug("URL=" + fullPath.toString());
 
-               mainDeployer.deploy(fullPath, kernelClassLoader);
+                     mainDeployer.deploy(fullPath, kernelClassLoader);
+                  }
+                  catch (Throwable deployThrowable)
+                  {
+                     error(deployThrowable.getMessage(), deployThrowable);
+                  }
+               }
             }
          }
 
@@ -188,11 +209,18 @@ public class KernelImpl implements Kernel
          {
             for (File f : deployDirectory.listFiles())
             {
-               if (isDebugEnabled())
-                  debug("URL=" + f.toURI().toURL().toExternalForm());
+               try
+               {
+                  if (isDebugEnabled())
+                     debug("URL=" + f.toURI().toURL().toExternalForm());
 
-               mainDeployer.deploy(f.toURI().toURL(), kernelClassLoader);
-            }   
+                  mainDeployer.deploy(f.toURI().toURL(), kernelClassLoader);
+               }
+               catch (Throwable deployThrowable)
+               {
+                  error(deployThrowable.getMessage(), deployThrowable);
+               }
+            }
          }
       }
       catch (Throwable t)
@@ -342,7 +370,7 @@ public class KernelImpl implements Kernel
     * @param name The name of the bean
     * @return The bean
     */
-   Object getBean(String name)
+   public Object getBean(String name)
    {
       return services.get(name);
    }
@@ -360,7 +388,7 @@ public class KernelImpl implements Kernel
     * Get the main deployer
     * @return The main deployer
     */
-   MainDeployer getMainDeployer()
+   public MainDeployer getMainDeployer()
    {
       return mainDeployer;
    }

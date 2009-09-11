@@ -85,7 +85,6 @@
   <property name="version.jboss.classloading" value="2.0.6.GA"/>
   <property name="version.jboss.common" value="2.2.15.GA"/>
   <property name="version.jboss.deployers" value="2.0.8.GA"/>
-  <property name="version.jboss.ejb3.test" value="1.0.0"/>
   <property name="version.jboss.integration" value="5.1.0.CR1"/>
   <property name="version.jboss.logging" value="2.2.0.CR1"/>
   <property name="version.jboss.logging.metadata" value="1.0.0.CR3"/>
@@ -202,6 +201,7 @@
     <ant dir="common" inheritRefs="true" target="jars"/>
     <ant dir="core" inheritRefs="true" target="jars"/>
     <ant dir="deployers" inheritRefs="true" target="jars"/>
+    <ant dir="embedded" inheritRefs="true" target="jars"/>
     <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="standalone" inheritRefs="true" target="jars"/>
   </target>
@@ -215,6 +215,7 @@
     <ant dir="common" inheritRefs="true" target="docs"/>
     <ant dir="core" inheritRefs="true" target="docs"/>
     <ant dir="deployers" inheritRefs="true" target="docs"/>
+    <ant dir="embedded" inheritRefs="true" target="docs"/>
     <ant dir="sjc" inheritRefs="true" target="docs"/>
     <ant dir="standalone" inheritRefs="true" target="docs"/>
   </target>

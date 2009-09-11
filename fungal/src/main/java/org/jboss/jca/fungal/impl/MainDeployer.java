@@ -69,8 +69,9 @@ public class MainDeployer implements MainDeployerMBean
    /**
     * Deploy
     * @param url The URL for the deployment
+    * @exception Throwable If an error occurs
     */
-   public void deploy(URL url)
+   public synchronized void deploy(URL url) throws Throwable
    {
       deploy(url, kernel.getKernelClassLoader());
    }
@@ -79,27 +80,22 @@ public class MainDeployer implements MainDeployerMBean
     * Deploy
     * @param url The URL for the deployment
     * @param classLoader The class loader
+    * @exception Throwable If an error occurs
     */
-   public void deploy(URL url, ClassLoader classLoader)
+   public synchronized void deploy(URL url, ClassLoader classLoader) throws Throwable
    {
       boolean done = false;
-      try
+
+      for (int i = 0; !done && i < deployers.size(); i++)
       {
-         for (int i = 0; !done && i < deployers.size(); i++)
-         {
-            Deployer deployer = deployers.get(i);
+         Deployer deployer = deployers.get(i);
             
-            Deployment deployment = deployer.deploy(url, classLoader);
-            if (deployment != null)
-            {
-               kernel.registerDeployment(deployment);
-               done = true;
-            }
+         Deployment deployment = deployer.deploy(url, classLoader);
+         if (deployment != null)
+         {
+            kernel.registerDeployment(deployment);
+            done = true;
          }
-      }
-      catch (Throwable t)
-      {
-         error(t.getMessage(), t);
       }
    }
 

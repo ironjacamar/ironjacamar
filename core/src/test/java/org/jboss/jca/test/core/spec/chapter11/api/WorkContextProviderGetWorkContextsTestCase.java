@@ -22,9 +22,8 @@
 
 package org.jboss.jca.test.core.spec.chapter11.api;
 
+import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.test.core.spec.chapter11.section4.subsection3.WorkContextHandlingAssignmentTestCase;
-
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 
 import junit.framework.Assert;
 
@@ -41,7 +40,10 @@ import org.junit.Test;
  */
 public class WorkContextProviderGetWorkContextsTestCase
 {
-   private static EmbeddedTestMcBootstrap bootstrap = null;
+   /*
+    * Embedded
+    */
+   private static EmbeddedJCA embedded;
    
    /**
     * Test api for {@link WorkContextProvider#getWorkContexts()}
@@ -58,29 +60,35 @@ public class WorkContextProviderGetWorkContextsTestCase
 
    /**
     * Before class.
+    * @throws Throwable throwable exception 
     */
    @BeforeClass
-   public static void beforeClass()
+   public static void beforeClass() throws Throwable
    {
-      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+      // Create and set an embedded JCA instance
+      embedded = new EmbeddedJCA(false);
+
+      // Startup
+      embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      bootstrap.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      bootstrap.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
 
    }
 
    /**
     * After class.
+    * @throws Throwable throwable exception 
     */
    @AfterClass
-   public static void afterClass()
+   public static void afterClass() throws Throwable
    {
-      bootstrap.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      bootstrap.shutdown();
+      embedded.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.shutdown();
 
-      bootstrap = null;
+      embedded = null;
    }
 
 }

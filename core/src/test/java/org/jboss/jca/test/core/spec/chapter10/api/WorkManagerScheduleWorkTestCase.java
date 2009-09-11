@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.api;
 
+import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
@@ -31,8 +32,6 @@ import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;
-
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -51,9 +50,9 @@ import static org.junit.Assert.*;
 public class WorkManagerScheduleWorkTestCase
 {
    /*
-    * Bootstrap (MC Facade)
+    * Embedded
     */
-   private static EmbeddedTestMcBootstrap bootstrap;
+   private static EmbeddedJCA embedded;
    
    /**
     * scheduleWork method: TThis call does not block and returns immediately once a
@@ -63,7 +62,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test
    public void testScheduleWork() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -85,7 +84,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test(expected = WorkException.class)
    public void testScheduleWorkNullWork() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
       Work work = null;
       workManager.scheduleWork(work);
    }
@@ -98,7 +97,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test(expected = WorkException.class)
    public void testScheduleWorkThrowWorkException() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
       Work work = null;
       workManager.scheduleWork(work);
    }
@@ -134,7 +133,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test
    public void testScheduleWorkFullSpec() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -156,7 +155,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test(expected = WorkException.class)
    public void testScheduleWorkFullSpecNullWork() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       Work work = null;
       workManager.scheduleWork(work, WorkManager.INDEFINITE, null, null);
@@ -171,7 +170,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test
    public void testScheduleWorkFullSpecWithIndefiniteStartTimeout() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -195,7 +194,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test
    public void testScheduleWorkFullSpecWithImmediateStartTimeout() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -218,7 +217,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test(expected = IllegalArgumentException.class)
    public void testScheduleWorkFullSpecWithUnknowStartTimeout() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -241,7 +240,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test(expected = IllegalArgumentException.class)
    public void testScheduleWorkFullSpecWithNegativeStartTimeout() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -264,7 +263,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test
    public void testScheduleWorkFullSpecWithExecutionContext() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -288,7 +287,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test
    public void testScheduleWorkFullSpecWithNullExecutionContext() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -311,7 +310,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test
    public void testScheduleWorkFullSpecWithWorkListener() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -340,7 +339,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test
    public void testScheduleWorkFullSpecWithWorkNullListener() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
 
       final CountDownLatch start = new CountDownLatch(1);
       final CountDownLatch done = new CountDownLatch(1);
@@ -361,7 +360,7 @@ public class WorkManagerScheduleWorkTestCase
    @Test(expected = WorkException.class)
    public void testScheduleWorkFullSpecThrowWorkException() throws Throwable
    {
-      WorkManager workManager = bootstrap.lookup("WorkManager", WorkManager.class);
+      WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
       Work work = null;
       workManager.scheduleWork(work, WorkManager.INDEFINITE, null, null);
    }
@@ -398,13 +397,16 @@ public class WorkManagerScheduleWorkTestCase
    @BeforeClass
    public static void beforeClass() throws Throwable
    {
-      // Create and set a new MC Bootstrap
-      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+      // Create and set an embedded JCA instance
+      embedded = new EmbeddedJCA(false);
+
+      // Startup
+      embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      bootstrap.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      bootstrap.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
    }
 
    /**
@@ -415,14 +417,14 @@ public class WorkManagerScheduleWorkTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      bootstrap.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      bootstrap.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
 
-      // Shutdown MC
-      bootstrap.shutdown();
+      // Shutdown embedded
+      embedded.shutdown();
 
-      // Set Bootstrap to null
-      bootstrap = null;
+      // Set embedded to null
+      embedded = null;
    }
 }

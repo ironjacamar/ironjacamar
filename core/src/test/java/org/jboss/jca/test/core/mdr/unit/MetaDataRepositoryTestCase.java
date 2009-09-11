@@ -23,8 +23,8 @@
 package org.jboss.jca.test.core.mdr.unit;
 
 import org.jboss.jca.core.api.MetaDataRepository;
+import org.jboss.jca.embedded.EmbeddedJCA;
 
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.rar.jboss.RARDeploymentMetaData;
 import org.jboss.metadata.rar.jboss.mcf.ManagedConnectionFactoryDeploymentGroup;
@@ -53,9 +53,9 @@ public class MetaDataRepositoryTestCase
    private static Logger log = Logger.getLogger(MetaDataRepositoryTestCase.class);
 
    /*
-    * Bootstrap (MC Facade)
+    * Embedded
     */
-   private static EmbeddedTestMcBootstrap bootstrap;
+   private static EmbeddedJCA embedded;
 
    // --------------------------------------------------------------------------------||
    // Tests --------------------------------------------------------------------------||
@@ -69,7 +69,7 @@ public class MetaDataRepositoryTestCase
    public void testDefined() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
    }
@@ -82,7 +82,7 @@ public class MetaDataRepositoryTestCase
    public void testAddRARDeploymentMetaDataNullName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -105,7 +105,7 @@ public class MetaDataRepositoryTestCase
    public void testAddRARDeploymentMetaDataNullRDMD() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -128,7 +128,7 @@ public class MetaDataRepositoryTestCase
    public void testAddRARDeploymentMetaData() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -146,7 +146,7 @@ public class MetaDataRepositoryTestCase
    public void testAddRARDeploymentMetaDataPreviousValue() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -169,7 +169,7 @@ public class MetaDataRepositoryTestCase
    public void testGetRARDeploymentMetaDataNullName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -192,7 +192,7 @@ public class MetaDataRepositoryTestCase
    public void testGetRARDeploymentMetaDataUndefinedName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -208,7 +208,7 @@ public class MetaDataRepositoryTestCase
    public void testGetRARDeploymentMetaData() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -232,7 +232,7 @@ public class MetaDataRepositoryTestCase
    public void testMultiAddGetRARDeploymentMetaData() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -263,7 +263,7 @@ public class MetaDataRepositoryTestCase
    public void testRemoveRARDeploymentMetaDataNullName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -286,7 +286,7 @@ public class MetaDataRepositoryTestCase
    public void testRemoveRARDeploymentMetaDataUndefinedName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -301,7 +301,7 @@ public class MetaDataRepositoryTestCase
    public void testRemoveRARDeploymentMetaData() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -319,7 +319,7 @@ public class MetaDataRepositoryTestCase
    public void testAddMCFDGNullName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -342,7 +342,7 @@ public class MetaDataRepositoryTestCase
    public void testAddMCFDGNullGroup() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -365,7 +365,7 @@ public class MetaDataRepositoryTestCase
    public void testAddMCFDG() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -383,7 +383,7 @@ public class MetaDataRepositoryTestCase
    public void testAddMCFDGPreviousValue() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -406,7 +406,7 @@ public class MetaDataRepositoryTestCase
    public void testGetMCFDGNullName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -429,7 +429,7 @@ public class MetaDataRepositoryTestCase
    public void testGetMCFDGUndefinedName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -445,7 +445,7 @@ public class MetaDataRepositoryTestCase
    public void testGetMCFDG() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -468,7 +468,7 @@ public class MetaDataRepositoryTestCase
    public void testMultiAddGetMCFDG() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -499,7 +499,7 @@ public class MetaDataRepositoryTestCase
    public void testRemoveMCFDGNullName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -522,7 +522,7 @@ public class MetaDataRepositoryTestCase
    public void testRemoveMCFDGUndefinedName() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -537,7 +537,7 @@ public class MetaDataRepositoryTestCase
    public void testRemoveMCFDG() throws Throwable
    {
       MetaDataRepository mdr =
-         bootstrap.lookup("MetaDataRepository", MetaDataRepository.class);
+         embedded.lookup("MetaDataRepository", MetaDataRepository.class);
 
       assertNotNull(mdr);
 
@@ -558,11 +558,14 @@ public class MetaDataRepositoryTestCase
    @BeforeClass
    public static void beforeClass() throws Throwable
    {
-      // Create and set a new MC Bootstrap
-      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+      // Create and set an embedded JCA instance
+      embedded = new EmbeddedJCA(false);
+
+      // Startup
+      embedded.startup();
 
       // Deploy MDR
-      bootstrap.deploy(MetaDataRepositoryTestCase.class.getClassLoader(), "mdr-jboss-beans.xml");
+      embedded.deploy(MetaDataRepositoryTestCase.class.getClassLoader(), "mdr-jboss-beans.xml");
    }
 
    /**
@@ -573,12 +576,12 @@ public class MetaDataRepositoryTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy MDR
-      bootstrap.undeploy(MetaDataRepositoryTestCase.class.getClassLoader(), "mdr-jboss-beans.xml");
+      embedded.undeploy(MetaDataRepositoryTestCase.class.getClassLoader(), "mdr-jboss-beans.xml");
 
-      // Shutdown MC
-      bootstrap.shutdown();
+      // Shutdown embedded
+      embedded.shutdown();
 
-      // Set Bootstrap to null
-      bootstrap = null;
+      // Set embedded to null
+      embedded = null;
    }
 }

@@ -3,7 +3,7 @@
 <!--
     JBoss JCA
 -->
-<deployment xmlns="urn:jboss:bean-deployer:2.0">
+<deployment>
 
   <!-- Naming -->
   <bean name="NamingServer" class="org.jnp.server.SingletonNamingServer"/>

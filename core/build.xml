@@ -104,6 +104,9 @@
       <jvmarg line="${junit.jvm.options}"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
       
       <classpath>
         <pathelement location="${build.core.dir}/test"/>
@@ -146,6 +149,9 @@
       <jvmarg line="${junit.jvm.options}"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
       
       <classpath>
         <pathelement location="${build.core.dir}/test"/>

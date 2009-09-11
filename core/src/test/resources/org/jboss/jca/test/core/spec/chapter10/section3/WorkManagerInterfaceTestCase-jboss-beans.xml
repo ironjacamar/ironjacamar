@@ -3,7 +3,7 @@
 <!--
     JBoss JCA
 -->
-<deployment xmlns="urn:jboss:bean-deployer:2.0">
+<deployment>
 
   <bean name="SimpleBootstrapContext" interface="javax.resource.spi.BootstrapContext" class="org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext">
     <!-- The work manager -->

@@ -22,8 +22,7 @@
 package org.jboss.jca.test.core.spec.chapter10.section1;
 
 import org.jboss.jca.common.api.ThreadPool;
-
-import org.jboss.ejb3.test.mc.bootstrap.EmbeddedTestMcBootstrap;
+import org.jboss.jca.embedded.EmbeddedJCA;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -42,9 +41,9 @@ import static org.junit.Assert.*;
 public class ManageThreadTestCase
 {
    /*
-    * Bootstrap (MC Facade)
+    * Embedded
     */
-   private static EmbeddedTestMcBootstrap bootstrap;
+   private static EmbeddedJCA embedded;
    
    /**
     * Test for paragraph 4 : bullet 1
@@ -54,7 +53,7 @@ public class ManageThreadTestCase
    public void testWorkManagerHasThreadPool() throws Throwable
    {
       org.jboss.jca.core.api.WorkManager workManager = 
-         bootstrap.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
+         embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
       ThreadPool threadPool = workManager.getThreadPool();
       assertNotNull(threadPool);
    }
@@ -105,13 +104,16 @@ public class ManageThreadTestCase
    @BeforeClass
    public static void beforeClass() throws Throwable
    {
-      // Create and set a new MC Bootstrap
-      bootstrap = EmbeddedTestMcBootstrap.createEmbeddedMcBootstrap();
+      // Create and set an embedded JCA instance
+      embedded = new EmbeddedJCA(false);
+
+      // Startup
+      embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      bootstrap.deploy(ManageThreadTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      bootstrap.deploy(ManageThreadTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.deploy(ManageThreadTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.deploy(ManageThreadTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.deploy(ManageThreadTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.deploy(ManageThreadTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
    }
 
    /**
@@ -122,14 +124,14 @@ public class ManageThreadTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      bootstrap.undeploy(ManageThreadTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      bootstrap.undeploy(ManageThreadTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      bootstrap.undeploy(ManageThreadTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.undeploy(ManageThreadTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.undeploy(ManageThreadTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.undeploy(ManageThreadTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
 
-      // Shutdown MC
-      bootstrap.shutdown();
+      // Shutdown embedded
+      embedded.shutdown();
 
-      // Set Bootstrap to null
-      bootstrap = null;
+      // Set embedded to null
+      embedded = null;
    }
 }
