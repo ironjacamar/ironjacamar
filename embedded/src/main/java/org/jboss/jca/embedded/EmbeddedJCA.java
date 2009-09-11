@@ -163,6 +163,7 @@ public class EmbeddedJCA
       if (url == null)
          throw new IllegalArgumentException("Url is null");      
 
+      kernel.getMainDeployer().undeploy(url);
    }
 
    /**
@@ -179,6 +180,8 @@ public class EmbeddedJCA
       if (name == null)
          throw new IllegalArgumentException("Name is null");
 
+      URL url = cl.getResource(name);
+      kernel.getMainDeployer().undeploy(url);
    }
 
    /**
@@ -190,5 +193,11 @@ public class EmbeddedJCA
    {
       if (clz == null)
          throw new IllegalArgumentException("Clz is null");      
+
+      String name = clz.getName().replace('.', '/');
+      name += "-jboss-beans.xml";
+
+      URL url = clz.getClassLoader().getResource(name);
+      kernel.getMainDeployer().undeploy(url);
    }
 }

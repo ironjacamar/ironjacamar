@@ -100,6 +100,26 @@ public class MainDeployer implements MainDeployerMBean
    }
 
    /**
+    * Undeploy
+    * @param url The URL for the deployment
+    * @exception Throwable If an error occurs
+    */
+   public synchronized void undeploy(URL url) throws Throwable
+   {
+      undeploy(url, kernel.getKernelClassLoader());
+   }
+
+   /**
+    * Undeploy
+    * @param url The URL for the deployment
+    * @param classLoader The class loader
+    * @exception Throwable If an error occurs
+    */
+   public synchronized void undeploy(URL url, ClassLoader classLoader) throws Throwable
+   {
+   }
+
+   /**
     * Init logging
     */
    private static void initLogging()

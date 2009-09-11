@@ -36,4 +36,11 @@ public interface MainDeployerMBean
     * @exception Throwable If an error occurs
     */
    public void deploy(URL url) throws Throwable;
+
+   /**
+    * Undeploy
+    * @param url The URL for the deployment
+    * @exception Throwable If an error occurs
+    */
+   public void undeploy(URL url) throws Throwable;
 }
