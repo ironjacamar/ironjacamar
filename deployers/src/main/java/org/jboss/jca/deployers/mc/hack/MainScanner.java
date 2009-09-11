@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.hack;
+package org.jboss.jca.deployers.mc.hack;
 
 import java.io.IOException;
 import java.net.JarURLConnection;

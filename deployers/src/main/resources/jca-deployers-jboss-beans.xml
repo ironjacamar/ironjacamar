@@ -2,6 +2,6 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="RaXmlParsingDeployer" class="org.jboss.jca.deployers.rar.RaXmlParsingDeployer"/>
+  <bean name="RaXmlParsingDeployer" class="org.jboss.jca.deployers.mc.rar.RaXmlParsingDeployer"/>
 
 </deployment>
