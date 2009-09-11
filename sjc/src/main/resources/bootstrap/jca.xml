@@ -29,7 +29,7 @@
   </bean>
 
   <!-- RA deployer -->
-  <bean name="RADeployer" interface="org.jboss.jca.sjc.deployers.Deployer" class="org.jboss.jca.sjc.deployers.ra.RADeployer">
+  <bean name="RADeployer" interface="org.jboss.jca.fungal.deployers.Deployer" class="org.jboss.jca.deployers.fungal.RADeployer">
     <depends>ConnectionManager</depends>
     <depends>WorkManager</depends>
   </bean>

@@ -56,18 +56,7 @@
   <target name="jars" depends="compile">
     <jar destfile="${target.dir}/jboss-jca-sjc.jar"
          manifest="src/main/resources/sjc-manifest.mf"
-         basedir="${build.sjc.dir}/impl"
-         excludes="**/*.java,**/annotationscanner/**,,**/hack/**,**/ra/**,**/util/**"/>
-    <jar destfile="${target.dir}/jboss-jca-sjc-services.jar"
-         manifest="src/main/resources/sjc-services-manifest.mf"
-         basedir="${build.sjc.dir}/impl"
-         includes="**/annotationscanner/**,**/hack/**,**/util/**"
-         excludes="**/*.java"/>
-    <jar destfile="${target.dir}/jboss-jca-sjc-ra-deployer.jar"
-         manifest="src/main/resources/sjc-ra-manifest.mf"
-         basedir="${build.sjc.dir}/impl"
-         includes="**/ra/**"
-         excludes="**/*.java"/>
+         basedir="${build.sjc.dir}/impl"/>
   </target>
 
   <!-- ================================= 
@@ -140,10 +129,11 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
-        <exclude name="*fungal.jar"/>
-        <exclude name="*sjc.jar"/>
-        <exclude name="jboss-jca-deployers*.jar"/>
-        <exclude name="jboss-jca-standalone*.jar"/>
+        <exclude name="jboss-jca-fungal.jar"/>
+        <exclude name="jboss-jca-sjc.jar"/>
+        <exclude name="jboss-jca-deployers-main.jar"/>
+        <exclude name="jboss-jca-deployers-rar.jar"/>
+        <exclude name="jboss-jca-standalone.jar"/>
       </fileset>
     </copy>
 

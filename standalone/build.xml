@@ -97,7 +97,7 @@
 
     <copy todir="${target.dir}/standalone/bin">
       <fileset dir="${target.dir}">
-        <include name="*standalone.jar"/>
+        <include name="jboss-jca-standalone.jar"/>
       </fileset>
     </copy>
 
@@ -134,8 +134,11 @@
     <copy todir="${target.dir}/standalone/lib">
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
-        <exclude name="*standalone.jar"/>
-        <exclude name="jboss-jca-sjc*.jar"/>
+        <exclude name="jboss-jca-deployers-fungal.jar"/>
+        <exclude name="jboss-jca-fungal-services.jar"/>
+        <exclude name="jboss-jca-fungal.jar"/>
+        <exclude name="jboss-jca-sjc.jar"/>
+        <exclude name="jboss-jca-standalone.jar"/>
       </fileset>
     </copy>
 
