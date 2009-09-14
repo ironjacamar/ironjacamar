@@ -43,14 +43,27 @@ import javax.resource.spi.work.WorkContext;
 
 import org.jboss.logging.Logger;
 
+import org.jboss.metadata.javaee.spec.DescriptionGroupMetaData;
+import org.jboss.metadata.javaee.spec.DescriptionImpl;
+import org.jboss.metadata.javaee.spec.DescriptionsImpl;
+import org.jboss.metadata.javaee.spec.DisplayNameImpl;
+import org.jboss.metadata.javaee.spec.DisplayNamesImpl;
+import org.jboss.metadata.javaee.spec.IconImpl;
+import org.jboss.metadata.javaee.spec.IconsImpl;
+
+import org.jboss.metadata.rar.spec.ActivationspecMetaData;
 import org.jboss.metadata.rar.spec.AdminObjectMetaData;
 import org.jboss.metadata.rar.spec.AuthenticationMechanismMetaData;
+import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
+import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.InboundRaMetaData;
 import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.metadata.rar.spec.LicenseMetaData;
+import org.jboss.metadata.rar.spec.MessageAdapterMetaData;
+import org.jboss.metadata.rar.spec.MessageListenerMetaData;
 import org.jboss.metadata.rar.spec.OutboundRaMetaData;
 import org.jboss.metadata.rar.spec.ResourceAdapterMetaData;
 import org.jboss.metadata.rar.spec.SecurityPermissionMetaData;
@@ -179,18 +192,41 @@ public class Annotations
          }
       }
 
+      DescriptionGroupMetaData descGroup = new DescriptionGroupMetaData();
+      md.setDescriptionGroup(descGroup);
+      
       // Description
       String[] description = c.description();
       if (description != null)
       {
-         // TODO
+         if (descGroup.getDescriptions() == null)
+         {
+            DescriptionsImpl descsImpl = new DescriptionsImpl();
+            descGroup.setDescriptions(descsImpl);
+         }
+         for (String desc : description)
+         {
+            DescriptionImpl descImpl = new DescriptionImpl();
+            descImpl.setDescription(desc);
+            ((DescriptionsImpl)descGroup.getDescriptions()).add(descImpl);
+         }
       }
 
       // Display name
       String[] displayName = c.displayName();
       if (displayName != null)
       {
-         // TODO
+         if (descGroup.getDisplayNames() == null)
+         {
+            DisplayNamesImpl dnsImpl = new DisplayNamesImpl();
+            descGroup.setDisplayNames(dnsImpl);
+         }
+         for (String dn : displayName)
+         {
+            DisplayNameImpl dnImpl = new DisplayNameImpl();
+            dnImpl.setDisplayName(dn);
+            ((DisplayNamesImpl)descGroup.getDisplayNames()).add(dnImpl);
+         }
       }
 
       // EIS type
@@ -205,7 +241,17 @@ public class Annotations
       String[] largeIcon = c.largeIcon();
       if (largeIcon != null)
       {
-         // TODO
+         if (descGroup.getIcons() == null)
+         {
+            IconsImpl icsImpl = new IconsImpl();
+            descGroup.setIcons(icsImpl);
+         }
+         for (String large : largeIcon)
+         {
+            IconImpl icImpl = new IconImpl();
+            icImpl.setLargeIcon(large);
+            ((IconsImpl)descGroup.getIcons()).add(icImpl);
+         }
       }
 
       // License description
@@ -215,7 +261,17 @@ public class Annotations
          if (md.getLicense() == null)
             md.setLicense(new LicenseMetaData());
 
-         // TODO
+         if (md.getLicense().getDescriptions() == null)
+         {
+            DescriptionsImpl descsImpl = new DescriptionsImpl();
+            md.getLicense().setDescriptions(descsImpl);
+         }
+         for (String desc : licenseDescription)
+         {
+            DescriptionImpl descImpl = new DescriptionImpl();
+            descImpl.setDescription(desc);
+            ((DescriptionsImpl)md.getLicense().getDescriptions()).add(descImpl);
+         }
       }
 
       // License required
@@ -304,7 +360,28 @@ public class Annotations
       String[] smallIcon = c.smallIcon();
       if (smallIcon != null)
       {
-         // TODO
+         IconsImpl icsImpl;
+         if (descGroup.getIcons() == null)
+         {
+            icsImpl = new IconsImpl();
+            descGroup.setIcons(icsImpl);
+         }
+         else
+         {
+            icsImpl = (IconsImpl)descGroup.getIcons();
+         }
+         IconImpl[] icArray = icsImpl.toArray(new IconImpl[]{});
+         for (int i = 0; i < smallIcon.length; i++)
+         {
+            if (i < icArray.length)
+               icArray[i].setSmallIcon(smallIcon[i]);
+            else
+            {
+               IconImpl icImpl = new IconImpl();
+               icImpl.setLargeIcon(smallIcon[i]);
+               icsImpl.add(icImpl);
+            }
+         }
       }
 
       // Spec version
@@ -390,6 +467,18 @@ public class Annotations
                                                                 ConnectionDefinitions cds)
       throws Exception
    {
+      if (md.getRa() == null)
+      {
+         md.setRa(new ResourceAdapterMetaData());
+      }
+      if (md.getRa().getOutboundRa() == null)
+      {
+         md.getRa().setOutboundRa(new OutboundRaMetaData());
+      }
+      if (md.getRa().getOutboundRa().getConDefs() == null)
+      {
+         md.getRa().getOutboundRa().setConDefs(new ArrayList<ConnectionDefinitionMetaData>());
+      }
       return md;
    }
 
@@ -432,6 +521,25 @@ public class Annotations
                                                                ConnectionDefinition cd)
       throws Exception
    {
+      if (md.getRa() == null)
+      {
+         md.setRa(new ResourceAdapterMetaData());
+      }
+      if (md.getRa().getOutboundRa() == null)
+      {
+         md.getRa().setOutboundRa(new OutboundRaMetaData());
+      }
+      if (md.getRa().getOutboundRa().getConDefs() == null)
+      {
+         md.getRa().getOutboundRa().setConDefs(new ArrayList<ConnectionDefinitionMetaData>());
+      }
+
+      ConnectionDefinitionMetaData cdMeta = new ConnectionDefinitionMetaData();
+      cdMeta.setConnectionFactoryInterfaceClass(cd.connectionFactory().getName());
+      cdMeta.setConnectionFactoryImplementationClass(cd.connectionFactoryImpl().getName());
+      cdMeta.setConnectionInterfaceClass(cd.connection().getName());
+      cdMeta.setConnectionImplementationClass(cd.connectionImpl().getName());
+      md.getRa().getOutboundRa().getConDefs().add(cdMeta);
       return md;
    }
 
@@ -474,6 +582,20 @@ public class Annotations
                                                          ConfigProperty configProperty)
       throws Exception
    {
+      ConfigPropertyMetaData cfgMeta = new ConfigPropertyMetaData();
+      cfgMeta.setValue(configProperty.defaultValue());
+      cfgMeta.setType(configProperty.type().getName());
+      cfgMeta.setIgnore(configProperty.ignore());
+      if (cfgMeta.getDescriptions() == null)
+      {
+         DescriptionsImpl descsImpl = new DescriptionsImpl();
+         cfgMeta.setDescriptions(descsImpl);
+      }
+      DescriptionImpl descImpl = new DescriptionImpl();
+      descImpl.setDescription(configProperty.description());
+      ((DescriptionsImpl)cfgMeta.getDescriptions()).add(descImpl);
+      
+      //TODO judge config belong to which object
       return md;
    }
 
@@ -545,6 +667,16 @@ public class Annotations
          credentialInterfaceClass = "javax.resource.spi.security.PasswordCredential";
       }
       ammd.setCredentialInterfaceClass(credentialInterfaceClass);
+      
+      if (ammd.getDescriptions() == null)
+      {
+         DescriptionsImpl descsImpl = new DescriptionsImpl();
+         ammd.setDescriptions(descsImpl);
+      }
+      DescriptionImpl descImpl = new DescriptionImpl();
+      descImpl.setDescription(authenticationmechanism.description());
+      ((DescriptionsImpl)ammd.getDescriptions()).add(descImpl);
+      
       md.getRa().getOutboundRa().getAuthMechanisms().add(ammd);
 
       return md;
@@ -653,7 +785,23 @@ public class Annotations
       {
          md.getRa().setInboundRa(new InboundRaMetaData());
       }
-      //TODO
+      if (md.getRa().getInboundRa().getMessageAdapter() == null)
+      {
+         md.getRa().getInboundRa().setMessageAdapter(new MessageAdapterMetaData());
+      }
+      if (md.getRa().getInboundRa().getMessageAdapter().getMessageListeners() == null)
+      {
+         md.getRa().getInboundRa().getMessageAdapter().setMessageListeners(new ArrayList<MessageListenerMetaData>());
+      }
+      for (Class asClass : activation.messageListeners())
+      {
+         ActivationspecMetaData asMeta = new ActivationspecMetaData();
+         asMeta.setAsClass(asClass.getName());
+         MessageListenerMetaData mlMeta = new MessageListenerMetaData();
+         mlMeta.setActivationSpecType(asMeta);
+         //TODO miss type, which should be get from annotation parser
+         md.getRa().getInboundRa().getMessageAdapter().getMessageListeners().add(mlMeta);
+      }
       return md;
    }
 }
