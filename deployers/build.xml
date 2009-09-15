@@ -258,6 +258,20 @@
           includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutanno/*.class"/>
        <fileset dir="src/test/resources/ra16inoutanno.rar"/>
     </jar>
+
+   <jar destfile="${build.deployers.dir}/ra16inoutjar.jar">
+      <fileset dir="${build.deployers.dir}/test"
+         includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+      <fileset dir="${build.deployers.dir}/test"
+         includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutjar/*.class"/>
+   </jar>
+   <jar destfile="${build.deployers.dir}/ra16inoutjar.rar"
+        manifest="src/main/resources/rar-manifest.mf">
+   	<filelist dir="${build.deployers.dir}" files="ra16inoutjar.jar"/> 
+      <fileset dir="src/test/resources/ra16inoutjar.rar"/>
+   </jar>
+  	<delete file="${build.deployers.dir}/ra16inoutjar.jar"/>
+  	
   </target>
 
   <!-- ================================= 
