@@ -308,8 +308,12 @@
            timeout="${junit.timeout}">
       
       <jvmarg line="${junit.jvm.options}"/>
-      <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="archives.dir" value="${build.deployers.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       
       <classpath>
         <pathelement location="${build.deployers.dir}/test"/>
@@ -350,7 +354,12 @@
            timeout="${junit.timeout}">
       
       <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.deployers.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       
       <classpath>
         <pathelement location="${build.deployers.dir}/test"/>
