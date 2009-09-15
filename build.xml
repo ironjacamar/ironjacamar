@@ -353,6 +353,7 @@
       <class location="${target.dir}/jboss-jca-deployers-fungal.jar" />
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
+      <class location="${target.dir}/jboss-jca-embedded.jar" />
       <class location="${target.dir}/jboss-jca-fungal.jar" />
       <class location="${target.dir}/jboss-jca-fungal-services.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
@@ -376,6 +377,7 @@
       <class location="${target.dir}/jboss-jca-deployers-fungal.jar" />
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
+      <class location="${target.dir}/jboss-jca-embedded.jar" />
       <class location="${target.dir}/jboss-jca-fungal.jar" />
       <class location="${target.dir}/jboss-jca-fungal-services.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
@@ -478,6 +480,12 @@
       <fileset dir="deployers/src/main/java">
         <include name="**/*.java" />
       </fileset>
+      <fileset dir="embedded/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="fungal/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
     </cobertura-report>
 
     <cobertura-report format="xml" 
@@ -493,6 +501,12 @@
         <include name="**/*.java" />
       </fileset>
       <fileset dir="deployers/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="embedded/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="fungal/src/main/java">
         <include name="**/*.java" />
       </fileset>
     </cobertura-report>
