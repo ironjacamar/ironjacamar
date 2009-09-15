@@ -65,20 +65,20 @@ public class RarTestCase
    @Test
    public void testRa15dtdinout() throws Throwable
    {
-     URL archive = getURL("ra15dtdinout.rar");
+      URL archive = getURL("ra15dtdinout.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -88,20 +88,20 @@ public class RarTestCase
    @Test
    public void testRa15inoutjbossra() throws Throwable
    {
-     URL archive = getURL("ra15inoutjbossra.rar");
+      URL archive = getURL("ra15inoutjbossra.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -111,20 +111,20 @@ public class RarTestCase
    @Test
    public void testRa15inout() throws Throwable
    {
-     URL archive = getURL("ra15inout.rar");
+      URL archive = getURL("ra15inout.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -134,20 +134,20 @@ public class RarTestCase
    @Test
    public void testRa15outjbossradefaultns() throws Throwable
    {
-     URL archive = getURL("ra15outjbossradefaultns.rar");
- 
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      URL archive = getURL("ra15outjbossradefaultns.rar");
+      
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -157,20 +157,20 @@ public class RarTestCase
    @Test
    public void testRa15outjbossra() throws Throwable
    {
-     URL archive = getURL("ra15outjbossra.rar");
+      URL archive = getURL("ra15outjbossra.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -180,20 +180,20 @@ public class RarTestCase
    @Test
    public void testRa15out() throws Throwable
    {
-     URL archive = getURL("ra15out.rar");
+      URL archive = getURL("ra15out.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -203,20 +203,20 @@ public class RarTestCase
    @Test
    public void testRa16dtdinout() throws Throwable
    {
-     URL archive = getURL("ra16dtdinout.rar");
+      URL archive = getURL("ra16dtdinout.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -226,20 +226,20 @@ public class RarTestCase
    @Test
    public void testRa16inoutanno() throws Throwable
    {
-     URL archive = getURL("ra16inoutanno.rar");
- 
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      URL archive = getURL("ra16inoutanno.rar");
+      
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -249,20 +249,20 @@ public class RarTestCase
    @Test
    public void testRa16inoutjar() throws Throwable
    {
-     URL archive = getURL("ra16inoutjar.rar");
+      URL archive = getURL("ra16inoutjar.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -272,20 +272,20 @@ public class RarTestCase
    @Test
    public void testRa16inoutjbossra() throws Throwable
    {
-     URL archive = getURL("ra16inoutjbossra.rar");
+      URL archive = getURL("ra16inoutjbossra.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -295,20 +295,20 @@ public class RarTestCase
    @Test
    public void testRa16inoutnora() throws Throwable
    {
-     URL archive = getURL("ra16inoutnora.rar");
- 
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      URL archive = getURL("ra16inoutnora.rar");
+      
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -318,20 +318,20 @@ public class RarTestCase
    @Test
    public void testRa16inoutoverwrite() throws Throwable
    {
-     URL archive = getURL("ra16inoutoverwrite.rar");
- 
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      URL archive = getURL("ra16inoutoverwrite.rar");
+      
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -341,20 +341,20 @@ public class RarTestCase
    @Test
    public void testRa16inout() throws Throwable
    {
-     URL archive = getURL("ra16inout.rar");
+      URL archive = getURL("ra16inout.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -364,20 +364,20 @@ public class RarTestCase
    @Test
    public void testRa16outjbossradefaultns() throws Throwable
    {
-     URL archive = getURL("ra16outjbossradefaultns.rar");
+      URL archive = getURL("ra16outjbossradefaultns.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
@@ -387,20 +387,20 @@ public class RarTestCase
    @Test
    public void testRa16outjbossra() throws Throwable
    {
-     URL archive = getURL("ra16outjbossra.rar");
+      URL archive = getURL("ra16outjbossra.rar");
  
-     try
-     {
-        embedded.deploy(archive);
-     }
-     catch (Throwable t)
-     {
-        fail(t.getMessage());
-     }
-     finally
-     {
-        embedded.undeploy(archive);
-     }
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
    }
 
    /**
