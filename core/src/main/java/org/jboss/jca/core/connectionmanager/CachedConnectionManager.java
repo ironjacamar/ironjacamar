@@ -127,13 +127,6 @@ public class CachedConnectionManager implements
    public void setTransactionManager(TransactionManager transactionManager)
    {
       this.transactionManager = transactionManager;
-      
-      // FIXME we should be injecting onto the synchronizer directly
-      if (this.transactionManager != null)
-      {
-         TransactionSynchronizer.setTransactionManager(transactionManager);
-      }
-         
    }
    
    

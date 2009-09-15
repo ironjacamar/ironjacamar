@@ -29,7 +29,6 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
-import org.jboss.logging.Logger;
 import org.jboss.tm.TransactionLocal;
 
 /**
@@ -56,10 +55,9 @@ public class SubPoolContext
     * @param subject the subject
     * @param cri the connection request info
     * @param poolParams the pool parameters
-    * @param log the log
     */
    public SubPoolContext(TransactionManager tm, ManagedConnectionFactory mcf, ConnectionListenerFactory clf, 
-         Subject subject, ConnectionRequestInfo cri, PoolParams poolParams, Logger log)
+         Subject subject, ConnectionRequestInfo cri, PoolParams poolParams)
    {
       subPool = new InternalManagedConnectionPool(mcf, clf, subject, cri, poolParams);
       if (tm != null)

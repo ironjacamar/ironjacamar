@@ -486,7 +486,7 @@ public  abstract class AbstractConnectionManager
    /**
     * {@inheritDoc}
     */
-   public TransactionManager getTransactionManagerInstance()
+   public TransactionManager getTransactionManager()
    {
       return null;
    }

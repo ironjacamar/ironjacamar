@@ -22,6 +22,8 @@
 package org.jboss.jca.core.connectionmanager.transaction;
 
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
@@ -60,13 +62,19 @@ public class TransactionSynchronizer implements Synchronization
    private Thread enlistingThread;
    
    /** Unenlisted */
-   private CopyOnWriteArrayList<Synchronization> unenlisted;
+   private CopyOnWriteArrayList<Synchronization> unenlisted = new CopyOnWriteArrayList<Synchronization>();
    
    /** Enlisted */
-   private CopyOnWriteArrayList<Synchronization> enlisted;
+   private CopyOnWriteArrayList<Synchronization> enlisted = new CopyOnWriteArrayList<Synchronization>();
    
    /** The cached connection manager synchronization */
    private Synchronization ccmSynch;
+   
+   /**Lock*/
+   private ReentrantLock lockObject = new ReentrantLock();
+   
+   /**Condition*/
+   private Condition condition = this.lockObject.newCondition();
 
    /** 
     * Initialization. 
@@ -106,16 +114,23 @@ public class TransactionSynchronizer implements Synchronization
    public CopyOnWriteArrayList<Synchronization> getUnenlisted()
    {
       Thread currentThread = Thread.currentThread();
+      
       while (enlistingThread != null && enlistingThread != currentThread)
       {
          boolean interrupted = false;
          try
          {
-            wait();
+            this.lockObject.lock();
+            
+            this.condition.await();
          }
          catch (InterruptedException e)
          {
             interrupted = true;
+         }         
+         finally
+         {
+            this.lockObject.unlock();
          }
          
          if (interrupted)
@@ -123,6 +138,7 @@ public class TransactionSynchronizer implements Synchronization
             currentThread.interrupt();  
          }
       }
+
       CopyOnWriteArrayList<Synchronization> result = unenlisted;
       
       unenlisted = null;
@@ -160,17 +176,28 @@ public class TransactionSynchronizer implements Synchronization
     */
    public void enlisted()
    {
-      Thread currentThread = Thread.currentThread();
-      if (enlistingThread == null || enlistingThread != currentThread)
+      try
       {
-         log.warn("Thread " + currentThread + " not the enlisting thread " + 
-               enlistingThread, new Exception("STACKTRACE"));
+         this.lockObject.lock();
          
-         return;
+         Thread currentThread = Thread.currentThread();
+         
+         if (enlistingThread == null || enlistingThread != currentThread)
+         {
+            log.warn("Thread " + currentThread + " not the enlisting thread " + 
+                  enlistingThread, new Exception("STACKTRACE"));
+            
+            return;
+         }
+         
+         enlistingThread = null;
+         
+         this.condition.signalAll();
       }
-      
-      enlistingThread = null;
-      notifyAll();
+      finally
+      {
+         this.lockObject.unlock();
+      }      
    }
    
    /**
@@ -331,5 +358,6 @@ public class TransactionSynchronizer implements Synchronization
       {
          log.warn("Transaction " + tx + " error in after completion " + synch, t);
       }
-   }
+   }   
+   
 }

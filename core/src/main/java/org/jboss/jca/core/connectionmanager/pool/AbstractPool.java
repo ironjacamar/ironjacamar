@@ -161,7 +161,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
       if (subPoolContext == null)
       {
          SubPoolContext newSubPoolContext = new SubPoolContext(getTransactionManager(), mcf, clf, subject, 
-                                                         cri, poolParams, log);
+                                                         cri, poolParams);
          subPoolContext = subPools.putIfAbsent(key, newSubPoolContext);
          if (subPoolContext == null)
          {
@@ -182,7 +182,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
    {
       if (clf != null)
       {
-         return clf.getTransactionManagerInstance();  
+         return clf.getTransactionManager();  
       }
       else
       {

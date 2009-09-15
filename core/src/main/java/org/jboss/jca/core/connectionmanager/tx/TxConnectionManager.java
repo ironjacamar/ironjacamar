@@ -125,7 +125,7 @@ import org.jboss.util.NestedRuntimeException;
 public class TxConnectionManager extends AbstractConnectionManager
 {
    /**Transaction manager instance*/
-   private TransactionManager tm;
+   private TransactionManager transactionManager;
 
    /**Interleaving or not*/
    private boolean interleaving;
@@ -159,18 +159,18 @@ public class TxConnectionManager extends AbstractConnectionManager
     * Gets transaction manager instance.
     * @return transaction manager
     */
-   public TransactionManager getTransactionManagerInstance()
+   public TransactionManager getTransactionManager()
    {
-      return tm;
+      return this.transactionManager;
    }
 
    /**
     * Sets transaction manager.
     * @param tm transaction manager
     */
-   public void setTransactionManagerInstance(TransactionManager tm)
+   public void setTransactionManager(TransactionManager tm)
    {
-      this.tm = tm;
+      this.transactionManager = tm;
    }
 
    /**
@@ -316,10 +316,17 @@ public class TxConnectionManager extends AbstractConnectionManager
     */
    public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException
    {
-      if (tm == null)
-         throw new IllegalStateException("No transaction manager: " + getCachedConnectionManager());
-      if (tm instanceof TransactionTimeoutConfiguration)
-         return ((TransactionTimeoutConfiguration) tm).getTimeLeftBeforeTransactionTimeout(errorRollback);
+      if (this.transactionManager == null)
+      {
+         throw new IllegalStateException("No transaction manager: " + getCachedConnectionManager());  
+      }
+
+      if (this.transactionManager instanceof TransactionTimeoutConfiguration)
+      {
+         return ((TransactionTimeoutConfiguration) this.transactionManager).
+            getTimeLeftBeforeTransactionTimeout(errorRollback);  
+      }
+      
       return -1;
    }
 
@@ -329,16 +336,21 @@ public class TxConnectionManager extends AbstractConnectionManager
    @Override
    public void checkTransactionActive() throws RollbackException, SystemException
    {
-      if (tm == null)
-         throw new IllegalStateException("No transaction manager: " + getCachedConnectionManager());
-      Transaction tx = tm.getTransaction();
+      if (this.transactionManager == null)
+      {
+         throw new IllegalStateException("No transaction manager: " + getCachedConnectionManager());  
+      }
+      
+      Transaction tx = this.transactionManager.getTransaction();
       if (tx != null)
       {
          int status = tx.getStatus();
          // Only allow states that will actually succeed
          if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING && 
                status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
-            throw new RollbackException("Transaction " + tx + " cannot proceed " + TxUtils.getStatusAsString(status));
+         {
+            throw new RollbackException("Transaction " + tx + " cannot proceed " + TxUtils.getStatusAsString(status));  
+         }
       }
    }
 
@@ -351,11 +363,16 @@ public class TxConnectionManager extends AbstractConnectionManager
       Transaction trackByTransaction = null;
       try
       {
-         Transaction tx = tm.getTransaction();
+         Transaction tx = this.transactionManager.getTransaction();
          if (tx != null && !TxUtils.isActive(tx))
-            throw new ResourceException("Transaction is not active: tx=" + tx);
+         {
+            throw new ResourceException("Transaction is not active: tx=" + tx);  
+         }
+         
          if (!interleaving)
-            trackByTransaction = tx;
+         {
+            trackByTransaction = tx;  
+         }
       }
       catch (Throwable t)
       {
@@ -363,7 +380,10 @@ public class TxConnectionManager extends AbstractConnectionManager
       }
 
       if (this.trace)
-         getLog().trace("getManagedConnection interleaving=" + interleaving + " tx=" + trackByTransaction);
+      {
+         getLog().trace("getManagedConnection interleaving=" + interleaving + " tx=" + trackByTransaction);  
+      }
+      
       return super.getManagedConnection(trackByTransaction, subject, cri);
    }
 
@@ -447,12 +467,14 @@ public class TxConnectionManager extends AbstractConnectionManager
    {
       XAResource xaResource = null;
       
-      if (localTransactions)
+      if (this.localTransactions)
       {
          xaResource = new LocalXAResource(this);
     
          if (xaResourceTimeout != 0)
-            getLog().debug("XAResource transaction timeout cannot be set for local transactions: " + getJndiName());
+         {
+            getLog().debug("XAResource transaction timeout cannot be set for local transactions: " + getJndiName());  
+         }
       }
       
       else
@@ -508,7 +530,7 @@ public class TxConnectionManager extends AbstractConnectionManager
     */
    public boolean isTransactional()
    {
-      return !TxUtils.isCompleted(tm);
+      return !TxUtils.isCompleted(this.transactionManager);
    }
    
    /**

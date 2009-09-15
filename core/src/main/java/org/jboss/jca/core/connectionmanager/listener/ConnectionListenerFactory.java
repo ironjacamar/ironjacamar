@@ -57,5 +57,5 @@ public interface ConnectionListenerFactory
     * 
     * @return the transaction manager
     */
-   TransactionManager getTransactionManagerInstance();
+   TransactionManager getTransactionManager();
 }
