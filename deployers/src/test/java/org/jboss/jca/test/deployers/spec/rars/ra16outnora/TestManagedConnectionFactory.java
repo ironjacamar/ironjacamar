@@ -24,7 +24,6 @@ package org.jboss.jca.test.deployers.spec.rars.ra16outnora;
 import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
 import org.jboss.jca.test.deployers.spec.rars.TestConnection;
 import org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface;
-import org.jboss.jca.test.deployers.spec.rars.ra16out.TestManagedConnection;
 
 import javax.resource.spi.ConnectionDefinition;
 import javax.resource.spi.ManagedConnection;
