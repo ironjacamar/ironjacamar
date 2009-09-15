@@ -21,38 +21,22 @@
  */
 package org.jboss.jca.test.core.connectionmanager.common;
 
-import java.io.PrintWriter;
-
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionEventListener;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.LocalTransaction;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionMetaData;
-import javax.security.auth.Subject;
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 /**
- * Mocked managed connection.
- * 
+ * Mock XAResource.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
  * @version $Rev$ $Date$
  *
  */
-public class MockManagedConnection implements ManagedConnection
+public class MockXAResource implements XAResource
 {
    /**
-    * Creates a new instance.
-    */
-   public MockManagedConnection()
-   {
-      
-   }
-
-   /**
     * {@inheritDoc}
     */
-   public void addConnectionEventListener(ConnectionEventListener listener)
+   public void commit(Xid xid, boolean onePhase) throws XAException
    {
       
       
@@ -61,8 +45,7 @@ public class MockManagedConnection implements ManagedConnection
    /**
     * {@inheritDoc}
     */
-
-   public void associateConnection(Object connection) throws ResourceException
+   public void end(Xid xid, int flags) throws XAException
    {
       
       
@@ -70,9 +53,8 @@ public class MockManagedConnection implements ManagedConnection
 
    /**
     * {@inheritDoc}
-    */
-
-   public void cleanup() throws ResourceException
+    */   
+   public void forget(Xid xid) throws XAException
    {
       
       
@@ -80,9 +62,44 @@ public class MockManagedConnection implements ManagedConnection
 
    /**
     * {@inheritDoc}
-    */
+    */   
+   public int getTransactionTimeout() throws XAException
+   {
+      
+      return 0;
+   }
 
-   public void destroy() throws ResourceException
+   /**
+    * {@inheritDoc}
+    */   
+   public boolean isSameRM(XAResource xares) throws XAException
+   {
+      
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public int prepare(Xid xid) throws XAException
+   {
+      
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public Xid[] recover(int flag) throws XAException
+   {
+      
+      return new Xid[0];
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public void rollback(Xid xid) throws XAException
    {
       
       
@@ -90,68 +107,17 @@ public class MockManagedConnection implements ManagedConnection
 
    /**
     * {@inheritDoc}
-    */
-
-   public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
-   {      
-      return new MockHandle();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-
-   public LocalTransaction getLocalTransaction() throws ResourceException
+    */   
+   public boolean setTransactionTimeout(int seconds) throws XAException
    {
       
-      return new MockLocalTransaction();
+      return false;
    }
 
    /**
     * {@inheritDoc}
-    */
-
-   public PrintWriter getLogWriter() throws ResourceException
-   {
-      
-      return null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-
-   public ManagedConnectionMetaData getMetaData() throws ResourceException
-   {
-      
-      return null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-
-   public XAResource getXAResource() throws ResourceException
-   {
-      
-      return new MockXAResource();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-
-   public void removeConnectionEventListener(ConnectionEventListener listener)
-   {
-      
-      
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-
-   public void setLogWriter(PrintWriter out) throws ResourceException
+    */   
+   public void start(Xid xid, int flags) throws XAException
    {
       
       

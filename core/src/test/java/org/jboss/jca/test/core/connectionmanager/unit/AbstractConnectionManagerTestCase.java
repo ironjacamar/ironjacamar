@@ -151,7 +151,7 @@ public class AbstractConnectionManagerTestCase
     * testAllocationRetry.
     */
    @Test
-   public void testAllocationRetry()
+   public void testGetAllocationRetry()
    {
       assertEquals(0, connectionManager.getAllocationRetry());
       connectionManager.setAllocationRetry(5);
@@ -177,7 +177,7 @@ public class AbstractConnectionManagerTestCase
    @Test
    public void testGetTransactionManagerInstance()
    {
-      assertNull(connectionManager.getTransactionManagerInstance());
+      assertNull(connectionManager.getTransactionManager());
    }
    
    /**
@@ -266,6 +266,113 @@ public class AbstractConnectionManagerTestCase
       connectionManager.allocateConnection(new MockManagedConnectionFactory(), null);
    }
    
+   /**
+    * testGetManagedConnections.
+    */
+   @Test
+   public void testGetManagedConnections()
+   {
+      
+   }
+   
+   /**
+    * testIdleTimeout.
+    * @throws Exception for exception
+    */
+   @Test
+   public void testIdleTimeout() throws Exception
+   {
+      
+   }
+   
+   /**
+    * testPartialIdleTimeout.
+    * @throws Exception for exception.
+    */
+   @Test
+   public void testPartialIdleTimeout() throws Exception
+   {
+      
+   }
+   
+   /**
+    * testFillToMin.
+    * @throws Exception for exception
+    */
+   @Test
+   public void testFillToMin() throws Exception
+   {
+      
+   }
+   
+   /**
+    * testPrefillPool.
+    * @throws Exception for exception
+    */
+   @Test
+   public void testPrefillPool() throws Exception
+   {
+      
+      
+   }
+   
+   /**
+    * testNonStrictMinPool.
+    * @throws Exception for exception
+    */
+   @Test
+   public void testNonStrictMinPool() throws Exception
+   {
+      
+   }
+   
+   /**
+    * testStrictMinPool.
+    * @throws Exception for exception
+    */
+   @Test
+   public void testStrictMinPool() throws Exception
+   {
+      
+   }
+   
+   /**
+    * testMisConfiguredFillToMin.
+    * @throws Exception for exception
+    */
+   public void testMisConfiguredFillToMin() throws Exception
+   {
+      
+   }
+   
+   /**
+    * testChangedMaximum.
+    * @throws Exception for exception.
+    */
+   @Test
+   public void testChangedMaximum() throws Exception
+   {
+      
+   }
+   
+   /**
+    * testAllocationRetry.
+    * @throws Exception for exception.
+    */
+   @Test
+   public void testAllocationRetry() throws Exception
+   {
+      
+   }
+   
+   /**
+    * testAllocationRetryMultiThread. 
+    * @throws Exception for exception
+    */
+   public void testAllocationRetryMultiThread() throws Exception
+   {
+      
+   }
    
    /**
     * Destroy.
