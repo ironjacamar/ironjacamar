@@ -199,7 +199,7 @@ public class FileUtil
     */
    public static void recursiveDelete(File f) throws IOException
    {
-      if (f.exists())
+      if (f != null && f.exists())
       {
          File[] files = f.listFiles();
          if (files != null)

@@ -82,6 +82,9 @@ public class KernelImpl implements Kernel
    /** MBeanServer */
    private MBeanServer mbeanServer;
 
+   /** Temporary environment */
+   private boolean temporaryEnvironment;
+
    /** Logging */
    private Object logging;
 
@@ -92,6 +95,7 @@ public class KernelImpl implements Kernel
    public KernelImpl(KernelConfiguration kc)
    {
       this.kernelConfiguration = kc;
+      this.temporaryEnvironment = false;
    }
 
    /**
@@ -125,7 +129,28 @@ public class KernelImpl implements Kernel
          }
          else
          {
-            // TODO
+            File tmp = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
+            root = new File(tmp, "jboss-jca");
+
+            if (root.exists())
+            {
+               try
+               {
+                  recursiveDelete(root);
+               }
+               catch (Throwable t)
+               {
+                  // TODO
+                  error(t.getMessage(), t);
+               }
+            }
+
+            if (!root.mkdirs())
+               throw new IOException("Could not create directory " + root.getAbsolutePath());
+
+            SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
+
+            temporaryEnvironment = true;
          }
 
          File libDirectory = null;
@@ -301,6 +326,22 @@ public class KernelImpl implements Kernel
 
       info("Shutdown complete");
 
+      if (temporaryEnvironment)
+      {
+         File tmp = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
+         File root = new File(tmp, "jboss-jca");
+
+         try
+         {
+            recursiveDelete(root);
+         }
+         catch (Throwable t)
+         {
+            // TODO
+            error(t.getMessage(), t);
+         }
+      }
+
       if (kernelClassLoader != null && kernelClassLoader instanceof Closeable)
       {
          try
@@ -452,6 +493,36 @@ public class KernelImpl implements Kernel
       }
 
       return null;
+   }
+
+   /**
+    * Recursive delete
+    * @param f The file handler
+    * @exception IOException Thrown if a file could not be deleted
+    */
+   private void recursiveDelete(File f) throws IOException
+   {
+      if (f != null && f.exists())
+      {
+         File[] files = f.listFiles();
+         if (files != null)
+         {
+            for (int i = 0; i < files.length; i++)
+            {
+               if (files[i].isDirectory())
+               {
+                  recursiveDelete(files[i]);
+               } 
+               else
+               {
+                  if (!files[i].delete())
+                     throw new IOException("Could not delete " + files[i]);
+               }
+            }
+         }
+         if (!f.delete())
+            throw new IOException("Could not delete " + f);
+      }
    }
 
    /**

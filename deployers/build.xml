@@ -270,7 +270,7 @@
    	<filelist dir="${build.deployers.dir}" files="ra16inoutjar.jar"/> 
       <fileset dir="src/test/resources/ra16inoutjar.rar"/>
    </jar>
-  	<delete file="${build.deployers.dir}/ra16inoutjar.jar"/>
+   <delete file="${build.deployers.dir}/ra16inoutjar.jar"/>
   	
   </target>
 
@@ -309,6 +309,7 @@
       
       <jvmarg line="${junit.jvm.options}"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="archives.dir" value="${build.deployers.dir}"/>
       
       <classpath>
         <pathelement location="${build.deployers.dir}/test"/>
