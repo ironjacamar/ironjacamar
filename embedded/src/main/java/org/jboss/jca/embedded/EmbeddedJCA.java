@@ -84,6 +84,13 @@ public class EmbeddedJCA
     */
    public void shutdown() throws Throwable
    {
+      if (fullProfile)
+      {
+         undeploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
+         undeploy(EmbeddedJCA.class.getClassLoader(), "transaction.xml");
+         undeploy(EmbeddedJCA.class.getClassLoader(), "naming.xml");
+      }
+
       kernel.shutdown();
    }
 
