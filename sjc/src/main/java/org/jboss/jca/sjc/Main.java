@@ -278,8 +278,15 @@ public class Main
             @Override
             public void run()
             {
-               if (kernel != null)
-                  kernel.shutdown();
+               try
+               {
+                  if (kernel != null)
+                     kernel.shutdown();
+               }
+               catch (Throwable t)
+               {
+                  error(t.getMessage(), t);
+               }
             }
          });
 

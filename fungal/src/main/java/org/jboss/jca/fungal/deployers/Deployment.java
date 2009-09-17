@@ -22,6 +22,8 @@
 
 package org.jboss.jca.fungal.deployers;
 
+import java.net.URL;
+
 /**
  * The deployment interface for JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
@@ -29,10 +31,10 @@ package org.jboss.jca.fungal.deployers;
 public interface Deployment
 {
    /**
-    * Get the name
-    * @return The name
+    * Get the unique URL for the deployment
+    * @return The URL
     */
-   public String getName();
+   public URL getURL();
 
    /**
     * Get the classloader

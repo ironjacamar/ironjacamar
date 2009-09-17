@@ -38,11 +38,13 @@ public interface Kernel
 
    /**
     * Startup
+    * @exception Throwable Thrown if an error occurs
     */
-   public void startup();
+   public void startup() throws Throwable;
 
    /**
     * Shutdown
+    * @exception Throwable Thrown if an error occurs
     */
-   public void shutdown();
+   public void shutdown() throws Throwable;
 }

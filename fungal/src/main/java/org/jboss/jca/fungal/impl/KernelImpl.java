@@ -109,137 +109,108 @@ public class KernelImpl implements Kernel
 
    /**
     * Startup
+    * @exception Throwable Thrown if an error occurs
     */
-   public void startup()
+   public void startup() throws Throwable
    {
-      try
+      ThreadGroup tg = kernelConfiguration.getThreadGroup();
+      if (tg == null)
+         tg = new ThreadGroup("jboss");
+      ThreadFactory tf = new FungalThreadFactory(tg);
+      executorService = Executors.newCachedThreadPool(tf);
+
+      File root = null;
+
+      if (kernelConfiguration.getHome() != null)
       {
-         ThreadGroup tg = kernelConfiguration.getThreadGroup();
-         if (tg == null)
-            tg = new ThreadGroup("jboss");
-         ThreadFactory tf = new FungalThreadFactory(tg);
-         executorService = Executors.newCachedThreadPool(tf);
+         root = new File(kernelConfiguration.getHome().toURI());
+         SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
+      }
+      else
+      {
+         File tmp = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
+         root = new File(tmp, "jboss-jca");
 
-         File root = null;
-
-         if (kernelConfiguration.getHome() != null)
+         if (root.exists())
          {
-            root = new File(kernelConfiguration.getHome().toURI());
-            SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
+            recursiveDelete(root);
          }
-         else
-         {
-            File tmp = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
-            root = new File(tmp, "jboss-jca");
 
-            if (root.exists())
+         if (!root.mkdirs())
+            throw new IOException("Could not create directory " + root.getAbsolutePath());
+
+         SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
+         
+         temporaryEnvironment = true;
+      }
+
+      File libDirectory = null;
+      File configDirectory = null;
+      File deployDirectory = null;
+
+      if (root != null && root.exists())
+      {
+         libDirectory = new File(root, "/lib/");
+         configDirectory = new File(root, "/config/");
+         deployDirectory = new File(root, "/deploy/");
+      }
+
+      oldClassLoader = SecurityActions.getThreadContextClassLoader();
+
+      URL[] libUrls = getUrls(libDirectory);
+      URL[] confUrls = getUrls(configDirectory);
+
+      URL[] urls = mergeUrls(libUrls, confUrls);
+
+      kernelClassLoader = SecurityActions.createKernelClassLoader(urls, oldClassLoader);
+      SecurityActions.setThreadContextClassLoader(kernelClassLoader);
+
+      SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
+      SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+
+      if (kernelConfiguration.getBindAddress() != null)
+         SecurityActions.setSystemProperty("jboss.jca.bindaddress", kernelConfiguration.getBindAddress().trim());
+
+      // Init logging
+      initLogging(kernelClassLoader);
+
+      // Create MBeanServer
+      mbeanServer = MBeanServerFactory.createMBeanServer("jboss.jca");
+
+      // Main deployer
+      mainDeployer = new MainDeployer(this);
+      ObjectName mainDeployerObjectName = new ObjectName("jboss.jca:name=MainDeployer");
+      mbeanServer.registerMBean(mainDeployer, mainDeployerObjectName);
+
+      // Add the deployment deployer
+      mainDeployer.addDeployer(new DeploymentDeployer(this));
+
+      // Add the kernel bean reference
+      addBean("Kernel", this);
+      setBeanStatus("Kernel", ServiceLifecycle.STARTED);
+
+      // Start all URLs defined in bootstrap.xml
+      if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory())
+      {
+         File bootXml = new File(configDirectory, "bootstrap.xml");
+         JAXBContext bootJc = JAXBContext.newInstance("org.jboss.jca.fungal.bootstrap");
+         Unmarshaller bootU = bootJc.createUnmarshaller();
+         org.jboss.jca.fungal.bootstrap.Bootstrap boot = 
+            (org.jboss.jca.fungal.bootstrap.Bootstrap)bootU.unmarshal(bootXml);
+
+         // Boot urls
+         if (boot != null)
+         {
+            for (String url : boot.getUrl())
             {
                try
                {
-                  recursiveDelete(root);
-               }
-               catch (Throwable t)
-               {
-                  // TODO
-                  error(t.getMessage(), t);
-               }
-            }
+                  URL fullPath = new URL(configDirectory.toURI().toURL().toExternalForm() + url);
 
-            if (!root.mkdirs())
-               throw new IOException("Could not create directory " + root.getAbsolutePath());
-
-            SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
-
-            temporaryEnvironment = true;
-         }
-
-         File libDirectory = null;
-         File configDirectory = null;
-         File deployDirectory = null;
-
-         if (root != null)
-         {
-            libDirectory = new File(root, "/lib/");
-            configDirectory = new File(root, "/config/");
-            deployDirectory = new File(root, "/deploy/");
-         }
-
-         oldClassLoader = SecurityActions.getThreadContextClassLoader();
-
-         URL[] libUrls = getUrls(libDirectory);
-         URL[] confUrls = getUrls(configDirectory);
-
-         URL[] urls = mergeUrls(libUrls, confUrls);
-
-         kernelClassLoader = SecurityActions.createKernelClassLoader(urls, oldClassLoader);
-         SecurityActions.setThreadContextClassLoader(kernelClassLoader);
-
-         SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
-         SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
-
-         if (kernelConfiguration.getBindAddress() != null)
-            SecurityActions.setSystemProperty("jboss.jca.bindaddress", kernelConfiguration.getBindAddress().trim());
-
-         // Init logging
-         initLogging(kernelClassLoader);
-
-         // Create MBeanServer
-         mbeanServer = MBeanServerFactory.createMBeanServer("jboss.jca");
-
-         // Main deployer
-         mainDeployer = new MainDeployer(this);
-         ObjectName mainDeployerObjectName = new ObjectName("jboss.jca:name=MainDeployer");
-         mbeanServer.registerMBean(mainDeployer, mainDeployerObjectName);
-
-         // Add the deployment deployer
-         mainDeployer.addDeployer(new DeploymentDeployer(this));
-
-         // Add the kernel bean reference
-         addBean("Kernel", this);
-         setBeanStatus("Kernel", ServiceLifecycle.STARTED);
-
-         // Start all URLs defined in bootstrap.xml
-         if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory())
-         {
-            File bootXml = new File(configDirectory, "bootstrap.xml");
-            JAXBContext bootJc = JAXBContext.newInstance("org.jboss.jca.fungal.bootstrap");
-            Unmarshaller bootU = bootJc.createUnmarshaller();
-            org.jboss.jca.fungal.bootstrap.Bootstrap boot = 
-               (org.jboss.jca.fungal.bootstrap.Bootstrap)bootU.unmarshal(bootXml);
-
-            // Boot urls
-            if (boot != null)
-            {
-               for (String url : boot.getUrl())
-               {
-                  try
-                  {
-                     URL fullPath = new URL(configDirectory.toURI().toURL().toExternalForm() + url);
-
-                     if (isDebugEnabled())
-                        debug("URL=" + fullPath.toString());
-
-                     mainDeployer.deploy(fullPath, kernelClassLoader);
-                  }
-                  catch (Throwable deployThrowable)
-                  {
-                     error(deployThrowable.getMessage(), deployThrowable);
-                  }
-               }
-            }
-         }
-
-         // Deploy all files in deploy/
-         if (deployDirectory != null && deployDirectory.exists() && deployDirectory.isDirectory())
-         {
-            for (File f : deployDirectory.listFiles())
-            {
-               try
-               {
                   if (isDebugEnabled())
-                     debug("URL=" + f.toURI().toURL().toExternalForm());
+                     debug("URL=" + fullPath.toString());
 
-                  mainDeployer.deploy(f.toURI().toURL(), kernelClassLoader);
+                  mainDeployer.deploy(fullPath, kernelClassLoader);
                }
                catch (Throwable deployThrowable)
                {
@@ -248,100 +219,65 @@ public class KernelImpl implements Kernel
             }
          }
       }
-      catch (Throwable t)
+
+      // Deploy all files in deploy/
+      if (deployDirectory != null && deployDirectory.exists() && deployDirectory.isDirectory())
       {
-         error(t.getMessage(), t);
+         for (File f : deployDirectory.listFiles())
+         {
+            try
+            {
+               if (isDebugEnabled())
+                  debug("URL=" + f.toURI().toURL().toExternalForm());
+
+               mainDeployer.deploy(f.toURI().toURL(), kernelClassLoader);
+            }
+            catch (Throwable deployThrowable)
+            {
+               error(deployThrowable.getMessage(), deployThrowable);
+            }
+         }
       }
    }
 
    /**
     * Shutdown
+    * @exception Throwable Thrown if an error occurs
     */
-   public void shutdown()
+   public void shutdown() throws Throwable
    {
       SecurityActions.setThreadContextClassLoader(kernelClassLoader);
 
+      // Shutdown thread pool
       executorService.shutdown();
 
+      // Shutdown all deployments
       List<Deployment> shutdownDeployments = new LinkedList<Deployment>(deployments);
       Collections.reverse(shutdownDeployments);
 
       for (Deployment deployment : shutdownDeployments)
       {
-         try
-         {
-            Method stopMethod = deployment.getClass().getMethod("stop", (Class[])null);
-            stopMethod.invoke(deployment, (Object[])null);
-         }
-         catch (Exception e)
-         {
-            // No stop method
-         }
-
-         try
-         {
-            Method destroyMethod = deployment.getClass().getMethod("destroy", (Class[])null);
-            destroyMethod.invoke(deployment, (Object[])null);
-         }
-         catch (Exception e)
-         {
-            // No destroy method
-         }
+         shutdownDeployment(deployment);
       }
 
-      List<String> shutdownServices = new LinkedList<String>(startup);
-      Collections.reverse(shutdownServices);
-
-      for (String name : shutdownServices)
-      {
-         setBeanStatus(name, ServiceLifecycle.STOPPING);
-
-         Object service = services.get(name);
-
-         try
-         {
-            Method stopMethod = service.getClass().getMethod("stop", (Class[])null);
-            stopMethod.invoke(service, (Object[])null);
-         }
-         catch (Exception e)
-         {
-            // No stop method
-         }
-
-         try
-         {
-            Method destroyMethod = service.getClass().getMethod("destroy", (Class[])null);
-            destroyMethod.invoke(service, (Object[])null);
-         }
-         catch (Exception e)
-         {
-            // No destroy method
-         }
-
-         setBeanStatus(name, ServiceLifecycle.NOT_STARTED);
-      }
+      // Remove kernel bean
+      removeBean("Kernel");
 
       // Release MBeanServer
       MBeanServerFactory.releaseMBeanServer(mbeanServer);
 
       info("Shutdown complete");
 
+      // Cleanup temporary environment
       if (temporaryEnvironment)
       {
          File tmp = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
          File root = new File(tmp, "jboss-jca");
 
-         try
-         {
-            recursiveDelete(root);
-         }
-         catch (Throwable t)
-         {
-            // TODO
-            error(t.getMessage(), t);
-         }
+         recursiveDelete(root);
       }
 
+      // Reset class loader
       if (kernelClassLoader != null && kernelClassLoader instanceof Closeable)
       {
          try
@@ -355,6 +291,57 @@ public class KernelImpl implements Kernel
       }
 
       SecurityActions.setThreadContextClassLoader(oldClassLoader);
+   }
+
+   /**
+    * Find a deployment unit
+    * @param url The unique URL for a deployment
+    * @return The deployment unit; <code>null</code> if no unit is found
+    */
+   Deployment findDeployment(URL url)
+   {
+      if (deployments != null)
+      {
+         for (Deployment deployment : deployments)
+         {
+            if (deployment.getURL().equals(url))
+               return deployment;
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Shutdown a deployment unit
+    * @param deployment The deployment unit
+    * @exception Throwable If an error occurs
+    */
+   void shutdownDeployment(Deployment deployment) throws Throwable
+   {
+      SecurityActions.setThreadContextClassLoader(kernelClassLoader);
+
+      try
+      {
+         Method stopMethod = deployment.getClass().getMethod("stop", (Class[])null);
+         stopMethod.invoke(deployment, (Object[])null);
+      }
+      catch (Exception e)
+      {
+         // No stop method
+      }
+
+      try
+      {
+         Method destroyMethod = deployment.getClass().getMethod("destroy", (Class[])null);
+         destroyMethod.invoke(deployment, (Object[])null);
+      }
+      catch (Exception e)
+      {
+         // No destroy method
+      }
+
+      deployments.remove(deployment);
    }
 
    /**
@@ -404,6 +391,18 @@ public class KernelImpl implements Kernel
    {
       startup.add(name);
       services.put(name, bean);
+   }
+
+   /**
+    * Remove a bean
+    * @param name The name of the bean
+    * @param bean The bean
+    */
+   synchronized void removeBean(String name)
+   {
+      startup.remove(name);
+      services.remove(name);
+      servicesStatus.remove(name);
    }
 
    /**

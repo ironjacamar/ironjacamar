@@ -275,7 +275,7 @@ public class RADeployer implements Deployer
          
          // Activate deployment
 
-         return new RADeployment(f, cl);
+         return new RADeployment(url, cl);
       }
       catch (Throwable t)
       {

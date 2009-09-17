@@ -25,8 +25,8 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.fungal.deployers.Deployment;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import org.jboss.logging.Logger;
 
@@ -40,7 +40,7 @@ public class RADeployment implements Deployment
    private static boolean trace = log.isTraceEnabled();
 
    /** The resource adapter file */
-   private File adapter;
+   private URL adapter;
 
    /** The classloader */
    private ClassLoader cl;
@@ -50,19 +50,19 @@ public class RADeployment implements Deployment
     * @param adapter The adapter
     * @param cl The classloader for the deployment
     */
-   public RADeployment(File adapter, ClassLoader cl)
+   public RADeployment(URL adapter, ClassLoader cl)
    {
       this.adapter = adapter;
       this.cl = cl;
    }
 
    /**
-    * Get the name
-    * @return The name
+    * Get the unique URL for the deployment
+    * @return The URL
     */
-   public String getName()
+   public URL getURL()
    {
-      return adapter.getName();
+      return adapter;
    }
 
    /**
@@ -79,7 +79,7 @@ public class RADeployment implements Deployment
     */
    public void destroy()
    {
-      log.info("Undeploying: " + adapter.getAbsolutePath());
+      log.info("Undeploying: " + adapter.toExternalForm());
 
       if (cl != null && cl instanceof Closeable)
       {

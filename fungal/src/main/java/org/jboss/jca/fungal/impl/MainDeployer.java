@@ -117,6 +117,9 @@ public class MainDeployer implements MainDeployerMBean
     */
    public synchronized void undeploy(URL url, ClassLoader classLoader) throws Throwable
    {
+      Deployment deployment = kernel.findDeployment(url);
+      if (deployment != null)
+         kernel.shutdownDeployment(deployment);
    }
 
    /**

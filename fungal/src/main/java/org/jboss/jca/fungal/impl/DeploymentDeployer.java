@@ -87,6 +87,8 @@ public class DeploymentDeployer implements Deployer
       if (url == null || !url.toString().endsWith(".xml"))
          return null;
 
+      List<String> beans = new ArrayList<String>(1);
+
       try
       {
          JAXBContext deploymentJc = JAXBContext.newInstance("org.jboss.jca.fungal.deployment");
@@ -100,7 +102,7 @@ public class DeploymentDeployer implements Deployer
 
             for (BeanType bt : deployment.getBean())
             {
-               Runnable r = new ServiceRunnable(bt, kernel, beansLatch, parent);
+               Runnable r = new ServiceRunnable(bt, beans, kernel, beansLatch, parent);
                kernel.getExecutorService().execute(r);
             }
 
@@ -112,7 +114,7 @@ public class DeploymentDeployer implements Deployer
          error(t.getMessage(), t);
       }
 
-      return null;
+      return new BeanDeployment(url, beans, kernel);
    }
 
    /**
@@ -122,6 +124,9 @@ public class DeploymentDeployer implements Deployer
    {
       /** The bean */
       private BeanType bt;
+
+      /** The bean names */
+      private List<String> beans;
 
       /** The kernel */
       private KernelImpl kernel;
@@ -135,13 +140,19 @@ public class DeploymentDeployer implements Deployer
       /**
        * Constructor
        * @param bt The bean
+       * @param beans The list of bean names
        * @param kernel The kernel
        * @param beansLatch The beans latch
        * @param classLoader The class loader
        */
-      public ServiceRunnable(BeanType bt, KernelImpl kernel, CountDownLatch beansLatch, ClassLoader classLoader)
+      public ServiceRunnable(BeanType bt, 
+                             List<String> beans,
+                             KernelImpl kernel,
+                             CountDownLatch beansLatch,
+                             ClassLoader classLoader)
       {
          this.bt = bt;
+         this.beans = beans;
          this.kernel = kernel;
          this.beansLatch = beansLatch;
          this.classLoader = classLoader;
@@ -181,6 +192,7 @@ public class DeploymentDeployer implements Deployer
                Object bean = createBean(bt, classLoader);
 
                kernel.addBean(bt.getName(), bean);
+               beans.add(bt.getName());
 
                kernel.setBeanStatus(bt.getName(), ServiceLifecycle.STARTED);
             }
