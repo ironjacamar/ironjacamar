@@ -304,7 +304,7 @@ public class KernelImpl implements Kernel
       {
          for (Deployment deployment : deployments)
          {
-            if (deployment.getURL().equals(url))
+            if (deployment.getURL().toString().equals(url.toString()))
                return deployment;
          }
       }
@@ -396,7 +396,6 @@ public class KernelImpl implements Kernel
    /**
     * Remove a bean
     * @param name The name of the bean
-    * @param bean The bean
     */
    synchronized void removeBean(String name)
    {
