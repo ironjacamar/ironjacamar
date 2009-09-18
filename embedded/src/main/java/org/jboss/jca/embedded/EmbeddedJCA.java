@@ -67,6 +67,8 @@ public class EmbeddedJCA
    public void startup() throws Throwable
    {
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
+      kernelConfiguration = kernelConfiguration.remoteAccess(false);
+
       kernel = new KernelImpl(kernelConfiguration);
       kernel.startup();
 

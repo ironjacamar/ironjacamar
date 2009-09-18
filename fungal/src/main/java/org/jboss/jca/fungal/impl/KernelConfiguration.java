@@ -39,11 +39,22 @@ public class KernelConfiguration
    /** Thread group */
    private ThreadGroup threadGroup;
 
+   /** Remote access */
+   private boolean remoteAccess;
+
+   /** Remote port */
+   private int remotePort;
+
    /**
     * Constructor
     */
    public KernelConfiguration()
    {
+      home = null;
+      bindAddress = null;
+      threadGroup = null;
+      remoteAccess = true;
+      remotePort = 1202;
    }
 
    /**
@@ -107,5 +118,47 @@ public class KernelConfiguration
    public ThreadGroup getThreadGroup()
    {
       return threadGroup;
+   }
+
+   /**
+    * Set the remote access
+    * @param v The value
+    * @return The configuration
+    */
+   public KernelConfiguration remoteAccess(boolean v)
+   {
+      this.remoteAccess = v;
+
+      return this;
+   }
+
+   /**
+    * Is remote access enabled ?
+    * @return The value
+    */
+   public boolean isRemoteAccess()
+   {
+      return remoteAccess;
+   }
+
+   /**
+    * Set the port for remote access
+    * @param v The value
+    * @return The configuration
+    */
+   public KernelConfiguration remotePort(int v)
+   {
+      this.remotePort = v;
+
+      return this;
+   }
+
+   /**
+    * Get the remote port
+    * @return The value
+    */
+   public int getRemotePort()
+   {
+      return remotePort;
    }
 }

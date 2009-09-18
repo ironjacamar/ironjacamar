@@ -32,8 +32,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -43,6 +45,9 @@ import java.util.concurrent.ThreadFactory;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
@@ -81,6 +86,9 @@ public class KernelImpl implements Kernel
 
    /** MBeanServer */
    private MBeanServer mbeanServer;
+
+   /** JMXConnectorServer */
+   private JMXConnectorServer jmxConnectorServer;
 
    /** Temporary environment */
    private boolean temporaryEnvironment;
@@ -218,6 +226,21 @@ public class KernelImpl implements Kernel
                }
             }
          }
+
+         // Remote MBeanServer access
+         if (kernelConfiguration.isRemoteAccess())
+         {
+            Map<String, Object> env = new HashMap<String, Object>();
+            env.put("jmx.remote.protocol.provider.class.loader", kernelClassLoader);
+
+            JMXServiceURL serviceURL = new JMXServiceURL("rmi", 
+                                                         kernelConfiguration.getBindAddress(),
+                                                         kernelConfiguration.getRemotePort());
+
+            jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(serviceURL, env, mbeanServer);
+            jmxConnectorServer.start();
+         }
+
       }
 
       // Deploy all files in deploy/
@@ -247,6 +270,19 @@ public class KernelImpl implements Kernel
    public void shutdown() throws Throwable
    {
       SecurityActions.setThreadContextClassLoader(kernelClassLoader);
+
+      // Stop the JMX connector
+      if (jmxConnectorServer != null)
+      {
+         try
+         {
+            jmxConnectorServer.stop();
+         }
+         catch (IOException ioe)
+         {
+            // Nothing we can do
+         }
+      }
 
       // Shutdown thread pool
       executorService.shutdown();
