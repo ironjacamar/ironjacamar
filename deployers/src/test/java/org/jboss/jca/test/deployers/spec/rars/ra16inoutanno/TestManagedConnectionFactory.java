@@ -25,6 +25,7 @@ import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
 import org.jboss.jca.test.deployers.spec.rars.TestConnection;
 import org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface;
 
+import javax.resource.spi.ConfigProperty;
 import javax.resource.spi.ConnectionDefinition;
 import javax.resource.spi.ManagedConnection;
 
@@ -40,4 +41,23 @@ import javax.resource.spi.ManagedConnection;
 public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
 {
    private static final long serialVersionUID = 1L;
+   
+   @ConfigProperty(type = String.class, defaultValue = "JCA")
+   private String myStringProperty;
+
+   /**
+    * @param myStringProperty the myStringProperty to set
+    */
+   public void setMyStringProperty(String myStringProperty)
+   {
+      this.myStringProperty = myStringProperty;
+   }
+
+   /**
+    * @return the myStringProperty
+    */
+   public String getMyStringProperty()
+   {
+      return myStringProperty;
+   }
 }

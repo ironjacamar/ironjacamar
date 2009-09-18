@@ -125,8 +125,8 @@ public class Annotations
       // @ConnectionDefinition (outside of @ConnectionDefinitions)
       md = processConnectionDefinition(md, annotationRepository);
 
-      // @ConfigProperty
-      md = processConfigProperty(md, annotationRepository);
+      // @Activation
+      md = processActivation(md, annotationRepository);
 
       // @AuthenticationMechanism
       md = processAuthenticationMechanism(md, annotationRepository);
@@ -134,8 +134,8 @@ public class Annotations
       // @AdministeredObject
       md = processAdministeredObject(md, annotationRepository);
 
-      // @Activation
-      md = processActivation(md, annotationRepository);
+      // @ConfigProperty handle at last
+      md = processConfigProperty(md, annotationRepository);
 
       //log.debug("ConnectorMetadata " + md);
 
@@ -498,12 +498,7 @@ public class Annotations
       {
          for (Annotation annotation : values)
          {
-            ConnectionDefinition c = (ConnectionDefinition)annotation.getAnnotation();
-
-            if (trace)
-               log.trace("Processing: " + c);
-
-            md = attachConnectionDefinition(md, c);
+            md = attachConnectionDefinition(md, annotation);
          }
       }
 
@@ -517,10 +512,14 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachConnectionDefinition(ConnectorMetaData md, 
-                                                               ConnectionDefinition cd)
+   private static ConnectorMetaData attachConnectionDefinition(ConnectorMetaData md, Annotation annotation)
       throws Exception
    {
+      ConnectionDefinition cd = (ConnectionDefinition)annotation.getAnnotation();
+
+      if (trace)
+         log.trace("Processing: " + annotation);
+
       if (md.getRa() == null)
       {
          md.setRa(new ResourceAdapterMetaData());
@@ -534,7 +533,16 @@ public class Annotations
          md.getRa().getOutboundRa().setConDefs(new ArrayList<ConnectionDefinitionMetaData>());
       }
 
+      for (ConnectionDefinitionMetaData cdMeta : md.getRa().getOutboundRa().getConDefs())
+      {
+         if (cdMeta.getManagedConnectionFactoryClass().equals(annotation.getClassName()))
+         {
+            //ra.xml define
+            return md;
+         }
+      }
       ConnectionDefinitionMetaData cdMeta = new ConnectionDefinitionMetaData();
+      cdMeta.setManagedConnectionFactoryClass(annotation.getClassName());
       cdMeta.setConnectionFactoryInterfaceClass(cd.connectionFactory().getName());
       cdMeta.setConnectionFactoryImplementationClass(cd.connectionFactoryImpl().getName());
       cdMeta.setConnectionInterfaceClass(cd.connection().getName());
@@ -559,12 +567,7 @@ public class Annotations
       {
          for (Annotation annotation : values)
          {
-            ConfigProperty c = (ConfigProperty)annotation.getAnnotation();
-
-            if (trace)
-               log.trace("Processing: " + c);
-
-            md = attachConfigProperty(md, c);
+            md = attachConfigProperty(md, annotation);
          }
       }
 
@@ -578,11 +581,16 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachConfigProperty(ConnectorMetaData md, 
-                                                         ConfigProperty configProperty)
+   private static ConnectorMetaData attachConfigProperty(ConnectorMetaData md, Annotation annotation)
       throws Exception
    {
+      ConfigProperty configProperty = (ConfigProperty)annotation.getAnnotation();
+
+      if (trace)
+         log.trace("Processing: " + configProperty);
+
       ConfigPropertyMetaData cfgMeta = new ConfigPropertyMetaData();
+      cfgMeta.setName(annotation.getMemberName());
       cfgMeta.setValue(configProperty.defaultValue());
       cfgMeta.setType(configProperty.type().getName());
       cfgMeta.setIgnore(configProperty.ignore());
@@ -595,10 +603,153 @@ public class Annotations
       descImpl.setDescription(configProperty.description());
       ((DescriptionsImpl)cfgMeta.getDescriptions()).add(descImpl);
       
-      //TODO judge config belong to which object
+      String attachedClassName = annotation.getClassName();
+      ClassLoader cl = SecurityActions.getThreadContextClassLoader();
+      Class attachedClass = Class.forName(attachedClassName, true, cl);
+      Class[] interfaces = attachedClass.getInterfaces();
+
+      if (hasInterface(attachedClass, "javax.resource.spi.ResourceAdapter"))
+      {
+         if (md.getRa() == null)
+         {
+            throw new DeployException("@Connector should be already handled");
+         }
+         if (md.getRa().getConfigProperty() == null)
+         {
+            md.getRa().setConfigProperty(new ArrayList<ConfigPropertyMetaData>());
+         }
+         for (ConfigPropertyMetaData cpMeta : md.getRa().getConfigProperty())
+         {
+            if (cpMeta.getName().equals(cfgMeta.getName()))
+            {
+               return md;
+            }
+         }
+         md.getRa().getConfigProperty().add(cfgMeta);
+      }
+      else if (hasInterface(attachedClass, "javax.resource.spi.ManagedConnectionFactory"))
+      {
+         if (md.getRa() == null || 
+            md.getRa().getOutboundRa() == null ||
+            md.getRa().getOutboundRa().getConDefs() == null)
+         {
+            throw new DeployException("@ConnectionDefinition should be already handled");
+         }
+         for (ConnectionDefinitionMetaData cdMeta : md.getRa().getOutboundRa().getConDefs())
+         {
+            if (attachedClassName.equals(cdMeta.getManagedConnectionFactoryClass()))
+            {
+               if (cdMeta.getConfigProps() == null)
+               {
+                  cdMeta.setConfigProps(new ArrayList<ConfigPropertyMetaData>());
+               }
+               for (ConfigPropertyMetaData cpMeta : cdMeta.getConfigProps())
+               {
+                  if (cpMeta.getName().equals(cfgMeta.getName()))
+                  {
+                     return md;
+                  }
+               }
+               cdMeta.getConfigProps().add(cfgMeta);
+            }
+         }
+      }
+      else if (hasInterface(attachedClass, "javax.resource.spi.AdministeredObject"))
+      {
+         if (md.getRa() == null || 
+            md.getRa().getOutboundRa() == null ||
+            md.getRa().getAdminObjects() == null)
+         {
+            throw new DeployException("@AdministeredObject should be already handled");
+         }
+         for (AdminObjectMetaData aoMeta : md.getRa().getAdminObjects())
+         {
+            if (attachedClassName.equals(aoMeta.getAdminObjectImplementationClass()))
+            {
+               if (aoMeta.getConfigProps() == null)
+               {
+                  aoMeta.setConfigProps(new ArrayList<ConfigPropertyMetaData>());
+               }
+               for (ConfigPropertyMetaData cpMeta : aoMeta.getConfigProps())
+               {
+                  if (cpMeta.getName().equals(cfgMeta.getName()))
+                  {
+                     return md;
+                  }
+               }
+               aoMeta.getConfigProps().add(cfgMeta);
+            }
+         }
+      }
+      else if (hasInterface(attachedClass, "javax.resource.spi.ActivationSpec"))
+      {
+         if (md.getRa() == null || 
+            md.getRa().getInboundRa() == null ||
+            md.getRa().getInboundRa().getMessageAdapter() == null ||
+            md.getRa().getInboundRa().getMessageAdapter().getMessageListeners() == null)
+         {
+            throw new DeployException("@Activation should be already handled");
+         }
+         for (MessageListenerMetaData mlMeta : md.getRa().getInboundRa().getMessageAdapter().getMessageListeners())
+         {
+            if (attachedClassName.equals(mlMeta.getActivationSpecType().getAsClass()))
+            {
+               if (mlMeta.getActivationSpecType().getConfigProps() == null)
+               {
+                  mlMeta.getActivationSpecType().setConfigProps(new ArrayList<ConfigPropertyMetaData>());
+               }
+               for (ConfigPropertyMetaData cpMeta : mlMeta.getActivationSpecType().getConfigProps())
+               {
+                  if (cpMeta.getName().equals(cfgMeta.getName()))
+                  {
+                     return md;
+                  }
+               }
+               mlMeta.getActivationSpecType().getConfigProps().add(cfgMeta);
+            }
+         }
+      }
+
       return md;
    }
 
+   /**
+    * hasInterface
+    * 
+    * @param c
+    * @param targetClassName
+    * @return
+    */
+   private static boolean hasInterface(Class c, String targetClassName)
+   {
+      for (Class face : c.getInterfaces())
+      {
+         if (face.getName().equals(targetClassName))
+         {
+            return true;
+         } 
+         else
+         {
+            for (Class face2 : face.getInterfaces())
+            {
+               if (face2.getName().equals(targetClassName))
+               {
+                  return true;
+               } 
+               else if (hasInterface(face2, targetClassName))
+               {
+                  return true;
+               }
+            }
+         }
+      }
+      if (null != c.getSuperclass())
+      {
+         return hasInterface(c.getSuperclass(), targetClassName);
+      }
+      return false;
+   }
+   
    /**
     * Process: @AuthenticationMechanism
     * @param md The metadata
@@ -755,12 +906,7 @@ public class Annotations
       {
          for (Annotation annotation : values)
          {
-            Activation a = (Activation)annotation.getAnnotation();
-
-            if (trace)
-               log.trace("Processing: " + a);
-
-            md = attachActivation(md, a);
+            md = attachActivation(md, annotation);
          }
       }
 
@@ -774,9 +920,14 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachActivation(ConnectorMetaData md, Activation activation)
+   private static ConnectorMetaData attachActivation(ConnectorMetaData md, Annotation annotation)
       throws Exception
    {
+      Activation activation = (Activation)annotation.getAnnotation();
+
+      if (trace)
+         log.trace("Processing: " + activation);
+      
       if (md.getRa() == null)
       {
          md.setRa(new ResourceAdapterMetaData());
@@ -799,7 +950,7 @@ public class Annotations
          asMeta.setAsClass(asClass.getName());
          MessageListenerMetaData mlMeta = new MessageListenerMetaData();
          mlMeta.setActivationSpecType(asMeta);
-         //TODO miss type, which should be get from annotation parser
+         mlMeta.setType(annotation.getClassName());
          md.getRa().getInboundRa().getMessageAdapter().getMessageListeners().add(mlMeta);
       }
       return md;
