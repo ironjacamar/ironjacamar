@@ -606,7 +606,6 @@ public class Annotations
       String attachedClassName = annotation.getClassName();
       ClassLoader cl = SecurityActions.getThreadContextClassLoader();
       Class attachedClass = Class.forName(attachedClassName, true, cl);
-      Class[] interfaces = attachedClass.getInterfaces();
 
       if (hasInterface(attachedClass, "javax.resource.spi.ResourceAdapter"))
       {
