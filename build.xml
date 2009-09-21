@@ -240,7 +240,10 @@
        Target: one-test
        ================================= -->
   <target name="one-test" depends="jars">
+  <!-- we should refactor this to make one-test target can be run on the component build.xml
     <ant dir="core" inheritRefs="true" target="one-test"/>
+   -->
+    <ant dir="deployers" inheritRefs="true" target="one-test"/>
   </target>
 
   <!-- ================================= 

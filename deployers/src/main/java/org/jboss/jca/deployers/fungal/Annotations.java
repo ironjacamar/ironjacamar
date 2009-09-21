@@ -97,6 +97,8 @@ public class Annotations
    public static ConnectorMetaData process(ConnectorMetaData md, AnnotationRepository annotationRepository)
       throws Exception
    {
+      if (annotationRepository == null)
+         throw new DeployException("AnnotationRepository reference is null");
       /* Process
          -------
          javax.resource.spi.Activation 
