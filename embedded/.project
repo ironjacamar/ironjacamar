@@ -1,6 +1,6 @@
 <projectDescription>
-  <name>jboss-jca-sjc</name>
-  <comment>JBoss JCA Simple Container</comment>
+  <name>jboss-jca-embedded</name>
+  <comment>JBoss JCA Embedded</comment>
   <projects/>
   <buildSpec>
     <buildCommand>

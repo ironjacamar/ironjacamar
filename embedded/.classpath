@@ -8,6 +8,5 @@
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/metadata-rar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
