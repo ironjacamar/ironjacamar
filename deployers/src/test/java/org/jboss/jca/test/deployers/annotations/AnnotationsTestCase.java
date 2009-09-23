@@ -27,6 +27,7 @@ import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.fungal.deployers.DeployException;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
@@ -54,7 +55,7 @@ public class AnnotationsTestCase
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
-   private static final Logger LOG = Logger.getLogger(AnnotationsTestCase.class);
+   private static Logger log = Logger.getLogger(AnnotationsTestCase.class);
 
    /*
     * Embedded
@@ -97,7 +98,7 @@ public class AnnotationsTestCase
       {
          URL url = getURL("ra16inout.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
-         AnnotationRepository ar = asf.scan(new URL[] {url});
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          Annotations.process(null, ar);
       }
@@ -118,7 +119,7 @@ public class AnnotationsTestCase
       {
          URL url = getURL("ra16inoutnora.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
-         AnnotationRepository ar = asf.scan(new URL[] {url});
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          Annotations.process(null, ar);
       }
@@ -139,7 +140,7 @@ public class AnnotationsTestCase
       {
          URL url = getURL("rafail2connector.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
-         AnnotationRepository ar = asf.scan(new URL[] {url});
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          Annotations.process(null, ar);
 
@@ -180,7 +181,12 @@ public class AnnotationsTestCase
     */
    public URL getURL(String archive) throws Throwable
    {
-      File f = new File(System.getProperty("archives.dir") + File.separator + archive);
+      String fileName = System.getProperty("archives.dir") + File.separator + archive;
+      File f = new File(fileName);
+
+      if (!f.exists())
+         throw new IOException("Archive: " + fileName + " doesn't exists");
+
       return f.toURI().toURL();
    }
 }
