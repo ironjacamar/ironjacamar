@@ -7,17 +7,18 @@
    <section id="logging">
       <title>Logging service</title>
 
-      <para>The JBoss JCA container uses JBoss Logging and the Apache Log4J framework as the implementation.</para>
+      <para>The JBoss JCA container uses JBoss Logging framework as the implementation.</para>
 
       <para>The configuration is done in the</para>
 
       <programlisting>
-config/log4j.xml
+config/logging.properties
       </programlisting>
 
       <para>file.</para>
 
-      <para>Consult the Apache Log4J documentation on how the service can be configured.</para>
+      <para>Consult the <ulink url="http://www.jboss.org/community/wiki/JBossBootLogging">
+          JBoss Logging documentation</ulink> on how the service can be configured.</para>
 
    </section>
 
