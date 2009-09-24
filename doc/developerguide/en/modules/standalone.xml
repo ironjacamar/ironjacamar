@@ -2,6 +2,50 @@
 <chapter id="standalone">
   <title>Standalone</title>
 
+  <section id="standaloneoverview">
+    <title>Overview</title>
+    
+    <para>The standalone JBoss JCA container implements Chapter 3 Section 5 of the 
+      JCA 1.6 specification which defines a standalone JCA environment.</para>
+
+    <para>The standalone container has the following layout:</para>
+
+    <itemizedlist>
+      <listitem>
+        <code>$JBOSS_JCA_HOME/bin/</code>
+        <para>contains the run scripts and the SJC kernel.</para>
+      </listitem>
+      <listitem>
+        <code>$JBOSS_JCA_HOME/config/</code>
+        <para>contains the configuration of the container.</para>
+      </listitem>
+      <listitem>
+        <code>$JBOSS_JCA_HOME/deploy/</code>
+        <para>contains the user deployments.</para>
+      </listitem>
+      <listitem>
+        <code>$JBOSS_JCA_HOME/lib/</code>
+        <para>contains all the libraries used by the container.</para>
+      </listitem>
+      <listitem>
+        <code>$JBOSS_JCA_HOME/log/</code>
+        <para>contains the log files.</para>
+      </listitem>
+      <listitem>
+        <code>$JBOSS_JCA_HOME/tmp/</code>
+        <para>contains temporary files.</para>
+      </listitem>
+    </itemizedlist>
+    
+    <para>To start the container execute the following</para>
+    <programlisting>
+cd $JBOSS_JCA_HOME/bin
+./run.sh
+      </programlisting>
+      <para>.</para>
+
+  </section>
+
   <section id="jbossmc">
     <title>JBoss Microcontainer</title>
 
@@ -13,266 +57,10 @@
       This standalone configuration is for development purposes only.
     </warning>
 
-    <para>The JBoss JCA/SJC is a small very simple way of bootstrapping the
-      JBoss JCA container where the configuration is done in a similar
-      way to the JBoss Microcontainer.</para>
+    <para>The JBoss JCA/SJC uses the JBoss JCA/Fungal kernel for 
+      its run-time environment.</para>
 
     <para>SJC is short for "Simple JCA Container".</para>
-
-    <section id="jcasjc_layout">
-      <title>Layout</title>
-
-      <para>JBoss JCA/SJC has the following layout:</para>
-
-      <itemizedlist>
-        <listitem>
-          <code>$JBOSS_JCA_HOME/bin/</code>
-          <para>contains the run scripts and the SJC kernel.</para>
-        </listitem>
-        <listitem>
-          <code>$JBOSS_JCA_HOME/config/</code>
-          <para>contains the configuration of the container.</para>
-        </listitem>
-        <listitem>
-          <code>$JBOSS_JCA_HOME/deploy/</code>
-          <para>contains the user deployments.</para>
-        </listitem>
-        <listitem>
-          <code>$JBOSS_JCA_HOME/lib/</code>
-          <para>contains all the libraries used by the container.</para>
-        </listitem>
-        <listitem>
-          <code>$JBOSS_JCA_HOME/log/</code>
-          <para>contains the log files.</para>
-        </listitem>
-        <listitem>
-          <code>$JBOSS_JCA_HOME/tmp/</code>
-          <para>contains temporary files.</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>To start the container execute the following</para>
-      <programlisting>
-cd $JBOSS_JCA_HOME/bin
-./run.sh
-      </programlisting>
-      <para>.</para>
-
-    </section>
-
-    <section id="jcasjc_configuration">
-      <title>Configuration</title>
-
-      <para>There is support for a single</para>
-      <programlisting>
-$JBOSS_JCA_HOME/config/boot.xml
-      </programlisting>
-      <para>file, where all the beans are initialized in the order they appear when
-        the single threaded kernel is used. Otherwise the dependency resolution based
-        solution is used (&lt;depends&gt;).</para>
-
-      <para>The layout of boot.xml is defined in</para>
-      <programlisting>
-$JBOSS_JCA_HOME/config/boot.xsd
-      </programlisting>
-
-      <para>In boot.xml there is support for the following constructs:</para>
-      
-      <itemizedlist>
-        <listitem>
-          <code>&lt;bean&gt;</code>
-          <para>which initialize a bean based on the class attribute.</para>
-        </listitem>
-        <listitem>
-          <code>&lt;property&gt;</code>
-          <para>which sets a property on the bean - being an object or a primitive.</para>
-        </listitem>
-        <listitem>
-          <code>&lt;inject&gt;</code>
-          <para>injects a bean or a property from a bean (defines an implicit dependency on the bean).</para>
-        </listitem>
-        <listitem>
-          <code>&lt;constructor&gt;</code>
-          <para>which defines the constructor method to use for a bean.</para>
-        </listitem>
-        <listitem>
-          <code>&lt;parameter&gt;</code>
-          <para>defines a parameter value for a constructor.</para>
-        </listitem>
-        <listitem>
-          <code>&lt;depends&gt;</code>
-          <para>defines an explicit dependency to another bean.</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>In order to define locations relative to the install root of the JBoss JCA
-        container the variable</para>
-      <programlisting>
-${jboss.jca.home}
-      </programlisting>
-      <para>can be used.</para>
-
-      <para>There is support for accessing system properties using the "${property}" mechanism
-        with an optional default value</para>
-      <programlisting>
-${jboss.jca.host:localhost}
-      </programlisting>
-
-      <para>A configuration example would be</para>
-      <programlisting>
-&lt;!-- Transaction manager --&gt;
-&lt;bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService"&gt;
-   &lt;property name="transactionTimeout"&gt;300&lt;/property&gt;
-   &lt;property name="objectStoreDir"&gt;${jboss.jca.home}/tmp/tx-object-store&lt;/property&gt;
-   &lt;property name="mbeanServer"&gt;&lt;inject bean="JMX" property="mbeanServer"/&gt;&lt;/property&gt;
-   &lt;property name="transactionStatusManagerInetAddress"&gt;${jboss.jca.host:localhost}&lt;/property&gt;
-   &lt;property name="transactionStatusManagerPort"&gt;4713&lt;/property&gt;
-   &lt;property name="recoveryInetAddress"&gt;${jboss.jca.host:localhost}&lt;/property&gt;
-   &lt;property name="recoveryPort"&gt;4712&lt;/property&gt;
-   &lt;property name="socketProcessIdPort"&gt;0&lt;/property&gt;    
-   &lt;depends&gt;NamingServer&lt;/depends&gt;
- &lt;/bean&gt;
-      </programlisting>
-
-    </section>
-
-    <section id="jcasjc_lifecycle">
-      <title>Lifecycle</title>
-
-      <para>There is basic support for lifecycle methods. These include</para>
-
-      <itemizedlist>
-        <listitem>
-          <code>public void create()</code>
-          <para>Called after a bean has been constructed.</para>
-        </listitem>
-        <listitem>
-          <code>public void start()</code>
-          <para>Called after create.</para>
-        </listitem>
-        <listitem>
-          <code>public void stop()</code>
-          <para>Called when bean is stopped.</para>
-        </listitem>
-        <listitem>
-          <code>public void destroy()</code>
-          <para>Called after stop.</para>
-        </listitem>
-      </itemizedlist>
-    </section>
-
-    <section id="jcasjc_logging">
-      <title>Logging</title>
-
-      <para>There is support for logging using the JBoss Logging framework. The logging is done using two different
-        methods</para>
-
-      <itemizedlist>
-        <listitem>
-          <para>Inside SJC</para>
-          <para>All logging is handled through reflection calls which are wrapped with methods inside <code>Main</code> itself.</para>
-        </listitem>
-        <listitem>
-          <para>All other services</para>
-          <para>Logging is handled by importing <code>org.jboss.logging.Logger</code> and using the class as you would normally do.</para>
-        </listitem>
-      </itemizedlist>
-    </section>
-
-    <section id="jcasjc_paralleldeployment">
-      <title>Parallel deployment and dependency resolution</title>
-
-      <para>JBoss JCA/SJC features a mode where multiple threads are used during 
-        the booting sequence. This mode is enabled by using the</para>
-
-      <programlisting>
-./run.sh -mt
-      </programlisting>
-
-      <para>startup parameter.</para>
-
-      <para>When multiple threads are used in the kernel a dependency mechanism between beans is
-        needed. The kernel keeps track of each bean deployment and assigns a status</para>
-
-      <itemizedlist>
-        <listitem>
-          <para><code>NOT_STARTED</code></para>
-          <para>The bean hasn't started.</para>
-        </listitem>
-        <listitem>
-          <para><code>STARTING</code></para>
-          <para>The bean is starting.</para>
-        </listitem>
-        <listitem>
-          <para><code>STARTED</code></para>
-          <para>The bean has fully started.</para>
-        </listitem>
-        <listitem>
-          <para><code>STOPPING</code></para>
-          <para>The bean is stopping.</para>
-        </listitem>
-      </itemizedlist>
-
-      <para>Caveats: The kernel currently doesn't detect cyclic dependencies between deployment units.</para>
-
-    </section>
-
-    <section id="jcasjc_classloading">
-      <title>Classloading</title>
-
-      <para>JBoss JCA/SJC features a simple 3-level classloader model:</para>
-
-      <orderedlist>
-        <listitem>
-          <para>Application classloader (AppCL).</para>
-          <para>Top-level classloader that loads the SJC kernel.</para>
-        </listitem>
-        <listitem>
-          <para>Container classloader (ConCL).</para>
-          <para>An URLClassLoader with AppCL as its parent which loads
-            all libraries used by the JBoss JCA container.</para>
-        </listitem>
-        <listitem>
-          <para>Deployment classloader (DCL).</para>
-          <para>Each deployment is running in its own classloader with
-            ConCL as its parent.</para>
-        </listitem>
-      </orderedlist>
-
-    </section>
-
-    <section id="jcasjc_deployers">
-      <title>Deployers</title>
-
-      <para>JBoss JCA/SJC features a very simple deployers mechanism.</para>
-
-      <para>Each deployer is defined as a bean in the boot.xml file and they
-        must implement the</para>
-      <programlisting>
-org.jboss.jca.sjc.deployers.Deployer
-      </programlisting>
-      <para>interface.</para>
-
-      <para>The interface contains the</para>
-      <programlisting>
-/**
- * Deploy
- * @param f The file
- * @param parent The parent classloader
- * @return The deployment; or null if no deployment was made
- * @exception DeployException Thrown if an error occurs
- */
-public Deployment deploy(File f, ClassLoader parent) throws DeployException;
-      </programlisting>
-      <para>method which is invoked once with each of the files in the
-        $JBOSS_JCA_HOME/deploy/ directory.</para>
-
-      <para>The <code>Deployment</code> interface returned represents the
-        deployment unit or <code>null</code> if a deployment unit wasn't
-        created.</para>
-
-    </section>
-
-
   </section>
+
 </chapter>

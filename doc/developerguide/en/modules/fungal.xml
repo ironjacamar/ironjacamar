@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="fungal">
+  <title>Fungal</title>
+
+    <section id="fungal_overview">
+      <title>Overview</title>
+      
+      <para>The JBoss JCA/Fungal kernel implements a sub-set of the JBoss Microcontainer functionality
+        - basically just enough to boot the required services for a simple container environment.</para>
+
+      <para>The JBoss JCA/Fungal kernel features parallel deployments using a simple dependency management
+        algorithm, a simple deployment framework and a simple class loading model.</para>
+    </section>
+
+    <section id="fungal_configuration">
+      <title>Configuration</title>
+
+      <para>The kernel is booted using a</para>
+      <programlisting>
+$JBOSS_JCA_HOME/config/bootstrap.xml
+      </programlisting>
+
+      <para>file, where references to URLs for bean deployments.</para>
+
+      <para>The layout of bootstrap.xml is defined in</para>
+      <programlisting>
+$JBOSS_JCA_HOME/config/bootstrap.xsd
+      </programlisting>
+
+      <para>The</para>
+
+      <programlisting>
+$JBOSS_JCA_HOME/config/deployment.xsd
+      </programlisting>
+
+      <para>file defines how bean deployments are constructed.</para>
+
+      <para>In a bean deployment file there is support for the following constructs:</para>
+      
+      <itemizedlist>
+        <listitem>
+          <code>&lt;bean&gt;</code>
+          <para>which initialize a bean based on the class attribute.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;property&gt;</code>
+          <para>which sets a property on the bean - being an object or a primitive.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;inject&gt;</code>
+          <para>injects a bean or a property from a bean (defines an implicit dependency on the bean).</para>
+        </listitem>
+        <listitem>
+          <code>&lt;constructor&gt;</code>
+          <para>which defines the constructor method to use for a bean.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;parameter&gt;</code>
+          <para>defines a parameter value for a constructor.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;depends&gt;</code>
+          <para>defines an explicit dependency to another bean.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>In order to define locations relative to the install root of the JBoss JCA
+        container the variable</para>
+      <programlisting>
+${jboss.jca.home}
+      </programlisting>
+      <para>can be used.</para>
+
+      <para>There is support for accessing system properties using the "${property}" mechanism
+        with an optional default value</para>
+      <programlisting>
+${jboss.jca.host:localhost}
+      </programlisting>
+
+      <para>A configuration example would be</para>
+      <programlisting>
+&lt;!-- Transaction manager --&gt;
+&lt;bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService"&gt;
+   &lt;property name="transactionTimeout"&gt;300&lt;/property&gt;
+   &lt;property name="objectStoreDir"&gt;${jboss.jca.home}/tmp/tx-object-store&lt;/property&gt;
+   &lt;property name="mbeanServer"&gt;&lt;inject bean="JMX" property="mbeanServer"/&gt;&lt;/property&gt;
+   &lt;property name="transactionStatusManagerInetAddress"&gt;${jboss.jca.host:localhost}&lt;/property&gt;
+   &lt;property name="transactionStatusManagerPort"&gt;4713&lt;/property&gt;
+   &lt;property name="recoveryInetAddress"&gt;${jboss.jca.host:localhost}&lt;/property&gt;
+   &lt;property name="recoveryPort"&gt;4712&lt;/property&gt;
+   &lt;property name="socketProcessIdPort"&gt;0&lt;/property&gt;    
+   &lt;depends&gt;NamingServer&lt;/depends&gt;
+ &lt;/bean&gt;
+      </programlisting>
+
+    </section>
+
+    <section id="fungal_lifecycle">
+      <title>Lifecycle</title>
+
+      <para>There is basic support for lifecycle methods. These include</para>
+
+      <itemizedlist>
+        <listitem>
+          <code>public void create()</code>
+          <para>Called after a bean has been constructed.</para>
+        </listitem>
+        <listitem>
+          <code>public void start()</code>
+          <para>Called after create.</para>
+        </listitem>
+        <listitem>
+          <code>public void stop()</code>
+          <para>Called when bean is stopped.</para>
+        </listitem>
+        <listitem>
+          <code>public void destroy()</code>
+          <para>Called after stop.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section id="fungal_logging">
+      <title>Logging</title>
+
+      <para>There is support for logging using the JBoss Logging framework. The logging is done using two different
+        methods</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Inside Fungal</para>
+          <para>All logging is handled through reflection calls which are wrapped with methods inside <code>Main</code> itself.</para>
+        </listitem>
+        <listitem>
+          <para>All other services</para>
+          <para>Logging is handled by importing <code>org.jboss.logging.Logger</code> and using the class as you would normally do.</para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section id="fungal_paralleldeployment">
+      <title>Parallel deployment and dependency resolution</title>
+
+      <para>JBoss JCA/Fungal uses multiple threads during 
+        the booting sequence.</para>
+
+      <para>When multiple threads are used in the kernel a dependency mechanism between beans is
+        needed. The kernel keeps track of each bean deployment and assigns a status</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><code>NOT_STARTED</code></para>
+          <para>The bean hasn't started.</para>
+        </listitem>
+        <listitem>
+          <para><code>STARTING</code></para>
+          <para>The bean is starting.</para>
+        </listitem>
+        <listitem>
+          <para><code>STARTED</code></para>
+          <para>The bean has fully started.</para>
+        </listitem>
+        <listitem>
+          <para><code>STOPPING</code></para>
+          <para>The bean is stopping.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>Caveats: The kernel currently doesn't detect cyclic dependencies between deployment units.</para>
+
+      <para>Furthermore the dependencies between beans are recorded in order to be able to safely shutdown
+        deployments.</para>
+
+    </section>
+
+    <section id="fungal_classloading">
+      <title>Classloading</title>
+
+      <para>JBoss JCA/Fungal features a simple 3-level classloader model:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Application classloader (AppCL).</para>
+          <para>Top-level classloader that loads the Fungal kernel. This class loader is
+            controlled by the application that uses the kernel.</para>
+        </listitem>
+        <listitem>
+          <para>Kernel classloader (KernelCL).</para>
+          <para>An URLClassLoader based class loader with AppCL as its parent which loads
+            all libraries used by the kernel.</para>
+        </listitem>
+        <listitem>
+          <para>Deployment classloader (DCL).</para>
+          <para>Each deployment is running in its own classloader with
+            KernelCL as its parent.</para>
+        </listitem>
+      </orderedlist>
+
+    </section>
+
+    <section id="fungal_deployers">
+      <title>Deployers</title>
+
+      <para>JBoss JCA/Fungal features a very simple deployers mechanism.</para>
+
+      <para>Each deployer is defined as a bean in a bean deployment XML file and they
+        must implement the</para>
+      <programlisting>
+org.jboss.jca.fungal.deployers.Deployer
+      </programlisting>
+      <para>interface.</para>
+
+      <para>The interface contains the</para>
+      <programlisting>
+/**
+ * Deploy
+ * @param url The URL for the deployment
+ * @param parent The parent classloader
+ * @return The deployment; or null if no deployment was made
+ * @exception DeployException Thrown if an error occurs
+ */
+public Deployment deploy(URL url, ClassLoader parent) throws DeployException;
+      </programlisting>
+      <para>method which is invoked once with each of the files in the
+        $JBOSS_JCA_HOME/deploy/ directory.</para>
+
+      <para>The <code>Deployment</code> interface returned represents the
+        deployment unit or <code>null</code> if a deployment unit wasn't
+        created.</para>
+
+    </section>
+
+    <section id="fungal_usage">
+      <title>Usage</title>
+
+      <para>The JBoss JCA/Fungal kernel is constructed and started using</para>
+
+      <programlisting>
+import org.jboss.jca.fungal.api.Kernel;
+import org.jboss.jca.fungal.impl.KernelConfiguration;
+import org.jboss.jca.fungal.impl.KernelImpl;
+
+// Create a kernel configuration and start the kernel
+KernelConfiguration kernelConfiguration = new KernelConfiguration();
+kernelConfiguration = kernelConfiguration.remoteAccess(false);
+
+Kernel kernel = new KernelImpl(kernelConfiguration);
+kernel.startup();
+      </programlisting>
+
+      <para>where the <code>KernelConfiguration</code> object allows you to
+        configure the kernel setup.</para>
+
+      <para>The kernel is stopped using</para>
+
+      <programlisting>
+kernel.shutdown();
+      </programlisting>
+
+      <para>See the JavaDoc for additional details.</para>
+
+    </section>
+
+</appendix>
