@@ -287,6 +287,7 @@ public class Main
                {
                   error(t.getMessage(), t);
                }
+               info("Shutdown complete");
             }
          });
 
