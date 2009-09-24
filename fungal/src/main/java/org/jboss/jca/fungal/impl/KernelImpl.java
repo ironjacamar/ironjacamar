@@ -63,9 +63,6 @@ public class KernelImpl implements Kernel
    /** Kernel configuration */
    private KernelConfiguration kernelConfiguration;
 
-   /** Startup list */
-   private List<String> startup = Collections.synchronizedList(new LinkedList<String>());
-
    /** Deployments */
    private List<Deployment> deployments = Collections.synchronizedList(new LinkedList<Deployment>());
 
@@ -437,7 +434,6 @@ public class KernelImpl implements Kernel
     */
    void addBean(String name, Object bean)
    {
-      startup.add(name);
       beans.put(name, bean);
    }
 
@@ -447,7 +443,6 @@ public class KernelImpl implements Kernel
     */
    void removeBean(String name)
    {
-      startup.remove(name);
       beans.remove(name);
       beanStatus.remove(name);
    }
