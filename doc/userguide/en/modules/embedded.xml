@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="embedded">
+   <title>Embedded</title>
+
+   <section id="embedded_overview">
+      <title>Overview</title>
+
+      <para>The JBoss JCA embedded configuration provides a way of running a JCA container
+        in-VM.</para>
+
+      <para>The configuration is useful when you want a</para>
+
+      <itemizedlist>
+        <listitem>
+          JCA container within your environment
+        </listitem>
+        <listitem>
+          JCA container when doing unit testing
+        </listitem>
+      </itemizedlist>
+
+      <para>Especially the ability to unit test your resource adapter archives before deploying them
+        into a testing or a production environment will benefit developers.</para>
+
+   </section>
+
+   <section id="embedded_deployment">
+      <title>Deployment</title>
+
+      <para>Current you will need all the JAR files located in the</para>
+
+      <programlisting>
+$JBOSS_JCA_HOME/lib
+      </programlisting>
+
+      <para>directory as well as sub-directories on your application class loader - f.ex.</para>
+
+      <programlisting>
+java -classpath allthejarfiles.jar yourapp
+      </programlisting>
+
+      <para>in order to use the embedded configuration.</para>
+
+   </section>
+
+   <section id="embedded_usage">
+      <title>Usage</title>
+
+      <para>The code sample below shows a simple usage of using the JBoss JCA embedded environment
+        in a JUnit 4 test case.</para>
+
+      <programlisting>
+import org.jboss.jca.embedded.EmbeddedJCA;
+
+import java.net.URL;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class MyTestCase
+{
+   /* Embedded */
+   private static EmbeddedJCA embedded;
+
+   /**
+    * Simple test to verify deployment of myresourceadapter.rar
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testDeployment() throws Throwable
+   {
+      URL archive = getURL("myresourceadapter.rar");
+ 
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
+   }
+
+   @BeforeClass
+   public static void beforeClass() throws Throwable
+   {
+      // Create an embedded JCA instance
+      embedded = new EmbeddedJCA();
+
+      // Startup
+      embedded.startup();
+   }
+
+   @AfterClass
+   public static void afterClass() throws Throwable
+   {
+      // Shutdown
+      embedded.shutdown();
+   }
+}
+      </programlisting>
+
+   </section>
+
+
+</chapter>
