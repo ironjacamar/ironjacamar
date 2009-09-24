@@ -28,6 +28,7 @@ import org.jboss.jca.fungal.deployers.Deployment;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -302,8 +303,6 @@ public class KernelImpl implements Kernel
       // Release MBeanServer
       MBeanServerFactory.releaseMBeanServer(mbeanServer);
 
-      info("Shutdown complete");
-
       // Cleanup temporary environment
       if (temporaryEnvironment)
       {
@@ -362,9 +361,13 @@ public class KernelImpl implements Kernel
          Method stopMethod = deployment.getClass().getMethod("stop", (Class[])null);
          stopMethod.invoke(deployment, (Object[])null);
       }
-      catch (Exception e)
+      catch (NoSuchMethodException nsme)
       {
          // No stop method
+      }
+      catch (InvocationTargetException ite)
+      {
+         throw ite.getCause();
       }
 
       try
@@ -372,9 +375,13 @@ public class KernelImpl implements Kernel
          Method destroyMethod = deployment.getClass().getMethod("destroy", (Class[])null);
          destroyMethod.invoke(deployment, (Object[])null);
       }
-      catch (Exception e)
+      catch (NoSuchMethodException nsme)
       {
          // No destroy method
+      }
+      catch (InvocationTargetException ite)
+      {
+         throw ite.getCause();
       }
 
       deployments.remove(deployment);
