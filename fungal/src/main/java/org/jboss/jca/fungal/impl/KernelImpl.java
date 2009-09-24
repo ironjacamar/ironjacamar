@@ -69,13 +69,13 @@ public class KernelImpl implements Kernel
    /** Deployments */
    private List<Deployment> deployments = Collections.synchronizedList(new LinkedList<Deployment>());
 
-   /** Services */
-   private ConcurrentMap<String, Object> services = new ConcurrentHashMap<String, Object>();
+   /** Beans */
+   private ConcurrentMap<String, Object> beans = new ConcurrentHashMap<String, Object>();
 
-   /** Services status */
-   private ConcurrentMap<String, ServiceLifecycle> servicesStatus = new ConcurrentHashMap<String, ServiceLifecycle>();
+   /** Bean status */
+   private ConcurrentMap<String, ServiceLifecycle> beanStatus = new ConcurrentHashMap<String, ServiceLifecycle>();
 
-   /** Services status */
+   /** Bean dependants */
    private ConcurrentMap<String, Set<String>> beanDependants = new ConcurrentHashMap<String, Set<String>>();
 
    /** Executor service */
@@ -417,7 +417,7 @@ public class KernelImpl implements Kernel
     */
    ServiceLifecycle getBeanStatus(String name)
    {
-      return servicesStatus.get(name);
+      return beanStatus.get(name);
    }
 
    /**
@@ -427,7 +427,7 @@ public class KernelImpl implements Kernel
     */
    void setBeanStatus(String name, ServiceLifecycle status)
    {
-      servicesStatus.put(name, status);
+      beanStatus.put(name, status);
    }
 
    /**
@@ -435,21 +435,21 @@ public class KernelImpl implements Kernel
     * @param name The name of the bean
     * @param bean The bean
     */
-   synchronized void addBean(String name, Object bean)
+   void addBean(String name, Object bean)
    {
       startup.add(name);
-      services.put(name, bean);
+      beans.put(name, bean);
    }
 
    /**
     * Remove a bean
     * @param name The name of the bean
     */
-   synchronized void removeBean(String name)
+   void removeBean(String name)
    {
       startup.remove(name);
-      services.remove(name);
-      servicesStatus.remove(name);
+      beans.remove(name);
+      beanStatus.remove(name);
    }
 
    /**
@@ -459,7 +459,7 @@ public class KernelImpl implements Kernel
     */
    public Object getBean(String name)
    {
-      return services.get(name);
+      return beans.get(name);
    }
 
    /**
