@@ -27,8 +27,10 @@ import org.jboss.jca.fungal.deployers.Deployment;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A bean deployment for JCA/Fungal
@@ -78,8 +80,36 @@ public class BeanDeployment implements Deployment
 
    /**
     * Stop
+    * @exception Throwable If the unit cant be stopped
     */
-   public void stop()
+   public void stop() throws Throwable
+   {
+      Set<String> remaining = new HashSet<String>();
+      remaining.addAll(beans);
+
+      for (String bean : beans)
+      {
+         Set<String> dependants = kernel.getBeanDependants(bean);
+
+         if (dependants != null)
+         {
+            for (String dependant : dependants)
+            {
+               remaining.remove(dependant);
+            }
+         }
+
+         remaining.remove(bean);
+      }
+
+      if (remaining.size() > 0)
+         throw new Exception("Cannot stop deployment " + deployment + " due to remaining dependants " + remaining);
+   }
+
+   /**
+    * Destroy
+    */
+   public void destroy()
    {
       List<String> shutdownBeans = new LinkedList<String>(beans);
       Collections.reverse(shutdownBeans);
@@ -112,12 +142,5 @@ public class BeanDeployment implements Deployment
 
          kernel.removeBean(name);
       }
-   }
-
-   /**
-    * Destroy
-    */
-   public void destroy()
-   {
    }
 }

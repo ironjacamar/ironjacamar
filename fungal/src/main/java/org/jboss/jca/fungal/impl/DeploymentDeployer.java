@@ -245,6 +245,8 @@ public class DeploymentDeployer implements Deployer
                   {
                      InjectType it = (InjectType)element;
                      result.add(it.getBean());
+
+                     kernel.addBeanDependants(it.getBean(), bt.getName());
                   }
                }
             }

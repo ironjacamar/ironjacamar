@@ -34,9 +34,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -72,6 +74,9 @@ public class KernelImpl implements Kernel
 
    /** Services status */
    private ConcurrentMap<String, ServiceLifecycle> servicesStatus = new ConcurrentHashMap<String, ServiceLifecycle>();
+
+   /** Services status */
+   private ConcurrentMap<String, Set<String>> beanDependants = new ConcurrentHashMap<String, Set<String>>();
 
    /** Executor service */
    private ExecutorService executorService;
@@ -159,9 +164,9 @@ public class KernelImpl implements Kernel
 
       if (root != null && root.exists())
       {
-         libDirectory = new File(root, "/lib/");
-         configDirectory = new File(root, "/config/");
-         deployDirectory = new File(root, "/deploy/");
+         libDirectory = new File(root, File.separator + "lib" + File.separator);
+         configDirectory = new File(root, File.separator + "config" + File.separator);
+         deployDirectory = new File(root, File.separator + "deploy" + File.separator);
       }
 
       oldClassLoader = SecurityActions.getThreadContextClassLoader();
@@ -455,6 +460,37 @@ public class KernelImpl implements Kernel
    public Object getBean(String name)
    {
       return services.get(name);
+   }
+
+   /**
+    * Get the set of dependants for a bean
+    * @param name The name of the bean
+    * @return The set of dependants; <code>null</code> if there are no dependants
+    */
+   Set<String> getBeanDependants(String name)
+   {
+      return beanDependants.get(name);
+   }
+
+   /**
+    * Add a bean to the dependants map
+    * @param from The name of the from bean
+    * @param to The name of the to bean
+    */
+   void addBeanDependants(String from, String to)
+   {
+      Set<String> dependants = beanDependants.get(from);
+      if (dependants == null)
+      {
+         Set<String> newDependants = new HashSet<String>();
+         dependants = beanDependants.putIfAbsent(from, newDependants);
+         if (dependants == null)
+         {
+            dependants = newDependants;
+         }
+      }
+      
+      dependants.add(to);
    }
 
    /**
