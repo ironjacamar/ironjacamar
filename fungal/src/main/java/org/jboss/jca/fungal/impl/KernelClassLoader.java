@@ -65,12 +65,12 @@ public class KernelClassLoader extends URLClassLoader
     * @return The class
     * @throws ClassNotFoundException If the class could not be found 
     */
-   public synchronized Class<?> loadClass(String name) throws ClassNotFoundException
+   public Class<?> loadClass(String name) throws ClassNotFoundException
    {
       Class<?> result = simpleTypes.get(name);
       if (result != null)
          return result;
 
-      return super.loadClass(name);
+      return loadClass(name, false);
    }
 }
