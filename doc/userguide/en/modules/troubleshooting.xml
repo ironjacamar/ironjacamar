@@ -20,7 +20,7 @@
 
       <para>There are a couple of steps to get a feature included</para>
 
-      <para>First, you should create a new thread in our development forum where you describe the feature and its design and
+      <para>First, you should create a new thread in our development forum where you describe the feature, its design and
         implementation.</para>
 
       <para>Once there is an agreement on the feature and the design you should proceed with creating the patch.</para>
@@ -52,7 +52,7 @@ ant clean cobertura
         </listitem>
       </orderedlist>
 
-      <para>Then done, create a JIRA task (Patch) in our JIRA environment. See the developer guide for
+      <para>when done, create a JIRA task (Patch) in our JIRA environment. See the developer guide for
         additional details.</para>
 
       <para>Happy Coding !</para>

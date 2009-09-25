@@ -97,9 +97,20 @@ org.jboss.jca.test.core.workmanager
 
       <para>This allows for easier readability and a consistent feel of the project.</para>
 
-      <para>The home of checkstyle is located here: <ulink url="http://checkstyle.sourceforge.net/"/>.</para>
+      <para>The goal is to have zero errors in the report. The checkstyle report is generated
+        using</para>
 
-      <para>The goal is to have zero errors in the report.</para>
+      <programlisting>
+ant checkstyle
+      </programlisting>
+
+      <para>The report is generated into</para>
+
+      <programlisting>
+reports/checkstyle
+      </programlisting>
+
+      <para>The home of checkstyle is located here: <ulink url="http://checkstyle.sourceforge.net/"/>.</para>
 
     </section>
 
@@ -110,9 +121,20 @@ org.jboss.jca.test.core.workmanager
 
       <para>This tool helps lower of the number of bugs found in the JBoss JCA project.</para>
 
-      <para>The home of findbugs is located here: <ulink url="http://findbugs.sourceforge.net/"/>.</para>
+      <para>The goal is to have zero errors in the report and as few exclusions in the filter as possible.
+        The findbugs report is generated using</para>
 
-      <para>The goal is to have zero errors in the report and as few exclusions in the filter as possible.</para>
+      <programlisting>
+ant findbugs
+      </programlisting>
+
+      <para>The report is generated into</para>
+
+      <programlisting>
+reports/findbugs
+      </programlisting>
+
+      <para>The home of findbugs is located here: <ulink url="http://findbugs.sourceforge.net/"/>.</para>
 
     </section>
 
@@ -123,9 +145,20 @@ org.jboss.jca.test.core.workmanager
 
       <para>The reports that the tool provides makes sure that the JBoss JCA project has the correct test coverage.</para>
 
-      <para>The home of Cobertura is located here: <ulink url="http://cobertura.sourceforge.net/"/>.</para>
+      <para>The goal is to have as high code coverage as possible in all areas. The Cobertura report is
+        generated using</para>
 
-      <para>The goal is to have as high code coverage as possible in all areas.</para>
+      <programlisting>
+ant cobertura
+      </programlisting>
+
+      <para>The report is generated into</para>
+
+      <programlisting>
+reports/cobertura
+      </programlisting>
+
+      <para>The home of Cobertura is located here: <ulink url="http://cobertura.sourceforge.net/"/>.</para>
 
     </section>
 
