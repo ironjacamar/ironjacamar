@@ -38,6 +38,7 @@ import org.jboss.papaki.AnnotationScannerFactory;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -151,6 +152,134 @@ public class AnnotationsTestCase
          // Ok
       }
    }
+   
+   /**
+    * Process: ConnectionDefinitions -- verification of the processConnectionDefinitions method
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testProcessConnectionDefinitions() throws Throwable
+   {
+      try
+      {
+         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
+
+         Annotations.process(null, ar);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+   }
+   
+   
+   /**
+    * Process: ConnectionDefinition -- verification of the processConnectionDefinition method
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testProcessConnectionDefinition() throws Throwable
+   {
+      try
+      {
+         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
+
+         Annotations.process(null, ar);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+   }
+   
+   /**
+    * Process: Activation -- verification of the processActivation method
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testProcessActivation() throws Throwable
+   {
+      try
+      {
+         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
+
+         Annotations.process(null, ar);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+   }
+   
+   /**
+    * Process: AuthenticationMechanism -- verification of the processAuthenticationMechanism method
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testProcessAuthenticationMechanism() throws Throwable
+   {
+      try
+      {
+         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
+
+         Annotations.process(null, ar);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+   }
+   
+   /**
+    * Process: AdministeredObject -- verification of the processAdministeredObject method
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testProcessAdministeredObject() throws Throwable
+   {
+      try
+      {
+         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
+
+         Annotations.process(null, ar);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+   } 
+   
+   /**
+    * Process: ConfigProperty -- verification of the processConfigProperty method
+    * @throws Throwable throwable exception 
+    */
+   @Ignore
+   public void testProcessConfigProperty() throws Throwable
+   {
+      try
+      {
+         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
+
+         Annotations.process(null, ar);
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
+   }
+   
    // --------------------------------------------------------------------------------||
    // Lifecycle Methods --------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
