@@ -11,9 +11,6 @@
 
       <itemizedlist spacing="compact">
          <listitem>
-            <para>Sun JDK 1.5.x</para>
-         </listitem>
-         <listitem>
             <para>Sun JDK 1.6.x</para>
          </listitem>
          <listitem>
