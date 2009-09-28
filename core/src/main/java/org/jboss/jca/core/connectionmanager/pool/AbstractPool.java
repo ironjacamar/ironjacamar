@@ -157,7 +157,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
     */
    protected SubPoolContext getSubPool(Object key, Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
-      SubPoolContext subPoolContext = (SubPoolContext)subPools.get(key);
+      SubPoolContext subPoolContext = subPools.get(key);
       if (subPoolContext == null)
       {
          SubPoolContext newSubPoolContext = new SubPoolContext(getTransactionManager(), mcf, clf, subject, 

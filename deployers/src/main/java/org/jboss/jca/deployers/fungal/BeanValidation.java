@@ -79,7 +79,7 @@ public class BeanValidation
       }
       else
       {
-         Class[] vargs = (Class[])groupsClasses.toArray(new Class[groupsClasses.size()]);
+         Class[] vargs = groupsClasses.toArray(new Class[groupsClasses.size()]);
          errors = v.validate(object, vargs);
       }
       if (errors != null && errors.size() > 0)

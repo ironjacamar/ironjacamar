@@ -102,7 +102,7 @@ public class PoolFiller implements Runnable
             // keep iterating through pools till empty, exception escapes.
             while (true)
             {
-               mcp = (InternalManagedConnectionPool) pools.remove();
+               mcp = pools.remove();
 
                if (mcp == null)
                {

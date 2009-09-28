@@ -56,6 +56,7 @@ public class Main
     * Boot
     * @param args The arguments
     */
+   @SuppressWarnings("unchecked") 
    private void boot(String[] args)
    {
       try
@@ -144,6 +145,7 @@ public class Main
    /**
     * Shutdown
     */
+   @SuppressWarnings("unchecked") 
    private void shutdown()
    {
       try

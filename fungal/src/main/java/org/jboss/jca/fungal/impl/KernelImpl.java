@@ -354,6 +354,7 @@ public class KernelImpl implements Kernel
     * @param deployment The deployment unit
     * @exception Throwable If an error occurs
     */
+   @SuppressWarnings("unchecked") 
    void shutdownDeployment(Deployment deployment) throws Throwable
    {
       SecurityActions.setThreadContextClassLoader(kernelClassLoader);
@@ -601,6 +602,7 @@ public class KernelImpl implements Kernel
     * Init logging
     * @param cl The classloader to load from
     */
+   @SuppressWarnings("unchecked") 
    private void initLogging(ClassLoader cl)
    {
       try
@@ -637,6 +639,7 @@ public class KernelImpl implements Kernel
     * @param s The string
     * @param t The throwable
     */
+   @SuppressWarnings("unchecked") 
    private void error(String s, Throwable t)
    {
       if (logging != null)
@@ -663,6 +666,7 @@ public class KernelImpl implements Kernel
     * Logging: WARN
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private void warn(String s)
    {
       if (logging != null)
@@ -688,6 +692,7 @@ public class KernelImpl implements Kernel
     * Logging: INFO
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private void info(String s)
    {
       if (logging != null)
@@ -713,6 +718,7 @@ public class KernelImpl implements Kernel
     * Logging: Is DEBUG enabled
     * @return True if debug is enabled; otherwise false
     */
+   @SuppressWarnings("unchecked") 
    private boolean isDebugEnabled()
    {
       if (logging != null)
@@ -735,6 +741,7 @@ public class KernelImpl implements Kernel
     * Logging: DEBUG
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private void debug(String s)
    {
       if (logging != null)

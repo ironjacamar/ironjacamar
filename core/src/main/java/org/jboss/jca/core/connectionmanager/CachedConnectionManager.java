@@ -152,8 +152,8 @@ public class CachedConnectionManager implements
       while (cmToConnectionsMapIterator.hasNext())
       {
          Entry<ConnectionCacheListener, Collection<ConnectionRecord>> entry = cmToConnectionsMapIterator.next();
-         ConnectionCacheListener cm = (ConnectionCacheListener) entry.getKey();
-         Collection<ConnectionRecord> conns =  entry.getValue();
+         ConnectionCacheListener cm = entry.getKey();
+         Collection<ConnectionRecord> conns = entry.getValue();
          
          cm.transactionStarted(conns);
       }
@@ -370,7 +370,7 @@ public class CachedConnectionManager implements
       while (cmToConnectionsMapIterator.hasNext())
       {
          Entry<ConnectionCacheListener, Collection<ConnectionRecord>> entry = cmToConnectionsMapIterator.next();
-         ConnectionCacheListener cm = (ConnectionCacheListener) entry.getKey();
+         ConnectionCacheListener cm = entry.getKey();
          Collection<ConnectionRecord> conns =  entry.getValue();
          
          cm.reconnect(conns, unsharableResources);
@@ -400,7 +400,7 @@ public class CachedConnectionManager implements
          while (cmToConnectionsMapIterator.hasNext())
          {
             Entry<ConnectionCacheListener, Collection<ConnectionRecord>> entry = cmToConnectionsMapIterator.next();
-            ConnectionCacheListener cm = (ConnectionCacheListener) entry.getKey();
+            ConnectionCacheListener cm = entry.getKey();
             Collection<ConnectionRecord> conns =  entry.getValue();
             
             cm.disconnect(conns, unsharableResources);
@@ -539,7 +539,7 @@ public class CachedConnectionManager implements
          
          synchronized (connectionStackTraces)
          {
-            exception = (Throwable) connectionStackTraces.remove(connectionHandle);
+            exception = connectionStackTraces.remove(connectionHandle);
          }
          
          Method m = connectionHandle.getClass().getMethod("close", new Class[]{});

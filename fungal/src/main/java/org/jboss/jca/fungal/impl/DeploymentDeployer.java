@@ -283,6 +283,7 @@ public class DeploymentDeployer implements Deployer
        * @return The new bean
        * @exception Exception Thrown if an error occurs
        */
+      @SuppressWarnings("unchecked") 
       private Object createBean(BeanType bt, ClassLoader cl) throws Exception
       {
          Class<?> clz = null;
@@ -670,6 +671,7 @@ public class DeploymentDeployer implements Deployer
    /**
     * Init logging
     */
+   @SuppressWarnings("unchecked") 
    private static void initLogging()
    {
       try
@@ -691,6 +693,7 @@ public class DeploymentDeployer implements Deployer
     * @param s The string
     * @param t The throwable
     */
+   @SuppressWarnings("unchecked") 
    private static void error(String s, Throwable t)
    {
       if (logging != null)
@@ -717,6 +720,7 @@ public class DeploymentDeployer implements Deployer
     * Logging: WARN
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private static void warn(String s)
    {
       if (logging != null)
@@ -742,6 +746,7 @@ public class DeploymentDeployer implements Deployer
     * Logging: INFO
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private static void info(String s)
    {
       if (logging != null)
@@ -767,6 +772,7 @@ public class DeploymentDeployer implements Deployer
     * Logging: Is DEBUG enabled
     * @return True if debug is enabled; otherwise false
     */
+   @SuppressWarnings("unchecked") 
    private static boolean isDebugEnabled()
    {
       if (logging != null)
@@ -789,6 +795,7 @@ public class DeploymentDeployer implements Deployer
     * Logging: DEBUG
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private static void debug(String s)
    {
       if (logging != null)

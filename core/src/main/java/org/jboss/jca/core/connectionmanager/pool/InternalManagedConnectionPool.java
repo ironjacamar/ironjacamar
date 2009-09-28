@@ -204,7 +204,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
                   this.checkedOut.add(connectionListener);
                   
                   //Max used connections, maxSize - permits.aval --> gives current used connection!
-                  int size = (int) (maxSize - permits.availablePermits());
+                  int size = (maxSize - permits.availablePermits());
                   if (size > maxUsedConnections)
                   {
                      maxUsedConnections = size;  
@@ -342,7 +342,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          cl = createsConnectionEventListener(subject, cri);
 
          checkedOut.add(cl);
-         int size = (int) (maxSize - permits.availablePermits());
+         int size = (maxSize - permits.availablePermits());
          if (size > maxUsedConnections)
          {
             maxUsedConnections = size;  
@@ -449,7 +449,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
             break;
 
          // Check the first in the list
-         ConnectionListener cl = (ConnectionListener) cls.get(0);
+         ConnectionListener cl = cls.get(0);
          if (cl.isTimedOut(timeout) && shouldRemove())
          {
             connectionCounter.incTimedOutCount();
@@ -474,7 +474,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       {
          for (int i = 0; i < destroy.size(); ++i)
          {
-            ConnectionListener cl = (ConnectionListener) destroy.get(i);
+            ConnectionListener cl = destroy.get(i);
             if (trace)
             {
                log.trace("Destroying timedout connection " + cl);  
@@ -1006,7 +1006,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       ConnectionListener cl = null;
       for (Iterator<ConnectionListener> iter = cls.iterator(); iter.hasNext();)
       {
-         cl = (ConnectionListener) iter.next();
+         cl = iter.next();
          long lastCheck = cl.getLastValidatedTime();
 
          if ((System.currentTimeMillis() - lastCheck) >= poolParams.getBackgroundValidationInterval())

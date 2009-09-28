@@ -103,6 +103,7 @@ public class Main
     * Init logging
     * @param cl The classloader to load from
     */
+   @SuppressWarnings("unchecked") 
    private static void initLogging(ClassLoader cl)
    {
       try
@@ -139,6 +140,7 @@ public class Main
     * @param s The string
     * @param t The throwable
     */
+   @SuppressWarnings("unchecked") 
    private static void error(String s, Throwable t)
    {
       if (logging != null)
@@ -165,6 +167,7 @@ public class Main
     * Logging: WARN
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private static void warn(String s)
    {
       if (logging != null)
@@ -190,6 +193,7 @@ public class Main
     * Logging: INFO
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private static void info(String s)
    {
       if (logging != null)
@@ -215,6 +219,7 @@ public class Main
     * Logging: Is DEBUG enabled
     * @return True if debug is enabled; otherwise false
     */
+   @SuppressWarnings("unchecked") 
    private static boolean isDebugEnabled()
    {
       if (logging != null)
@@ -237,6 +242,7 @@ public class Main
     * Logging: DEBUG
     * @param s The string
     */
+   @SuppressWarnings("unchecked") 
    private static void debug(String s)
    {
       if (logging != null)

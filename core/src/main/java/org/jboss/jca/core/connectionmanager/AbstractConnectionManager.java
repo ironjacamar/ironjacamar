@@ -552,7 +552,7 @@ public  abstract class AbstractConnectionManager
       }
       for (Iterator<ConnectionListener> i = cls.iterator(); i.hasNext();)
       {
-         disconnectManagedConnection((ConnectionListener) i.next());  
+         disconnectManagedConnection(i.next());  
       }      
    }
 
@@ -581,7 +581,7 @@ public  abstract class AbstractConnectionManager
             log.warn("reconnecting a connection handle that still has a managedConnection! "
                   + cr.getConnectionListener().getManagedConnection() + " " + cr.getConnection());
          }
-         ConnectionListener cl = (ConnectionListener) criToCLMap.get(cr.getCri());
+         ConnectionListener cl = criToCLMap.get(cr.getCri());
          if (cl == null)
          {
             cl = getManagedConnection(getSubject(), cr.getCri());
