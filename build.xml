@@ -449,6 +449,7 @@
            timeout="${junit.timeout}">
       
       <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.dir}/deployers"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
 
