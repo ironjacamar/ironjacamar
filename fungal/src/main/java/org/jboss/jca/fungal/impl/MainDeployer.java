@@ -39,15 +39,15 @@ public class MainDeployer implements MainDeployerMBean
    private KernelImpl kernel;
    private List<Deployer> deployers;
 
-   /** Logging */
-   private static Object logging;
-
    /**
     * Constructor
     * @param kernel The kernel
     */
    public MainDeployer(KernelImpl kernel)
    {
+      if (kernel == null)
+         throw new IllegalArgumentException("Kernel is null");
+
       this.kernel = kernel;
       this.deployers = new ArrayList<Deployer>();
    }
@@ -58,11 +58,14 @@ public class MainDeployer implements MainDeployerMBean
     */
    public void addDeployer(Deployer deployer)
    {
+      if (deployer == null)
+         throw new IllegalArgumentException("Deployer is null");
+
       deployers.add(deployer);
    }
 
    /**
-    * Deploy
+    * Deploy uses the kernel class loader as the parent class loader
     * @param url The URL for the deployment
     * @exception Throwable If an error occurs
     */
@@ -74,11 +77,17 @@ public class MainDeployer implements MainDeployerMBean
    /**
     * Deploy
     * @param url The URL for the deployment
-    * @param classLoader The class loader
+    * @param classLoader The parent class loader for the deployment
     * @exception Throwable If an error occurs
     */
    public synchronized void deploy(URL url, ClassLoader classLoader) throws Throwable
    {
+      if (url == null)
+         throw new IllegalArgumentException("URL is null");
+
+      if (classLoader == null)
+         throw new IllegalArgumentException("ClassLoader is null");
+
       boolean done = false;
 
       for (int i = 0; !done && i < deployers.size(); i++)
@@ -101,17 +110,9 @@ public class MainDeployer implements MainDeployerMBean
     */
    public synchronized void undeploy(URL url) throws Throwable
    {
-      undeploy(url, kernel.getKernelClassLoader());
-   }
+      if (url == null)
+         throw new IllegalArgumentException("URL is null");
 
-   /**
-    * Undeploy
-    * @param url The URL for the deployment
-    * @param classLoader The class loader
-    * @exception Throwable If an error occurs
-    */
-   public synchronized void undeploy(URL url, ClassLoader classLoader) throws Throwable
-   {
       Deployment deployment = kernel.findDeployment(url);
       if (deployment != null)
          kernel.shutdownDeployment(deployment);
