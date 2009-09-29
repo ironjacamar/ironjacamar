@@ -33,7 +33,7 @@ import java.util.Map;
  * 
  * @since 1.6
  * @see javax.resource.spi.work.WorkContextProvider
- * @version JSR322-PublicReview
+ * @version Java EE Connector Architecture 1.6
  */
 
 public class HintsContext implements WorkContext 

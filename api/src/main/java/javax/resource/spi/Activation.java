@@ -44,12 +44,12 @@ import static java.lang.annotation.RetentionPolicy.*;
  * <p>The ActivationSpec JavaBean has a set of configurable properties specific to
  * the messaging style and the message provider.
  * 
- * <p>Together with the messageListener annotation element type this annotation
+ * <p>Together with the messageListener annotation element, this annotation
  * specifies information about a specific message listener type supported by the
  * messaging resource adapter.
  * 
  * @since 1.6
- * @version JSR322-PublicReview
+ * @version Java EE Connector Architecture 1.6
  */
 
 @Documented
@@ -64,5 +64,5 @@ public @interface Activation
     * @return The Java types of the Message Listener interface this
     *         activation-spec is associated with.
     */
-   Class[] messageListeners() default { };
+   Class[] messageListeners();
 }

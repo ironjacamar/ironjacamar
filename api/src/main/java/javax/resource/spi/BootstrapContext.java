@@ -36,7 +36,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
  * context contains references to useful facilities that could be used by the
  * resource adapter instance.
  *
- * @version JSR322-EarlyDraft
+ * @version Java EE Connector Architecture 1.6
  * @author  Ram Jeyaraman, Sivakumar Thyagarajan
  */
 public interface BootstrapContext 

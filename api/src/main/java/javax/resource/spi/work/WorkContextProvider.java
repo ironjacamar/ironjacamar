@@ -37,8 +37,12 @@ import java.util.List;
  * through the {@link #getWorkContexts() getWorkContexts} method must be
  * used while setting the execution context of the <code>Work</code> instance.<p>
  * 
+ * If the {@link #getWorkContexts() getWorkContexts} method returns an empty List
+ * or null, the WorkManager must treat it as if no additional execution contexts
+ * are associated with that Work instance.
+ *
  * @since 1.6
- * @version JSR322-EarlyDraft
+ * @version Java EE Connector Architecture 1.6
  */
 public interface WorkContextProvider extends Serializable
 {

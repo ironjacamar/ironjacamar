@@ -52,7 +52,7 @@ package javax.resource.spi.work;
  * <p>
  * 
  * @since 1.6
- * @version JSR322-EarlyDraft
+ * @version Java EE Connector Architecture 1.6
  */
 
 public interface WorkContextLifecycleListener 

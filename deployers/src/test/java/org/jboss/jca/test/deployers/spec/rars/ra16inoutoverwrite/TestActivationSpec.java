@@ -30,7 +30,7 @@ import javax.resource.spi.Activation;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
-@Activation()
+@Activation(messageListeners = { })
 public class TestActivationSpec extends BaseActivationSpec
 {
 

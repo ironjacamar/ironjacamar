@@ -37,7 +37,7 @@ import javax.resource.spi.work.WorkContext;
  * JavaBean class.
  * 
  * @since 1.6
- * @version JSR322-PublicReview
+ * @version Java EE Connector Architecture 1.6
  */
 @Documented
 @Retention(RUNTIME)
@@ -105,15 +105,6 @@ public @interface Connector
     * adapter
     */
    boolean licenseRequired() default false;
-   
-   /**
-    * Specifies the version of the Java EE Connector Architecture specification
-    * that is supported by this resource adapter. This information enables
-    * deployer to configure the resource adapter to support deployment and
-    * runtime requirements of the corresponding connector architecture
-    * specification.
-    */
-   String specVersion() default "1.6";
    
    /**
     * Specifies the authentication mechanisms supported by the resource

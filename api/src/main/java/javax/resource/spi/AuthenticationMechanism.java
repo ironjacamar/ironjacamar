@@ -33,11 +33,11 @@ import static java.lang.annotation.RetentionPolicy.*;
  * supported by the resource adapter.
  *
  * @since 1.6
- * @version JSR322-PublicReview
+ * @version Java EE Connector Architecture 1.6
  */
 @Documented
 @Retention(RUNTIME)
-@Target(TYPE)
+@Target({ })
 public @interface AuthenticationMechanism 
 {
    
@@ -47,7 +47,7 @@ public @interface AuthenticationMechanism
     * of the credentials.
     *
     * @since 1.6
-    * @version JSR322-PublicReview
+    * @version Java EE Connector Architecture 1.6
     */
    public enum CredentialInterface 
    {

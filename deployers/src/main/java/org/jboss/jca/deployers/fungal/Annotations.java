@@ -386,10 +386,6 @@ public class Annotations
          }
       }
 
-      // Spec version
-      String specVersion = c.specVersion();
-      md.setVersion("1.6");
-
       // Transaction support
       TransactionSupport.TransactionSupportLevel transactionSupport = c.transactionSupport();
       if (md.getRa() != null && md.getRa().getOutboundRa() != null)

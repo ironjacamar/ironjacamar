@@ -38,8 +38,7 @@ package javax.resource.spi.work;
  * <code>DistributableWorkManager</code> marker interface.
  * 
  * @since 1.6
- * @version JSR322-PublicDraft
- * @author Sivakumar Thyagarajan
+ * @version Java EE Connector Architecture 1.6
  */
 public interface DistributableWorkManager extends WorkManager 
 {

@@ -73,7 +73,7 @@ import javax.security.auth.callback.CallbackHandler;
  * 
  * @since 1.6
  * @see javax.resource.spi.work.WorkContextProvider
- * @version JSR322-EarlyDraft
+ * @version Java EE Connector Architecture 1.6
  */
 
 public abstract class SecurityContext implements WorkContext 

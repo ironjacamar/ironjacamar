@@ -32,7 +32,7 @@ package javax.resource.spi.work;
  * custom <code>WorkContext</code> types.
  * 
  * @since 1.6
- * @version JSR322-EarlyDraft
+ * @version Java EE Connector Architecture 1.6
  */
 public class WorkContextErrorCodes 
 {
@@ -46,8 +46,8 @@ public class WorkContextErrorCodes
    public static final String UNSUPPORTED_CONTEXT_TYPE = "1";
    
    /**
-    * Indicates that there are more than instance of a
-    * <code>WorkContext</code> type passed in by the <code>Work</code>
+    * Indicates that there are more than one instance of a <code>WorkContext</code>
+    * type passed in by the <code>Work</code>
     * instance.
     * <p>
     * 
