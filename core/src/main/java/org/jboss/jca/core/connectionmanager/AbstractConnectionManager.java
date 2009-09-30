@@ -23,12 +23,10 @@
 package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.common.api.JBossResourceException;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
+import org.jboss.jca.core.api.RealConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.ManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -50,7 +48,6 @@ import javax.transaction.TransactionManager;
 import org.jboss.logging.Logger;
 
 import org.jboss.security.SubjectFactory;
-import org.jboss.tm.TransactionTimeoutConfiguration;
 import org.jboss.util.NotImplementedException;
 
 
@@ -62,12 +59,7 @@ import org.jboss.util.NotImplementedException;
  * @version $Rev$ $Date$
  *
  */
-public  abstract class AbstractConnectionManager 
-   implements 
-   ConnectionCacheListener, 
-   ConnectionListenerFactory, 
-   TransactionTimeoutConfiguration, 
-   JTATransactionChecker
+public  abstract class AbstractConnectionManager implements RealConnectionManager 
 
 {
    /**Log instance*/
@@ -422,11 +414,7 @@ public  abstract class AbstractConnectionManager
    
    
    /**
-    * Gets connection handle instance.
-    * @param mcf managed connection factory
-    * @param cri connection request info
-    * @return ne wconnection
-    * @throws ResourceException for exception
+    * {@inheritDoc}
     */
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {

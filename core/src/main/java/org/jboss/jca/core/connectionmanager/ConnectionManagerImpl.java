@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.core.api.ConnectionManager;
+import org.jboss.jca.core.api.RealConnectionManager;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -39,7 +40,7 @@ public class ConnectionManagerImpl implements ConnectionManager
    private static final long serialVersionUID = 2843159124540746692L;
  
    /**Real connection manager*/
-   private transient AbstractConnectionManager realConnectionManager;
+   private transient RealConnectionManager realConnectionManager;
    
    /**
     * Creates a new instance of connection manager.
@@ -90,7 +91,7 @@ public class ConnectionManagerImpl implements ConnectionManager
    /**
     * {@inheritDoc}
     */
-   public AbstractConnectionManager getRealConnectionManager()
+   public RealConnectionManager getRealConnectionManager()
    {
       return this.realConnectionManager;
    }
@@ -98,7 +99,7 @@ public class ConnectionManagerImpl implements ConnectionManager
    /**
     * {@inheritDoc}
     */
-   public void setRealConnectionManager(AbstractConnectionManager realConnectionManager)
+   public void setRealConnectionManager(RealConnectionManager realConnectionManager)
    {
       this.realConnectionManager = realConnectionManager;
    }

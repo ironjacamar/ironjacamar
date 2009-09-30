@@ -19,35 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.jboss.jca.core.api;
 
+import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
 
-import java.io.Serializable;
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnectionFactory;
 
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
 /**
- * The JBoss specific connection manager interface
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * Real connection manager contract.
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
+ * @version $Rev$ $Date$
+ *
  */
-public interface ConnectionManager extends 
-   javax.resource.spi.ConnectionManager,
-   Serializable,
-   TransactionTimeoutConfiguration,
+public interface RealConnectionManager extends
+   ConnectionCacheListener, 
+   ConnectionListenerFactory, 
+   TransactionTimeoutConfiguration, 
    JTATransactionChecker
-{   
+
+{
    /**
-    * Sets real connection manager.
-    * @param realConnectionManager real connection manager
+    * Gets connection handle instance.
+    * @param mcf managed connection factory
+    * @param cri connection request info
+    * @return ne wconnection
+    * @throws ResourceException for exception
     */
-   public void setRealConnectionManager(RealConnectionManager realConnectionManager);
-   
-   /**
-    * Gets real connection manager instance.
-    * @return real connection manager
-    */
-   public RealConnectionManager getRealConnectionManager();
+   public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException;
 }
