@@ -48,7 +48,7 @@ public @interface ConfigProperty
    /**
     * Description of the configuration property
     */
-   String description() default "";
+   String[] description() default { };
    
    /**
     * Inferred by the container for field based annotations if possible

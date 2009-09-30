@@ -592,14 +592,22 @@ public class Annotations
       cfgMeta.setValue(configProperty.defaultValue());
       cfgMeta.setType(configProperty.type().getName());
       cfgMeta.setIgnore(configProperty.ignore());
-      if (cfgMeta.getDescriptions() == null)
+
+      String[] description = configProperty.description();
+      if (description != null)
       {
-         DescriptionsImpl descsImpl = new DescriptionsImpl();
-         cfgMeta.setDescriptions(descsImpl);
+         if (cfgMeta.getDescriptions() == null)
+         {
+            DescriptionsImpl descsImpl = new DescriptionsImpl();
+            cfgMeta.setDescriptions(descsImpl);
+         }
+         for (String desc : description)
+         {
+            DescriptionImpl descImpl = new DescriptionImpl();
+            descImpl.setDescription(desc);
+            ((DescriptionsImpl)cfgMeta.getDescriptions()).add(descImpl);
+         }
       }
-      DescriptionImpl descImpl = new DescriptionImpl();
-      descImpl.setDescription(configProperty.description());
-      ((DescriptionsImpl)cfgMeta.getDescriptions()).add(descImpl);
       
       String attachedClassName = annotation.getClassName();
       ClassLoader cl = SecurityActions.getThreadContextClassLoader();
@@ -816,14 +824,21 @@ public class Annotations
       }
       ammd.setCredentialInterfaceClass(credentialInterfaceClass);
       
-      if (ammd.getDescriptions() == null)
+      String[] description = authenticationmechanism.description();
+      if (description != null)
       {
-         DescriptionsImpl descsImpl = new DescriptionsImpl();
-         ammd.setDescriptions(descsImpl);
+         if (ammd.getDescriptions() == null)
+         {
+            DescriptionsImpl descsImpl = new DescriptionsImpl();
+            ammd.setDescriptions(descsImpl);
+         }
+         for (String desc : description)
+         {
+            DescriptionImpl descImpl = new DescriptionImpl();
+            descImpl.setDescription(desc);
+            ((DescriptionsImpl)ammd.getDescriptions()).add(descImpl);
+         }
       }
-      DescriptionImpl descImpl = new DescriptionImpl();
-      descImpl.setDescription(authenticationmechanism.description());
-      ((DescriptionsImpl)ammd.getDescriptions()).add(descImpl);
       
       md.getRa().getOutboundRa().getAuthMechanisms().add(ammd);
 

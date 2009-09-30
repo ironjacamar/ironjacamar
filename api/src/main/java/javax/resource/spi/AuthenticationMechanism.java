@@ -84,7 +84,7 @@ public @interface AuthenticationMechanism
     * any resource adapter specific requirement for the support of
     * security contract and authentication mechanism.
     */
-   String description() default "";
+   String[] description() default { };
    
    /**
     * Represents the interface that the resource adapter implementation

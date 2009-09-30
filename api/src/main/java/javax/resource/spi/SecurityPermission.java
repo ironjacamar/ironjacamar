@@ -46,7 +46,7 @@ public @interface SecurityPermission
     * Specifies an optional description to mention any specific reason that a
     * resource requires a given security permission.
     */
-   String description() default "";
+   String[] description() default { };
 
    /**
     * Specifies a security permission based on the Security policy file syntax.
