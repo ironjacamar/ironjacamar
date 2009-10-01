@@ -33,6 +33,16 @@ import org.jboss.tm.TransactionTimeoutConfiguration;
 
 /**
  * Real connection manager contract.
+ * <p>
+ * <ul>
+ *    <li>Responsible for managing cached connections over transactional 
+ *    components via {@link ConnectionCacheListener}</li>
+ *    <li>Responsible for managing connection instances using event listener 
+ *    via {@link ConnectionListenerFactory}</li>
+ *    <li>Responsible for managing transaction operations via 
+ *    {@link TransactionTimeoutConfiguration} and {@link JTATransactionChecker}</li>.
+ * </ul>
+ * </p> 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
  * @version $Rev$ $Date$
  *

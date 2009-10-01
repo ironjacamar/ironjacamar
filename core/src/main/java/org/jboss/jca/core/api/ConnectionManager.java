@@ -22,25 +22,22 @@
 
 package org.jboss.jca.core.api;
 
-import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
-
-import java.io.Serializable;
-
-import org.jboss.tm.TransactionTimeoutConfiguration;
-
 /**
- * The JBoss specific connection manager interface
+ * The JBoss specific connection manager interface.
+ * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @version $Rev$ $Date$
  */
 public interface ConnectionManager extends 
-   javax.resource.spi.ConnectionManager,
-   Serializable,
-   TransactionTimeoutConfiguration,
-   JTATransactionChecker
+   javax.resource.spi.ConnectionManager
 {   
    /**
     * Sets real connection manager.
+    * <p>
+    * <code>ConnectionManager</code> delegates to all connection related operations
+    * to the <code>RealConnectionManager</code>. {@link RealConnectionManager} implemetation
+    * is responsible for managing the connection pools and handling transactions over connections. 
+    * </p>
     * @param realConnectionManager real connection manager
     */
    public void setRealConnectionManager(RealConnectionManager realConnectionManager);
