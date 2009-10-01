@@ -30,6 +30,7 @@ import org.jboss.jca.fungal.deployment.ConstructorType;
 import org.jboss.jca.fungal.deployment.DependsType;
 import org.jboss.jca.fungal.deployment.InjectType;
 import org.jboss.jca.fungal.deployment.PropertyType;
+import org.jboss.jca.fungal.deployment.Unmarshaller;
 
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -40,10 +41,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.Unmarshaller;
 
 /**
  * The deployment deployer (deploys .xml files)
@@ -60,19 +57,20 @@ public class DeploymentDeployer implements Deployer
    /** Logging */
    private static Object logging;
 
-   static
-   {
-      initLogging();
-   }
-
    /**
     * Constructor
     * @param kernel The kernel
     */
    public DeploymentDeployer(KernelImpl kernel)
    {
+      if (kernel == null)
+         throw new IllegalArgumentException("Kernel is null");
+
       this.kernel = kernel;
       this.beansLatch = null;
+
+      if (logging == null)
+         initLogging(kernel.getKernelClassLoader());
    }
 
    /**
@@ -91,10 +89,9 @@ public class DeploymentDeployer implements Deployer
 
       try
       {
-         JAXBContext deploymentJc = JAXBContext.newInstance("org.jboss.jca.fungal.deployment");
-         Unmarshaller deploymentU = deploymentJc.createUnmarshaller();
+         Unmarshaller deploymentU = new Unmarshaller();
          org.jboss.jca.fungal.deployment.Deployment deployment = 
-            (org.jboss.jca.fungal.deployment.Deployment)deploymentU.unmarshal(url);
+            deploymentU.unmarshal(url);
 
          if (deployment != null)
          {
@@ -236,18 +233,14 @@ public class DeploymentDeployer implements Deployer
 
             for (PropertyType pt : pts)
             {
-               Object e = pt.getContent().get(0);
+               Object element = pt.getContent().get(0);
 
-               if (e != null && e instanceof JAXBElement)
+               if (element != null && element instanceof InjectType)
                {
-                  Object element = ((JAXBElement)e).getValue();
-                  if (element instanceof InjectType)
-                  {
-                     InjectType it = (InjectType)element;
-                     result.add(it.getBean());
+                  InjectType it = (InjectType)element;
+                  result.add(it.getBean());
 
-                     kernel.addBeanDependants(it.getBean(), bt.getName());
-                  }
+                  kernel.addBeanDependants(it.getBean(), bt.getName());
                }
             }
          }
@@ -517,20 +510,10 @@ public class DeploymentDeployer implements Deployer
          Class parameterClass = m.getParameterTypes()[0];
       
          Object parameterValue = null;
-         Object e = pt.getContent().get(0);
-         Object element = null;
+         Object element = pt.getContent().get(0);
 
-         if (e != null && e instanceof JAXBElement)
-         {
-            element = ((JAXBElement)e).getValue();
-         }
-         else
-         {
-            if (e == null)
-               e = "";
-
-            element = e;
-         }
+         if (element == null)
+            element = "";
 
          if (element instanceof InjectType)
          {
@@ -672,11 +655,11 @@ public class DeploymentDeployer implements Deployer
     * Init logging
     */
    @SuppressWarnings("unchecked") 
-   private static void initLogging()
+   private static void initLogging(ClassLoader cl)
    {
       try
       {
-         Class clz = Class.forName("org.jboss.logging.Logger");
+         Class clz = Class.forName("org.jboss.logging.Logger", true, cl);
          
          Method mGetLogger = clz.getMethod("getLogger", String.class);
 

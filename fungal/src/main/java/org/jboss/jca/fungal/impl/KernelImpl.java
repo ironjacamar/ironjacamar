@@ -51,8 +51,6 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 
 /**
  * The kernel implementation for JBoss JCA/Fungal
@@ -178,6 +176,8 @@ public class KernelImpl implements Kernel
 
       SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
       SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+      SecurityActions.setSystemProperty("javax.xml.stream.XMLInputFactory", 
+                                        "com.sun.xml.internal.stream.XMLInputFactoryImpl");
 
       if (kernelConfiguration.getBindAddress() != null)
          SecurityActions.setSystemProperty("jboss.jca.bindaddress", kernelConfiguration.getBindAddress().trim());
@@ -203,16 +203,15 @@ public class KernelImpl implements Kernel
       // Start all URLs defined in bootstrap.xml
       if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory())
       {
-         File bootXml = new File(configDirectory, "bootstrap.xml");
-         JAXBContext bootJc = JAXBContext.newInstance("org.jboss.jca.fungal.bootstrap");
-         Unmarshaller bootU = bootJc.createUnmarshaller();
-         org.jboss.jca.fungal.bootstrap.Bootstrap boot = 
-            (org.jboss.jca.fungal.bootstrap.Bootstrap)bootU.unmarshal(bootXml);
+         File bootstrapXml = new File(configDirectory, "bootstrap.xml");
+         org.jboss.jca.fungal.bootstrap.Unmarshaller bootstrapU = 
+            new org.jboss.jca.fungal.bootstrap.Unmarshaller();
+         org.jboss.jca.fungal.bootstrap.Bootstrap bootstrap = bootstrapU.unmarshal(bootstrapXml);
 
-         // Boot urls
-         if (boot != null)
+         // Bootstrap urls
+         if (bootstrap != null)
          {
-            for (String url : boot.getUrl())
+            for (String url : bootstrap.getUrl())
             {
                try
                {

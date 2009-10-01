@@ -80,7 +80,6 @@
   <property name="version.javassist" value="3.11.0.GA"/>
   <property name="version.jaxb.api" value="2.1"/>
   <property name="version.jaxb.impl" value="2.1.9"/>
-  <property name="version.jaxb.xjc" value="2.1.9"/>
   <property name="version.jboss.bootstrap" value="1.0.0-Beta-3"/>
   <property name="version.jboss.classloading" value="2.0.6.GA"/>
   <property name="version.jboss.common" value="2.2.15.GA"/>
@@ -426,6 +425,7 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
 
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
@@ -454,6 +454,7 @@
       <sysproperty key="archives.dir" value="${build.dir}/deployers"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
 
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />

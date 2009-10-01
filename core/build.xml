@@ -107,6 +107,7 @@
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       
       <classpath>
         <pathelement location="${build.core.dir}/test"/>
@@ -152,6 +153,7 @@
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       
       <classpath>
         <pathelement location="${build.core.dir}/test"/>

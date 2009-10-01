@@ -142,7 +142,6 @@
         <include name="*.jar"/>
         <exclude name="jaxb-api.jar"/>
         <exclude name="xercesImpl.jar"/>
-        <exclude name="*xjc.jar"/>
         <exclude name="stax-api.jar"/>
       </fileset>
     </copy>

@@ -37,59 +37,9 @@
   </target>
 
   <!-- ================================= 
-       Target: compile bootstrap.xsd
-       ================================= -->
-  <target name="compile-bootstrap-xsd" depends="init">
-    <taskdef name="xjc"
-             classname="com.sun.tools.xjc.XJCTask"
-             classpathref="fungal.lib.path.id"/>
-    <xjc schema="src/main/resources/bootstrap.xsd"
-         destdir="${build.fungal.dir}/impl"
-         package="org.jboss.jca.fungal.bootstrap"/>
-    <javac srcdir="${build.fungal.dir}/impl"
-           destdir="${build.fungal.dir}/impl"
-           classpathref="fungal.lib.path.id"
-           debug="${javac.debug}"
-           deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
-      <compilerarg value="-Xlint"/>
-    </javac>
-    <delete>
-      <fileset dir="${build.fungal.dir}/impl">
-        <include name="**/*.java"/>
-      </fileset>
-    </delete>
-  </target>
-
-  <!-- ================================= 
-       Target: compile deployment.xsd
-       ================================= -->
-  <target name="compile-deployment-xsd" depends="init">
-    <taskdef name="xjc"
-             classname="com.sun.tools.xjc.XJCTask"
-             classpathref="fungal.lib.path.id"/>
-    <xjc schema="src/main/resources/deployment.xsd"
-         destdir="${build.fungal.dir}/impl"
-         package="org.jboss.jca.fungal.deployment"/>
-    <javac srcdir="${build.fungal.dir}/impl"
-           destdir="${build.fungal.dir}/impl"
-           classpathref="fungal.lib.path.id"
-           debug="${javac.debug}"
-           deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
-      <compilerarg value="-Xlint"/>
-    </javac>
-    <delete>
-      <fileset dir="${build.fungal.dir}/impl">
-        <include name="**/*.java"/>
-      </fileset>
-    </delete>
-  </target>
-
-  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile" depends="compile-bootstrap-xsd,compile-deployment-xsd">
+  <target name="compile" depends="init">
     <javac srcdir="src/main"
            destdir="${build.fungal.dir}/impl"
            classpathref="fungal.lib.path.id"
