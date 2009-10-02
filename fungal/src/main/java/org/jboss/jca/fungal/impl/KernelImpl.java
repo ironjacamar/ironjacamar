@@ -266,9 +266,6 @@ public class KernelImpl implements Kernel
          jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(serviceURL, env, mbeanServer);
          jmxConnectorServer.start();
       }
-
-      // Shutdown thread pool
-      executorService.shutdown();
    }
 
    /**
@@ -291,6 +288,9 @@ public class KernelImpl implements Kernel
             // Nothing we can do
          }
       }
+
+      // Shutdown thread pool
+      executorService.shutdown();
 
       // Shutdown all deployments
       List<Deployment> shutdownDeployments = new LinkedList<Deployment>(deployments);
