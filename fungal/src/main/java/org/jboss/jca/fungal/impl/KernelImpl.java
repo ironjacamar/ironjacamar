@@ -209,7 +209,7 @@ public class KernelImpl implements Kernel
          {
             org.jboss.jca.fungal.bootstrap.Unmarshaller bootstrapU = 
                new org.jboss.jca.fungal.bootstrap.Unmarshaller();
-            org.jboss.jca.fungal.bootstrap.Bootstrap bootstrap = bootstrapU.unmarshal(bootstrapXml);
+            org.jboss.jca.fungal.bootstrap.Bootstrap bootstrap = bootstrapU.unmarshal(bootstrapXml.toURI().toURL());
 
             // Bootstrap urls
             if (bootstrap != null)

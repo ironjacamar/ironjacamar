@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
+import java.net.URL;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -46,27 +48,34 @@ public class Unmarshaller
 
    /**
     * Unmarshal
-    * @param file The file
+    * @param url The URL
     * @return The result
     * @exception IOException If an I/O error occurs
     */
-   public Bootstrap unmarshal(File file) throws IOException
+   public Bootstrap unmarshal(URL url) throws IOException
    {
-      if (file == null)
-         throw new IllegalArgumentException("File is null");
-
-      if (!file.exists())
-         throw new IOException("File doesn't exists: " + file);
-
-      if (file.isDirectory())
-         throw new IOException("File is a directory: " + file);
+      if (url == null)
+         throw new IllegalArgumentException("URL is null");
 
       InputStream is = null;
       try
       {
          Bootstrap bootstrap = new Bootstrap();
 
-         is = new FileInputStream(file);
+         if ("file".equals(url.getProtocol()))
+         {
+            File file = new File(url.toURI());
+            is = new FileInputStream(file);
+         }
+         else if ("jar".equals(url.getProtocol()))
+         {
+            JarURLConnection jarConnection = (JarURLConnection)url.openConnection();
+            is = jarConnection.getInputStream();
+         }
+         else
+         {
+            throw new IOException("Unsupport protocol: " + url);
+         }
 
          XMLInputFactory xmlInputFactory = null;
 
