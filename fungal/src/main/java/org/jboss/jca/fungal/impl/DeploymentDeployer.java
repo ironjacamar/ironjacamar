@@ -41,6 +41,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Future;
 
 /**
  * The deployment deployer (deploys .xml files)
@@ -100,7 +101,7 @@ public class DeploymentDeployer implements Deployer
             for (BeanType bt : deployment.getBean())
             {
                Runnable r = new ServiceRunnable(bt, beans, kernel, beansLatch, parent);
-               kernel.getExecutorService().execute(r);
+               Future<?> result = kernel.getExecutorService().submit(r);
             }
 
             beansLatch.await();

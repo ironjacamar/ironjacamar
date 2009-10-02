@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.xml.stream.XMLInputFactory;
@@ -56,12 +57,27 @@ public class Unmarshaller
       if (url == null)
          throw new IllegalArgumentException("File is null");
 
+      File file = null;
+      try
+      {
+         file = new File(url.toURI());
+      }
+      catch (URISyntaxException use)
+      {
+         throw new IOException("File cant be constructed: " + file, use);
+      }
+
+      if (!file.exists())
+         throw new IOException("File doesn't exists: " + file);
+
+      if (file.isDirectory())
+         throw new IOException("File is a directory: " + file);
+
       InputStream is = null;
       try
       {
          Deployment deployment = new Deployment();
 
-         File file = new File(url.toURI());
          is = new FileInputStream(file);
 
          XMLInputFactory xmlInputFactory = null;
