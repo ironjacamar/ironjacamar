@@ -204,45 +204,34 @@ public class KernelImpl implements Kernel
       if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory())
       {
          File bootstrapXml = new File(configDirectory, "bootstrap.xml");
-         org.jboss.jca.fungal.bootstrap.Unmarshaller bootstrapU = 
-            new org.jboss.jca.fungal.bootstrap.Unmarshaller();
-         org.jboss.jca.fungal.bootstrap.Bootstrap bootstrap = bootstrapU.unmarshal(bootstrapXml);
 
-         // Bootstrap urls
-         if (bootstrap != null)
+         if (bootstrapXml != null && bootstrapXml.exists())
          {
-            for (String url : bootstrap.getUrl())
+            org.jboss.jca.fungal.bootstrap.Unmarshaller bootstrapU = 
+               new org.jboss.jca.fungal.bootstrap.Unmarshaller();
+            org.jboss.jca.fungal.bootstrap.Bootstrap bootstrap = bootstrapU.unmarshal(bootstrapXml);
+
+            // Bootstrap urls
+            if (bootstrap != null)
             {
-               try
+               for (String url : bootstrap.getUrl())
                {
-                  URL fullPath = new URL(configDirectory.toURI().toURL().toExternalForm() + url);
-
-                  if (isDebugEnabled())
-                     debug("URL=" + fullPath.toString());
-
-                  mainDeployer.deploy(fullPath, kernelClassLoader);
-               }
-               catch (Throwable deployThrowable)
-               {
-                  error(deployThrowable.getMessage(), deployThrowable);
+                  try
+                  {
+                     URL fullPath = new URL(configDirectory.toURI().toURL().toExternalForm() + url);
+                     
+                     if (isDebugEnabled())
+                        debug("URL=" + fullPath.toString());
+                     
+                     mainDeployer.deploy(fullPath, kernelClassLoader);
+                  }
+                  catch (Throwable deployThrowable)
+                  {
+                     error(deployThrowable.getMessage(), deployThrowable);
+                  }
                }
             }
          }
-
-         // Remote MBeanServer access
-         if (kernelConfiguration.isRemoteAccess())
-         {
-            Map<String, Object> env = new HashMap<String, Object>();
-            env.put("jmx.remote.protocol.provider.class.loader", kernelClassLoader);
-
-            JMXServiceURL serviceURL = new JMXServiceURL("rmi", 
-                                                         kernelConfiguration.getBindAddress(),
-                                                         kernelConfiguration.getRemotePort());
-
-            jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(serviceURL, env, mbeanServer);
-            jmxConnectorServer.start();
-         }
-
       }
 
       // Deploy all files in deploy/
@@ -263,6 +252,23 @@ public class KernelImpl implements Kernel
             }
          }
       }
+
+      // Remote MBeanServer access
+      if (kernelConfiguration.isRemoteAccess())
+      {
+         Map<String, Object> env = new HashMap<String, Object>();
+         env.put("jmx.remote.protocol.provider.class.loader", kernelClassLoader);
+
+         JMXServiceURL serviceURL = new JMXServiceURL("rmi", 
+                                                      kernelConfiguration.getBindAddress(),
+                                                      kernelConfiguration.getRemotePort());
+         
+         jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(serviceURL, env, mbeanServer);
+         jmxConnectorServer.start();
+      }
+
+      // Shutdown thread pool
+      executorService.shutdown();
    }
 
    /**
@@ -285,9 +291,6 @@ public class KernelImpl implements Kernel
             // Nothing we can do
          }
       }
-
-      // Shutdown thread pool
-      executorService.shutdown();
 
       // Shutdown all deployments
       List<Deployment> shutdownDeployments = new LinkedList<Deployment>(deployments);
