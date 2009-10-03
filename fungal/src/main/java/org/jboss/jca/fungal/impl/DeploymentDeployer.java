@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -86,7 +87,7 @@ public class DeploymentDeployer implements Deployer
       if (url == null || !url.toString().endsWith(".xml"))
          return null;
 
-      List<String> beans = new ArrayList<String>(1);
+      List<String> beans = Collections.synchronizedList(new ArrayList<String>(1));
 
       try
       {
@@ -189,7 +190,7 @@ public class DeploymentDeployer implements Deployer
 
                Object bean = createBean(bt, classLoader);
 
-               kernel.addBean(bt.getName(), bean);
+               kernel.addBean(bt.getName(), bean); 
                beans.add(bt.getName());
 
                kernel.setBeanStatus(bt.getName(), ServiceLifecycle.STARTED);

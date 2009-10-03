@@ -22,6 +22,7 @@
 
 package org.jboss.jca.fungal.bootstrap;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -76,6 +77,8 @@ public class Unmarshaller
          {
             throw new IOException("Unsupport protocol: " + url);
          }
+
+         is = new BufferedInputStream(is, 4096);
 
          XMLInputFactory xmlInputFactory = null;
 
