@@ -87,16 +87,16 @@ public class DeploymentDeployer implements Deployer
       if (url == null || !url.toString().endsWith(".xml"))
          return null;
 
-      List<String> beans = Collections.synchronizedList(new ArrayList<String>(1));
-
       try
       {
          Unmarshaller deploymentU = new Unmarshaller();
          org.jboss.jca.fungal.deployment.Deployment deployment = 
             deploymentU.unmarshal(url);
 
-         if (deployment != null)
+         if (deployment != null && deployment.getBean().size() > 0)
          {
+            List<String> beans = Collections.synchronizedList(new ArrayList<String>(deployment.getBean().size()));
+
             beansLatch = new CountDownLatch(deployment.getBean().size());
 
             for (BeanType bt : deployment.getBean())
@@ -106,14 +106,17 @@ public class DeploymentDeployer implements Deployer
             }
 
             beansLatch.await();
+
+            return new BeanDeployment(url, beans, kernel);
          }
       }
       catch (Throwable t)
       {
          error(t.getMessage(), t);
+         throw new DeployException("Deployment " + url + " failed", t);
       }
 
-      return new BeanDeployment(url, beans, kernel);
+      return null;
    }
 
    /**
@@ -164,11 +167,13 @@ public class DeploymentDeployer implements Deployer
       {
          SecurityActions.setThreadContextClassLoader(classLoader);
 
+         String beanName = bt.getName();
+
          try
          {
-            if (kernel.getBean(bt.getName()) == null)
+            if (kernel.getBean(beanName) == null)
             {
-               kernel.setBeanStatus(bt.getName(), ServiceLifecycle.NOT_STARTED);
+               kernel.setBeanStatus(beanName, ServiceLifecycle.NOT_STARTED);
 
                Set<String> dependencies = getDependencies(bt);
                int notStarted = getNotStarted(dependencies);
@@ -186,23 +191,23 @@ public class DeploymentDeployer implements Deployer
                   }
                }
 
-               kernel.setBeanStatus(bt.getName(), ServiceLifecycle.STARTING);
+               kernel.setBeanStatus(beanName, ServiceLifecycle.STARTING);
 
                Object bean = createBean(bt, classLoader);
 
-               kernel.addBean(bt.getName(), bean); 
-               beans.add(bt.getName());
+               kernel.addBean(beanName, bean); 
+               beans.add(beanName);
 
-               kernel.setBeanStatus(bt.getName(), ServiceLifecycle.STARTED);
+               kernel.setBeanStatus(beanName, ServiceLifecycle.STARTED);
             }
             else
             {
-               warn("Warning: A service with name " + bt.getName() + " already exists");
+               warn("Warning: A service with name " + beanName + " already exists");
             }
          }
          catch (Throwable t)
          {
-            error("Installing bean " + bt.getName(), t);
+            error("Installing bean " + beanName, t);
          }
 
          beansLatch.countDown();
