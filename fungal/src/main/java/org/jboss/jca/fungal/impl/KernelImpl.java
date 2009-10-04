@@ -39,11 +39,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -73,8 +76,8 @@ public class KernelImpl implements Kernel
    /** Bean dependants */
    private ConcurrentMap<String, Set<String>> beanDependants = new ConcurrentHashMap<String, Set<String>>();
 
-   /** Executor service */
-   private ExecutorService executorService;
+   /** Kernel thread pool */
+   private ThreadPoolExecutor threadPoolExecutor;
 
    /** The old class loader */
    private ClassLoader oldClassLoader;
@@ -125,8 +128,16 @@ public class KernelImpl implements Kernel
       ThreadGroup tg = kernelConfiguration.getThreadGroup();
       if (tg == null)
          tg = new ThreadGroup("jboss");
+
+      BlockingQueue<Runnable> threadPoolQueue = new SynchronousQueue<Runnable>(true);
       ThreadFactory tf = new FungalThreadFactory(tg);
-      executorService = Executors.newCachedThreadPool(tf);
+
+      threadPoolExecutor = new ThreadPoolExecutor(1, Integer.MAX_VALUE,
+                                                  60, TimeUnit.SECONDS,
+                                                  threadPoolQueue,
+                                                  tf);
+
+      threadPoolExecutor.prestartAllCoreThreads();
 
       File root = null;
 
@@ -290,7 +301,7 @@ public class KernelImpl implements Kernel
       }
 
       // Shutdown thread pool
-      executorService.shutdown();
+      threadPoolExecutor.shutdown();
 
       // Shutdown all deployments
       List<Deployment> shutdownDeployments = new LinkedList<Deployment>(deployments);
@@ -407,7 +418,7 @@ public class KernelImpl implements Kernel
     */
    ExecutorService getExecutorService()
    {
-      return executorService;
+      return threadPoolExecutor;
    }
 
    /**

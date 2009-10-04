@@ -23,6 +23,7 @@
 package org.jboss.jca.fungal.impl;
 
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The thread factory for JBoss JCA/Fungal
@@ -33,6 +34,9 @@ public class FungalThreadFactory implements ThreadFactory
    /** The thread group */
    private ThreadGroup tg;
 
+   /** Thread number */
+   private AtomicInteger threadNumber;
+
    /**
     * Constructor
     * @param tg The thread group
@@ -40,6 +44,7 @@ public class FungalThreadFactory implements ThreadFactory
    public FungalThreadFactory(ThreadGroup tg)
    {
       this.tg = tg;
+      this.threadNumber = new AtomicInteger(1);
    }
 
    /**
@@ -49,6 +54,6 @@ public class FungalThreadFactory implements ThreadFactory
     */
    public Thread newThread(Runnable r)
    {
-      return new Thread(tg, r);
+      return new Thread(tg, r, "fungal-" + threadNumber.getAndIncrement());
    }
 }
