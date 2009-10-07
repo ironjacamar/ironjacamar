@@ -30,21 +30,6 @@ package org.jboss.jca.core.api;
  */
 public interface ConnectionManager extends 
    javax.resource.spi.ConnectionManager
-{   
-   /**
-    * Sets real connection manager.
-    * <p>
-    * <code>ConnectionManager</code> delegates to all connection related operations
-    * to the <code>RealConnectionManager</code>. {@link RealConnectionManager} implemetation
-    * is responsible for managing the connection pools and handling transactions over connections. 
-    * </p>
-    * @param realConnectionManager real connection manager
-    */
-   public void setRealConnectionManager(RealConnectionManager realConnectionManager);
+{
    
-   /**
-    * Gets real connection manager instance.
-    * @return real connection manager
-    */
-   public RealConnectionManager getRealConnectionManager();
 }

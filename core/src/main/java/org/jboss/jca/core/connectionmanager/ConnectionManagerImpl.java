@@ -23,7 +23,6 @@
 package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.core.api.ConnectionManager;
-import org.jboss.jca.core.api.RealConnectionManager;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
