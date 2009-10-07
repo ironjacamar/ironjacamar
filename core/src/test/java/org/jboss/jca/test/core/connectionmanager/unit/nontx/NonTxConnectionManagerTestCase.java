@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
 /**
  * NonTxConnectionManagerTestCase.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev$ $Date$
+ * @version $Rev:93321 $ $Date:2009-09-09 20:36:35 +0300 (Wed, 09 Sep 2009) $
  *
  */
 public class NonTxConnectionManagerTestCase
@@ -68,7 +68,7 @@ public class NonTxConnectionManagerTestCase
       
       noTxCm.setPoolingStrategy(onePool);
       
-      connectionManager.setRealConnectionManager(noTxCm);
+      ((ConnectionManagerImpl)connectionManager).setRealConnectionManager(noTxCm);
    }   
    
    /**

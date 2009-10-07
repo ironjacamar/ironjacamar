@@ -22,6 +22,7 @@
 package org.jboss.jca.test.core.connectionmanager.unit.tx;
 
 import org.jboss.jca.core.api.ConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
@@ -63,9 +64,11 @@ public class TxConnectionManagerTestCase
       ConnectionManager connectionManager = embedded.lookup("ConnectionManagerTx", ConnectionManager.class);
       assertNotNull(connectionManager);
       
-      assertTrue(connectionManager.getRealConnectionManager() instanceof TxConnectionManager);
+      ConnectionManagerImpl impl = (ConnectionManagerImpl)connectionManager;
       
-      TxConnectionManager txConnectionManager = (TxConnectionManager)connectionManager.getRealConnectionManager();
+      assertTrue(impl.getRealConnectionManager() instanceof TxConnectionManager);
+      
+      TxConnectionManager txConnectionManager = (TxConnectionManager)impl.getRealConnectionManager();
       txConnectionManager.setLocalTransactions(true);
       
       assertNotNull(txConnectionManager.getCachedConnectionManager());
