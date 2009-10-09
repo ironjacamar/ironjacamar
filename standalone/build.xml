@@ -87,6 +87,8 @@
     <mkdir dir="${target.dir}/standalone/server/jca/conf"/>
     <mkdir dir="${target.dir}/standalone/server/jca/conf/bootstrap"/>
     <mkdir dir="${target.dir}/standalone/server/jca/deploy"/>
+    <mkdir dir="${target.dir}/standalone/server/jca/log"/>
+    <mkdir dir="${target.dir}/standalone/server/jca/tmp"/>
 
     <copy todir="${target.dir}/standalone/bin">
       <fileset dir="src/main/resources/">

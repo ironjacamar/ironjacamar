@@ -5,7 +5,7 @@
 -->
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="HDScanner" class="org.jboss.jca.deployers.hack.MainScanner">
+  <bean name="HDScanner" class="org.jboss.jca.deployers.mc.hack.MainScanner">
     <property name="mainDeployer"><inject bean="MainDeployer"/></property>
     <property name="deployDirectory">${jboss.deploy.url}</property>
   </bean>

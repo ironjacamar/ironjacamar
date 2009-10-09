@@ -36,6 +36,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+
 /**
  * The main class for JBoss JCA standalone
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
@@ -44,6 +47,10 @@ public class Main
 {
    /** The server */
    private Object server;
+
+
+   /** Logging */
+   private static Object logging;
 
    /**
     * Default constructor
@@ -72,6 +79,7 @@ public class Main
          {
             home = new File(".").toURI().toURL().toString();
             root = new File(new URI(home.substring(0, home.lastIndexOf("bin"))));
+            SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
          }
 
          if (args != null && args.length > 0)
@@ -128,6 +136,8 @@ public class Main
          if (loggingManager == null)
             props.setProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
 
+         initLogging(SecurityActions.getThreadContextClassLoader());
+
          Constructor serverLoaderConstructor = serverLoaderClass.getDeclaredConstructor(Properties.class); 
          Object serverLoader = serverLoaderConstructor.newInstance(props);
 
@@ -135,6 +145,14 @@ public class Main
          serverMethodInit.invoke(server, props, null);
 
          serverMethodStart.invoke(server);
+
+         if (isDebugEnabled())
+         {
+            MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+            debug("Heap memory: " + memoryBean.getHeapMemoryUsage().toString());
+            debug("NonHeap memory: " + memoryBean.getNonHeapMemoryUsage().toString());
+         }
+
       }
       catch (Throwable t)
       {
@@ -207,6 +225,171 @@ public class Main
       }
 
       return list.toArray(new URL[list.size()]);      
+   }
+
+   /**
+    * Init logging
+    * @param cl The classloader to load from
+    */
+   @SuppressWarnings("unchecked") 
+   private static void initLogging(ClassLoader cl)
+   {
+      try
+      {
+         Class clz = Class.forName("org.jboss.logmanager.log4j.BridgeRepositorySelector", true, cl);
+         Method mStart = clz.getMethod("start", (Class[])null);
+
+         Object brs = clz.newInstance();
+
+         logging = mStart.invoke(brs, (Object[])null);
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+      }
+
+
+      try
+      {
+         Class clz = Class.forName("org.jboss.logging.Logger", true, cl);
+         
+         Method mGetLogger = clz.getMethod("getLogger", String.class);
+
+         logging = mGetLogger.invoke((Object)null, new Object[] {"org.jboss.jca.standalone.Main"});
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+      }
+   }
+
+   /**
+    * Logging: ERROR
+    * @param s The string
+    * @param t The throwable
+    */
+   @SuppressWarnings("unchecked") 
+   private static void error(String s, Throwable t)
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mError = clz.getMethod("error", Object.class, Throwable.class);
+            mError.invoke(logging, new Object[] {s, t});
+         }
+         catch (Throwable th)
+         {
+            // Nothing we can do
+         }
+      }
+      else
+      {
+         System.out.println(s);
+         t.printStackTrace(System.out);
+      }
+   }
+
+   /**
+    * Logging: WARN
+    * @param s The string
+    */
+   @SuppressWarnings("unchecked") 
+   private static void warn(String s)
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mWarn = clz.getMethod("warn", Object.class);
+            mWarn.invoke(logging, new Object[] {s});
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+      else
+      {
+         System.out.println(s);
+      }
+   }
+
+   /**
+    * Logging: INFO
+    * @param s The string
+    */
+   @SuppressWarnings("unchecked") 
+   private static void info(String s)
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mInfo = clz.getMethod("info", Object.class);
+            mInfo.invoke(logging, new Object[] {s});
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+      else
+      {
+         System.out.println(s);
+      }
+   }
+
+   /**
+    * Logging: Is DEBUG enabled
+    * @return True if debug is enabled; otherwise false
+    */
+   @SuppressWarnings("unchecked") 
+   private static boolean isDebugEnabled()
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mIsDebugEnabled = clz.getMethod("isDebugEnabled", (Class[])null);
+            return ((Boolean)mIsDebugEnabled.invoke(logging, (Object[])null)).booleanValue();
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+      return true;
+   }
+
+   /**
+    * Logging: DEBUG
+    * @param s The string
+    */
+   @SuppressWarnings("unchecked") 
+   private static void debug(String s)
+   {
+      if (logging != null)
+      {
+         try
+         {
+            Class clz = logging.getClass();
+            Method mDebug = clz.getMethod("debug", Object.class);
+            mDebug.invoke(logging, new Object[] {s});
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+      else
+      {
+         System.out.println(s);
+      }
    }
 
    /**
