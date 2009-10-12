@@ -79,8 +79,8 @@
     <dependency org="org.jboss.logmanager" name="jboss-logmanager-log4j" rev="${version.jboss.logmanager.log4j}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.man" name="jboss-managed" rev="${version.jboss.managed}" conf="standalone->default"/>
     <dependency org="org.jboss.man" name="jboss-metatype" rev="${version.jboss.managed}" conf="standalone->default"/>
-    <dependency org="org.jboss.metadata" name="jboss-metadata-common" rev="${version.jboss.metadata}" conf="standalone->default;sjc->*"/>
-    <dependency org="org.jboss.metadata" name="jboss-metadata-rar" rev="${version.jboss.metadata}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.metadata" name="jboss-metadata-common" rev="${version.jboss.metadata.common}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.metadata" name="jboss-metadata-rar" rev="${version.jboss.metadata.rar}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.microcontainer" name="jboss-dependency" rev="${version.jboss.mc.dependency}" conf="standalone->default"/>
     <dependency org="org.jboss.microcontainer" name="jboss-kernel" rev="${version.jboss.mc.kernel}" conf="standalone->default"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="standalone->default;sjc->*"/>
