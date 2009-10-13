@@ -47,7 +47,7 @@ public class RarTestCase
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
-   private static final Logger LOG = Logger.getLogger(RarTestCase.class);
+   private static Logger log = Logger.getLogger(RarTestCase.class);
 
    /*
     * Embedded
@@ -73,6 +73,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -96,6 +97,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -119,6 +121,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -142,6 +145,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -165,6 +169,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -188,6 +193,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -211,6 +217,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -234,6 +241,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -257,6 +265,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -280,6 +289,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -303,6 +313,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -326,6 +337,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -349,6 +361,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -372,6 +385,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -395,6 +409,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -418,6 +433,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -441,6 +457,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -464,6 +481,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -487,6 +505,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally
@@ -534,6 +553,7 @@ public class RarTestCase
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          fail(t.getMessage());
       }
       finally

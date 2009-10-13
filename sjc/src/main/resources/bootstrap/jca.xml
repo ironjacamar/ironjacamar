@@ -1,5 +1,10 @@
 <deployment>
 
+  <!-- Bean Validation -->
+  <bean name="BeanValidation" class="org.jboss.jca.core.bv.BeanValidation">
+    <depends>NamingServer</depends>
+  </bean>
+
   <!-- Work Manager thread pool -->
   <bean name="WorkManagerThreadPool" interface="org.jboss.jca.common.threadpool.ThreadPool" class="org.jboss.jca.common.threadpool.ThreadPoolImpl">
     <!-- The name that appears in thread names -->
@@ -30,6 +35,7 @@
 
   <!-- RA deployer -->
   <bean name="RADeployer" interface="org.jboss.jca.fungal.deployers.Deployer" class="org.jboss.jca.deployers.fungal.RADeployer">
+    <depends>BeanValidation</depends>
     <depends>ConnectionManager</depends>
     <depends>WorkManager</depends>
   </bean>

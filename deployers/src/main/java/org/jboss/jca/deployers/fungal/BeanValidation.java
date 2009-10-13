@@ -25,9 +25,10 @@ package org.jboss.jca.deployers.fungal;
 import java.util.List;
 import java.util.Set;
 
-import javax.validation.Configuration;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
@@ -61,32 +62,52 @@ public class BeanValidation
          throw new IllegalArgumentException("Object is null");
       }
 
-      Configuration configuration = Validation.byDefaultProvider().configure();
-      Configuration<?> conf = configuration.traversableResolver(new JCATraversableResolver());
-      ValidatorFactory vf = conf.buildValidatorFactory();
-      Validator v = vf.getValidator();
+      Context context = null;
+      try
+      {
+         context = new InitialContext();
 
-      if (trace)
-      {
-         log.trace("Validating: " + object + " against groups "
-               + Default.class.getName());
-      }
+         ValidatorFactory vf = (ValidatorFactory)context.lookup("java:/ValidatorFactory");
+         Validator v = vf.usingContext().traversableResolver(new JCATraversableResolver()).getValidator();
 
-      Set errors = null;
-      if (groupsClasses == null)
-      {
-         errors = v.validate(object, Default.class);
+         Set errors = null;
+         if (groupsClasses == null || groupsClasses.size() == 0)
+         {
+            if (trace)
+               log.trace("Validating: " + object + " against groups " + Default.class.getName());
+
+            errors = v.validate(object, Default.class);
+         }
+         else
+         {
+            Class[] vargs = groupsClasses.toArray(new Class[groupsClasses.size()]);
+
+            if (trace)
+               log.trace("Validating: " + object + " against groups " + vargs);
+
+            errors = v.validate(object, vargs);
+         }
+
+         if (errors != null && errors.size() > 0)
+         {
+            throw new ConstraintViolationException(errors);
+         }
       }
-      else
+      catch (NamingException ne)
       {
-         Class[] vargs = groupsClasses.toArray(new Class[groupsClasses.size()]);
-         errors = v.validate(object, vargs);
+         log.error(ne.getMessage(), ne);
       }
-      if (errors != null && errors.size() > 0)
+      finally
       {
-         log.debug("Validated: " + errors.size() + " validate failing");
-         throw new ConstraintViolationException(errors);
+         try
+         {
+            if (context != null)
+               context.close();
+         }
+         catch (NamingException ne)
+         {
+            // Ignore
+         }
       }
    }
-
 }

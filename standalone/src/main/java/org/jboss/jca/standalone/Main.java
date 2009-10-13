@@ -24,6 +24,8 @@ package org.jboss.jca.standalone;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -35,9 +37,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 
 /**
  * The main class for JBoss JCA standalone
