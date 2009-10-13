@@ -27,7 +27,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
+import javax.validation.TraversableResolver;
 import javax.validation.Validator;
 import javax.validation.ValidatorContext;
 import javax.validation.ValidatorFactory;
@@ -103,6 +105,24 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
    public <T> T unwrap(Class<T> type)
    {
       return validatorFactory.unwrap(type);
+   }
+
+   /**
+    * Get the constraint validator factory
+    * @return The factory
+    */
+   public ConstraintValidatorFactory getConstraintValidatorFactory()
+   {
+      return validatorFactory.getConstraintValidatorFactory();
+   }
+
+   /**
+    * Get the traversable resolver
+    * @return The resolver
+    */
+   public TraversableResolver getTraversableResolver()
+   {
+      return validatorFactory.getTraversableResolver();
    }
 
    /**
