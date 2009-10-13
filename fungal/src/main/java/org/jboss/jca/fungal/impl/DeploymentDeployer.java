@@ -32,6 +32,7 @@ import org.jboss.jca.fungal.deployment.InjectType;
 import org.jboss.jca.fungal.deployment.PropertyType;
 import org.jboss.jca.fungal.deployment.Unmarshaller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.URL;
@@ -281,10 +282,10 @@ public class DeploymentDeployer implements Deployer
        * @param bt The bean type definition
        * @param cl The classloader
        * @return The new bean
-       * @exception Exception Thrown if an error occurs
+       * @exception Throwable Thrown if an error occurs
        */
       @SuppressWarnings("unchecked") 
-      private Object createBean(BeanType bt, ClassLoader cl) throws Exception
+      private Object createBean(BeanType bt, ClassLoader cl) throws Throwable
       {
          Class<?> clz = null;
          Object instance = null;
@@ -397,9 +398,13 @@ public class DeploymentDeployer implements Deployer
             Method createMethod = clz.getMethod("create", (Class[])null);
             createMethod.invoke(instance, (Object[])null);
          }
-         catch (Exception e)
+         catch (NoSuchMethodException nsme)
          {
             // No create method
+         }
+         catch (InvocationTargetException ite)
+         {
+            throw ite.getTargetException();
          }
 
          try
@@ -407,9 +412,13 @@ public class DeploymentDeployer implements Deployer
             Method startMethod = clz.getMethod("start", (Class[])null);
             startMethod.invoke(instance, (Object[])null);
          }
-         catch (Exception e)
+         catch (NoSuchMethodException nsme)
          {
             // No start method
+         }
+         catch (InvocationTargetException ite)
+         {
+            throw ite.getTargetException();
          }
 
          // Register deployer
