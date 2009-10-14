@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -83,7 +84,7 @@ public class BeanValidation
             Class[] vargs = groupsClasses.toArray(new Class[groupsClasses.size()]);
 
             if (trace)
-               log.trace("Validating: " + object + " against groups " + vargs);
+               log.trace("Validating: " + object + " against groups " + Arrays.toString(vargs));
 
             errors = v.validate(object, vargs);
          }
