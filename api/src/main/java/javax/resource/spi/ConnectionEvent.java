@@ -132,12 +132,12 @@ public class ConnectionEvent extends EventObject
       {
          serialVersionUID = 2776168349823367611L;
          serialPersistentFields = new ObjectStreamField[] {
-         /** @serialField id int */
-         new ObjectStreamField("id", int.class),
-         /** @serialField e Exception */
-         new ObjectStreamField("e", Exception.class),
-         /** @serialField connectionHandle Object */
-         new ObjectStreamField("connectionHandle", Object.class)
+            /** @serialField id int */
+            new ObjectStreamField("id", int.class),
+            /** @serialField e Exception */
+            new ObjectStreamField("e", Exception.class),
+            /** @serialField connectionHandle Object */
+            new ObjectStreamField("connectionHandle", Object.class)
          };
       }
       else
