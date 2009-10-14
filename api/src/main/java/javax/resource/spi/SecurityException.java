@@ -22,6 +22,9 @@
 
 package javax.resource.spi;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /** 
  * A <code>SecurityException</code> indicates error conditions 
  * related to the security
@@ -49,6 +52,37 @@ package javax.resource.spi;
 
 public class SecurityException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = 5003890345420586914L;
+      }
+      else
+      {
+         serialVersionUID = -7609456980660658364L;
+      }
+   }
    
    /**
     * Constructs a new instance with null as its detail message.

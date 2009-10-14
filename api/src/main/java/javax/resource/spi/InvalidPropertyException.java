@@ -23,6 +23,8 @@
 package javax.resource.spi;
 
 import java.beans.PropertyDescriptor;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * This exception is thrown to indicate invalid configuration 
@@ -33,7 +35,39 @@ import java.beans.PropertyDescriptor;
  */
 public class InvalidPropertyException extends javax.resource.ResourceException 
 {
-   /*
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = -2395559483586818078L;
+      }
+      else
+      {
+         serialVersionUID = -485903720300735741L;
+      }
+   }
+
+   /**
     * Holder for invalid properties.
     */
    private PropertyDescriptor[] invalidProperties;

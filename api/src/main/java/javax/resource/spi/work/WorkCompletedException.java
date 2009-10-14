@@ -46,6 +46,8 @@ package javax.resource.spi.work;
  */
 public class WorkCompletedException extends WorkException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = -229158982387790244L;
 
    /**
     * Constructs a new instance with null as its detail message.

@@ -22,6 +22,9 @@
 
 package javax.resource.spi;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * An <code>IllegalStateException</code> 
  * is thrown from a method if the callee (resource
@@ -35,6 +38,37 @@ package javax.resource.spi;
 
 public class IllegalStateException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = -150139934550438352L;
+      }
+      else
+      {
+         serialVersionUID = 3473092818417322126L;
+      }
+   }
    
    /**
     * Constructs a new instance with null as its detail message.

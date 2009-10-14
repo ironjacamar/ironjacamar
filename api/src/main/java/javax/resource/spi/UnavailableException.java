@@ -30,6 +30,9 @@ package javax.resource.spi;
  */
 public class UnavailableException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = -2495485036033570467L;
+
    /**
     * Constructs a new instance with null as its detail message.
     */

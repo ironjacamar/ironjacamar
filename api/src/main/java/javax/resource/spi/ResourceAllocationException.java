@@ -22,6 +22,9 @@
 
 package javax.resource.spi;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * A <code>ResourceAllocationException</code> can be thrown by an 
  * application server or
@@ -38,6 +41,37 @@ package javax.resource.spi;
 
 public class ResourceAllocationException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = -2680085755660844424L;
+      }
+      else
+      {
+         serialVersionUID = -9036793565852998502L;
+      }
+   }
    
    /**
     * Constructs a new instance with null as its detail message.

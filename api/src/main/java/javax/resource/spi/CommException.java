@@ -22,6 +22,9 @@
 
 package javax.resource.spi;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * This indicates errors related to failed or interrupted 
  * communication with an EIS instance. Examples of common error conditions
@@ -34,6 +37,37 @@ package javax.resource.spi;
  */
 public class CommException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = -4522218827155509206L;
+      }
+      else
+      {
+         serialVersionUID = 5000980212339163591L;
+      }
+   }
    
    /**
     * Constructs a new instance with null as its detail message.

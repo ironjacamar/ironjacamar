@@ -22,6 +22,9 @@
 
 package javax.resource;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * A <code>NotSupportedException</code> is thrown to indicate that 
  * callee (resource adapter
@@ -39,6 +42,37 @@ package javax.resource;
 
 public class NotSupportedException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = 1510031578141681454L;
+      }
+      else
+      {
+         serialVersionUID = -5433838894743521833L;
+      }
+   }
    
    /**
     * Constructs a new instance with null as its detail message.

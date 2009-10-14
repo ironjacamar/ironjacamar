@@ -22,6 +22,9 @@
 
 package javax.resource.cci;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * A <code>ResourceWarning</code> provides information on warnings related to
  * execution of an interaction with an EIS. Warnings are silently 
@@ -31,6 +34,37 @@ package javax.resource.cci;
  */
 public class ResourceWarning extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = 4883365394555743885L;
+      }
+      else
+      {
+         serialVersionUID = 1233859030030360576L;
+      }
+   }
 
    /**
     * Constructs a new instance with null as its detail message.

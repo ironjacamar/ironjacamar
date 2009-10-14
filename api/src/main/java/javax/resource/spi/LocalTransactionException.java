@@ -22,6 +22,9 @@
 
 package javax.resource.spi;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /** 
  * A <code>LocalTransactionException</code> represents various 
  * error conditions related to the local transaction management contract. 
@@ -57,6 +60,37 @@ package javax.resource.spi;
 
 public class LocalTransactionException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = 4704131764458675746L;
+      }
+      else
+      {
+         serialVersionUID = 7495828853103281459L;
+      }
+   }
    
    /**
     * Constructs a new instance with null as its detail message.

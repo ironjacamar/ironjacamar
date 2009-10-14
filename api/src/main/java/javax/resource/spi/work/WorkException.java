@@ -30,6 +30,9 @@ package javax.resource.spi.work;
  */
 public class WorkException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = 6360106395593829940L;
+
    /**
     * Indicates an internal error condition.
     */

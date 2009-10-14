@@ -22,6 +22,9 @@
 
 package javax.resource.spi;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * An <code>EISSystemException</code> is used to indicate any EIS
  * specific system-level 
@@ -36,6 +39,37 @@ package javax.resource.spi;
 
 public class EISSystemException extends javax.resource.ResourceException 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = 5912222091656752433L;
+      }
+      else
+      {
+         serialVersionUID = 5753172122428814004L;
+      }
+   }
    
    /**
     * Constructs a new instance with null as its detail message.

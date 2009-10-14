@@ -22,6 +22,9 @@
 
 package javax.resource;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * This is the root interface of the exception hierarchy defined
  * for the Connector architecture.
@@ -46,6 +49,38 @@ package javax.resource;
 
 public class ResourceException extends Exception 
 {
+   /** Serial version UID */
+   private static final long serialVersionUID;
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = 4770679801401540475L;
+      }
+      else
+      {
+         serialVersionUID = 547071213627824490L;
+      }
+   }
+
    /** Vendor specific error code */
    private String errorCode;
    

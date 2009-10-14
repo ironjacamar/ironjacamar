@@ -22,6 +22,12 @@
 
 package javax.resource.spi.work;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamField;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.EventObject;
 
 /**
@@ -33,6 +39,16 @@ import java.util.EventObject;
  */
 public class WorkEvent extends EventObject 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   /** Persistence fields information */
+   private static final ObjectStreamField[] serialPersistentFields;
+   private static final int TYPE_IDX = 0;
+   private static final int WORK_IDX = 1;
+   private static final int EXCPEPTION_IDX = 2;
+   private static final int DURATION_IDX = 2;
+
    /**
     * Indicates <code>Work</code> instance has been accepted.
     */
@@ -66,13 +82,63 @@ public class WorkEvent extends EventObject
    /**
     * The exception that occured during <code>Work</code> processing.
     */
-   private WorkException exc;
+   private WorkException e;
    
    /**
     * The start delay duration (in milliseconds).
     */
    private long startDuration = WorkManager.UNKNOWN;
    
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = 6971276136970053051L;
+         serialPersistentFields = new ObjectStreamField[] {
+            /** @serialField type int */
+            new ObjectStreamField("type", int.class),
+            /** @serialField work Work */
+            new ObjectStreamField("work", Work.class),
+            /** @serialField exception WorkException */
+            new ObjectStreamField("e", WorkException.class),
+            /** @serialField startDuration long */
+            new ObjectStreamField("startDuration", long.class)
+         };
+      }
+      else
+      {
+         serialVersionUID = -3063612635015047218L;
+         serialPersistentFields = new ObjectStreamField[] {
+            /** @serialField type int */
+            new ObjectStreamField("type", int.class),
+            /** @serialField work Work */
+            new ObjectStreamField("work", Work.class),
+            /** @serialField exception WorkException */
+            new ObjectStreamField("exception", WorkException.class),
+            /** @serialField startDuration long */
+            new ObjectStreamField("startDuration", long.class)
+         };
+      }
+   }
+
    /**
     * Constructor.
     *
@@ -92,7 +158,7 @@ public class WorkEvent extends EventObject
       super(source);
       this.type = type;
       this.work =  work;
-      this.exc = exc;
+      this.e = exc;
    }
    
    /**
@@ -162,6 +228,44 @@ public class WorkEvent extends EventObject
     */
    public WorkException getException()
    {
-      return this.exc;
+      return this.e;
+   }
+
+   /**
+    * Read object
+    * @param ois The object input stream
+    * @exception ClassNotFoundException If a class can not be found
+    * @exception IOException Thrown if an error occurs
+    */
+   private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
+   {
+      ObjectInputStream.GetField fields = ois.readFields();
+      String name = serialPersistentFields[TYPE_IDX].getName();
+      this.type = fields.get(name, 0);
+      name = serialPersistentFields[WORK_IDX].getName();
+      this.work = (Work) fields.get(name, null);
+      name = serialPersistentFields[EXCPEPTION_IDX].getName();
+      this.e = (WorkException) fields.get(name, null);
+      name = serialPersistentFields[DURATION_IDX].getName();
+      this.startDuration = fields.get(name, 0L);
+   }
+
+   /**
+    * Write object
+    * @param oos The object output stream
+    * @exception IOException Thrown if an error occurs
+    */
+   private void writeObject(ObjectOutputStream oos) throws IOException
+   {
+      ObjectOutputStream.PutField fields =  oos.putFields();
+      String name = serialPersistentFields[TYPE_IDX].getName();
+      fields.put(name, type);
+      name = serialPersistentFields[WORK_IDX].getName();
+      fields.put(name, work);
+      name = serialPersistentFields[EXCPEPTION_IDX].getName();
+      fields.put(name, e);
+      name = serialPersistentFields[DURATION_IDX].getName();
+      fields.put(name, startDuration);
+      oos.writeFields();
    }
 }

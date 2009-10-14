@@ -22,6 +22,12 @@
 
 package javax.resource.spi;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamField;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.EventObject;
 
 /** The ConnectionEvent class provides information about the source of 
@@ -55,6 +61,14 @@ import java.util.EventObject;
 
 public class ConnectionEvent extends EventObject 
 {
+   /** Serial version uid */
+   private static final long serialVersionUID;
+
+   /** Persistence field information */
+   private static final ObjectStreamField[] serialPersistentFields;
+   private static final int ID_IDX = 0;
+   private static final int EXCEPTION_IDX = 1;
+   private static final int CONN_HANDLE_IDX = 2;
 
    /** Event notification that an application component has closed the 
     *  connection
@@ -87,13 +101,58 @@ public class ConnectionEvent extends EventObject
     *
     *  @serial
     **/
-   private Exception exception;
+   private Exception e;
    
    /** Type of the event
     **/
    protected int id;
 
    private Object connectionHandle;    
+
+   static
+   {
+      Boolean legacy = (Boolean)AccessController.doPrivileged(new PrivilegedAction()
+      {
+         public Boolean run()
+         {
+            try
+            {
+               if (System.getProperty("org.jboss.j2ee.LegacySerialization") != null)
+                  return Boolean.TRUE;
+            }
+            catch (Throwable ignored)
+            {
+               // Ignore
+            }
+            return Boolean.FALSE;
+         }
+      });
+
+      if (Boolean.TRUE.equals(legacy))
+      {
+         serialVersionUID = 2776168349823367611L;
+         serialPersistentFields = new ObjectStreamField[] {
+         /** @serialField id int */
+         new ObjectStreamField("id", int.class),
+         /** @serialField e Exception */
+         new ObjectStreamField("e", Exception.class),
+         /** @serialField connectionHandle Object */
+         new ObjectStreamField("connectionHandle", Object.class)
+         };
+      }
+      else
+      {
+         serialVersionUID = 5611772461379563249L;
+         serialPersistentFields = new ObjectStreamField[] {
+            /** @serialField id int */
+            new ObjectStreamField("id", int.class),
+            /** @serialField exception Exception */
+            new ObjectStreamField("exception", Exception.class),
+            /** @serialField connectionHandle Object */
+            new ObjectStreamField("connectionHandle", Object.class)
+         };
+      }
+   }
    
    /**
     * Construct a ConnectionEvent object. Exception defaults to null.
@@ -121,7 +180,7 @@ public class ConnectionEvent extends EventObject
                           Exception exception) 
    {
       super(source);  
-      this.exception = exception;
+      this.e = exception;
       this.id = eid;
    }
 
@@ -151,7 +210,7 @@ public class ConnectionEvent extends EventObject
     */
    public Exception getException() 
    {
-      return exception;
+      return e;
    }
 
    /**
@@ -161,5 +220,39 @@ public class ConnectionEvent extends EventObject
    public int getId() 
    {
       return id;
+   }
+
+   /**
+    * Read object
+    * @param ois The object input stream
+    * @exception ClassNotFoundException If a class can not be found
+    * @exception IOException Thrown if an error occurs
+    */
+   private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
+   {
+      ObjectInputStream.GetField fields = ois.readFields();
+      String name = serialPersistentFields[ID_IDX].getName();
+      this.id = fields.get(name, CONNECTION_ERROR_OCCURRED);
+      name = serialPersistentFields[EXCEPTION_IDX].getName();
+      this.e = (Exception) fields.get(name, null);
+      name = serialPersistentFields[CONN_HANDLE_IDX].getName();
+      this.connectionHandle = fields.get(name, null);
+   }
+
+   /**
+    * Write object
+    * @param oos The object output stream
+    * @exception IOException Thrown if an error occurs
+    */
+   private void writeObject(ObjectOutputStream oos) throws IOException
+   {
+      ObjectOutputStream.PutField fields =  oos.putFields();
+      String name = serialPersistentFields[ID_IDX].getName();
+      fields.put(name, id);
+      name = serialPersistentFields[EXCEPTION_IDX].getName();
+      fields.put(name, e);
+      name = serialPersistentFields[CONN_HANDLE_IDX].getName();
+      fields.put(name, connectionHandle);
+      oos.writeFields();
    }
 }
