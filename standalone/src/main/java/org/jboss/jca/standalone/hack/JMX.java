@@ -59,7 +59,7 @@ public class JMX
     * Get the MBeanServer
     * @return The MBeanServer
     */
-   public MBeanServer getMbeanServer()
+   public MBeanServer getMBeanServer()
    {
       return mbeanServer;
    }

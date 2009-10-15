@@ -24,6 +24,7 @@ package org.jboss.jca.fungal.impl;
 
 import org.jboss.jca.fungal.deployers.Deployment;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Collections;
@@ -108,8 +109,9 @@ public class BeanDeployment implements Deployment
 
    /**
     * Destroy
+    * @exception Throwable If the unit cant be stopped
     */
-   public void destroy()
+   public void destroy() throws Throwable
    {
       List<String> shutdownBeans = new LinkedList<String>(beans);
       Collections.reverse(shutdownBeans);
@@ -125,9 +127,13 @@ public class BeanDeployment implements Deployment
             Method stopMethod = bean.getClass().getMethod("stop", (Class[])null);
             stopMethod.invoke(bean, (Object[])null);
          }
-         catch (Exception e)
+         catch (NoSuchMethodException nsme)
          {
-            // No stop method
+            // No create method
+         }
+         catch (InvocationTargetException ite)
+         {
+            throw ite.getTargetException();
          }
 
          try
@@ -135,9 +141,13 @@ public class BeanDeployment implements Deployment
             Method destroyMethod = bean.getClass().getMethod("destroy", (Class[])null);
             destroyMethod.invoke(bean, (Object[])null);
          }
-         catch (Exception e)
+         catch (NoSuchMethodException nsme)
          {
-            // No destroy method
+            // No create method
+         }
+         catch (InvocationTargetException ite)
+         {
+            throw ite.getTargetException();
          }
 
          kernel.removeBean(name);

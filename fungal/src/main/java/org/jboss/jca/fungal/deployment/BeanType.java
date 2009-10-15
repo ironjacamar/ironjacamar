@@ -75,7 +75,7 @@ public class BeanType
    public List<PropertyType> getProperty()
    {
       if (property == null)
-         property = new ArrayList<PropertyType>();
+         property = new ArrayList<PropertyType>(1);
 
       return property;
    }
@@ -87,7 +87,7 @@ public class BeanType
    public List<DependsType> getDepends()
    {
       if (depends == null)
-         depends = new ArrayList<DependsType>();
+         depends = new ArrayList<DependsType>(1);
 
       return depends;
    }

@@ -47,7 +47,7 @@ public class Deployment
    public List<BeanType> getBean()
    {
       if (bean == null)
-         bean = new ArrayList<BeanType>();
+         bean = new ArrayList<BeanType>(1);
 
       return bean;
    }

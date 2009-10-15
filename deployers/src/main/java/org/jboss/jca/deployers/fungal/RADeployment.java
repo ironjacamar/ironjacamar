@@ -37,7 +37,6 @@ import org.jboss.logging.Logger;
 public class RADeployment implements Deployment
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
-   private static boolean trace = log.isTraceEnabled();
 
    /** The resource adapter file */
    private URL adapter;

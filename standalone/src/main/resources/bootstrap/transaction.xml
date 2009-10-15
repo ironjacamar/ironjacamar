@@ -13,7 +13,7 @@
 <!--    <annotation>@org.jboss.aop.microcontainer.aspects.jmx.JMX(name="jboss:service=TransactionManager", exposedInterface=com.arjuna.ats.jbossatx.jta.TransactionManagerServiceMBean.class, registerDirectly=true)</annotation> -->
     <property name="transactionTimeout">300</property>
     <property name="objectStoreDir">${jboss.jca.home}/server/jca/tmp/tx-object-store</property>
-    <property name="mbeanServer"><inject bean="JMX" property="mbeanServer"/></property>
+    <property name="mbeanServer"><inject bean="JMX" property="MBeanServer"/></property>
     <property name="transactionStatusManagerInetAddress">localhost</property>
     <property name="transactionStatusManagerPort">4713</property>
     <property name="recoveryInetAddress">localhost</property>

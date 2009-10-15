@@ -51,7 +51,7 @@ public class PropertyType
    public List<Object> getContent()
    {
       if (content == null)
-         content = new ArrayList<Object>();
+         content = new ArrayList<Object>(1);
       
       return this.content;
    }

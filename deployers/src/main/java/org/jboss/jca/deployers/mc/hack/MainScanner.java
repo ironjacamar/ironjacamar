@@ -187,6 +187,6 @@ public class MainScanner
          log.info("Deploying " + deployment.getName());
          deployments.add(deployment);
       }
-      mainDeployer.deploy(deployments.toArray(new Deployment[0]));
+      mainDeployer.deploy(deployments.toArray(new Deployment[deployments.size()]));
    }
 }

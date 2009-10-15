@@ -47,7 +47,7 @@ public class Bootstrap
    public List<String> getUrl()
    {
       if (url == null) 
-         url = new ArrayList<String>();
+         url = new ArrayList<String>(1);
       
       return url;
    }

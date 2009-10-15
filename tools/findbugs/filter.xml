@@ -11,11 +11,15 @@
   </Match>
   <Match>
     <Class name="javax.resource.spi.InvalidPropertyException"/>
-    <Bug code="EI,EI2"/>
+    <Bug code="EI,EI2,Se"/>
   </Match>
   <Match>
     <Class name="javax.resource.spi.security.PasswordCredential"/>
     <Bug code="EI"/>
+  </Match>
+  <Match>
+    <Class name="javax.resource.spi.work.HintsContext"/>
+    <Bug code="Se"/>
   </Match>
 
   <!--  org.jboss.jca.common filter -->
@@ -34,17 +38,36 @@
     <Bug code="Nm"/>
   </Match>
 
-  <!--  org.jboss.jca.sjc filter -->
+  <!--  org.jboss.jca.deployers filter -->
   <Match>
-    <Class name="org.jboss.jca.sjc.Main$LifeThread"/>
-    <Bug code="UW"/>
-  </Match>
-  <Match>
-    <Class name="org.jboss.jca.sjc.Main$LifeThread"/>
-    <Bug code="Wa"/>
-  </Match>
-  <Match>
-    <Class name="org.jboss.jca.sjc.deployers.ra.RADeployer"/>
+    <Class name="org.jboss.jca.deployers.fungal.RADeployer"/>
     <Bug code="DLS"/>
   </Match>
+
+  <!--  org.jboss.jca.fungal filter -->
+  <Match>
+    <Class name="org.jboss.jca.fungal.impl.DeploymentDeployer"/>
+    <Bug code="DLS,UPM"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.fungal.impl.KernelImpl"/>
+    <Bug code="UPM"/>
+  </Match>
+
+  <!--  org.jboss.jca.sjc filter -->
+  <Match>
+    <Class name="org.jboss.jca.sjc.Main"/>
+    <Bug code="UPM"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.sjc.Main$LifeThread"/>
+    <Bug code="UW,Wa"/>
+  </Match>
+
+  <!--  org.jboss.jca.standalone filter -->
+  <Match>
+    <Class name="org.jboss.jca.standalone.Main"/>
+    <Bug code="UPM"/>
+  </Match>
+
 </FindBugsFilter>

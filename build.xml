@@ -344,7 +344,8 @@
     <findbugs home="${basedir}/tools/findbugs/lib/"
               output="html"
               outputFile="${reports.dir}/findbugs/findbugs.html" 
-              excludeFilter="${basedir}/tools/findbugs/filter.xml">
+              excludeFilter="${basedir}/tools/findbugs/filter.xml"
+              reportLevel="low">
       <auxClasspath>
         <fileset dir="${lib.dir}/standalone">
           <include name="*.jar"/>
@@ -368,7 +369,8 @@
     <findbugs home="${basedir}/tools/findbugs/lib/"
               output="xml:withMessages"
               outputFile="${reports.dir}/findbugs/findbugs.xml" 
-              excludeFilter="${basedir}/tools/findbugs/filter.xml">
+              excludeFilter="${basedir}/tools/findbugs/filter.xml"
+              reportLevel="low">
       <auxClasspath>
         <fileset dir="${lib.dir}/standalone">
           <include name="*.jar"/>

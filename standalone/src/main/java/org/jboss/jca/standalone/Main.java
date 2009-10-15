@@ -28,6 +28,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -173,9 +174,17 @@ public class Main
             serverMethodShutdown.invoke(server);
          }
       }
-      catch (Exception e)
+      catch (NoSuchMethodException nsme)
       {
-         e.printStackTrace(System.err);
+         // Ignore
+      }
+      catch (IllegalAccessException iae)
+      {
+         iae.printStackTrace(System.err);
+      }
+      catch (InvocationTargetException ite)
+      {
+         ite.printStackTrace(System.err);
       }
    }
 

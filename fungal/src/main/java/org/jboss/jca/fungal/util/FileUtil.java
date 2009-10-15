@@ -77,9 +77,24 @@ public class FileUtil
       File manifestFile = new File(directory, "META-INF/MANIFEST.MF");
       if (manifestFile.exists())
       {
-         FileInputStream fis = new FileInputStream(manifestFile);
-         manifest = new Manifest(fis);
-         fis.close();
+         FileInputStream fis = null;
+         try
+         {
+            fis = new FileInputStream(manifestFile);
+            manifest = new Manifest(fis);
+         }
+         finally
+         {
+            try
+            {
+               if (fis != null)
+                  fis.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
       }
       else
       {
@@ -87,50 +102,66 @@ public class FileUtil
          manifest = new Manifest();
       }
 
-      FileOutputStream fos = new FileOutputStream(target);
-      JarOutputStream jos = new JarOutputStream(fos, manifest);
+      JarOutputStream jos = null;
 
-      int bytesRead;
-      byte[] buffer = new byte[4096];
-
-      List<File> entries = findEntries(directory);
-
-      if (entries != null)
+      try
       {
-         entries.remove(new File("META-INF/MANIFEST.MF"));
+         FileOutputStream fos = new FileOutputStream(target);
+         jos = new JarOutputStream(fos, manifest);
 
-         for (File file : entries)
+         int bytesRead;
+         byte[] buffer = new byte[4096];
+
+         List<File> entries = findEntries(directory);
+
+         if (entries != null)
          {
-            File f = new File(directory, file.getPath());
-            JarEntry entry = new JarEntry(file.getPath());
-            jos.putNextEntry(entry);
+            entries.remove(new File("META-INF/MANIFEST.MF"));
 
-            FileInputStream in = null;
-            try
+            for (File file : entries)
             {
-               in = new FileInputStream(f);
-               while ((bytesRead = in.read(buffer)) != -1)
-                  jos.write(buffer, 0, bytesRead);
-            }
-            finally
-            {
-               if (in != null)
+               File f = new File(directory, file.getPath());
+               JarEntry entry = new JarEntry(file.getPath());
+               jos.putNextEntry(entry);
+
+               FileInputStream in = null;
+               try
                {
-                  try
+                  in = new FileInputStream(f);
+                  while ((bytesRead = in.read(buffer)) != -1)
+                     jos.write(buffer, 0, bytesRead);
+               }
+               finally
+               {
+                  if (in != null)
                   {
-                     in.close(); 
-                  }
-                  catch (IOException ioe)
-                  {
-                     // Ignore
+                     try
+                     {
+                        in.close(); 
+                     }
+                     catch (IOException ioe)
+                     {
+                        // Ignore
+                     }
                   }
                }
             }
          }
-      }
 
-      jos.flush();
-      jos.close();
+         jos.flush();
+      }
+      finally
+      {
+         try
+         {
+            if (jos != null)
+               jos.close();
+         }
+         catch (IOException ignore)
+         {
+            // Ignore
+         }
+      }
    }
 
    /**
@@ -166,21 +197,47 @@ public class FileUtil
 
          if (!je.isDirectory())
          {
-            InputStream in = new BufferedInputStream(jar.getInputStream(je));
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(copy));
+            InputStream in = null;
+            OutputStream out = null;
 
-            byte[] buffer = new byte[4096];
-            for (;;)
+            try
             {
-               int nBytes = in.read(buffer);
-               if (nBytes <= 0)
-                  break;
+               in = new BufferedInputStream(jar.getInputStream(je));
+               out = new BufferedOutputStream(new FileOutputStream(copy));
 
-               out.write(buffer, 0, nBytes);
+               byte[] buffer = new byte[4096];
+               for (;;)
+               {
+                  int nBytes = in.read(buffer);
+                  if (nBytes <= 0)
+                     break;
+
+                  out.write(buffer, 0, nBytes);
+               }
+               out.flush();
             }
-            out.flush();
-            out.close();
-            in.close();
+            finally
+            {
+               try
+               {
+                  if (out != null)
+                     out.close();
+               }
+               catch (IOException ignore)
+               {
+                  // Ignore
+               }
+
+               try
+               {
+                  if (in != null)
+                     in.close();
+               }
+               catch (IOException ignore)
+               {
+                  // Ignore
+               }
+            }
          }
          else
          {

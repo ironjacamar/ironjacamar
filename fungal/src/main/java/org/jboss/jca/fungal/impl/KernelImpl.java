@@ -541,7 +541,7 @@ public class KernelImpl implements Kernel
 
          if (jars != null)
          {
-            for (int j = 0; jars != null && j < jars.length; j++)
+            for (int j = 0; j < jars.length; j++)
             {
                list.add(jars[j].getCanonicalFile().toURI().toURL());
             }
@@ -550,7 +550,7 @@ public class KernelImpl implements Kernel
          return list.toArray(new URL[list.size()]);      
       }
 
-      return null;
+      return new URL[0];
    }
 
    /**
@@ -578,7 +578,7 @@ public class KernelImpl implements Kernel
          return list.toArray(new URL[list.size()]);      
       }
 
-      return null;
+      return new URL[0];
    }
 
    /**

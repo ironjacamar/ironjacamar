@@ -24,6 +24,7 @@ package org.jboss.jca.fungal.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Locale;
 
 /**
  * Injection utility
@@ -112,7 +113,7 @@ public class Injection
                                             "property " + propertyName);
       }
 
-      String methodName = "set" + propertyName.substring(0, 1).toUpperCase();
+      String methodName = "set" + propertyName.substring(0, 1).toUpperCase(Locale.US);
       if (propertyName.length() > 1)
       {
          methodName += propertyName.substring(1);

@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -224,7 +225,7 @@ public class DeploymentDeployer implements Deployer
          Set<String> result = null;
 
          List<DependsType> dts = bt.getDepends();
-         if (dts != null)
+         if (dts.size() > 0)
          {
             result = new HashSet<String>();
             for (DependsType dt : dts)
@@ -234,7 +235,7 @@ public class DeploymentDeployer implements Deployer
          }
 
          List<PropertyType> pts = bt.getProperty();
-         if (pts != null)
+         if (pts.size() > 0)
          {
             if (result == null)
                result = new HashSet<String>();
@@ -302,7 +303,7 @@ public class DeploymentDeployer implements Deployer
             Method factoryMethod = null;
             Object[] args = null;
 
-            if (ct.getParameter() == null)
+            if (ct.getParameter().size() == 0)
             {
                factoryMethod = factoryClass.getMethod(ct.getFactoryMethod(), (Class[])null);
             }
@@ -492,7 +493,7 @@ public class DeploymentDeployer implements Deployer
        */
       private void setBeanProperty(Object instance, PropertyType pt, ClassLoader cl) throws Exception
       {
-         String name = "set" + pt.getName().substring(0, 1).toUpperCase() + pt.getName().substring(1);
+         String name = "set" + pt.getName().substring(0, 1).toUpperCase(Locale.US) + pt.getName().substring(1);
          Method m = null;
       
          if (pt.getClazz() == null)
@@ -546,13 +547,13 @@ public class DeploymentDeployer implements Deployer
                try
                {
                   String getMethodName = "get" + 
-                     it.getProperty().substring(0, 1).toUpperCase() + it.getProperty().substring(1);
+                     it.getProperty().substring(0, 1).toUpperCase(Locale.US) + it.getProperty().substring(1);
                   method = injectionObject.getClass().getMethod(getMethodName, (Class[])null);
                }
                catch (NoSuchMethodException nsme)
                {
                   String isMethodName = "is" + 
-                     it.getProperty().substring(0, 1).toUpperCase() + it.getProperty().substring(1);
+                     it.getProperty().substring(0, 1).toUpperCase(Locale.US) + it.getProperty().substring(1);
                   method = injectionObject.getClass().getMethod(isMethodName, (Class[])null);
                }
 
