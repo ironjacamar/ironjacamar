@@ -97,7 +97,7 @@ public class AnnotationsTestCase
    {
       try
       {
-         URL url = getURL("rars/ra16inout.rar");
+         URL url = getURL("ra16inout.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
@@ -118,7 +118,7 @@ public class AnnotationsTestCase
    {
       try
       {
-         URL url = getURL("rars/ra16inoutanno.rar");
+         URL url = getURL("ra16inoutanno.rar");
          System.out.println(url);
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
@@ -140,7 +140,7 @@ public class AnnotationsTestCase
    {
       try
       {
-         URL url = getURL("rars/rafail2connector.rar");
+         URL url = getURL("rafail2connector.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
