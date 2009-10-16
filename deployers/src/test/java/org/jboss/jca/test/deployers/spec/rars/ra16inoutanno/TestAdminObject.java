@@ -21,30 +21,16 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16inoutanno;
 
-import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
-import org.jboss.jca.test.deployers.spec.rars.TestConnection;
-import org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface;
-
 import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.ConnectionDefinition;
-import javax.resource.spi.ConnectionDefinitions;
-import javax.resource.spi.ManagedConnection;
 
 /**
- * TestManagedConnectionFactory
+ * 
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
-@ConnectionDefinitions(
-@ConnectionDefinition(connectionFactory = ManagedConnection.class,
-      connectionFactoryImpl = TestManagedConnection.class,
-      connection = TestConnectionInterface.class,
-      connectionImpl = TestConnection.class))
-public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
+public class TestAdminObject
 {
-   private static final long serialVersionUID = 1L;
-   
-   @ConfigProperty(type = String.class, defaultValue = "JCA")
+   @ConfigProperty(type = String.class, defaultValue = "InAO")
    private String myStringProperty;
 
    /**

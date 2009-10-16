@@ -49,10 +49,11 @@ import javax.resource.spi.TransactionSupport;
       reauthenticationSupport = true,
       authMechanisms = { @AuthenticationMechanism(credentialInterface = CredentialInterface.PasswordCredential) },
       securityPermissions = { @SecurityPermission(permissionSpec = "permissionSpec") },
-      transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction)
+      transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction,
+      requiredWorkContexts = { TestWorkContext.class })
       //TODO API has not been updated requiredWorkContexts = null
 @AdministeredObject(
-      adminObjectInterfaces = TestAdminObjectInterface.class)
+      adminObjectInterfaces = TestAdminObject.class)
 public class TestResourceAdapter extends BaseResourceAdapter
 {
    @ConfigProperty(type = String.class, defaultValue = "JCA")

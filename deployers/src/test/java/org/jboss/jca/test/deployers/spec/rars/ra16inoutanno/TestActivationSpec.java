@@ -22,16 +22,35 @@
 package org.jboss.jca.test.deployers.spec.rars.ra16inoutanno;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseActivationSpec;
+import org.jboss.jca.test.deployers.spec.rars.MessageListener;
 
 import javax.resource.spi.Activation;
+import javax.resource.spi.ConfigProperty;
 
 /**
  * TestActivationSpec
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
-@Activation(messageListeners = { })
+@Activation(messageListeners = { MessageListener.class })
 public class TestActivationSpec extends BaseActivationSpec
 {
+   @ConfigProperty(type = String.class, defaultValue = "InAS")
+   private String myStringProperty;
 
+   /**
+    * @param myStringProperty the myStringProperty to set
+    */
+   public void setMyStringProperty(String myStringProperty)
+   {
+      this.myStringProperty = myStringProperty;
+   }
+
+   /**
+    * @return the myStringProperty
+    */
+   public String getMyStringProperty()
+   {
+      return myStringProperty;
+   }
 }

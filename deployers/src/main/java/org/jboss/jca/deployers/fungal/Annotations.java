@@ -131,7 +131,7 @@ public class Annotations
       md = processActivation(md, annotationRepository);
 
       // @AuthenticationMechanism
-      md = processAuthenticationMechanism(md, annotationRepository);
+      //md = processAuthenticationMechanism(md, annotationRepository);
 
       // @AdministeredObject
       md = processAdministeredObject(md, annotationRepository);
@@ -762,6 +762,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
+   /*
    private static ConnectorMetaData processAuthenticationMechanism(ConnectorMetaData md, 
                                                                    AnnotationRepository annotationRepository)
       throws Exception
@@ -782,6 +783,7 @@ public class Annotations
 
       return md;
    }
+   */
 
    /**
     * Attach @AuthenticationMechanism
@@ -959,10 +961,10 @@ public class Annotations
       for (Class asClass : activation.messageListeners())
       {
          ActivationspecMetaData asMeta = new ActivationspecMetaData();
-         asMeta.setAsClass(asClass.getName());
+         asMeta.setAsClass(annotation.getClassName());
          MessageListenerMetaData mlMeta = new MessageListenerMetaData();
          mlMeta.setActivationSpecType(asMeta);
-         mlMeta.setType(annotation.getClassName());
+         mlMeta.setType(asClass.getName());
          md.getRa().getInboundRa().getMessageAdapter().getMessageListeners().add(mlMeta);
       }
       return md;

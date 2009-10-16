@@ -21,12 +21,36 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16inoutanno;
 
+import javax.resource.spi.work.WorkContext;
+
 /**
  * 
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
-public interface TestAdminObjectInterface
+public class TestWorkContext implements WorkContext
 {
+   private static final long serialVersionUID = 1L;
+
+   /** 
+    * getDescription
+    * 
+    * @see javax.resource.spi.work.WorkContext#getDescription()
+    * @return description
+    */
+   public String getDescription()
+   {
+      return "TestDescription";
+   }
+
+   /** 
+    * getName
+    * @see javax.resource.spi.work.WorkContext#getName()
+    * @return name
+    */
+   public String getName()
+   {
+      return "TestName";
+   }
 
 }
