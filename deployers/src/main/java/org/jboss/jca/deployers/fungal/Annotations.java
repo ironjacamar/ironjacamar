@@ -372,7 +372,7 @@ public class Annotations
          {
             icsImpl = (IconsImpl)descGroup.getIcons();
          }
-         IconImpl[] icArray = icsImpl.toArray(new IconImpl[]{});
+         IconImpl[] icArray = icsImpl.toArray(new IconImpl[icsImpl.size()]);
          for (int i = 0; i < smallIcon.length; i++)
          {
             if (i < icArray.length)
