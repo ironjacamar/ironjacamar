@@ -58,8 +58,7 @@ import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.InboundRaMetaData;
-import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
-import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
+import org.jboss.metadata.rar.spec.JCA16Base;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.metadata.rar.spec.LicenseMetaData;
 import org.jboss.metadata.rar.spec.MessageAdapterMetaData;
@@ -295,37 +294,9 @@ public class Annotations
       {
          for (Class<? extends WorkContext> requiredWorkContext : requiredWorkContexts)
          {
-            if (md instanceof JCA16MetaData)
+            if (md instanceof JCA16Base)
             {
-               JCA16MetaData jmd = (JCA16MetaData)md;
-               if (jmd.getRequiredWorkContexts() == null)
-                  jmd.setRequiredWorkContexts(new ArrayList<String>());
-
-               if (!jmd.getRequiredWorkContexts().contains(requiredWorkContext.getName()))
-               {
-                  if (trace)
-                     log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
-
-                  jmd.getRequiredWorkContexts().add(requiredWorkContext.getName());
-               }
-            }
-            else if (md instanceof JCA16DefaultNSMetaData)
-            {
-               JCA16DefaultNSMetaData jmd = (JCA16DefaultNSMetaData)md;
-               if (jmd.getRequiredWorkContexts() == null)
-                  jmd.setRequiredWorkContexts(new ArrayList<String>());
-
-               if (!jmd.getRequiredWorkContexts().contains(requiredWorkContext.getName()))
-               {
-                  if (trace)
-                     log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
-
-                  jmd.getRequiredWorkContexts().add(requiredWorkContext.getName());
-               }
-            }
-            else if (md instanceof JCA16DTDMetaData)
-            {
-               JCA16DTDMetaData jmd = (JCA16DTDMetaData)md;
+               JCA16Base jmd = (JCA16Base)md;
                if (jmd.getRequiredWorkContexts() == null)
                   jmd.setRequiredWorkContexts(new ArrayList<String>());
 
