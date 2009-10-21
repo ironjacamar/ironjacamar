@@ -264,12 +264,12 @@ public class AnnotationsTestCase
     * Process: ConfigProperty -- verification of the processConfigProperty method
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testProcessConfigProperty() throws Throwable
    {
       try
       {
-         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         URL url = getURL("ra16annoconfprop.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 

@@ -436,18 +436,7 @@ public class Annotations
                                                                 ConnectionDefinitions cds)
       throws Exception
    {
-      if (md.getRa() == null)
-      {
-         md.setRa(new ResourceAdapterMetaData());
-      }
-      if (md.getRa().getOutboundRa() == null)
-      {
-         md.getRa().setOutboundRa(new OutboundRaMetaData());
-      }
-      if (md.getRa().getOutboundRa().getConDefs() == null)
-      {
-         md.getRa().getOutboundRa().setConDefs(new ArrayList<ConnectionDefinitionMetaData>());
-      }
+      createConDefs(md);
       return md;
    }
 
@@ -489,18 +478,7 @@ public class Annotations
       if (trace)
          log.trace("Processing: " + annotation);
 
-      if (md.getRa() == null)
-      {
-         md.setRa(new ResourceAdapterMetaData());
-      }
-      if (md.getRa().getOutboundRa() == null)
-      {
-         md.getRa().setOutboundRa(new OutboundRaMetaData());
-      }
-      if (md.getRa().getOutboundRa().getConDefs() == null)
-      {
-         md.getRa().getOutboundRa().setConDefs(new ArrayList<ConnectionDefinitionMetaData>());
-      }
+      createConDefs(md);
 
       for (ConnectionDefinitionMetaData cdMeta : md.getRa().getOutboundRa().getConDefs())
       {
@@ -588,7 +566,7 @@ public class Annotations
       {
          if (md.getRa() == null)
          {
-            throw new DeployException("@Connector should be already handled");
+            md.setRa(new ResourceAdapterMetaData());
          }
          if (md.getRa().getConfigProperty() == null)
          {
@@ -605,12 +583,7 @@ public class Annotations
       }
       else if (hasInterface(attachedClass, "javax.resource.spi.ManagedConnectionFactory"))
       {
-         if (md.getRa() == null || 
-            md.getRa().getOutboundRa() == null ||
-            md.getRa().getOutboundRa().getConDefs() == null)
-         {
-            throw new DeployException("@ConnectionDefinition should be already handled");
-         }
+         createConDefs(md);
          for (ConnectionDefinitionMetaData cdMeta : md.getRa().getOutboundRa().getConDefs())
          {
             if (attachedClassName.equals(cdMeta.getManagedConnectionFactoryClass()))
@@ -632,12 +605,7 @@ public class Annotations
       }
       else if (hasInterface(attachedClass, "javax.resource.spi.AdministeredObject"))
       {
-         if (md.getRa() == null || 
-            md.getRa().getOutboundRa() == null ||
-            md.getRa().getAdminObjects() == null)
-         {
-            throw new DeployException("@AdministeredObject should be already handled");
-         }
+         createAdminObject(md);
          for (AdminObjectMetaData aoMeta : md.getRa().getAdminObjects())
          {
             if (attachedClassName.equals(aoMeta.getAdminObjectImplementationClass()))
@@ -659,13 +627,7 @@ public class Annotations
       }
       else if (hasInterface(attachedClass, "javax.resource.spi.ActivationSpec"))
       {
-         if (md.getRa() == null || 
-            md.getRa().getInboundRa() == null ||
-            md.getRa().getInboundRa().getMessageAdapter() == null ||
-            md.getRa().getInboundRa().getMessageAdapter().getMessageListeners() == null)
-         {
-            throw new DeployException("@Activation should be already handled");
-         }
+         createMessageListeners(md);
          for (MessageListenerMetaData mlMeta : md.getRa().getInboundRa().getMessageAdapter().getMessageListeners())
          {
             if (attachedClassName.equals(mlMeta.getActivationSpecType().getAsClass()))
@@ -725,36 +687,6 @@ public class Annotations
       }
       return false;
    }
-   
-   /**
-    * Process: @AuthenticationMechanism
-    * @param md The metadata
-    * @param annotationRepository The annotation repository
-    * @return The updated metadata
-    * @exception Exception Thrown if an error occurs
-    */
-   /*
-   private static ConnectorMetaData processAuthenticationMechanism(ConnectorMetaData md, 
-                                                                   AnnotationRepository annotationRepository)
-      throws Exception
-   {
-      Collection<Annotation> values = annotationRepository.getAnnotation(AuthenticationMechanism.class);
-      if (values != null)
-      {
-         for (Annotation annotation : values)
-         {
-            AuthenticationMechanism a = (AuthenticationMechanism)annotation.getAnnotation();
-
-            if (trace)
-               log.trace("Processing: " + a);
-
-            md = attachAuthenticationMechanism(md, a);
-         }
-      }
-
-      return md;
-   }
-   */
 
    /**
     * Attach @AuthenticationMechanism
@@ -856,14 +788,7 @@ public class Annotations
    private static ConnectorMetaData attachAdministeredObject(ConnectorMetaData md, AdministeredObject a)
       throws Exception
    {
-      if (md.getRa() == null)
-      {
-         md.setRa(new ResourceAdapterMetaData());
-      }
-      if (md.getRa().getAdminObjects() == null)
-      {
-         md.getRa().setAdminObjects(new ArrayList<AdminObjectMetaData>());
-      }
+      createAdminObject(md);
       String aoName = null;
       if (a.adminObjectInterfaces().length > 0)
       {
@@ -913,6 +838,27 @@ public class Annotations
       if (trace)
          log.trace("Processing: " + activation);
       
+      createMessageListeners(md);
+      for (Class asClass : activation.messageListeners())
+      {
+         ActivationspecMetaData asMeta = new ActivationspecMetaData();
+         asMeta.setAsClass(annotation.getClassName());
+         MessageListenerMetaData mlMeta = new MessageListenerMetaData();
+         mlMeta.setActivationSpecType(asMeta);
+         mlMeta.setType(asClass.getName());
+         md.getRa().getInboundRa().getMessageAdapter().getMessageListeners().add(mlMeta);
+      }
+      return md;
+   }
+   
+
+   /**
+    * createMessageListeners
+    * @param md
+    * @throws Exception
+    */
+   private static void createMessageListeners(ConnectorMetaData md) throws Exception
+   {
       if (md.getRa() == null)
       {
          md.setRa(new ResourceAdapterMetaData());
@@ -929,15 +875,44 @@ public class Annotations
       {
          md.getRa().getInboundRa().getMessageAdapter().setMessageListeners(new ArrayList<MessageListenerMetaData>());
       }
-      for (Class asClass : activation.messageListeners())
-      {
-         ActivationspecMetaData asMeta = new ActivationspecMetaData();
-         asMeta.setAsClass(annotation.getClassName());
-         MessageListenerMetaData mlMeta = new MessageListenerMetaData();
-         mlMeta.setActivationSpecType(asMeta);
-         mlMeta.setType(asClass.getName());
-         md.getRa().getInboundRa().getMessageAdapter().getMessageListeners().add(mlMeta);
-      }
-      return md;
    }
+
+   /**
+    * createAdminObject
+    * @param md
+    * @throws Exception
+    */
+   private static void createAdminObject(ConnectorMetaData md) throws Exception
+   {
+      if (md.getRa() == null)
+      {
+         md.setRa(new ResourceAdapterMetaData());
+      }
+      if (md.getRa().getAdminObjects() == null)
+      {
+         md.getRa().setAdminObjects(new ArrayList<AdminObjectMetaData>());
+      }
+   }
+
+   /**
+    * createConDefs
+    * @param md
+    * @throws Exception
+    */
+   private static void createConDefs(ConnectorMetaData md) throws Exception
+   {
+      if (md.getRa() == null)
+      {
+         md.setRa(new ResourceAdapterMetaData());
+      }
+      if (md.getRa().getOutboundRa() == null)
+      {
+         md.getRa().setOutboundRa(new OutboundRaMetaData());
+      }
+      if (md.getRa().getOutboundRa().getConDefs() == null)
+      {
+         md.getRa().getOutboundRa().setConDefs(new ArrayList<ConnectionDefinitionMetaData>());
+      }
+   }
+
 }
