@@ -19,11 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec.rars.ra16inoutanno;
+package org.jboss.jca.test.deployers.spec.rars.ra16annoconndefs;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
 
-import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.AuthenticationMechanism;
 import javax.resource.spi.AuthenticationMechanism.CredentialInterface;
 import javax.resource.spi.ConfigProperty;
@@ -47,12 +46,10 @@ import javax.resource.spi.TransactionSupport;
       licenseDescription = { "licenseDescription" },
       licenseRequired = true,
       reauthenticationSupport = true,
-      authMechanisms = { @AuthenticationMechanism(credentialInterface = CredentialInterface.PasswordCredential) },
+      authMechanisms = { @AuthenticationMechanism(credentialInterface = CredentialInterface.GenericCredential) },
       securityPermissions = { @SecurityPermission(permissionSpec = "permissionSpec") },
-      transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction,
+      transactionSupport = TransactionSupport.TransactionSupportLevel.NoTransaction,
       requiredWorkContexts = { TestWorkContext.class })
-@AdministeredObject(
-      adminObjectInterfaces = TestAdminObject.class)
 public class TestResourceAdapter extends BaseResourceAdapter
 {
    @ConfigProperty(type = String.class, defaultValue = "JCA")

@@ -38,7 +38,7 @@ import org.jboss.papaki.AnnotationScannerFactory;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
+//import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -158,12 +158,12 @@ public class AnnotationsTestCase
     * Process: ConnectionDefinitions -- verification of the processConnectionDefinitions method
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testProcessConnectionDefinitions() throws Throwable
    {
       try
       {
-         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         URL url = getURL("ra16annoconndefs.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
@@ -180,12 +180,12 @@ public class AnnotationsTestCase
     * Process: ConnectionDefinition -- verification of the processConnectionDefinition method
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testProcessConnectionDefinition() throws Throwable
    {
       try
       {
-         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         URL url = getURL("ra16annoconndef.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
@@ -201,12 +201,12 @@ public class AnnotationsTestCase
     * Process: Activation -- verification of the processActivation method
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testProcessActivation() throws Throwable
    {
       try
       {
-         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         URL url = getURL("ra16annoactiv.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
@@ -222,12 +222,12 @@ public class AnnotationsTestCase
     * Process: AuthenticationMechanism -- verification of the processAuthenticationMechanism method
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testProcessAuthenticationMechanism() throws Throwable
    {
       try
       {
-         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         URL url = getURL("ra16annoauthmech.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
@@ -243,12 +243,12 @@ public class AnnotationsTestCase
     * Process: AdministeredObject -- verification of the processAdministeredObject method
     * @throws Throwable throwable exception 
     */
-   @Ignore
+   @Test
    public void testProcessAdministeredObject() throws Throwable
    {
       try
       {
-         URL url = getURL("ra16inoutnora.rar"); //TODO will create rar for testcase 
+         URL url = getURL("ra16annoadminobj.rar");
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 

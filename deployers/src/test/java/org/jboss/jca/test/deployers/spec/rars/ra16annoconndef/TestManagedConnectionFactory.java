@@ -19,42 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec.rars.ra16inoutanno;
+package org.jboss.jca.test.deployers.spec.rars.ra16annoconndef;
 
-import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
+import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
+import org.jboss.jca.test.deployers.spec.rars.TestConnection;
+import org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface;
 
-import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.AuthenticationMechanism;
-import javax.resource.spi.AuthenticationMechanism.CredentialInterface;
 import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.Connector;
-import javax.resource.spi.SecurityPermission;
-import javax.resource.spi.TransactionSupport;
+import javax.resource.spi.ConnectionDefinition;
+import javax.resource.spi.ConnectionDefinitions;
+import javax.resource.spi.ManagedConnection;
 
 /**
- * TestResourceAdapter
+ * TestManagedConnectionFactory
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
-@Connector(
-      description = { "Test RA" },
-      displayName = { "displayName" },
-      smallIcon = { "smallIcon" },
-      largeIcon = { "largeIcon" },
-      vendorName = "Red Hat Middleware LLC",
-      eisType = "Test RA",
-      version = "0.1",
-      licenseDescription = { "licenseDescription" },
-      licenseRequired = true,
-      reauthenticationSupport = true,
-      authMechanisms = { @AuthenticationMechanism(credentialInterface = CredentialInterface.PasswordCredential) },
-      securityPermissions = { @SecurityPermission(permissionSpec = "permissionSpec") },
-      transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction,
-      requiredWorkContexts = { TestWorkContext.class })
-@AdministeredObject(
-      adminObjectInterfaces = TestAdminObject.class)
-public class TestResourceAdapter extends BaseResourceAdapter
+@ConnectionDefinitions(
+@ConnectionDefinition(connectionFactory = ManagedConnection.class,
+      connectionFactoryImpl = TestManagedConnection.class,
+      connection = TestConnectionInterface.class,
+      connectionImpl = TestConnection.class))
+public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
 {
+   private static final long serialVersionUID = 1L;
+   
    @ConfigProperty(type = String.class, defaultValue = "JCA")
    private String myStringProperty;
 

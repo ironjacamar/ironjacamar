@@ -13,7 +13,7 @@
    <resourceadapter-version>0.1</resourceadapter-version>
 
    <resourceadapter>
-      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra16annoconfprop.TestResourceAdapter</resourceadapter-class>
+      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.ra16annoconndefs.TestResourceAdapter</resourceadapter-class>
 
       <config-property>
          <config-property-name>myStringProperty</config-property-name>
@@ -23,7 +23,7 @@
       
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra16annoconfprop.TestManagedConnectionFactory</managedconnectionfactory-class>
+            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra16annoconndefs.TestManagedConnectionFactory</managedconnectionfactory-class>
 
           <config-property>
              <config-property-name>myStringProperty</config-property-name>
@@ -32,13 +32,14 @@
           </config-property>
           
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
-            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra16annoconfprop.TestManagedConnection</connectionfactory-impl-class>
+            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra16annoconndefs.TestManagedConnection</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
             <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.TestConnection</connection-impl-class>
          </connection-definition>
-         <!-- overwrite -->
+         <!-- overwrite 
      
          <transaction-support>LocalTransaction</transaction-support>
+         -->
          <reauthentication-support>false</reauthentication-support>
       </outbound-resourceadapter>
       <inbound-resourceadapter>
@@ -46,7 +47,7 @@
             <messagelistener>
                <messagelistener-type>org.jboss.jca.test.deployers.spec.rars.MessageListener</messagelistener-type>
                <activationspec>
-                  <activationspec-class>org.jboss.jca.test.deployers.spec.rars.ra16annoconfprop.TestActivationSpec</activationspec-class>
+                  <activationspec-class>org.jboss.jca.test.deployers.spec.rars.ra16annoconndefs.TestActivationSpec</activationspec-class>
                </activationspec>
             </messagelistener>
          </messageadapter>

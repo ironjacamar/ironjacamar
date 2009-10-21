@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec.rars.ra16inoutanno;
+package org.jboss.jca.test.deployers.spec.rars.ra16annoconndef;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
 
@@ -47,9 +47,9 @@ import javax.resource.spi.TransactionSupport;
       licenseDescription = { "licenseDescription" },
       licenseRequired = true,
       reauthenticationSupport = true,
-      authMechanisms = { @AuthenticationMechanism(credentialInterface = CredentialInterface.PasswordCredential) },
+      authMechanisms = { @AuthenticationMechanism(credentialInterface = CredentialInterface.GSSCredential) },
       securityPermissions = { @SecurityPermission(permissionSpec = "permissionSpec") },
-      transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction,
+      transactionSupport = TransactionSupport.TransactionSupportLevel.XATransaction,
       requiredWorkContexts = { TestWorkContext.class })
 @AdministeredObject(
       adminObjectInterfaces = TestAdminObject.class)

@@ -19,43 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec.rars.ra16inoutanno;
+package org.jboss.jca.test.deployers.spec.rars.ra16annoadminobj;
 
-import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
+import org.jboss.jca.test.deployers.spec.rars.BaseActivationSpec;
 
-import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.AuthenticationMechanism;
-import javax.resource.spi.AuthenticationMechanism.CredentialInterface;
 import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.Connector;
-import javax.resource.spi.SecurityPermission;
-import javax.resource.spi.TransactionSupport;
 
 /**
- * TestResourceAdapter
+ * TestActivationSpec
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
-@Connector(
-      description = { "Test RA" },
-      displayName = { "displayName" },
-      smallIcon = { "smallIcon" },
-      largeIcon = { "largeIcon" },
-      vendorName = "Red Hat Middleware LLC",
-      eisType = "Test RA",
-      version = "0.1",
-      licenseDescription = { "licenseDescription" },
-      licenseRequired = true,
-      reauthenticationSupport = true,
-      authMechanisms = { @AuthenticationMechanism(credentialInterface = CredentialInterface.PasswordCredential) },
-      securityPermissions = { @SecurityPermission(permissionSpec = "permissionSpec") },
-      transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction,
-      requiredWorkContexts = { TestWorkContext.class })
-@AdministeredObject(
-      adminObjectInterfaces = TestAdminObject.class)
-public class TestResourceAdapter extends BaseResourceAdapter
+public class TestActivationSpec extends BaseActivationSpec
 {
-   @ConfigProperty(type = String.class, defaultValue = "JCA")
+   @ConfigProperty(type = String.class, defaultValue = "InAS")
    private String myStringProperty;
 
    /**
