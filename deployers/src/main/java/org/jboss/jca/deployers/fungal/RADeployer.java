@@ -107,12 +107,15 @@ public class RADeployer implements Deployer
       if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
          return null;
 
-      log.info("Deploying: " + url.toExternalForm());
+      log.debug("Deploying: " + url.toExternalForm());
 
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
       try
       {
          File f = new File(url.toURI());
+      
+         if (!f.exists())
+            throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
 
          File root = null;
 
@@ -274,6 +277,8 @@ public class RADeployer implements Deployer
          }
          
          // Activate deployment
+
+         log.info("Deployed: " + url.toExternalForm());
 
          return new RADeployment(url, cl);
       }
