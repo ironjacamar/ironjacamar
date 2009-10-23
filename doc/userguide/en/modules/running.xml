@@ -34,10 +34,45 @@ run.bat
      <para>Once the container has started you should see a log entry like</para>
 
      <programlisting>
-13:33:10,999 INFO  [Main] Server started in 1192ms
+13:33:10,999 INFO  [Main] Server started in 941ms
      </programlisting>
 
      <para>in the console where the command was executed.</para>
+
+   </section>
+
+
+   <section id="cli">
+      <title>Command line interface</title>
+
+      <para>The JBoss JCA container can be controlled by a command line interface.</para>
+
+      <section id="cli_deploy">
+        <title>Deploy</title>
+
+        <para>You can deploy a resource adapter archive (.rar) using</para>
+
+        <programlisting>
+java -jar jboss-jca-fungal-cli.jar deploy &lt;file&gt;
+        </programlisting>
+
+        <para>where <code>file</code> specifies the resource adapter archive.</para>
+
+      </section>
+
+      <section id="cli_undeploy">
+        <title>Undeploy</title>
+
+        <para>You can undeploy a resource adapter archive (.rar) using</para>
+
+        <programlisting>
+java -jar jboss-jca-fungal-cli.jar undeploy &lt;file&gt;
+        </programlisting>
+
+        <para>where <code>file</code> specifies the resource adapter archive.</para>
+
+      </section>
+
 
    </section>
 
