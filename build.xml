@@ -361,6 +361,7 @@
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-embedded.jar" />
       <class location="${target.dir}/jboss-jca-fungal.jar" />
+      <class location="${target.dir}/jboss-jca-fungal-cli.jar" />
       <class location="${target.dir}/jboss-jca-fungal-services.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
@@ -386,6 +387,7 @@
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-embedded.jar" />
       <class location="${target.dir}/jboss-jca-fungal.jar" />
+      <class location="${target.dir}/jboss-jca-fungal-cli.jar" />
       <class location="${target.dir}/jboss-jca-fungal-services.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />

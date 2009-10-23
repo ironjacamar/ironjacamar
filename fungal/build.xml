@@ -57,11 +57,16 @@
     <jar destfile="${target.dir}/jboss-jca-fungal.jar"
          manifest="src/main/resources/fungal-manifest.mf"
          basedir="${build.fungal.dir}/impl"
-         excludes="**/*.java,**/annotationscanner/**,**/util/**"/>
+         excludes="**/*.java,**/cli/**,**/util/**"/>
+    <jar destfile="${target.dir}/jboss-jca-fungal-cli.jar"
+         manifest="src/main/resources/fungal-cli-manifest.mf"
+         basedir="${build.fungal.dir}/impl"
+         includes="**/cli/**"
+         excludes="**/*.java"/>
     <jar destfile="${target.dir}/jboss-jca-fungal-services.jar"
          manifest="src/main/resources/fungal-services-manifest.mf"
          basedir="${build.fungal.dir}/impl"
-         includes="**/annotationscanner/**,**/util/**"
+         includes="**/util/**"
          excludes="**/*.java"/>
   </target>
 

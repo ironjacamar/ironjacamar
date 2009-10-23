@@ -46,6 +46,10 @@
             <entry>The documentation (Users Guide / Developers Guide) for the project.</entry>
           </row>
           <row>
+            <entry>Fungal</entry>
+            <entry>The JCA/Fungal kernel.</entry>
+          </row>
+          <row>
             <entry>JDBC</entry>
             <entry>A JDBC resource adapter.</entry>
           </row>

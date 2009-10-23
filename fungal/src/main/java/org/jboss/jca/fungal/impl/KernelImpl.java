@@ -24,6 +24,7 @@ package org.jboss.jca.fungal.impl;
 
 import org.jboss.jca.fungal.api.Kernel;
 import org.jboss.jca.fungal.deployers.Deployment;
+import org.jboss.jca.fungal.impl.remote.CommunicationServer;
 
 import java.io.Closeable;
 import java.io.File;
@@ -33,16 +34,15 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -51,9 +51,6 @@ import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
 
 /**
  * The kernel implementation for JBoss JCA/Fungal
@@ -91,8 +88,8 @@ public class KernelImpl implements Kernel
    /** MBeanServer */
    private MBeanServer mbeanServer;
 
-   /** JMXConnectorServer */
-   private JMXConnectorServer jmxConnectorServer;
+   /** Communition server */
+   private CommunicationServer remote;
 
    /** Temporary environment */
    private boolean temporaryEnvironment;
@@ -267,15 +264,10 @@ public class KernelImpl implements Kernel
       // Remote MBeanServer access
       if (kernelConfiguration.isRemoteAccess())
       {
-         Map<String, Object> env = new HashMap<String, Object>();
-         env.put("jmx.remote.protocol.provider.class.loader", kernelClassLoader);
-
-         JMXServiceURL serviceURL = new JMXServiceURL("rmi", 
-                                                      kernelConfiguration.getBindAddress(),
-                                                      kernelConfiguration.getRemotePort());
-         
-         jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(serviceURL, env, mbeanServer);
-         jmxConnectorServer.start();
+         remote = new CommunicationServer(this,
+                                          kernelConfiguration.getBindAddress(),
+                                          kernelConfiguration.getRemotePort());
+         Future<?> f = threadPoolExecutor.submit(remote);
       }
    }
 
@@ -287,17 +279,10 @@ public class KernelImpl implements Kernel
    {
       SecurityActions.setThreadContextClassLoader(kernelClassLoader);
 
-      // Stop the JMX connector
-      if (jmxConnectorServer != null)
+      // Stop the remote connector
+      if (remote != null)
       {
-         try
-         {
-            jmxConnectorServer.stop();
-         }
-         catch (IOException ioe)
-         {
-            // Nothing we can do
-         }
+         remote.stop();
       }
 
       // Shutdown thread pool
@@ -407,7 +392,7 @@ public class KernelImpl implements Kernel
     * Get the kernel class loader
     * @return The class loader
     */
-   KernelClassLoader getKernelClassLoader()
+   public KernelClassLoader getKernelClassLoader()
    {
       return kernelClassLoader;
    }
@@ -416,7 +401,7 @@ public class KernelImpl implements Kernel
     * Get the executor service
     * @return The executor service
     */
-   ExecutorService getExecutorService()
+   public ExecutorService getExecutorService()
    {
       return threadPoolExecutor;
    }

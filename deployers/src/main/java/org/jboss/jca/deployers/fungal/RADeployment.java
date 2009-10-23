@@ -78,7 +78,7 @@ public class RADeployment implements Deployment
     */
    public void destroy()
    {
-      log.info("Undeploying: " + adapter.toExternalForm());
+      log.debug("Undeploying: " + adapter.toExternalForm());
 
       if (cl != null && cl instanceof Closeable)
       {
@@ -91,5 +91,7 @@ public class RADeployment implements Deployment
             // Swallow
          }
       }
+
+      log.info("Undeployed: " + adapter.toExternalForm());
    }
 }

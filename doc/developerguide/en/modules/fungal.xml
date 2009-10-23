@@ -5,11 +5,38 @@
     <section id="fungal_overview">
       <title>Overview</title>
       
-      <para>The JBoss JCA/Fungal kernel implements a sub-set of the JBoss Microcontainer functionality
-        - basically just enough to boot the required services for a simple container environment.</para>
+      <para>The JBoss JCA/Fungal kernel is a Plain Old Java Object (POJO) based kernel which
+        can build a simple container environment for Java services.</para>
 
-      <para>The JBoss JCA/Fungal kernel features parallel deployments using a simple dependency management
-        algorithm, a simple deployment framework and a simple class loading model.</para>
+      <para>The kernel features</para>
+
+      <itemizedlist spacing="compact">
+        <listitem>
+          Bean definition language
+        </listitem>
+        <listitem>
+          Lifecycle of beans
+        </listitem>
+        <listitem>
+          Parallel deployment
+        </listitem>
+        <listitem>
+          Dependency management
+        </listitem>
+        <listitem>
+          Classloader architecture
+        </listitem>
+        <listitem>
+          Deployer framework
+        </listitem>
+        <listitem>
+          Communication protocol
+        </listitem>
+        <listitem>
+          Core services
+        </listitem>
+      </itemizedlist>
+
     </section>
 
     <section id="fungal_configuration">
@@ -129,11 +156,11 @@ ${jboss.jca.host:localhost}
       <itemizedlist>
         <listitem>
           <para>Inside Fungal</para>
-          <para>All logging is handled through reflection calls which are wrapped with methods inside <code>Main</code> itself.</para>
+          <para>All logging is handled through reflection calls</para>
         </listitem>
         <listitem>
           <para>All other services</para>
-          <para>Logging is handled by importing <code>org.jboss.logging.Logger</code> and using the class as you would normally do.</para>
+          <para>Logging is handled by importing <code>org.jboss.logging.Logger</code></para>
         </listitem>
       </itemizedlist>
     </section>
@@ -227,6 +254,163 @@ public Deployment deploy(URL url, ClassLoader parent) throws DeployException;
       <para>The <code>Deployment</code> interface returned represents the
         deployment unit or <code>null</code> if a deployment unit wasn't
         created.</para>
+
+    </section>
+
+    <section id="fungal_remote_protocol">
+      <title>Remote protocol</title>
+
+      <para>JBoss JCA/Fungal features a remote protocol to allow deployment
+        and undeployment of units.</para>
+
+      <para>The protocol is based on the <code>java.io.ObjectInputStream</code> and 
+        <code>java.io.ObjectOutputStream</code> format over a standard <code>java.net.Socket</code>
+        connection.</para>
+
+      <para>The kernel must be configured with <code>KernelConfiguration.remoteAccess(true)</code>
+        in order to enable remote access.</para>
+
+      <section id="fungal_remote_protocol_deploy">
+        <title>Deploy</title>
+
+        <para>Deploys a file.</para>
+
+        <table frame="all">
+          <title>Deploy: Input</title>
+          <tgroup cols="4" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1"/>
+            <colspec colname="c2"/>
+            <colspec colname="c3"/>
+            <colspec colname="c4" colwidth="4*"/>
+            <thead>
+              <row>
+                <entry align="left">Order</entry>
+                <entry align="left">Type</entry>
+                <entry align="left">Value</entry>
+                <entry align="left">Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>1</entry>
+                <entry>int</entry>
+                <entry>0x00</entry>
+                <entry>Identification</entry>
+              </row>
+              <row>
+                <entry>2</entry>
+                <entry>UTF</entry>
+                <entry>&lt;file url&gt;</entry>
+                <entry>Location of the deployment unit</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <table frame="all">
+          <title>Deploy: Output</title>
+          <tgroup cols="4" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1"/>
+            <colspec colname="c2"/>
+            <colspec colname="c3"/>
+            <colspec colname="c4" colwidth="4*"/>
+            <thead>
+              <row>
+                <entry align="left">Order</entry>
+                <entry align="left">Type</entry>
+                <entry align="left">Value</entry>
+                <entry align="left">Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>1</entry>
+                <entry>boolean</entry>
+                <entry>&lt;boolean&gt;</entry>
+                <entry>True if deployment were successful. False if error</entry>
+              </row>
+              <row>
+                <entry>2</entry>
+                <entry>UTF</entry>
+                <entry>&lt;message&gt;</entry>
+                <entry>Empty string if successful. Otherwise error description</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+      </section>
+
+      <section id="fungal_remote_protocol_undeploy">
+        <title>Undeploy</title>
+
+        <para>Undeploys a file.</para>
+
+        <table frame="all">
+          <title>Undeploy: Input</title>
+          <tgroup cols="4" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1"/>
+            <colspec colname="c2"/>
+            <colspec colname="c3"/>
+            <colspec colname="c4" colwidth="4*"/>
+            <thead>
+              <row>
+                <entry align="left">Order</entry>
+                <entry align="left">Type</entry>
+                <entry align="left">Value</entry>
+                <entry align="left">Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>1</entry>
+                <entry>int</entry>
+                <entry>0x01</entry>
+                <entry>Identification</entry>
+              </row>
+              <row>
+                <entry>2</entry>
+                <entry>UTF</entry>
+                <entry>&lt;file url&gt;</entry>
+                <entry>Location of the deployment unit</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <table frame="all">
+          <title>Undeploy: Output</title>
+          <tgroup cols="4" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1"/>
+            <colspec colname="c2"/>
+            <colspec colname="c3"/>
+            <colspec colname="c4" colwidth="4*"/>
+            <thead>
+              <row>
+                <entry align="left">Order</entry>
+                <entry align="left">Type</entry>
+                <entry align="left">Value</entry>
+                <entry align="left">Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>1</entry>
+                <entry>boolean</entry>
+                <entry>&lt;boolean&gt;</entry>
+                <entry>True if undeployment were successful. False if error</entry>
+              </row>
+              <row>
+                <entry>2</entry>
+                <entry>UTF</entry>
+                <entry>&lt;message&gt;</entry>
+                <entry>Empty string if successful. Otherwise error description</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+      </section>
 
     </section>
 

@@ -51,7 +51,15 @@
   </Match>
   <Match>
     <Class name="org.jboss.jca.fungal.impl.KernelImpl"/>
+    <Bug code="DLS,UPM"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.fungal.impl.remote.Communication"/>
     <Bug code="UPM"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.fungal.impl.remote.CommunicationServer"/>
+    <Bug code="DLS,UPM"/>
   </Match>
 
   <!--  org.jboss.jca.sjc filter -->
