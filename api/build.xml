@@ -47,7 +47,7 @@
        Target: jars
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/javax-resource-spec-api.jar"
+    <jar destfile="${target.dir}/jboss-jca-spec-api.jar"
          manifest="src/main/resources/manifest.mf"
          basedir="${build.api.dir}"
          excludes="**/*.java"/>

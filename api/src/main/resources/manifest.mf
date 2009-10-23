@@ -4,4 +4,3 @@ Specification-Vendor: JCP / JSR-322
 Implementation-Title: JBoss JCA Javax Resource API
 Implementation-Vendor: Red Hat Middleware LLC
 Implementation-Vendor-Id: org.jboss
-Implementation-Version: Public Review

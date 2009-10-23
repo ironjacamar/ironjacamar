@@ -351,7 +351,6 @@
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
-      <class location="${target.dir}/javax-resource-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-common-api.jar" />
       <class location="${target.dir}/jboss-jca-common-impl.jar" />
       <class location="${target.dir}/jboss-jca-core-api.jar" />
@@ -360,10 +359,11 @@
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-embedded.jar" />
-      <class location="${target.dir}/jboss-jca-fungal.jar" />
       <class location="${target.dir}/jboss-jca-fungal-cli.jar" />
       <class location="${target.dir}/jboss-jca-fungal-services.jar" />
+      <class location="${target.dir}/jboss-jca-fungal.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
+      <class location="${target.dir}/jboss-jca-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
     </findbugs>
 
@@ -377,7 +377,6 @@
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
-      <class location="${target.dir}/javax-resource-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-common-api.jar" />
       <class location="${target.dir}/jboss-jca-common-impl.jar" />
       <class location="${target.dir}/jboss-jca-core-api.jar" />
@@ -386,10 +385,11 @@
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-embedded.jar" />
-      <class location="${target.dir}/jboss-jca-fungal.jar" />
       <class location="${target.dir}/jboss-jca-fungal-cli.jar" />
       <class location="${target.dir}/jboss-jca-fungal-services.jar" />
+      <class location="${target.dir}/jboss-jca-fungal.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
+      <class location="${target.dir}/jboss-jca-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
     </findbugs>
   </target>
