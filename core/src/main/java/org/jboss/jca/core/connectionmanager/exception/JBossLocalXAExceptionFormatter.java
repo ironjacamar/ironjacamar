@@ -51,13 +51,13 @@ public class JBossLocalXAExceptionFormatter implements XAExceptionFormatter
     */
    public void formatXAException(XAException xae, Logger log)
    {
-      try
+      if (xae instanceof JBossLocalXAException)
       {
-         log.warn("JBoss Local XA wrapper error: ", ((JBossLocalXAException) xae).getCause());
+         log.warn("JBoss Local XA wrapper error: ", ((JBossLocalXAException) xae).getCause());   
       }
-      catch (Exception e)
+      else
       {
-         log.warn("Problem trying to format XAException: ", e);
+         log.warn("Problem trying to format XAException: ", xae);     
       }
    }
 }

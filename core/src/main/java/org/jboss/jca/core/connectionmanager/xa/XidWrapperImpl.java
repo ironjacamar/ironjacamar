@@ -151,12 +151,8 @@ public class XidWrapperImpl implements XidWrapper
          StringBuffer buffer = new StringBuffer();
          buffer.append("XidWrapper[FormatId=").append(getFormatId());
          buffer.append(" GlobalId=").append(new String(getGlobalTransactionId()).trim());
-         byte[] branchQualifer = getBranchQualifier();
          buffer.append(" BranchQual=");
-         if (branchQualifer == null)
-            buffer.append("null");
-         else
-            buffer.append(new String(getBranchQualifier()).trim());
+         buffer.append(new String(getBranchQualifier()).trim());
          buffer.append(']');
          cachedToString = buffer.toString();
       }

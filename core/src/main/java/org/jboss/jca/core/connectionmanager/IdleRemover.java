@@ -171,16 +171,31 @@ public class IdleRemover
          return;
       }
       
-      AccessController.doPrivileged(new PrivilegedAction<Object>()
-      {
-         public Object run()
-         {
-            Thread.currentThread().setContextClassLoader(cl);
-            
-            return null;
-         }
-      });
+      AccessController.doPrivileged(new ClassLoaderAction(cl));
+      
    }
+   
+   /**
+    * Priviledge action. 
+    */
+   private static class ClassLoaderAction implements PrivilegedAction<Object>
+   {
+      private ClassLoader classLoader;
+      
+      public ClassLoaderAction(ClassLoader cl)
+      {
+         this.classLoader = cl;
+      }
+      
+      public Object run()
+      {
+         Thread.currentThread().setContextClassLoader(classLoader);
+         
+         return null;
+      }
+      
+   }   
+   
    
    /**
     * Wait for background thread.

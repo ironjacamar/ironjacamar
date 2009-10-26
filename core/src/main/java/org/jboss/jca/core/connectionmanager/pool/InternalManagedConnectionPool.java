@@ -292,8 +292,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       this.checkedOut.remove(connectionListener);
       
       //Destroy it
-      doDestroy(connectionListener);
-      connectionListener = null;                              
+      doDestroy(connectionListener);                              
    }
    
    /**

@@ -173,15 +173,29 @@ public class ConnectionValidator
          return;
       }
       
-      AccessController.doPrivileged(new PrivilegedAction<Object>()
+      AccessController.doPrivileged(new ClassLoaderAction(cl));
+ 
+   }
+   
+   /**
+    * Priviledge action. 
+    */
+   private static class ClassLoaderAction implements PrivilegedAction<Object>
+   {
+      private ClassLoader classLoader;
+      
+      public ClassLoaderAction(ClassLoader cl)
       {
-         public Object run()
-         {
-            Thread.currentThread().setContextClassLoader(cl);
-            
-            return null;
-         }
-      });
+         this.classLoader = cl;
+      }
+      
+      public Object run()
+      {
+         Thread.currentThread().setContextClassLoader(classLoader);
+         
+         return null;
+      }
+      
    }
    
    /**
