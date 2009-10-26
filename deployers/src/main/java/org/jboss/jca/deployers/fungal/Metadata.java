@@ -22,25 +22,30 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.fungal.deployers.DeployException;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.jboss.logging.Logger;
-//import org.jboss.metadata.rar.jboss.JBossRA10DefaultNSMetaData;
 import org.jboss.metadata.rar.jboss.JBossRA10MetaData;
 import org.jboss.metadata.rar.jboss.JBossRA20DefaultNSMetaData;
 import org.jboss.metadata.rar.jboss.JBossRA20MetaData;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
 import org.jboss.metadata.rar.jboss.RaConfigPropertyMetaData;
 import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
+import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
+import org.jboss.metadata.rar.spec.InboundRaMetaData;
 import org.jboss.metadata.rar.spec.JCA15DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA15MetaData;
 import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
+import org.jboss.metadata.rar.spec.MessageListenerMetaData;
+import org.jboss.metadata.rar.spec.OutboundRaMetaData;
 import org.jboss.xb.binding.Unmarshaller;
 import org.jboss.xb.binding.UnmarshallerFactory;
 import org.jboss.xb.binding.resolver.MutableSchemaResolver;
@@ -276,5 +281,73 @@ public class Metadata
       }
 
       return cmd;
+   }
+   
+   /**
+    * Validate specification metadata
+    * @param cmd The specification metadata
+    * @return The merged metadata
+    * @exception Exception Thrown if an error occurs
+    */
+   public static ConnectorMetaData validate(ConnectorMetaData cmd) throws Exception
+   {
+      //make sure all need metadata parsered and processed after annotation handle
+      if (cmd.getRa() == null)
+         throw new DeployException("ResourceAdapter metadata should be defined");
+      
+      //make sure ra metadata contains inbound or outbound at least
+      boolean inboundOrOutbound = false;
+      if (validateOutbound(cmd.getRa().getOutboundRa()))
+         inboundOrOutbound = true;
+      if (validateInbound(cmd.getRa().getInboundRa()) && cmd.getRa().getRaClass() != null)
+         inboundOrOutbound = true;
+      if (!inboundOrOutbound)
+         throw new DeployException("ResourceAdapter metadata should contains inbound or outbound at least");
+      return cmd;
+   }
+   
+   /**
+    * Validate outbound metadata
+    * @param omd The specification metadata
+    * @return validate
+    * @exception Exception Thrown if an error occurs
+    */
+   private static boolean validateOutbound(OutboundRaMetaData omd) throws Exception
+   {
+      if (omd == null)
+         return false;
+      if (omd.getConDefs() == null || omd.getConDefs().size() == 0)
+         return false;
+      ConnectionDefinitionMetaData cdm = omd.getConDefs().get(0);
+      if (cdm.getManagedConnectionFactoryClass() == null ||
+         cdm.getConnectionFactoryInterfaceClass() == null ||
+         cdm.getConnectionFactoryImplementationClass() == null ||
+         cdm.getConnectionInterfaceClass() == null ||
+         cdm.getConnectionImplementationClass() == null)
+         return false;
+   
+      return true;
+   }
+   
+   /**
+    * Validate inbound metadata
+    * @param cmd The specification metadata
+    * @return validate
+    * @exception Exception Thrown if an error occurs
+    */
+   private static boolean validateInbound(InboundRaMetaData imd) throws Exception
+   {
+      if (imd == null)
+         return false;
+      if (imd.getMessageAdapter() == null ||
+         imd.getMessageAdapter().getMessageListeners() == null ||
+         imd.getMessageAdapter().getMessageListeners().size() == 0)
+         return false;
+      MessageListenerMetaData mlmd = imd.getMessageAdapter().getMessageListeners().get(0);
+      if (mlmd.getType() == null ||
+         mlmd.getActivationSpecType() == null ||
+         mlmd.getActivationSpecType().getAsClass() == null)
+         return false;
+      return true;
    }
 }

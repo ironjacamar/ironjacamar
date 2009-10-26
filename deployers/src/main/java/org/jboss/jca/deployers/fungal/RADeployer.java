@@ -171,6 +171,7 @@ public class RADeployer implements Deployer
          }
          
          // Validate metadata
+         Metadata.validate(cmd);
          
          // Merge metadata
          cmd = Metadata.merge(cmd, jrmd);
