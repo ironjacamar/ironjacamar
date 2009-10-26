@@ -603,28 +603,6 @@ public class Annotations
             }
          }
       }
-      else if (hasInterface(attachedClass, "javax.resource.spi.AdministeredObject"))
-      {
-         createAdminObject(md);
-         for (AdminObjectMetaData aoMeta : md.getRa().getAdminObjects())
-         {
-            if (attachedClassName.equals(aoMeta.getAdminObjectImplementationClass()))
-            {
-               if (aoMeta.getConfigProps() == null)
-               {
-                  aoMeta.setConfigProps(new ArrayList<ConfigPropertyMetaData>());
-               }
-               for (ConfigPropertyMetaData cpMeta : aoMeta.getConfigProps())
-               {
-                  if (cpMeta.getName().equals(cfgMeta.getName()))
-                  {
-                     return md;
-                  }
-               }
-               aoMeta.getConfigProps().add(cfgMeta);
-            }
-         }
-      }
       else if (hasInterface(attachedClass, "javax.resource.spi.ActivationSpec"))
       {
          createMessageListeners(md);
