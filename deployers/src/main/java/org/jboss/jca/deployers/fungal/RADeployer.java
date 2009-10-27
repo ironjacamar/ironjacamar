@@ -283,6 +283,11 @@ public class RADeployer implements Deployer
 
          return new RADeployment(url, cl);
       }
+      catch (DeployException de)
+      {
+         // Just rethrow
+         throw de;
+      }
       catch (Throwable t)
       {
          throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
@@ -301,7 +306,7 @@ public class RADeployer implements Deployer
     * @throws DeployException
     */
    private void initAndInject(String className, List<ConfigPropertyMetaData> cpMetas,
-      List<Object> mcfs, URLClassLoader cl) throws DeployException
+                              List<Object> mcfs, URLClassLoader cl) throws DeployException
    {
       Object mcf = null;
       try 
@@ -351,9 +356,12 @@ public class RADeployer implements Deployer
          // Add the contents of the directory too
          File[] jars = directory.listFiles(new JarFilter());
 
-         for (int j = 0; jars != null && j < jars.length; j++)
+         if (jars != null)
          {
-            list.add(jars[j].getCanonicalFile().toURI().toURL());
+            for (int j = 0; j < jars.length; j++)
+            {
+               list.add(jars[j].getCanonicalFile().toURI().toURL());
+            }
          }
       }
       return list.toArray(new URL[list.size()]);      
