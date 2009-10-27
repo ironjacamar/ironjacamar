@@ -26,7 +26,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Properties;
 
 /**
  * Privileged Blocks
@@ -47,9 +46,9 @@ class SecurityActions
     */
    static ClassLoader getThreadContextClassLoader()
    {
-      return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() 
       {
-         public Object run()
+         public ClassLoader run()
          {
             return Thread.currentThread().getContextClassLoader();
          }
@@ -73,49 +72,17 @@ class SecurityActions
    }
 
    /**
-    * Get the system properties
-    * @return The properties
-    */
-   static Properties getSystemProperties()
-   {
-      return (Properties)AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            return System.getProperties();
-         }
-      });
-   }
-
-   /**
     * Get a system property
     * @param name The property name
     * @return The property value
     */
    static String getSystemProperty(final String name)
    {
-      return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      return AccessController.doPrivileged(new PrivilegedAction<String>() 
       {
-         public Object run()
+         public String run()
          {
             return System.getProperty(name);
-         }
-      });
-   }
-
-   /**
-    * Set a system property
-    * @param name The property name
-    * @param value The property value
-    */
-   static void setSystemProperty(final String name, final String value)
-   {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            System.setProperty(name, value);
-            return null;
          }
       });
    }
@@ -128,9 +95,9 @@ class SecurityActions
     */
    static URLClassLoader createURLCLassLoader(final URL[] urls, final ClassLoader parent)
    {
-      return (URLClassLoader)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() 
       {
-         public Object run()
+         public URLClassLoader run()
          {
             return new URLClassLoader(urls, parent);
          }
