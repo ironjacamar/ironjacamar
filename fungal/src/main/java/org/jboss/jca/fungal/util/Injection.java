@@ -52,9 +52,6 @@ public class Injection
       if (propertyName == null || propertyName.trim().equals(""))
          throw new IllegalArgumentException("PropertyName is undefined");
 
-      if (propertyValue == null || propertyValue.trim().equals(""))
-         throw new IllegalArgumentException("PropertyValue is undefined");
-
       if (object == null)
          throw new IllegalArgumentException("Object is null");
 
@@ -62,50 +59,60 @@ public class Injection
       Class parameterClass = null;
       Object parameterValue = null;
 
+      String substituredValue = getSubstitutionValue(propertyValue);
+
       if (propertyType.equals("java.lang.String"))
       {
          parameterClass = String.class;
-         parameterValue = getSubstitutionValue(propertyValue);
+         parameterValue = substituredValue;
       }
       else if (propertyType.equals("byte") || propertyType.equals("java.lang.Byte"))
       {
          parameterClass = Byte.class;
-         parameterValue = Byte.valueOf(getSubstitutionValue(propertyValue));
+         if (substituredValue != null && !substituredValue.trim().equals(""))
+            parameterValue = Byte.valueOf(substituredValue);
       }
       else if (propertyType.equals("short") || propertyType.equals("java.lang.Short"))
       {
          parameterClass = Short.class;
-         parameterValue = Short.valueOf(getSubstitutionValue(propertyValue));
+         if (substituredValue != null && !substituredValue.trim().equals(""))
+            parameterValue = Short.valueOf(substituredValue);
       }
       else if (propertyType.equals("int") || propertyType.equals("java.lang.Integer"))
       {
          parameterClass = Integer.class;
-         parameterValue = Integer.valueOf(getSubstitutionValue(propertyValue));
+         if (substituredValue != null && !substituredValue.trim().equals(""))
+            parameterValue = Integer.valueOf(substituredValue);
       }
       else if (propertyType.equals("long") || propertyType.equals("java.lang.Long"))
       {
          parameterClass = Long.class;
-         parameterValue = Long.valueOf(getSubstitutionValue(propertyValue));
+         if (substituredValue != null && !substituredValue.trim().equals(""))
+            parameterValue = Long.valueOf(substituredValue);
       }
       else if (propertyType.equals("float") || propertyType.equals("java.lang.Float"))
       {
          parameterClass = Float.class;
-         parameterValue = Float.valueOf(getSubstitutionValue(propertyValue));
+         if (substituredValue != null && !substituredValue.trim().equals(""))
+            parameterValue = Float.valueOf(substituredValue);
       }
       else if (propertyType.equals("double") || propertyType.equals("java.lang.Double"))
       {
          parameterClass = Double.class;
-         parameterValue = Double.valueOf(getSubstitutionValue(propertyValue));
+         if (substituredValue != null && !substituredValue.trim().equals(""))
+            parameterValue = Double.valueOf(substituredValue);
       }
       else if (propertyType.equals("boolean") || propertyType.equals("java.lang.Boolean"))
       {
          parameterClass = Boolean.class;
-         parameterValue = Boolean.valueOf(getSubstitutionValue(propertyValue));
+         if (substituredValue != null && !substituredValue.trim().equals(""))
+            parameterValue = Boolean.valueOf(substituredValue);
       }
       else if (propertyType.equals("char") || propertyType.equals("java.lang.Character"))
       {
          parameterClass = Character.class;
-         parameterValue = Character.valueOf((getSubstitutionValue(propertyValue)).charAt(0));
+         if (substituredValue != null && !substituredValue.trim().equals(""))
+            parameterValue = Character.valueOf(substituredValue.charAt(0));
       }
       else
       {
@@ -119,8 +126,55 @@ public class Injection
          methodName += propertyName.substring(1);
       }
 
-      Method method = object.getClass().getMethod(methodName, parameterClass);
-      method.invoke(object, new Object[] {parameterValue});
+      Method method = null;
+      boolean objectInjection = true;
+
+      try
+      {
+         method = object.getClass().getMethod(methodName, parameterClass);
+      }
+      catch (NoSuchMethodException nsme)
+      {
+         objectInjection = false;
+
+         if (parameterClass.equals(Byte.class))
+         {
+            parameterClass = byte.class;
+         }
+         else if (parameterClass.equals(Short.class))
+         {
+            parameterClass = short.class;
+         }
+         else if (parameterClass.equals(Integer.class))
+         {
+            parameterClass = int.class;
+         }
+         else if (parameterClass.equals(Long.class))
+         {
+            parameterClass = long.class;
+         }
+         else if (parameterClass.equals(Float.class))
+         {
+            parameterClass = float.class;
+         }
+         else if (parameterClass.equals(Double.class))
+         {
+            parameterClass = double.class;
+         }
+         else if (parameterClass.equals(Boolean.class))
+         {
+            parameterClass = boolean.class;
+         }
+         else if (parameterClass.equals(Character.class))
+         {
+            parameterClass = char.class;
+         }
+
+         method = object.getClass().getMethod(methodName, parameterClass);
+      }
+
+      if (objectInjection || parameterValue != null)
+         method.invoke(object, new Object[] {parameterValue});
    }
 
    /**
