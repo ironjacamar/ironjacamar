@@ -144,6 +144,7 @@ public class WARDeployer implements Deployer
          log.debug("ContextPath=" + contextPath);
 
          WebAppContext webapp = new WebAppContext();
+         webapp.setServer(server);
          webapp.setContextPath(contextPath);
          webapp.setWar(url.toString());
          webapp.setTempDirectory(tmpDeployment); 
