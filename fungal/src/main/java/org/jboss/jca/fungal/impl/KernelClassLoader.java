@@ -22,6 +22,8 @@
 
 package org.jboss.jca.fungal.impl;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,7 +33,7 @@ import java.util.concurrent.ConcurrentMap;
  * Kernel class loader
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class KernelClassLoader extends URLClassLoader
+public class KernelClassLoader extends URLClassLoader implements Closeable
 {
    /** Simple types */
    private static ConcurrentMap<String, Class<?>> simpleTypes = new ConcurrentHashMap<String, Class<?>>(9);
@@ -72,5 +74,22 @@ public class KernelClassLoader extends URLClassLoader
          return result;
 
       return loadClass(name, false);
+   }
+
+   /**
+    * Close - no operation as shutdown needs to be called explicit
+    * @exception IOException Thrown if an error occurs
+    */
+   public void close() throws IOException
+   {
+   }
+
+   /**
+    * Shutdown
+    * @exception IOException Thrown if an error occurs
+    */
+   public void shutdown() throws IOException
+   {
+      // Implement this by calling super.close() when JDK7
    }
 }

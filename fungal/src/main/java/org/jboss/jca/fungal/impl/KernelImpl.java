@@ -26,7 +26,6 @@ import org.jboss.jca.fungal.api.Kernel;
 import org.jboss.jca.fungal.deployers.Deployment;
 import org.jboss.jca.fungal.impl.remote.CommunicationServer;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -312,12 +311,12 @@ public class KernelImpl implements Kernel
          recursiveDelete(root);
       }
 
-      // Reset class loader
-      if (kernelClassLoader != null && kernelClassLoader instanceof Closeable)
+      // Shutdown kernel class loader
+      if (kernelClassLoader != null)
       {
          try
          {
-            ((Closeable)kernelClassLoader).close();
+            kernelClassLoader.shutdown();
          }
          catch (IOException ioe)
          {
@@ -325,6 +324,7 @@ public class KernelImpl implements Kernel
          }
       }
 
+      // Reset to the old class loader
       SecurityActions.setThreadContextClassLoader(oldClassLoader);
    }
 
