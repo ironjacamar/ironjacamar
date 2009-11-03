@@ -78,4 +78,42 @@
     <Bug code="UPM"/>
   </Match>
 
+  <!--  org.jboss.jca.web filter -->
+  <Match>
+    <Class name="org.jboss.jca.web.WARDeployment"/>
+    <Bug code="UrF"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.web.console.HtmlAdaptorServlet"/>
+    <Bug code="DLS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.web.console.HtmlAdaptorServlet$1"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.web.console.HtmlAdaptorServlet$2"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.web.console.HtmlAdaptorServlet$3"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.web.console.HtmlAdaptorServlet$4"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.web.console.HtmlAdaptorServlet$5"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.web.console.OpResultInfo"/>
+    <Bug code="EI,EI2"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.web.console.Server"/>
+    <Bug code="RCN"/>
+  </Match>
+
 </FindBugsFilter>

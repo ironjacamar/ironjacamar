@@ -1,0 +1,16 @@
+<deployment>
+
+  <!-- Web Server -->
+  <bean name="WebServer" class="org.jboss.jca.web.WebServer">
+    <property name="host">${jboss.jca.bindaddress:localhost}</property>
+    <property name="port">8080</property>
+    <depends>NamingServer</depends>
+  </bean>
+
+  <!-- WAR deployer -->
+  <bean name="WARDeployer" class="org.jboss.jca.web.WARDeployer">
+    <property name="server"><inject bean="WebServer" property="Server"/></property>
+    <depends>WebServer</depends>
+  </bean>
+
+</deployment>

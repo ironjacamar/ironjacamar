@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<web-app version="2.5"
+   xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+   
+   <description>The JBoss JCA Management Console</description>
+
+   <servlet>
+     <servlet-name>HtmlAdaptor</servlet-name>
+     <servlet-class>org.jboss.jca.web.console.HtmlAdaptorServlet</servlet-class>
+   </servlet>
+
+   <servlet-mapping>
+      <servlet-name>HtmlAdaptor</servlet-name>
+      <url-pattern>/HtmlAdaptor</url-pattern>
+   </servlet-mapping>
+
+   <error-page>
+      <error-code>500</error-code>
+      <location>/error.jsp</location>
+   </error-page>
+
+</web-app>

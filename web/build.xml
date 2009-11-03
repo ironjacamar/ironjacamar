@@ -1,0 +1,104 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="jboss-jca-web" 
+         default="compile" 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.web.dir" value="${build.dir}/web" />
+
+  <!-- ================================= 
+       Target: init
+       ================================= -->
+  <target name="init">
+    <mkdir dir="${build.web.dir}" />
+    <mkdir dir="${build.web.dir}/impl" />
+  </target>
+
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile" depends="init">
+    <javac srcdir="src/main"
+           destdir="${build.web.dir}/impl"
+           classpathref="sjc.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+  </target>
+
+  <!-- ================================= 
+       Target: jars 
+       ================================= -->
+  <target name="jars" depends="compile">
+    <copy todir="${build.web.dir}/impl">
+      <fileset dir="src/main/resources"
+               includes="*.xml"/>
+    </copy>
+    <jar destfile="${target.dir}/jboss-jca-web.jar"
+         manifest="src/main/resources/web-manifest.mf"
+         basedir="${build.web.dir}/impl"
+         excludes="**/console/**,**/*.java"/>
+
+    <jar destfile="${target.dir}/jboss-jca-web-console.jar"
+         manifest="src/main/resources/console-manifest.mf"
+         basedir="${build.web.dir}/impl"
+         includes="**/console/**"
+         excludes="**/*.java"/>
+
+    <war destfile="${target.dir}/console.war"
+         webxml="src/main/resources/console/WEB-INF/web.xml">
+      <fileset dir="src/main/resources/console"/>
+      <lib dir="${target.dir}">
+        <include name="jboss-jca-web-console.jar"/>
+      </lib>
+      <lib dir="${lib.dir}/sjc">
+        <include name="dom4j.jar"/>
+      </lib>
+    </war>
+
+  </target>
+
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs">
+    <mkdir dir="${target.dir}/docs/web"/>
+    <javadoc packagenames="org.*"
+             sourcepath="src/main/java"
+             destdir="${target.dir}/docs/web"
+             author="true"
+             version="true"
+             windowtitle="JBoss JCA Web"
+             doctitle="JBoss JCA Web"
+             use="true"
+             classpathref="sjc.lib.path.id"
+             bottom="Copyright &#169; 2009 Red Hat Middleware LLC (http://www.jboss.com/)">
+      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+  </target>
+
+</project>

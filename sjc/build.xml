@@ -134,12 +134,14 @@
         <exclude name="jboss-jca-deployers-main.jar"/>
         <exclude name="jboss-jca-deployers-rar.jar"/>
         <exclude name="jboss-jca-standalone.jar"/>
+        <exclude name="jboss-jca-web-console.jar"/>
       </fileset>
     </copy>
 
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${lib.dir}/sjc">
         <include name="*.jar"/>
+        <exclude name="dom4j.jar"/>
         <exclude name="jaxb-api.jar"/>
         <exclude name="xercesImpl.jar"/>
         <exclude name="stax-api.jar"/>
@@ -151,6 +153,12 @@
         <include name="jaxb-api.jar"/>
         <include name="xercesImpl.jar"/>
         <include name="stax-api.jar"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/deploy">
+      <fileset dir="${target.dir}">
+        <include name="*.war"/>
       </fileset>
     </copy>
 

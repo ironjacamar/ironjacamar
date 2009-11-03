@@ -39,6 +39,7 @@
     <dependency org="apache-log4j" name="log4j" rev="${version.apache-log4j}" conf="standalone->default;sjc->*"/>
     <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="*"/>
     <dependency org="com.sun.xml.bind" name="jaxb-impl" rev="${version.jaxb.impl}" conf="standalone->default;sjc->*"/>
+    <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="standalone->default;sjc->*"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="standalone->default;sjc->*"/>
     <dependency org="javax.activation" name="activation" rev="${version.activation}" conf="standalone->default;sjc->*"/>
     <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="standalone->default;sjc->*"/>
@@ -49,6 +50,7 @@
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test->default"/>
     <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
     <dependency org="org.easymock" name="easymockclassextension" rev="${version.easymock}" conf="test->default"/>
+    <dependency org="org.eclipse.jdt" name="core" rev="${version.eclipse-jdt}" conf="standalone->default;sjc->*"/>
     <dependency org="org.hibernate" name="hibernate-validator" rev="${version.hibernate-validator}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="standalone->default;sjc->*"/>
@@ -88,6 +90,11 @@
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logging" rev="${version.jboss.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.security" name="jboss-security-spi-bare" rev="${version.jboss.security}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logmanager" rev="${version.jboss.slf4j.logmanager}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.mortbay.jetty" name="jetty" rev="${version.jetty}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.mortbay.jetty" name="jetty-util" rev="${version.jetty}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.mortbay.jetty" name="jsp-2.1" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.mortbay.jetty" name="jsp-api-2.1" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="stax" name="stax-api" rev="${version.stax}" conf="standalone->default;sjc->*"/>
