@@ -166,4 +166,55 @@
 
   </target>
 
+  <!-- ================================= 
+       Target: war
+       ================================= -->
+  <target name="war" depends="compile">
+    <mkdir dir="${build.dir}/sjc/war"/>
+    <mkdir dir="${build.dir}/sjc/war/api"/>
+    <mkdir dir="${build.dir}/sjc/war/userguide"/>
+    <mkdir dir="${build.dir}/sjc/war/developerguide"/>
+
+    <ant dir="${api.dir}" inheritRefs="true" target="docs"/>
+    <move todir="${build.dir}/sjc/war/api">
+      <fileset dir="${target.dir}/docs/spec">
+        <include name="**/*"/>
+      </fileset>
+    </move>
+
+    <ant dir="${doc.dir}/userguide" target="html"/>
+    <move todir="${build.dir}/sjc/war/userguide">
+      <fileset dir="${build.dir}/en/html">
+        <include name="**/*"/>
+      </fileset>
+    </move>
+
+    <ant dir="${doc.dir}/developerguide" target="html"/>
+    <move todir="${build.dir}/sjc/war/developerguide">
+      <fileset dir="${build.dir}/en/html">
+        <include name="**/*"/>
+      </fileset>
+    </move>
+
+    <copy todir="${build.dir}/sjc/war">
+      <fileset dir="src/main/resources/root/">
+        <include name="**/*"/>
+      </fileset>
+    </copy>
+
+    <war destfile="${target.dir}/root.war"
+         needxmlfile="false">
+      <fileset dir="${build.dir}/sjc/war"/>
+    </war>
+
+    <delete dir="${build.dir}/en"/>
+
+    <copy todir="${target.dir}/sjc/deploy">
+      <fileset dir="${target.dir}">
+        <include name="*.war"/>
+      </fileset>
+    </copy>
+
+  </target>
+
 </project>

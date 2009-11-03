@@ -48,6 +48,8 @@
        ================================= -->
   <property name="lib.dir" value="${basedir}/lib" />
   <property name="build.dir" value="${basedir}/build" />
+  <property name="api.dir" value="${basedir}/api" />
+  <property name="doc.dir" value="${basedir}/doc" />
   <property name="target.dir" value="${basedir}/target" />
   <property name="tools.dir" value="${basedir}/tools" />
   <property name="reports.dir" value="${basedir}/reports" />
@@ -279,6 +281,9 @@
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc" />
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec" />
 
+    <ant dir="sjc" inheritRefs="true" target="war"/>
+    <delete dir="${build.dir}/sjc"/>
+
     <ant dir="doc/userguide" target="pdf"/>
     <ant dir="doc/developerguide" target="pdf"/>
 
@@ -309,9 +314,6 @@
     
     <gzip zipfile="${name}-${major}.${minor}.${patch}.${type}.tar.gz" 
           src="${name}-${major}.${minor}.${patch}.${type}.tar"/>
-    
-    <bzip2 zipfile="${name}-${major}.${minor}.${patch}.${type}.tar.bz2" 
-           src="${name}-${major}.${minor}.${patch}.${type}.tar"/>
     
     <delete file="${name}-${major}.${minor}.${patch}.${type}.tar"/>
     
@@ -556,6 +558,8 @@
     <delete dir="${build.dir}"/>
     <delete dir="${target.dir}"/>
     <delete dir="${reports.dir}"/>
+    <delete file="${name}-${major}.${minor}.${patch}.${type}.zip" />
+    <delete file="${name}-${major}.${minor}.${patch}.${type}.tar.gz" />
   </target>
   
   <!-- ================================= 
