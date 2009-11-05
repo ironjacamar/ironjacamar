@@ -25,6 +25,7 @@ package org.jboss.jca.web;
 import org.jboss.jca.fungal.deployers.DeployException;
 import org.jboss.jca.fungal.deployers.Deployer;
 import org.jboss.jca.fungal.deployers.Deployment;
+import org.jboss.jca.fungal.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -131,11 +132,11 @@ public class WARDeployer implements Deployer
          File tmp = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
          File tmpDeployment = new File(tmp, "/web" + contextPath);
 
-         if (!tmpDeployment.exists())
-         {
-            if (!tmpDeployment.mkdirs())
-               throw new IOException("Unable to create " + tmpDeployment);
-         }
+         if (tmpDeployment.exists())
+            FileUtil.recursiveDelete(tmpDeployment);
+
+         if (!tmpDeployment.mkdirs())
+            throw new IOException("Unable to create " + tmpDeployment);
 
          // Map ROOT.war to /
          if ("/ROOT".equalsIgnoreCase(contextPath))
