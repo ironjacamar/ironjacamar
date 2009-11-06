@@ -4,6 +4,7 @@
   <bean name="WebServer" class="org.jboss.jca.web.WebServer">
     <property name="host">${jboss.jca.bindaddress:localhost}</property>
     <property name="port">8080</property>
+    <property name="executorService"><inject bean="Kernel" property="ExecutorService"/></property>
   </bean>
 
   <!-- WAR deployer -->

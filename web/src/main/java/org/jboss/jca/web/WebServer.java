@@ -132,6 +132,9 @@ public class WebServer
 
       server.setConnectors(new Connector[]{connector});
 
+      if (executorService != null)
+         server.setThreadPool(new ExecutorThreadPool(executorService));
+
       server.start();
 
       log.info("Jetty " + Server.getVersion() + " started");
