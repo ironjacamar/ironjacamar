@@ -80,7 +80,7 @@
   <property name="version.dom4j" value="1.6.1"/>
   <property name="version.easymock" value="2.4"/>
   <property name="version.eclipse-jdt" value="3.1.1"/>
-  <property name="version.hibernate-validator" value="4.0.1.GA"/>
+  <property name="version.hibernate-validator" value="4.0.2.GA"/>
   <property name="version.javassist" value="3.11.0.GA"/>
   <property name="version.jaxb.api" value="2.1"/>
   <property name="version.jaxb.impl" value="2.1.9"/>
