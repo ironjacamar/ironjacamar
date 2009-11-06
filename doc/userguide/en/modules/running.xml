@@ -39,6 +39,14 @@ run.bat
 
      <para>in the console where the command was executed.</para>
 
+     <para>After the container has started you can browse to</para>
+
+     <programlisting>
+http://localhost:8080
+     </programlisting>
+
+     <para>to view the project documentation and use the administration console.</para>
+
    </section>
 
 

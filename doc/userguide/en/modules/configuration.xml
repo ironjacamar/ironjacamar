@@ -39,5 +39,32 @@ config/jbossts-properties.xml
 
    </section>
 
+   <section id="webserver">
+      <title>Web server</title>
+
+      <para>The JBoss JCA project features a web server which is used to serve web archive deployments.</para>
+
+      <para>The configuration is done in the</para>
+
+      <programlisting>
+config/bootstrap/web.xml
+      </programlisting>
+
+      <para>file.</para>
+
+      <para>The <code>port</code> property specifies which port the web server will be running on. Default port
+        is 8080.</para>
+
+      <para>The web server can be removed from the environment by removing the reference to <code>web.xml</code>
+        in</para>
+
+      <programlisting>
+config/bootstrap.xml
+      </programlisting>
+
+      <para>file.</para>
+
+   </section>
+
 
 </chapter>
