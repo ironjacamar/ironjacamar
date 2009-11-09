@@ -30,13 +30,12 @@ import java.util.concurrent.TimeUnit;
 import org.jboss.logging.Logger;
 
 import org.mortbay.component.AbstractLifeCycle;
-import org.mortbay.component.LifeCycle;
 import org.mortbay.thread.ThreadPool;
 
 /**
  * An implementation of the Jetty ThreadPool interface using an ExecutorService
  */
-public class ExecutorThreadPool extends AbstractLifeCycle implements ThreadPool, LifeCycle
+public class ExecutorThreadPool extends AbstractLifeCycle implements ThreadPool
 {
    private static Logger log = Logger.getLogger(ExecutorThreadPool.class);
    private static boolean trace = log.isTraceEnabled();
