@@ -44,14 +44,6 @@ import javax.resource.spi.work.WorkContext;
 @Target(TYPE)
 public @interface Connector 
 {
-   
-   /**
-    * Specifies the name of the resource adapter module. If the moduleName 
-    * annotation element is not specified, the application server must 
-    * follow the requirements in the Java Platform, Enterprise Edition 
-    * (Java EE) Specification to determine the default moduleName.
-    */
-   String moduleName() default "";
 
    /**
     * Describes the resource adapter module.
