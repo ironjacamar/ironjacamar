@@ -47,6 +47,7 @@
     <dependency org="jboss.jbossts" name="jbossjts" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
     <dependency org="jboss.jbossts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
     <dependency org="jboss.jbossts" name="jbossts-common" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
+    <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="standalone->default;sjc->*"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test->default"/>
     <dependency org="org.easymock" name="easymock" rev="${version.easymock}" conf="test->default"/>
     <dependency org="org.easymock" name="easymockclassextension" rev="${version.easymock}" conf="test->default"/>
@@ -57,6 +58,7 @@
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-vfs" rev="${version.jboss.vfs}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.bootstrap" name="jboss-bootstrap" rev="${version.jboss.bootstrap}" conf="standalone->default"/>
     <dependency org="org.jboss.cl" name="jboss-classloader" rev="${version.jboss.classloading}" conf="standalone->default"/>
     <dependency org="org.jboss.cl" name="jboss-classloading" rev="${version.jboss.classloading}" conf="standalone->default"/>
