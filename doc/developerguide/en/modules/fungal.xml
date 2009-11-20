@@ -191,6 +191,10 @@ ${jboss.jca.host:localhost}
           <para><code>STOPPING</code></para>
           <para>The bean is stopping.</para>
         </listitem>
+        <listitem>
+          <para><code>ERROR</code></para>
+          <para>The bean is in error.</para>
+        </listitem>
       </itemizedlist>
 
       <para>Caveats: The kernel currently doesn't detect cyclic dependencies between deployment units.</para>

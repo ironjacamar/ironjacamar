@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
@@ -89,6 +90,7 @@ public class DeploymentDeployer implements Deployer
       if (url == null || !url.toString().endsWith(".xml"))
          return null;
 
+      DeployException deployException = null;
       try
       {
          Unmarshaller deploymentU = new Unmarshaller();
@@ -97,19 +99,31 @@ public class DeploymentDeployer implements Deployer
 
          if (deployment != null && deployment.getBean().size() > 0)
          {
+            List<BeanDeployer> deployers = new ArrayList<BeanDeployer>(deployment.getBean().size());
             List<String> beans = Collections.synchronizedList(new ArrayList<String>(deployment.getBean().size()));
 
             beansLatch = new CountDownLatch(deployment.getBean().size());
 
             for (BeanType bt : deployment.getBean())
             {
-               Runnable r = new ServiceRunnable(bt, beans, kernel, beansLatch, parent);
-               Future<?> result = kernel.getExecutorService().submit(r);
+               BeanDeployer deployer = new BeanDeployer(bt, beans, kernel, beansLatch, parent);
+               deployers.add(deployer);
+
+               Future<?> result = kernel.getExecutorService().submit(deployer);
             }
 
             beansLatch.await();
 
-            return new BeanDeployment(url, beans, kernel);
+            Iterator<BeanDeployer> it = deployers.iterator();
+            while (deployException == null && it.hasNext())
+            {
+               BeanDeployer deployer = it.next();
+               if (deployer.getDeployException() != null)
+                  deployException = deployer.getDeployException();
+            }
+
+            if (deployException == null)
+               return new BeanDeployment(url, beans, kernel);
          }
       }
       catch (Throwable t)
@@ -118,13 +132,16 @@ public class DeploymentDeployer implements Deployer
          throw new DeployException("Deployment " + url + " failed", t);
       }
 
+      if (deployException != null)
+         throw new DeployException("Deployment " + url + " failed", deployException);
+
       return null;
    }
 
    /**
-    * Service runnable
+    * Bean deployer
     */
-   static class ServiceRunnable implements Runnable
+   static class BeanDeployer implements Runnable
    {
       /** The bean */
       private BeanType bt;
@@ -141,6 +158,9 @@ public class DeploymentDeployer implements Deployer
       /** The classloader */
       private ClassLoader classLoader;
 
+      /** DeployException */
+      private DeployException deployException;
+
       /**
        * Constructor
        * @param bt The bean
@@ -149,17 +169,18 @@ public class DeploymentDeployer implements Deployer
        * @param beansLatch The beans latch
        * @param classLoader The class loader
        */
-      public ServiceRunnable(BeanType bt, 
-                             List<String> beans,
-                             KernelImpl kernel,
-                             CountDownLatch beansLatch,
-                             ClassLoader classLoader)
+      public BeanDeployer(BeanType bt, 
+                          List<String> beans,
+                          KernelImpl kernel,
+                          CountDownLatch beansLatch,
+                          ClassLoader classLoader)
       {
          this.bt = bt;
          this.beans = beans;
          this.kernel = kernel;
          this.beansLatch = beansLatch;
          this.classLoader = classLoader;
+         this.deployException = null;
       }
 
       /**
@@ -170,7 +191,6 @@ public class DeploymentDeployer implements Deployer
          SecurityActions.setThreadContextClassLoader(classLoader);
 
          String beanName = bt.getName();
-
          try
          {
             if (kernel.getBean(beanName) == null)
@@ -209,10 +229,21 @@ public class DeploymentDeployer implements Deployer
          }
          catch (Throwable t)
          {
+            deployException = new DeployException("Installing bean " + beanName, t);
+            kernel.setBeanStatus(beanName, ServiceLifecycle.ERROR);
             error("Installing bean " + beanName, t);
          }
 
          beansLatch.countDown();
+      }
+
+      /**
+       * Get deploy exception
+       * @return null if no error; otherwise the exception
+       */
+      public DeployException getDeployException()
+      {
+         return deployException;
       }
 
       /**
@@ -271,7 +302,8 @@ public class DeploymentDeployer implements Deployer
          for (String dependency : dependencies)
          {
             ServiceLifecycle dependencyStatus = kernel.getBeanStatus(dependency);
-            if (dependencyStatus == null || dependencyStatus != ServiceLifecycle.STARTED)
+            if (dependencyStatus == null || (dependencyStatus != ServiceLifecycle.STARTED && 
+                                             dependencyStatus != ServiceLifecycle.ERROR))
                count += 1;
          }
 

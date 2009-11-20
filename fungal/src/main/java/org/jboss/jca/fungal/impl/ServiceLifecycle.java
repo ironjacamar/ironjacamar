@@ -38,5 +38,8 @@ public enum ServiceLifecycle
    STARTED,
          
    /** Service stopping */
-   STOPPING
+   STOPPING,
+
+   /** Service error */
+   ERROR
 }
