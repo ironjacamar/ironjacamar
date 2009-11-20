@@ -43,7 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
@@ -99,6 +98,11 @@ public class DeploymentDeployer implements Deployer
 
          if (deployment != null && deployment.getBean().size() > 0)
          {
+            for (BeanType bt : deployment.getBean())
+            {
+               kernel.setBeanStatus(bt.getName(), ServiceLifecycle.NOT_STARTED);
+            }
+
             List<BeanDeployer> deployers = new ArrayList<BeanDeployer>(deployment.getBean().size());
             List<String> beans = Collections.synchronizedList(new ArrayList<String>(deployment.getBean().size()));
 
@@ -195,8 +199,6 @@ public class DeploymentDeployer implements Deployer
          {
             if (kernel.getBean(beanName) == null)
             {
-               kernel.setBeanStatus(beanName, ServiceLifecycle.NOT_STARTED);
-
                Set<String> dependencies = getDependencies(bt);
                int notStarted = getNotStarted(dependencies);
 
@@ -292,8 +294,9 @@ public class DeploymentDeployer implements Deployer
        * Get the number of services that are not started yet
        * @paran dependencies The dependencies for a service
        * @return The number of not started services
+       * @exception DeployException Thrown if an unknown dependency is found
        */
-      private int getNotStarted(Set<String> dependencies)
+      private int getNotStarted(Set<String> dependencies) throws DeployException
       {
          if (dependencies == null || dependencies.size() == 0)
             return 0;
@@ -302,8 +305,11 @@ public class DeploymentDeployer implements Deployer
          for (String dependency : dependencies)
          {
             ServiceLifecycle dependencyStatus = kernel.getBeanStatus(dependency);
-            if (dependencyStatus == null || (dependencyStatus != ServiceLifecycle.STARTED && 
-                                             dependencyStatus != ServiceLifecycle.ERROR))
+
+            if (dependencyStatus == null)
+               throw new DeployException("Unknown dependency: " + dependency);
+
+            if (dependencyStatus != ServiceLifecycle.STARTED && dependencyStatus != ServiceLifecycle.ERROR)
                count += 1;
          }
 
