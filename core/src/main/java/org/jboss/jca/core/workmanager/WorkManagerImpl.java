@@ -54,8 +54,8 @@ import org.jboss.util.threadpool.Task;
 /**
  * The work manager implementation.
  * 
- * @author gurkanerdogdu
- * @version $Rev$ $Date$
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
+ * @version $Rev: $
  */
 public class WorkManagerImpl implements WorkManager
 {

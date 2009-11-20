@@ -35,8 +35,7 @@ import javax.security.auth.Subject;
  * Single pool implementation.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
- *
+ * @version $Rev: $
  */
 public class OnePool extends AbstractPool
 {

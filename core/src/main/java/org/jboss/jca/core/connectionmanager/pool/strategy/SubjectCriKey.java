@@ -35,9 +35,7 @@ import javax.security.auth.Subject;
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
  * @author <a href="mailto:weston.price@jboss.com">Weston Price</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
- * 
- * @version $Rev$ $Date$
- *
+ * @version $Rev: $
  */
 class SubjectCriKey
 {

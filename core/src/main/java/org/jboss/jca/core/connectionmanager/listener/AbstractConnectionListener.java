@@ -40,8 +40,8 @@ import org.jboss.logging.Logger;
  * Abstract implementation of the {@link ConnectionListener} interface
  * contract.
  * 
- * @author gurkanerdogdu
- * @version $Rev$ $Date$
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
+ * @version $Rev: $
  *
  */
 public abstract class AbstractConnectionListener implements ConnectionListener

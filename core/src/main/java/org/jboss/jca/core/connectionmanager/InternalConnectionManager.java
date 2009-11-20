@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager;
 
+import org.jboss.jca.core.api.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
@@ -32,7 +33,7 @@ import javax.resource.spi.ManagedConnectionFactory;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
 /**
- * Real connection manager contract.
+ * Internal connection manager contract.
  * <p>
  * <ul>
  *    <li>Responsible for managing cached connections over transactional 
@@ -44,10 +45,11 @@ import org.jboss.tm.TransactionTimeoutConfiguration;
  * </ul>
  * </p> 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev$ $Date$
+ * @version $Rev: $
  *
  */
-public interface RealConnectionManager extends
+public interface InternalConnectionManager extends
+   ConnectionManager,
    ConnectionCacheListener, 
    ConnectionListenerFactory, 
    TransactionTimeoutConfiguration, 

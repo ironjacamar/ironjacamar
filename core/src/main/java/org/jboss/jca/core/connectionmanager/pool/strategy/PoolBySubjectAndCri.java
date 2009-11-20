@@ -35,8 +35,7 @@ import javax.security.auth.Subject;
  * request info for its pool partition.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
- *
+ * @version $Rev: $
  */
 public class PoolBySubjectAndCri extends AbstractPool
 {

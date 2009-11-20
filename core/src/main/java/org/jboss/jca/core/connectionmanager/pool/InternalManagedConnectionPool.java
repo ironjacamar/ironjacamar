@@ -23,7 +23,6 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.common.api.JBossResourceException;
-import org.jboss.jca.core.connectionmanager.ConnectionCounter;
 import org.jboss.jca.core.connectionmanager.ConnectionValidator;
 import org.jboss.jca.core.connectionmanager.IdleConnectionRemovalSupport;
 import org.jboss.jca.core.connectionmanager.IdleRemover;
@@ -73,7 +72,7 @@ import org.jboss.util.UnreachableStatementException;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  *   
- * @version $Rev$ $Date$
+ * @version $Rev: $
  * 
  * @see AbstractPool
  */
@@ -111,9 +110,6 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
 
    /** Whether trace is enabled */
    private final boolean trace = log.isTraceEnabled();
-
-   /** Stats */
-   private final ConnectionCounter connectionCounter = new ConnectionCounter();
 
    /** The checked out connections */
    private final CopyOnWriteArraySet<ConnectionListener> checkedOut = new CopyOnWriteArraySet<ConnectionListener>();
@@ -180,15 +176,9 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       
       try
       {
-         //Update blocked time
-         this.connectionCounter.updateBlockTime(System.currentTimeMillis() - startWait);
-
          //Check connection is available, and if not waits for the blocking timeout
          if (this.permits.tryAcquire(this.poolParams.getBlockingTimeout(), TimeUnit.MILLISECONDS))
          {
-            long poolBlockTime = (System.currentTimeMillis() - startWait);
-            this.connectionCounter.updateBlockTime(poolBlockTime);
-            
             do
             {
                //Check shutdown
@@ -275,8 +265,6 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       catch (InterruptedException e)
       {
          long end = System.currentTimeMillis() - startWait;
-         connectionCounter.updateBlockTime(end);
-         
          throw new ResourceException("Interrupted while requesting permit! Waited " + end + " ms");         
       }
       
@@ -392,14 +380,12 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       throws ResourceException
    {
       ManagedConnection mc = mcf.createManagedConnection(subject, cri);
-      connectionCounter.inc();
       try
       {
          return clf.createConnectionListener(mc, this);
       }
       catch (ResourceException re)
       {
-         connectionCounter.dec();
          mc.destroy();
          throw re;
       }
@@ -419,7 +405,6 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          return;
       }
 
-      connectionCounter.dec();
       cl.setState(ConnectionState.DESTROYED);
       
       try
@@ -451,7 +436,6 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          ConnectionListener cl = cls.get(0);
          if (cl.isTimedOut(timeout) && shouldRemove())
          {
-            connectionCounter.incTimedOutCount();
             // We need to destroy this one
             cls.remove(0);
             if (destroy == null)
@@ -653,98 +637,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       }
       
    }
-   
-   
-   /**
-    * Gets connection in use count.
-    * @return connection in use
-    */
-   public int getConnectionInUseCount()
-   { 
-      return this.checkedOut.size();
-   }
-   
-   /**
-    * Gets total connection for this pool.
-    * @return total connection
-    */
-   public int getConnectionCount()
-   {
-      return this.connectionCounter.getCount();
-   }
-   
-   /**
-    * Gets total block time.
-    * @return total block time
-    */
-   public long getTotalBlockTime()
-   {
-      return this.connectionCounter.getTotalBlockTime();
-   }
-   
-   /**
-    * Gets timed out.
-    * @return timed out
-    */
-   public int getTimedOutCount()
-   {
-      return this.connectionCounter.getTimedOutCount();
-   }
-   
-   /**
-    * Gets average blocked time.
-    * @return average block time.
-    */
-   public long getAverageBlockTime()
-   {
-      return this.connectionCounter.getTotalBlockTime() / getConnectionCreatedCount();
-   }
-   
-   /**
-    * Gets max wait time.
-    * @return max wait time.
-    */
-   public long getMaxWaitTime()
-   {
-      return this.connectionCounter.getMaxWaitTime();
-   }
 
-   /**
-    * Gets connection created count.
-    * @return connection created count
-    */
-   public int getConnectionCreatedCount()
-   {
-      return this.connectionCounter.getCreatedCount();
-   }
-
-   /**
-    * Gets connection destroyed count.
-    * @return connection destroyed count
-    */
-   public int getConnectionDestroyedCount()
-   {
-      return this.connectionCounter.getDestroyedCount();
-   }
-   
-   /**
-    * Gets available connections.
-    * @return available connections
-    */
-   public long getAvailableConnections()
-   {
-      return permits.availablePermits();
-   }
-   
-   /**
-    * Gets max connection in-use count.
-    * @return max connection in-use count
-    */
-   public int getMaxConnectionsInUseCount()
-   {
-      return this.maxUsedConnections;
-   }
-   
    /**
     * Pool is shut down.
     */
@@ -867,12 +760,13 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
                      return;  
                   }
 
-                  // We already have enough connections
-                  if (getMinSize() - connectionCounter.getGuaranteedCount() <= 0)
-                  {
-                     return;  
-                  }
+                  // We already have enough connections -- TODO
+                  //if (getMinSize() - connectionCounter.getGuaranteedCount() <= 0)
+                  //{
+                  return;  
+                  //}
 
+                  /* -- TODO
                   // Create a connection to fill the pool
                   try
                   {
@@ -889,6 +783,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
                      log.warn("Unable to fill pool ", re);
                      return;
                   }
+                  */
                }
                finally
                {

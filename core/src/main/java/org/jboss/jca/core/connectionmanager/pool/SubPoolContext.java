@@ -35,8 +35,7 @@ import org.jboss.tm.TransactionLocal;
  * Sub-pool context. 
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * 
- * @version $Rev$ $Date$
+ * @version $Rev: $
  */
 public class SubPoolContext
 {

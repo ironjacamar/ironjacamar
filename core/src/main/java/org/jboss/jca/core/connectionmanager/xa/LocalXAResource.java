@@ -37,7 +37,7 @@ import org.jboss.tm.LastResource;
  * Local XA resource implementation.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * @version $Rev$
  */
 public class LocalXAResource implements XAResource, LastResource
 {

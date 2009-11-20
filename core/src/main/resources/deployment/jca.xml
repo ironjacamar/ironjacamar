@@ -29,8 +29,4 @@
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
   </bean>
   
-  <!-- Connection Manager -->
-  <bean name="ConnectionManager" interface="org.jboss.jca.core.api.ConnectionManager" class="org.jboss.jca.core.connectionmanager.ConnectionManagerImpl">
-  </bean>
-  
 </deployment>

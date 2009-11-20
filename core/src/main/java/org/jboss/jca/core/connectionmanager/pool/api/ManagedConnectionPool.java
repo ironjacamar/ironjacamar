@@ -78,42 +78,12 @@ public interface ManagedConnectionPool
       throws ResourceException;
 
    /**
-    * @return the connection count
-    */
-   int getConnectionCount ();
-
-   /**
-    * @return the connections in use count
-    */
-   int getInUseConnectionCount();
-
-   /**
-    * @return the connections created count
-    */
-   int getConnectionCreatedCount();
-
-   /**
-    * @return the connections destroyed count
-    */
-   int getConnectionDestroyedCount();
-
-   /**
-    * shutdown the pool
+    * Shutdown the pool
     */
    void shutdown();
 
    /**
-    * @return the available connections
-    */
-   long getAvailableConnectionCount();
-
-   /**
-    * @return the available connections
-    */
-   int getMaxConnectionsInUseCount();
-
-   /**
-    * flush the pool
+    * Flush the pool
     */
    void flush();
 
@@ -122,10 +92,4 @@ public interface ManagedConnectionPool
     * @param pool the internal managed connection pool
     */
    void emptySubPool(InternalManagedConnectionPool pool);
-
-   /**
-    *  @return the native connection statistics of underlying 
-    *  connection.
-    */
-   Object listUnderlyingNativeConnectionStatistics();
 }

@@ -30,8 +30,7 @@ import javax.security.auth.Subject;
  * Pool by {@link Subject} key.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
- *
+ * @version $Rev: $
  */
 class SubjectKey
 {

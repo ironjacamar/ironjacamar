@@ -37,7 +37,7 @@ import org.jboss.logging.Logger;
  * @author Scott.Stark@jboss.org
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * @version $Rev: $
  */
 public class PoolFiller implements Runnable
 {

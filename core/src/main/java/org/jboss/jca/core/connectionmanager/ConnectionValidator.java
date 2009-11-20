@@ -41,8 +41,7 @@ import org.jboss.logging.Logger;
  * Connection validator class.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
- *
+ * @version $Rev: $
  */
 public class ConnectionValidator
 {

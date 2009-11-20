@@ -29,14 +29,9 @@
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
   </bean>
   
-  <!-- Connection Manager -->
-  <bean name="ConnectionManager" interface="org.jboss.jca.core.api.ConnectionManager" class="org.jboss.jca.core.connectionmanager.ConnectionManagerImpl">
-  </bean>
-
   <!-- RA deployer -->
   <bean name="RADeployer" interface="org.jboss.jca.fungal.deployers.Deployer" class="org.jboss.jca.deployers.fungal.RADeployer">
     <depends>BeanValidation</depends>
-    <depends>ConnectionManager</depends>
     <depends>WorkManager</depends>
   </bean>
 

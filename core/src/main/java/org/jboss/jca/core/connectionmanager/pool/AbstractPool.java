@@ -51,7 +51,7 @@ import org.jboss.tm.TransactionLocal;
  * method to create map key object.
  * </p>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * @version $Rev$
  *
  */
 public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoolSupport
@@ -78,35 +78,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
    private String poolName;
 
    /** Is trace enabled */
-   private boolean traceEnabled = false;
-   
-   /**
-    * Types of the pool's connection
-    * counts. Used internally to repeat same
-    * code again.
-    * 
-    * @see AbstractPool#getCounts(PoolCounts)
-    */
-   private enum PoolCounts 
-   {
-      /**Pool connection count*/
-      CONNECTION_COUNT,
-      
-      /**Pool in use connection count*/
-      CONNECTION_IN_USE_COUNT,
-      
-      /**Created connection count for pool*/
-      CONNECTION_CREATED_COUNT,
-      
-      /**Destroyed connection count for pool*/
-      CONNECTION_DESTROYED_COUNT,
-      
-      /**Pool get available connection count*/
-      CONNECTION_GET_AVAILABLE_COUNT,
-      
-      /**Get Max connections in use count*/
-      CONNECTION_GET_MAX_CONNECTIONS_IN_USE_COUNT
-   }
+   private boolean trace = false;
    
    /**
     * Create a new base pool.
@@ -121,7 +93,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
       this.mcf = mcf;
       this.poolParams = poolParams;
       this.noTxSeparatePools = noTxSeparatePools;
-      this.traceEnabled = log.isTraceEnabled();
+      this.trace = log.isTraceEnabled();
    }
 
    /**
@@ -198,7 +170,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
    {
       if (pool != null)
       {
-         Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
+         Iterator<SubPoolContext> itSubPoolContexts = subPools.values().iterator();
          SubPoolContext other = null;
          while (itSubPoolContexts.hasNext())
          {
@@ -218,7 +190,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
     */
    public void flush()
    {
-      Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
+      Iterator<SubPoolContext> itSubPoolContexts = subPools.values().iterator();
       SubPoolContext subPoolContext = null;
       while (itSubPoolContexts.hasNext())
       {
@@ -226,15 +198,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          subPoolContext.getSubPool().flush();
       }
 
-      this.subPools.clear();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public long getAvailableConnectionCount()
-   {
-      return getCounts(PoolCounts.CONNECTION_GET_AVAILABLE_COUNT);
+      subPools.clear();
    }
 
    /**
@@ -247,7 +211,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
       
       boolean separateNoTx = false;
       
-      if (this.noTxSeparatePools)
+      if (noTxSeparatePools)
       {
          separateNoTx = clf.isTransactional();
       }
@@ -307,7 +271,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          //Get connection from imcp
          cl = imcp.getConnection(subject, cri);
          
-         if (this.traceEnabled)
+         if (trace)
          {
             dump("Got connection from pool : " + cl);
          }
@@ -333,7 +297,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          
          //Getting connection from pool
          cl = imcp.getConnection(subject, cri);
-         if (traceEnabled)
+         if (trace)
          {
             dump("Got connection from pool (retried) " + cl);  
          }
@@ -371,7 +335,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          cl = (ConnectionListener) trackByTx.get(trackByTransaction);
          if (cl != null)
          {
-            if (traceEnabled)
+            if (trace)
             {
                dump("Previous connection tracked by transaction " + cl + " tx=" + trackByTransaction);  
             }
@@ -410,7 +374,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
       // Instead we do a double check after we got the transaction to see
       // whether another thread beat us to the punch.
       cl = mcp.getConnection(subject, cri);
-      if (traceEnabled)
+      if (trace)
       {
          dump("Got connection from pool tracked by transaction " + cl + " tx=" + trackByTransaction);  
       }
@@ -423,7 +387,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
       catch (Throwable t)
       {
          mcp.returnConnection(cl, false);
-         if (traceEnabled)
+         if (trace)
          {
             dump("Had to return connection tracked by transaction " + cl + " tx=" + 
                   trackByTransaction + " error=" + t.getMessage());  
@@ -439,7 +403,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          if (other != null)
          {
             mcp.returnConnection(cl, false);
-            if (traceEnabled)
+            if (trace)
             {
                dump("Another thread already got a connection tracked by transaction " + 
                      other + " tx=" + trackByTransaction);  
@@ -452,7 +416,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          cl.setTrackByTx(true);
          trackByTx.set(cl);
          
-         if (traceEnabled)
+         if (trace)
          {
             dump("Using connection from pool tracked by transaction " + cl + " tx=" + trackByTransaction);  
          }
@@ -465,62 +429,13 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
       
       return cl;
    }
-   
-   
-   /**
-    * {@inheritDoc}
-    */   
-   public int getConnectionCount()
-   {
-      return (int)getCounts(PoolCounts.CONNECTION_COUNT);
-   }
 
    /**
     * {@inheritDoc}
-    */   
-   public int getConnectionCreatedCount()
-   {
-      return (int)getCounts(PoolCounts.CONNECTION_CREATED_COUNT);      
-   }
-
-   /**
-    * {@inheritDoc}
-    */    
-   public int getConnectionDestroyedCount()
-   {      
-      return (int)getCounts(PoolCounts.CONNECTION_DESTROYED_COUNT);   
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public int getInUseConnectionCount()
-   {
-      return (int)getCounts(PoolCounts.CONNECTION_IN_USE_COUNT);
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
+    */
    public ManagedConnectionFactory getManagedConnectionFactory()
-   {      
-      return this.mcf;
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public int getMaxConnectionsInUseCount()
    {
-      return (int)getCounts(PoolCounts.CONNECTION_GET_MAX_CONNECTIONS_IN_USE_COUNT);
-   }   
-   
-   /**
-    * {@inheritDoc}
-    */   
-   public Object listUnderlyingNativeConnectionStatistics()
-   {
-      return null;
+      return mcf;
    }
 
    /**
@@ -535,7 +450,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
       //Return connection to the pool
       mcp.returnConnection(cl, kill);
       
-      if (traceEnabled)
+      if (trace)
       {
          dump("Returning connection to pool " + cl);
       }            
@@ -554,7 +469,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
     */
    public void shutdown()
    {
-      Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
+      Iterator<SubPoolContext> itSubPoolContexts = subPools.values().iterator();
       SubPoolContext subPoolContext = null;
       while (itSubPoolContexts.hasNext())
       {
@@ -562,7 +477,7 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          subPoolContext.getSubPool().shutdown();
       }
 
-      this.subPools.clear();
+      subPools.clear();
    }
 
    /**
@@ -597,7 +512,6 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
             
             //Get sub-pool automatically initializes pool
             getSubPool(key, subject, cri);
-            
          }
          catch (Throwable t)
          {
@@ -632,75 +546,24 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
     */
    public boolean getPreFill()
    {
-      return this.poolParams.isPrefill();
-
+      return poolParams.isPrefill();
    }
-   
-   
    
    /**
     * Dump the stats to the trace log
-    * 
     * @param info some context
     */
    private void dump(String info)
    {
-      if (this.traceEnabled)
-      {
-         StringBuffer toLog = new StringBuffer(100);
-         toLog.append(info).append(" [InUse/Available/Max]: [");
-         toLog.append(this.getInUseConnectionCount()).append("/");
-         toLog.append(this.getAvailableConnectionCount()).append("/");
-         toLog.append(this.poolParams.getMaxSize());
-         toLog.append("]");;
-         log.trace(toLog);
-      }
-   }
-   
-   /**
-    * Gets pool specific count.
-    * @param countType count type
-    * @return counts
-    */
-   private long getCounts(PoolCounts countType)
-   {
-      long count = 0L;
-
-      Iterator<SubPoolContext> itSubPoolContexts = this.subPools.values().iterator();
-      SubPoolContext subPoolContext = null;
-      while (itSubPoolContexts.hasNext())
-      {
-         subPoolContext = itSubPoolContexts.next();
-         if (countType.equals(PoolCounts.CONNECTION_COUNT))
-         {
-            count += subPoolContext.getSubPool().getConnectionCount();
-         }
-         else if (countType.equals(PoolCounts.CONNECTION_IN_USE_COUNT))
-         {
-            count += subPoolContext.getSubPool().getConnectionInUseCount();
-         }
-         else if (countType.equals(PoolCounts.CONNECTION_CREATED_COUNT))
-         {
-            count += subPoolContext.getSubPool().getConnectionCreatedCount();
-         }
-         else if (countType.equals(PoolCounts.CONNECTION_DESTROYED_COUNT))
-         {
-            count += subPoolContext.getSubPool().getConnectionDestroyedCount();
-         }
-         else if (countType.equals(PoolCounts.CONNECTION_GET_AVAILABLE_COUNT))
-         {
-            count += subPoolContext.getSubPool().getAvailableConnections();
-         }
-         else if (countType.equals(PoolCounts.CONNECTION_GET_MAX_CONNECTIONS_IN_USE_COUNT))
-         {
-            count += subPoolContext.getSubPool().getMaxConnectionsInUseCount();
-         }
-         else
-         {
-            log.warn("Unknown count type : " + countType.toString());
-         }
-      }
-
-      return count;
+      StringBuffer toLog = new StringBuffer(100);
+      toLog.append(info);
+      /*
+         .append(" [InUse/Available/Max]: [");
+      toLog.append(getInUseConnectionCount()).append("/");
+      toLog.append(getAvailableConnectionCount()).append("/");
+      toLog.append(poolParams.getMaxSize());
+      toLog.append("]");
+      */
+      log.trace(toLog);
    }
 }

@@ -29,6 +29,9 @@ import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
 import org.jboss.jca.core.connectionmanager.xa.LocalXAResource;
 import org.jboss.jca.core.connectionmanager.xa.XAResourceWrapperImpl;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -124,8 +127,11 @@ import org.jboss.util.NestedRuntimeException;
  */
 public class TxConnectionManager extends AbstractConnectionManager
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = 1L;
+
    /**Transaction manager instance*/
-   private TransactionManager transactionManager;
+   private transient TransactionManager transactionManager;
 
    /**Interleaving or not*/
    private boolean interleaving;
@@ -156,43 +162,21 @@ public class TxConnectionManager extends AbstractConnectionManager
    }
 
    /**
-    * Gets transaction manager instance.
-    * @return transaction manager
+    * Get the transaction manager instance
+    * @return The transaction manager
     */
    public TransactionManager getTransactionManager()
    {
-      return this.transactionManager;
+      return transactionManager;
    }
 
    /**
-    * Sets transaction manager.
-    * @param tm transaction manager
+    * Set the transaction manager.
+    * @param tm The transaction manager
     */
    public void setTransactionManager(TransactionManager tm)
    {
-      this.transactionManager = tm;
-   }
-
-   /**
-    * Gets track connection by tx.
-    * @return track connection by tx
-    */
-   @Deprecated
-   public boolean isTrackConnectionByTx()
-   {
-      getLog().warn("isTrackConnectionByTx() is deprecated in favor of isInterleaving()");
-      return !isInterleaving();
-   }
-
-   /**
-    * Set track connection by tx.
-    * @param trackConnectionByTx track connection by tx
-    */
-   @Deprecated
-   public void setTrackConnectionByTx(boolean trackConnectionByTx)
-   {
-      getLog().warn("setTrackConnectionByTx(boolean value) is deprecated in favor of setInterleaving(boolean value)");
-      setInterleaving(!trackConnectionByTx);
+      transactionManager = tm;
    }
 
    /**
@@ -553,5 +537,19 @@ public class TxConnectionManager extends AbstractConnectionManager
          throw new IllegalStateException(context + " tx=" + tx + " marked for rollback.");
       throw new NestedRuntimeException(context + " tx=" + tx + " got unexpected error ", t);
    }
-   
+
+
+   private void writeObject(ObjectOutputStream out)
+      throws IOException
+   {
+
+
+   }
+
+
+   private void readObject(ObjectInputStream in)
+      throws IOException, ClassNotFoundException
+   {
+
+   }
 }

@@ -45,7 +45,7 @@ import org.jboss.util.NestedRuntimeException;
  *
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
  * @author gurkanerdogdu
- * @version $Rev$ $Date$
+ * @version $Rev$
  */
 public class TransactionSynchronizer implements Synchronization
 {

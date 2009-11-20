@@ -32,7 +32,7 @@ import javax.resource.spi.ManagedConnection;
  * NoTx Connection Listener.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev$ $Date$
+ * @version $Rev$
  * @see AbstractConnectionListener
  */
 public class NoTxConnectionListener extends AbstractConnectionListener

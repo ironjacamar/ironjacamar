@@ -31,8 +31,8 @@ import javax.transaction.SystemException;
 /**
  * Connection listener.
  * 
- * @version $Rev$ $Date$
- * @author gurkanerdogdu
+ * @version $Rev: $
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
  * @author <a href="weston.price@jboss.com">Weston Price</a>
  */

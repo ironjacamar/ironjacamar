@@ -25,8 +25,7 @@ package org.jboss.jca.core.connectionmanager.pool;
 /**
  * Pooling parameters. 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * 
- * @version $Rev$ $Date$
+ * @version $Rev: $
  */
 public class PoolParams
 {

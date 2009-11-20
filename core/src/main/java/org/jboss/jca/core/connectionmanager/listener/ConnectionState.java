@@ -30,9 +30,8 @@ package org.jboss.jca.core.connectionmanager.listener;
  *    <li>DESTROYED</li>
  * </ul>
  * 
- * @version $Rev$ $Date$
- * @author gurkanerdogdu
- *
+ * @version $Rev: $
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  */
 public enum ConnectionState
 {

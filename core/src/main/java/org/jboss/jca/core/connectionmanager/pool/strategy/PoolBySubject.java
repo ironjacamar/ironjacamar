@@ -34,8 +34,7 @@ import javax.security.auth.Subject;
  * Pool implementation that uses subject.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
- *
+ * @version $Rev: $
  */
 public class PoolBySubject extends AbstractPool
 {

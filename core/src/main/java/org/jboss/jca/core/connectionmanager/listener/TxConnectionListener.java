@@ -48,8 +48,7 @@ import org.jboss.tm.TxUtils;
 /**
  * Tx connection listener.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev$ $Date$
- *
+ * @version $Rev$
  */
 public class TxConnectionListener extends AbstractConnectionListener
 {

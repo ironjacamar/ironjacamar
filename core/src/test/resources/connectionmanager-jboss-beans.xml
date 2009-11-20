@@ -5,20 +5,20 @@
 -->
 <deployment>
 
-  <bean name="ConnectionManagerTx" interface="org.jboss.jca.core.api.ConnectionManager" class="org.jboss.jca.core.connectionmanager.ConnectionManagerImpl">
-    <property name="realConnectionManager"><inject bean="RealConnectionManagerTx"/></property>    
-  </bean>
-
-
-  <bean name="RealConnectionManagerTx" interface="org.jboss.jca.core.connectionmanager.AbstractConnectionManager" class="org.jboss.jca.core.connectionmanager.tx.TxConnectionManager">
+  <bean name="ConnectionManagerTx" 
+        interface="org.jboss.jca.core.connectionmanager.AbstractConnectionManager" 
+        class="org.jboss.jca.core.connectionmanager.tx.TxConnectionManager">
     <property name="transactionManager"><inject bean="TransactionManager" property="TransactionManager"/></property>
     <property name="cachedConnectionManager"><inject bean="CachedConnectionManager"/></property>    
   </bean>
   
-  <bean name="RealConnectionManagerNoTx" interface="org.jboss.jca.core.connectionmanager.AbstractConnectionManager" class="org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager">
+  <bean name="ConnectionManagerNoTx"
+        interface="org.jboss.jca.core.connectionmanager.AbstractConnectionManager" 
+        class="org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager">
   </bean>
   
-  <bean name="CachedConnectionManager" class="org.jboss.jca.core.connectionmanager.CachedConnectionManager">
+  <bean name="CachedConnectionManager" 
+        class="org.jboss.jca.core.connectionmanager.CachedConnectionManager">
   </bean>
 
 </deployment>

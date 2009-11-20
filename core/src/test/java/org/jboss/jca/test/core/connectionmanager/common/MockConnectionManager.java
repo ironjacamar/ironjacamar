@@ -35,12 +35,14 @@ import javax.resource.spi.ManagedConnection;
  */
 public class MockConnectionManager extends AbstractConnectionManager
 {
+   /** Serial version UID */
+   private static final long serialVersionUID = 1L;
+
    /**
     * Creates a new mock connection manager.
     */
    public MockConnectionManager()
    {
-      
    }
 
    /**

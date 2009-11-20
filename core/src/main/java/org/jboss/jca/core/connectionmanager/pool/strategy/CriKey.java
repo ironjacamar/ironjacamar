@@ -28,8 +28,7 @@ import javax.resource.spi.ConnectionRequestInfo;
  * Pool by {@link ConnectionRequestInfo} key.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
- *
+ * @version $Rev: $
  */
 class CriKey
 {

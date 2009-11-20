@@ -34,8 +34,8 @@ import org.jboss.util.Strings;
  * The class <code>KeyConnectionAssociation</code> wraps objects so they may be used in hashmaps
  * based on their object identity rather than equals implementation. Used for keys.
  * 
- * @author gurkanerdogdu
- * @version $Rev$ $Date$
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
+ * @version $Rev$
  */
 final class KeyConnectionAssociation
 {

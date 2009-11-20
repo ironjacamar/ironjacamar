@@ -53,10 +53,9 @@ import org.jboss.util.NotImplementedException;
  * AbstractConnectionManager.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
- *
+ * @version $Rev$
  */
-public  abstract class AbstractConnectionManager implements RealConnectionManager 
+public  abstract class AbstractConnectionManager implements InternalConnectionManager 
 
 {
    /**Log instance*/
@@ -109,7 +108,7 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
     */
    protected Logger getLog()
    {
-      return this.log;
+      return log;
    }
    
    /**
@@ -127,7 +126,7 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
     */
    public ManagedConnectionPool getPoolingStrategy()
    {
-      return this.poolingStrategy;
+      return poolingStrategy;
    }   
    
    /**
@@ -155,7 +154,7 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
     */
    public CachedConnectionManager getCachedConnectionManager()
    {
-      return this.cachedConnectionManager;
+      return cachedConnectionManager;
    }
    
    /**
@@ -225,12 +224,11 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
     */
    public javax.resource.spi.ManagedConnectionFactory getManagedConnectionFactory()
    {
-      if (this.poolingStrategy == null)
+      if (poolingStrategy == null)
       {
-         if (this.log.isTraceEnabled())
+         if (trace)
          {
             log.trace("No pooling strategy found! for connection manager : " + this);
-            
             return null;
          }
       }
@@ -308,7 +306,7 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
    {
       ResourceException failure = null;
 
-      if (this.shutdown.get())
+      if (shutdown.get())
       {
          throw new ResourceException("The connection manager is shutdown " + jndiName);  
       }
@@ -316,23 +314,23 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
       // First attempt
       try
       {
-         return this.poolingStrategy.getConnection(transaction, subject, cri);
+         return poolingStrategy.getConnection(transaction, subject, cri);
       }
       catch (ResourceException e)
       {
          failure = e;
          
          // Retry?
-         if (this.allocationRetry != 0)
+         if (allocationRetry != 0)
          {
-            for (int i = 0; i < this.allocationRetry; i++)
+            for (int i = 0; i < allocationRetry; i++)
             {
-               if (this.shutdown.get())
+               if (shutdown.get())
                {
                   throw new ResourceException("The connection manager is shutdown " + jndiName);  
                }
 
-               if (this.trace)
+               if (trace)
                {
                   log.trace("Attempting allocation retry for cri=" + cri);  
                }
@@ -371,7 +369,7 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
    public void returnManagedConnection(ConnectionListener cl, boolean kill)
    {
       ManagedConnectionPool localStrategy = cl.getManagedConnectionPool();
-      if (localStrategy != this.poolingStrategy)
+      if (localStrategy != poolingStrategy)
       {
          kill = true;  
       }
@@ -416,14 +414,14 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {
       //Check for pooling!
-      if (this.poolingStrategy == null)
+      if (poolingStrategy == null)
       {
          throw new ResourceException("You are trying to use a connection factory that has been shut down: " +
                "ManagedConnectionFactory is null.");         
       }
 
       //it is an explicit spec requirement that equals be used for matching rather than ==.
-      if (!this.poolingStrategy.getManagedConnectionFactory().equals(mcf))
+      if (!poolingStrategy.getManagedConnectionFactory().equals(mcf))
       {
          throw new ResourceException("Wrong ManagedConnectionFactory sent to allocateConnection!");  
       }
@@ -459,9 +457,9 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
       // Associate managed connection with the connection
       registerAssociation(cl, connection);
       
-      if (this.cachedConnectionManager != null)
+      if (cachedConnectionManager != null)
       {
-         this.cachedConnectionManager.registerConnection(this, cl, connection, cri);  
+         cachedConnectionManager.registerConnection(this, cl, connection, cri);  
       }
       
       return connection;
@@ -516,7 +514,7 @@ public  abstract class AbstractConnectionManager implements RealConnectionManage
    {
       // if we have an unshareable connection do not remove the association
       // nothing to do
-      if (unsharableResources.contains(this.jndiName))
+      if (unsharableResources.contains(jndiName))
       {
          log.trace("disconnect for unshareable connection: nothing to do");
          

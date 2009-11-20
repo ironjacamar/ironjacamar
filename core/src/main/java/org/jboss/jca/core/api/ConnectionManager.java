@@ -26,10 +26,10 @@ package org.jboss.jca.core.api;
  * The JBoss specific connection manager interface.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * @version $Rev$
  */
 public interface ConnectionManager extends 
-   javax.resource.spi.ConnectionManager
+  javax.resource.spi.ConnectionManager, java.io.Serializable
 {
    
 }

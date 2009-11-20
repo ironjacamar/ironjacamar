@@ -34,17 +34,19 @@ import javax.resource.spi.ManagedConnection;
  * Non transactional connection manager implementation.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
+ * @version $Rev$
  *
  */
 public class NoTxConnectionManager extends AbstractConnectionManager
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = 1L;
+
    /**
     * Default constructor.
     */
    public NoTxConnectionManager()
    {
-      
    }
 
    /**

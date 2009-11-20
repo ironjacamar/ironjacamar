@@ -23,7 +23,6 @@ package org.jboss.jca.test.core.connectionmanager.unit.nontx;
 
 import org.jboss.jca.core.api.ConnectionManager;
 
-import org.jboss.jca.core.connectionmanager.ConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
@@ -58,7 +57,6 @@ public class NonTxConnectionManagerTestCase
    @BeforeClass
    public static void init()
    {
-      connectionManager = new ConnectionManagerImpl();
       NoTxConnectionManager noTxCm = new NoTxConnectionManager();
       mcf = new MockManagedConnectionFactory();
       PoolParams poolParams = new PoolParams();
@@ -68,7 +66,7 @@ public class NonTxConnectionManagerTestCase
       
       noTxCm.setPoolingStrategy(onePool);
       
-      ((ConnectionManagerImpl)connectionManager).setRealConnectionManager(noTxCm);
+      connectionManager = noTxCm;
    }   
    
    /**

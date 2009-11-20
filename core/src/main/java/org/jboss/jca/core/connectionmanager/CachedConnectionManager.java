@@ -57,7 +57,7 @@ import org.jboss.util.Strings;
 
 /**
  * CacheConnectionManager.
- * @version $Rev$ $Date$
+ * @version $Rev$
  *
  */
 public class CachedConnectionManager implements
@@ -95,8 +95,8 @@ public class CachedConnectionManager implements
     * the idiot spec compliant behavior.
     */
    private final Map<KeyConnectionAssociation, Map<ConnectionCacheListener, Collection<ConnectionRecord>>> 
-   objectToConnectionManagerMap = new HashMap<KeyConnectionAssociation, 
-                                              Map<ConnectionCacheListener, Collection<ConnectionRecord>>>();
+      objectToConnectionManagerMap = new HashMap<KeyConnectionAssociation, 
+         Map<ConnectionCacheListener, Collection<ConnectionRecord>>>();
 
    /**
     * Connection stacktraces
@@ -117,7 +117,7 @@ public class CachedConnectionManager implements
     */
    public TransactionManager getTransactionManager()
    {
-      return this.transactionManager;
+      return transactionManager;
    }
 
    /**
@@ -189,9 +189,9 @@ public class CachedConnectionManager implements
    @SuppressWarnings("unchecked")
    public void popMetaAwareObject(Set unsharableResources) throws ResourceException
    {
-      LinkedList<Object> stack = this.currentObjects.get();
+      LinkedList<Object> stack = currentObjects.get();
       KeyConnectionAssociation oldKey = (KeyConnectionAssociation) stack.removeLast();
-      if (this.trace)
+      if (trace)
       {
          log.trace("popped object: " + Strings.defaultToString(oldKey));  
       }
@@ -201,9 +201,9 @@ public class CachedConnectionManager implements
          disconnect(oldKey, unsharableResources);
       } // end of if ()
        
-      if (this.debug)
+      if (debug)
       {
-         if (closeAll(oldKey.getCMToConnectionsMap()) && this.error)
+         if (closeAll(oldKey.getCMToConnectionsMap()) && error)
          {
             throw new ResourceException("Some connections were not closed, " +
                   "see the log for the allocation stacktraces");  
@@ -222,17 +222,17 @@ public class CachedConnectionManager implements
    public void registerConnection(ConnectionCacheListener cm, ConnectionListener cl, 
          Object connection, ConnectionRequestInfo cri)
    {
-      if (this.debug)
+      if (debug)
       {
-         synchronized (this.connectionStackTraces)
+         synchronized (connectionStackTraces)
          {
-            this.connectionStackTraces.put(connection, new Throwable("STACKTRACE"));
+            connectionStackTraces.put(connection, new Throwable("STACKTRACE"));
          }
       }
 
       KeyConnectionAssociation key = peekMetaAwareObject();
       
-      if (this.trace)
+      if (trace)
       {
          log.trace("registering connection from connection manager " + cm +
                ", connection : " + connection + ", key: " + key);  
@@ -262,7 +262,7 @@ public class CachedConnectionManager implements
     */
    public void unregisterConnection(ConnectionCacheListener cm, Object connection)
    {
-      if (this.debug)
+      if (debug)
       {
          CloseConnectionSynchronization cas = getCloseConnectionSynchronization(false);
          if (cas != null)
@@ -270,15 +270,15 @@ public class CachedConnectionManager implements
             cas.remove(connection);  
          }
          
-         synchronized (this.connectionStackTraces)
+         synchronized (connectionStackTraces)
          {
-            this.connectionStackTraces.remove(connection);
+            connectionStackTraces.remove(connection);
          }
       }
 
       KeyConnectionAssociation key = peekMetaAwareObject();
       
-      if (this.trace)
+      if (trace)
       {
          log.trace("unregistering connection from connection manager " + cm +
                ", object: " + connection + ", key: " + key);  
@@ -314,10 +314,10 @@ public class CachedConnectionManager implements
    @SuppressWarnings("unchecked")
    public void pushMetaAwareObject(final Object rawKey, Set unsharableResources) throws ResourceException
    {
-      LinkedList<Object> stack = this.currentObjects.get();
+      LinkedList<Object> stack = currentObjects.get();
       if (stack == null)
       {
-         if (this.trace)
+         if (trace)
          {
             log.trace("new stack for key: " + Strings.defaultToString(rawKey));  
          }
@@ -355,9 +355,9 @@ public class CachedConnectionManager implements
    private void reconnect(KeyConnectionAssociation key, Set unsharableResources) throws ResourceException
    {
       Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap = null;
-      synchronized (this.objectToConnectionManagerMap)
+      synchronized (objectToConnectionManagerMap)
       {
-         cmToConnectionsMap = this.objectToConnectionManagerMap.get(key);
+         cmToConnectionsMap = objectToConnectionManagerMap.get(key);
          if (cmToConnectionsMap == null)
          {
             return;  
@@ -427,7 +427,7 @@ public class CachedConnectionManager implements
       synchronized (objectToConnectionManagerMap)
       {
          Iterator<Map<ConnectionCacheListener, Collection<ConnectionRecord>>> it = 
-               this.objectToConnectionManagerMap.values().iterator();
+               objectToConnectionManagerMap.values().iterator();
          
          while (it.hasNext())
          {
@@ -491,9 +491,9 @@ public class CachedConnectionManager implements
       try
       {
          Transaction tx = null;
-         if (this.transactionManager != null)
+         if (transactionManager != null)
          {
-            tx = this.transactionManager.getTransaction();  
+            tx = transactionManager.getTransaction();  
          }
         
          if (tx != null)
@@ -628,7 +628,7 @@ public class CachedConnectionManager implements
        */
       public void afterCompletion(int status)
       {
-         this.closing.set(true);
+         closing.set(true);
          
          for (Iterator<Object> i = connections.iterator(); i.hasNext();)
          {
