@@ -61,7 +61,7 @@
   <!-- ================================= 
        Target: docs
        ================================= -->
-  <target name="docs">
+  <target name="docs" depends="compile">
     <mkdir dir="${target.dir}/docs/common"/>
     <javadoc packagenames="org.*"
              sourcepath="src/main/java"

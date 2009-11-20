@@ -56,7 +56,7 @@
   <!-- ================================= 
        Target: docs
        ================================= -->
-  <target name="docs">
+  <target name="docs" depends="compile">
     <mkdir dir="${target.dir}/docs/spec"/>
     <javadoc packagenames="javax.*"
              sourcepath="src/main/java"
