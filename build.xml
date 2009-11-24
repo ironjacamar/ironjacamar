@@ -110,7 +110,7 @@
   <property name="version.jboss.xb" value="2.0.1.GA"/>
   <property name="version.jboss.security" value="2.1.0.20090318"/>
   <property name="version.jdepend" value="2.9.1"/>
-  <property name="version.jetty" value="6.1.21"/>
+  <property name="version.jetty" value="6.1.22"/>
   <property name="version.jetty.servlet" value="6.1.14"/>
   <property name="version.junit" value="4.7"/>
   <property name="version.slf4j" value="1.5.6"/>
