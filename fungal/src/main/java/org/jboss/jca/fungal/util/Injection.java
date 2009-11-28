@@ -32,6 +32,12 @@ import java.util.Locale;
  */
 public class Injection
 {
+   /**
+    * Constructor
+    */
+   public Injection()
+   {
+   }
 
    /**
     * Inject a value into an object property
@@ -43,7 +49,7 @@ public class Injection
     * @exception IllegalAccessException If the property method cannot be accessed
     * @exception InvocationTargetException If the property method cannot be executed
     */
-   public static void inject(String propertyType, String propertyName, String propertyValue, Object object)
+   public void inject(String propertyType, String propertyName, String propertyValue, Object object)
       throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
    {
       if (propertyType == null || propertyType.trim().equals(""))
@@ -182,7 +188,7 @@ public class Injection
     * @param input The input string
     * @return The output
     */
-   private static String getSubstitutionValue(String input)
+   private String getSubstitutionValue(String input)
    {
       if (input == null || input.trim().equals(""))
          return input;

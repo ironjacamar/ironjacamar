@@ -121,8 +121,9 @@ public class RADeployer implements CloneableDeployer
 
          if (f.isFile())
          {
+            FileUtil fileUtil = new FileUtil();
             File destination = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
-            root = FileUtil.extract(f, destination);
+            root = fileUtil.extract(f, destination);
          }
          else
          {
@@ -135,8 +136,9 @@ public class RADeployer implements CloneableDeployer
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Parse metadata
-         ConnectorMetaData cmd = Metadata.getStandardMetaData(root);
-         JBossRAMetaData jrmd = Metadata.getJBossMetaData(root);
+         Metadata metadataHandler = new Metadata();
+         ConnectorMetaData cmd = metadataHandler.getStandardMetaData(root);
+         JBossRAMetaData jrmd = metadataHandler.getJBossMetaData(root);
          boolean isMetadataComplete = true;
 
          // Process annotations
@@ -167,14 +169,17 @@ public class RADeployer implements CloneableDeployer
             }
             
             if (cmd == null || !isMetadataComplete)
-               cmd = Annotations.process(cmd, annotationRepository);
+            {
+               Annotations annotator = new Annotations();
+               cmd = annotator.process(cmd, annotationRepository);
+            }
          }
          
          // Validate metadata
-         Metadata.validate(cmd);
+         metadataHandler.validate(cmd);
          
          // Merge metadata
-         cmd = Metadata.merge(cmd, jrmd);
+         cmd = metadataHandler.merge(cmd, jrmd);
 
          // Create objects
          // And
@@ -270,9 +275,10 @@ public class RADeployer implements CloneableDeployer
             
             if (objects != null && objects.size() > 0)
             {
+               BeanValidation beanValidator = new BeanValidation();
                for (Object mcf : objects)
                {
-                  BeanValidation.validate(mcf, groupsClasses);
+                  beanValidator.validate(mcf, groupsClasses);
                }
             }
          }
@@ -319,9 +325,10 @@ public class RADeployer implements CloneableDeployer
          {
             if (cpMetas != null)
             {
+               Injection injector = new Injection();
                for (ConfigPropertyMetaData cpmd : cpMetas)
                {
-                  Injection.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), mcf);
+                  injector.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), mcf);
                }
             }
          }
@@ -374,9 +381,6 @@ public class RADeployer implements CloneableDeployer
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      RADeployer copy = new RADeployer();
-      copy.setBeanValidation(getBeanValidation());
-
-      return copy;
+      return new RADeployer();
    }
 }

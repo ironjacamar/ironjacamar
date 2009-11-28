@@ -51,7 +51,7 @@ public class FileUtil
    /**
     * Constructor
     */
-   private FileUtil()
+   public FileUtil()
    {
    }
 
@@ -61,7 +61,7 @@ public class FileUtil
     * @param target The JAR file
     * @exception IOException Thrown if an error occurs
     */
-   public static void compress(File directory, File target) throws IOException
+   public void compress(File directory, File target) throws IOException
    {
       if (directory == null)
          throw new IllegalArgumentException("Directory is null");
@@ -171,7 +171,7 @@ public class FileUtil
     * @return The root of the extracted JAR file
     * @exception IOException Thrown if an error occurs
     */
-   public static File extract(File file, File directory) throws IOException
+   public File extract(File file, File directory) throws IOException
    {
       if (file == null)
          throw new IllegalArgumentException("File is null");
@@ -254,7 +254,7 @@ public class FileUtil
     * @param f The file handler
     * @exception IOException Thrown if a file could not be deleted
     */
-   public static void recursiveDelete(File f) throws IOException
+   public void recursiveDelete(File f) throws IOException
    {
       if (f != null && f.exists())
       {
@@ -284,7 +284,7 @@ public class FileUtil
     * @param file The root directory
     * @return The list of files
     */
-   private static List<File> findEntries(File root)
+   private List<File> findEntries(File root)
    {
       try
       {
@@ -305,7 +305,7 @@ public class FileUtil
     * @return The list of files
     * @exception Exception Thrown if an error occurs
     */
-   private static List<File> getListing(File root, File directory) throws Exception 
+   private List<File> getListing(File root, File directory) throws Exception 
    {
       List<File> result = new ArrayList<File>();
 

@@ -64,7 +64,7 @@ public class Metadata
    /**
     * Constructor
     */
-   private Metadata()
+   public Metadata()
    {
    }
 
@@ -74,7 +74,7 @@ public class Metadata
     * @return The metadata
     * @exception Exception Thrown if an error occurs
     */
-   public static ConnectorMetaData getStandardMetaData(File root) throws Exception
+   public ConnectorMetaData getStandardMetaData(File root) throws Exception
    {
       ConnectorMetaData result = null;
 
@@ -123,7 +123,7 @@ public class Metadata
     * @return The metadata
     * @exception Exception Thrown if an error occurs
     */
-   public static JBossRAMetaData getJBossMetaData(File root) throws Exception
+   public JBossRAMetaData getJBossMetaData(File root) throws Exception
    {
       JBossRAMetaData result = null;
 
@@ -168,7 +168,7 @@ public class Metadata
     * @return The merged metadata
     * @exception Exception Thrown if an error occurs
     */
-   public static ConnectorMetaData merge(ConnectorMetaData cmd, JBossRAMetaData jmd) throws Exception
+   public ConnectorMetaData merge(ConnectorMetaData cmd, JBossRAMetaData jmd) throws Exception
    {
       if (cmd != null && jmd != null)
       {
@@ -289,7 +289,7 @@ public class Metadata
     * @return The merged metadata
     * @exception Exception Thrown if an error occurs
     */
-   public static ConnectorMetaData validate(ConnectorMetaData cmd) throws Exception
+   public ConnectorMetaData validate(ConnectorMetaData cmd) throws Exception
    {
       //make sure all need metadata parsered and processed after annotation handle
       if (cmd.getRa() == null)
@@ -312,7 +312,7 @@ public class Metadata
     * @return validate
     * @exception Exception Thrown if an error occurs
     */
-   private static boolean validateOutbound(OutboundRaMetaData omd) throws Exception
+   private boolean validateOutbound(OutboundRaMetaData omd) throws Exception
    {
       if (omd == null)
          return false;
@@ -335,7 +335,7 @@ public class Metadata
     * @return validate
     * @exception Exception Thrown if an error occurs
     */
-   private static boolean validateInbound(InboundRaMetaData imd) throws Exception
+   private boolean validateInbound(InboundRaMetaData imd) throws Exception
    {
       if (imd == null)
          return false;

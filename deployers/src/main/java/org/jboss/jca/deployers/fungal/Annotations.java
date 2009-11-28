@@ -82,7 +82,7 @@ public class Annotations
    /**
     * Constructor
     */
-   private Annotations()
+   public Annotations()
    {
    }
 
@@ -93,7 +93,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   public static ConnectorMetaData process(ConnectorMetaData md, AnnotationRepository annotationRepository)
+   public ConnectorMetaData process(ConnectorMetaData md, AnnotationRepository annotationRepository)
       throws Exception
    {
       if (annotationRepository == null)
@@ -150,7 +150,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData processConnector(ConnectorMetaData md, AnnotationRepository annotationRepository)
+   private ConnectorMetaData processConnector(ConnectorMetaData md, AnnotationRepository annotationRepository)
       throws Exception
    {
       Collection<Annotation> values = annotationRepository.getAnnotation(Connector.class);
@@ -180,7 +180,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachConnector(ConnectorMetaData md, Connector c)
+   private ConnectorMetaData attachConnector(ConnectorMetaData md, Connector c)
       throws Exception
    {
       // AuthenticationMechanism
@@ -401,7 +401,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData processConnectionDefinitions(ConnectorMetaData md, 
+   private ConnectorMetaData processConnectionDefinitions(ConnectorMetaData md, 
                                                                  AnnotationRepository annotationRepository)
       throws Exception
    {
@@ -432,7 +432,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachConnectionDefinitions(ConnectorMetaData md, 
+   private ConnectorMetaData attachConnectionDefinitions(ConnectorMetaData md, 
                                                                 ConnectionDefinitions cds)
       throws Exception
    {
@@ -447,7 +447,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData processConnectionDefinition(ConnectorMetaData md, 
+   private ConnectorMetaData processConnectionDefinition(ConnectorMetaData md, 
                                                                 AnnotationRepository annotationRepository)
       throws Exception
    {
@@ -470,7 +470,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachConnectionDefinition(ConnectorMetaData md, Annotation annotation)
+   private ConnectorMetaData attachConnectionDefinition(ConnectorMetaData md, Annotation annotation)
       throws Exception
    {
       ConnectionDefinition cd = (ConnectionDefinition)annotation.getAnnotation();
@@ -505,7 +505,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData processConfigProperty(ConnectorMetaData md, 
+   private ConnectorMetaData processConfigProperty(ConnectorMetaData md, 
                                                           AnnotationRepository annotationRepository)
       throws Exception
    {
@@ -528,7 +528,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachConfigProperty(ConnectorMetaData md, Annotation annotation)
+   private ConnectorMetaData attachConfigProperty(ConnectorMetaData md, Annotation annotation)
       throws Exception
    {
       ConfigProperty configProperty = (ConfigProperty)annotation.getAnnotation();
@@ -636,7 +636,7 @@ public class Annotations
     * @param targetClassName
     * @return
     */
-   private static boolean hasInterface(Class c, String targetClassName)
+   private boolean hasInterface(Class c, String targetClassName)
    {
       for (Class face : c.getInterfaces())
       {
@@ -673,7 +673,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachAuthenticationMechanism(ConnectorMetaData md, 
+   private ConnectorMetaData attachAuthenticationMechanism(ConnectorMetaData md, 
                                                                   AuthenticationMechanism authenticationmechanism)
       throws Exception
    {
@@ -735,7 +735,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData processAdministeredObject(ConnectorMetaData md, 
+   private ConnectorMetaData processAdministeredObject(ConnectorMetaData md, 
                                                               AnnotationRepository annotationRepository)
       throws Exception
    {
@@ -763,7 +763,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachAdministeredObject(ConnectorMetaData md, AdministeredObject a)
+   private ConnectorMetaData attachAdministeredObject(ConnectorMetaData md, AdministeredObject a)
       throws Exception
    {
       createAdminObject(md);
@@ -785,7 +785,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData processActivation(ConnectorMetaData md, 
+   private ConnectorMetaData processActivation(ConnectorMetaData md, 
                                                       AnnotationRepository annotationRepository)
       throws Exception
    {
@@ -808,7 +808,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private static ConnectorMetaData attachActivation(ConnectorMetaData md, Annotation annotation)
+   private ConnectorMetaData attachActivation(ConnectorMetaData md, Annotation annotation)
       throws Exception
    {
       Activation activation = (Activation)annotation.getAnnotation();
@@ -835,7 +835,7 @@ public class Annotations
     * @param md
     * @throws Exception
     */
-   private static void createMessageListeners(ConnectorMetaData md) throws Exception
+   private void createMessageListeners(ConnectorMetaData md) throws Exception
    {
       if (md.getRa() == null)
       {
@@ -860,7 +860,7 @@ public class Annotations
     * @param md
     * @throws Exception
     */
-   private static void createAdminObject(ConnectorMetaData md) throws Exception
+   private void createAdminObject(ConnectorMetaData md) throws Exception
    {
       if (md.getRa() == null)
       {
@@ -877,7 +877,7 @@ public class Annotations
     * @param md
     * @throws Exception
     */
-   private static void createConDefs(ConnectorMetaData md) throws Exception
+   private void createConDefs(ConnectorMetaData md) throws Exception
    {
       if (md.getRa() == null)
       {

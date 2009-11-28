@@ -49,6 +49,13 @@ public class BeanValidation
    private static boolean trace = log.isTraceEnabled();
 
    /**
+    * Constructor
+    */
+   public BeanValidation()
+   {
+   }
+
+   /**
     * Validate the object against the Bean Validation specification (JSR-303).
     * The object must be fully initialized
     * @param object The object that should be validated
@@ -56,7 +63,7 @@ public class BeanValidation
     * @exception ConstraintViolationException Thrown if the object can't be validated
     */
    @SuppressWarnings("unchecked")
-   public static void validate(Object object, List<Class> groupsClasses) throws ConstraintViolationException
+   public void validate(Object object, List<Class> groupsClasses) throws ConstraintViolationException
    {
       if (object == null)
       {

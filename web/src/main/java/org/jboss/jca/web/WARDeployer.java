@@ -133,7 +133,10 @@ public class WARDeployer implements Deployer
          File tmpDeployment = new File(tmp, "/web" + contextPath);
 
          if (tmpDeployment.exists())
-            FileUtil.recursiveDelete(tmpDeployment);
+         {
+            FileUtil fileUtil = new FileUtil();
+            fileUtil.recursiveDelete(tmpDeployment);
+         }
 
          if (!tmpDeployment.mkdirs())
             throw new IOException("Unable to create " + tmpDeployment);
