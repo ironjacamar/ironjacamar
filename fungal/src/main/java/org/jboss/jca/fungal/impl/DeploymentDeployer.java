@@ -22,6 +22,7 @@
 
 package org.jboss.jca.fungal.impl;
 
+import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.DeployException;
 import org.jboss.jca.fungal.deployers.Deployer;
 import org.jboss.jca.fungal.deployers.Deployment;
@@ -50,13 +51,10 @@ import java.util.concurrent.Future;
  * The deployment deployer (deploys .xml files)
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class DeploymentDeployer implements Deployer
+public class DeploymentDeployer implements CloneableDeployer
 {
    /** The kernel */
    private KernelImpl kernel;
-
-   /** Bean latch */
-   private CountDownLatch beansLatch;
 
    /** Logging */
    private static Object logging;
@@ -71,7 +69,6 @@ public class DeploymentDeployer implements Deployer
          throw new IllegalArgumentException("Kernel is null");
 
       this.kernel = kernel;
-      this.beansLatch = null;
 
       if (logging == null)
          initLogging(kernel.getKernelClassLoader());
@@ -103,10 +100,12 @@ public class DeploymentDeployer implements Deployer
                kernel.setBeanStatus(bt.getName(), ServiceLifecycle.NOT_STARTED);
             }
 
+            kernel.beansRegistered();
+
             List<BeanDeployer> deployers = new ArrayList<BeanDeployer>(deployment.getBean().size());
             List<String> beans = Collections.synchronizedList(new ArrayList<String>(deployment.getBean().size()));
 
-            beansLatch = new CountDownLatch(deployment.getBean().size());
+            final CountDownLatch beansLatch = new CountDownLatch(deployment.getBean().size());
 
             for (BeanType bt : deployment.getBean())
             {
@@ -306,10 +305,11 @@ public class DeploymentDeployer implements Deployer
          {
             ServiceLifecycle dependencyStatus = kernel.getBeanStatus(dependency);
 
-            if (dependencyStatus == null)
+            if (dependencyStatus == null && kernel.isAllBeansRegistered())
                throw new DeployException("Unknown dependency: " + dependency);
 
-            if (dependencyStatus != ServiceLifecycle.STARTED && dependencyStatus != ServiceLifecycle.ERROR)
+            if (dependencyStatus == null || 
+                (dependencyStatus != ServiceLifecycle.STARTED && dependencyStatus != ServiceLifecycle.ERROR))
                count += 1;
          }
 
@@ -853,5 +853,15 @@ public class DeploymentDeployer implements Deployer
       {
          System.out.println(s);
       }
+   }
+
+   /**
+    * Clone
+    * @return The copy of the object
+    * @exception CloneNotSupportedException Thrown if a copy can't be created
+    */
+   public Deployer clone() throws CloneNotSupportedException
+   {
+      return new DeploymentDeployer(kernel);
    }
 }

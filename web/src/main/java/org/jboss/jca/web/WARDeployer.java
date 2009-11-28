@@ -81,7 +81,7 @@ public class WARDeployer implements Deployer
     * @return The deployment
     * @exception DeployException Thrown if an error occurs during deployment
     */
-   public Deployment deploy(URL url, ClassLoader parent) throws DeployException
+   public synchronized Deployment deploy(URL url, ClassLoader parent) throws DeployException
    {
       if (url == null || !(url.toExternalForm().endsWith(".war") || url.toExternalForm().endsWith(".war/")))
          return null;

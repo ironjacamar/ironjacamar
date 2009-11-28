@@ -303,6 +303,7 @@
         <include name="**/*"/>
       </fileset>
     </move>
+    <delete dir="${build.dir}/api"/>
 
     <copy todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}">
       <fileset dir="${target.dir}/sjc"/>

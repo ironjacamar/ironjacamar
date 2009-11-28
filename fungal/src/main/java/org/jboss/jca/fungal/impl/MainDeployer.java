@@ -22,21 +22,25 @@
 
 package org.jboss.jca.fungal.impl;
 
+import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.Deployer;
 import org.jboss.jca.fungal.deployers.Deployment;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The main deployer for JBoss JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class MainDeployer implements MainDeployerMBean
+public class MainDeployer implements Cloneable, MainDeployerMBean
 {
+   private static List<Deployer> deployers = new CopyOnWriteArrayList<Deployer>();
+
    private KernelImpl kernel;
-   private List<Deployer> deployers;
+   private List<Deployer> copy;
 
    /**
     * Constructor
@@ -48,7 +52,7 @@ public class MainDeployer implements MainDeployerMBean
          throw new IllegalArgumentException("Kernel is null");
 
       this.kernel = kernel;
-      this.deployers = new ArrayList<Deployer>();
+      this.copy = null;
    }
 
    /**
@@ -68,7 +72,7 @@ public class MainDeployer implements MainDeployerMBean
     * @param url The URL for the deployment
     * @exception Throwable If an error occurs
     */
-   public synchronized void deploy(URL url) throws Throwable
+   public void deploy(URL url) throws Throwable
    {
       deploy(url, kernel.getKernelClassLoader());
    }
@@ -79,7 +83,7 @@ public class MainDeployer implements MainDeployerMBean
     * @param classLoader The parent class loader for the deployment
     * @exception Throwable If an error occurs
     */
-   public synchronized void deploy(URL url, ClassLoader classLoader) throws Throwable
+   public void deploy(URL url, ClassLoader classLoader) throws Throwable
    {
       if (url == null)
          throw new IllegalArgumentException("URL is null");
@@ -87,11 +91,36 @@ public class MainDeployer implements MainDeployerMBean
       if (classLoader == null)
          throw new IllegalArgumentException("ClassLoader is null");
 
+      if (copy == null || copy.size() != deployers.size())
+      {
+         copy = new ArrayList<Deployer>(deployers.size());
+         for (Deployer deployer : deployers)
+         {
+            if (deployer instanceof CloneableDeployer)
+            {
+               try
+               {
+                  copy.add(((CloneableDeployer)deployer).clone());
+               }
+               catch (CloneNotSupportedException cnse)
+               {
+                  // Add the deployer and assume synchronized access
+                  copy.add(deployer);
+               }
+            }
+            else
+            {
+               // Assume synchronized access to deploy()
+               copy.add(deployer);
+            }
+         }
+      }
+
       boolean done = false;
 
-      for (int i = 0; !done && i < deployers.size(); i++)
+      for (int i = 0; !done && i < copy.size(); i++)
       {
-         Deployer deployer = deployers.get(i);
+         Deployer deployer = copy.get(i);
             
          Deployment deployment = deployer.deploy(url, classLoader);
          if (deployment != null)
@@ -107,7 +136,7 @@ public class MainDeployer implements MainDeployerMBean
     * @param url The URL for the deployment
     * @exception Throwable If an error occurs
     */
-   public synchronized void undeploy(URL url) throws Throwable
+   public void undeploy(URL url) throws Throwable
    {
       if (url == null)
          throw new IllegalArgumentException("URL is null");
@@ -115,5 +144,15 @@ public class MainDeployer implements MainDeployerMBean
       Deployment deployment = kernel.findDeployment(url);
       if (deployment != null)
          kernel.shutdownDeployment(deployment);
+   }
+
+   /**
+    * Clone
+    * @return The copy of the object
+    * @exception CloneNotSupportedException Thrown if a copy can't be created
+    */
+   public Object clone() throws CloneNotSupportedException
+   {
+      return new MainDeployer(kernel);
    }
 }

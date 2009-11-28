@@ -6,7 +6,7 @@
       <title>Overview</title>
       
       <para>The JBoss JCA/Fungal kernel is a Plain Old Java Object (POJO) based kernel which
-        can build a simple container environment for Java services.</para>
+        can build a container environment for Java services.</para>
 
       <para>The kernel features</para>
 
@@ -36,6 +36,8 @@
           Core services
         </listitem>
       </itemizedlist>
+
+      <para>The focus of the Fungal kernel is simplicity and high performance.</para>
 
     </section>
 
@@ -202,6 +204,9 @@ ${jboss.jca.host:localhost}
       <para>Furthermore the dependencies between beans are recorded in order to be able to safely shutdown
         deployments.</para>
 
+      <para>Note, that all deployment units in the <code>deploy</code> directory are booted in sequence
+        defined by the <code>File.listFiles()</code> method.</para>
+
     </section>
 
     <section id="fungal_classloading">
@@ -258,6 +263,38 @@ public Deployment deploy(URL url, ClassLoader parent) throws DeployException;
       <para>The <code>Deployment</code> interface returned represents the
         deployment unit or <code>null</code> if a deployment unit wasn't
         created.</para>
+
+      <para>The implementation of the deployer bean must be thread-safe. This can be done by
+        using the <code>synchronized</code> keyword on the <code>deploy</code> method.</para>
+
+      <section id="fungal_deployers_advanced">
+        <title>Advanced deployers</title>
+
+        <para>The kernel supports deploying multiple artifacts of the same type at the same time
+          for optimal performance.</para>
+
+        <para>If a deployer supports this mechanism it must implement the</para>
+          <programlisting>
+org.jboss.jca.fungal.deployers.CloneableDeployer
+          </programlisting>
+          <para>interface.</para>
+
+          <para>The interface contains the</para>
+          <programlisting>
+/**
+ * Clone the deployer
+ * @return A copy of the deployer
+ * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
+ */
+public Deployer clone() throws CloneNotSupportedException;
+          </programlisting>
+          <para>method which constructs a new instance of the deployer.</para>
+
+          <para>Implementing this interface means that the <code>deploy</code> method doesn't have
+            to be <code>synchronized</code>. However any state that should be shared between
+            all the deployer instances should be <code>static</code> and have atomic access.</para>
+
+      </section>
 
     </section>
 

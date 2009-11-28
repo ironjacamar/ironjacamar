@@ -32,20 +32,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -71,6 +75,9 @@ public class KernelImpl implements Kernel
 
    /** Bean dependants */
    private ConcurrentMap<String, Set<String>> beanDependants = new ConcurrentHashMap<String, Set<String>>();
+
+   /** Bean deployments */
+   private AtomicInteger beanDeployments;
 
    /** Kernel thread pool */
    private ThreadPoolExecutor threadPoolExecutor;
@@ -103,6 +110,7 @@ public class KernelImpl implements Kernel
    public KernelImpl(KernelConfiguration kc)
    {
       this.kernelConfiguration = kc;
+      this.beanDeployments = new AtomicInteger(0);
       this.temporaryEnvironment = false;
    }
 
@@ -128,11 +136,12 @@ public class KernelImpl implements Kernel
       BlockingQueue<Runnable> threadPoolQueue = new SynchronousQueue<Runnable>(true);
       ThreadFactory tf = new FungalThreadFactory(tg);
 
-      threadPoolExecutor = new ThreadPoolExecutor(1, Integer.MAX_VALUE,
+      threadPoolExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(), Integer.MAX_VALUE,
                                                   60, TimeUnit.SECONDS,
                                                   threadPoolQueue,
                                                   tf);
 
+      threadPoolExecutor.allowCoreThreadTimeOut(true);
       threadPoolExecutor.prestartAllCoreThreads();
 
       File root = null;
@@ -221,22 +230,17 @@ public class KernelImpl implements Kernel
             // Bootstrap urls
             if (bootstrap != null)
             {
+               beanDeployments = new AtomicInteger(bootstrap.getUrl().size());
+
+               List<URL> bootstrapUrls = new ArrayList<URL>(bootstrap.getUrl().size());
+
                for (String url : bootstrap.getUrl())
                {
-                  try
-                  {
-                     URL fullPath = new URL(configDirectory.toURI().toURL().toExternalForm() + url);
-                     
-                     if (isDebugEnabled())
-                        debug("URL=" + fullPath.toString());
-                     
-                     mainDeployer.deploy(fullPath, kernelClassLoader);
-                  }
-                  catch (Throwable deployThrowable)
-                  {
-                     error(deployThrowable.getMessage(), deployThrowable);
-                  }
+                  URL fullPath = new URL(configDirectory.toURI().toURL().toExternalForm() + url);
+                  bootstrapUrls.add(fullPath);
                }
+
+               deployUrls(bootstrapUrls.toArray(new URL[bootstrapUrls.size()]));
             }
          }
       }
@@ -244,19 +248,14 @@ public class KernelImpl implements Kernel
       // Deploy all files in deploy/
       if (deployDirectory != null && deployDirectory.exists() && deployDirectory.isDirectory())
       {
-         for (File f : deployDirectory.listFiles())
-         {
-            try
-            {
-               if (isDebugEnabled())
-                  debug("URL=" + f.toURI().toURL().toExternalForm());
+         File[] files = deployDirectory.listFiles();
 
-               mainDeployer.deploy(f.toURI().toURL(), kernelClassLoader);
-            }
-            catch (Throwable deployThrowable)
+         if (files != null)
+         {
+            for (File f : files)
             {
-               error(deployThrowable.getMessage(), deployThrowable);
-            }
+               deployUrls(new URL[] {f.toURI().toURL()});
+            }                     
          }
       }
 
@@ -267,6 +266,59 @@ public class KernelImpl implements Kernel
                                           kernelConfiguration.getBindAddress(),
                                           kernelConfiguration.getRemotePort());
          Future<?> f = threadPoolExecutor.submit(remote);
+      }
+   }
+
+   /**
+    * Deploy URLs
+    * @param urls The URLs
+    */
+   private void deployUrls(URL[] urls)
+   {
+      if (urls != null && urls.length > 0)
+      {
+         try
+         {
+            List<UnitDeployer> unitDeployers = new ArrayList<UnitDeployer>(urls.length);
+
+            final CountDownLatch unitLatch = new CountDownLatch(urls.length);
+
+            for (URL url : urls)
+            {
+               try
+               {
+                  if (isDebugEnabled())
+                     debug("URL=" + url.toString());
+
+                  MainDeployer deployer = (MainDeployer)mainDeployer.clone();
+                  UnitDeployer unitDeployer = new UnitDeployer(url, deployer, kernelClassLoader, unitLatch);
+                  unitDeployers.add(unitDeployer);
+                  
+                  getExecutorService().execute(unitDeployer);
+               }
+               catch (Throwable deployThrowable)
+               {
+                  error(deployThrowable.getMessage(), deployThrowable);
+               }
+            }
+
+            unitLatch.await();
+
+            Iterator<UnitDeployer> it = unitDeployers.iterator();
+            while (it.hasNext())
+            {
+               UnitDeployer deployer = it.next();
+               if (deployer.getThrowable() != null)
+               {
+                  Throwable t = deployer.getThrowable();
+                  error(t.getMessage(), t);
+               }
+            }
+         }
+         catch (Throwable t)
+         {
+            error(t.getMessage(), t);
+         }
       }
    }
 
@@ -497,12 +549,36 @@ public class KernelImpl implements Kernel
    }
 
    /**
+    * Beans registered
+    */
+   void beansRegistered()
+   {
+      beanDeployments.decrementAndGet();
+   }
+
+   /**
+    * Is all beans registered
+    * @return True if all beans have been registered; otherwise false
+    */
+   boolean isAllBeansRegistered()
+   {
+      return beanDeployments.get() <= 0;
+   }
+
+   /**
     * Get the main deployer
     * @return The main deployer
     */
    public MainDeployer getMainDeployer()
    {
-      return mainDeployer;
+      try
+      {
+         return (MainDeployer)mainDeployer.clone();
+      }
+      catch (CloneNotSupportedException cnse)
+      {
+         return mainDeployer;
+      }
    }
 
    /**
@@ -758,6 +834,70 @@ public class KernelImpl implements Kernel
       else
       {
          System.out.println(s);
+      }
+   }
+
+   /**
+    * Unit deployer
+    */
+   static class UnitDeployer implements Runnable
+   {
+      /** Unit URL */
+      private URL url;
+
+      /** Main deployer */
+      private MainDeployer deployer;
+
+      /** Class loader */
+      private ClassLoader classLoader;
+
+      /** Unit latch */
+      private CountDownLatch unitLatch;
+
+      /** Throwable */
+      private Throwable throwable;
+
+      /**
+       * Constructor
+       */
+      public UnitDeployer(final URL url,
+                          final MainDeployer deployer,
+                          final ClassLoader classLoader,
+                          final CountDownLatch unitLatch)
+      {
+         this.url = url;
+         this.deployer = deployer;
+         this.classLoader = classLoader;
+         this.unitLatch = unitLatch;
+         this.throwable = null;
+      }
+
+      /**
+       * Run
+       */
+      public void run()
+      {
+         SecurityActions.setThreadContextClassLoader(classLoader);
+
+         try
+         {
+            deployer.deploy(url, classLoader);
+         }
+         catch (Throwable t)
+         {
+            throwable = t;
+         }
+
+         unitLatch.countDown();
+      }
+
+      /**
+       * Get deploy exception
+       * @return null if no error; otherwise the exception
+       */
+      public Throwable getThrowable()
+      {
+         return throwable;
       }
    }
 }

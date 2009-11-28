@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.DeployException;
 import org.jboss.jca.fungal.deployers.Deployer;
 import org.jboss.jca.fungal.deployers.Deployment;
@@ -37,6 +38,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jboss.logging.Logger;
 
@@ -60,15 +62,13 @@ import org.jboss.papaki.AnnotationScannerFactory;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  */
-public class RADeployer implements Deployer
+public class RADeployer implements CloneableDeployer
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
    private static boolean trace = log.isTraceEnabled();
    
-   /**
-    * validation optional
-    */
-   private boolean beanValidation = true;
+   /** Preform bean validation */
+   private static AtomicBoolean beanValidation = new AtomicBoolean(true);
 
    /**
     * Constructor
@@ -78,21 +78,21 @@ public class RADeployer implements Deployer
    }
 
    /**
-    * setBeanValidation
-    * @param value validation optional
+    * Set if bean validation should be performed
+    * @param value The value
     */
    public void setBeanValidation(boolean value)
    {
-      beanValidation = value;
+      beanValidation.set(value);
    }
    
    /**
-    * getBeanValidation
-    * @return validation optional
+    * Should bean validation be performed
+    * @return True if validation; otherwise false
     */
    public boolean getBeanValidation()
    {
-      return beanValidation;
+      return beanValidation.get();
    }
    
    /**
@@ -250,7 +250,7 @@ public class RADeployer implements Deployer
 
 
          // Bean validation
-         if (beanValidation)
+         if (getBeanValidation())
          {
             JBossRA20Base jrmd20 = null;
             List<Class> groupsClasses = null;
@@ -365,5 +365,18 @@ public class RADeployer implements Deployer
          }
       }
       return list.toArray(new URL[list.size()]);      
+   }
+
+   /**
+    * Clone
+    * @return The copy of the object
+    * @exception CloneNotSupportedException Thrown if a copy can't be created
+    */
+   public Deployer clone() throws CloneNotSupportedException
+   {
+      RADeployer copy = new RADeployer();
+      copy.setBeanValidation(getBeanValidation());
+
+      return copy;
    }
 }
