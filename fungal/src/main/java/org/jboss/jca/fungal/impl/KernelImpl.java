@@ -253,6 +253,15 @@ public class KernelImpl implements Kernel
 
          if (files != null)
          {
+            int counter = 0;
+            for (File f : files)
+            {
+               if (f.toURI().toURL().toString().endsWith(".xml"))
+                  counter++;
+            }
+
+            beanDeployments = new AtomicInteger(counter);
+
             for (File f : files)
             {
                deployUrls(new URL[] {f.toURI().toURL()});
