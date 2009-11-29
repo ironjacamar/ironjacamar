@@ -61,7 +61,7 @@ public class FileUtil
     * @param target The JAR file
     * @exception IOException Thrown if an error occurs
     */
-   public void compress(File directory, File target) throws IOException
+   public synchronized void compress(File directory, File target) throws IOException
    {
       if (directory == null)
          throw new IllegalArgumentException("Directory is null");
@@ -171,7 +171,7 @@ public class FileUtil
     * @return The root of the extracted JAR file
     * @exception IOException Thrown if an error occurs
     */
-   public File extract(File file, File directory) throws IOException
+   public synchronized File extract(File file, File directory) throws IOException
    {
       if (file == null)
          throw new IllegalArgumentException("File is null");
@@ -254,7 +254,7 @@ public class FileUtil
     * @param f The file handler
     * @exception IOException Thrown if a file could not be deleted
     */
-   public void recursiveDelete(File f) throws IOException
+   public synchronized void recursiveDelete(File f) throws IOException
    {
       if (f != null && f.exists())
       {

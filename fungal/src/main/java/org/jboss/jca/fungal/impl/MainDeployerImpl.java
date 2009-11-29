@@ -35,7 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * The main deployer for JBoss JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class MainDeployer implements Cloneable, MainDeployerMBean
+public class MainDeployerImpl implements Cloneable, MainDeployerImplMBean
 {
    private static List<Deployer> deployers = new CopyOnWriteArrayList<Deployer>();
 
@@ -46,7 +46,7 @@ public class MainDeployer implements Cloneable, MainDeployerMBean
     * Constructor
     * @param kernel The kernel
     */
-   public MainDeployer(KernelImpl kernel)
+   public MainDeployerImpl(KernelImpl kernel)
    {
       if (kernel == null)
          throw new IllegalArgumentException("Kernel is null");
@@ -72,7 +72,7 @@ public class MainDeployer implements Cloneable, MainDeployerMBean
     * @param url The URL for the deployment
     * @exception Throwable If an error occurs
     */
-   public void deploy(URL url) throws Throwable
+   public synchronized void deploy(URL url) throws Throwable
    {
       deploy(url, kernel.getKernelClassLoader());
    }
@@ -83,7 +83,7 @@ public class MainDeployer implements Cloneable, MainDeployerMBean
     * @param classLoader The parent class loader for the deployment
     * @exception Throwable If an error occurs
     */
-   public void deploy(URL url, ClassLoader classLoader) throws Throwable
+   public synchronized void deploy(URL url, ClassLoader classLoader) throws Throwable
    {
       if (url == null)
          throw new IllegalArgumentException("URL is null");
@@ -136,7 +136,7 @@ public class MainDeployer implements Cloneable, MainDeployerMBean
     * @param url The URL for the deployment
     * @exception Throwable If an error occurs
     */
-   public void undeploy(URL url) throws Throwable
+   public synchronized void undeploy(URL url) throws Throwable
    {
       if (url == null)
          throw new IllegalArgumentException("URL is null");
@@ -153,6 +153,6 @@ public class MainDeployer implements Cloneable, MainDeployerMBean
     */
    public Object clone() throws CloneNotSupportedException
    {
-      return new MainDeployer(kernel);
+      return new MainDeployerImpl(kernel);
    }
 }

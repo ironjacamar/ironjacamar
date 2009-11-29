@@ -49,7 +49,7 @@ public class Injection
     * @exception IllegalAccessException If the property method cannot be accessed
     * @exception InvocationTargetException If the property method cannot be executed
     */
-   public void inject(String propertyType, String propertyName, String propertyValue, Object object)
+   public synchronized void inject(String propertyType, String propertyName, String propertyValue, Object object)
       throws NoSuchMethodException, IllegalAccessException, InvocationTargetException
    {
       if (propertyType == null || propertyType.trim().equals(""))

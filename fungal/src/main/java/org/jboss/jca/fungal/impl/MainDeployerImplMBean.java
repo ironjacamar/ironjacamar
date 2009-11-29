@@ -20,37 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.fungal.api;
+package org.jboss.jca.fungal.impl;
 
-import javax.management.MBeanServer;
+import org.jboss.jca.fungal.api.MainDeployer;
 
 /**
- * The kernel API
+ * The main deployer MBean for JBoss JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface Kernel
+public interface MainDeployerImplMBean extends MainDeployer
 {
-   /**
-    * Get the MBeanServer for the kernel
-    * @return The MBeanServer instance
-    */
-   public MBeanServer getMBeanServer();
-
-   /**
-    * Get the MainDeployer for the kernel
-    * @return The MainDeployer instance
-    */
-   public MainDeployer getMainDeployer();
-
-   /**
-    * Startup
-    * @exception Throwable Thrown if an error occurs
-    */
-   public void startup() throws Throwable;
-
-   /**
-    * Shutdown
-    * @exception Throwable Thrown if an error occurs
-    */
-   public void shutdown() throws Throwable;
 }

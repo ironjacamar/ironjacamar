@@ -22,7 +22,7 @@
 
 package org.jboss.jca.fungal.impl.remote;
 
-import org.jboss.jca.fungal.impl.MainDeployer;
+import org.jboss.jca.fungal.api.MainDeployer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

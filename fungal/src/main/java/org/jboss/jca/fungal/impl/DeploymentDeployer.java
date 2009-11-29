@@ -463,7 +463,7 @@ public class DeploymentDeployer implements CloneableDeployer
          // Register deployer
          if (instance instanceof Deployer)
          {
-            kernel.getMainDeployer().addDeployer((Deployer)instance);
+            ((MainDeployerImpl)kernel.getMainDeployer()).addDeployer((Deployer)instance);
          }
 
          return instance;

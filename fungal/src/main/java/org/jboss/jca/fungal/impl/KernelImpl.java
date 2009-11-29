@@ -23,6 +23,7 @@
 package org.jboss.jca.fungal.impl;
 
 import org.jboss.jca.fungal.api.Kernel;
+import org.jboss.jca.fungal.api.MainDeployer;
 import org.jboss.jca.fungal.deployers.Deployment;
 import org.jboss.jca.fungal.impl.remote.CommunicationServer;
 
@@ -89,7 +90,7 @@ public class KernelImpl implements Kernel
    private KernelClassLoader kernelClassLoader;
 
    /** Main deployer */
-   private MainDeployer mainDeployer;
+   private MainDeployerImpl mainDeployer;
 
    /** MBeanServer */
    private MBeanServer mbeanServer;
@@ -205,7 +206,7 @@ public class KernelImpl implements Kernel
       mbeanServer = MBeanServerFactory.createMBeanServer("jboss.jca");
 
       // Main deployer
-      mainDeployer = new MainDeployer(this);
+      mainDeployer = new MainDeployerImpl(this);
       ObjectName mainDeployerObjectName = new ObjectName("jboss.jca:name=MainDeployer");
       mbeanServer.registerMBean(mainDeployer, mainDeployerObjectName);
 
@@ -290,7 +291,7 @@ public class KernelImpl implements Kernel
                   if (isDebugEnabled())
                      debug("URL=" + url.toString());
 
-                  MainDeployer deployer = (MainDeployer)mainDeployer.clone();
+                  MainDeployerImpl deployer = (MainDeployerImpl)mainDeployer.clone();
                   UnitDeployer unitDeployer = new UnitDeployer(url, deployer, kernelClassLoader, unitLatch);
                   unitDeployers.add(unitDeployer);
                   
@@ -846,7 +847,7 @@ public class KernelImpl implements Kernel
       private URL url;
 
       /** Main deployer */
-      private MainDeployer deployer;
+      private MainDeployerImpl deployer;
 
       /** Class loader */
       private ClassLoader classLoader;
@@ -861,7 +862,7 @@ public class KernelImpl implements Kernel
        * Constructor
        */
       public UnitDeployer(final URL url,
-                          final MainDeployer deployer,
+                          final MainDeployerImpl deployer,
                           final ClassLoader classLoader,
                           final CountDownLatch unitLatch)
       {

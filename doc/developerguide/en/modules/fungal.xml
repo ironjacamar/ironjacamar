@@ -462,6 +462,7 @@ public Deployer clone() throws CloneNotSupportedException;
 
       <programlisting>
 import org.jboss.jca.fungal.api.Kernel;
+import org.jboss.jca.fungal.api.MainDeployer;
 import org.jboss.jca.fungal.impl.KernelConfiguration;
 import org.jboss.jca.fungal.impl.KernelImpl;
 
@@ -471,10 +472,19 @@ kernelConfiguration = kernelConfiguration.remoteAccess(false);
 
 Kernel kernel = new KernelImpl(kernelConfiguration);
 kernel.startup();
+
+// Get the reference to the main deployer
+MainDeployer mainDeployer = kernel.getMainDeployer();
+
+// Reference to my deployment
+URL myDeployment = ...;
+
+mainDeployer.deploy(myDeployment);
       </programlisting>
 
       <para>where the <code>KernelConfiguration</code> object allows you to
-        configure the kernel setup.</para>
+        configure the kernel setup. The <code>MainDeployer</code> allows you
+        to deploy and undeploy deployment units that are supported.</para>
 
       <para>The kernel is stopped using</para>
 

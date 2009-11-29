@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,18 +20,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.fungal.impl;
+package org.jboss.jca.fungal.api;
 
 import java.net.URL;
 
 /**
- * The main deployer MBean for JBoss JCA/Fungal
+ * The main deployer for JBoss JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface MainDeployerMBean
+public interface MainDeployer
 {
    /**
-    * Deploy
+    * Deploy uses the kernel class loader as the parent class loader
     * @param url The URL for the deployment
     * @exception Throwable If an error occurs
     */
