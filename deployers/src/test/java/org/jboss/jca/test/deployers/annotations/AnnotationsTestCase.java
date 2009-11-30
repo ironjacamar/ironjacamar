@@ -36,7 +36,9 @@ import org.jboss.papaki.AnnotationRepository;
 import org.jboss.papaki.AnnotationScanner;
 import org.jboss.papaki.AnnotationScannerFactory;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 //import org.junit.Ignore;
 import org.junit.Test;
@@ -62,6 +64,11 @@ public class AnnotationsTestCase
     * Embedded
     */
    private static EmbeddedJCA embedded;
+   
+   /*
+    * Annotations
+    */
+   private Annotations annotations;
 
    // --------------------------------------------------------------------------------||
    // Tests --------------------------------------------------------------------------||
@@ -74,7 +81,7 @@ public class AnnotationsTestCase
    @Test(expected = DeployException.class)
    public void testProcessNullArguments() throws Throwable
    {
-      Annotations.process(null, null);
+      annotations.process(null, null);
    }
 
    /**
@@ -85,7 +92,7 @@ public class AnnotationsTestCase
    public void testProcessNullAnnotationRepository() throws Throwable
    {
       ConnectorMetaData cmd = new ConnectorMetaData();
-      Annotations.process(cmd, null);
+      annotations.process(cmd, null);
    }
 
    /**
@@ -101,7 +108,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
       }
       catch (Throwable t)
       {
@@ -123,7 +130,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
       }
       catch (Throwable t)
       {
@@ -144,7 +151,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
 
          fail("Success");
       }
@@ -167,7 +174,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
       }
       catch (Throwable t)
       {
@@ -189,7 +196,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
       }
       catch (Throwable t)
       {
@@ -210,7 +217,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
       }
       catch (Throwable t)
       {
@@ -231,7 +238,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
       }
       catch (Throwable t)
       {
@@ -252,7 +259,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
       }
       catch (Throwable t)
       {
@@ -273,7 +280,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         Annotations.process(null, ar);
+         annotations.process(null, ar);
       }
       catch (Throwable t)
       {
@@ -284,7 +291,27 @@ public class AnnotationsTestCase
    // --------------------------------------------------------------------------------||
    // Lifecycle Methods --------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
+   
+   /**
+    * be run before the Test method.
+    * @throws Throwable throwable exception 
+    */
+   @Before
+   public void setup() throws Throwable
+   {
+	   annotations = new Annotations();
+   }
 
+   /**
+    * causes that method to be run after the Test method.
+    * @throws Throwable throwable exception 
+    */
+   @After
+   public void tearDown() throws Throwable
+   {
+	   annotations = null;
+   }
+   
    /**
     * Lifecycle start, before the suite is executed
     * @throws Throwable throwable exception 
