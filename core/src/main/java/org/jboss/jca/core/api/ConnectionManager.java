@@ -28,8 +28,6 @@ package org.jboss.jca.core.api;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @version $Rev$
  */
-public interface ConnectionManager extends 
-  javax.resource.spi.ConnectionManager, java.io.Serializable
+public interface ConnectionManager extends javax.resource.spi.ConnectionManager, java.io.Serializable
 {
-   
 }

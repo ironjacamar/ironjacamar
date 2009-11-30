@@ -299,7 +299,7 @@ public class AnnotationsTestCase
    @Before
    public void setup() throws Throwable
    {
-	   annotations = new Annotations();
+      annotations = new Annotations();
    }
 
    /**
@@ -309,7 +309,7 @@ public class AnnotationsTestCase
    @After
    public void tearDown() throws Throwable
    {
-	   annotations = null;
+      annotations = null;
    }
    
    /**
