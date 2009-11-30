@@ -869,6 +869,10 @@ public class KernelImpl implements Kernel
 
       /**
        * Constructor
+       * @param url The deployment url
+       * @param deployer The main deployer
+       * @param classLoader The class loader
+       * @param unitLatch The unit latch
        */
       public UnitDeployer(final URL url,
                           final MainDeployerImpl deployer,

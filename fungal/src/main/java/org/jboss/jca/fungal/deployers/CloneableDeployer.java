@@ -22,8 +22,6 @@
 
 package org.jboss.jca.fungal.deployers;
 
-import java.net.URL;
-
 /**
  * The deployer interface for JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>

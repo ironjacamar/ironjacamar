@@ -95,8 +95,8 @@ public class CachedConnectionManager implements
     * the idiot spec compliant behavior.
     */
    private final Map<KeyConnectionAssociation, Map<ConnectionCacheListener, Collection<ConnectionRecord>>> 
-      objectToConnectionManagerMap = new HashMap<KeyConnectionAssociation, 
-         Map<ConnectionCacheListener, Collection<ConnectionRecord>>>();
+   objectToConnectionManagerMap = new HashMap<KeyConnectionAssociation, 
+      Map<ConnectionCacheListener, Collection<ConnectionRecord>>>();
 
    /**
     * Connection stacktraces
