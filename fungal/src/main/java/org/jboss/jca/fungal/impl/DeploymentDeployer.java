@@ -51,7 +51,7 @@ import java.util.concurrent.Future;
  * The deployment deployer (deploys .xml files)
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class DeploymentDeployer implements CloneableDeployer
+public final class DeploymentDeployer implements CloneableDeployer
 {
    /** The kernel */
    private KernelImpl kernel;

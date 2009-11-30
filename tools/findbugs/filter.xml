@@ -80,6 +80,10 @@
 
   <!--  org.jboss.jca.web filter -->
   <Match>
+    <Class name="org.jboss.jca.web.WARDeployer"/>
+    <Bug code="IS"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.web.WARDeployment"/>
     <Bug code="UrF"/>
   </Match>

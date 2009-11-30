@@ -35,7 +35,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * The main deployer for JBoss JCA/Fungal
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class MainDeployerImpl implements Cloneable, MainDeployerImplMBean
+public final class MainDeployerImpl implements Cloneable, MainDeployerImplMBean
 {
    private static List<Deployer> deployers = new CopyOnWriteArrayList<Deployer>();
 

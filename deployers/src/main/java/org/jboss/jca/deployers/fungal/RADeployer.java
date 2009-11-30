@@ -62,7 +62,7 @@ import org.jboss.papaki.AnnotationScannerFactory;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  */
-public class RADeployer implements CloneableDeployer
+public final class RADeployer implements CloneableDeployer
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
    private static boolean trace = log.isTraceEnabled();
