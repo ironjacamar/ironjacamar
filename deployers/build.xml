@@ -69,11 +69,16 @@
 
     <copy todir="${build.deployers.dir}/jars/rar">
       <fileset dir="${build.deployers.dir}/impl"
-               includes="**/mc/rar/**"/>
+               includes="**/common/**,**/mc/rar/**"/>
     </copy>
 
     <copy file="src/main/resources/jca-deployers-jboss-beans.xml" 
           tofile="${build.deployers.dir}/jars/rar/META-INF/jboss-beans.xml"/>
+
+    <copy todir="${build.deployers.dir}/jars/rar">
+      <fileset dir="src/main/resources/"
+               includes="**/*.properties"/>
+    </copy>
 
     <jar destfile="${target.dir}/jboss-jca-deployers-rar.jar"
          manifest="src/main/resources/rar-manifest.mf"
@@ -84,7 +89,12 @@
 
     <copy todir="${build.deployers.dir}/jars/fungal">
       <fileset dir="${build.deployers.dir}/impl"
-               includes="**/fungal/**"/>
+               includes="**/common/**,**/fungal/**"/>
+    </copy>
+
+    <copy todir="${build.deployers.dir}/jars/fungal">
+      <fileset dir="src/main/resources/"
+               includes="**/*.properties"/>
     </copy>
 
     <jar destfile="${target.dir}/jboss-jca-deployers-fungal.jar"

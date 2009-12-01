@@ -39,6 +39,84 @@ config/jbossts-properties.xml
 
    </section>
 
+   <section id="jca">
+      <title>JCA</title>
+
+      <section id="jca_deployer">
+        <title>Deployer</title>
+
+        <para>The JBoss JCA deployer is configured in the</para>
+
+        <programlisting>
+config/bootstrap/jca.xml
+        </programlisting>
+
+        <para>file, as the</para>
+
+        <programlisting>
+&lt;bean name="RADeployer" 
+      interface="org.jboss.jca.fungal.deployers.Deployer" 
+      class="org.jboss.jca.deployers.fungal.RADeployer"&gt;
+  &lt;depends&gt;BeanValidation&lt;/depends&gt;
+  &lt;depends&gt;WorkManager&lt;/depends&gt;
+&lt;/bean&gt;
+        </programlisting>
+
+        <para>bean.</para>
+
+        <table frame="all">
+          <title>JCA Deployer</title>
+          <tgroup cols="3" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1" colwidth="2*"/>
+            <colspec colname="c2"/>
+            <colspec colname="c3" colwidth="3*"/>
+            <thead>
+              <row>
+                <entry align="left">Property</entry>
+                <entry align="left">Type</entry>
+                <entry align="left">Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry><code>BeanValidation</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Toggle bean validation (JSR-303) for the deployment units.
+                  <para>Default: <code>true</code></para>
+                </entry>
+              </row>
+              <row>
+                <entry><code>ArchiveValidation</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Toggle archive validation for the deployment units.
+                  <para>Default: <code>true</code></para>
+                </entry>
+              </row>
+              <row>
+                <entry><code>ArchiveValidationFailOnWarn</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should an archive validation warning report fail the deployment.
+                  <para>Default: <code>false</code></para>
+                </entry>
+              </row>
+              <row>
+                <entry><code>ArchiveValidationFailOnError</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should an archive validation error report fail the deployment.
+                  <para>Default: <code>true</code></para>
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </section>
+
+   </section>
+
    <section id="webserver">
       <title>Web server</title>
 
@@ -52,8 +130,31 @@ config/bootstrap/web.xml
 
       <para>file.</para>
 
-      <para>The <code>port</code> property specifies which port the web server will be running on. Default port
-        is 8080.</para>
+      <table frame="all">
+        <title>Web server</title>
+        <tgroup cols="3" align="left" colsep="1" rowsep="1">
+          <colspec colname="c1" colwidth="2*"/>
+          <colspec colname="c2"/>
+          <colspec colname="c3" colwidth="3*"/>
+          <thead>
+            <row>
+              <entry align="left">Property</entry>
+              <entry align="left">Type</entry>
+              <entry align="left">Description</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><code>Port</code></entry>
+              <entry><code>int</code></entry>
+              <entry>
+                Set the port for the web server
+                <para>Default: <code>8080</code></para>
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
 
       <para>The web server can be removed from the environment by removing the reference to <code>web.xml</code>
         in</para>

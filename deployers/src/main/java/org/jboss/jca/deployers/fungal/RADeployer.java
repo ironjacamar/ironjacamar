@@ -22,6 +22,10 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.deployers.common.validator.Failure;
+import org.jboss.jca.deployers.common.validator.FailureHelper;
+import org.jboss.jca.deployers.common.validator.Severity;
+import org.jboss.jca.deployers.common.validator.Validator;
 import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.DeployException;
 import org.jboss.jca.fungal.deployers.Deployer;
@@ -30,7 +34,9 @@ import org.jboss.jca.fungal.util.FileUtil;
 import org.jboss.jca.fungal.util.Injection;
 import org.jboss.jca.fungal.util.JarFilter;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -70,6 +76,15 @@ public final class RADeployer implements CloneableDeployer
    /** Preform bean validation */
    private static AtomicBoolean beanValidation = new AtomicBoolean(true);
 
+   /** Preform archive validation */
+   private static AtomicBoolean archiveValidation = new AtomicBoolean(true);
+
+   /** Archive validation: Fail on Warn */
+   private static AtomicBoolean archiveValidationFailOnWarn = new AtomicBoolean(false);
+
+   /** Archive validation: Fail on Error */
+   private static AtomicBoolean archiveValidationFailOnError = new AtomicBoolean(true);
+
    /**
     * Constructor
     */
@@ -93,6 +108,60 @@ public final class RADeployer implements CloneableDeployer
    public boolean getBeanValidation()
    {
       return beanValidation.get();
+   }
+   
+   /**
+    * Set if archive validation should be performed
+    * @param value The value
+    */
+   public void setArchiveValidation(boolean value)
+   {
+      archiveValidation.set(value);
+   }
+   
+   /**
+    * Should archive validation be performed
+    * @return True if validation; otherwise false
+    */
+   public boolean getArchiveValidation()
+   {
+      return archiveValidation.get();
+   }
+   
+   /**
+    * Set if a failed warning archive validation report should fail the deployment
+    * @param value The value
+    */
+   public void setArchiveValidationFailOnWarn(boolean value)
+   {
+      archiveValidationFailOnWarn.set(value);
+   }
+   
+   /**
+    * Does a failed archive validation warning report fail the deployment
+    * @return True if failing; otherwise false
+    */
+   public boolean getArchiveValidationFailOnWarn()
+   {
+      return archiveValidationFailOnWarn.get();
+   }
+   
+   /**
+    * Set if a failed error archive validation report should fail the deployment
+    * @param value The value
+    */
+   public void setArchiveValidationFailOnError(boolean value)
+   {
+      archiveValidationFailOnError.set(value);
+   }
+   
+   /**
+    * Does a failed archive validation error report fail the deployment
+    * @return True if failing; otherwise false
+    */
+   public boolean getArchiveValidationFailOnError()
+   {
+      return archiveValidationFailOnError.get();
    }
    
    /**
@@ -283,6 +352,82 @@ public final class RADeployer implements CloneableDeployer
             }
          }
          
+         // Archive validation
+         if (getArchiveValidation())
+         {
+            Validator validator = new Validator();
+            List<Failure> failures = validator.validate(objects.toArray(new Object[objects.size()]));
+
+            if (failures != null && failures.size() > 0)
+            {
+               FailureHelper fh = new FailureHelper(failures);
+               File reportDirectory = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/log/");
+
+               boolean failureWarn = false;
+               boolean failureError = false;
+
+               for (Failure failure : failures)
+               {
+                  if (failure.getSeverity() == Severity.WARNING)
+                  {
+                     failureWarn = true;
+                  }
+                  else
+                  {
+                     failureError = true;
+                  }
+               }
+
+               String errorText = "";
+               if (reportDirectory.exists())
+               {
+                  String reportName = url.getFile();
+                  int lastIndex = reportName.lastIndexOf(File.separator);
+                  if (lastIndex != -1)
+                     reportName = reportName.substring(lastIndex + 1);
+                  reportName += ".log";
+
+                  File report = new File(reportDirectory, reportName);
+                  FileWriter fw = null;
+                  try
+                  {
+                     fw = new FileWriter(report);
+                     BufferedWriter bw = new BufferedWriter(fw, 8192);
+                     bw.write(fh.asText(validator.getResourceBundle()));
+                     bw.flush();
+
+                     errorText = "Validation failures - see: " + report.getAbsolutePath();
+                  }
+                  catch (IOException ioe)
+                  {
+                     log.warn(ioe.getMessage(), ioe);
+                  }
+                  finally
+                  {
+                     if (fw != null)
+                     {
+                        try
+                        {
+                           fw.close();
+                        }
+                        catch (IOException ignore)
+                        {
+                           // Ignore
+                        }
+                     }
+                  }
+               }
+               else
+               {
+                  errorText = fh.asText(validator.getResourceBundle());
+               }
+
+               if ((getArchiveValidationFailOnWarn() && failureWarn) ||
+                   (getArchiveValidationFailOnError() && failureError))
+                  throw new DeployException(errorText);
+            }
+         }
+
          // Activate deployment
 
          log.info("Deployed: " + url.toExternalForm());

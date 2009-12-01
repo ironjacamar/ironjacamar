@@ -125,4 +125,26 @@ public class BaseManagedConnectionFactory implements
 
    }
 
+   /**
+    * Hash code
+    * @return The hash
+    */
+   @Override
+   public int hashCode()
+   {
+      return 42;
+   }
+
+   /**
+    * Equals
+    * @param other The other object
+    * @return True if equal; otherwise false
+    */
+   public boolean equals(Object other)
+   {
+      if (other == null)
+         return false;
+
+      return getClass().equals(other.getClass());
+   }
 }
