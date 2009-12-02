@@ -199,6 +199,13 @@ public class FileUtil
          {
             InputStream in = null;
             OutputStream out = null;
+            
+            // Make sure that the directory is _really_ there
+            if (copy.getParentFile() != null && !copy.getParentFile().exists())
+            {
+               if (!copy.getParentFile().mkdirs())
+                  throw new IOException("Could not create " + copy.getParentFile());
+            }
 
             try
             {
