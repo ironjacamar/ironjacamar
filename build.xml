@@ -255,10 +255,11 @@
        Target: one-test
        ================================= -->
   <target name="one-test" depends="jars">
-  <!-- we should refactor this to make one-test target can be run on the component build.xml
-    <ant dir="core" inheritRefs="true" target="one-test"/>
-   -->
-    <ant dir="embedded" inheritRefs="true" target="one-test"/>
+    <condition property="module" else="core">
+      <equals arg1="${module}" arg2="" trim="true"/> 
+    </condition>
+
+    <ant dir="${module}" inheritRefs="true" target="one-test"/>
   </target>
 
   <!-- ================================= 
