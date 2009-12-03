@@ -87,4 +87,119 @@
     </javadoc>
   </target>
 
+  <!-- ================================= 
+       Target: prepare-test
+       ================================= -->
+  <target name="prepare-test">
+    <mkdir dir="${build.embedded.dir}" />
+    <mkdir dir="${build.embedded.dir}/test" />
+
+    <javac srcdir="src/test"
+           destdir="${build.embedded.dir}/test"
+           classpathref="test.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
+    <copy todir="${build.embedded.dir}/test">
+      <fileset dir="src/test/resources"/>
+    </copy>
+
+    <ant target="test-jars"/>
+
+  </target>
+
+  <!-- ================================= 
+       Target: test-jars 
+       ================================= -->
+  <target name="test-jars">
+  </target>
+
+  <!-- ================================= 
+       Target: test
+       ================================= -->
+  <target name="test" depends="jars, prepare-test">
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${reports.dir}/embedded"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.embedded.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      
+      <classpath>
+        <pathelement location="${build.embedded.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/embedded"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.embedded.dir}/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+    
+  </target>
+
+  <!-- ================================= 
+       Target: one-test
+       ================================= -->
+  <target name="one-test" depends="jars, prepare-test">
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${reports.dir}/embedded"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.embedded.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      
+      <classpath>
+        <pathelement location="${build.embedded.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <test todir="${reports.dir}/embedded" name="${test}"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}"/>
+    </junit>
+  </target>
+
 </project>

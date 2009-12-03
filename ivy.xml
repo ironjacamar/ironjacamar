@@ -89,6 +89,9 @@
     <dependency org="org.jboss.microcontainer" name="jboss-kernel" rev="${version.jboss.mc.kernel}" conf="standalone->default"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-impl-base" rev="${version.jboss.shrinkwrap}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-spi" rev="${version.jboss.shrinkwrap}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logging" rev="${version.jboss.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.security" name="jboss-security-spi-bare" rev="${version.jboss.security}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logmanager" rev="${version.jboss.slf4j.logmanager}" conf="standalone->default;sjc->*"/>

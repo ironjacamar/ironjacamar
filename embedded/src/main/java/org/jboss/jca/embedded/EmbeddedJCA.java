@@ -25,7 +25,16 @@ package org.jboss.jca.embedded;
 import org.jboss.jca.fungal.impl.KernelConfiguration;
 import org.jboss.jca.fungal.impl.KernelImpl;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 
 /**
  * The embedded JBoss JCA container
@@ -38,6 +47,9 @@ public class EmbeddedJCA
 
    /** Kernel */
    private KernelImpl kernel;
+
+   /** ShrinkWrap deployments */
+   private List<File> shrinkwrapDeployments;
 
    /**
     * Constructs an embedded JCA environment using
@@ -58,6 +70,7 @@ public class EmbeddedJCA
    public EmbeddedJCA(boolean fullProfile)
    {
       this.fullProfile = fullProfile;
+      this.shrinkwrapDeployments = null;
    }
 
    /**
@@ -86,6 +99,15 @@ public class EmbeddedJCA
     */
    public void shutdown() throws Throwable
    {
+      if (shrinkwrapDeployments != null && shrinkwrapDeployments.size() > 0)
+      {
+         List<File> copy = new ArrayList<File>(shrinkwrapDeployments);
+         for (File f : copy)
+         {
+            removeDeployment(f);
+         }
+      }
+
       if (fullProfile)
       {
          undeploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
@@ -125,6 +147,75 @@ public class EmbeddedJCA
          throw new IllegalArgumentException("Url is null");      
 
       kernel.getMainDeployer().deploy(url);
+   }
+
+   /**
+    * Deploy
+    * @param raa The resource adapter archive
+    * @exception Throwable If an error occurs
+    */
+   public void deploy(ResourceAdapterArchive raa) throws Throwable
+   {
+      if (raa == null)
+         throw new IllegalArgumentException("Url is null");      
+
+      InputStream is = raa.as(ZipExporter.class).exportZip();
+
+      File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
+      File raaFile = new File(parentDirectory, raa.getName());
+
+      if (shrinkwrapDeployments != null && shrinkwrapDeployments.contains(raaFile))
+         throw new IOException(raa.getName() + " already deployed");
+
+      if (raaFile.exists())
+         recursiveDelete(raaFile);
+
+      FileOutputStream os = new FileOutputStream(raaFile);
+
+      byte[] buffer = new byte[4096];
+      int read = 0;
+      try
+      {
+         while ((read = is.read(buffer)) != -1)
+         {
+            os.write(buffer, 0, read);
+         }
+
+         os.flush();
+      }
+      finally
+      {
+         if (os != null)
+         {
+            try
+            {
+               os.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+
+         if (is != null)
+         {
+            try
+            {
+               is.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      if (shrinkwrapDeployments == null)
+         shrinkwrapDeployments = new ArrayList<File>(1);
+
+      shrinkwrapDeployments.add(raaFile);
+     
+      kernel.getMainDeployer().deploy(raaFile.toURI().toURL());
    }
 
    /**
@@ -177,6 +268,27 @@ public class EmbeddedJCA
 
    /**
     * Undeploy
+    * @param raa The resource adapter archive
+    * @exception Throwable If an error occurs
+    */
+   public void undeploy(ResourceAdapterArchive raa) throws Throwable
+   {
+      if (raa == null)
+         throw new IllegalArgumentException("Url is null");      
+
+      File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
+      File raaFile = new File(parentDirectory, raa.getName());
+
+      if (!shrinkwrapDeployments.contains(raaFile))
+         throw new IOException(raa.getName() + " not deployed");
+
+      kernel.getMainDeployer().undeploy(raaFile.toURI().toURL());
+
+      removeDeployment(raaFile);
+   }
+
+   /**
+    * Undeploy
     * @param cl The class loader
     * @param name The resource name
     * @exception Throwable If an error occurs
@@ -208,5 +320,58 @@ public class EmbeddedJCA
 
       URL url = clz.getClassLoader().getResource(name);
       kernel.getMainDeployer().undeploy(url);
+   }
+
+   /**
+    * Remove ShrinkWrap deployment
+    * @param deployment The deployment
+    * @exception IOException Thrown if the deployment cant be removed
+    */
+   private void removeDeployment(File deployment) throws IOException
+   {
+      /*
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");      
+
+      if (deployment.exists())
+      {
+         shrinkwrapDeployments.remove(deployment);
+
+         if (shrinkwrapDeployments.size() == 0)
+            shrinkwrapDeployments = null;
+
+         recursiveDelete(deployment);
+      }
+      */
+   }
+
+   /**
+    * Recursive delete
+    * @param f The file handler
+    * @exception IOException Thrown if a file could not be deleted
+    */
+   private void recursiveDelete(File f) throws IOException
+   {
+      if (f != null && f.exists())
+      {
+         File[] files = f.listFiles();
+         if (files != null)
+         {
+            for (int i = 0; i < files.length; i++)
+            {
+               if (files[i].isDirectory())
+               {
+                  recursiveDelete(files[i]);
+               } 
+               else
+               {
+                  if (!files[i].delete())
+                     throw new IOException("Could not delete " + files[i]);
+               }
+            }
+         }
+         if (!f.delete())
+            throw new IOException("Could not delete " + f);
+      }
    }
 }
