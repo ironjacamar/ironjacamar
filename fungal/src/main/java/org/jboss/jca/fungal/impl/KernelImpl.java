@@ -350,16 +350,29 @@ public class KernelImpl implements Kernel
       threadPoolExecutor.shutdown();
 
       // Shutdown all deployments
-      List<Deployment> shutdownDeployments = new LinkedList<Deployment>(deployments);
-      Collections.reverse(shutdownDeployments);
-
-      for (Deployment deployment : shutdownDeployments)
+      if (deployments.size() > 0)
       {
-         shutdownDeployment(deployment);
+         List<Deployment> shutdownDeployments = new LinkedList<Deployment>(deployments);
+         Collections.reverse(shutdownDeployments);
+
+         for (Deployment deployment : shutdownDeployments)
+         {
+            shutdownDeployment(deployment);
+         }
       }
 
       // Remove kernel bean
       removeBean("Kernel");
+
+      // Check for additional beans
+      if (beans.size() > 0)
+      {
+         List<String> beanNames = new LinkedList<String>(beans.keySet());
+         for (String beanName : beanNames)
+         {
+            removeBean(beanName);
+         }
+      }
 
       // Release MBeanServer
       MBeanServerFactory.releaseMBeanServer(mbeanServer);
