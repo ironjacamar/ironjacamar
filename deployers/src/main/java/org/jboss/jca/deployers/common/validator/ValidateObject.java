@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,19 +22,47 @@
 
 package org.jboss.jca.deployers.common.validator;
 
-import java.util.List;
-import java.util.ResourceBundle;
-
 /**
- * Rule
+ * Object wrapper for objects that should be validated
  */
-public interface Rule
+public class ValidateObject
 {
+   /** Key */
+   private int key;
+
+   /** Onject */
+   private Object object;
+
    /**
-    * Validate
-    * @param obj The object
-    * @param rb The resource bundle 
-    * @return The list of failures found; <code>null</code> if none
+    * Constructor
+    * @param key The key
+    * @param object The key
     */
-   public List<Failure> validate(ValidateObject obj, ResourceBundle rb);
+   public ValidateObject(int key,
+                         Object object)
+   {
+      if (object == null)
+         throw new IllegalArgumentException("Object is null");
+
+      this.key = key;
+      this.object = object;
+   }
+   
+   /**
+    * Get the key
+    * @return The key
+    */
+   public int getKey()
+   {
+      return key;
+   }
+
+   /**
+    * Get the object
+    * @return The object
+    */
+   public Object getObject()
+   {
+      return object;
+   }
 }

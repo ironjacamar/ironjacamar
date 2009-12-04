@@ -28,7 +28,6 @@ import org.jboss.jca.deployers.common.validator.Rule;
 import org.jboss.jca.deployers.common.validator.Severity;
 import org.jboss.jca.deployers.common.validator.ValidateObject;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -36,9 +35,9 @@ import java.util.ResourceBundle;
 import javax.resource.spi.ManagedConnectionFactory;
 
 /**
- * ManagedConnectionFactory must have an equals implementation
+ * ManagedConnectionFactory must be implemented
  */
-public class MCFEquals implements Rule
+public class MCF implements Rule
 {
    /** Section */
    private static final String SECTION = "6.5.3.2";
@@ -46,7 +45,7 @@ public class MCFEquals implements Rule
    /**
     * Constructor
     */
-   public MCFEquals()
+   public MCF()
    {
    }
 
@@ -59,34 +58,15 @@ public class MCFEquals implements Rule
    @SuppressWarnings("unchecked")
    public List<Failure> validate(ValidateObject vo, ResourceBundle rb)
    {
-      if (vo != null && 
-          Key.MANAGED_CONNECTION_FACTORY == vo.getKey() &&
-          vo.getObject() instanceof ManagedConnectionFactory)
+      if (vo != null && Key.MANAGED_CONNECTION_FACTORY == vo.getKey())
       {
-         boolean error = true;
-         Class clz = vo.getObject().getClass();
-
-         while (error && !clz.equals(Object.class))
-         {
-            try
-            {
-               Method equals = clz.getDeclaredMethod("equals", new Class[] {Object.class});
-               if (equals != null)
-                  error = false;
-            }
-            catch (Throwable t)
-            {
-               clz = clz.getSuperclass();
-            }
-         }
-
-         if (error)
+         if (!(vo.getObject() instanceof ManagedConnectionFactory))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
-                                          rb.getString("mcf.MCFEquals"),
+                                          rb.getString("mcf.MCF"),
                                           vo.getObject().getClass().getName());
             failures.add(failure);
 

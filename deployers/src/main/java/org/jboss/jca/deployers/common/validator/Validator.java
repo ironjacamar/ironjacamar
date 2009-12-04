@@ -22,7 +22,6 @@
 
 package org.jboss.jca.deployers.common.validator;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +38,7 @@ public class Validator
     * properties file
     */
    private static final String[] RULES = {
+      "org.jboss.jca.deployers.common.validator.rules.mcf.MCF",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFHashCode",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFEquals"
    };
@@ -61,24 +61,10 @@ public class Validator
 
    /**
     * Validate
-    * @param url The URL of the resource adapter archive
-    * @return The list of failures; <code>null</code> if no errors
-    */
-   public List<Failure> validate(URL url)
-   {
-      Object[] objects = null;
-
-      // TODO
-
-      return validate(objects);
-   }
-
-   /**
-    * Validate
     * @param objects Objects that should be validated
     * @return The list of failures; <code>null</code> if no errors
     */
-   public List<Failure> validate(Object[] objects)
+   public List<Failure> validate(ValidateObject[] objects)
    {
       if (objects == null || objects.length == 0)
          return null;
@@ -94,9 +80,9 @@ public class Validator
 
             rules.add(rule);
          }
-         catch (Exception e)
+         catch (Throwable t)
          {
-            e.printStackTrace();
+            t.printStackTrace();
          }
       }
 
@@ -106,7 +92,7 @@ public class Validator
 
       for (Rule rule : rules)
       {
-         for (Object obj : objects)
+         for (ValidateObject obj : objects)
          {
             List<Failure> failures = rule.validate(obj, resourceBundle);
 

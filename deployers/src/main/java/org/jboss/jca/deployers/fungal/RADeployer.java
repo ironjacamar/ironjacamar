@@ -24,7 +24,9 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.FailureHelper;
+import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Severity;
+import org.jboss.jca.deployers.common.validator.ValidateObject;
 import org.jboss.jca.deployers.common.validator.Validator;
 import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.DeployException;
@@ -250,43 +252,47 @@ public final class RADeployer implements CloneableDeployer
          // Merge metadata
          cmd = metadataHandler.merge(cmd, jrmd);
 
-         // Create objects
-         // And
-         // Inject values
-         List<Object> objects = new ArrayList<Object>();
+
+         List<ValidateObject> archiveValidationObjects = new ArrayList<ValidateObject>();
+         List<Object> beanValidationObjects = new ArrayList<Object>();
+
+         // Create objects and inject values
          if (cmd != null)
          {
             // ResourceAdapter
             if (cmd.getRa() != null && cmd.getRa().getRaClass() != null)
             {
-               initAndInject(cmd.getRa().getRaClass(), 
-                     cmd.getRa().getConfigProperty(), objects, cl);
+               Object o = initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
+               archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, o));
+               beanValidationObjects.add(o);
             }
             
             // ManagedConnectionFactory
             if (cmd.getRa() != null &&
-               cmd.getRa().getOutboundRa() != null && 
-               cmd.getRa().getOutboundRa().getConDefs() != null)
+                cmd.getRa().getOutboundRa() != null && 
+                cmd.getRa().getOutboundRa().getConDefs() != null)
             {
                List<ConnectionDefinitionMetaData> cdMetas = cmd.getRa().getOutboundRa().getConDefs();
                if (cdMetas.size() > 0)
                {
-                  //mcfs = new ArrayList<Object>();
                   for (ConnectionDefinitionMetaData cdMeta : cdMetas)
                   {
                      if (cdMeta.getManagedConnectionFactoryClass() != null)
                      {
-                        initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
-                           cdMeta.getConfigProps(), objects, cl);
+                        Object o = initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
+                                                 cdMeta.getConfigProps(), cl);
+                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY, o));
+                        beanValidationObjects.add(o);
                      }
                   }
                }
             }
-            // activationspec
+
+            // ActivationSpec
             if (cmd.getRa() != null &&
-               cmd.getRa().getInboundRa() != null &&
-               cmd.getRa().getInboundRa().getMessageAdapter() != null &&
-               cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners() != null)
+                cmd.getRa().getInboundRa() != null &&
+                cmd.getRa().getInboundRa().getMessageAdapter() != null &&
+                cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners() != null)
             {
                List<MessageListenerMetaData> mlMetas = cmd.getRa().getInboundRa().
                   getMessageAdapter().getMessageListeners();
@@ -296,16 +302,18 @@ public final class RADeployer implements CloneableDeployer
                   {
                      if (mlMeta.getActivationSpecType() != null && mlMeta.getActivationSpecType().getAsClass() != null)
                      {
-                        initAndInject(mlMeta.getActivationSpecType().getAsClass(), 
-                           mlMeta.getActivationSpecType().getConfigProps(), objects, cl);
+                        Object o = initAndInject(mlMeta.getActivationSpecType().getAsClass(), 
+                                                 mlMeta.getActivationSpecType().getConfigProps(), cl);
+                        archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o));
+                        beanValidationObjects.add(o);
                      }
                   }
                }
             }
 
-            //adminobject
+            // AdminObject
             if (cmd.getRa() != null &&
-               cmd.getRa().getAdminObjects() != null)
+                cmd.getRa().getAdminObjects() != null)
             {
                List<AdminObjectMetaData> aoMetas = cmd.getRa().getAdminObjects();
                if (aoMetas.size() > 0)
@@ -314,49 +322,22 @@ public final class RADeployer implements CloneableDeployer
                   {
                      if (aoMeta.getAdminObjectImplementationClass() != null)
                      {
-                        initAndInject(aoMeta.getAdminObjectImplementationClass(), 
-                              aoMeta.getConfigProps(), objects, cl);
+                        Object o = initAndInject(aoMeta.getAdminObjectImplementationClass(), 
+                                                 aoMeta.getConfigProps(), cl);
+                        archiveValidationObjects.add(new ValidateObject(Key.ADMIN_OBJECT, o));
+                        beanValidationObjects.add(o);
                      }
                   }
                }
             }
          }
 
-
-         // Bean validation
-         if (getBeanValidation())
-         {
-            JBossRA20Base jrmd20 = null;
-            List<Class> groupsClasses = null;
-            if (jrmd instanceof JBossRA20Base)
-            {
-               jrmd20 = (JBossRA20Base)jrmd;
-            }
-            if (jrmd20 != null && jrmd20.getBvGroupsList() != null && jrmd20.getBvGroupsList().size() > 0)
-            {
-               BvGroupMetaData bvGroups = jrmd20.getBvGroupsList().get(0);
-               groupsClasses = new ArrayList<Class>();
-               for (String group : bvGroups.getBvGroups())
-               {
-                  groupsClasses.add(Class.forName(group, true, cl));
-               }
-            }
-            
-            if (objects != null && objects.size() > 0)
-            {
-               BeanValidation beanValidator = new BeanValidation();
-               for (Object mcf : objects)
-               {
-                  beanValidator.validate(mcf, groupsClasses);
-               }
-            }
-         }
-         
          // Archive validation
          if (getArchiveValidation())
          {
             Validator validator = new Validator();
-            List<Failure> failures = validator.validate(objects.toArray(new Object[objects.size()]));
+            List<Failure> failures = validator.validate(archiveValidationObjects.toArray(
+               new ValidateObject[archiveValidationObjects.size()]));
 
             if (failures != null && failures.size() > 0)
             {
@@ -428,6 +409,35 @@ public final class RADeployer implements CloneableDeployer
             }
          }
 
+         // Bean validation
+         if (getBeanValidation())
+         {
+            JBossRA20Base jrmd20 = null;
+            List<Class> groupsClasses = null;
+            if (jrmd instanceof JBossRA20Base)
+            {
+               jrmd20 = (JBossRA20Base)jrmd;
+            }
+            if (jrmd20 != null && jrmd20.getBvGroupsList() != null && jrmd20.getBvGroupsList().size() > 0)
+            {
+               BvGroupMetaData bvGroups = jrmd20.getBvGroupsList().get(0);
+               groupsClasses = new ArrayList<Class>();
+               for (String group : bvGroups.getBvGroups())
+               {
+                  groupsClasses.add(Class.forName(group, true, cl));
+               }
+            }
+            
+            if (beanValidationObjects.size() > 0)
+            {
+               BeanValidation beanValidator = new BeanValidation();
+               for (Object o : beanValidationObjects)
+               {
+                  beanValidator.validate(o, groupsClasses);
+               }
+            }
+         }
+         
          // Activate deployment
 
          log.info("Deployed: " + url.toExternalForm());
@@ -450,43 +460,38 @@ public final class RADeployer implements CloneableDeployer
    }
 
    /**
-    * initAndInject
-    * @param mlMeta
-    * @param mcfs
-    * @param cl
-    * @throws DeployException
+    * Initialize and inject configuration properties
+    * @param className The fully qualified class name
+    * @param configs The configuration properties
+    * @param cl The class loader
+    * @return The object
+    * @throws DeployException Thrown if the object cant be initialized
     */
-   private void initAndInject(String className, List<ConfigPropertyMetaData> cpMetas,
-                              List<Object> mcfs, URLClassLoader cl) throws DeployException
+   private Object initAndInject(String className, 
+                                List<ConfigPropertyMetaData> configs,
+                                ClassLoader cl)
+      throws DeployException
    {
-      Object mcf = null;
       try 
       {
-         Class mcfClass = Class.forName(className, true, cl);
-         mcf = mcfClass.newInstance();
-         mcfs.add(mcf);
+         Class clz = Class.forName(className, true, cl);
+         Object o = clz.newInstance();
          
-         if (mcf != null)
+         if (configs != null)
          {
-            if (cpMetas != null)
+            Injection injector = new Injection();
+            for (ConfigPropertyMetaData cpmd : configs)
             {
-               Injection injector = new Injection();
-               for (ConfigPropertyMetaData cpmd : cpMetas)
-               {
-                  injector.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), mcf);
-               }
+               injector.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), o);
             }
          }
-      } 
-      catch (ClassNotFoundException e)
-      {
-         log.trace("can't constractor " + className + " class");
+
+         return o;
       }
       catch (Throwable t)
       {
          throw new DeployException("Deployment " + className + " failed", t);
       }
-
    }
 
    /**

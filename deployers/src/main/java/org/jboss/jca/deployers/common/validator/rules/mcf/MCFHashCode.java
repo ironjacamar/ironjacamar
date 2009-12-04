@@ -23,8 +23,10 @@
 package org.jboss.jca.deployers.common.validator.rules.mcf;
 
 import org.jboss.jca.deployers.common.validator.Failure;
+import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Rule;
 import org.jboss.jca.deployers.common.validator.Severity;
+import org.jboss.jca.deployers.common.validator.ValidateObject;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -50,17 +52,19 @@ public class MCFHashCode implements Rule
 
    /**
     * Validate
-    * @param obj The object
+    * @param vo The validate object
     * @param rb The resource bundle 
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")
-   public List<Failure> validate(Object obj, ResourceBundle rb)
+   public List<Failure> validate(ValidateObject vo, ResourceBundle rb)
    {
-      if (obj != null && obj instanceof ManagedConnectionFactory)
+      if (vo != null && 
+          Key.MANAGED_CONNECTION_FACTORY == vo.getKey() &&
+          vo.getObject() instanceof ManagedConnectionFactory)
       {
          boolean error = true;
-         Class clz = obj.getClass();
+         Class clz = vo.getObject().getClass();
 
          while (error && !clz.equals(Object.class))
          {
@@ -70,7 +74,7 @@ public class MCFHashCode implements Rule
                if (hashCode != null)
                   error = false;
             }
-            catch (Exception e)
+            catch (Throwable t)
             {
                clz = clz.getSuperclass();
             }
@@ -83,7 +87,7 @@ public class MCFHashCode implements Rule
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("mcf.MCFHashCode"),
-                                          obj.getClass().getName());
+                                          vo.getObject().getClass().getName());
             failures.add(failure);
 
             return failures;

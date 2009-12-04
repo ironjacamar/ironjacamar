@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,19 +22,27 @@
 
 package org.jboss.jca.deployers.common.validator;
 
-import java.util.List;
-import java.util.ResourceBundle;
-
 /**
- * Rule
+ * Key
  */
-public interface Rule
+public class Key
 {
+   /** Resource adapter */
+   public static final int RESOURCE_ADAPTER = 0;
+
+   /** Managed connection factory */
+   public static final int MANAGED_CONNECTION_FACTORY = 1;
+
+   /** Activation spec */
+   public static final int ACTIVATION_SPEC = 2;
+
+   /** Admin object */
+   public static final int ADMIN_OBJECT = 3;
+
    /**
-    * Validate
-    * @param obj The object
-    * @param rb The resource bundle 
-    * @return The list of failures found; <code>null</code> if none
+    * Constructor
     */
-   public List<Failure> validate(ValidateObject obj, ResourceBundle rb);
+   private Key()
+   {
+   }
 }
