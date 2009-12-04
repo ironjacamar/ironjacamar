@@ -112,6 +112,11 @@ public class MyTestCase
 }
         </programlisting>
 
+        <callout>
+          <note>Note that, the url for the archive must end with the <code>.rar</code> extension
+            - either representing a file or a directory.</note>
+        </callout>
+
         <para>See the JBoss JCA Embedded API documentation for additional functionality.</para>
 
       </section>
@@ -221,6 +226,11 @@ public class ShrinkWrapTestCase
 }
 ]]>
         </programlisting>
+
+        <callout>
+          <note>Note that, the name for the <code>ResourceAdapterArchive</code> must end with the
+            <code>.rar</code> extension.</note>
+        </callout>
 
         <para>See the <ulink url="http://www.jboss.org/community/wiki/ShrinkWrap">
           ShrinkWrap</ulink> web site for a full description of the project and additional documentation.</para>

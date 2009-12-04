@@ -159,6 +159,9 @@ public class EmbeddedJCA
       if (raa == null)
          throw new IllegalArgumentException("Url is null");      
 
+      if (!raa.getName().endsWith(".rar"))
+         throw new IllegalArgumentException(raa.getName() + " doesn't end with .rar");      
+
       InputStream is = raa.as(ZipExporter.class).exportZip();
 
       File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
