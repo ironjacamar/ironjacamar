@@ -248,8 +248,16 @@ public class FileUtil
          }
          else
          {
-            if (!copy.mkdirs())
-               throw new IOException("Could not create " + copy);
+            if (!copy.exists())
+            {
+               if (!copy.mkdirs())
+                  throw new IOException("Could not create " + copy);
+            }
+            else
+            {
+               if (!copy.isDirectory())
+                  throw new IOException(copy + " isn't a directory");
+            }
          }
       }
 

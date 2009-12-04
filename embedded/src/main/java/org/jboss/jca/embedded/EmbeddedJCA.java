@@ -332,7 +332,6 @@ public class EmbeddedJCA
     */
    private void removeDeployment(File deployment) throws IOException
    {
-      /*
       if (deployment == null)
          throw new IllegalArgumentException("Deployment is null");      
 
@@ -345,7 +344,6 @@ public class EmbeddedJCA
 
          recursiveDelete(deployment);
       }
-      */
    }
 
    /**
