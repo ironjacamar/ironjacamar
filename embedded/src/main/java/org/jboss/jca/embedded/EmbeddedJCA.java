@@ -33,8 +33,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 /**
  * The embedded JBoss JCA container
