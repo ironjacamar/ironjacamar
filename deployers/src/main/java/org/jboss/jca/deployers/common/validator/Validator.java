@@ -40,7 +40,8 @@ public class Validator
    private static final String[] RULES = {
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCF",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFHashCode",
-      "org.jboss.jca.deployers.common.validator.rules.mcf.MCFEquals"
+      "org.jboss.jca.deployers.common.validator.rules.mcf.MCFEquals",
+      "org.jboss.jca.deployers.common.validator.rules.mc.MC"
    };
 
    /**

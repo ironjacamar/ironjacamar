@@ -39,6 +39,9 @@ public class Key
    /** Admin object */
    public static final int ADMIN_OBJECT = 3;
 
+   /** Managed connection */
+   public static final int MANAGED_CONNECTION = 4;
+   
    /**
     * Constructor
     */
