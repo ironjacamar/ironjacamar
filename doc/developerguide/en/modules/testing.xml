@@ -7,6 +7,21 @@
     <para>The overall goals of our test environment is to execute tests that ensures that
     we have full coverage of the JCA specification as well as our implementation.</para>
 
+    <para>The full test suite is executed using</para>
+
+    <programlisting>
+ant test
+    </programlisting>
+
+    <para>A single test case can be executed using</para>
+
+    <programlisting>
+ant -Dmodule=embedded -Dtest=org.jboss.jca.test.embedded.unit.ShrinkWrapTestCase one-test
+    </programlisting>
+
+    <para>where <code>-Dmodule</code> specifies which module to execute the test case in. This parameter
+      defaults to <code>core</code>. The <code>-Dtest</code> parameter specifies the test case itself.</para>
+
     <section id="spectest">
       <title>Specification</title>
       <para>The purpose of the specification tests is to test our implementation against the
