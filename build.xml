@@ -177,6 +177,10 @@
     <fileset dir="${tools.dir}/cobertura/lib"/>
   </path>
 
+  <path id="tattletale.lib.path.id">
+    <fileset dir="${tools.dir}/tattletale/lib"/>
+  </path>
+
   <!-- ================================= 
        Target: init              
        ================================= -->
@@ -547,6 +551,23 @@
         <include name="**/*.java" />
       </fileset>
     </cobertura-report>
+  </target>
+
+  <!-- ================================= 
+       Target: tattletale
+       ================================= -->
+  <target name="tattletale" depends="sjc">
+    <taskdef name="report"
+             classname="org.jboss.tattletale.ant.ReportTask"
+             classpathref="tattletale.lib.path.id"/>
+
+    <mkdir dir="${reports.dir}/tattletale"/>
+
+    <report source="${target.dir}/sjc"
+            destination="${reports.dir}/tattletale"
+            configuration="${tools.dir}/tattletale/configuration.properties"
+            filter="${tools.dir}/tattletale/filter.properties"
+            profiles="java6"/>
   </target>
 
   <!-- ================================= 

@@ -162,6 +162,30 @@ reports/cobertura
 
     </section>
 
+    <section id="tattletale">
+      <title>Tattletale</title>
+      <para>Tattletale generates reports about different quality matrix of the dependencies within the project.</para>
+
+      <para>The reports that the tool provides makes sure that the JBoss JCA project doesn't for example have
+        cyclic dependencies within the project.</para>
+
+      <para>The goal is to have as no issues flagged by the tool. The Tattletale reports are
+        generated using</para>
+
+      <programlisting>
+ant tattletale
+      </programlisting>
+
+      <para>The reports are generated into</para>
+
+      <programlisting>
+reports/tattletale
+      </programlisting>
+
+      <para>The home of Tattletale is located here: <ulink url="http://www.jboss.org/tattletale"/>.</para>
+
+    </section>
+
   </section>
 
 </chapter>
