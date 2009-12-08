@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.FailureHelper;
 import org.jboss.jca.deployers.common.validator.Key;
@@ -40,6 +41,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -47,6 +49,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 
@@ -86,6 +91,9 @@ public final class RADeployer implements CloneableDeployer
 
    /** Archive validation: Fail on Error */
    private static AtomicBoolean archiveValidationFailOnError = new AtomicBoolean(true);
+
+   /** Default bootstrap context */
+   private static CloneableBootstrapContext defaultBootstrapContext = null;
 
    /**
     * Constructor
@@ -164,6 +172,24 @@ public final class RADeployer implements CloneableDeployer
    public boolean getArchiveValidationFailOnError()
    {
       return archiveValidationFailOnError.get();
+   }
+   
+   /**
+    * Set the default bootstrap context
+    * @param value The value
+    */
+   public synchronized void setDefaultBootstrapContext(CloneableBootstrapContext value)
+   {
+      defaultBootstrapContext = value;
+   }
+   
+   /**
+    * Get the default bootstrap context
+    * @return The handle
+    */
+   public synchronized CloneableBootstrapContext getDefaultBootstrapContext()
+   {
+      return defaultBootstrapContext;
    }
    
    /**
@@ -252,7 +278,7 @@ public final class RADeployer implements CloneableDeployer
          // Merge metadata
          cmd = metadataHandler.merge(cmd, jrmd);
 
-
+         ResourceAdapter resourceAdapter = null;
          List<ValidateObject> archiveValidationObjects = new ArrayList<ValidateObject>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
 
@@ -262,9 +288,10 @@ public final class RADeployer implements CloneableDeployer
             // ResourceAdapter
             if (cmd.getRa() != null && cmd.getRa().getRaClass() != null)
             {
-               Object o = initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
-               archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, o));
-               beanValidationObjects.add(o);
+               resourceAdapter =
+                  (ResourceAdapter)initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
+               archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, resourceAdapter));
+               beanValidationObjects.add(resourceAdapter);
             }
             
             // ManagedConnectionFactory
@@ -439,6 +466,8 @@ public final class RADeployer implements CloneableDeployer
          }
          
          // Activate deployment
+         if (resourceAdapter != null)
+            startContext(resourceAdapter);
 
          log.info("Deployed: " + url.toExternalForm());
 
@@ -456,6 +485,28 @@ public final class RADeployer implements CloneableDeployer
       finally
       {
          SecurityActions.setThreadContextClassLoader(oldTCCL);
+      }
+   }
+
+   /**
+    * Start the resource adapter
+    * @param resourceAdapter The resource adapter
+    * @throws DeployException Thrown if the resource adapter cant be started
+    */
+   private void startContext(ResourceAdapter resourceAdapter) throws DeployException
+   {
+      try 
+      {
+         Class clz = resourceAdapter.getClass();
+         Method start = clz.getMethod("start", new Class[] {BootstrapContext.class});
+
+         CloneableBootstrapContext cbc = defaultBootstrapContext.clone();
+
+         start.invoke(resourceAdapter, new Object[] {cbc});
+      }
+      catch (Throwable t)
+      {
+         throw new DeployException("Unable to start " + resourceAdapter.getClass().getName(), t);
       }
    }
 

@@ -13,4 +13,8 @@
     <depends>NamingServer</depends>
   </bean>
 
+  <!-- Transaction synchronization registry -->
+  <bean name="TransactionSynchronizationRegistry" 
+        class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple"/>
+
 </deployment>

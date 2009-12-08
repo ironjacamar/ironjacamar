@@ -29,10 +29,25 @@
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
   </bean>
   
+  <!-- Default Bootstrap context -->
+  <bean name="DefaultBootstrapContext" 
+        interface="org.jboss.jca.core.api.CloneableBootstrapContext"
+        class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
+
+    <!-- The Transaction Synchronization Registry -->
+    <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
+
+    <!-- The Work Manager -->
+    <property name="WorkManager"><inject bean="WorkManager"/></property>
+
+    <!-- The XA terminator -->
+    <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
+  </bean>
+
   <!-- RA deployer -->
   <bean name="RADeployer" interface="org.jboss.jca.fungal.deployers.Deployer" class="org.jboss.jca.deployers.fungal.RADeployer">
+    <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
     <depends>BeanValidation</depends>
-    <depends>WorkManager</depends>
   </bean>
 
 </deployment>
