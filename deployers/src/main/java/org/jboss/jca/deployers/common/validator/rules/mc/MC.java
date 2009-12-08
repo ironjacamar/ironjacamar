@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.common.validator.rules.mcf;
+package org.jboss.jca.deployers.common.validator.rules.mc;
 
 import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.Key;
