@@ -52,6 +52,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterAssociation;
 
 import org.jboss.logging.Logger;
 
@@ -281,6 +282,7 @@ public final class RADeployer implements CloneableDeployer
          ResourceAdapter resourceAdapter = null;
          List<ValidateObject> archiveValidationObjects = new ArrayList<ValidateObject>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
+         List<Object> associationObjects = new ArrayList<Object>();
 
          // Create objects and inject values
          if (cmd != null)
@@ -310,6 +312,7 @@ public final class RADeployer implements CloneableDeployer
                                                  cdMeta.getConfigProps(), cl);
                         archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY, o));
                         beanValidationObjects.add(o);
+                        associationObjects.add(o);
                      }
                   }
                }
@@ -333,6 +336,7 @@ public final class RADeployer implements CloneableDeployer
                                                  mlMeta.getActivationSpecType().getConfigProps(), cl);
                         archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o));
                         beanValidationObjects.add(o);
+                        associationObjects.add(o);
                      }
                   }
                }
@@ -466,6 +470,9 @@ public final class RADeployer implements CloneableDeployer
          }
          
          // Activate deployment
+         if (resourceAdapter != null && associationObjects.size() > 0)
+            associateResourceAdapter(resourceAdapter, associationObjects);
+
          if (resourceAdapter != null)
             startContext(resourceAdapter);
 
@@ -507,6 +514,37 @@ public final class RADeployer implements CloneableDeployer
       catch (Throwable t)
       {
          throw new DeployException("Unable to start " + resourceAdapter.getClass().getName(), t);
+      }
+   }
+
+   /**
+    * Associate resource adapter with ojects if they implement ResourceAdapterAssociation
+    * @param resourceAdapter The resource adapter
+    * @param associationObjects The list of possible objects
+    * @throws DeployException Thrown if the resource adapter cant be started
+    */
+   private void associateResourceAdapter(ResourceAdapter resourceAdapter, 
+                                         List<Object> associationObjects)
+      throws DeployException
+   {
+      for (Object object : associationObjects)
+      {
+         if (object instanceof ResourceAdapterAssociation)
+         {
+            try 
+            {
+               Class clz = object.getClass();
+
+               Method setResourceAdapter = clz.getMethod("setResourceAdapter",
+                                                         new Class[] {ResourceAdapter.class});
+
+               setResourceAdapter.invoke(object, new Object[] {resourceAdapter});
+            }
+            catch (Throwable t)
+            {
+               throw new DeployException("Unable to associate " + object.getClass().getName(), t);
+            }
+         }
       }
    }
 

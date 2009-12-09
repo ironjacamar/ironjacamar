@@ -562,6 +562,30 @@ public class RarTestCase
       }
    }
 
+   /**
+    * ra16asso.rar
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testRa16asso() throws Throwable
+   {
+      URL archive = getURL("ra16asso.rar");
+      
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         log.error(t.getMessage(), t);
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
+   }
+
    // --------------------------------------------------------------------------------||
    // Lifecycle Methods --------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
