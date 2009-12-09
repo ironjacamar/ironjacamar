@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionMetaData;
 
 /**
  * ManagedConnectionFactory must have an equals implementation
