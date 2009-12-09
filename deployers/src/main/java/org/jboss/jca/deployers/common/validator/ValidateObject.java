@@ -22,6 +22,10 @@
 
 package org.jboss.jca.deployers.common.validator;
 
+import java.util.List;
+
+import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
+
 /**
  * Object wrapper for objects that should be validated
  */
@@ -33,6 +37,9 @@ public class ValidateObject
    /** Onject */
    private Object object;
 
+   /** config-property */
+   private List<ConfigPropertyMetaData> configProperties;
+
    /**
     * Constructor
     * @param key The key
@@ -41,8 +48,22 @@ public class ValidateObject
    public ValidateObject(int key,
                          Object object)
    {
+      this(key, object, null);
+   }
+   
+   /**
+    * Constructor
+    * @param key The key
+    * @param object The key
+    * @param configProperties The list of config property metadata
+    */
+   public ValidateObject(int key,
+                         Object object,
+                         List<ConfigPropertyMetaData> configProperties)
+   {
       this.key = key;
       this.object = object;
+      this.configProperties = configProperties;
    }
    
    /**
@@ -61,5 +82,14 @@ public class ValidateObject
    public Object getObject()
    {
       return object;
+   }
+
+   /**
+    * Get the list of config properties
+    * @return The list
+    */
+   public List<ConfigPropertyMetaData> getConfigProperties()
+   {
+      return configProperties;
    }
 }

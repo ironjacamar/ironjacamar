@@ -42,7 +42,11 @@ public class Validator
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFHashCode",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFEquals",
       "org.jboss.jca.deployers.common.validator.rules.mc.MC",
-      "org.jboss.jca.deployers.common.validator.rules.mc.MCGetMetaData"
+      "org.jboss.jca.deployers.common.validator.rules.mc.MCGetMetaData",
+      "org.jboss.jca.deployers.common.validator.rules.ra.RANull",
+      "org.jboss.jca.deployers.common.validator.rules.ra.RA",
+      "org.jboss.jca.deployers.common.validator.rules.ra.RAHashCode",
+      "org.jboss.jca.deployers.common.validator.rules.ra.RAEquals"
    };
 
    /**
@@ -84,7 +88,7 @@ public class Validator
          }
          catch (Throwable t)
          {
-            t.printStackTrace();
+            throw new IllegalArgumentException(RULES[i], t);
          }
       }
 

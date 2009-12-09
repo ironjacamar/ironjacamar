@@ -294,7 +294,9 @@ public final class RADeployer implements CloneableDeployer
             {
                resourceAdapter =
                   (ResourceAdapter)initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
-               archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, resourceAdapter));
+               archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, 
+                                                               resourceAdapter, 
+                                                               cmd.getRa().getConfigProperty()));
                beanValidationObjects.add(resourceAdapter);
             }
             
@@ -313,7 +315,9 @@ public final class RADeployer implements CloneableDeployer
                         ManagedConnectionFactory mcf =
                            (ManagedConnectionFactory)initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
                                                                    cdMeta.getConfigProps(), cl);
-                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY, mcf));
+                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
+                                                                        mcf,
+                                                                        cdMeta.getConfigProps()));
                         beanValidationObjects.add(mcf);
                         associationObjects.add(mcf);
 
@@ -339,9 +343,11 @@ public final class RADeployer implements CloneableDeployer
                   {
                      if (mlMeta.getActivationSpecType() != null && mlMeta.getActivationSpecType().getAsClass() != null)
                      {
-                        Object o = initAndInject(mlMeta.getActivationSpecType().getAsClass(), 
-                                                 mlMeta.getActivationSpecType().getConfigProps(), cl);
-                        archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o));
+                        List<ConfigPropertyMetaData> cpm = mlMeta.getActivationSpecType().getConfigProps();
+
+                        Object o = initAndInject(mlMeta.getActivationSpecType().getAsClass(), cpm, cl);
+
+                        archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o, cpm));
                         beanValidationObjects.add(o);
                         associationObjects.add(o);
                      }
@@ -362,7 +368,7 @@ public final class RADeployer implements CloneableDeployer
                      {
                         Object o = initAndInject(aoMeta.getAdminObjectImplementationClass(), 
                                                  aoMeta.getConfigProps(), cl);
-                        archiveValidationObjects.add(new ValidateObject(Key.ADMIN_OBJECT, o));
+                        archiveValidationObjects.add(new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProps()));
                         beanValidationObjects.add(o);
                      }
                   }
