@@ -37,6 +37,7 @@ import org.jboss.logging.Logger;
  * TestManagedConnectionFactory
  *
  * @author  <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>.
+ * @author  <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>.
  * @version $Revision: $
  */
 public class TestManagedConnectionFactory implements
@@ -54,8 +55,8 @@ public class TestManagedConnectionFactory implements
     */
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
    {
-      log.debug("call createConnectionFactory");
-      return null;
+      log.debug("call createConnectionFactory(" + cmManager + ")");
+      return new TestConnectionFactory(cxManager);
    }
 
    /**
@@ -67,7 +68,7 @@ public class TestManagedConnectionFactory implements
    public Object createConnectionFactory() throws ResourceException
    {
       log.debug("call createConnectionFactory");
-      return null;
+      return new TestConnectionFactory(new TestConnectionManager());
    }
 
    /** 
