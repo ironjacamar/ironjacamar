@@ -64,36 +64,20 @@ public class MCGetMetaData implements Rule
           Key.MANAGED_CONNECTION == vo.getKey() &&
           vo.getObject() instanceof ManagedConnection)
       {
-         boolean error = true;
-         Class clz = vo.getObject().getClass();
+         boolean error = false;
 
-         while (error && !clz.equals(Object.class))
+         try
          {
-            try
-            {
-               Method gmd = clz.getDeclaredMethod("getMetaData", new Class[] {Object.class});
-               if (gmd != null)
-               {
-                  Object md = null;
-                  try
-                  {
-                     md = gmd.invoke(vo.getObject(), (Object[])null);
-                  }
-                  catch (Exception e)
-                  {
-                     //Ignore exception for ResourceException and ResourceAdapterInternalException
-                  }
-                  if (md != null && md instanceof ManagedConnectionMetaData)
-                  {
-                     error = false;
-                  }
-                  break; //exit while cycle since we got getMetaData method
-               }
-            }
-            catch (Throwable t)
-            {
-               clz = clz.getSuperclass();
-            }
+            Class clz = vo.getObject().getClass();
+            Method gmd = clz.getMethod("getMetaData", (Class[])null);
+            Object md = gmd.invoke(vo.getObject(), (Object[])null);
+
+            if (md == null)
+               error = true;
+         }
+         catch (Throwable t)
+         {
+            // Ignore
          }
 
          if (error)
