@@ -26,7 +26,9 @@ import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.test.embedded.rars.simple.MessageListener;
 import org.jboss.jca.test.embedded.rars.simple.TestActivationSpec;
 import org.jboss.jca.test.embedded.rars.simple.TestConnection;
+import org.jboss.jca.test.embedded.rars.simple.TestConnectionFactory;
 import org.jboss.jca.test.embedded.rars.simple.TestConnectionInterface;
+import org.jboss.jca.test.embedded.rars.simple.TestConnectionManager;
 import org.jboss.jca.test.embedded.rars.simple.TestManagedConnection;
 import org.jboss.jca.test.embedded.rars.simple.TestManagedConnectionFactory;
 import org.jboss.jca.test.embedded.rars.simple.TestResourceAdapter;
@@ -112,6 +114,7 @@ public class ShrinkWrapTestCase
 
       JavaArchive ja = Archives.create(UUID.randomUUID().toString() + ".jar", JavaArchive.class);
       ja.addClasses(MessageListener.class, TestActivationSpec.class, TestConnection.class,
+                    TestConnectionFactory.class, TestConnectionManager.class, 
                     TestConnectionInterface.class, TestManagedConnection.class, 
                     TestManagedConnectionFactory.class, TestResourceAdapter.class);
 

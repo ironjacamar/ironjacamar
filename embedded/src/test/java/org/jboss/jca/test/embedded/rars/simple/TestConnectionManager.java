@@ -23,6 +23,8 @@ package org.jboss.jca.test.embedded.rars.simple;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnectionFactory;
 
 import org.jboss.logging.Logger;
 

@@ -55,7 +55,7 @@ public class TestManagedConnectionFactory implements
     */
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
    {
-      log.debug("call createConnectionFactory(" + cmManager + ")");
+      log.debug("call createConnectionFactory(" + cxManager + ")");
       return new TestConnectionFactory(cxManager);
    }
 
