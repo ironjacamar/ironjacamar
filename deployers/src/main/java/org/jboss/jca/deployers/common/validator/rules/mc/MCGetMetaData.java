@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionMetaData;
 
 /**
  * ManagedConnectionFactory must have an equals implementation
@@ -70,9 +71,24 @@ public class MCGetMetaData implements Rule
          {
             try
             {
-               Method equals = clz.getDeclaredMethod("getMetaData", new Class[] {Object.class});
-               if (equals != null)
-                  error = false;
+               Method gmd = clz.getDeclaredMethod("getMetaData", new Class[] {Object.class});
+               if (gmd != null)
+               {
+                  Object md = null;
+                  try
+                  {
+                     md = gmd.invoke(vo.getObject(), (Object[])null);
+                  }
+                  catch (Exception e)
+                  {
+                     //Ignore exception for ResourceException and ResourceAdapterInternalException
+                  }
+                  if (md != null && md instanceof ManagedConnectionMetaData)
+                  {
+                     error = false;
+                  }
+                  break; //exit while cycle since we got getMetaData method
+               }
             }
             catch (Throwable t)
             {
