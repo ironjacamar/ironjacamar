@@ -42,8 +42,7 @@ public class Validator
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFHashCode",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFEquals",
       "org.jboss.jca.deployers.common.validator.rules.mc.MC",
-      "org.jboss.jca.deployers.common.validator.rules.mc.MCMD",
-      "org.jboss.jca.deployers.common.validator.rules.mc.MCGetMetaData"
+      "org.jboss.jca.deployers.common.validator.rules.mc.MCMD"
    };
 
    /**

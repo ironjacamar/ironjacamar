@@ -42,9 +42,6 @@ public class Key
    /** Managed connection */
    public static final int MANAGED_CONNECTION = 4;
    
-   /** Managed connection metadata */
-   public static final int MANAGED_CONNECTION_METADATA = 5;
-   
    /**
     * Constructor
     */
