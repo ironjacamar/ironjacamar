@@ -42,6 +42,9 @@ public class Key
    /** Managed connection */
    public static final int MANAGED_CONNECTION = 4;
    
+   /** Connection factory */
+   public static final int CONNECTION_FACTORY = 5;
+
    /**
     * Constructor
     */

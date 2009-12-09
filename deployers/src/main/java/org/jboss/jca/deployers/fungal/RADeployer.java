@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.api.CloneableBootstrapContext;
+import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.FailureHelper;
 import org.jboss.jca.deployers.common.validator.Key;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
 
@@ -308,11 +310,16 @@ public final class RADeployer implements CloneableDeployer
                   {
                      if (cdMeta.getManagedConnectionFactoryClass() != null)
                      {
-                        Object o = initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
-                                                 cdMeta.getConfigProps(), cl);
-                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY, o));
-                        beanValidationObjects.add(o);
-                        associationObjects.add(o);
+                        ManagedConnectionFactory mcf =
+                           (ManagedConnectionFactory)initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
+                                                                   cdMeta.getConfigProps(), cl);
+                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY, mcf));
+                        beanValidationObjects.add(mcf);
+                        associationObjects.add(mcf);
+
+                        // ConnectionFactory
+                        Object cf = mcf.createConnectionFactory(new NoTxConnectionManager());
+                        archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
                      }
                   }
                }

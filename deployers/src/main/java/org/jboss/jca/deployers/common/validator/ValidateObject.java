@@ -41,9 +41,6 @@ public class ValidateObject
    public ValidateObject(int key,
                          Object object)
    {
-      if (object == null)
-         throw new IllegalArgumentException("Object is null");
-
       this.key = key;
       this.object = object;
    }
