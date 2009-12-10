@@ -55,7 +55,7 @@ public class BaseManagedConnectionFactory implements
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
    {
       log.debug("call createConnectionFactory");
-      return null;
+      return new BaseCciConnectionFactory();
    }
 
    /**
@@ -67,7 +67,7 @@ public class BaseManagedConnectionFactory implements
    public Object createConnectionFactory() throws ResourceException
    {
       log.debug("call createConnectionFactory");
-      return null;
+      return createConnectionFactory((ConnectionManager)null);
    }
 
    /** 

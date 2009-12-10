@@ -47,7 +47,10 @@ public class Validator
       "org.jboss.jca.deployers.common.validator.rules.ra.RA",
       "org.jboss.jca.deployers.common.validator.rules.ra.RAHashCode",
       "org.jboss.jca.deployers.common.validator.rules.ra.RAEquals",
-      "org.jboss.jca.deployers.common.validator.rules.ra.RAConfigProperties"
+      "org.jboss.jca.deployers.common.validator.rules.ra.RAConfigProperties",
+      "org.jboss.jca.deployers.common.validator.rules.cf.CFNull",
+      "org.jboss.jca.deployers.common.validator.rules.cf.CFSerializable",
+      "org.jboss.jca.deployers.common.validator.rules.cf.CFReferenceable"
    };
 
    /**
