@@ -41,6 +41,7 @@ public class Validator
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCF",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFHashCode",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFEquals",
+      "org.jboss.jca.deployers.common.validator.rules.mcf.MCFConfigProperties",
       "org.jboss.jca.deployers.common.validator.rules.mc.MC",
       "org.jboss.jca.deployers.common.validator.rules.mc.MCGetMetaData",
       "org.jboss.jca.deployers.common.validator.rules.ra.RANull",
@@ -50,7 +51,9 @@ public class Validator
       "org.jboss.jca.deployers.common.validator.rules.ra.RAConfigProperties",
       "org.jboss.jca.deployers.common.validator.rules.cf.CFNull",
       "org.jboss.jca.deployers.common.validator.rules.cf.CFSerializable",
-      "org.jboss.jca.deployers.common.validator.rules.cf.CFReferenceable"
+      "org.jboss.jca.deployers.common.validator.rules.cf.CFReferenceable",
+      "org.jboss.jca.deployers.common.validator.rules.as.ASConfigProperties",
+      "org.jboss.jca.deployers.common.validator.rules.ao.AOConfigProperties"
    };
 
    /**
