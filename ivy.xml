@@ -73,6 +73,7 @@
     <dependency org="org.jboss.deployers" name="jboss-deployers-vfs" rev="${version.jboss.deployers}" conf="standalone->default"/>
     <dependency org="org.jboss.deployers" name="jboss-deployers-vfs-spi" rev="${version.jboss.deployers}" conf="standalone->default"/>
     <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.javaee" name="jboss-jaspi-api" rev="${version.jboss.jaspi.api}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.logging" name="jboss-logging-jdk" rev="${version.jboss.logging}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging}" conf="standalone->default;sjc->*"/>
