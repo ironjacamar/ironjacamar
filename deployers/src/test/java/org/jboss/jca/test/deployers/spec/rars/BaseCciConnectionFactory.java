@@ -45,13 +45,18 @@ public class BaseCciConnectionFactory implements ConnectionFactory
     */
    private static final long serialVersionUID = 1L;
 
+   /**
+    * Reference
+    */
+   private Reference reference;
+
    /* getConnection
     * @see javax.resource.cci.ConnectionFactory#getConnection()
     */
    @Override
    public Connection getConnection() throws ResourceException
    {
-      return null;
+      return new BaseCciConnection();
    }
 
    /* getConnection
@@ -60,7 +65,7 @@ public class BaseCciConnectionFactory implements ConnectionFactory
    @Override
    public Connection getConnection(ConnectionSpec properties) throws ResourceException
    {
-      return null;
+      return new BaseCciConnection();
    }
 
    /* getMetaData
@@ -87,7 +92,9 @@ public class BaseCciConnectionFactory implements ConnectionFactory
    @Override
    public Reference getReference() throws NamingException
    {
-      return null;
+      if (reference == null)
+         reference = new BaseReference(this.getClass().getName());
+      return reference;
    }
 
    /* setReference
@@ -96,7 +103,7 @@ public class BaseCciConnectionFactory implements ConnectionFactory
    @Override
    public void setReference(Reference reference)
    {
-      
+      this.reference = reference;
    }
 
 
