@@ -990,19 +990,28 @@ public class Annotations
     * @param annotation The annotation
     * @return The fully qualified classname
     * @exception ClassNotFoundException Thrown if a class cannot be found
-    * @exception NoSuchFieldException Thrown if a field cannot be found
-    * @exception NoSuchMethodException Thrown if a method cannot be found
     */
    private String getConfigPropertyType(Annotation annotation)
-      throws ClassNotFoundException, NoSuchFieldException, NoSuchMethodException
+      throws ClassNotFoundException
    {
       if (AnnotationType.FIELD.equals(annotation.getType()))
       {
          ClassLoader cl = SecurityActions.getThreadContextClassLoader();
          Class clz = Class.forName(annotation.getClassName(), true, cl);
-         Field field = clz.getDeclaredField(annotation.getMemberName());
 
-         return field.getType().getName();
+         while (!Object.class.equals(clz))
+         {
+            try
+            {
+               Field field = clz.getDeclaredField(annotation.getMemberName());
+
+               return field.getType().getName();
+            }
+            catch (NoSuchFieldException nsfe)
+            {
+               clz = clz.getSuperclass();
+            }
+         }
       }
       else if (AnnotationType.METHOD.equals(annotation.getType()))
       {
@@ -1022,18 +1031,28 @@ public class Annotations
             }
          }
 
-         Method method = clz.getDeclaredMethod(annotation.getMemberName(), parameters);
-         
-         if (void.class.equals(method.getReturnType()))
+         while (!Object.class.equals(clz))
          {
-            if (parameters != null && parameters.length > 0)
+            try
             {
-               return parameters[0].getName();
+               Method method = clz.getDeclaredMethod(annotation.getMemberName(), parameters);
+         
+               if (void.class.equals(method.getReturnType()))
+               {
+                  if (parameters != null && parameters.length > 0)
+                  {
+                     return parameters[0].getName();
+                  }
+               }
+               else
+               {
+                  return method.getReturnType().getName();
+               }
             }
-         }
-         else
-         {
-            return method.getReturnType().getName();
+            catch (NoSuchMethodException nsme)
+            {
+               clz = clz.getSuperclass();
+            }
          }
       }
 
