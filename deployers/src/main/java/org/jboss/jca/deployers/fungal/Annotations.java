@@ -405,7 +405,7 @@ public class Annotations
     * @exception Exception Thrown if an error occurs
     */
    private ConnectorMetaData processConnectionDefinitions(ConnectorMetaData md, 
-                                                                 AnnotationRepository annotationRepository)
+                                                          AnnotationRepository annotationRepository)
       throws Exception
    {
       Collection<Annotation> values = annotationRepository.getAnnotation(ConnectionDefinitions.class);
@@ -419,7 +419,7 @@ public class Annotations
             if (trace)
                log.trace("Processing: " + c);
 
-            md = attachConnectionDefinitions(md , c);
+            md = attachConnectionDefinitions(md , c, annotation.getClassName());
          }
          else
             throw new DeployException("More than one @ConnectionDefinitions defined");
@@ -432,14 +432,25 @@ public class Annotations
     * Attach @ConnectionDefinitions
     * @param md The metadata
     * @param cds The connection definitions
+    * @param mcf The managed connection factory
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private ConnectorMetaData attachConnectionDefinitions(ConnectorMetaData md, 
-                                                                ConnectionDefinitions cds)
+                                                         ConnectionDefinitions cds,
+                                                         String mcf)
       throws Exception
    {
       createConDefs(md);
+
+      if (cds.value() != null)
+      {
+         for (ConnectionDefinition cd : cds.value())
+         {
+            md = attachConnectionDefinition(md, mcf, cd);
+         }
+      }
+
       return md;
    }
 
@@ -451,7 +462,7 @@ public class Annotations
     * @exception Exception Thrown if an error occurs
     */
    private ConnectorMetaData processConnectionDefinition(ConnectorMetaData md, 
-                                                                AnnotationRepository annotationRepository)
+                                                         AnnotationRepository annotationRepository)
       throws Exception
    {
       Collection<Annotation> values = annotationRepository.getAnnotation(ConnectionDefinition.class);
@@ -491,8 +502,30 @@ public class Annotations
             return md;
          }
       }
+
+      return attachConnectionDefinition(md, annotation.getClassName(), cd);
+   }
+
+   /**
+    * Attach @ConnectionDefinition
+    * @param md The metadata
+    * @param mcf The managed connection factory
+    * @param cd The connection definition
+    * @return The updated metadata
+    * @exception Exception Thrown if an error occurs
+    */
+   private ConnectorMetaData attachConnectionDefinition(ConnectorMetaData md, 
+                                                        String mcf, 
+                                                        ConnectionDefinition cd)
+      throws Exception
+   {
+      if (trace)
+         log.trace("Processing: " + cd);
+
+      createConDefs(md);
+
       ConnectionDefinitionMetaData cdMeta = new ConnectionDefinitionMetaData();
-      cdMeta.setManagedConnectionFactoryClass(annotation.getClassName());
+      cdMeta.setManagedConnectionFactoryClass(mcf);
       cdMeta.setConnectionFactoryInterfaceClass(cd.connectionFactory().getName());
       cdMeta.setConnectionFactoryImplementationClass(cd.connectionFactoryImpl().getName());
       cdMeta.setConnectionInterfaceClass(cd.connection().getName());
