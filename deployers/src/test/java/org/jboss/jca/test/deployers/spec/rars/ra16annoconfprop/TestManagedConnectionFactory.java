@@ -37,8 +37,21 @@ public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
    @ConfigProperty(type = String.class, defaultValue = "JCA")
    private String myStringProperty;
 
+   @ConfigProperty
+   private String myOtherStringProperty;
+
+   private String myMethodStringProperty;
+
    /**
-    * @param myStringProperty the myStringProperty to set
+    * Constructor
+    */
+   public TestManagedConnectionFactory()
+   {
+   }
+
+   /**
+    * Set the MyStringProperty value
+    * @param myStringProperty The value
     */
    public void setMyStringProperty(String myStringProperty)
    {
@@ -46,10 +59,48 @@ public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
    }
 
    /**
-    * @return the myStringProperty
+    * Get the MyStringProperty value
+    * @return The value
     */
    public String getMyStringProperty()
    {
       return myStringProperty;
+   }
+
+   /**
+    * Set the MyOtherStringProperty value
+    * @param value The value
+    */
+   public void setMyOtherStringProperty(String value)
+   {
+      this.myOtherStringProperty = value;
+   }
+
+   /**
+    * Get the MyOtherStringProperty value
+    * @return The value
+    */
+   public String getMyOtherStringProperty()
+   {
+      return myOtherStringProperty;
+   }
+
+   /**
+    * Set the MyMethodStringProperty value
+    * @param value The value
+    */
+   @ConfigProperty
+   public void setMyMethodStringProperty(String value)
+   {
+      this.myMethodStringProperty = value;
+   }
+
+   /**
+    * Get the MyMethodStringProperty value
+    * @return The value
+    */
+   public String getMyMethodStringProperty()
+   {
+      return myMethodStringProperty;
    }
 }

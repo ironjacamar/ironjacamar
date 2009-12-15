@@ -25,6 +25,8 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.fungal.deployers.DeployException;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -69,6 +71,7 @@ import org.jboss.metadata.rar.spec.SecurityPermissionMetaData;
 import org.jboss.metadata.rar.spec.TransactionSupportMetaData;
 import org.jboss.papaki.Annotation;
 import org.jboss.papaki.AnnotationRepository;
+import org.jboss.papaki.AnnotationType;
 
 /**
  * The annotation processor for JCA 1.6
@@ -536,10 +539,21 @@ public class Annotations
       if (trace)
          log.trace("Processing: " + configProperty);
 
+      // Ignore config-property which has ignore=true
+      if (configProperty.ignore())
+         return md;
+
       ConfigPropertyMetaData cfgMeta = new ConfigPropertyMetaData();
-      cfgMeta.setName(annotation.getMemberName());
+      cfgMeta.setName(getConfigPropertyName(annotation));
       cfgMeta.setValue(configProperty.defaultValue());
-      cfgMeta.setType(configProperty.type().getName());
+      if (!Object.class.equals(configProperty.type()))
+      {
+         cfgMeta.setType(configProperty.type().getName());
+      }
+      else
+      {
+         cfgMeta.setType(getConfigPropertyType(annotation));
+      }
       cfgMeta.setIgnore(configProperty.ignore());
 
       String[] description = configProperty.description();
@@ -893,4 +907,103 @@ public class Annotations
       }
    }
 
+   /**
+    * Get the config-property-name for an annotation
+    * @param annotation The annotation
+    * @return The name
+    * @exception ClassNotFoundException Thrown if a class cannot be found
+    * @exception NoSuchFieldException Thrown if a field cannot be found
+    * @exception NoSuchMethodException Thrown if a method cannot be found
+    */
+   private String getConfigPropertyName(Annotation annotation)
+      throws ClassNotFoundException, NoSuchFieldException, NoSuchMethodException
+   {
+      if (AnnotationType.FIELD.equals(annotation.getType()))
+      {
+         return annotation.getMemberName();
+      }
+      else if (AnnotationType.METHOD.equals(annotation.getType()))
+      {
+         String name = annotation.getMemberName();
+
+         if (name.startsWith("set"))
+         {
+            name = name.substring(3);
+         }
+         else if (name.startsWith("get"))
+         {
+            name = name.substring(3);
+         }
+         else if (name.startsWith("is"))
+         {
+            name = name.substring(2);
+         }
+
+         if (name.length() > 1)
+         {
+            return Character.toLowerCase(name.charAt(0)) + name.substring(1);
+         }
+         else
+         {
+            return Character.toString(Character.toLowerCase(name.charAt(0)));
+         }
+      }
+
+      throw new IllegalArgumentException("Unknown annotation: " + annotation);
+   }
+
+   /**
+    * Get the config-property-type for an annotation
+    * @param annotation The annotation
+    * @return The fully qualified classname
+    * @exception ClassNotFoundException Thrown if a class cannot be found
+    * @exception NoSuchFieldException Thrown if a field cannot be found
+    * @exception NoSuchMethodException Thrown if a method cannot be found
+    */
+   private String getConfigPropertyType(Annotation annotation)
+      throws ClassNotFoundException, NoSuchFieldException, NoSuchMethodException
+   {
+      if (AnnotationType.FIELD.equals(annotation.getType()))
+      {
+         ClassLoader cl = SecurityActions.getThreadContextClassLoader();
+         Class clz = Class.forName(annotation.getClassName(), true, cl);
+         Field field = clz.getDeclaredField(annotation.getMemberName());
+
+         return field.getType().getName();
+      }
+      else if (AnnotationType.METHOD.equals(annotation.getType()))
+      {
+         ClassLoader cl = SecurityActions.getThreadContextClassLoader();
+         Class clz = Class.forName(annotation.getClassName(), true, cl);
+
+         Class[] parameters = null;
+
+         if (annotation.getParameterTypes() != null)
+         {
+            parameters = new Class[annotation.getParameterTypes().length];
+
+            for (int i = 0; i < annotation.getParameterTypes().length; i++)
+            {
+               String parameter = annotation.getParameterTypes()[i];
+               parameters[i] = Class.forName(parameter, true, cl);
+            }
+         }
+
+         Method method = clz.getDeclaredMethod(annotation.getMemberName(), parameters);
+         
+         if (void.class.equals(method.getReturnType()))
+         {
+            if (parameters != null && parameters.length > 0)
+            {
+               return parameters[0].getName();
+            }
+         }
+         else
+         {
+            return method.getReturnType().getName();
+         }
+      }
+
+      throw new IllegalArgumentException("Unknown annotation: " + annotation);
+   }
 }
