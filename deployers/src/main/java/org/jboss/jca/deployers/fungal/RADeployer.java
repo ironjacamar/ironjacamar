@@ -42,6 +42,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -246,6 +247,7 @@ public final class RADeployer implements CloneableDeployer
          {
             AnnotationScanner annotationScanner = 
                AnnotationScannerFactory.getStrategy(AnnotationScannerFactory.JAVASSIST_INPUT_STREAM);
+            annotationScanner.configure().constructorLevel(false).parameterLevel(false);
             AnnotationRepository annotationRepository = annotationScanner.scan(cl.getURLs(), cl);
 
             isMetadataComplete = false;
@@ -523,6 +525,11 @@ public final class RADeployer implements CloneableDeployer
          CloneableBootstrapContext cbc = defaultBootstrapContext.clone();
 
          start.invoke(resourceAdapter, new Object[] {cbc});
+      }
+      catch (InvocationTargetException ite)
+      {
+         throw new DeployException("Unable to start " + 
+                                   resourceAdapter.getClass().getName(), ite.getTargetException());
       }
       catch (Throwable t)
       {
