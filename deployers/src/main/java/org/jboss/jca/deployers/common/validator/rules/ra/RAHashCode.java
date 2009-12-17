@@ -41,7 +41,7 @@ import javax.resource.spi.ResourceAdapter;
 public class RAHashCode implements Rule
 {
    /** Section */
-   private static final String SECTION = "5.3.1";
+   private static final String SECTION = "19.4.2";
 
    /**
     * Constructor
