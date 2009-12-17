@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id $ -->
+
+<!DOCTYPE connector PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Connector 1.0//EN"
+ "http://java.sun.com/dtd/connector_1_0.dtd">
+
+<connector>
+   <display-name>en-connector-disp</display-name>
+   <description>en-connector-desc</description>
+   <vendor-name>Red Hat Middleware LLC</vendor-name>
+   <spec-version>1.0</spec-version>
+   <eis-type>JMS 1.1 Server</eis-type>
+   <version>6.0</version>
+
+   <resourceadapter>
+
+     <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.ra10dtdout.TestManagedConnectionFactory</managedconnectionfactory-class>
+
+     <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
+     <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.ra10dtdout.TestManagedConnection</connectionfactory-impl-class>
+     <connection-interface>org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
+     <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.TestConnection</connection-impl-class>
+
+     <transaction-support>LocalTransaction</transaction-support>
+     <authentication-mechanism id="amid">
+        <description>authentication-mechanism</description>
+        <authentication-mechanism-type>BasicPassword</authentication-mechanism-type>
+        <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+     </authentication-mechanism>
+     <reauthentication-support>false</reauthentication-support>
+      <security-permission>
+     <description></description>
+     <security-permission-spec>sa</security-permission-spec>
+     </security-permission>
+
+   </resourceadapter>
+</connector>

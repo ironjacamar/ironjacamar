@@ -274,6 +274,15 @@
    </jar>
    <delete file="${build.deployers.dir}/ra16inoutjar.jar"/>
   	
+    <jar destfile="${build.deployers.dir}/ra10dtdout.rar"
+         manifest="src/main/resources/rar-manifest.mf">
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/ra10dtdout/*.class"/>
+       <fileset dir="src/test/resources/ra10dtdout.rar"/>
+    </jar>     	
+  	
     <jar destfile="${build.deployers.dir}/rafail2connector.rar"
          manifest="src/main/resources/rar-manifest.mf">
        <fileset dir="${build.deployers.dir}/test"

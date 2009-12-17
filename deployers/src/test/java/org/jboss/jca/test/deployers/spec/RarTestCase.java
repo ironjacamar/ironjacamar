@@ -59,6 +59,30 @@ public class RarTestCase
    // --------------------------------------------------------------------------------||
 
    /**
+    * ra10dtdout.rar
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testRa10dtdout() throws Throwable
+   {
+      URL archive = getURL("ra10dtdout.rar");
+ 
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         log.error(t.getMessage(), t);
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
+   }
+   
+   /**
     * ra15dtdinout.rar
     * @throws Throwable throwable exception 
     */
