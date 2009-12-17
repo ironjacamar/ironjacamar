@@ -39,6 +39,7 @@ import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.InboundRaMetaData;
+import org.jboss.metadata.rar.spec.JCA10DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA15DTDMetaData;
 import org.jboss.metadata.rar.spec.JCA15MetaData;
 import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
@@ -46,6 +47,7 @@ import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
 import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.metadata.rar.spec.MessageListenerMetaData;
 import org.jboss.metadata.rar.spec.OutboundRaMetaData;
+import org.jboss.metadata.rar.spec.RA10MetaData;
 import org.jboss.xb.binding.Unmarshaller;
 import org.jboss.xb.binding.UnmarshallerFactory;
 import org.jboss.xb.binding.resolver.MutableSchemaResolver;
@@ -86,6 +88,7 @@ public class Metadata
       resolver.mapLocationToClass("connector_1_5.xsd", JCA15MetaData.class);
       resolver.mapLocationToClass("connector_1_5.dtd", JCA15DTDMetaData.class);
       resolver.mapLocationToClass("connector_1_6.dtd", JCA16DTDMetaData.class);
+      resolver.mapLocationToClass("connector_1_0.dtd", JCA10DTDMetaData.class);
       resolver.mapLocationToClass("connector", JCA16DefaultNSMetaData.class);
 
       File metadataFile = new File(root, "/META-INF/ra.xml");
@@ -291,6 +294,17 @@ public class Metadata
     */
    public ConnectorMetaData validate(ConnectorMetaData cmd) throws Exception
    {
+      if (cmd.is10())
+      {
+         RA10MetaData ra10 = ((JCA10DTDMetaData)cmd).getRa10();
+         if (ra10 == null 
+            || ra10.getManagedConnectionFactoryClass() == null
+            || ra10.getManagedConnectionFactoryClass().equals(""))
+         {
+            throw new DeployException("ManagedConnectionFactoryClass should be defined");
+         }
+         return cmd;
+      }
       //make sure all need metadata parsered and processed after annotation handle
       if (cmd.getRa() == null)
          throw new DeployException("ResourceAdapter metadata should be defined");
