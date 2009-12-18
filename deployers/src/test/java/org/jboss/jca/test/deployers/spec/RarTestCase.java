@@ -275,6 +275,30 @@ public class RarTestCase
    }
 
    /**
+    * ra16inoutmultianno.rar
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testRa16inoutmultianno() throws Throwable
+   {
+      URL archive = getURL("ra16inoutmultianno.rar");
+      
+      try
+      {
+         embedded.deploy(archive);
+      }
+      catch (Throwable t)
+      {
+         log.error(t.getMessage(), t);
+         fail(t.getMessage());
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
+   }
+
+   /**
     * ra16inoutjar.rar
     * @throws Throwable throwable exception 
     */
