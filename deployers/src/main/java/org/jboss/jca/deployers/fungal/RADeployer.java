@@ -284,7 +284,7 @@ public final class RADeployer implements CloneableDeployer
          cmd = metadataHandler.merge(cmd, jrmd);
 
          // Notify regarding license terms
-         if (cmd != null && cmd.getLicense() != null && cmd.getLicense().isRequired())
+         if (cmd != null && cmd.getLicense() != null && cmd.getLicense().getRequired())
             log.info("Required license terms for " + url.toExternalForm());
 
          ResourceAdapter resourceAdapter = null;
