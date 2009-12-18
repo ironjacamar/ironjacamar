@@ -170,7 +170,12 @@ public class Annotations
             md = attachConnector(md, c);
          }
          else
-            throw new DeployException("More than one @Connector defined");
+         {
+            //if it define zero @Connector or >=2 @Connector, it should be defined ResourceAdapter class in the ra.xml
+            //see https://jira.jboss.org/jira/browse/JBJCA-240
+            if (md.getRa().getRaClass() == null || md.getRa().getRaClass().equals(""))
+               throw new DeployException("More than one @Connector defined");
+         }
       }
 
       return md;
