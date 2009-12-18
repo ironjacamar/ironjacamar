@@ -169,12 +169,24 @@ public class Annotations
 
             md = attachConnector(md, c);
          }
+         else if (values.size() == 0)
+         {
+            // JBJCA-240
+            if (md.getRa().getRaClass() == null || md.getRa().getRaClass().equals(""))
+            {
+               log.fatal("No @Connector was found and no definition in the ra.xml metadata either");
+               throw new DeployException("No @Connector defined");
+            }
+         }
          else
          {
-            //if it define zero @Connector or >=2 @Connector, it should be defined ResourceAdapter class in the ra.xml
-            //see https://jira.jboss.org/jira/browse/JBJCA-240
+            // JBJCA-240
             if (md.getRa().getRaClass() == null || md.getRa().getRaClass().equals(""))
+            {
+               log.fatal("More than one @Connector was found but the correct one " + 
+                         "wasn't defined in the ra.xml metadata");
                throw new DeployException("More than one @Connector defined");
+            }
          }
       }
 
