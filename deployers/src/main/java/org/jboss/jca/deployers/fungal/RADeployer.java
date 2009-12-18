@@ -283,6 +283,10 @@ public final class RADeployer implements CloneableDeployer
          // Merge metadata
          cmd = metadataHandler.merge(cmd, jrmd);
 
+         // Notify regarding license terms
+         if (cmd != null && cmd.getLicense() != null && cmd.getLicense().isRequired())
+            log.info("Required license terms for " + url.toExternalForm());
+
          ResourceAdapter resourceAdapter = null;
          List<ValidateObject> archiveValidationObjects = new ArrayList<ValidateObject>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
