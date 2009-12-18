@@ -101,6 +101,19 @@ public class CommunicationServer implements Runnable
    public void stop()
    {
       running.set(false);
+
+      if (ss != null)
+      {
+         try
+         {
+            ss.close();
+         }
+         catch (IOException ioe)
+         {
+            if (isDebugEnabled())
+               debug(ioe.getMessage());
+         }
+      }
    }
 
    /**
