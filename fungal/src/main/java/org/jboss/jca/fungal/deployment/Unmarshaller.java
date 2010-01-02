@@ -186,7 +186,7 @@ public class Unmarshaller
       }
 
       if (!"bean".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("url tag not completed");
+         throw new XMLStreamException("bean tag not completed");
 
       return result;
    }
@@ -234,7 +234,7 @@ public class Unmarshaller
       }
 
       if (!"constructor".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("url tag not completed");
+         throw new XMLStreamException("constructor tag not completed");
 
       return result;
    }
@@ -265,7 +265,7 @@ public class Unmarshaller
       }
 
       if (!"parameter".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("url tag not completed");
+         throw new XMLStreamException("parameter tag not completed");
 
       return result;
    }
@@ -303,7 +303,25 @@ public class Unmarshaller
                String name = xmlStreamReader.getLocalName();
 
                if ("inject".equals(name))
+               {
                   result.getContent().add(readInject(xmlStreamReader));
+               }
+               else if ("set".equals(name))
+               {
+                  result.getContent().add(readSet(xmlStreamReader));
+               }
+               else if ("list".equals(name))
+               {
+                  result.getContent().add(readList(xmlStreamReader));
+               }
+               else if ("null".equals(name))
+               {
+                  result.getContent().add(readNull(xmlStreamReader));
+               }
+               else if ("this".equals(name))
+               {
+                  result.getContent().add(readThis(xmlStreamReader));
+               }
 
                break;
 
@@ -319,7 +337,7 @@ public class Unmarshaller
       }
 
       if (!"property".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("url tag not completed");
+         throw new XMLStreamException("property tag not completed");
 
       return result;
    }
@@ -365,7 +383,7 @@ public class Unmarshaller
       }
 
       if (!"inject".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("url tag not completed");
+         throw new XMLStreamException("inject tag not completed");
 
       return result;
    }
@@ -398,7 +416,312 @@ public class Unmarshaller
       }
 
       if (!"depends".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("url tag not completed");
+         throw new XMLStreamException("depends tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <map>
+    * @param xmlStreamReader The XML stream
+    * @return The map
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private MapType readMap(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      MapType result = new MapType();
+
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("keyClass".equals(name))
+         {
+            result.setKeyClass(xmlStreamReader.getAttributeValue(i));
+         }
+         else if ("valueClass".equals(name))
+         {
+            result.setValueClass(xmlStreamReader.getAttributeValue(i));
+         }
+         else if ("class".equals(name))
+         {
+            result.setClazz(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         switch (eventCode)
+         {
+            case XMLStreamReader.START_ELEMENT :
+               String name = xmlStreamReader.getLocalName();
+
+               if ("entry".equals(name))
+                  result.getEntry().add(readEntry(xmlStreamReader));
+
+               break;
+
+            default :
+         }
+
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"map".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("map tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <set>
+    * @param xmlStreamReader The XML stream
+    * @return The set
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private SetType readSet(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      SetType result = new SetType();
+
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("elementClass".equals(name))
+         {
+            result.setElementClass(xmlStreamReader.getAttributeValue(i));
+         }
+         else if ("class".equals(name))
+         {
+            result.setClazz(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         switch (eventCode)
+         {
+            case XMLStreamReader.START_ELEMENT :
+               String name = xmlStreamReader.getLocalName();
+
+               if ("value".equals(name))
+                  result.getValue().add(readValue(xmlStreamReader));
+
+               break;
+
+            default :
+         }
+
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"set".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("set tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <list>
+    * @param xmlStreamReader The XML stream
+    * @return The list
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private ListType readList(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      ListType result = new ListType();
+
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("elementClass".equals(name))
+         {
+            result.setElementClass(xmlStreamReader.getAttributeValue(i));
+         }
+         else if ("class".equals(name))
+         {
+            result.setClazz(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         switch (eventCode)
+         {
+            case XMLStreamReader.START_ELEMENT :
+               String name = xmlStreamReader.getLocalName();
+
+               if ("value".equals(name))
+                  result.getValue().add(readValue(xmlStreamReader));
+
+               break;
+
+            default :
+         }
+
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"list".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("list tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <entry>
+    * @param xmlStreamReader The XML stream
+    * @return The entry
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private EntryType readEntry(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      EntryType result = new EntryType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         switch (eventCode)
+         {
+            case XMLStreamReader.START_ELEMENT :
+               String name = xmlStreamReader.getLocalName();
+
+               if ("key".equals(name))
+               {
+                  result.setKey(readKey(xmlStreamReader));
+               }
+               else if ("value".equals(name))
+               {
+                  result.setValue(readValue(xmlStreamReader));
+               }
+
+               break;
+
+            default :
+         }
+
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"map".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("map tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <key>
+    * @param xmlStreamReader The XML stream
+    * @return The key
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private KeyType readKey(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      KeyType result = new KeyType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         switch (eventCode)
+         {
+            case XMLStreamReader.CHARACTERS :
+               result.setValue(xmlStreamReader.getText());
+
+               break;
+
+            default :
+         }
+
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"key".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("key tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <value>
+    * @param xmlStreamReader The XML stream
+    * @return The value
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private ValueType readValue(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      ValueType result = new ValueType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         switch (eventCode)
+         {
+            case XMLStreamReader.CHARACTERS :
+               result.setValue(xmlStreamReader.getText());
+
+               break;
+
+            default :
+         }
+
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"value".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("value tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <null>
+    * @param xmlStreamReader The XML stream
+    * @return The null
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private NullType readNull(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      NullType result = new NullType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"null".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("null tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <this>
+    * @param xmlStreamReader The XML stream
+    * @return The this
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private ThisType readThis(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      ThisType result = new ThisType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"this".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("this tag not completed");
 
       return result;
    }

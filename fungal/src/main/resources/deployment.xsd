@@ -18,6 +18,12 @@
    <xsd:complexType name="propertyType" mixed="true">
      <xsd:sequence>
        <xsd:element name="inject" type="injectType" maxOccurs="1" minOccurs="0"/>
+       <xsd:element name="list" type="listType" maxOccurs="1" minOccurs="0"/>
+       <xsd:element name="set" type="setType" maxOccurs="1" minOccurs="0"/>
+       <xsd:element name="map" type="mapType" maxOccurs="1" minOccurs="0"/>
+       <xsd:element name="value" type="valueType" maxOccurs="1" minOccurs="0"/>
+       <xsd:element name="null" type="nullType" maxOccurs="1" minOccurs="0"/>
+       <xsd:element name="this" type="thisType" maxOccurs="1" minOccurs="0"/>
      </xsd:sequence>
      <xsd:attribute name="name" type="xsd:token" use="required"/>
      <xsd:attribute name="class" type="xsd:token"/>
@@ -36,8 +42,40 @@
      <xsd:sequence>
        <xsd:element name="parameter" type="parameterType" maxOccurs="unbounded" minOccurs="0"/>
      </xsd:sequence>
-     <xsd:attribute name="factoryMethod" type="xsd:token" use="required"/>
-     <xsd:attribute name="factoryClass" type="xsd:token" use="required"/>
+     <xsd:attribute name="factoryMethod" type="xsd:token"/>
+     <xsd:attribute name="factoryClass" type="xsd:token"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="mapType">
+     <xsd:sequence>
+       <xsd:element name="entry" type="entryType" maxOccurs="unbounded" minOccurs="0"/>
+     </xsd:sequence>
+     <xsd:attribute name="class" type="xsd:token"/>
+     <xsd:attribute name="keyClass" type="xsd:token" use="required"/>
+     <xsd:attribute name="valueClass" type="xsd:token" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="entryType">
+     <xsd:sequence>
+       <xsd:element name="key" type="keyType"/>
+       <xsd:element name="value" type="valueType"/>
+     </xsd:sequence>
+   </xsd:complexType>
+
+   <xsd:complexType name="setType">
+     <xsd:sequence>
+       <xsd:element name="value" type="valueType" maxOccurs="unbounded" minOccurs="0"/>
+     </xsd:sequence>
+     <xsd:attribute name="class" type="xsd:token"/>
+     <xsd:attribute name="elementClass" type="xsd:token" use="required"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="listType">
+     <xsd:sequence>
+       <xsd:element name="value" type="valueType" maxOccurs="unbounded" minOccurs="0"/>
+     </xsd:sequence>
+     <xsd:attribute name="class" type="xsd:token"/>
+     <xsd:attribute name="elementClass" type="xsd:token" use="required"/>
    </xsd:complexType>
 
    <xsd:complexType name="parameterType">
@@ -53,6 +91,24 @@
        </xsd:extension>
      </xsd:simpleContent>
    </xsd:complexType>
+
+   <xsd:complexType name="keyType">
+     <xsd:simpleContent>
+       <xsd:extension base="xsd:token">
+       </xsd:extension>
+     </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="valueType">
+     <xsd:simpleContent>
+       <xsd:extension base="xsd:token">
+       </xsd:extension>
+     </xsd:simpleContent>
+   </xsd:complexType>
+
+   <xsd:complexType name="thisType"/>
+
+   <xsd:complexType name="nullType"/>
 
    <xsd:element name="deployment">
      <xsd:complexType>

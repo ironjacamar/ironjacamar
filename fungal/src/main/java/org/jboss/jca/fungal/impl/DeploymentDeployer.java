@@ -29,9 +29,17 @@ import org.jboss.jca.fungal.deployers.Deployment;
 import org.jboss.jca.fungal.deployment.BeanType;
 import org.jboss.jca.fungal.deployment.ConstructorType;
 import org.jboss.jca.fungal.deployment.DependsType;
+import org.jboss.jca.fungal.deployment.EntryType;
 import org.jboss.jca.fungal.deployment.InjectType;
+import org.jboss.jca.fungal.deployment.KeyType;
+import org.jboss.jca.fungal.deployment.ListType;
+import org.jboss.jca.fungal.deployment.MapType;
+import org.jboss.jca.fungal.deployment.NullType;
 import org.jboss.jca.fungal.deployment.PropertyType;
+import org.jboss.jca.fungal.deployment.SetType;
+import org.jboss.jca.fungal.deployment.ThisType;
 import org.jboss.jca.fungal.deployment.Unmarshaller;
+import org.jboss.jca.fungal.deployment.ValueType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -39,10 +47,12 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -389,7 +399,9 @@ public final class DeploymentDeployer implements CloneableDeployer
                   args = new Object[ct.getParameter().size()];
                   for (int i = 0; i < ct.getParameter().size(); i++)
                   {
-                     args[i] = getValue(ct.getParameter().get(i).getValue(), factoryMethod.getParameterTypes()[i]);
+                     args[i] = getValue(ct.getParameter().get(i).getValue(), 
+                                        factoryMethod.getParameterTypes()[i],
+                                        cl);
                   }
                }
                else
@@ -405,8 +417,9 @@ public final class DeploymentDeployer implements CloneableDeployer
 
                         for (int i = 0; i < ct.getParameter().size(); i++)
                         {
-                           args[i] = 
-                              getValue(ct.getParameter().get(i).getValue(), factoryMethod.getParameterTypes()[i]);
+                           args[i] = getValue(ct.getParameter().get(i).getValue(),
+                                              factoryMethod.getParameterTypes()[i],
+                                              cl);
                         }
 
                         factoryMethod = m;
@@ -473,11 +486,14 @@ public final class DeploymentDeployer implements CloneableDeployer
        * Get a value from a string
        * @param s The string representation
        * @param clz The class
+       * @param cl The class loader
        * @return The value
        * @exception Exception If the string cant be converted
        */
-      private Object getValue(String s, Class<?> clz) throws Exception
+      private Object getValue(String s, Class<?> clz, ClassLoader cl) throws Exception
       {
+         s = getSubstitutionValue(s);
+
          if (clz.equals(String.class))
          {
             return s;
@@ -518,6 +534,10 @@ public final class DeploymentDeployer implements CloneableDeployer
          {
             return InetAddress.getByName(s);
          }
+         else if (clz.equals(Class.class))
+         {
+            return Class.forName(s, true, cl);
+         }
          
          throw new Exception("Unknown class " + clz.getName() + " for " + s);
       }
@@ -529,6 +549,7 @@ public final class DeploymentDeployer implements CloneableDeployer
        * @param cl The classloader
        * @exception Exception Thrown if an error occurs
        */
+      @SuppressWarnings("unchecked") 
       private void setBeanProperty(Object instance, PropertyType pt, ClassLoader cl) throws Exception
       {
          String name = "set" + pt.getName().substring(0, 1).toUpperCase(Locale.US) + pt.getName().substring(1);
@@ -602,48 +623,102 @@ public final class DeploymentDeployer implements CloneableDeployer
                parameterValue = injectionObject;
             }
          }
+         else if (element instanceof MapType)
+         {
+            MapType mt = (MapType)element;
+
+            Map map = null;
+            
+            if (mt.getClazz() == null)
+            {
+               map = new HashMap();
+            }
+            else
+            {
+               Class mapClass = Class.forName(mt.getClazz(), true, cl);
+               map = (Map)mapClass.newInstance();
+            }
+
+            Class keyClass = Class.forName(mt.getKeyClass(), true, cl);
+            Class valueClass = Class.forName(mt.getValueClass(), true, cl);
+
+            for (EntryType et : mt.getEntry())
+            {
+               Object key = getValue(et.getKey().getValue(), keyClass, cl);
+               Object value = getValue(et.getValue().getValue(), valueClass, cl);
+
+               map.put(key, value);
+            }
+
+            parameterValue = map;
+         }
+         else if (element instanceof ListType)
+         {
+            ListType lt = (ListType)element;
+
+            List list = null;
+            
+            if (lt.getClazz() == null)
+            {
+               list = new ArrayList();
+            }
+            else
+            {
+               Class listClass = Class.forName(lt.getClazz(), true, cl);
+               list = (List)listClass.newInstance();
+            }
+
+            Class elementClass = Class.forName(lt.getElementClass(), true, cl);
+
+            for (ValueType vt : lt.getValue())
+            {
+               Object value = getValue(vt.getValue(), elementClass, cl);
+               list.add(value);
+            }
+
+            parameterValue = list;
+         }
+         else if (element instanceof SetType)
+         {
+            SetType st = (SetType)element;
+
+            Set set = null;
+            
+            if (st.getClazz() == null)
+            {
+               set = new HashSet();
+            }
+            else
+            {
+               Class setClass = Class.forName(st.getClazz(), true, cl);
+               set = (Set)setClass.newInstance();
+            }
+
+            Class elementClass = Class.forName(st.getElementClass(), true, cl);
+
+            for (ValueType vt : st.getValue())
+            {
+               Object value = getValue(vt.getValue(), elementClass, cl);
+               set.add(value);
+            }
+
+            parameterValue = set;
+         }
+         else if (element instanceof NullType)
+         {
+            parameterValue = null;
+         }
+         else if (element instanceof ThisType)
+         {
+            parameterValue = instance;
+         }
+         else if (element instanceof ValueType)
+         {
+            parameterValue = getValue(((ValueType)element).getValue(), parameterClass, cl);
+         }
          else
          {
-            if (parameterClass.equals(String.class))
-            {
-               parameterValue = getSubstitutionValue((String)element);
-            }
-            else if (parameterClass.equals(byte.class) || parameterClass.equals(Byte.class))
-            {
-               parameterValue = Byte.valueOf(getSubstitutionValue((String)element));
-            }
-            else if (parameterClass.equals(short.class) || parameterClass.equals(Short.class))
-            {
-               parameterValue = Short.valueOf(getSubstitutionValue((String)element));
-            }
-            else if (parameterClass.equals(int.class) || parameterClass.equals(Integer.class))
-            {
-               parameterValue = Integer.valueOf(getSubstitutionValue((String)element));
-            }
-            else if (parameterClass.equals(long.class) || parameterClass.equals(Long.class))
-            {
-               parameterValue = Long.valueOf(getSubstitutionValue((String)element));
-            }
-            else if (parameterClass.equals(float.class) || parameterClass.equals(Float.class))
-            {
-               parameterValue = Float.valueOf(getSubstitutionValue((String)element));
-            }
-            else if (parameterClass.equals(double.class) || parameterClass.equals(Double.class))
-            {
-               parameterValue = Double.valueOf(getSubstitutionValue((String)element));
-            }
-            else if (parameterClass.equals(boolean.class) || parameterClass.equals(Boolean.class))
-            {
-               parameterValue = Boolean.valueOf(getSubstitutionValue((String)element));
-            }
-            else if (parameterClass.equals(char.class) || parameterClass.equals(Character.class))
-            {
-               parameterValue = Character.valueOf((getSubstitutionValue((String)element)).charAt(0));
-            }
-            else if (parameterClass.equals(InetAddress.class))
-            {
-               parameterValue = InetAddress.getByName(getSubstitutionValue((String)element));
-            }
+            parameterValue = getValue((String)element, parameterClass, cl);
          }
 
          if (parameterValue == null)
