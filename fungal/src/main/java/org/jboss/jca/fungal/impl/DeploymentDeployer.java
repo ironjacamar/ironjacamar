@@ -32,7 +32,6 @@ import org.jboss.jca.fungal.deployment.DependsType;
 import org.jboss.jca.fungal.deployment.EntryType;
 import org.jboss.jca.fungal.deployment.InjectType;
 import org.jboss.jca.fungal.deployment.InstallType;
-import org.jboss.jca.fungal.deployment.KeyType;
 import org.jboss.jca.fungal.deployment.ListType;
 import org.jboss.jca.fungal.deployment.MapType;
 import org.jboss.jca.fungal.deployment.NullType;

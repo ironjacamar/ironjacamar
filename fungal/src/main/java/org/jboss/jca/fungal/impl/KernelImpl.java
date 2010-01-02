@@ -62,6 +62,9 @@ import javax.management.ObjectName;
  */
 public class KernelImpl implements Kernel
 {
+   /** Version information */
+   private static final String VERSION = "Fungal 0.5";
+
    /** Kernel configuration */
    private KernelConfiguration kernelConfiguration;
 
@@ -216,6 +219,9 @@ public class KernelImpl implements Kernel
       // Add the kernel bean reference
       addBean("Kernel", this);
       setBeanStatus("Kernel", ServiceLifecycle.STARTED);
+
+      // Log version information
+      info(VERSION + " started");
 
       // Start all URLs defined in bootstrap.xml
       if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory())
@@ -723,7 +729,7 @@ public class KernelImpl implements Kernel
          
          Method mGetLogger = clz.getMethod("getLogger", String.class);
 
-         logging = mGetLogger.invoke((Object)null, new Object[] {"org.jboss.jca.fungal.impl.KernelImpl"});
+         logging = mGetLogger.invoke((Object)null, new Object[] {"org.jboss.jca.fungal.Fungal"});
       }
       catch (Throwable t)
       {
