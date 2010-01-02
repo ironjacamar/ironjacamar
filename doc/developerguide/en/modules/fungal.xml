@@ -92,6 +92,14 @@ $JBOSS_JCA_HOME/config/deployment.xsd
           <para>defines an explicit dependency to another bean.</para>
         </listitem>
         <listitem>
+          <code>&lt;install&gt;</code>
+          <para>defines an install method.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;uninstall&gt;</code>
+          <para>defines an uninstall method.</para>
+        </listitem>
+        <listitem>
           <code>&lt;map&gt;</code>
           <para>defines a map data structure.</para>
         </listitem>
@@ -147,7 +155,7 @@ ${jboss.jca.host:localhost}
     <section id="fungal_lifecycle">
       <title>Lifecycle</title>
 
-      <para>There is basic support for lifecycle methods. These include</para>
+      <para>There is support for lifecycle methods. These include</para>
 
       <itemizedlist>
         <listitem>
@@ -167,6 +175,11 @@ ${jboss.jca.host:localhost}
           <para>Called after stop.</para>
         </listitem>
       </itemizedlist>
+
+      <para>Furthermore all <code>install</code> methods defined for the bean are called after the <code>start</code>
+        method. All <code>uninstall</code> methods defined for the bean are called before the <code>stop</code>
+        method.</para>
+
     </section>
 
     <section id="fungal_logging">

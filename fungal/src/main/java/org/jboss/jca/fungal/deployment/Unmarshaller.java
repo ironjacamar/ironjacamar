@@ -177,6 +177,14 @@ public class Unmarshaller
                {
                   result.getDepends().add(readDepends(xmlStreamReader));
                }
+               else if ("install".equals(name))
+               {
+                  result.getInstall().add(readInstall(xmlStreamReader));
+               }
+               else if ("uninstall".equals(name))
+               {
+                  result.getUninstall().add(readUninstall(xmlStreamReader));
+               }
 
                break;
             default :
@@ -417,6 +425,70 @@ public class Unmarshaller
 
       if (!"depends".equals(xmlStreamReader.getLocalName()))
          throw new XMLStreamException("depends tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <install>
+    * @param xmlStreamReader The XML stream
+    * @return The install
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private InstallType readInstall(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      InstallType result = new InstallType();
+
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("method".equals(name))
+         {
+            result.setMethod(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"install".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("install tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <uninstall>
+    * @param xmlStreamReader The XML stream
+    * @return The install
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private UninstallType readUninstall(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      UninstallType result = new UninstallType();
+
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("method".equals(name))
+         {
+            result.setMethod(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"uninstall".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("uninstall tag not completed");
 
       return result;
    }

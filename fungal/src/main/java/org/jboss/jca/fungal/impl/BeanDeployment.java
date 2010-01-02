@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -45,6 +46,9 @@ public class BeanDeployment implements Deployment
    /** The bean names */
    private List<String> beans;
 
+   /** Uninstall methods */
+   private Map<String, List<Method>> uninstall;
+
    /** The kernel */
    private KernelImpl kernel;
 
@@ -52,12 +56,29 @@ public class BeanDeployment implements Deployment
     * Constructor
     * @param deployment The deployment
     * @param beans The list of bean names for the deployment
+    * @param uninstall Uninstall methods for beans
     * @param kernel The kernel
     */
-   public BeanDeployment(URL deployment, List<String> beans, KernelImpl kernel)
+   public BeanDeployment(URL deployment, 
+                         List<String> beans, 
+                         Map<String, List<Method>> uninstall,
+                         KernelImpl kernel)
    {
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");
+
+      if (beans == null)
+         throw new IllegalArgumentException("Beans is null");
+
+      if (uninstall == null)
+         throw new IllegalArgumentException("Uninstall is null");
+
+      if (kernel == null)
+         throw new IllegalArgumentException("Kernel is null");
+
       this.deployment = deployment;
       this.beans = beans;
+      this.uninstall = uninstall;
       this.kernel = kernel;
    }
 
@@ -121,6 +142,22 @@ public class BeanDeployment implements Deployment
          kernel.setBeanStatus(name, ServiceLifecycle.STOPPING);
 
          Object bean = kernel.getBean(name);
+
+         List<Method> l = uninstall.get(name);
+         if (l != null)
+         {
+            for (Method m : l)
+            {
+               try
+               {
+                  m.invoke(bean, (Object[])null);
+               }
+               catch (InvocationTargetException ite)
+               {
+                  throw ite.getTargetException();
+               }
+            }
+         }
 
          try
          {

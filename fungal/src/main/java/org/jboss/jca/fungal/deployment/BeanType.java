@@ -33,6 +33,8 @@ public class BeanType
    private ConstructorType constructor;
    private List<PropertyType> property;
    private List<DependsType> depends;
+   private List<InstallType> install;
+   private List<UninstallType> uninstall;
    private String name;
    private String interfaze;
    private String clazz;
@@ -90,6 +92,30 @@ public class BeanType
          depends = new ArrayList<DependsType>(1);
 
       return depends;
+   }
+
+   /**
+    * Get the install values
+    * @return The value
+    */
+   public List<InstallType> getInstall()
+   {
+      if (install == null)
+         install = new ArrayList<InstallType>(1);
+
+      return install;
+   }
+
+   /**
+    * Get the uninstall values
+    * @return The value
+    */
+   public List<UninstallType> getUninstall()
+   {
+      if (uninstall == null)
+         uninstall = new ArrayList<UninstallType>(1);
+
+      return uninstall;
    }
 
    /**

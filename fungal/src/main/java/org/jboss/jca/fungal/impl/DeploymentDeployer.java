@@ -31,6 +31,7 @@ import org.jboss.jca.fungal.deployment.ConstructorType;
 import org.jboss.jca.fungal.deployment.DependsType;
 import org.jboss.jca.fungal.deployment.EntryType;
 import org.jboss.jca.fungal.deployment.InjectType;
+import org.jboss.jca.fungal.deployment.InstallType;
 import org.jboss.jca.fungal.deployment.KeyType;
 import org.jboss.jca.fungal.deployment.ListType;
 import org.jboss.jca.fungal.deployment.MapType;
@@ -38,6 +39,7 @@ import org.jboss.jca.fungal.deployment.NullType;
 import org.jboss.jca.fungal.deployment.PropertyType;
 import org.jboss.jca.fungal.deployment.SetType;
 import org.jboss.jca.fungal.deployment.ThisType;
+import org.jboss.jca.fungal.deployment.UninstallType;
 import org.jboss.jca.fungal.deployment.Unmarshaller;
 import org.jboss.jca.fungal.deployment.ValueType;
 
@@ -54,6 +56,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 
@@ -114,12 +117,14 @@ public final class DeploymentDeployer implements CloneableDeployer
 
             List<BeanDeployer> deployers = new ArrayList<BeanDeployer>(deployment.getBean().size());
             List<String> beans = Collections.synchronizedList(new ArrayList<String>(deployment.getBean().size()));
+            Map<String, List<Method>> uninstall = 
+               new ConcurrentHashMap<String, List<Method>>(deployment.getBean().size());
 
             final CountDownLatch beansLatch = new CountDownLatch(deployment.getBean().size());
 
             for (BeanType bt : deployment.getBean())
             {
-               BeanDeployer deployer = new BeanDeployer(bt, beans, kernel, beansLatch, parent);
+               BeanDeployer deployer = new BeanDeployer(bt, beans, uninstall, kernel, beansLatch, parent);
                deployers.add(deployer);
 
                Future<?> result = kernel.getExecutorService().submit(deployer);
@@ -136,7 +141,7 @@ public final class DeploymentDeployer implements CloneableDeployer
             }
 
             if (deployException == null)
-               return new BeanDeployment(url, beans, kernel);
+               return new BeanDeployment(url, beans, uninstall, kernel);
          }
       }
       catch (Throwable t)
@@ -162,6 +167,9 @@ public final class DeploymentDeployer implements CloneableDeployer
       /** The bean names */
       private List<String> beans;
 
+      /** Uninstall methods */
+      private Map<String, List<Method>> uninstall;
+
       /** The kernel */
       private KernelImpl kernel;
 
@@ -178,18 +186,21 @@ public final class DeploymentDeployer implements CloneableDeployer
        * Constructor
        * @param bt The bean
        * @param beans The list of bean names
+       * @param uninstall Uninstall methods for beans
        * @param kernel The kernel
        * @param beansLatch The beans latch
        * @param classLoader The class loader
        */
       public BeanDeployer(BeanType bt, 
                           List<String> beans,
+                          Map<String, List<Method>> uninstall,
                           KernelImpl kernel,
                           CountDownLatch beansLatch,
                           ClassLoader classLoader)
       {
          this.bt = bt;
          this.beans = beans;
+         this.uninstall = uninstall;
          this.kernel = kernel;
          this.beansLatch = beansLatch;
          this.classLoader = classLoader;
@@ -471,6 +482,42 @@ public final class DeploymentDeployer implements CloneableDeployer
          catch (InvocationTargetException ite)
          {
             throw ite.getTargetException();
+         }
+
+         // Invoke install methods
+         if (bt.getInstall() != null && bt.getInstall().size() > 0)
+         {
+            for (InstallType it : bt.getInstall())
+            {
+               try
+               {
+                  Method method = clz.getMethod(it.getMethod(), (Class[])null);
+                  method.invoke(instance, (Object[])null);
+               }
+               catch (InvocationTargetException ite)
+               {
+                  throw ite.getTargetException();
+               }
+            }
+         }
+
+         // Register uninstall methods
+         if (bt.getUninstall() != null && bt.getUninstall().size() > 0)
+         {
+            List<Method> methods = new ArrayList<Method>(bt.getUninstall().size());
+            for (UninstallType ut : bt.getUninstall())
+            {
+               try
+               {
+                  Method method = clz.getMethod(ut.getMethod(), (Class[])null);
+                  methods.add(method);
+               }
+               catch (NoSuchMethodException nsme)
+               {
+                  throw new Exception("Unknown uninstall method:" + ut.getMethod());
+               }
+            }
+            uninstall.put(bt.getName(), methods);
          }
 
          // Register deployer
