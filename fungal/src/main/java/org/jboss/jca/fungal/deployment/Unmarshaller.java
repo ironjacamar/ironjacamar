@@ -232,7 +232,13 @@ public class Unmarshaller
                String name = xmlStreamReader.getLocalName();
 
                if ("parameter".equals(name))
+               {
                   result.getParameter().add(readParameter(xmlStreamReader));
+               }
+               else if ("factory".equals(name))
+               {
+                  result.setFactory(readFactory(xmlStreamReader));
+               }
 
                break;
             default :
@@ -794,6 +800,38 @@ public class Unmarshaller
 
       if (!"this".equals(xmlStreamReader.getLocalName()))
          throw new XMLStreamException("this tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <factory>
+    * @param xmlStreamReader The XML stream
+    * @return The factory
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private FactoryType readFactory(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      FactoryType result = new FactoryType();
+
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("bean".equals(name))
+         {
+            result.setBean(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"factory".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("factory tag not completed");
 
       return result;
    }

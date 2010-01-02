@@ -32,6 +32,7 @@ import java.util.List;
 public class ConstructorType
 {
    private List<ParameterType> parameter;
+   private FactoryType factory;
    private String factoryMethod;
    private String factoryClass;
    
@@ -41,6 +42,7 @@ public class ConstructorType
    public ConstructorType()
    {
       parameter = null;
+      factory = null;
       factoryMethod = null;
       factoryClass = null;
    }
@@ -55,6 +57,24 @@ public class ConstructorType
          parameter = new ArrayList<ParameterType>(1);
 
       return parameter;
+   }
+
+   /**
+    * Get the factory
+    * @return The value
+    */
+   public FactoryType getFactory()
+   {
+      return factory;
+   }
+   
+   /**
+    * Set the factory
+    * @param value The value
+    */
+   public void setFactory(FactoryType value)
+   {
+      factory = value;
    }
 
    /**

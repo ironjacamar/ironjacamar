@@ -283,6 +283,7 @@ public final class DeploymentDeployer implements CloneableDeployer
             for (DependsType dt : dts)
             {
                result.add(dt.getValue());
+               kernel.addBeanDependants(bt.getName(), dt.getValue());
             }
          }
 
@@ -300,10 +301,19 @@ public final class DeploymentDeployer implements CloneableDeployer
                {
                   InjectType it = (InjectType)element;
                   result.add(it.getBean());
-
-                  kernel.addBeanDependants(it.getBean(), bt.getName());
+                  kernel.addBeanDependants(bt.getName(), it.getBean());
                }
             }
+         }
+
+         ConstructorType ct = bt.getConstructor();
+         if (ct != null && ct.getFactory() != null)
+         {
+            if (result == null)
+               result = new HashSet<String>();
+
+            result.add(ct.getFactory().getBean());
+            kernel.addBeanDependants(bt.getName(), ct.getFactory().getBean());
          }
 
          return result;
@@ -357,16 +367,23 @@ public final class DeploymentDeployer implements CloneableDeployer
          else
          {
             ConstructorType ct = bt.getConstructor();
-            Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
+            Object factoryObject = null;
             Method factoryMethod = null;
             Object[] args = null;
 
-            if (ct.getParameter().size() == 0)
+            if (ct.getParameter().size() == 0 && ct.getFactory() == null)
             {
+               Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
                factoryMethod = factoryClass.getMethod(ct.getFactoryMethod(), (Class[])null);
+            }
+            else if (ct.getParameter().size() == 0 && ct.getFactory() != null)
+            {
+               factoryObject = kernel.getBean(ct.getFactory().getBean());
+               factoryMethod = factoryObject.getClass().getMethod(ct.getFactoryMethod(), (Class[])null);
             }
             else
             {
+               Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
                Method[] factoryMethods = factoryClass.getMethods();
             
                List<Method> candidates = new ArrayList<Method>();
@@ -443,7 +460,7 @@ public final class DeploymentDeployer implements CloneableDeployer
                }
             }
 
-            instance = factoryMethod.invoke((Object)null, args);
+            instance = factoryMethod.invoke(factoryObject, args);
             clz = instance.getClass();
          }
 

@@ -43,9 +43,14 @@
    <xsd:complexType name="constructorType">
      <xsd:sequence>
        <xsd:element name="parameter" type="parameterType" maxOccurs="unbounded" minOccurs="0"/>
+       <xsd:element name="factory" type="factoryType" maxOccurs="1" minOccurs="0"/>
      </xsd:sequence>
      <xsd:attribute name="factoryMethod" type="xsd:token"/>
      <xsd:attribute name="factoryClass" type="xsd:token"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="factoryType">
+     <xsd:attribute name="bean" type="xsd:token"/>
    </xsd:complexType>
 
    <xsd:complexType name="mapType">

@@ -88,6 +88,10 @@ $JBOSS_JCA_HOME/config/deployment.xsd
           <para>defines a parameter value for a constructor.</para>
         </listitem>
         <listitem>
+          <code>&lt;factory&gt;</code>
+          <para>defines a factory bean for a constructor.</para>
+        </listitem>
+        <listitem>
           <code>&lt;depends&gt;</code>
           <para>defines an explicit dependency to another bean.</para>
         </listitem>

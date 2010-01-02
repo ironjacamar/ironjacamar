@@ -405,6 +405,9 @@ public class KernelImpl implements Kernel
          }
       }
 
+      // Log shutdown
+      info(VERSION + " stopped");
+
       // Reset to the old class loader
       SecurityActions.setThreadContextClassLoader(oldClassLoader);
    }
