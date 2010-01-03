@@ -368,27 +368,31 @@ public final class DeploymentDeployer implements CloneableDeployer
          else
          {
             ConstructorType ct = bt.getConstructor();
-            Object factoryObject = null;
-            Method factoryMethod = null;
-            Object[] args = null;
 
             if (ct.getParameter().size() == 0 && ct.getFactory() == null)
             {
                Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
-               factoryMethod = factoryClass.getMethod(ct.getFactoryMethod(), (Class[])null);
+               Method factoryMethod = factoryClass.getMethod(ct.getFactoryMethod(), (Class[])null);
+               
+               instance = factoryMethod.invoke((Object)null, (Object[])null);
+               clz = instance.getClass();
             }
             else if (ct.getParameter().size() == 0 && ct.getFactory() != null)
             {
-               factoryObject = kernel.getBean(ct.getFactory().getBean());
-               factoryMethod = factoryObject.getClass().getMethod(ct.getFactoryMethod(), (Class[])null);
+               Object factoryObject = kernel.getBean(ct.getFactory().getBean());
+               Method factoryMethod = factoryObject.getClass().getMethod(ct.getFactoryMethod(), (Class[])null);
+
+               instance = factoryMethod.invoke(factoryObject, (Object[])null);
+               clz = instance.getClass();
             }
             else
             {
-               if (bt.getClazz() != null)
+               if (bt.getClazz() != null && ct.getFactoryClass() == null)
                {
                   clz = Class.forName(bt.getClazz(), true, cl);
                   Constructor[] constructors = clz.getConstructors();
                   Constructor constructor = null;
+                  Object[] args = null;
 
                   List<Constructor> candidates = new ArrayList<Constructor>();
 
@@ -466,6 +470,8 @@ public final class DeploymentDeployer implements CloneableDeployer
                {
                   Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
                   Method[] factoryMethods = factoryClass.getMethods();
+                  Method factoryMethod = null;
+                  Object[] args = null;
 
                   List<Method> candidates = new ArrayList<Method>();
 
@@ -540,7 +546,7 @@ public final class DeploymentDeployer implements CloneableDeployer
                      }
                   }
 
-                  instance = factoryMethod.invoke(factoryObject, args);
+                  instance = factoryMethod.invoke((Object)null, args);
                   clz = instance.getClass();
                }
             }
@@ -865,10 +871,6 @@ public final class DeploymentDeployer implements CloneableDeployer
          {
             parameterValue = getValue((String)element, parameterClass, cl);
          }
-
-         if (parameterValue == null)
-            throw new Exception("No parameter value assigned for class " + parameterClass.getName() + 
-                                " value " + element);
 
          m.invoke(instance, parameterValue);
       }

@@ -340,7 +340,8 @@ public class Unmarshaller
                break;
 
             case XMLStreamReader.CHARACTERS :
-               result.getContent().add(xmlStreamReader.getText());
+               if (!xmlStreamReader.getText().trim().equals(""))
+                  result.getContent().add(xmlStreamReader.getText());
 
                break;
 
@@ -387,7 +388,6 @@ public class Unmarshaller
          {
             case XMLStreamReader.CHARACTERS :
                result.setValue(xmlStreamReader.getText());
-
                break;
 
             default :
@@ -420,7 +420,6 @@ public class Unmarshaller
          {
             case XMLStreamReader.CHARACTERS :
                result.setValue(xmlStreamReader.getText());
-
                break;
 
             default :
@@ -710,7 +709,6 @@ public class Unmarshaller
          {
             case XMLStreamReader.CHARACTERS :
                result.setValue(xmlStreamReader.getText());
-
                break;
 
             default :
@@ -743,7 +741,6 @@ public class Unmarshaller
          {
             case XMLStreamReader.CHARACTERS :
                result.setValue(xmlStreamReader.getText());
-
                break;
 
             default :
