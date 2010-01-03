@@ -42,6 +42,7 @@ import org.jboss.jca.fungal.deployment.UninstallType;
 import org.jboss.jca.fungal.deployment.Unmarshaller;
 import org.jboss.jca.fungal.deployment.ValueType;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
@@ -359,7 +360,7 @@ public final class DeploymentDeployer implements CloneableDeployer
          Class<?> clz = null;
          Object instance = null;
 
-         if (bt.getClazz() != null)
+         if (bt.getClazz() != null && bt.getConstructor() == null)
          {
             clz = Class.forName(bt.getClazz(), true, cl);
             instance = clz.newInstance();
@@ -383,21 +384,22 @@ public final class DeploymentDeployer implements CloneableDeployer
             }
             else
             {
-               Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
-               Method[] factoryMethods = factoryClass.getMethods();
-            
-               List<Method> candidates = new ArrayList<Method>();
-
-               for (Method m : factoryMethods)
+               if (bt.getClazz() != null)
                {
-                  if (ct.getFactoryMethod().equals(m.getName()))
+                  clz = Class.forName(bt.getClazz(), true, cl);
+                  Constructor[] constructors = clz.getConstructors();
+                  Constructor constructor = null;
+
+                  List<Constructor> candidates = new ArrayList<Constructor>();
+
+                  for (Constructor c : constructors)
                   {
-                     if (ct.getParameter().size() == m.getParameterTypes().length)
+                     if (ct.getParameter().size() == c.getParameterTypes().length)
                      {
                         boolean include = true;
-                        for (int i = 0; include && i < m.getParameterTypes().length; i++)
+                        for (int i = 0; include && i < c.getParameterTypes().length; i++)
                         {
-                           Class<?> parameterClass = m.getParameterTypes()[i];
+                           Class<?> parameterClass = c.getParameterTypes()[i];
 
                            if (!(parameterClass.equals(String.class) ||
                                  parameterClass.equals(byte.class) || parameterClass.equals(Byte.class) ||
@@ -415,53 +417,133 @@ public final class DeploymentDeployer implements CloneableDeployer
                         }
 
                         if (include)
-                           candidates.add(m);
+                           candidates.add(c);
                      }
                   }
-               }
 
-               if (candidates.size() == 1)
-               {
-                  factoryMethod = candidates.get(0);
-                  args = new Object[ct.getParameter().size()];
-                  for (int i = 0; i < ct.getParameter().size(); i++)
+                  if (candidates.size() == 1)
                   {
-                     args[i] = getValue(ct.getParameter().get(i).getValue(), 
-                                        factoryMethod.getParameterTypes()[i],
-                                        cl);
+                     constructor = candidates.get(0);
+                     args = new Object[ct.getParameter().size()];
+                     for (int i = 0; i < ct.getParameter().size(); i++)
+                     {
+                        args[i] = getValue(ct.getParameter().get(i).getValue(), 
+                                           constructor.getParameterTypes()[i],
+                                           cl);
+                     }
                   }
+                  else
+                  {
+                     boolean found = false;
+                     Iterator<Constructor> it = candidates.iterator();
+                     while (!found && it.hasNext())
+                     {
+                        try
+                        {
+                           Constructor c = it.next();
+                           args = new Object[ct.getParameter().size()];
+
+                           for (int i = 0; i < ct.getParameter().size(); i++)
+                           {
+                              args[i] = getValue(ct.getParameter().get(i).getValue(),
+                                                 c.getParameterTypes()[i],
+                                                 cl);
+                           }
+
+                           constructor = c;
+                           found = true;
+                        }
+                        catch (Throwable t)
+                        {
+                           // ok - not this one...
+                        }
+                     }
+                  }
+               
+                  instance = constructor.newInstance(args);
                }
                else
                {
-                  boolean found = false;
-                  Iterator<Method> it = candidates.iterator();
-                  while (!found && it.hasNext())
+                  Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
+                  Method[] factoryMethods = factoryClass.getMethods();
+
+                  List<Method> candidates = new ArrayList<Method>();
+
+                  for (Method m : factoryMethods)
                   {
-                     try
+                     if (ct.getFactoryMethod().equals(m.getName()))
                      {
-                        Method m = it.next();
-                        args = new Object[ct.getParameter().size()];
-
-                        for (int i = 0; i < ct.getParameter().size(); i++)
+                        if (ct.getParameter().size() == m.getParameterTypes().length)
                         {
-                           args[i] = getValue(ct.getParameter().get(i).getValue(),
-                                              factoryMethod.getParameterTypes()[i],
-                                              cl);
-                        }
+                           boolean include = true;
+                           for (int i = 0; include && i < m.getParameterTypes().length; i++)
+                           {
+                              Class<?> parameterClass = m.getParameterTypes()[i];
 
-                        factoryMethod = m;
-                        found = true;
-                     }
-                     catch (Throwable t)
-                     {
-                        // ok - not this one...
+                              if (!(parameterClass.equals(String.class) ||
+                                    parameterClass.equals(byte.class) || parameterClass.equals(Byte.class) ||
+                                    parameterClass.equals(short.class) || parameterClass.equals(Short.class) ||
+                                    parameterClass.equals(int.class) || parameterClass.equals(Integer.class) ||
+                                    parameterClass.equals(long.class) || parameterClass.equals(Long.class) ||
+                                    parameterClass.equals(float.class) || parameterClass.equals(Float.class) ||
+                                    parameterClass.equals(double.class) || parameterClass.equals(Double.class) ||
+                                    parameterClass.equals(boolean.class) || parameterClass.equals(Boolean.class) ||
+                                    parameterClass.equals(char.class) || parameterClass.equals(Character.class) ||
+                                    parameterClass.equals(InetAddress.class)))
+                              {
+                                 include = false;
+                              }
+                           }
+
+                           if (include)
+                              candidates.add(m);
+                        }
                      }
                   }
+
+                  if (candidates.size() == 1)
+                  {
+                     factoryMethod = candidates.get(0);
+                     args = new Object[ct.getParameter().size()];
+                     for (int i = 0; i < ct.getParameter().size(); i++)
+                     {
+                        args[i] = getValue(ct.getParameter().get(i).getValue(), 
+                                           factoryMethod.getParameterTypes()[i],
+                                           cl);
+                     }
+                  }
+                  else
+                  {
+                     boolean found = false;
+                     Iterator<Method> it = candidates.iterator();
+                     while (!found && it.hasNext())
+                     {
+                        try
+                        {
+                           Method m = it.next();
+                           args = new Object[ct.getParameter().size()];
+
+                           for (int i = 0; i < ct.getParameter().size(); i++)
+                           {
+                              args[i] = getValue(ct.getParameter().get(i).getValue(),
+                                                 factoryMethod.getParameterTypes()[i],
+                                                 cl);
+                           }
+
+                           factoryMethod = m;
+                           found = true;
+                        }
+                        catch (Throwable t)
+                        {
+                           // ok - not this one...
+                        }
+                     }
+                  }
+
+                  instance = factoryMethod.invoke(factoryObject, args);
+                  clz = instance.getClass();
                }
             }
-
-            instance = factoryMethod.invoke(factoryObject, args);
-            clz = instance.getClass();
          }
 
          if (bt.getProperty() != null)
