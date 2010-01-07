@@ -185,6 +185,14 @@ public class Unmarshaller
                {
                   result.getUninstall().add(readUninstall(xmlStreamReader));
                }
+               else if ("incallback".equals(name))
+               {
+                  result.getIncallback().add(readIncallback(xmlStreamReader));
+               }
+               else if ("uncallback".equals(name))
+               {
+                  result.getUncallback().add(readUncallback(xmlStreamReader));
+               }
 
                break;
             default :
@@ -494,6 +502,70 @@ public class Unmarshaller
 
       if (!"uninstall".equals(xmlStreamReader.getLocalName()))
          throw new XMLStreamException("uninstall tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <incallback>
+    * @param xmlStreamReader The XML stream
+    * @return The incallback
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private IncallbackType readIncallback(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      IncallbackType result = new IncallbackType();
+
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("method".equals(name))
+         {
+            result.setMethod(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"incallback".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("incallback tag not completed");
+
+      return result;
+   }
+
+   /**
+    * Read: <uncallback>
+    * @param xmlStreamReader The XML stream
+    * @return The uncallback
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private UncallbackType readUncallback(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      UncallbackType result = new UncallbackType();
+
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("method".equals(name))
+         {
+            result.setMethod(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"uncallback".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("uncallback tag not completed");
 
       return result;
    }

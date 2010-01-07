@@ -125,6 +125,14 @@
      <xsd:attribute name="method" type="xsd:token"/>
    </xsd:complexType>
 
+   <xsd:complexType name="incallbackType">
+     <xsd:attribute name="method" type="xsd:token"/>
+   </xsd:complexType>
+
+   <xsd:complexType name="uncallbackType">
+     <xsd:attribute name="method" type="xsd:token"/>
+   </xsd:complexType>
+
    <xsd:element name="deployment">
      <xsd:complexType>
        <xsd:sequence>

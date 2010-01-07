@@ -35,6 +35,8 @@ public class BeanType
    private List<DependsType> depends;
    private List<InstallType> install;
    private List<UninstallType> uninstall;
+   private List<IncallbackType> incallback;
+   private List<UncallbackType> uncallback;
    private String name;
    private String interfaze;
    private String clazz;
@@ -47,6 +49,10 @@ public class BeanType
       constructor = null;
       property = null;
       depends = null;
+      install = null;
+      uninstall = null;
+      incallback = null;
+      uncallback = null;
       name = null;
       interfaze = null;
       clazz = null;
@@ -116,6 +122,30 @@ public class BeanType
          uninstall = new ArrayList<UninstallType>(1);
 
       return uninstall;
+   }
+
+   /**
+    * Get the incallback values
+    * @return The value
+    */
+   public List<IncallbackType> getIncallback()
+   {
+      if (incallback == null)
+         incallback = new ArrayList<IncallbackType>(1);
+
+      return incallback;
+   }
+
+   /**
+    * Get the uncallback values
+    * @return The value
+    */
+   public List<UncallbackType> getUncallback()
+   {
+      if (uncallback == null)
+         uncallback = new ArrayList<UncallbackType>(1);
+
+      return uncallback;
    }
 
    /**

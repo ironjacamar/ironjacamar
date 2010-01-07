@@ -104,6 +104,16 @@ $JBOSS_JCA_HOME/config/deployment.xsd
           <para>defines an uninstall method.</para>
         </listitem>
         <listitem>
+          <code>&lt;incallback&gt;</code>
+          <para>defines a method which is invoked with all beans that has the type of the first parameter
+            when the installed.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;uncallback&gt;</code>
+          <para>defines a method which is invoked with all beans that has the type of the first parameter
+            when the uninstalled.</para>
+        </listitem>
+        <listitem>
           <code>&lt;map&gt;</code>
           <para>defines a map data structure.</para>
         </listitem>

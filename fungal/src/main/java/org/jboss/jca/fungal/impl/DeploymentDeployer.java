@@ -30,6 +30,7 @@ import org.jboss.jca.fungal.deployment.BeanType;
 import org.jboss.jca.fungal.deployment.ConstructorType;
 import org.jboss.jca.fungal.deployment.DependsType;
 import org.jboss.jca.fungal.deployment.EntryType;
+import org.jboss.jca.fungal.deployment.IncallbackType;
 import org.jboss.jca.fungal.deployment.InjectType;
 import org.jboss.jca.fungal.deployment.InstallType;
 import org.jboss.jca.fungal.deployment.ListType;
@@ -38,6 +39,7 @@ import org.jboss.jca.fungal.deployment.NullType;
 import org.jboss.jca.fungal.deployment.PropertyType;
 import org.jboss.jca.fungal.deployment.SetType;
 import org.jboss.jca.fungal.deployment.ThisType;
+import org.jboss.jca.fungal.deployment.UncallbackType;
 import org.jboss.jca.fungal.deployment.UninstallType;
 import org.jboss.jca.fungal.deployment.Unmarshaller;
 import org.jboss.jca.fungal.deployment.ValueType;
@@ -622,6 +624,58 @@ public final class DeploymentDeployer implements CloneableDeployer
                }
             }
             uninstall.put(bt.getName(), methods);
+         }
+
+         // Register incallback methods
+         if (bt.getIncallback() != null && bt.getIncallback().size() > 0)
+         {
+            for (IncallbackType it : bt.getIncallback())
+            {
+               List<Method> candidates = new ArrayList<Method>(1);
+               Method[] methods = clz.getMethods();
+
+               for (Method m : methods)
+               {
+                  if (m.getName().equals(it.getMethod()) && m.getParameterTypes().length == 1)
+                     candidates.add(m);
+               }
+
+               if (candidates.size() > 0)
+               {
+                  Method method = candidates.get(0);
+                  Class<?> parameter = method.getParameterTypes()[0];
+
+                  Callback cb = new Callback(parameter, method, instance);
+
+                  kernel.registerIncallback(cb);
+               }
+            }
+         }
+
+         // Register uncallback methods
+         if (bt.getUncallback() != null && bt.getUncallback().size() > 0)
+         {
+            for (UncallbackType ut : bt.getUncallback())
+            {
+               List<Method> candidates = new ArrayList<Method>(1);
+               Method[] methods = clz.getMethods();
+
+               for (Method m : methods)
+               {
+                  if (m.getName().equals(ut.getMethod()) && m.getParameterTypes().length == 1)
+                     candidates.add(m);
+               }
+
+               if (candidates.size() > 0)
+               {
+                  Method method = candidates.get(0);
+                  Class<?> parameter = method.getParameterTypes()[0];
+
+                  Callback cb = new Callback(parameter, method, instance);
+
+                  kernel.registerUncallback(cb);
+               }
+            }
          }
 
          // Register deployer

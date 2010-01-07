@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -103,6 +104,15 @@ public class KernelImpl implements Kernel
 
    /** Temporary environment */
    private boolean temporaryEnvironment;
+
+   /** Incallbacks */
+   private ConcurrentMap<Class<?>, List<Callback>> incallbacks = new ConcurrentHashMap<Class<?>, List<Callback>>();
+
+   /** Uncallbacks */
+   private ConcurrentMap<Class<?>, List<Callback>> uncallbacks = new ConcurrentHashMap<Class<?>, List<Callback>>();
+
+   /** Callback beans */
+   private ConcurrentMap<Object, List<Callback>> callbackBeans = new ConcurrentHashMap<Object, List<Callback>>();
 
    /** Logging */
    private Object logging;
@@ -249,6 +259,8 @@ public class KernelImpl implements Kernel
 
                deployUrls(bootstrapUrls.toArray(new URL[bootstrapUrls.size()]));
             }
+
+            incallback();
          }
       }
 
@@ -272,6 +284,9 @@ public class KernelImpl implements Kernel
             {
                deployUrls(new URL[] {f.toURI().toURL()});
             }                     
+
+            if (counter > 0)
+               incallback();
          }
       }
 
@@ -526,6 +541,43 @@ public class KernelImpl implements Kernel
     */
    void removeBean(String name)
    {
+      if (uncallbacks.size() > 0)
+      {
+         Object bean = beans.get(name);
+
+         if (callbackBeans.containsKey(bean))
+         {
+            Iterator<Map.Entry<Class<?>, List<Callback>>> cit = uncallbacks.entrySet().iterator();
+            while (cit.hasNext())
+            {
+               Map.Entry<Class<?>, List<Callback>> entry = cit.next();
+
+               Class<?> type = entry.getKey();
+               List<Callback> callbacks = entry.getValue();
+            
+               if (type.isInstance(bean))
+               {
+                  for (Callback cb : callbacks)
+                  {
+                     try
+                     {
+                        Method m = cb.getMethod();
+                        Object instance = cb.getInstance();
+                           
+                        m.invoke(instance, new Object[] {bean});
+                     }
+                     catch (Throwable t)
+                     {
+                        debug(cb.toString());
+                     }
+                  }
+               }
+            }
+
+            callbackBeans.remove(bean);
+         }
+      }
+
       beans.remove(name);
       beanStatus.remove(name);
    }
@@ -560,7 +612,7 @@ public class KernelImpl implements Kernel
       Set<String> dependants = beanDependants.get(from);
       if (dependants == null)
       {
-         Set<String> newDependants = new HashSet<String>();
+         Set<String> newDependants = new HashSet<String>(1);
          dependants = beanDependants.putIfAbsent(from, newDependants);
          if (dependants == null)
          {
@@ -610,6 +662,98 @@ public class KernelImpl implements Kernel
       catch (CloneNotSupportedException cnse)
       {
          return mainDeployer;
+      }
+   }
+
+   /**
+    * Register an incallback method with the kernel
+    * @param cb The callback structure
+    */
+   void registerIncallback(Callback cb)
+   {
+      List<Callback> callbacks = incallbacks.get(cb.getType());
+      if (callbacks == null)
+      {
+         List<Callback> newCallbacks = new ArrayList<Callback>(1);
+         callbacks = incallbacks.putIfAbsent(cb.getType(), newCallbacks);
+         if (callbacks == null)
+         {
+            callbacks = newCallbacks;
+         }
+      }
+      
+      callbacks.add(cb);
+   }
+
+   /**
+    * Register an uncallback method with the kernel
+    * @param cb The callback structure
+    */
+   void registerUncallback(Callback cb)
+   {
+      List<Callback> callbacks = uncallbacks.get(cb.getType());
+      if (callbacks == null)
+      {
+         List<Callback> newCallbacks = new ArrayList<Callback>(1);
+         callbacks = uncallbacks.putIfAbsent(cb.getType(), newCallbacks);
+         if (callbacks == null)
+         {
+            callbacks = newCallbacks;
+         }
+      }
+      
+      callbacks.add(cb);
+   }
+
+   /**
+    * Handle incallback
+    */
+   private void incallback()
+   {
+      if (incallbacks.size() > 0)
+      {
+         Iterator<Map.Entry<Class<?>, List<Callback>>> cit = incallbacks.entrySet().iterator();
+         while (cit.hasNext())
+         {
+            Map.Entry<Class<?>, List<Callback>> entry = cit.next();
+
+            Class<?> type = entry.getKey();
+            List<Callback> callbacks = entry.getValue();
+            
+            Iterator<Object> bit = beans.values().iterator();
+            while (bit.hasNext())
+            {
+               Object bean = bit.next();
+
+               if (type.isInstance(bean))
+               {
+                  for (Callback cb : callbacks)
+                  {
+                     List<Callback> registeredCallbacks = callbackBeans.get(bean);
+                     if (registeredCallbacks == null || !registeredCallbacks.contains(bean))
+                     {
+                        if (registeredCallbacks == null)
+                           registeredCallbacks = new ArrayList<Callback>(1);
+
+                        try
+                        {
+                           Method m = cb.getMethod();
+                           Object instance = cb.getInstance();
+                           
+                           m.invoke(instance, new Object[] {bean});
+
+                           registeredCallbacks.add(cb);
+                           callbackBeans.put(bean, registeredCallbacks);
+                        }
+                        catch (Throwable t)
+                        {
+                           debug(cb.toString());
+                        }
+                     }
+                  }
+               }
+            }
+         }
       }
    }
 
