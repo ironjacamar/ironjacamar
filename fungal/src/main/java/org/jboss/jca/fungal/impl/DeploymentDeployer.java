@@ -337,13 +337,32 @@ public final class DeploymentDeployer implements CloneableDeployer
          }
 
          ConstructorType ct = bt.getConstructor();
-         if (ct != null && ct.getFactory() != null)
+         if (ct != null)
          {
-            if (result == null)
-               result = new HashSet<String>();
+            if (ct.getFactory() != null)
+            {
+               if (result == null)
+                  result = new HashSet<String>();
 
-            result.add(ct.getFactory().getBean());
-            kernel.addBeanDependants(bt.getName(), ct.getFactory().getBean());
+               result.add(ct.getFactory().getBean());
+               kernel.addBeanDependants(bt.getName(), ct.getFactory().getBean());
+            }
+            else if (ct.getParameter() != null && ct.getParameter().size() > 0)
+            {
+               for (ParameterType pt : ct.getParameter())
+               {
+                  Object v = pt.getContent().get(0);
+                  if (v instanceof InjectType)
+                  {
+                     if (result == null)
+                        result = new HashSet<String>();
+
+                     InjectType it = (InjectType)v;
+                     result.add(it.getBean());
+                     kernel.addBeanDependants(bt.getName(), it.getBean());
+                  }
+               }
+            }
          }
 
          return result;
@@ -617,8 +636,9 @@ public final class DeploymentDeployer implements CloneableDeployer
 
                      if (pt.getClazz() == null)
                      {
-                        if (!SUPPORTED_TYPES.contains(parameterClass))
-                           include = false;
+                        if (!(pt.getContent().get(0) instanceof InjectType))
+                           if (!SUPPORTED_TYPES.contains(parameterClass))
+                              include = false;
                      }
                      else
                      {
@@ -674,8 +694,9 @@ public final class DeploymentDeployer implements CloneableDeployer
 
                         if (pt.getClazz() == null)
                         {
-                           if (!SUPPORTED_TYPES.contains(parameterClass))
-                              include = false;
+                           if (!(pt.getContent().get(0) instanceof InjectType))
+                              if (!SUPPORTED_TYPES.contains(parameterClass))
+                                 include = false;
                         }
                         else
                         {
@@ -693,7 +714,7 @@ public final class DeploymentDeployer implements CloneableDeployer
             }
          }
 
-         throw new Exception("Unable to find method (" + name + ") in " + clz.getName());
+         throw new Exception("Unable to find method (" + name + "[" + parameters + "]) in " + clz.getName());
       }
 
       /**

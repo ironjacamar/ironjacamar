@@ -71,4 +71,16 @@ public class ParameterType
    {
       clazz = value;
    }
+
+   /**
+    * String representation
+    * @return The value
+    */
+   public String toString()
+   {
+      if (clazz == null)
+         return "<Unknown>";
+
+      return clazz;
+   }
 }
