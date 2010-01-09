@@ -202,7 +202,7 @@ public class Unmarshaller
       }
 
       if (!"bean".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("bean tag not completed");
+         throw new XMLStreamException("bean tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -256,7 +256,7 @@ public class Unmarshaller
       }
 
       if (!"constructor".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("constructor tag not completed");
+         throw new XMLStreamException("constructor tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -271,15 +271,37 @@ public class Unmarshaller
    {
       ParameterType result = new ParameterType();
 
+      for (int i = 0; i < xmlStreamReader.getAttributeCount(); i++)
+      {
+         String name = xmlStreamReader.getAttributeLocalName(i);
+         if ("class".equals(name))
+         {
+            result.setClazz(xmlStreamReader.getAttributeValue(i));
+         }
+      }
+
       int eventCode = xmlStreamReader.next();
 
       while (eventCode != XMLStreamReader.END_ELEMENT)
       {
          switch (eventCode)
          {
-            case XMLStreamReader.CHARACTERS :
-               result.setValue(xmlStreamReader.getText());
+            case XMLStreamReader.START_ELEMENT :
+               String name = xmlStreamReader.getLocalName();
+
+               if ("inject".equals(name))
+               {
+                  result.getContent().add(readInject(xmlStreamReader));
+               }
+
                break;
+
+            case XMLStreamReader.CHARACTERS :
+               if (!xmlStreamReader.getText().trim().equals(""))
+                  result.getContent().add(xmlStreamReader.getText());
+
+               break;
+
             default :
          }
 
@@ -287,7 +309,7 @@ public class Unmarshaller
       }
 
       if (!"parameter".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("parameter tag not completed");
+         throw new XMLStreamException("parameter tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -360,7 +382,7 @@ public class Unmarshaller
       }
 
       if (!"property".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("property tag not completed");
+         throw new XMLStreamException("property tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -405,7 +427,7 @@ public class Unmarshaller
       }
 
       if (!"inject".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("inject tag not completed");
+         throw new XMLStreamException("inject tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -437,7 +459,7 @@ public class Unmarshaller
       }
 
       if (!"depends".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("depends tag not completed");
+         throw new XMLStreamException("depends tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -469,7 +491,7 @@ public class Unmarshaller
       }
 
       if (!"install".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("install tag not completed");
+         throw new XMLStreamException("install tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -501,7 +523,7 @@ public class Unmarshaller
       }
 
       if (!"uninstall".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("uninstall tag not completed");
+         throw new XMLStreamException("uninstall tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -533,7 +555,7 @@ public class Unmarshaller
       }
 
       if (!"incallback".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("incallback tag not completed");
+         throw new XMLStreamException("incallback tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -565,7 +587,7 @@ public class Unmarshaller
       }
 
       if (!"uncallback".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("uncallback tag not completed");
+         throw new XMLStreamException("uncallback tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -618,7 +640,7 @@ public class Unmarshaller
       }
 
       if (!"map".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("map tag not completed");
+         throw new XMLStreamException("map tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -667,7 +689,7 @@ public class Unmarshaller
       }
 
       if (!"set".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("set tag not completed");
+         throw new XMLStreamException("set tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -716,7 +738,7 @@ public class Unmarshaller
       }
 
       if (!"list".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("list tag not completed");
+         throw new XMLStreamException("list tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -758,7 +780,7 @@ public class Unmarshaller
       }
 
       if (!"map".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("map tag not completed");
+         throw new XMLStreamException("map tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -790,7 +812,7 @@ public class Unmarshaller
       }
 
       if (!"key".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("key tag not completed");
+         throw new XMLStreamException("key tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -822,7 +844,7 @@ public class Unmarshaller
       }
 
       if (!"value".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("value tag not completed");
+         throw new XMLStreamException("value tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -845,7 +867,7 @@ public class Unmarshaller
       }
 
       if (!"null".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("null tag not completed");
+         throw new XMLStreamException("null tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -868,7 +890,7 @@ public class Unmarshaller
       }
 
       if (!"this".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("this tag not completed");
+         throw new XMLStreamException("this tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
@@ -900,7 +922,7 @@ public class Unmarshaller
       }
 
       if (!"factory".equals(xmlStreamReader.getLocalName()))
-         throw new XMLStreamException("factory tag not completed");
+         throw new XMLStreamException("factory tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -36,6 +36,7 @@ import org.jboss.jca.fungal.deployment.InstallType;
 import org.jboss.jca.fungal.deployment.ListType;
 import org.jboss.jca.fungal.deployment.MapType;
 import org.jboss.jca.fungal.deployment.NullType;
+import org.jboss.jca.fungal.deployment.ParameterType;
 import org.jboss.jca.fungal.deployment.PropertyType;
 import org.jboss.jca.fungal.deployment.SetType;
 import org.jboss.jca.fungal.deployment.ThisType;
@@ -163,6 +164,9 @@ public final class DeploymentDeployer implements CloneableDeployer
     */
    static class BeanDeployer implements Runnable
    {
+      /** Supported types by parameters/properties */
+      private static final Set<Class<?>> SUPPORTED_TYPES = new HashSet<Class<?>>();
+
       /** The bean */
       private BeanType bt;
 
@@ -183,6 +187,29 @@ public final class DeploymentDeployer implements CloneableDeployer
 
       /** DeployException */
       private DeployException deployException;
+
+      static
+      {
+         SUPPORTED_TYPES.add(String.class);
+         SUPPORTED_TYPES.add(byte.class);
+         SUPPORTED_TYPES.add(Byte.class);
+         SUPPORTED_TYPES.add(short.class);
+         SUPPORTED_TYPES.add(Short.class);
+         SUPPORTED_TYPES.add(int.class);
+         SUPPORTED_TYPES.add(Integer.class);
+         SUPPORTED_TYPES.add(long.class);
+         SUPPORTED_TYPES.add(Long.class);
+         SUPPORTED_TYPES.add(float.class);
+         SUPPORTED_TYPES.add(Float.class);
+         SUPPORTED_TYPES.add(double.class);
+         SUPPORTED_TYPES.add(Double.class);
+         SUPPORTED_TYPES.add(boolean.class);
+         SUPPORTED_TYPES.add(Boolean.class);
+         SUPPORTED_TYPES.add(char.class);
+         SUPPORTED_TYPES.add(Character.class);
+         SUPPORTED_TYPES.add(InetAddress.class);
+         SUPPORTED_TYPES.add(Class.class);
+      }
 
       /**
        * Constructor
@@ -371,189 +398,59 @@ public final class DeploymentDeployer implements CloneableDeployer
          {
             ConstructorType ct = bt.getConstructor();
 
-            if (ct.getParameter().size() == 0 && ct.getFactory() == null)
-            {
-               Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
-               Method factoryMethod = factoryClass.getMethod(ct.getFactoryMethod(), (Class[])null);
-               
-               instance = factoryMethod.invoke((Object)null, (Object[])null);
-               clz = instance.getClass();
-            }
-            else if (ct.getParameter().size() == 0 && ct.getFactory() != null)
-            {
-               Object factoryObject = kernel.getBean(ct.getFactory().getBean());
-               Method factoryMethod = factoryObject.getClass().getMethod(ct.getFactoryMethod(), (Class[])null);
+            Object factoryObject = null;
+            Class<?> factoryClass = null;
 
-               instance = factoryMethod.invoke(factoryObject, (Object[])null);
-               clz = instance.getClass();
+            if (ct.getFactory() != null)
+            {
+               factoryObject = kernel.getBean(ct.getFactory().getBean());
+               factoryClass = factoryObject.getClass();
             }
             else
             {
-               if (bt.getClazz() != null && ct.getFactoryClass() == null)
+               String fcs = ct.getFactoryClass();
+
+               if (fcs == null)
+                  fcs = bt.getClazz();
+
+               factoryClass = Class.forName(fcs, true, cl);
+            }
+
+            if (ct.getFactoryMethod() == null)
+            {
+               if (ct.getParameter() == null || ct.getParameter().size() == 0)
                {
-                  clz = Class.forName(bt.getClazz(), true, cl);
-                  Constructor[] constructors = clz.getConstructors();
-                  Constructor constructor = null;
-                  Object[] args = null;
-
-                  List<Constructor> candidates = new ArrayList<Constructor>();
-
-                  for (Constructor c : constructors)
-                  {
-                     if (ct.getParameter().size() == c.getParameterTypes().length)
-                     {
-                        boolean include = true;
-                        for (int i = 0; include && i < c.getParameterTypes().length; i++)
-                        {
-                           Class<?> parameterClass = c.getParameterTypes()[i];
-
-                           if (!(parameterClass.equals(String.class) ||
-                                 parameterClass.equals(byte.class) || parameterClass.equals(Byte.class) ||
-                                 parameterClass.equals(short.class) || parameterClass.equals(Short.class) ||
-                                 parameterClass.equals(int.class) || parameterClass.equals(Integer.class) ||
-                                 parameterClass.equals(long.class) || parameterClass.equals(Long.class) ||
-                                 parameterClass.equals(float.class) || parameterClass.equals(Float.class) ||
-                                 parameterClass.equals(double.class) || parameterClass.equals(Double.class) ||
-                                 parameterClass.equals(boolean.class) || parameterClass.equals(Boolean.class) ||
-                                 parameterClass.equals(char.class) || parameterClass.equals(Character.class) ||
-                                 parameterClass.equals(InetAddress.class)))
-                           {
-                              include = false;
-                           }
-                        }
-
-                        if (include)
-                           candidates.add(c);
-                     }
-                  }
-
-                  if (candidates.size() == 1)
-                  {
-                     constructor = candidates.get(0);
-                     args = new Object[ct.getParameter().size()];
-                     for (int i = 0; i < ct.getParameter().size(); i++)
-                     {
-                        args[i] = getValue(ct.getParameter().get(i).getValue(), 
-                                           constructor.getParameterTypes()[i],
-                                           cl);
-                     }
-                  }
-                  else
-                  {
-                     boolean found = false;
-                     Iterator<Constructor> it = candidates.iterator();
-                     while (!found && it.hasNext())
-                     {
-                        try
-                        {
-                           Constructor c = it.next();
-                           args = new Object[ct.getParameter().size()];
-
-                           for (int i = 0; i < ct.getParameter().size(); i++)
-                           {
-                              args[i] = getValue(ct.getParameter().get(i).getValue(),
-                                                 c.getParameterTypes()[i],
-                                                 cl);
-                           }
-
-                           constructor = c;
-                           found = true;
-                        }
-                        catch (Throwable t)
-                        {
-                           // ok - not this one...
-                        }
-                     }
-                  }
-               
-                  instance = constructor.newInstance(args);
+                  instance = factoryClass.newInstance();
+                  clz = instance.getClass();
                }
                else
                {
-                  Class factoryClass = Class.forName(ct.getFactoryClass(), true, cl);
-                  Method[] factoryMethods = factoryClass.getMethods();
-                  Method factoryMethod = null;
-                  Object[] args = null;
+                  Constructor factoryConstructor = findConstructor(factoryClass, ct.getParameter(), cl);
+                  Object[] args = getArguments(ct.getParameter(), factoryConstructor.getParameterTypes(), cl);
 
-                  List<Method> candidates = new ArrayList<Method>();
+                  instance = factoryConstructor.newInstance(args);
+                  clz = instance.getClass();
+               }
+            }
+            else
+            {
+               Method factoryMethod = findMethod(factoryClass, ct.getFactoryMethod(), ct.getParameter(), cl);
 
-                  for (Method m : factoryMethods)
-                  {
-                     if (ct.getFactoryMethod().equals(m.getName()))
-                     {
-                        if (ct.getParameter().size() == m.getParameterTypes().length)
-                        {
-                           boolean include = true;
-                           for (int i = 0; include && i < m.getParameterTypes().length; i++)
-                           {
-                              Class<?> parameterClass = m.getParameterTypes()[i];
-
-                              if (!(parameterClass.equals(String.class) ||
-                                    parameterClass.equals(byte.class) || parameterClass.equals(Byte.class) ||
-                                    parameterClass.equals(short.class) || parameterClass.equals(Short.class) ||
-                                    parameterClass.equals(int.class) || parameterClass.equals(Integer.class) ||
-                                    parameterClass.equals(long.class) || parameterClass.equals(Long.class) ||
-                                    parameterClass.equals(float.class) || parameterClass.equals(Float.class) ||
-                                    parameterClass.equals(double.class) || parameterClass.equals(Double.class) ||
-                                    parameterClass.equals(boolean.class) || parameterClass.equals(Boolean.class) ||
-                                    parameterClass.equals(char.class) || parameterClass.equals(Character.class) ||
-                                    parameterClass.equals(InetAddress.class)))
-                              {
-                                 include = false;
-                              }
-                           }
-
-                           if (include)
-                              candidates.add(m);
-                        }
-                     }
-                  }
-
-                  if (candidates.size() == 1)
-                  {
-                     factoryMethod = candidates.get(0);
-                     args = new Object[ct.getParameter().size()];
-                     for (int i = 0; i < ct.getParameter().size(); i++)
-                     {
-                        args[i] = getValue(ct.getParameter().get(i).getValue(), 
-                                           factoryMethod.getParameterTypes()[i],
-                                           cl);
-                     }
-                  }
-                  else
-                  {
-                     boolean found = false;
-                     Iterator<Method> it = candidates.iterator();
-                     while (!found && it.hasNext())
-                     {
-                        try
-                        {
-                           Method m = it.next();
-                           args = new Object[ct.getParameter().size()];
-
-                           for (int i = 0; i < ct.getParameter().size(); i++)
-                           {
-                              args[i] = getValue(ct.getParameter().get(i).getValue(),
-                                                 factoryMethod.getParameterTypes()[i],
-                                                 cl);
-                           }
-
-                           factoryMethod = m;
-                           found = true;
-                        }
-                        catch (Throwable t)
-                        {
-                           // ok - not this one...
-                        }
-                     }
-                  }
-
-                  instance = factoryMethod.invoke((Object)null, args);
+               if (ct.getParameter() == null || ct.getParameter().size() == 0)
+               {
+                  instance = factoryMethod.invoke(factoryObject, (Object[])null);
+                  clz = instance.getClass();
+               }
+               else
+               {
+                  Object[] args = getArguments(ct.getParameter(), factoryMethod.getParameterTypes(), cl);
+                  instance = factoryMethod.invoke(factoryObject, args);
                   clz = instance.getClass();
                }
             }
          }
 
+         // Bean properties
          if (bt.getProperty() != null)
          {
             for (PropertyType pt : bt.getProperty())
@@ -688,6 +585,190 @@ public final class DeploymentDeployer implements CloneableDeployer
       }
 
       /**
+       * Find constructor
+       * @param clz The class
+       * @param parameters The list of parameters
+       * @param cl The class loader
+       * @return The constructor
+       * @exception Throwable Thrown if a constructor cannot be found
+       */
+      @SuppressWarnings("unchecked") 
+      private Constructor findConstructor(Class clz, List<ParameterType> parameters, ClassLoader cl)
+         throws Throwable
+      {
+         if (parameters == null || parameters.size() == 0)
+         {
+            return clz.getConstructor((Class<?>)null);
+         }
+         else
+         {
+            Constructor[] constructors = clz.getConstructors();
+
+            for (Constructor c : constructors)
+            {
+               if (parameters.size() == c.getParameterTypes().length)
+               {
+                  boolean include = true;
+
+                  for (int i = 0; include && i < parameters.size(); i++)
+                  {
+                     ParameterType pt = parameters.get(i);
+                     Class<?> parameterClass = c.getParameterTypes()[i];
+
+                     if (pt.getClazz() == null)
+                     {
+                        if (!SUPPORTED_TYPES.contains(parameterClass))
+                           include = false;
+                     }
+                     else
+                     {
+                        Class<?> pClz = Class.forName(pt.getClazz(), true, cl);
+
+                        if (!parameterClass.equals(pClz))
+                           include = false;
+                     }
+                  }
+
+                  if (include)
+                     return c;
+               }
+            }
+         }
+
+         throw new Exception("Unable to find constructor for " + clz.getName());
+      }
+
+      /**
+       * Find method
+       * @param clz The class
+       * @param name The method name
+       * @param parameters The list of parameters
+       * @param cl The class loader
+       * @return The constructor
+       * @exception Throwable Thrown if a constructor cannot be found
+       */
+      @SuppressWarnings("unchecked") 
+      private Method findMethod(Class clz, String name, List<ParameterType> parameters, ClassLoader cl)
+         throws Throwable
+      {
+         if (parameters == null || parameters.size() == 0)
+         {
+            return clz.getMethod(name, (Class<?>[])null);
+         }
+         else
+         {
+            Method[] methods = clz.getMethods();
+
+            for (Method m : methods)
+            {
+               if (m.getName().equals(name))
+               {
+                  if (parameters.size() == m.getParameterTypes().length)
+                  {
+                     boolean include = true;
+
+                     for (int i = 0; include && i < parameters.size(); i++)
+                     {
+                        ParameterType pt = parameters.get(i);
+                        Class<?> parameterClass = m.getParameterTypes()[i];
+
+                        if (pt.getClazz() == null)
+                        {
+                           if (!SUPPORTED_TYPES.contains(parameterClass))
+                              include = false;
+                        }
+                        else
+                        {
+                           Class<?> pClz = Class.forName(pt.getClazz(), true, cl);
+                           
+                           if (!parameterClass.equals(pClz))
+                              include = false;
+                        }
+                     }
+
+                     if (include)
+                        return m;
+                  }
+               }
+            }
+         }
+
+         throw new Exception("Unable to find method (" + name + ") in " + clz.getName());
+      }
+
+      /**
+       * Get the argument values
+       * @param definitions The argument definitions
+       * @param types The argument types
+       * @param cl The class loader
+       * @return The values
+       * @exception Throwable Thrown if an error occurs
+       */
+      private Object[] getArguments(List<ParameterType> definitions, Class<?>[] types, ClassLoader cl)
+         throws Throwable
+      {
+         if (definitions == null || definitions.size() == 0)
+            return null;
+
+         Object[] args = new Object[types.length];
+
+         for (int i = 0; i < definitions.size(); i++)
+         {
+            ParameterType parameter = definitions.get(i);
+
+            Object v = parameter.getContent().get(0);
+
+            if (v instanceof InjectType)
+            {
+               args[i] = getInjectValue((InjectType)v);
+            }
+            else
+            {
+               args[i] = getValue((String)v, types[i], cl);
+            }
+         }
+
+         return args;
+      }
+
+      /**
+       * Get inject value
+       * @param it The inject type
+       * @return The value
+       * @exception Exception If the injection bean cannot be resolved or if an error occurs
+       */
+      private Object getInjectValue(InjectType it) throws Exception
+      {
+         Object injectionObject = kernel.getBean(it.getBean());
+
+         if (injectionObject == null)
+            throw new Exception("Injection depedency " + it.getBean() + " not found");
+
+         if (it.getProperty() != null)
+         {
+            Method method = null;
+            try
+            {
+               String getMethodName = "get" + 
+                  it.getProperty().substring(0, 1).toUpperCase(Locale.US) + it.getProperty().substring(1);
+               method = injectionObject.getClass().getMethod(getMethodName, (Class[])null);
+            }
+            catch (NoSuchMethodException nsme)
+            {
+               String isMethodName = "is" + 
+                  it.getProperty().substring(0, 1).toUpperCase(Locale.US) + it.getProperty().substring(1);
+               method = injectionObject.getClass().getMethod(isMethodName, (Class[])null);
+            }
+
+            return method.invoke(injectionObject, (Object[])null);
+         }
+         else
+         {
+            return injectionObject;
+         }
+      }
+
+      /**
        * Get a value from a string
        * @param s The string representation
        * @param clz The class
@@ -798,35 +879,7 @@ public final class DeploymentDeployer implements CloneableDeployer
 
          if (element instanceof InjectType)
          {
-            InjectType it = (InjectType)element;
-
-            Object injectionObject = kernel.getBean(it.getBean());
-
-            if (injectionObject == null)
-               throw new Exception("Injection depedency " + it.getBean() + " not found");
-
-            if (it.getProperty() != null)
-            {
-               Method method = null;
-               try
-               {
-                  String getMethodName = "get" + 
-                     it.getProperty().substring(0, 1).toUpperCase(Locale.US) + it.getProperty().substring(1);
-                  method = injectionObject.getClass().getMethod(getMethodName, (Class[])null);
-               }
-               catch (NoSuchMethodException nsme)
-               {
-                  String isMethodName = "is" + 
-                     it.getProperty().substring(0, 1).toUpperCase(Locale.US) + it.getProperty().substring(1);
-                  method = injectionObject.getClass().getMethod(isMethodName, (Class[])null);
-               }
-
-               parameterValue = method.invoke(injectionObject, (Object[])null);
-            }
-            else
-            {
-               parameterValue = injectionObject;
-            }
+            parameterValue = getInjectValue((InjectType)element);
          }
          else if (element instanceof MapType)
          {

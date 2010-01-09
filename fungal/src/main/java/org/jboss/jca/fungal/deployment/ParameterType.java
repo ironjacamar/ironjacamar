@@ -22,36 +22,53 @@
 
 package org.jboss.jca.fungal.deployment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a parameter element
  */
 public class ParameterType
 {
-   private String value;
+   private List<Object> content;
+   private String clazz;
 
    /**
     * Constructor
     */
    public ParameterType()
    {
-      value = null;
+      content = null;
+      clazz = null;
    }
 
    /**
-    * Get the value
+    * Get the content values
     * @return The value
     */
-   public String getValue()
+   public List<Object> getContent()
    {
-      return value;
+      if (content == null)
+         content = new ArrayList<Object>(1);
+      
+      return this.content;
    }
 
    /**
-    * Set the value
+    * Get the class
+    * @return The value
+    */
+   public String getClazz()
+   {
+      return clazz;
+   }
+
+   /**
+    * Set the class
     * @param value The value
     */
-   public void setValue(String value)
+   public void setClazz(String value)
    {
-      this.value = value;
+      clazz = value;
    }
 }
