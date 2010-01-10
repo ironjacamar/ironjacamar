@@ -22,7 +22,8 @@
 
 package org.jboss.jca.embedded;
 
-import org.jboss.jca.fungal.impl.KernelConfiguration;
+import org.jboss.jca.fungal.api.KernelConfiguration;
+import org.jboss.jca.fungal.api.KernelFactory;
 import org.jboss.jca.fungal.impl.KernelImpl;
 
 import java.io.File;
@@ -82,7 +83,7 @@ public class EmbeddedJCA
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
       kernelConfiguration = kernelConfiguration.remoteAccess(false);
 
-      kernel = new KernelImpl(kernelConfiguration);
+      kernel = (KernelImpl)KernelFactory.create(kernelConfiguration);
       kernel.startup();
 
       if (fullProfile)

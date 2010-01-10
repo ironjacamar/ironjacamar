@@ -509,15 +509,15 @@ public Deployer clone() throws CloneNotSupportedException;
 
       <programlisting>
 import org.jboss.jca.fungal.api.Kernel;
+import org.jboss.jca.fungal.api.KernelConfiguration;
+import org.jboss.jca.fungal.api.KernelFactory;
 import org.jboss.jca.fungal.api.MainDeployer;
-import org.jboss.jca.fungal.impl.KernelConfiguration;
-import org.jboss.jca.fungal.impl.KernelImpl;
 
 // Create a kernel configuration and start the kernel
 KernelConfiguration kernelConfiguration = new KernelConfiguration();
 kernelConfiguration = kernelConfiguration.remoteAccess(false);
 
-Kernel kernel = new KernelImpl(kernelConfiguration);
+Kernel kernel = KernelFactory.create(kernelConfiguration);
 kernel.startup();
 
 // Get the reference to the main deployer

@@ -23,8 +23,8 @@
 package org.jboss.jca.sjc;
 
 import org.jboss.jca.fungal.api.Kernel;
-import org.jboss.jca.fungal.impl.KernelConfiguration;
-import org.jboss.jca.fungal.impl.KernelImpl;
+import org.jboss.jca.fungal.api.KernelConfiguration;
+import org.jboss.jca.fungal.api.KernelFactory;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -88,7 +88,7 @@ public class Main
          if (tg != null)
             kernelConfiguration.threadGroup(tg);
 
-         kernel = new KernelImpl(kernelConfiguration);
+         kernel = KernelFactory.create(kernelConfiguration);
          kernel.startup();
 
          initLogging(SecurityActions.getThreadContextClassLoader());

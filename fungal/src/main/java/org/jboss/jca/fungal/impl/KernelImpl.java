@@ -23,6 +23,7 @@
 package org.jboss.jca.fungal.impl;
 
 import org.jboss.jca.fungal.api.Kernel;
+import org.jboss.jca.fungal.api.KernelConfiguration;
 import org.jboss.jca.fungal.api.MainDeployer;
 import org.jboss.jca.fungal.deployers.Deployment;
 import org.jboss.jca.fungal.impl.remote.CommunicationServer;
