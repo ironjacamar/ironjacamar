@@ -101,6 +101,8 @@
     
     <install method="bind"/>
     <uninstall method="unbind"/>
+    
+    <depends>NamingServer</depends>
   </bean>
   
   <bean name="TransactionSynchronizationRegistryJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
@@ -114,6 +116,8 @@
     
     <install method="bind"/>
     <uninstall method="unbind"/>
+    
+    <depends>NamingServer</depends>
   </bean>
     
   <bean name="TransactionPropagationContextImporterJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
@@ -123,6 +127,8 @@
     
     <install method="bind"/>
     <uninstall method="unbind"/>
+    
+    <depends>NamingServer</depends>
   </bean>
   
   <bean name="TransactionPropagationContextExporterJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
@@ -132,6 +138,8 @@
     
     <install method="bind"/>
     <uninstall method="unbind"/>
+    
+    <depends>NamingServer</depends>
   </bean>
   
   <bean name="RealTransactionManager">
