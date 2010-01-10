@@ -127,6 +127,8 @@
     
     <install method="bind"/>
     <uninstall method="unbind"/>
+
+    <depends>NamingServer</depends>
   </bean>
   
   <bean name="TransactionPropagationContextExporterJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
