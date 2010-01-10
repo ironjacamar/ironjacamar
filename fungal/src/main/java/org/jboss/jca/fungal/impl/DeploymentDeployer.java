@@ -309,7 +309,7 @@ public final class DeploymentDeployer implements CloneableDeployer
          List<DependsType> dts = bt.getDepends();
          if (dts.size() > 0)
          {
-            result = new HashSet<String>();
+            result = new HashSet<String>(dts.size());
             for (DependsType dt : dts)
             {
                result.add(dt.getValue());
@@ -320,15 +320,15 @@ public final class DeploymentDeployer implements CloneableDeployer
          List<PropertyType> pts = bt.getProperty();
          if (pts.size() > 0)
          {
-            if (result == null)
-               result = new HashSet<String>();
-
             for (PropertyType pt : pts)
             {
                Object element = pt.getContent().get(0);
 
                if (element != null && element instanceof InjectType)
                {
+                  if (result == null)
+                     result = new HashSet<String>(1);
+
                   InjectType it = (InjectType)element;
                   result.add(it.getBean());
                   kernel.addBeanDependants(bt.getName(), it.getBean());
@@ -342,12 +342,13 @@ public final class DeploymentDeployer implements CloneableDeployer
             if (ct.getFactory() != null)
             {
                if (result == null)
-                  result = new HashSet<String>();
+                  result = new HashSet<String>(1);
 
                result.add(ct.getFactory().getBean());
                kernel.addBeanDependants(bt.getName(), ct.getFactory().getBean());
             }
-            else if (ct.getParameter() != null && ct.getParameter().size() > 0)
+            
+            if (ct.getParameter() != null && ct.getParameter().size() > 0)
             {
                for (ParameterType pt : ct.getParameter())
                {
@@ -355,7 +356,7 @@ public final class DeploymentDeployer implements CloneableDeployer
                   if (v instanceof InjectType)
                   {
                      if (result == null)
-                        result = new HashSet<String>();
+                        result = new HashSet<String>(1);
 
                      InjectType it = (InjectType)v;
                      result.add(it.getBean());
