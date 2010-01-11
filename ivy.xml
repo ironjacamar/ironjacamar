@@ -95,6 +95,7 @@
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logging" rev="${version.jboss.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.security" name="jboss-security-spi-bare" rev="${version.jboss.security}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logmanager" rev="${version.jboss.slf4j.logmanager}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.stdio" name="jboss-stdio" rev="${version.jboss.stdio}" conf="standalone->default;sjc->*"/>
     <dependency org="org.mortbay.jetty" name="jetty" rev="${version.jetty}" conf="standalone->default;sjc->*"/>
     <dependency org="org.mortbay.jetty" name="jetty-util" rev="${version.jetty}" conf="standalone->default;sjc->*"/>
     <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>

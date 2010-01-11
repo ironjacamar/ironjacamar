@@ -46,8 +46,14 @@
 
   <!-- RA deployer -->
   <bean name="RADeployer" interface="org.jboss.jca.fungal.deployers.Deployer" class="org.jboss.jca.deployers.fungal.RADeployer">
+    <property name="ArchiveValidation">true</property>
+    <property name="ArchiveValidationFailOnWarn">false</property>
+    <property name="ArchiveValidationFailOnError">true</property>
+    <property name="BeanValidation">true</property>
+    <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
     <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
     <depends>BeanValidation</depends>
+    <depends>JBossStdioContextSelector</depends>
   </bean>
 
 </deployment>

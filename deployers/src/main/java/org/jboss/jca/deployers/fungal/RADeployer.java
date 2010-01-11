@@ -42,6 +42,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -95,6 +97,9 @@ public final class RADeployer implements CloneableDeployer
 
    /** Archive validation: Fail on Error */
    private static AtomicBoolean archiveValidationFailOnError = new AtomicBoolean(true);
+
+   /** Print stream */
+   private static PrintStream printStream = null;
 
    /** Default bootstrap context */
    private static CloneableBootstrapContext defaultBootstrapContext = null;
@@ -176,6 +181,24 @@ public final class RADeployer implements CloneableDeployer
    public boolean getArchiveValidationFailOnError()
    {
       return archiveValidationFailOnError.get();
+   }
+   
+   /**
+    * Set the print stream
+    * @param value The value
+    */
+   public synchronized void setPrintStream(PrintStream value)
+   {
+      printStream = value;
+   }
+   
+   /**
+    * Get the print stream
+    * @return The handle
+    */
+   public synchronized PrintStream getPrintStream()
+   {
+      return printStream;
    }
    
    /**
@@ -321,6 +344,9 @@ public final class RADeployer implements CloneableDeployer
                         ManagedConnectionFactory mcf =
                            (ManagedConnectionFactory)initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
                                                                    cdMeta.getConfigProps(), cl);
+
+                        mcf.setLogWriter(new PrintWriter(printStream));
+
                         archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
                                                                         mcf,
                                                                         cdMeta.getConfigProps()));

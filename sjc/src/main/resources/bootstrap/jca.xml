@@ -50,8 +50,10 @@
     <property name="ArchiveValidationFailOnWarn">false</property>
     <property name="ArchiveValidationFailOnError">true</property>
     <property name="BeanValidation">true</property>
+    <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
     <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
     <depends>BeanValidation</depends>
+    <depends>JBossStdioContextSelector</depends>
   </bean>
 
 </deployment>

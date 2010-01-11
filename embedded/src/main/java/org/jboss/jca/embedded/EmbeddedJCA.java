@@ -90,6 +90,7 @@ public class EmbeddedJCA
       {
          deploy(EmbeddedJCA.class.getClassLoader(), "naming.xml");
          deploy(EmbeddedJCA.class.getClassLoader(), "transaction.xml");
+         deploy(EmbeddedJCA.class.getClassLoader(), "stdio.xml");
          deploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
       }
    }
@@ -112,6 +113,7 @@ public class EmbeddedJCA
       if (fullProfile)
       {
          undeploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
+         undeploy(EmbeddedJCA.class.getClassLoader(), "stdio.xml");
          undeploy(EmbeddedJCA.class.getClassLoader(), "transaction.xml");
          undeploy(EmbeddedJCA.class.getClassLoader(), "naming.xml");
       }

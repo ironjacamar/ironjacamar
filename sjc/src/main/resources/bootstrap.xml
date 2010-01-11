@@ -1,6 +1,7 @@
 <bootstrap>
 
   <url>bootstrap/naming.xml</url>
+  <url>bootstrap/stdio.xml</url>
   <url>bootstrap/transaction.xml</url>
   <url>bootstrap/jca.xml</url>
   <url>bootstrap/web.xml</url>
