@@ -27,8 +27,14 @@ import org.jboss.jca.fungal.deployers.Deployment;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.jboss.logging.Logger;
+import org.jboss.util.naming.Util;
 
 /**
  * A resource adapter deployment for JCA/SJC
@@ -41,17 +47,22 @@ public class RADeployment implements Deployment
    /** The resource adapter file */
    private URL adapter;
 
+   /** JNDI names for connection factories */
+   private List<String> jndiNames;
+
    /** The classloader */
    private ClassLoader cl;
 
    /**
     * Constructor
     * @param adapter The adapter
+    * @param jndiNames The JNDI names for connection factories
     * @param cl The classloader for the deployment
     */
-   public RADeployment(URL adapter, ClassLoader cl)
+   public RADeployment(URL adapter, List<String> jndiNames, ClassLoader cl)
    {
       this.adapter = adapter;
+      this.jndiNames = jndiNames;
       this.cl = cl;
    }
 
@@ -79,6 +90,46 @@ public class RADeployment implements Deployment
    public void destroy()
    {
       log.debug("Undeploying: " + adapter.toExternalForm());
+
+      if (jndiNames != null)
+      {
+         Context context = null;
+         try
+         {
+            context = new InitialContext();
+
+            for (String jndiName : jndiNames)
+            {
+               try
+               {
+                  Util.unbind(context, jndiName);
+               }
+               catch (Throwable it)
+               {
+                  log.warn("Exception during JNDI unbind for: " + jndiName, it);
+               }
+            }
+         }
+         catch (Throwable t)
+         {
+            log.warn("Exception during JNDI initialization", t);
+         }
+         finally
+         {
+            if (context != null)
+            {
+               try
+               {
+                  context.close();
+               }
+               catch (NamingException ne)
+               {
+                  // Ignore
+               }
+            }
+         }
+      }
+
 
       if (cl != null && cl instanceof Closeable)
       {

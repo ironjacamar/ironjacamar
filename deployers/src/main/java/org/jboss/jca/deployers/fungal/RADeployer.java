@@ -322,6 +322,8 @@ public final class RADeployer implements CloneableDeployer
          List<Object> beanValidationObjects = new ArrayList<Object>();
          List<Object> associationObjects = new ArrayList<Object>();
 
+         List<String> jndiNames = null;
+
          // Create objects and inject values
          if (cmd != null)
          {
@@ -366,8 +368,12 @@ public final class RADeployer implements CloneableDeployer
 
                         if (cdMetas.size() == 1)
                         {
+                           if (jndiNames == null)
+                              jndiNames = new ArrayList<String>(1);
+
                            String jndiName = f.getName().substring(0, f.getName().indexOf(".rar"));
                            bindConnectionFactory(jndiName, (Serializable)cf);
+                           jndiNames.add(jndiName);
                         }
                         else
                         {
@@ -540,7 +546,7 @@ public final class RADeployer implements CloneableDeployer
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new RADeployment(url, cl);
+         return new RADeployment(url, jndiNames, cl);
       }
       catch (DeployException de)
       {
