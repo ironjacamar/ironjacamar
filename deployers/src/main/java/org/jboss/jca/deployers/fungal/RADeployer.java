@@ -44,6 +44,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -54,6 +55,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.resource.Referenceable;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
@@ -75,6 +81,7 @@ import org.jboss.metadata.rar.spec.MessageListenerMetaData;
 import org.jboss.papaki.AnnotationRepository;
 import org.jboss.papaki.AnnotationScanner;
 import org.jboss.papaki.AnnotationScannerFactory;
+import org.jboss.util.naming.Util;
 
 /**
  * The RA deployer for JCA/SJC
@@ -356,6 +363,16 @@ public final class RADeployer implements CloneableDeployer
                         // ConnectionFactory
                         Object cf = mcf.createConnectionFactory(new NoTxConnectionManager());
                         archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
+
+                        if (cdMetas.size() == 1)
+                        {
+                           String jndiName = f.getName().substring(0, f.getName().indexOf(".rar"));
+                           bindConnectionFactory(jndiName, (Serializable)cf);
+                        }
+                        else
+                        {
+                           log.warn("NYI: There are multiple connection factories for: " + f.getName());
+                        }
                      }
                   }
                }
@@ -545,6 +562,7 @@ public final class RADeployer implements CloneableDeployer
     * @param resourceAdapter The resource adapter
     * @throws DeployException Thrown if the resource adapter cant be started
     */
+   @SuppressWarnings("unchecked") 
    private void startContext(ResourceAdapter resourceAdapter) throws DeployException
    {
       try 
@@ -573,6 +591,7 @@ public final class RADeployer implements CloneableDeployer
     * @param associationObjects The list of possible objects
     * @throws DeployException Thrown if the resource adapter cant be started
     */
+   @SuppressWarnings("unchecked") 
    private void associateResourceAdapter(ResourceAdapter resourceAdapter, 
                                          List<Object> associationObjects)
       throws DeployException
@@ -661,6 +680,24 @@ public final class RADeployer implements CloneableDeployer
          }
       }
       return list.toArray(new URL[list.size()]);      
+   }
+
+   /**
+    * Bind connection factory into JNDI
+    * @param name The JNDI name
+    * @param cf The connection factory
+    * @exception Thrown if an error occurs
+    */
+   private void bindConnectionFactory(String name, Serializable cf) throws Exception
+   {
+      Context context = new InitialContext();
+
+      Util.bind(context, "java:/eis/" + name, cf);
+
+      Referenceable referenceable = (Referenceable)cf;
+      Reference ref = null;
+
+      referenceable.setReference(ref);
    }
 
    /**

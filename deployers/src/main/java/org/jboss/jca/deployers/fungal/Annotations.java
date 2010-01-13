@@ -1008,6 +1008,7 @@ public class Annotations
     * @return The fully qualified classname
     * @exception ClassNotFoundException Thrown if a class cannot be found
     */
+   @SuppressWarnings("unchecked") 
    private String getConfigPropertyType(Annotation annotation)
       throws ClassNotFoundException
    {

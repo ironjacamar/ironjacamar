@@ -27,6 +27,10 @@ import org.jboss.jca.embedded.EmbeddedJCA;
 import java.io.File;
 import java.net.URL;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 import org.jboss.logging.Logger;
 
 import org.junit.AfterClass;
@@ -49,6 +53,8 @@ public class RarTestCase
 
    private static Logger log = Logger.getLogger(RarTestCase.class);
 
+   private static final String JNDI_PREFIX = "java:/eis/";
+
    /*
     * Embedded
     */
@@ -66,10 +72,19 @@ public class RarTestCase
    public void testRa10dtdout() throws Throwable
    {
       URL archive = getURL("ra10dtdout.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         /*
+           TODO 
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra10dtdout");
+         assertNotNull(o);
+         */
       }
       catch (Throwable t)
       {
@@ -78,6 +93,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -90,10 +117,15 @@ public class RarTestCase
    public void testRa15dtdinout() throws Throwable
    {
       URL archive = getURL("ra15dtdinout.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra15dtdinout");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -102,6 +134,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -114,10 +158,15 @@ public class RarTestCase
    public void testRa15inoutjbossra() throws Throwable
    {
       URL archive = getURL("ra15inoutjbossra.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra15inoutjbossra");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -126,6 +175,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -138,10 +199,15 @@ public class RarTestCase
    public void testRa15inout() throws Throwable
    {
       URL archive = getURL("ra15inout.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra15inout");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -150,6 +216,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -162,10 +240,15 @@ public class RarTestCase
    public void testRa15outjbossradefaultns() throws Throwable
    {
       URL archive = getURL("ra15outjbossradefaultns.rar");
+      Context context = null;
       
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra15outjbossradefaultns");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -174,6 +257,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -186,10 +281,15 @@ public class RarTestCase
    public void testRa15outjbossra() throws Throwable
    {
       URL archive = getURL("ra15outjbossra.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra15outjbossra");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -198,6 +298,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -210,10 +322,15 @@ public class RarTestCase
    public void testRa15out() throws Throwable
    {
       URL archive = getURL("ra15out.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra15out");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -222,6 +339,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -234,10 +363,15 @@ public class RarTestCase
    public void testRa16dtdinout() throws Throwable
    {
       URL archive = getURL("ra16dtdinout.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16dtdinout");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -246,6 +380,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -258,10 +404,19 @@ public class RarTestCase
    public void testRa16inoutanno() throws Throwable
    {
       URL archive = getURL("ra16inoutanno.rar");
+      Context context = null;
       
       try
       {
          embedded.deploy(archive);
+
+         /*
+           TODO - as there are multiple connection factories
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16inoutanno");
+         assertNotNull(o);
+         */
       }
       catch (Throwable t)
       {
@@ -270,6 +425,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -282,10 +449,15 @@ public class RarTestCase
    public void testRa16inoutmultianno() throws Throwable
    {
       URL archive = getURL("ra16inoutmultianno.rar");
+      Context context = null;
       
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16inoutmultianno");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -294,6 +466,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -306,10 +490,15 @@ public class RarTestCase
    public void testRa16inoutjar() throws Throwable
    {
       URL archive = getURL("ra16inoutjar.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16inoutjar");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -318,6 +507,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -330,10 +531,15 @@ public class RarTestCase
    public void testRa16inoutjbossra() throws Throwable
    {
       URL archive = getURL("ra16inoutjbossra.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16inoutjbossra");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -342,6 +548,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -354,10 +572,15 @@ public class RarTestCase
    public void testRa16inoutnora() throws Throwable
    {
       URL archive = getURL("ra16inoutnora.rar");
+      Context context = null;
       
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16inoutnora");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -366,6 +589,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -378,10 +613,15 @@ public class RarTestCase
    public void testRa16inoutoverwrite() throws Throwable
    {
       URL archive = getURL("ra16inoutoverwrite.rar");
+      Context context = null;
       
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16inoutoverwrite");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -390,6 +630,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -402,10 +654,15 @@ public class RarTestCase
    public void testRa16inout() throws Throwable
    {
       URL archive = getURL("ra16inout.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16inout");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -414,6 +671,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -426,10 +695,15 @@ public class RarTestCase
    public void testRa16outjbossradefaultns() throws Throwable
    {
       URL archive = getURL("ra16outjbossradefaultns.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16outjbossradefaultns");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -438,6 +712,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -450,10 +736,15 @@ public class RarTestCase
    public void testRa16outjbossra() throws Throwable
    {
       URL archive = getURL("ra16outjbossra.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16outjbossra");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -462,6 +753,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -474,10 +777,15 @@ public class RarTestCase
    public void testRa16outnora() throws Throwable
    {
       URL archive = getURL("ra16outnora.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16outnora");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -486,6 +794,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -498,10 +818,15 @@ public class RarTestCase
    public void testRa16out() throws Throwable
    {
       URL archive = getURL("ra16out.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16out");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -510,6 +835,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -522,10 +859,15 @@ public class RarTestCase
    public void testRa16standard303jbossra() throws Throwable
    {
       URL archive = getURL("ra16standard303jbossra.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16standard303jbossra");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -534,6 +876,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -546,10 +900,15 @@ public class RarTestCase
    public void testRa16standard303() throws Throwable
    {
       URL archive = getURL("ra16standard303.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16standard303");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -558,6 +917,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -594,10 +965,15 @@ public class RarTestCase
    public void testRa16user303() throws Throwable
    {
       URL archive = getURL("ra16user303.rar");
+      Context context = null;
  
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16user303");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -606,6 +982,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -618,10 +1006,15 @@ public class RarTestCase
    public void testRa16annoconfprop() throws Throwable
    {
       URL archive = getURL("ra16annoconfprop.rar");
-      
+      Context context = null;
+            
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16annoconfprop");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -630,6 +1023,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
@@ -642,10 +1047,15 @@ public class RarTestCase
    public void testRa16asso() throws Throwable
    {
       URL archive = getURL("ra16asso.rar");
+      Context context = null;
       
       try
       {
          embedded.deploy(archive);
+
+         context = new InitialContext();
+         Object o = context.lookup(JNDI_PREFIX + "ra16asso");
+         assertNotNull(o);
       }
       catch (Throwable t)
       {
@@ -654,6 +1064,18 @@ public class RarTestCase
       }
       finally
       {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+
          embedded.undeploy(archive);
       }
    }
