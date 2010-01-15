@@ -78,13 +78,9 @@ public class RarTestCase
       {
          embedded.deploy(archive);
 
-         /*
-           TODO 
-
          context = new InitialContext();
          Object o = context.lookup(JNDI_PREFIX + "ra10dtdout");
          assertNotNull(o);
-         */
       }
       catch (Throwable t)
       {
