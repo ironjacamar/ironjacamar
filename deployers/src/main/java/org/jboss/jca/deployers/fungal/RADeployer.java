@@ -92,6 +92,9 @@ public final class RADeployer implements CloneableDeployer
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
    private static boolean trace = log.isTraceEnabled();
+
+   /** JNDI prefix */
+   private static final String JNDI_PREFIX = "java:/eis/";
    
    /** Preform bean validation */
    private static AtomicBoolean beanValidation = new AtomicBoolean(true);
@@ -373,7 +376,7 @@ public final class RADeployer implements CloneableDeployer
 
                            String jndiName = f.getName().substring(0, f.getName().indexOf(".rar"));
                            bindConnectionFactory(jndiName, (Serializable)cf);
-                           jndiNames.add(jndiName);
+                           jndiNames.add(JNDI_PREFIX + jndiName);
                         }
                         else
                         {
@@ -698,8 +701,8 @@ public final class RADeployer implements CloneableDeployer
    {
       Context context = new InitialContext();
 
-      Util.bind(context, "java:/eis/" + name, cf);
-
+      Util.bind(context, JNDI_PREFIX + name, cf);
+      
       Referenceable referenceable = (Referenceable)cf;
       Reference ref = null;
 
