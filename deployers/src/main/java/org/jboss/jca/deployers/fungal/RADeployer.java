@@ -335,6 +335,13 @@ public final class RADeployer implements CloneableDeployer
             {
                resourceAdapter =
                   (ResourceAdapter)initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
+
+               if (trace)
+               {
+                  log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
+                  log.trace("ResourceAdapter defined in classloader: " + resourceAdapter.getClass().getClassLoader());
+               }
+
                archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, 
                                                                resourceAdapter, 
                                                                cmd.getRa().getConfigProperty()));
@@ -357,6 +364,13 @@ public final class RADeployer implements CloneableDeployer
                            (ManagedConnectionFactory)initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
                                                                    cdMeta.getConfigProps(), cl);
 
+                        if (trace)
+                        {
+                           log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
+                           log.trace("ManagedConnectionFactory defined in classloader: " + 
+                                     mcf.getClass().getClassLoader());
+                        }
+
                         mcf.setLogWriter(new PrintWriter(printStream));
 
                         archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
@@ -367,20 +381,31 @@ public final class RADeployer implements CloneableDeployer
 
                         // ConnectionFactory
                         Object cf = mcf.createConnectionFactory(new NoTxConnectionManager());
+
+                        if (trace)
+                        {
+                           log.trace("ConnectionFactory: " + cf.getClass().getName());
+                           log.trace("ConnectionFactory defined in classloader: " + 
+                                     cf.getClass().getClassLoader());
+                        }
+
                         archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
-                        if (cdMetas.size() == 1)
+                        if (cf instanceof Serializable && cf instanceof Referenceable)
                         {
-                           if (jndiNames == null)
-                              jndiNames = new ArrayList<String>(1);
+                           if (cdMetas.size() == 1)
+                           {
+                              if (jndiNames == null)
+                                 jndiNames = new ArrayList<String>(1);
 
-                           String jndiName = f.getName().substring(0, f.getName().indexOf(".rar"));
-                           bindConnectionFactory(jndiName, (Serializable)cf);
-                           jndiNames.add(JNDI_PREFIX + jndiName);
-                        }
-                        else
-                        {
-                           log.warn("NYI: There are multiple connection factories for: " + f.getName());
+                              String jndiName = f.getName().substring(0, f.getName().indexOf(".rar"));
+                              bindConnectionFactory(jndiName, (Serializable)cf);
+                              jndiNames.add(JNDI_PREFIX + jndiName);
+                           }
+                           else
+                           {
+                              log.warn("NYI: There are multiple connection factories for: " + f.getName());
+                           }
                         }
                      }
                   }
@@ -405,6 +430,13 @@ public final class RADeployer implements CloneableDeployer
 
                         Object o = initAndInject(mlMeta.getActivationSpecType().getAsClass(), cpm, cl);
 
+                        if (trace)
+                        {
+                           log.trace("ActivationSpec: " + o.getClass().getName());
+                           log.trace("ActivationSpec defined in classloader: " + 
+                                     o.getClass().getClassLoader());
+                        }
+
                         archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o, cpm));
                         beanValidationObjects.add(o);
                         associationObjects.add(o);
@@ -426,6 +458,14 @@ public final class RADeployer implements CloneableDeployer
                      {
                         Object o = initAndInject(aoMeta.getAdminObjectImplementationClass(), 
                                                  aoMeta.getConfigProps(), cl);
+
+                        if (trace)
+                        {
+                           log.trace("AdminObject: " + o.getClass().getName());
+                           log.trace("AdminObject defined in classloader: " + 
+                                     o.getClass().getClassLoader());
+                        }
+
                         archiveValidationObjects.add(new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProps()));
                         beanValidationObjects.add(o);
                      }
