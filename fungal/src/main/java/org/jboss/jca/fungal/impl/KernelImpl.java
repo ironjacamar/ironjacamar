@@ -65,7 +65,7 @@ import javax.management.ObjectName;
 public class KernelImpl implements Kernel
 {
    /** Version information */
-   private static final String VERSION = "Fungal 0.5";
+   private static final String VERSION = "Fungal 0.5.1";
 
    /** Kernel configuration */
    private KernelConfiguration kernelConfiguration;

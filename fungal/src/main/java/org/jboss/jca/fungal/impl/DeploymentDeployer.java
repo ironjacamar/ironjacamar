@@ -637,7 +637,8 @@ public final class DeploymentDeployer implements CloneableDeployer
 
                      if (pt.getClazz() == null)
                      {
-                        if (!(pt.getContent().get(0) instanceof InjectType))
+                        if ((!(pt.getContent().get(0) instanceof InjectType)) &&
+                            (!(pt.getContent().get(0) instanceof NullType)))
                            if (!SUPPORTED_TYPES.contains(parameterClass))
                               include = false;
                      }
@@ -695,7 +696,8 @@ public final class DeploymentDeployer implements CloneableDeployer
 
                         if (pt.getClazz() == null)
                         {
-                           if (!(pt.getContent().get(0) instanceof InjectType))
+                           if ((!(pt.getContent().get(0) instanceof InjectType)) &&
+                               (!(pt.getContent().get(0) instanceof NullType)))
                               if (!SUPPORTED_TYPES.contains(parameterClass))
                                  include = false;
                         }
@@ -743,6 +745,10 @@ public final class DeploymentDeployer implements CloneableDeployer
             if (v instanceof InjectType)
             {
                args[i] = getInjectValue((InjectType)v);
+            }
+            else if (v instanceof NullType)
+            {
+               args[i] = null;
             }
             else
             {

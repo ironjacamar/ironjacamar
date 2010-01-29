@@ -293,6 +293,10 @@ public class Unmarshaller
                {
                   result.getContent().add(readInject(xmlStreamReader));
                }
+               else if ("null".equals(name))
+               {
+                  result.getContent().add(readNull(xmlStreamReader));
+               }
 
                break;
 

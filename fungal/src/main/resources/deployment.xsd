@@ -88,6 +88,7 @@
    <xsd:complexType name="parameterType" mixed="true">
      <xsd:sequence>
        <xsd:element name="inject" type="injectType" maxOccurs="1" minOccurs="0"/>
+       <xsd:element name="null" type="nullType" maxOccurs="1" minOccurs="0"/>
      </xsd:sequence>
      <xsd:attribute name="class" type="xsd:token"/>
    </xsd:complexType>
