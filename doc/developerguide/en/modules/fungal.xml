@@ -190,6 +190,27 @@ ${jboss.jca.host:localhost}
         </listitem>
       </itemizedlist>
 
+      <para>The lifecycle methods can be ignored by using the following constructs:</para>
+
+      <itemizedlist>
+        <listitem>
+          <code>&lt;ignoreCreate/&gt;</code>
+          <para>which ignores the <code>create</code> method.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;ignoreStart/&gt;</code>
+          <para>which ignores the <code>start</code> method.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;ignoreStop/&gt;</code>
+          <para>which ignores the <code>stop</code> method.</para>
+        </listitem>
+        <listitem>
+          <code>&lt;ignoreDestroy/&gt;</code>
+          <para>which ignores the <code>destroy</code> method.</para>
+        </listitem>
+      </itemizedlist>
+
       <para>Furthermore all <code>install</code> methods defined for the bean are called after the <code>start</code>
         method. All <code>uninstall</code> methods defined for the bean are called before the <code>stop</code>
         method.</para>
