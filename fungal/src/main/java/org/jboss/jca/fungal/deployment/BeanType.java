@@ -37,6 +37,10 @@ public class BeanType
    private List<UninstallType> uninstall;
    private List<IncallbackType> incallback;
    private List<UncallbackType> uncallback;
+   private IgnoreCreateType ignoreCreate;
+   private IgnoreStartType ignoreStart;
+   private IgnoreStopType ignoreStop;
+   private IgnoreDestroyType ignoreDestroy;
    private String name;
    private String interfaze;
    private String clazz;
@@ -53,6 +57,10 @@ public class BeanType
       uninstall = null;
       incallback = null;
       uncallback = null;
+      ignoreCreate = null;
+      ignoreStart = null;
+      ignoreStop = null;
+      ignoreDestroy = null;
       name = null;
       interfaze = null;
       clazz = null;
@@ -146,6 +154,78 @@ public class BeanType
          uncallback = new ArrayList<UncallbackType>(1);
 
       return uncallback;
+   }
+
+   /**
+    * Get the ignore create value
+    * @return The value
+    */
+   public IgnoreCreateType getIgnoreCreate()
+   {
+      return ignoreCreate;
+   }
+
+   /**
+    * Set the ignore create value
+    * @param value The value
+    */
+   public void setIgnoreCreate(IgnoreCreateType value)
+   {
+      ignoreCreate = value;
+   }
+
+   /**
+    * Get the ignore start value
+    * @return The value
+    */
+   public IgnoreStartType getIgnoreStart()
+   {
+      return ignoreStart;
+   }
+
+   /**
+    * Set the ignore start value
+    * @param value The value
+    */
+   public void setIgnoreStart(IgnoreStartType value)
+   {
+      ignoreStart = value;
+   }
+
+   /**
+    * Get the ignore stop value
+    * @return The value
+    */
+   public IgnoreStopType getIgnoreStop()
+   {
+      return ignoreStop;
+   }
+
+   /**
+    * Set the ignore stop value
+    * @param value The value
+    */
+   public void setIgnoreStop(IgnoreStopType value)
+   {
+      ignoreStop = value;
+   }
+
+   /**
+    * Get the ignore destroy value
+    * @return The value
+    */
+   public IgnoreDestroyType getIgnoreDestroy()
+   {
+      return ignoreDestroy;
+   }
+
+   /**
+    * Set the ignore destroy value
+    * @param value The value
+    */
+   public void setIgnoreDestroy(IgnoreDestroyType value)
+   {
+      ignoreDestroy = value;
    }
 
    /**

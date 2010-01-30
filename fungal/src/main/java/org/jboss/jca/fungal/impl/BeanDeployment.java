@@ -49,6 +49,12 @@ public class BeanDeployment implements Deployment
    /** Uninstall methods */
    private Map<String, List<Method>> uninstall;
 
+   /** Ignore stop */
+   private Set<String> ignoreStops;
+
+   /** Ignore destroy */
+   private Set<String> ignoreDestroys;
+
    /** The kernel */
    private KernelImpl kernel;
 
@@ -57,11 +63,15 @@ public class BeanDeployment implements Deployment
     * @param deployment The deployment
     * @param beans The list of bean names for the deployment
     * @param uninstall Uninstall methods for beans
+    * @param ignoreStops Ignore stop methods for beans
+    * @param ignoreDestroys Ignore destroy methods for beans
     * @param kernel The kernel
     */
    public BeanDeployment(URL deployment, 
                          List<String> beans, 
                          Map<String, List<Method>> uninstall,
+                         Set<String> ignoreStops,
+                         Set<String> ignoreDestroys,
                          KernelImpl kernel)
    {
       if (deployment == null)
@@ -79,6 +89,8 @@ public class BeanDeployment implements Deployment
       this.deployment = deployment;
       this.beans = beans;
       this.uninstall = uninstall;
+      this.ignoreStops = ignoreStops;
+      this.ignoreDestroys = ignoreDestroys;
       this.kernel = kernel;
    }
 
@@ -159,32 +171,38 @@ public class BeanDeployment implements Deployment
             }
          }
 
-         try
+         if (ignoreStops == null || !ignoreStops.contains(name))
          {
-            Method stopMethod = bean.getClass().getMethod("stop", (Class[])null);
-            stopMethod.invoke(bean, (Object[])null);
-         }
-         catch (NoSuchMethodException nsme)
-         {
-            // No create method
-         }
-         catch (InvocationTargetException ite)
-         {
-            throw ite.getTargetException();
+            try
+            {
+               Method stopMethod = bean.getClass().getMethod("stop", (Class[])null);
+               stopMethod.invoke(bean, (Object[])null);
+            }
+            catch (NoSuchMethodException nsme)
+            {
+               // No stop method
+            }
+            catch (InvocationTargetException ite)
+            {
+               throw ite.getTargetException();
+            }
          }
 
-         try
+         if (ignoreDestroys == null || !ignoreDestroys.contains(name))
          {
-            Method destroyMethod = bean.getClass().getMethod("destroy", (Class[])null);
-            destroyMethod.invoke(bean, (Object[])null);
-         }
-         catch (NoSuchMethodException nsme)
-         {
-            // No create method
-         }
-         catch (InvocationTargetException ite)
-         {
-            throw ite.getTargetException();
+            try
+            {
+               Method destroyMethod = bean.getClass().getMethod("destroy", (Class[])null);
+               destroyMethod.invoke(bean, (Object[])null);
+            }
+            catch (NoSuchMethodException nsme)
+            {
+               // No destroy method
+            }
+            catch (InvocationTargetException ite)
+            {
+               throw ite.getTargetException();
+            }
          }
 
          kernel.removeBean(name);

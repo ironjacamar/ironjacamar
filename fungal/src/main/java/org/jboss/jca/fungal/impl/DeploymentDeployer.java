@@ -30,6 +30,10 @@ import org.jboss.jca.fungal.deployment.BeanType;
 import org.jboss.jca.fungal.deployment.ConstructorType;
 import org.jboss.jca.fungal.deployment.DependsType;
 import org.jboss.jca.fungal.deployment.EntryType;
+import org.jboss.jca.fungal.deployment.IgnoreCreateType;
+import org.jboss.jca.fungal.deployment.IgnoreDestroyType;
+import org.jboss.jca.fungal.deployment.IgnoreStartType;
+import org.jboss.jca.fungal.deployment.IgnoreStopType;
 import org.jboss.jca.fungal.deployment.IncallbackType;
 import org.jboss.jca.fungal.deployment.InjectType;
 import org.jboss.jca.fungal.deployment.InstallType;
@@ -122,12 +126,15 @@ public final class DeploymentDeployer implements CloneableDeployer
             List<String> beans = Collections.synchronizedList(new ArrayList<String>(deployment.getBean().size()));
             Map<String, List<Method>> uninstall = 
                new ConcurrentHashMap<String, List<Method>>(deployment.getBean().size());
+            Set<String> ignoreStops = Collections.synchronizedSet(new HashSet<String>(deployment.getBean().size()));
+            Set<String> ignoreDestroys = Collections.synchronizedSet(new HashSet<String>(deployment.getBean().size()));
 
             final CountDownLatch beansLatch = new CountDownLatch(deployment.getBean().size());
 
             for (BeanType bt : deployment.getBean())
             {
-               BeanDeployer deployer = new BeanDeployer(bt, beans, uninstall, kernel, beansLatch, parent);
+               BeanDeployer deployer = new BeanDeployer(bt, beans, uninstall, ignoreStops, ignoreDestroys, kernel,
+                                                        beansLatch, parent);
                deployers.add(deployer);
 
                Future<?> result = kernel.getExecutorService().submit(deployer);
@@ -144,7 +151,7 @@ public final class DeploymentDeployer implements CloneableDeployer
             }
 
             if (deployException == null)
-               return new BeanDeployment(url, beans, uninstall, kernel);
+               return new BeanDeployment(url, beans, uninstall, ignoreStops, ignoreDestroys, kernel);
          }
       }
       catch (Throwable t)
@@ -175,6 +182,12 @@ public final class DeploymentDeployer implements CloneableDeployer
 
       /** Uninstall methods */
       private Map<String, List<Method>> uninstall;
+
+      /** Ignore stop */
+      private Set<String> ignoreStops;
+
+      /** Ignore destroy */
+      private Set<String> ignoreDestroys;
 
       /** The kernel */
       private KernelImpl kernel;
@@ -216,6 +229,8 @@ public final class DeploymentDeployer implements CloneableDeployer
        * @param bt The bean
        * @param beans The list of bean names
        * @param uninstall Uninstall methods for beans
+       * @param ignoreStops Ignore stop methods for beans
+       * @param ignoreDestroys Ignore destroy methods for beans
        * @param kernel The kernel
        * @param beansLatch The beans latch
        * @param classLoader The class loader
@@ -223,6 +238,8 @@ public final class DeploymentDeployer implements CloneableDeployer
       public BeanDeployer(BeanType bt, 
                           List<String> beans,
                           Map<String, List<Method>> uninstall,
+                          Set<String> ignoreStops,
+                          Set<String> ignoreDestroys,
                           KernelImpl kernel,
                           CountDownLatch beansLatch,
                           ClassLoader classLoader)
@@ -230,6 +247,8 @@ public final class DeploymentDeployer implements CloneableDeployer
          this.bt = bt;
          this.beans = beans;
          this.uninstall = uninstall;
+         this.ignoreStops = ignoreStops;
+         this.ignoreDestroys = ignoreDestroys;
          this.kernel = kernel;
          this.beansLatch = beansLatch;
          this.classLoader = classLoader;
@@ -479,33 +498,45 @@ public final class DeploymentDeployer implements CloneableDeployer
             }
          }
 
-         try
+         if (bt.getIgnoreCreate() == null)
          {
-            Method createMethod = clz.getMethod("create", (Class[])null);
-            createMethod.invoke(instance, (Object[])null);
-         }
-         catch (NoSuchMethodException nsme)
-         {
-            // No create method
-         }
-         catch (InvocationTargetException ite)
-         {
-            throw ite.getTargetException();
+            try
+            {
+               Method createMethod = clz.getMethod("create", (Class[])null);
+               createMethod.invoke(instance, (Object[])null);
+            }
+            catch (NoSuchMethodException nsme)
+            {
+               // No create method
+            }
+            catch (InvocationTargetException ite)
+            {
+               throw ite.getTargetException();
+            }
          }
 
-         try
+         if (bt.getIgnoreStart() == null)
          {
-            Method startMethod = clz.getMethod("start", (Class[])null);
-            startMethod.invoke(instance, (Object[])null);
+            try
+            {
+               Method startMethod = clz.getMethod("start", (Class[])null);
+               startMethod.invoke(instance, (Object[])null);
+            }
+            catch (NoSuchMethodException nsme)
+            {
+               // No start method
+            }
+            catch (InvocationTargetException ite)
+            {
+               throw ite.getTargetException();
+            }
          }
-         catch (NoSuchMethodException nsme)
-         {
-            // No start method
-         }
-         catch (InvocationTargetException ite)
-         {
-            throw ite.getTargetException();
-         }
+
+         if (bt.getIgnoreStop() != null)
+            ignoreStops.add(bt.getName());
+
+         if (bt.getIgnoreDestroy() != null)
+            ignoreDestroys.add(bt.getName());
 
          // Invoke install methods
          if (bt.getInstall() != null && bt.getInstall().size() > 0)

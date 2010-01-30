@@ -193,6 +193,22 @@ public class Unmarshaller
                {
                   result.getUncallback().add(readUncallback(xmlStreamReader));
                }
+               else if ("ignoreCreate".equals(name))
+               {
+                  result.setIgnoreCreate(readIgnoreCreate(xmlStreamReader));
+               }
+               else if ("ignoreStart".equals(name))
+               {
+                  result.setIgnoreStart(readIgnoreStart(xmlStreamReader));
+               }
+               else if ("ignoreStop".equals(name))
+               {
+                  result.setIgnoreStop(readIgnoreStop(xmlStreamReader));
+               }
+               else if ("ignoreDestroy".equals(name))
+               {
+                  result.setIgnoreDestroy(readIgnoreDestroy(xmlStreamReader));
+               }
 
                break;
             default :
@@ -927,6 +943,98 @@ public class Unmarshaller
 
       if (!"factory".equals(xmlStreamReader.getLocalName()))
          throw new XMLStreamException("factory tag not completed", xmlStreamReader.getLocation());
+
+      return result;
+   }
+
+   /**
+    * Read: <ignoreCreate>
+    * @param xmlStreamReader The XML stream
+    * @return The ignoreCreate
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private IgnoreCreateType readIgnoreCreate(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      IgnoreCreateType result = new IgnoreCreateType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"ignoreCreate".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("ignoreCreate tag not completed", xmlStreamReader.getLocation());
+
+      return result;
+   }
+
+   /**
+    * Read: <ignoreStart>
+    * @param xmlStreamReader The XML stream
+    * @return The ignoreStart
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private IgnoreStartType readIgnoreStart(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      IgnoreStartType result = new IgnoreStartType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"ignoreStart".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("ignoreStart tag not completed", xmlStreamReader.getLocation());
+
+      return result;
+   }
+
+   /**
+    * Read: <ignoreStop>
+    * @param xmlStreamReader The XML stream
+    * @return The ignoreStop
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private IgnoreStopType readIgnoreStop(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      IgnoreStopType result = new IgnoreStopType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"ignoreStop".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("ignoreStop tag not completed", xmlStreamReader.getLocation());
+
+      return result;
+   }
+
+   /**
+    * Read: <ignoreDestroy>
+    * @param xmlStreamReader The XML stream
+    * @return The ignoreDestroy
+    * @exception XMLStreamException Thrown if an exception occurs
+    */
+   private IgnoreDestroyType readIgnoreDestroy(XMLStreamReader xmlStreamReader) throws XMLStreamException
+   {
+      IgnoreDestroyType result = new IgnoreDestroyType();
+
+      int eventCode = xmlStreamReader.next();
+
+      while (eventCode != XMLStreamReader.END_ELEMENT)
+      {
+         eventCode = xmlStreamReader.next();
+      }
+
+      if (!"ignoreDestroy".equals(xmlStreamReader.getLocalName()))
+         throw new XMLStreamException("ignoreDestroy tag not completed", xmlStreamReader.getLocation());
 
       return result;
    }
