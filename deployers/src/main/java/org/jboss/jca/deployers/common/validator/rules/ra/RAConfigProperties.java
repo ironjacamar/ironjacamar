@@ -84,12 +84,12 @@ public class RAConfigProperties implements Rule
    {
       if (vo != null && 
           Key.RESOURCE_ADAPTER == vo.getKey() &&
-          vo.getObject() != null &&
-          vo.getObject() instanceof ResourceAdapter)
+          vo.getClazz() != null &&
+          vo.getClazz().isAssignableFrom(ResourceAdapter.class))
       {
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {
-            Class clz = vo.getObject().getClass();
+            Class clz = vo.getClazz();
             List<Failure> failures = new ArrayList<Failure>(1);
 
             for (ConfigPropertyMetaData cpmd : vo.getConfigProperties())
@@ -106,7 +106,7 @@ public class RAConfigProperties implements Rule
 
                   if (!VALID_TYPES.contains(method.getReturnType()))
                   {
-                     StringBuilder sb = new StringBuilder("Class: " + vo.getObject().getClass().getName());
+                     StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
                      sb = sb.append(" Property: " + cpmd.getName());
                      sb = sb.append(" Type: " + method.getReturnType().getName());
 
@@ -131,7 +131,7 @@ public class RAConfigProperties implements Rule
 
                      if (!VALID_TYPES.contains(method.getReturnType()))
                      {
-                        StringBuilder sb = new StringBuilder("Class: " + vo.getObject().getClass().getName());
+                        StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
                         sb = sb.append(" Property: " + cpmd.getName());
                         sb = sb.append(" Type: " + method.getReturnType().getName());
 

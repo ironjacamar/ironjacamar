@@ -60,14 +60,14 @@ public class RA implements Rule
    {
       if (vo != null && Key.RESOURCE_ADAPTER == vo.getKey())
       {
-         if (vo.getObject() != null && !(vo.getObject() instanceof ResourceAdapter))
+         if (vo.getClazz() != null && !vo.getClazz().isAssignableFrom(ResourceAdapter.class))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("ra.RA"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;

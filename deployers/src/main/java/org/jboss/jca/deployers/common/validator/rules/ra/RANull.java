@@ -58,7 +58,7 @@ public class RANull implements Rule
    {
       if (vo != null && Key.RESOURCE_ADAPTER == vo.getKey())
       {
-         if (vo.getObject() == null)
+         if (vo.getClazz() == null)
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 

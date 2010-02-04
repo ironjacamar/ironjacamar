@@ -90,7 +90,7 @@ public class RAEquals implements Rule
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("ra.RAEquals"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;

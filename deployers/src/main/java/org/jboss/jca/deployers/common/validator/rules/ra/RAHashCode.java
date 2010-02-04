@@ -61,11 +61,11 @@ public class RAHashCode implements Rule
    {
       if (vo != null && 
           Key.RESOURCE_ADAPTER == vo.getKey() &&
-          vo.getObject() != null &&
-          vo.getObject() instanceof ResourceAdapter)
+          vo.getClazz() != null &&
+          vo.getClazz().isAssignableFrom(ResourceAdapter.class))
       {
          boolean error = true;
-         Class clz = vo.getObject().getClass();
+         Class clz = vo.getClazz();
 
          while (error && !clz.equals(Object.class))
          {
@@ -88,7 +88,7 @@ public class RAHashCode implements Rule
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("ra.RAHashCode"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;
