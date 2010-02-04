@@ -33,13 +33,10 @@ public class ValidateClass
    /** Key */
    private int key;
 
-   /** Onject */
-   private Object object;
-
    /** config-property */
    private List<ConfigPropertyMetaData> configProperties;
 
-   /** clazz */
+   /** Clazz */
    private Class<?> clazz;
    
    /**
@@ -48,9 +45,9 @@ public class ValidateClass
     * @param object The key
     */
    public ValidateClass(int key,
-                         Object object)
+                         Class<?> clazz)
    {
-      this(key, object, null);
+      this(key, clazz, null);
    }
    
    /**
@@ -60,12 +57,11 @@ public class ValidateClass
     * @param configProperties The list of config property metadata
     */
    public ValidateClass(int key,
-                         Object object,
+                         Class<?> clazz,
                          List<ConfigPropertyMetaData> configProperties)
    {
       this.key = key;
-      this.object = object;
-      this.clazz = object.getClass();
+      this.clazz = clazz;
       this.configProperties = configProperties;
    }
    
@@ -76,15 +72,6 @@ public class ValidateClass
    public int getKey()
    {
       return key;
-   }
-
-   /**
-    * Get the object
-    * @return The object
-    */
-   public Object getObject()
-   {
-      return object;
    }
 
    /**

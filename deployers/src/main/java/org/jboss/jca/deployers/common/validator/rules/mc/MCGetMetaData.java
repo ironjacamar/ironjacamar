@@ -61,7 +61,7 @@ public class MCGetMetaData implements Rule
    {
       if (vo != null && 
           Key.MANAGED_CONNECTION == vo.getKey() &&
-          vo.getClazz().isAssignableFrom(ManagedConnection.class))
+          ManagedConnection.class.isAssignableFrom(vo.getClazz()))
       {
          boolean error = false;
 
@@ -69,9 +69,11 @@ public class MCGetMetaData implements Rule
          {
             Class clz = vo.getClazz();
             Method gmd = clz.getMethod("getMetaData", (Class[])null);
-            Object md = gmd.invoke(vo.getObject(), (Object[])null);
+            
+            //TODO should consider object call
+            //Object md = gmd.invoke(vo.getObject(), (Object[])null);
 
-            if (md == null)
+            if (gmd == null)
                error = true;
          }
          catch (Throwable t)

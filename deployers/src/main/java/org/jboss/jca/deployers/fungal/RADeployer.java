@@ -29,7 +29,6 @@ import org.jboss.jca.deployers.common.validator.FailureHelper;
 import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Severity;
 import org.jboss.jca.deployers.common.validator.ValidateClass;
-//import org.jboss.jca.deployers.common.validator.ValidateObject;
 import org.jboss.jca.deployers.common.validator.Validator;
 import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.DeployException;
@@ -344,7 +343,7 @@ public final class RADeployer implements CloneableDeployer
                }
 
                archiveValidationObjects.add(new ValidateClass(Key.RESOURCE_ADAPTER, 
-                                                               resourceAdapter, 
+                                                               resourceAdapter.getClass(), 
                                                                cmd.getRa().getConfigProperty()));
                beanValidationObjects.add(resourceAdapter);
             }
@@ -375,7 +374,7 @@ public final class RADeployer implements CloneableDeployer
                         mcf.setLogWriter(new PrintWriter(printStream));
 
                         archiveValidationObjects.add(new ValidateClass(Key.MANAGED_CONNECTION_FACTORY,
-                                                                        mcf,
+                                                                        mcf.getClass(),
                                                                         cdMeta.getConfigProps()));
                         beanValidationObjects.add(mcf);
                         associationObjects.add(mcf);
@@ -390,7 +389,7 @@ public final class RADeployer implements CloneableDeployer
                                      cf.getClass().getClassLoader());
                         }
 
-                        archiveValidationObjects.add(new ValidateClass(Key.CONNECTION_FACTORY, cf));
+                        archiveValidationObjects.add(new ValidateClass(Key.CONNECTION_FACTORY, cf.getClass()));
 
                         if (cf instanceof Serializable && cf instanceof Referenceable)
                         {
@@ -438,7 +437,7 @@ public final class RADeployer implements CloneableDeployer
                                      o.getClass().getClassLoader());
                         }
 
-                        archiveValidationObjects.add(new ValidateClass(Key.ACTIVATION_SPEC, o, cpm));
+                        archiveValidationObjects.add(new ValidateClass(Key.ACTIVATION_SPEC, o.getClass(), cpm));
                         beanValidationObjects.add(o);
                         associationObjects.add(o);
                      }
@@ -467,7 +466,7 @@ public final class RADeployer implements CloneableDeployer
                                      o.getClass().getClassLoader());
                         }
 
-                        archiveValidationObjects.add(new ValidateClass(Key.ADMIN_OBJECT, o, aoMeta.getConfigProps()));
+                        archiveValidationObjects.add(new ValidateClass(Key.ADMIN_OBJECT, o.getClass(), aoMeta.getConfigProps()));
                         beanValidationObjects.add(o);
                      }
                   }
