@@ -26,7 +26,7 @@ import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Rule;
 import org.jboss.jca.deployers.common.validator.Severity;
-import org.jboss.jca.deployers.common.validator.ValidateObject;
+import org.jboss.jca.deployers.common.validator.ValidateClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class CFNull implements Rule
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")
-   public List<Failure> validate(ValidateObject vo, ResourceBundle rb)
+   public List<Failure> validate(ValidateClass vo, ResourceBundle rb)
    {
       if (vo != null && Key.CONNECTION_FACTORY == vo.getKey())
       {

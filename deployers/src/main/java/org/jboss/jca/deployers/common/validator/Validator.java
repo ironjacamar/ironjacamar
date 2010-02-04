@@ -77,7 +77,7 @@ public class Validator
     * @param objects Objects that should be validated
     * @return The list of failures; <code>null</code> if no errors
     */
-   public List<Failure> validate(ValidateObject[] objects)
+   public List<Failure> validate(ValidateClass[] objects)
    {
       if (objects == null || objects.length == 0)
          return null;
@@ -105,7 +105,7 @@ public class Validator
 
       for (Rule rule : rules)
       {
-         for (ValidateObject obj : objects)
+         for (ValidateClass obj : objects)
          {
             List<Failure> failures = rule.validate(obj, resourceBundle);
 

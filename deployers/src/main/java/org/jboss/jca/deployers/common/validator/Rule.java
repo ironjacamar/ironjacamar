@@ -36,5 +36,5 @@ public interface Rule
     * @param rb The resource bundle 
     * @return The list of failures found; <code>null</code> if none
     */
-   public List<Failure> validate(ValidateObject obj, ResourceBundle rb);
+   public List<Failure> validate(ValidateClass obj, ResourceBundle rb);
 }
