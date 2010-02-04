@@ -62,7 +62,7 @@ public class RAHashCode implements Rule
       if (vo != null && 
           Key.RESOURCE_ADAPTER == vo.getKey() &&
           vo.getClazz() != null &&
-          vo.getClazz().isAssignableFrom(ResourceAdapter.class))
+          ResourceAdapter.class.isAssignableFrom(vo.getClazz()))
       {
          boolean error = true;
          Class clz = vo.getClazz();

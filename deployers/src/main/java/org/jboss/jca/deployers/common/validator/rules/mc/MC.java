@@ -60,7 +60,7 @@ public class MC implements Rule
    {
       if (vo != null && Key.MANAGED_CONNECTION == vo.getKey())
       {
-         if (!vo.getClazz().isAssignableFrom(ManagedConnection.class))
+         if (!ManagedConnection.class.isAssignableFrom(vo.getClazz()))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 

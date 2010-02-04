@@ -85,7 +85,7 @@ public class MCFConfigProperties implements Rule
       if (vo != null && 
           Key.MANAGED_CONNECTION_FACTORY == vo.getKey() &&
           vo.getClazz() != null &&
-          vo.getClazz().isAssignableFrom(ManagedConnectionFactory.class))
+          ManagedConnectionFactory.class.isAssignableFrom(vo.getClazz()))
       {
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {

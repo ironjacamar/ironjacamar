@@ -61,7 +61,7 @@ public class MCFHashCode implements Rule
    {
       if (vo != null && 
           Key.MANAGED_CONNECTION_FACTORY == vo.getKey() &&
-          vo.getClazz().isAssignableFrom(ManagedConnectionFactory.class))
+          ManagedConnectionFactory.class.isAssignableFrom(vo.getClazz()))
       {
          boolean error = true;
          Class clz = vo.getClazz();

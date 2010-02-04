@@ -61,7 +61,7 @@ public class CFReferenceable implements Rule
    {
       if (vo != null && Key.CONNECTION_FACTORY == vo.getKey())
       {
-         if (vo.getClazz() != null && !vo.getClazz().isAssignableFrom(Referenceable.class))
+         if (vo.getClazz() != null && !Referenceable.class.isAssignableFrom(vo.getClazz()))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 

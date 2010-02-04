@@ -60,7 +60,7 @@ public class RA implements Rule
    {
       if (vo != null && Key.RESOURCE_ADAPTER == vo.getKey())
       {
-         if (vo.getClazz() != null && !vo.getClazz().isAssignableFrom(ResourceAdapter.class))
+         if (vo.getClazz() != null && !ResourceAdapter.class.isAssignableFrom(vo.getClazz()))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 

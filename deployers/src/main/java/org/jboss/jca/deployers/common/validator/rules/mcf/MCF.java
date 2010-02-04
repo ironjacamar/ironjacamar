@@ -60,7 +60,7 @@ public class MCF implements Rule
    {
       if (vo != null && Key.MANAGED_CONNECTION_FACTORY == vo.getKey())
       {
-         if (!vo.getClazz().isAssignableFrom(ManagedConnectionFactory.class))
+         if (!ManagedConnectionFactory.class.isAssignableFrom(vo.getClazz()))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 

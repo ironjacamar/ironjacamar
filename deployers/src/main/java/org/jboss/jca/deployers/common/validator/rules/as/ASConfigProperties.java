@@ -85,7 +85,7 @@ public class ASConfigProperties implements Rule
       if (vo != null && 
           Key.ACTIVATION_SPEC == vo.getKey() &&
           vo.getClazz() != null &&
-          vo.getClazz().isAssignableFrom(ActivationSpec.class))
+          ActivationSpec.class.isAssignableFrom(vo.getClazz()))
       {
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {

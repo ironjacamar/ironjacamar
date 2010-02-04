@@ -85,7 +85,7 @@ public class RAConfigProperties implements Rule
       if (vo != null && 
           Key.RESOURCE_ADAPTER == vo.getKey() &&
           vo.getClazz() != null &&
-          vo.getClazz().isAssignableFrom(ResourceAdapter.class))
+          ResourceAdapter.class.isAssignableFrom(vo.getClazz()))
       {
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {
