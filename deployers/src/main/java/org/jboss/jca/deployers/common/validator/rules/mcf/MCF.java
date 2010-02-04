@@ -60,14 +60,14 @@ public class MCF implements Rule
    {
       if (vo != null && Key.MANAGED_CONNECTION_FACTORY == vo.getKey())
       {
-         if (!(vo.getObject() instanceof ManagedConnectionFactory))
+         if (!vo.getClazz().isAssignableFrom(ManagedConnectionFactory.class))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("mcf.MCF"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;

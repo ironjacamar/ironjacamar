@@ -58,7 +58,7 @@ public class CFNull implements Rule
    {
       if (vo != null && Key.CONNECTION_FACTORY == vo.getKey())
       {
-         if (vo.getObject() == null)
+         if (vo.getClazz() == null)
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 

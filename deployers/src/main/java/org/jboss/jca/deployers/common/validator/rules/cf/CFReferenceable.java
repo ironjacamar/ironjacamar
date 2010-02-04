@@ -61,14 +61,14 @@ public class CFReferenceable implements Rule
    {
       if (vo != null && Key.CONNECTION_FACTORY == vo.getKey())
       {
-         if (vo.getObject() != null && !(vo.getObject() instanceof Referenceable))
+         if (vo.getClazz() != null && !vo.getClazz().isAssignableFrom(Referenceable.class))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("cf.CFReferenceable"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;

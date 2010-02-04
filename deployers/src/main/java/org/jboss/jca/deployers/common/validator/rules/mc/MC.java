@@ -60,14 +60,14 @@ public class MC implements Rule
    {
       if (vo != null && Key.MANAGED_CONNECTION == vo.getKey())
       {
-         if (!(vo.getObject() instanceof ManagedConnection))
+         if (!vo.getClazz().isAssignableFrom(ManagedConnection.class))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("mc.MC"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;

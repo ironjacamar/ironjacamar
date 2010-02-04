@@ -84,12 +84,12 @@ public class ASConfigProperties implements Rule
    {
       if (vo != null && 
           Key.ACTIVATION_SPEC == vo.getKey() &&
-          vo.getObject() != null &&
-          vo.getObject() instanceof ActivationSpec)
+          vo.getClazz() != null &&
+          vo.getClazz().isAssignableFrom(ActivationSpec.class))
       {
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {
-            Class clz = vo.getObject().getClass();
+            Class clz = vo.getClazz();
             List<Failure> failures = new ArrayList<Failure>(1);
 
             for (ConfigPropertyMetaData cpmd : vo.getConfigProperties())
@@ -106,7 +106,7 @@ public class ASConfigProperties implements Rule
 
                   if (!VALID_TYPES.contains(method.getReturnType()))
                   {
-                     StringBuilder sb = new StringBuilder("Class: " + vo.getObject().getClass().getName());
+                     StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
                      sb = sb.append(" Property: " + cpmd.getName());
                      sb = sb.append(" Type: " + method.getReturnType().getName());
 
@@ -131,7 +131,7 @@ public class ASConfigProperties implements Rule
 
                      if (!VALID_TYPES.contains(method.getReturnType()))
                      {
-                        StringBuilder sb = new StringBuilder("Class: " + vo.getObject().getClass().getName());
+                        StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
                         sb = sb.append(" Property: " + cpmd.getName());
                         sb = sb.append(" Type: " + method.getReturnType().getName());
 

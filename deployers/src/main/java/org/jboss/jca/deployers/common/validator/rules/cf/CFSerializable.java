@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.resource.Referenceable;
+
 
 /**
  * Serializable must be implemented if present
@@ -60,14 +62,14 @@ public class CFSerializable implements Rule
    {
       if (vo != null && Key.CONNECTION_FACTORY == vo.getKey())
       {
-         if (vo.getObject() != null && !(vo.getObject() instanceof Serializable))
+         if (vo.getClazz() != null && !vo.getClazz().isAssignableFrom(Referenceable.class))
          {
             List<Failure> failures = new ArrayList<Failure>(1);
 
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("cf.CFSerializable"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;

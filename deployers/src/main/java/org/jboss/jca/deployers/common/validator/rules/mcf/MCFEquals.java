@@ -61,10 +61,10 @@ public class MCFEquals implements Rule
    {
       if (vo != null && 
           Key.MANAGED_CONNECTION_FACTORY == vo.getKey() &&
-          vo.getObject() instanceof ManagedConnectionFactory)
+          vo.getClazz().isAssignableFrom(ManagedConnectionFactory.class))
       {
          boolean error = true;
-         Class clz = vo.getObject().getClass();
+         Class clz = vo.getClazz();
 
          while (error && !clz.equals(Object.class))
          {
@@ -87,7 +87,7 @@ public class MCFEquals implements Rule
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("mcf.MCFEquals"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;

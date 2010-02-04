@@ -82,11 +82,11 @@ public class AOConfigProperties implements Rule
    {
       if (vo != null && 
           Key.ADMIN_OBJECT == vo.getKey() &&
-          vo.getObject() != null)
+          vo.getClazz() != null)
       {
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {
-            Class clz = vo.getObject().getClass();
+            Class clz = vo.getClazz();
             List<Failure> failures = new ArrayList<Failure>(1);
 
             for (ConfigPropertyMetaData cpmd : vo.getConfigProperties())
@@ -103,7 +103,7 @@ public class AOConfigProperties implements Rule
 
                   if (!VALID_TYPES.contains(method.getReturnType()))
                   {
-                     StringBuilder sb = new StringBuilder("Class: " + vo.getObject().getClass().getName());
+                     StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
                      sb = sb.append(" Property: " + cpmd.getName());
                      sb = sb.append(" Type: " + method.getReturnType().getName());
 
@@ -128,7 +128,7 @@ public class AOConfigProperties implements Rule
 
                      if (!VALID_TYPES.contains(method.getReturnType()))
                      {
-                        StringBuilder sb = new StringBuilder("Class: " + vo.getObject().getClass().getName());
+                        StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
                         sb = sb.append(" Property: " + cpmd.getName());
                         sb = sb.append(" Type: " + method.getReturnType().getName());
 

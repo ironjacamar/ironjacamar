@@ -61,13 +61,13 @@ public class MCGetMetaData implements Rule
    {
       if (vo != null && 
           Key.MANAGED_CONNECTION == vo.getKey() &&
-          vo.getObject() instanceof ManagedConnection)
+          vo.getClazz().isAssignableFrom(ManagedConnection.class))
       {
          boolean error = false;
 
          try
          {
-            Class clz = vo.getObject().getClass();
+            Class clz = vo.getClazz();
             Method gmd = clz.getMethod("getMetaData", (Class[])null);
             Object md = gmd.invoke(vo.getObject(), (Object[])null);
 
@@ -86,7 +86,7 @@ public class MCGetMetaData implements Rule
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
                                           rb.getString("mc.MCGetMetaData"),
-                                          vo.getObject().getClass().getName());
+                                          vo.getClazz().getName());
             failures.add(failure);
 
             return failures;
