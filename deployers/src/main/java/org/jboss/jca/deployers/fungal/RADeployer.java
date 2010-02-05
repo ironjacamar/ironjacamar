@@ -466,7 +466,8 @@ public final class RADeployer implements CloneableDeployer
                                      o.getClass().getClassLoader());
                         }
 
-                        archiveValidationObjects.add(new ValidateClass(Key.ADMIN_OBJECT, o.getClass(), aoMeta.getConfigProps()));
+                        archiveValidationObjects.add(
+                           new ValidateClass(Key.ADMIN_OBJECT, o.getClass(), aoMeta.getConfigProps()));
                         beanValidationObjects.add(o);
                      }
                   }

@@ -29,16 +29,10 @@ import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 /**
  * Object wrapper for objects that should be validated
  */
-public class ValidateObject
+public class ValidateObject extends ValidateClass
 {
-   /** Key */
-   private int key;
-
    /** Onject */
    private Object object;
-
-   /** config-property */
-   private List<ConfigPropertyMetaData> configProperties;
 
    /**
     * Constructor
@@ -61,18 +55,8 @@ public class ValidateObject
                          Object object,
                          List<ConfigPropertyMetaData> configProperties)
    {
-      this.key = key;
+      super(key, object.getClass(), configProperties);
       this.object = object;
-      this.configProperties = configProperties;
-   }
-   
-   /**
-    * Get the key
-    * @return The key
-    */
-   public int getKey()
-   {
-      return key;
    }
 
    /**
@@ -84,12 +68,4 @@ public class ValidateObject
       return object;
    }
 
-   /**
-    * Get the list of config properties
-    * @return The list
-    */
-   public List<ConfigPropertyMetaData> getConfigProperties()
-   {
-      return configProperties;
-   }
 }

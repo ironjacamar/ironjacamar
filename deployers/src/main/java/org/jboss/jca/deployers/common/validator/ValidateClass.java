@@ -28,7 +28,7 @@ import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 /**
  * ValidateClass for objects that should be validated
  */
-public class ValidateClass
+public class ValidateClass implements Validate 
 {
    /** Key */
    private int key;
@@ -42,7 +42,7 @@ public class ValidateClass
    /**
     * Constructor
     * @param key The key
-    * @param object The key
+    * @param clazz The class
     */
    public ValidateClass(int key,
                          Class<?> clazz)
@@ -53,7 +53,7 @@ public class ValidateClass
    /**
     * Constructor
     * @param key The key
-    * @param object The key
+    * @param clazz The class
     * @param configProperties The list of config property metadata
     */
    public ValidateClass(int key,

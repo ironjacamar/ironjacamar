@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.common.validator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -37,7 +38,7 @@ public class Validator
     * as we may want to externalize them into a 
     * properties file
     */
-   private static final String[] RULES = {
+   private static final String[] CLASS_RULES = {
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCF",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFHashCode",
       "org.jboss.jca.deployers.common.validator.rules.mcf.MCFEquals",
@@ -54,6 +55,19 @@ public class Validator
       "org.jboss.jca.deployers.common.validator.rules.cf.CFReferenceable",
       "org.jboss.jca.deployers.common.validator.rules.as.ASConfigProperties",
       "org.jboss.jca.deployers.common.validator.rules.ao.AOConfigProperties"
+   };
+   
+   private static final String[] OBJECT_RULES = {
+      "org.jboss.jca.deployers.common.validator.rules.mc.MCGetMetaData",
+   };
+   
+   private static String[] allRules;
+   static
+   {
+      List<String> arrayList = new ArrayList<String>();
+      arrayList.addAll(Arrays.asList(CLASS_RULES));
+      arrayList.addAll(Arrays.asList(OBJECT_RULES)); 
+      allRules = arrayList.toArray(new String[CLASS_RULES.length + OBJECT_RULES.length]);
    };
 
    /**
@@ -82,20 +96,20 @@ public class Validator
       if (objects == null || objects.length == 0)
          return null;
 
-      List<Rule> rules = new ArrayList<Rule>(RULES.length);
+      List<Rule> rules = new ArrayList<Rule>(allRules.length);
 
-      for (int i = 0; i < RULES.length; i++)
+      for (int i = 0; i < allRules.length; i++)
       {
          try
          {
-            Class clz = Class.forName(RULES[i], true, Validator.class.getClassLoader());
+            Class clz = Class.forName(allRules[i], true, Validator.class.getClassLoader());
             Rule rule = (Rule)clz.newInstance();
 
             rules.add(rule);
          }
          catch (Throwable t)
          {
-            throw new IllegalArgumentException(RULES[i], t);
+            throw new IllegalArgumentException(allRules[i], t);
          }
       }
 
