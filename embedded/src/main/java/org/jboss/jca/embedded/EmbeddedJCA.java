@@ -22,9 +22,9 @@
 
 package org.jboss.jca.embedded;
 
+import org.jboss.jca.fungal.api.Kernel;
 import org.jboss.jca.fungal.api.KernelConfiguration;
 import org.jboss.jca.fungal.api.KernelFactory;
-import org.jboss.jca.fungal.impl.KernelImpl;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,7 +47,7 @@ public class EmbeddedJCA
    private boolean fullProfile;
 
    /** Kernel */
-   private KernelImpl kernel;
+   private Kernel kernel;
 
    /** ShrinkWrap deployments */
    private List<File> shrinkwrapDeployments;
@@ -83,7 +83,7 @@ public class EmbeddedJCA
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
       kernelConfiguration = kernelConfiguration.remoteAccess(false);
 
-      kernel = (KernelImpl)KernelFactory.create(kernelConfiguration);
+      kernel = KernelFactory.create(kernelConfiguration);
       kernel.startup();
 
       if (fullProfile)
@@ -136,7 +136,7 @@ public class EmbeddedJCA
       if (expectedType == null)
          throw new IllegalArgumentException("ExpectedType is null");
 
-      return expectedType.cast(kernel.getBean(name));
+      return kernel.getBean(name, expectedType);
    }
 
    /**

@@ -43,6 +43,15 @@ public interface Kernel
    public MainDeployer getMainDeployer();
 
    /**
+    * Get a bean
+    * @param name The bean name
+    * @param expectedType The expected type for the bean
+    * @return The bean instance
+    * @exception Throwable If an error occurs
+    */
+   public <T> T getBean(String name, Class<T> expectedType) throws Throwable;
+
+   /**
     * Startup
     * @exception Throwable Thrown if an error occurs
     */

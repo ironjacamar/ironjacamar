@@ -585,6 +585,24 @@ public class KernelImpl implements Kernel
 
    /**
     * Get a bean
+    * @param name The bean name
+    * @param expectedType The expected type for the bean
+    * @return The bean instance
+    * @exception Throwable If an error occurs
+    */
+   public <T> T getBean(String name, Class<T> expectedType) throws Throwable
+   {
+      if (name == null)
+         throw new IllegalArgumentException("Name is null");
+
+      if (expectedType == null)
+         throw new IllegalArgumentException("ExpectedType is null");
+
+      return expectedType.cast(getBean(name));
+   }
+
+   /**
+    * Get a bean
     * @param name The name of the bean
     * @return The bean
     */
