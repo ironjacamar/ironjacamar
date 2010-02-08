@@ -28,13 +28,13 @@ import java.util.ResourceBundle;
 /**
  * Rule
  */
-public interface Rule extends Validate
+public interface Rule
 {
    /**
     * Validate
-    * @param obj The object
+    * @param v The object
     * @param rb The resource bundle 
     * @return The list of failures found; <code>null</code> if none
     */
-   public List<Failure> validate(ValidateClass obj, ResourceBundle rb);
+   public List<Failure> validate(Validate v, ResourceBundle rb);
 }

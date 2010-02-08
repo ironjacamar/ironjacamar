@@ -26,7 +26,7 @@ import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Rule;
 import org.jboss.jca.deployers.common.validator.Severity;
-import org.jboss.jca.deployers.common.validator.ValidateClass;
+import org.jboss.jca.deployers.common.validator.Validate;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class MCFHashCode implements Rule
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")
-   public List<Failure> validate(ValidateClass vo, ResourceBundle rb)
+   public List<Failure> validate(Validate vo, ResourceBundle rb)
    {
       if (vo != null && 
           Key.MANAGED_CONNECTION_FACTORY == vo.getKey() &&

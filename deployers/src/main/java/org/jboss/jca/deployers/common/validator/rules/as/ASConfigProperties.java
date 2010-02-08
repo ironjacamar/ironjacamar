@@ -26,6 +26,7 @@ import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Rule;
 import org.jboss.jca.deployers.common.validator.Severity;
+import org.jboss.jca.deployers.common.validator.Validate;
 import org.jboss.jca.deployers.common.validator.ValidateClass;
 
 import java.lang.reflect.Method;
@@ -75,18 +76,19 @@ public class ASConfigProperties implements Rule
 
    /**
     * Validate
-    * @param vo The validate object
+    * @param v The validate object
     * @param rb The resource bundle 
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")
-   public List<Failure> validate(ValidateClass vo, ResourceBundle rb)
+   public List<Failure> validate(Validate v, ResourceBundle rb)
    {
-      if (vo != null && 
-          Key.ACTIVATION_SPEC == vo.getKey() &&
-          vo.getClazz() != null &&
-          ActivationSpec.class.isAssignableFrom(vo.getClazz()))
+      if (v != null && 
+          Key.ACTIVATION_SPEC == v.getKey() &&
+          v.getClazz() != null &&
+          ActivationSpec.class.isAssignableFrom(v.getClazz()))
       {
+         ValidateClass vo = (ValidateClass)v;
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {
             Class clz = vo.getClazz();

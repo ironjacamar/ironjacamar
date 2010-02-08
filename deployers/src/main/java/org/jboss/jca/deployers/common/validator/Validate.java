@@ -27,5 +27,15 @@ package org.jboss.jca.deployers.common.validator;
  */
 public interface Validate
 {
-
+   /**
+    * Get the key
+    * @return The key
+    */
+   public int getKey();
+   
+   /**
+    * Get the class
+    * @return The class
+    */
+   public Class<?> getClazz();
 }

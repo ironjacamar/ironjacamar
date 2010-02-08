@@ -26,6 +26,7 @@ import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Rule;
 import org.jboss.jca.deployers.common.validator.Severity;
+import org.jboss.jca.deployers.common.validator.Validate;
 import org.jboss.jca.deployers.common.validator.ValidateClass;
 
 import java.lang.reflect.Method;
@@ -73,17 +74,18 @@ public class AOConfigProperties implements Rule
 
    /**
     * Validate
-    * @param vo The validate object
+    * @param v The validate object
     * @param rb The resource bundle 
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")
-   public List<Failure> validate(ValidateClass vo, ResourceBundle rb)
+   public List<Failure> validate(Validate v, ResourceBundle rb)
    {
-      if (vo != null && 
-          Key.ADMIN_OBJECT == vo.getKey() &&
-          vo.getClazz() != null)
+      if (v != null && 
+          Key.ADMIN_OBJECT == v.getKey() &&
+          v.getClazz() != null)
       {
+         ValidateClass vo = (ValidateClass)v;
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {
             Class clz = vo.getClazz();
