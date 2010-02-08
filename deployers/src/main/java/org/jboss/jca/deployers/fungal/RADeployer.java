@@ -28,7 +28,7 @@ import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.FailureHelper;
 import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Severity;
-import org.jboss.jca.deployers.common.validator.ValidateClass;
+import org.jboss.jca.deployers.common.validator.ValidateObject;
 import org.jboss.jca.deployers.common.validator.Validator;
 import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.DeployException;
@@ -321,7 +321,7 @@ public final class RADeployer implements CloneableDeployer
             log.info("Required license terms for " + url.toExternalForm());
 
          ResourceAdapter resourceAdapter = null;
-         List<ValidateClass> archiveValidationObjects = new ArrayList<ValidateClass>();
+         List<ValidateObject> archiveValidationObjects = new ArrayList<ValidateObject>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
          List<Object> associationObjects = new ArrayList<Object>();
 
@@ -342,8 +342,8 @@ public final class RADeployer implements CloneableDeployer
                   log.trace("ResourceAdapter defined in classloader: " + resourceAdapter.getClass().getClassLoader());
                }
 
-               archiveValidationObjects.add(new ValidateClass(Key.RESOURCE_ADAPTER, 
-                                                               resourceAdapter.getClass(), 
+               archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, 
+                                                               resourceAdapter, 
                                                                cmd.getRa().getConfigProperty()));
                beanValidationObjects.add(resourceAdapter);
             }
@@ -373,8 +373,8 @@ public final class RADeployer implements CloneableDeployer
 
                         mcf.setLogWriter(new PrintWriter(printStream));
 
-                        archiveValidationObjects.add(new ValidateClass(Key.MANAGED_CONNECTION_FACTORY,
-                                                                        mcf.getClass(),
+                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
+                                                                        mcf,
                                                                         cdMeta.getConfigProps()));
                         beanValidationObjects.add(mcf);
                         associationObjects.add(mcf);
@@ -389,7 +389,7 @@ public final class RADeployer implements CloneableDeployer
                                      cf.getClass().getClassLoader());
                         }
 
-                        archiveValidationObjects.add(new ValidateClass(Key.CONNECTION_FACTORY, cf.getClass()));
+                        archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
                         if (cf instanceof Serializable && cf instanceof Referenceable)
                         {
@@ -437,7 +437,7 @@ public final class RADeployer implements CloneableDeployer
                                      o.getClass().getClassLoader());
                         }
 
-                        archiveValidationObjects.add(new ValidateClass(Key.ACTIVATION_SPEC, o.getClass(), cpm));
+                        archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o, cpm));
                         beanValidationObjects.add(o);
                         associationObjects.add(o);
                      }
@@ -467,7 +467,7 @@ public final class RADeployer implements CloneableDeployer
                         }
 
                         archiveValidationObjects.add(
-                           new ValidateClass(Key.ADMIN_OBJECT, o.getClass(), aoMeta.getConfigProps()));
+                           new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProps()));
                         beanValidationObjects.add(o);
                      }
                   }
@@ -480,7 +480,7 @@ public final class RADeployer implements CloneableDeployer
          {
             Validator validator = new Validator();
             List<Failure> failures = validator.validate(archiveValidationObjects.toArray(
-               new ValidateClass[archiveValidationObjects.size()]));
+               new ValidateObject[archiveValidationObjects.size()]));
 
             if (failures != null && failures.size() > 0)
             {

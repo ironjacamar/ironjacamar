@@ -27,6 +27,7 @@ import org.jboss.jca.deployers.common.validator.Key;
 import org.jboss.jca.deployers.common.validator.Rule;
 import org.jboss.jca.deployers.common.validator.Severity;
 import org.jboss.jca.deployers.common.validator.Validate;
+import org.jboss.jca.deployers.common.validator.ValidateObject;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -52,28 +53,27 @@ public class MCGetMetaData implements Rule
 
    /**
     * Validate
-    * @param vo The validate object
+    * @param v The validate object
     * @param rb The resource bundle 
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")
-   public List<Failure> validate(Validate vo, ResourceBundle rb)
+   public List<Failure> validate(Validate v, ResourceBundle rb)
    {
-      if (vo != null && 
-          Key.MANAGED_CONNECTION == vo.getKey() &&
-          ManagedConnection.class.isAssignableFrom(vo.getClazz()))
+      if (v != null && 
+          Key.MANAGED_CONNECTION == v.getKey() &&
+          ManagedConnection.class.isAssignableFrom(v.getClazz()))
       {
          boolean error = false;
+         ValidateObject vo = (ValidateObject)v;
 
          try
          {
             Class clz = vo.getClazz();
             Method gmd = clz.getMethod("getMetaData", (Class[])null);
-            
-            //TODO should consider object call
-            //Object md = gmd.invoke(vo.getObject(), (Object[])null);
+            Object md = gmd.invoke(vo.getObject(), (Object[])null);
 
-            if (gmd == null)
+            if (md == null)
                error = true;
          }
          catch (Throwable t)
