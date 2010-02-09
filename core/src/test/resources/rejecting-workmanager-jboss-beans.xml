@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    JBoss JCA
+-->
+<deployment>
+
+  <!-- Short running thread pool -->
+  <bean name="ShortRunningThreadPool">
+    <constructor factoryMethod="blockingRejectingExecutor" 
+                 factoryClass="org.jboss.threads.JBossExecutors"/>
+  </bean>
+
+  <!-- Long running thread pool -->
+  <bean name="LongRunningThreadPool">
+    <constructor factoryMethod="blockingRejectingExecutor" 
+                 factoryClass="org.jboss.threads.JBossExecutors"/>
+  </bean>
+
+  <!-- Work Manager -->
+  <bean name="WorkManager" 
+        interface="org.jboss.jca.core.api.WorkManager" 
+        class="org.jboss.jca.core.workmanager.WorkManagerImpl">
+
+    <!-- The short running thread pool -->
+    <property name="ShortRunningThreadPool"><inject bean="ShortRunningThreadPool"/></property>
+
+    <!-- The long running thread pool -->
+    <property name="LongRunningThreadPool"><inject bean="LongRunningThreadPool"/></property>
+
+    <!-- The XA terminator -->
+    <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
+  </bean>
+
+</deployment>

@@ -22,10 +22,9 @@
 
 package org.jboss.jca.core.api;
 
-import org.jboss.jca.common.api.ThreadPool;
-
 import javax.resource.spi.work.WorkException;
 
+import org.jboss.threads.BlockingExecutor;
 import org.jboss.tm.JBossXATerminator;
 
 /**
@@ -34,16 +33,28 @@ import org.jboss.tm.JBossXATerminator;
 public interface WorkManager extends javax.resource.spi.work.WorkManager
 {
    /**
-    * Retrieve the thread pool
-    * @return the thread pool
+    * Retrieve the executor for short running tasks
+    * @return The executor
     */
-   public ThreadPool getThreadPool();
+   public BlockingExecutor getShortRunningThreadPool();
 
    /**
-    * Set the thread pool
-    * @param threadPool the thread pool
+    * Set the executor for short running tasks
+    * @param executor The executor
     */
-   public void setThreadPool(ThreadPool threadPool);
+   public void setShortRunningThreadPool(BlockingExecutor executor);
+
+   /**
+    * Retrieve the executor for long running tasks
+    * @return The executor
+    */
+   public BlockingExecutor getLongRunningThreadPool();
+
+   /**
+    * Set the executor for long running tasks
+    * @param executor The executor
+    */
+   public void setLongRunningThreadPool(BlockingExecutor executor);
 
    /**
     * Get the XATerminator
@@ -68,23 +79,4 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager
     * @param v The value
     */
    public void setSpecCompliant(boolean v);
-
-   /**
-    * Start work
-    * @param wrapper the work wrapper
-    * @throws WorkException for any error 
-    */
-   public void startWork(WorkWrapper wrapper) throws WorkException;
-
-   /**
-    * End work
-    * @param wrapper the work wrapper
-    */
-   public void endWork(WorkWrapper wrapper);
-
-   /**
-    * Cancel work
-    * @param wrapper the work wrapper
-    */
-   public void cancelWork(WorkWrapper wrapper);
 }

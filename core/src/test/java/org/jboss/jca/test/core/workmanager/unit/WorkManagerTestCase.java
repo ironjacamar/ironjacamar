@@ -83,8 +83,8 @@ public class WorkManagerTestCase
          embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
 
       assertNotNull(workManager);
-      assertNotNull(workManager.getThreadPool());
-      assertTrue(workManager.getThreadPool() instanceof org.jboss.jca.common.api.ThreadPool);
+      assertNotNull(workManager.getShortRunningThreadPool());
+      assertNotNull(workManager.getLongRunningThreadPool());
    }
 
    /**

@@ -99,7 +99,7 @@ public class WorkListenerInterfaceTestCase
     * Test for paragraph 1 Section 3.3.4
     * @throws Throwable throwable exception 
     */
-   @Test
+   @Ignore
    public void testWorkStartedStatus() throws Throwable
    {
       WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
@@ -186,7 +186,7 @@ public class WorkListenerInterfaceTestCase
    public void testSourceObjectIsInitial() throws Throwable
    {
       WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
-      
+
       Work work = new ShortRunningWork();
       MyWorkAdapter wa = new MyWorkAdapter();
       workManager.doWork(work, 0, null, wa);

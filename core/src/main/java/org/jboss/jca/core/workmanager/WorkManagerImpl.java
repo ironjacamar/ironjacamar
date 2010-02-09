@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,16 +22,17 @@
 
 package org.jboss.jca.core.workmanager;
 
-import org.jboss.jca.common.api.ThreadPool;
 import org.jboss.jca.common.util.ClassUtil;
 import org.jboss.jca.core.api.WorkManager;
-import org.jboss.jca.core.api.WorkWrapper;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.HintsContext;
 import javax.resource.spi.work.SecurityContext;
@@ -42,48 +43,54 @@ import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkContextErrorCodes;
 import javax.resource.spi.work.WorkContextLifecycleListener;
 import javax.resource.spi.work.WorkContextProvider;
+import javax.resource.spi.work.WorkEvent;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
 import javax.resource.spi.work.WorkRejectedException;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
+import org.jboss.threads.BlockingExecutor;
+import org.jboss.threads.ExecutionTimedOutException;
 import org.jboss.tm.JBossXATerminator;
-import org.jboss.util.threadpool.Task;
 
 /**
  * The work manager implementation.
  * 
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev: $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class WorkManagerImpl implements WorkManager
 {
    /** The logger */
    private static Logger log = Logger.getLogger(WorkManagerImpl.class);
    
-   /**Supported work context set*/
-   private static final Set<Class<? extends WorkContext>> SUPPORTED_WORK_CONTEXT_CLASSES = 
-       new HashSet<Class<? extends WorkContext>>(); 
-
    /** Whether trace is enabled */
-   private boolean trace = log.isTraceEnabled();
+   private static boolean trace = log.isTraceEnabled();
 
-   /** Running in spec compliant mode */
-   private boolean specCompliant;
-
-   /** The thread pool */
-   private ThreadPool threadPool;
-
-   /** The XA terminator */
-   private JBossXATerminator xaTerminator;
-   
    /**Work run method name*/
    private static final String RUN_METHOD_NAME = "run";
    
    /**Work release method name*/
    private static final String RELEASE_METHOD_NAME = "release";
-   
+
+   /**Supported work context set*/
+   private static final Set<Class<? extends WorkContext>> SUPPORTED_WORK_CONTEXT_CLASSES = 
+       new HashSet<Class<? extends WorkContext>>(3); 
+
+   /** Running in spec compliant mode */
+   private boolean specCompliant;
+
+   /** The short running executor */
+   private BlockingExecutor shortRunningExecutor;
+
+   /** The long running executor */
+   private BlockingExecutor longRunningExecutor;
+
+   /** The XA terminator */
+   private JBossXATerminator xaTerminator;
+
+   /** Validated work instances */
+   private Set<String> validatedWork;
 
    /**Default supported workcontext types*/
    static
@@ -94,32 +101,48 @@ public class WorkManagerImpl implements WorkManager
    }
    
    /**
-    * Default constructor.
-    * <p>
-    * Defines a default spec compliant.
-    * </p>
+    * Constructor - by default the WorkManager is running in spec-compliant mode
     */
    public WorkManagerImpl()
    {
       specCompliant = true;
+      validatedWork = new HashSet<String>();
    }
    
    /**
-    * Retrieve the thread pool
-    * @return the thread pool
+    * Retrieve the executor for short running tasks
+    * @return The executor
     */
-   public ThreadPool getThreadPool()
+   public BlockingExecutor getShortRunningThreadPool()
    {
-      return threadPool;
+      return shortRunningExecutor;
    }
 
    /**
-    * Set the thread pool
-    * @param threadPool the thread pool
+    * Set the executor for short running tasks
+    * @param executor The executor
     */
-   public void setThreadPool(ThreadPool threadPool)
+   public void setShortRunningThreadPool(BlockingExecutor executor)
    {
-      this.threadPool = threadPool;
+      this.shortRunningExecutor = executor;
+   }
+
+   /**
+    * Retrieve the executor for long running tasks
+    * @return The executor
+    */
+   public BlockingExecutor getLongRunningThreadPool()
+   {
+      return longRunningExecutor;
+   }
+
+   /**
+    * Set the executor for long running tasks
+    * @param executor The executor
+    */
+   public void setLongRunningThreadPool(BlockingExecutor executor)
+   {
+      this.longRunningExecutor = executor;
    }
 
    /**
@@ -175,22 +198,81 @@ public class WorkManagerImpl implements WorkManager
                       WorkListener workListener) 
       throws WorkException
    {
-      checkAndVerifyWork(work, execContext);
-      
-      if (execContext == null)
+      WorkException exception = null;
+      WorkWrapper wrapper = null;
+      try
       {
-         execContext = new ExecutionContext();  
-      }
+         if (work == null)
+            throw new WorkRejectedException("Work is null");
 
-      WorkWrapper wrapper = 
-         new WorkWrapper(this, work, Task.WAIT_FOR_COMPLETE, startTimeout, execContext, workListener);
+         if (startTimeout < 0)
+            throw new WorkRejectedException("StartTimeout is negative: " + startTimeout);
 
-      //Submit Work Instance
-      submitWork(wrapper);
+         checkAndVerifyWork(work, execContext);
       
-      //Check Result
-      checkWorkCompletionException(wrapper);
+         if (execContext == null)
+         {
+            execContext = new ExecutionContext();  
+         }
 
+         final CountDownLatch completedLatch = new CountDownLatch(1);
+
+         wrapper = new WorkWrapper(this, work, execContext, workListener, null, completedLatch);
+
+         setup(wrapper);
+
+         if (workListener != null)
+         {
+            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
+            workListener.workAccepted(event);
+         }
+
+         BlockingExecutor executor = getExecutor(work);
+
+         if (startTimeout == WorkManager.INDEFINITE)
+         {
+            executor.executeBlocking(wrapper);
+         }
+         else
+         {
+            executor.executeBlocking(wrapper, startTimeout, TimeUnit.MILLISECONDS);
+         }
+
+         completedLatch.await();
+      }
+      catch (ExecutionTimedOutException etoe)
+      {
+         exception = new WorkRejectedException(etoe);
+         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);  
+      }
+      catch (RejectedExecutionException ree)
+      {
+         exception = new WorkRejectedException(ree);
+      }
+      catch (WorkException we)
+      {
+         exception = we;
+      }
+      catch (InterruptedException ie)
+      {
+         Thread.currentThread().interrupt();
+         exception = new WorkRejectedException("Interrupted while requesting permit");
+      }
+      finally
+      {
+         if (exception != null)
+         {
+            if (workListener != null)
+            {
+               WorkEvent event = new WorkEvent(this, WorkEvent.WORK_REJECTED, work, exception);
+               workListener.workRejected(event);
+            }
+
+            throw exception;
+         }
+
+         checkWorkCompletionException(wrapper);
+      }
    }
    
    /**
@@ -210,22 +292,87 @@ public class WorkManagerImpl implements WorkManager
                          WorkListener workListener) 
       throws WorkException
    {
-      checkAndVerifyWork(work, execContext);
-      
-      if (execContext == null)
+      WorkException exception = null;
+      WorkWrapper wrapper = null;
+      try
       {
-         execContext = new ExecutionContext();  
+         if (work == null)
+            throw new WorkRejectedException("Work is null");
+
+         if (startTimeout < 0)
+            throw new WorkRejectedException("StartTimeout is negative: " + startTimeout);
+
+         long started = System.currentTimeMillis();
+
+         checkAndVerifyWork(work, execContext);
+      
+         if (execContext == null)
+         {
+            execContext = new ExecutionContext();  
+         }
+
+         final CountDownLatch startedLatch = new CountDownLatch(1);
+
+         wrapper = new WorkWrapper(this, work, execContext, workListener, startedLatch, null);
+
+         setup(wrapper);
+
+         if (workListener != null)
+         {
+            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
+            workListener.workAccepted(event);
+         }
+
+         BlockingExecutor executor = getExecutor(work);
+
+         if (startTimeout == WorkManager.INDEFINITE)
+         {
+            executor.executeBlocking(wrapper);
+         }
+         else
+         {
+            executor.executeBlocking(wrapper, startTimeout, TimeUnit.MILLISECONDS);
+         }
+
+         startedLatch.await();
+
+         return System.currentTimeMillis() - started;
+      }
+      catch (ExecutionTimedOutException etoe)
+      {
+         exception = new WorkRejectedException(etoe);
+         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);  
+      }
+      catch (RejectedExecutionException ree)
+      {
+         exception = new WorkRejectedException(ree);
+      }
+      catch (WorkException we)
+      {
+         exception = we;
+      }
+      catch (InterruptedException ie)
+      {
+         Thread.currentThread().interrupt();
+         exception = new WorkRejectedException("Interrupted while requesting permit");
+      }
+      finally
+      {
+         if (exception != null)
+         {
+            if (workListener != null)
+            {
+               WorkEvent event = new WorkEvent(this, WorkEvent.WORK_REJECTED, work, exception);
+               workListener.workRejected(event);
+            }
+
+            throw exception;
+         }
+
+         checkWorkCompletionException(wrapper);
       }
 
-      WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_FOR_START, startTimeout, execContext, workListener);
-      
-      //Submit Work Instance
-      submitWork(wrapper);
-      
-      //Check Result
-      checkWorkCompletionException(wrapper);
-
-      return wrapper.getBlockedElapsed();
+      return WorkManager.UNKNOWN;
    }
    
    /**
@@ -245,217 +392,141 @@ public class WorkManagerImpl implements WorkManager
                             WorkListener workListener) 
       throws WorkException
    {
-      checkAndVerifyWork(work, execContext);
-      
-      if (execContext == null)
+      WorkException exception = null;
+      WorkWrapper wrapper = null;
+      try
       {
-         execContext = new ExecutionContext();  
-      }
+         if (work == null)
+            throw new WorkRejectedException("Work is null");
 
-      WorkWrapper wrapper = new WorkWrapper(this, work, Task.WAIT_NONE, startTimeout, execContext, workListener);
+         if (startTimeout < 0)
+            throw new WorkRejectedException("StartTimeout is negative: " + startTimeout);
+
+         checkAndVerifyWork(work, execContext);
       
-      //Submit Work Instance
-      submitWork(wrapper);
-      
-      //Check Result
-      checkWorkCompletionException(wrapper);
+         if (execContext == null)
+         {
+            execContext = new ExecutionContext();  
+         }
+
+         wrapper = new WorkWrapper(this, work, execContext, workListener, null, null);
+
+         setup(wrapper);
+
+         if (workListener != null)
+         {
+            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
+            workListener.workAccepted(event);
+         }
+
+         BlockingExecutor executor = getExecutor(work);
+
+         if (startTimeout == WorkManager.INDEFINITE)
+         {
+            executor.executeBlocking(wrapper);
+         }
+         else
+         {
+            executor.executeBlocking(wrapper, startTimeout, TimeUnit.MILLISECONDS);
+         }
+      }
+      catch (ExecutionTimedOutException etoe)
+      {
+         exception = new WorkRejectedException(etoe);
+         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);  
+      }
+      catch (RejectedExecutionException ree)
+      {
+         exception = new WorkRejectedException(ree);
+      }
+      catch (WorkException we)
+      {
+         exception = we;
+      }
+      catch (InterruptedException ie)
+      {
+         Thread.currentThread().interrupt();
+         exception = new WorkRejectedException("Interrupted while requesting permit");
+      }
+      finally
+      {
+         if (exception != null)
+         {
+            if (workListener != null)
+            {
+               WorkEvent event = new WorkEvent(this, WorkEvent.WORK_REJECTED, work, exception);
+               workListener.workRejected(event);
+            }
+
+            throw exception;
+         }
+
+         checkWorkCompletionException(wrapper);
+      }
    }
 
    /**
-    * Imports any work.
-    * @param wrapper the work wrapper
-    * @throws WorkException for any error 
+    * Get the executor
+    * @param work The work instance
+    * @return The executor
     */
-   protected void importWork(WorkWrapper wrapper) throws WorkException
+   private BlockingExecutor getExecutor(Work work)
    {
-      if (wrapper == null)
+      BlockingExecutor executor = shortRunningExecutor;
+      if (work instanceof WorkContextProvider)
       {
-         return;  
-      }
-            
-      trace = log.isTraceEnabled();
-      
-      if (trace)
-      {
-         log.trace("Importing work " + wrapper);  
-      }
+         WorkContextProvider wcProvider = (WorkContextProvider)work;
+         List<WorkContext> contexts = wcProvider.getWorkContexts();
 
-      ExecutionContext ctx = wrapper.getWorkContext(TransactionContext.class);
-      if (ctx == null)
-      {
-         ctx = wrapper.getExecutionContext();
-      }
-      
-      if (ctx != null)
-      {
-         Xid xid = ctx.getXid();
-         if (xid != null)
+         if (contexts != null && contexts.size() > 0)
          {
-            //JBAS-4002 base value is in seconds as per the API, here we convert to millis
-            long timeout = (ctx.getTransactionTimeout() * 1000);
-            xaTerminator.registerWork(wrapper.getWork(), xid, timeout);
+            boolean found = false;
+            Iterator<WorkContext> it = contexts.iterator();
+            while (!found && it.hasNext())
+            {
+               WorkContext wc = it.next();
+               if (wc instanceof HintsContext)
+               {
+                  HintsContext hc = (HintsContext)wc;
+                  if (hc.getHints().containsKey(HintsContext.LONGRUNNING_HINT))
+                  {
+                     executor = longRunningExecutor;
+                     found = true;
+                  }
+               }
+            }
          }
       }
-      
-      //Fires Context setup complete
-      fireWorkContextSetupComplete(ctx);
-      
-      if (trace)
+
+      return executor;
+   }
+
+
+
+   /**
+    * Check and verify work before submitting.
+    * @param work the work instance
+    * @param executionContext any execution context that is passed by apadater
+    * @throws WorkException if any exception occurs
+    */
+   private void checkAndVerifyWork(Work work, ExecutionContext executionContext) throws WorkException
+   {
+      if (specCompliant)
       {
-         log.trace("Imported work " + wrapper);  
-      }
+         verifyWork(work);  
+      }   
+      
+      if (work instanceof WorkContextProvider)
+      {
+          //Implements WorkContextProvider and not-null ExecutionContext
+         if (executionContext != null)
+         {
+            throw new WorkRejectedException("Work execution context must be null because " +
+               "work instance implements WorkContextProvider!");
+         }          
+      }      
    }
    
-   /**
-    * Submit the given work instance for executing by the thread pool.
-    * @param wrapper the work wrapper
-    * @throws WorkException for any error 
-    */
-   protected void submitWork(WorkWrapper wrapper) throws WorkException
-   {
-      if (wrapper == null)
-      {
-         return;  
-      }
-      
-      if (trace)
-      {
-         log.trace("Submitting work to thread pool " + wrapper);  
-      }
-
-      threadPool.runTaskWrapper(wrapper);
-
-      if (trace)
-      {
-         log.trace("Submitted work to thread pool " + wrapper);  
-      }
-   }
-
-   /**
-    * Starts given work instance.
-    * @param wrapper the work wrapper
-    * @throws WorkException for any error 
-    */
-   public void startWork(WorkWrapper wrapper) throws WorkException
-   {
-      if (wrapper == null)
-      {
-         return;  
-      }      
-
-      if (trace)
-      {
-         log.trace("Setting up work contexts " + wrapper);  
-      }
-      
-      //Setting up WorkContexts if an exist
-      setupWorkContextProviders(wrapper);
-      
-      if (trace)
-      {
-         log.trace("Setted up work contexts " + wrapper);  
-      }
-      
-      //Import work instance
-      importWork(wrapper);
-            
-      if (trace)
-      {
-         log.trace("Starting work " + wrapper);  
-      }
-
-      ExecutionContext ctx = wrapper.getWorkContext(TransactionContext.class);
-      if (ctx == null)
-      {
-         ctx = wrapper.getExecutionContext();
-      }
-      
-      if (ctx != null)
-      {
-         Xid xid = ctx.getXid();
-         if (xid != null)
-         {
-            xaTerminator.startWork(wrapper.getWork(), xid);
-         }
-      }
-      if (trace)
-      {
-         log.trace("Started work " + wrapper);  
-      }
-   }
-
-   /**
-    * Ends given work instance.
-    * @param wrapper the work wrapper
-    */
-   public void endWork(WorkWrapper wrapper)
-   {
-      if (wrapper == null)
-      {
-         return;  
-      }
-      
-      if (trace)
-      {
-         log.trace("Ending work " + wrapper);  
-      }
-
-      ExecutionContext ctx = wrapper.getWorkContext(TransactionContext.class);
-      if (ctx == null)
-      {
-         ctx = wrapper.getExecutionContext();
-      }
-
-      if (ctx != null)
-      {
-         Xid xid = ctx.getXid();
-         if (xid != null)
-         {
-            xaTerminator.endWork(wrapper.getWork(), xid);
-         }
-      }
-      if (trace)
-      {
-         log.trace("Ended work " + wrapper);  
-      }
-   }
-
-   /**
-    * Cancels given work instance.
-    * @param wrapper the work wrapper
-    */
-   public void cancelWork(WorkWrapper wrapper)
-   {
-      if (wrapper == null)
-      {
-         return;  
-      }
-      
-      if (trace)
-      {
-         log.trace("Cancel work " + wrapper);  
-      }
-
-      ExecutionContext ctx = wrapper.getWorkContext(TransactionContext.class);
-      if (ctx == null)
-      {
-         ctx = wrapper.getExecutionContext();
-      }
-
-      if (ctx != null)
-      {
-         Xid xid = ctx.getXid();
-         if (xid != null)
-         {
-            xaTerminator.cancelWork(wrapper.getWork(), xid);
-         }
-      }
-      if (trace)
-      {
-         log.trace("Canceled work " + wrapper);  
-      }
-   }
-
    /**
     * Verify the given work instance.
     * @param work The work
@@ -463,45 +534,84 @@ public class WorkManagerImpl implements WorkManager
     */
    private void verifyWork(Work work) throws WorkException
    {     
-      Class<?> workClass = work.getClass();
-      boolean result = false;
+      if (!validatedWork.contains(work.getClass().getName()))
+      {
+         Class<?> workClass = work.getClass();
+         boolean result = false;
       
-      result = verfiyWorkMethods(workClass, RUN_METHOD_NAME, null, workClass.getName() + 
-            ": Run method is not defined");
+         result = verifyWorkMethods(workClass, RUN_METHOD_NAME, null, workClass.getName() + 
+                                    ": Run method is not defined");
      
-      if (!result)
-      {
-         throw new WorkException(workClass.getName() + ": Run method is synchronized");
-      }
+         if (!result)
+         {
+            throw new WorkException(workClass.getName() + ": Run method is synchronized");
+         }
       
-      result = verfiyWorkMethods(workClass, RELEASE_METHOD_NAME, null, workClass.getName() + 
-            ": Release method is not defined");
+         result = verifyWorkMethods(workClass, RELEASE_METHOD_NAME, null, workClass.getName() + 
+                                    ": Release method is not defined");
       
-      if (!result)
-      {
-         throw new WorkException(workClass.getName() + ": Release method is synchronized");
+         if (!result)
+         {
+            throw new WorkException(workClass.getName() + ": Release method is synchronized");
+         }
+
+         validatedWork.add(work.getClass().getName());
       }
    }
    
+   private boolean verifyWorkMethods(Class<?> workClass, String methodName, 
+                                     Class<?>[] parameterTypes, String errorMessage) throws WorkException
+   {
+      Method method = null;
+      try
+      {
+         method = ClassUtil.getClassMethod(workClass, methodName, null);
+         
+         if (ClassUtil.modifiersHasSynchronizedKeyword(method.getModifiers()))
+         {
+            return false;  
+         }
+      }
+      catch (NoSuchMethodException nsme)
+      {
+         throw new WorkException(errorMessage);
+      }
+      
+      return true;
+   }
+
+   /**
+    * Checks work completed status. 
+    * @param wrapper work wrapper instance
+    * @throws {@link WorkException} if work is completed with an exception
+    */
+   private void checkWorkCompletionException(WorkWrapper wrapper) throws WorkException
+   {
+      if (wrapper.getWorkException() != null)
+      {
+         throw wrapper.getWorkException();  
+      }      
+   }
+
    /**
     * Setup work context's of the given work instance.
     * 
-    * @param wrapper wrapper work instance
+    * @param wrapper The work wrapper instance
     * @throws WorkException if any exception occurs
     */
-   private void setupWorkContextProviders(WorkWrapper wrapper) throws WorkException
+   private void setup(WorkWrapper wrapper) throws WorkException
    {
       if (trace)
       {
-         log.trace("Starting checking work context providers");
+         log.trace("Setting up work contexts " + wrapper);  
       }
 
       Work work = wrapper.getWork();
-
+      
       //If work is an instanceof WorkContextProvider
       if (work instanceof WorkContextProvider)
       {
-         WorkContextProvider wcProvider = (WorkContextProvider) work;
+         WorkContextProvider wcProvider = (WorkContextProvider)work;
          List<WorkContext> contexts = wcProvider.getWorkContexts();
 
          if (contexts != null && contexts.size() > 0)
@@ -608,38 +718,26 @@ public class WorkManagerImpl implements WorkManager
             }
          }         
       }      
+
+      if (trace)
+      {
+         log.trace("Setted up work contexts " + wrapper);  
+      }      
    }
 
    /**
-    * Returns work context class if given work context is supported by server,
-    * returns null instance otherwise.
-    * 
-    * @param <T> work context class
-    * @param adaptorWorkContext adaptor supplied work context class
-    * @return work context class
+    * Calls listener with given error code.
+    * @param listener work context listener
+    * @param errorCode error code
     */
-   @SuppressWarnings("unchecked")
-   private <T extends WorkContext> Class<T> getSupportedWorkContextClass(Class<T> adaptorWorkContext)
+   private void fireWorkContextSetupFailed(Object workContext, String errorCode)
    {
-      for (Class<? extends WorkContext> supportedWorkContext : SUPPORTED_WORK_CONTEXT_CLASSES)
+      if (workContext instanceof WorkContextLifecycleListener)
       {
-         // Assignable or not
-         if (supportedWorkContext.isAssignableFrom(adaptorWorkContext))
-         {
-            // Supported by the server
-            if (adaptorWorkContext.equals(supportedWorkContext))
-            {
-               return adaptorWorkContext;
-            }
-            else
-            {
-               // Fallback to super class
-               return (Class<T>) adaptorWorkContext.getSuperclass();
-            }
-         }
+         WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
+         listener.contextSetupFailed(errorCode);   
       }
-
-      return null;
+      
    }
 
    /**
@@ -689,97 +787,36 @@ public class WorkManagerImpl implements WorkManager
 
       return false;
    }
-   
-   /**
-    * Check and verfiy work before submitting.
-    * @param work the work instance
-    * @param executionContext any execution context that is passed by apadater
-    * @throws WorkException if any exception occurs
-    */
-   private void checkAndVerifyWork(Work work, ExecutionContext executionContext) throws WorkException
-   {
-      if (work == null)
-      {
-         throw new WorkException("Null work");  
-      }
 
-      if (specCompliant)
-      {
-         verifyWork(work);  
-      }   
-      
-      if (work instanceof WorkContextProvider)
-      {
-          //Implements WorkContextProvider and not-null ExecutionContext
-         if (executionContext != null)
-         {
-            throw new WorkRejectedException("Work execution context must be null because " +
-               "work instance implements WorkContextProvider!");
-         }          
-      }      
-   }
-   
    /**
-    * Checks work completed status. 
-    * @param wrapper work wrapper instance
-    * @throws {@link WorkException} if work is completed with an exception
+    * Returns work context class if given work context is supported by server,
+    * returns null instance otherwise.
+    * 
+    * @param <T> work context class
+    * @param adaptorWorkContext adaptor supplied work context class
+    * @return work context class
     */
-   private void checkWorkCompletionException(WorkWrapper wrapper) throws WorkException
+   @SuppressWarnings("unchecked")
+   private <T extends WorkContext> Class<T> getSupportedWorkContextClass(Class<T> adaptorWorkContext)
    {
-      if (wrapper.getWorkException() != null)
+      for (Class<? extends WorkContext> supportedWorkContext : SUPPORTED_WORK_CONTEXT_CLASSES)
       {
-         throw wrapper.getWorkException();  
-      }      
-   }
-
-   private boolean verfiyWorkMethods(Class<?> workClass, String methodName, 
-         Class<?>[] parameterTypes, String errorMessage) throws WorkException
-   {
-      Method method = null;
-      try
-      {
-         method = ClassUtil.getClassMethod(workClass, methodName, null);
-         
-         if (ClassUtil.modifiersHasSynchronizedKeyword(method.getModifiers()))
+         // Assignable or not
+         if (supportedWorkContext.isAssignableFrom(adaptorWorkContext))
          {
-            return false;  
+            // Supported by the server
+            if (adaptorWorkContext.equals(supportedWorkContext))
+            {
+               return adaptorWorkContext;
+            }
+            else
+            {
+               // Fallback to super class
+               return (Class<T>) adaptorWorkContext.getSuperclass();
+            }
          }
       }
-      catch (NoSuchMethodException nsme)
-      {
-         throw new WorkException(errorMessage);
-      }
-      
-      return true;
+
+      return null;
    }
-   
-   /**
-    * Calls listener with given error code.
-    * @param listener work context listener
-    * @param errorCode error code
-    */
-   private void fireWorkContextSetupFailed(Object workContext, String errorCode)
-   {
-      if (workContext instanceof WorkContextLifecycleListener)
-      {
-         WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
-         listener.contextSetupFailed(errorCode);   
-      }
-      
-   }
-   
-   /**
-    * Calls listener after work context is setted up.
-    * @param listener work context listener
-    */
-   private void fireWorkContextSetupComplete(Object workContext)
-   {
-      if (workContext instanceof WorkContextLifecycleListener)
-      {
-         WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
-         listener.contextSetupComplete();   
-      }
-      
-   }
-   
 }

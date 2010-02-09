@@ -112,17 +112,9 @@ public class WorkInterfaceTestCase
       WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
       
       ShortRunningWork shortWork = new ShortRunningWork();
-      workManager.startWork(shortWork);
       assertFalse(shortWork.getWasReleased());
-      
-      final CountDownLatch start = new CountDownLatch(1);
-      final CountDownLatch done = new CountDownLatch(1);
-      
-      LongRunningWork longWork = new LongRunningWork(start, done);
-      workManager.startWork(longWork);
-      //TODO we should impl call release()
-      //assertTrue(longWork.getWasReleased();
-
+      workManager.doWork(shortWork);
+      assertTrue(shortWork.getWasReleased());
    }
    
    /**

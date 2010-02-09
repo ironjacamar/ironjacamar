@@ -21,8 +21,9 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section1;
 
-import org.jboss.jca.common.api.ThreadPool;
 import org.jboss.jca.embedded.EmbeddedJCA;
+
+import org.jboss.threads.BlockingExecutor;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -54,8 +55,12 @@ public class ManageThreadTestCase
    {
       org.jboss.jca.core.api.WorkManager workManager = 
          embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
-      ThreadPool threadPool = workManager.getThreadPool();
-      assertNotNull(threadPool);
+
+      BlockingExecutor shortRunning = workManager.getShortRunningThreadPool();
+      assertNotNull(shortRunning);
+
+      BlockingExecutor longRunning = workManager.getShortRunningThreadPool();
+      assertNotNull(longRunning);
    }
 
    /**

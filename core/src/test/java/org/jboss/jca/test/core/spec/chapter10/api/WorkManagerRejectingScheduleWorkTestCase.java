@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,27 +22,30 @@
 package org.jboss.jca.test.core.spec.chapter10.api;
 
 import org.jboss.jca.embedded.EmbeddedJCA;
-import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
+import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
 import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 
-import java.util.concurrent.CountDownLatch;
-
+import javax.resource.spi.work.ExecutionContext;
+import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;
+import javax.resource.spi.work.WorkRejectedException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * WorkTestCase.
+ * WorkManagerRejectingScheduleWorkTestCase.
  * 
- * Tests for the JCA specific API about Work
+ * Tests for rejecting work instance to the WorkManager scheduleWork() methods
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
-public class WorkTestCase
+public class WorkManagerRejectingScheduleWorkTestCase
 {
    /*
     * Embedded
@@ -50,37 +53,32 @@ public class WorkTestCase
    private static EmbeddedJCA embedded;
    
    /**
-    * testRun
-    * The WorkManager dispatches a thread that calls the run method to
-    *             begin execution of a Work instance.
+    * scheduleWork method
     * @throws Throwable throwable exception 
     */
-   @Test
-   public void testRun() throws Throwable
+   @Test(expected = WorkRejectedException.class)
+   public void testScheduleWork() throws Throwable
    {
       WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
+
       ShortRunningWork work = new ShortRunningWork();
-      
-      assertFalse(work.hasCallRun());
-      workManager.doWork(work);
-      assertTrue(work.hasCallRun());
+
+      workManager.scheduleWork(work);
    }
    
    /**
-    * testRelease
-    * The WorkManager may call the release method to request the active Work 
-    *            instance to complete execution as soon as possible. 
+    * scheduleWork method (full signature)
     * @throws Throwable throwable exception 
     */
-   @Test
-   public void testRelease() throws Throwable
+   @Test(expected = WorkRejectedException.class)
+   public void testScheduleWorkFullSignature() throws Throwable
    {
       WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
+
+      ShortRunningWork work = new ShortRunningWork();
+      MyWorkAdapter wa = new MyWorkAdapter();
       
-      ShortRunningWork shortWork = new ShortRunningWork();
-      assertFalse(shortWork.getWasReleased());
-      workManager.doWork(shortWork);
-      assertTrue(shortWork.getWasReleased());
+      workManager.scheduleWork(work, WorkManager.INDEFINITE, null, wa);
    }
    
    // --------------------------------------------------------------------------------||
@@ -100,9 +98,10 @@ public class WorkTestCase
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      embedded.deploy(WorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      embedded.deploy(WorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.deploy(WorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      embedded.deploy(WorkManagerRejectingStartWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.deploy(WorkManagerRejectingStartWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.deploy(WorkManagerRejectingStartWorkTestCase.class.getClassLoader(), 
+                      "rejecting-workmanager-jboss-beans.xml");
    }
 
    /**
@@ -113,9 +112,10 @@ public class WorkTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      embedded.undeploy(WorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      embedded.undeploy(WorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.undeploy(WorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      embedded.undeploy(WorkManagerRejectingStartWorkTestCase.class.getClassLoader(), 
+                        "rejecting-workmanager-jboss-beans.xml");
+      embedded.undeploy(WorkManagerRejectingStartWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      embedded.undeploy(WorkManagerRejectingStartWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
 
       // Shutdown embedded
       embedded.shutdown();

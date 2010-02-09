@@ -51,10 +51,15 @@ public class MyWorkAdapter extends WorkAdapter
       source = e.getSource();
       work = e.getWork();
       startDuration = e.getStartDuration();
-      synchronized (this) 
+      
+      if (callbackCount != null)
       {
-         callbackCount.setAcceptCount(callbackCount.getAcceptCount() + 1);
+         synchronized (this) 
+         {
+            callbackCount.setAcceptCount(callbackCount.getAcceptCount() + 1);
+         }
       }
+
       super.workCompleted(e);
    }
 
@@ -66,10 +71,14 @@ public class MyWorkAdapter extends WorkAdapter
    @Override
    public void workStarted(WorkEvent e)
    {
-      synchronized (this) 
+      if (callbackCount != null)
       {
-         callbackCount.setStartCount(callbackCount.getStartCount() + 1);
+         synchronized (this) 
+         {
+            callbackCount.setStartCount(callbackCount.getStartCount() + 1);
+         }
       }
+
       super.workStarted(e);
    }
    
@@ -81,10 +90,14 @@ public class MyWorkAdapter extends WorkAdapter
    @Override
    public void workCompleted(WorkEvent e)
    {
-      synchronized (this) 
+      if (callbackCount != null)
       {
-         callbackCount.setCompletedCount(callbackCount.getCompletedCount() + 1);
+         synchronized (this) 
+         {
+            callbackCount.setCompletedCount(callbackCount.getCompletedCount() + 1);
+         }
       }
+
       super.workCompleted(e);
    }
 

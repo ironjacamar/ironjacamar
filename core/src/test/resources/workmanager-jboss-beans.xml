@@ -5,23 +5,56 @@
 -->
 <deployment>
 
-  <bean name="WorkManagerThreadPool" interface="org.jboss.jca.common.api.ThreadPool" class="org.jboss.jca.common.threadpool.ThreadPoolImpl">
-    <!-- The name that appears in thread names -->
-    <property name="name">WorkManager</property>
-
-    <!-- The maximum amount of work in the queue -->
-    <property name="maximumQueueSize">1024</property>
-    
-    <!-- The maximum number of active threads -->
-    <property name="maximumPoolSize">100</property>
-    
-    <!-- How long to keep threads alive after their last work (default one minute) -->
-    <property name="keepAliveTime">60000</property>
+  <!-- Thread group -->
+  <bean name="ThreadGroup"
+        class="java.lang.ThreadGroup">
+    <constructor>
+      <parameter>workmanager</parameter>
+    </constructor>
+    <ignoreStop/>
+    <ignoreDestroy/>
   </bean>
 
-  <bean name="WorkManager" interface="org.jboss.jca.core.api.WorkManager" class="org.jboss.jca.core.workmanager.WorkManagerImpl">
-    <!-- The thread pool -->
-    <property name="threadPool"><inject bean="WorkManagerThreadPool"/></property>
+  <!-- Thread factory -->
+  <bean name="ThreadFactory"
+        interface="java.util.concurrent.ThreadFactory"
+        class="org.jboss.threads.JBossThreadFactory">
+    <constructor>
+      <parameter><inject bean="ThreadGroup"/></parameter>
+      <parameter>false</parameter>
+      <parameter>5</parameter>
+      <parameter>work</parameter>
+      <parameter><null/></parameter>
+      <parameter><null/></parameter>
+    </constructor>
+  </bean>
+
+  <!-- Short running thread pool -->
+  <bean name="ShortRunningThreadPool">
+    <constructor factoryMethod="threadFactoryExecutor" 
+                 factoryClass="org.jboss.threads.JBossExecutors">
+      <parameter><inject bean="ThreadFactory"/></parameter>
+    </constructor>
+  </bean>
+
+  <!-- Long running thread pool -->
+  <bean name="LongRunningThreadPool">
+    <constructor factoryMethod="threadFactoryExecutor" 
+                 factoryClass="org.jboss.threads.JBossExecutors">
+      <parameter><inject bean="ThreadFactory"/></parameter>
+    </constructor>
+  </bean>
+
+  <!-- Work Manager -->
+  <bean name="WorkManager" 
+        interface="org.jboss.jca.core.api.WorkManager" 
+        class="org.jboss.jca.core.workmanager.WorkManagerImpl">
+
+    <!-- The short running thread pool -->
+    <property name="ShortRunningThreadPool"><inject bean="ShortRunningThreadPool"/></property>
+
+    <!-- The long running thread pool -->
+    <property name="LongRunningThreadPool"><inject bean="LongRunningThreadPool"/></property>
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>

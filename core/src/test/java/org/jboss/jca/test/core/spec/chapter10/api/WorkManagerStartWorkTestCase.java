@@ -32,6 +32,7 @@ import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;
+import javax.resource.spi.work.WorkRejectedException;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -225,7 +226,7 @@ public class WorkManagerStartWorkTestCase
     *       to indicate an unknown start delay duration or other unknown values.
     * @throws Throwable throwable exception 
     */
-   @Test(expected = IllegalArgumentException.class)
+   @Test(expected = WorkRejectedException.class)
    public void testStartWorkFullSpecWithUnknowStartTimeout() throws Throwable
    {
       WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
@@ -248,7 +249,7 @@ public class WorkManagerStartWorkTestCase
     *       to indicate an negative value start delay duration
     * @throws Throwable throwable exception 
     */
-   @Test(expected = IllegalArgumentException.class)
+   @Test(expected = WorkRejectedException.class)
    public void testStartWorkFullSpecWithNegativeStartTimeout() throws Throwable
    {
       WorkManager workManager = embedded.lookup("WorkManager", WorkManager.class);
