@@ -23,26 +23,18 @@
 package org.jboss.jca.core.workmanager;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.work.ExecutionContext;
-import javax.resource.spi.work.HintsContext;
-import javax.resource.spi.work.SecurityContext;
 import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkContextErrorCodes;
 import javax.resource.spi.work.WorkContextLifecycleListener;
-import javax.resource.spi.work.WorkContextProvider;
 import javax.resource.spi.work.WorkEvent;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
-import javax.resource.spi.work.WorkRejectedException;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
@@ -93,9 +85,10 @@ public class WorkWrapper implements Runnable
     *
     * @param workManager the work manager
     * @param work the work
-    * @param waitType the waitType
     * @param executionContext the execution context
     * @param workListener the WorkListener
+    * @param startedLatch The latch for when work has started
+    * @param completedLatch The latch for when work has completed
     * @throws IllegalArgumentException for null work, execution context or a negative start timeout
     */
    public WorkWrapper(org.jboss.jca.core.api.WorkManager workManager, 

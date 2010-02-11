@@ -22,10 +22,7 @@
 package org.jboss.jca.test.core.spec.chapter10.api;
 
 import org.jboss.jca.embedded.EmbeddedJCA;
-import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
-
-import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.work.WorkManager;
 

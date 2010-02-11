@@ -22,8 +22,6 @@
 
 package org.jboss.jca.core.api;
 
-import javax.resource.spi.work.WorkException;
-
 import org.jboss.threads.BlockingExecutor;
 import org.jboss.tm.JBossXATerminator;
 

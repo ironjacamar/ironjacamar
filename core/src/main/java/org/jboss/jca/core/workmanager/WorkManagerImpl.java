@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.HintsContext;
 import javax.resource.spi.work.SecurityContext;
@@ -47,7 +48,6 @@ import javax.resource.spi.work.WorkEvent;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
 import javax.resource.spi.work.WorkRejectedException;
-import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
 import org.jboss.threads.BlockingExecutor;
