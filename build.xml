@@ -435,7 +435,9 @@
     
     <mkdir dir="${build.dir}/instrumented" />
     <copy todir="${build.dir}/instrumented">
-      <fileset dir="${target.dir}"/>
+      <fileset dir="${target.dir}">
+        <include name="*.jar"/>
+      </fileset>
     </copy>
 
     <cobertura-instrument todir="${build.dir}/instrumented"
@@ -444,6 +446,12 @@
         <include name="*.jar" />
       </fileset>
     </cobertura-instrument>
+
+    <copy todir="${build.dir}/instrumented">
+      <fileset dir="${target.dir}">
+        <include name="jboss-jca-core-api.jar"/>
+      </fileset>
+    </copy>
 
     <junit dir="core/src/test"
            printsummary="${junit.printsummary}"
@@ -457,6 +465,9 @@
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
 
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
@@ -486,6 +497,9 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
 
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
