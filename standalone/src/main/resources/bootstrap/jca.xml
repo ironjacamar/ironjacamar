@@ -11,8 +11,6 @@
     <constructor>
       <parameter>workmanager</parameter>
     </constructor>
-    <ignoreStop/>
-    <ignoreDestroy/>
   </bean>
 
   <!-- Thread factory -->
@@ -48,10 +46,10 @@
   <!-- Work Manager -->
   <bean name="WorkManager" interface="org.jboss.jca.core.api.WorkManager" class="org.jboss.jca.core.workmanager.WorkManagerImpl">
     <!-- The short running thread pool -->
-    <property name="ShortRunningThreadPool"><inject bean="ShortRunningThreadPool"/></property>
+    <property name="shortRunningThreadPool"><inject bean="ShortRunningThreadPool"/></property>
 
     <!-- The long running thread pool -->
-    <property name="LongRunningThreadPool"><inject bean="LongRunningThreadPool"/></property>
+    <property name="longRunningThreadPool"><inject bean="LongRunningThreadPool"/></property>
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
@@ -63,10 +61,10 @@
         class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
 
     <!-- The Transaction Synchronization Registry -->
-    <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
+    <property name="transactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
 
     <!-- The Work Manager -->
-    <property name="WorkManager"><inject bean="WorkManager"/></property>
+    <property name="workManager"><inject bean="WorkManager"/></property>
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>

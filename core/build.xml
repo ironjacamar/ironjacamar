@@ -58,14 +58,6 @@
          manifest="src/main/resources/impl-manifest.mf"
          basedir="${build.core.dir}/impl"
          excludes="**/*.java, **/core/api/**"/>
-
-    <mkdir dir="${target.dir}/bootstrap"/>
-    <copy todir="${target.dir}/bootstrap">
-      <fileset dir="src/main/resources/deployment">
-        <include name="**/*.xml"/>
-      </fileset>
-    </copy>
-
   </target>
 
   <!-- ================================= 
