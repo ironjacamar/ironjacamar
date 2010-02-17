@@ -25,12 +25,13 @@ package org.jboss.jca.common.util;
 import org.jboss.jca.common.api.ConnectionFactoryBuilder;
 import org.jboss.jca.fungal.deployers.DeployException;
 
+import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
-import java.util.Hashtable;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Local only support for connection factory
@@ -39,11 +40,25 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="mailto:smarlow@redhat.com">Scott Marlow</a>
  */
 
-public class LocalApplicationServerJNDIHandler implements ObjectFactory {
+public class LocalApplicationServerJNDIHandler implements ObjectFactory
+{
 
-   private static ConcurrentHashMap<String, ConnectionFactoryBuilder> connectionFactories = new ConcurrentHashMap();
+   private static ConcurrentHashMap<String, ConnectionFactoryBuilder> connectionFactories =
+      new ConcurrentHashMap<String, ConnectionFactoryBuilder>();
 
-   public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment) throws Exception {
+   /**
+    * Obtain the connection factory
+    * @see ObjectFactory#getObjectInstance(Object, javax.naming.Name, javax.naming.Context, java.util.Hashtable)
+    * @param obj Is the Reference that we bound to JNDI
+    * @param name
+    * @param nameCtx
+    * @param environment
+    * @return the connection factory
+    * @throws Exception
+    */
+   public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment)
+      throws Exception
+   {
       Reference ref = (Reference)obj;
       String className = (String)ref.get("class").getContent();
       String cfname = (String)ref.get("name").getContent();
@@ -52,20 +67,23 @@ public class LocalApplicationServerJNDIHandler implements ObjectFactory {
    }
 
    /**
-    *
+    * Register a connection factory builder
     * @param name
     * @param className
     * @param cfb
     * @throws DeployException if already registered and therefore deployed
     */
-   public static void register(String name, String className, ConnectionFactoryBuilder cfb) throws DeployException {
+   public static void register(String name, String className, ConnectionFactoryBuilder cfb) throws DeployException
+   {
 
-      if(null != connectionFactories.putIfAbsent(qualifiedName(name, className), cfb)) {
-         throw new DeployException("Deployment " + className + " failed, " + name +" is already deployed");
+      if (null != connectionFactories.putIfAbsent(qualifiedName(name, className), cfb))
+      {
+         throw new DeployException("Deployment " + className + " failed, " + name + " is already deployed");
       }
    }
 
-   private static String qualifiedName(String name, String className) {
+   private static String qualifiedName(String name, String className)
+   {
       return className + "#" + name;
    }
 

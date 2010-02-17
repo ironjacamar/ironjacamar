@@ -34,45 +34,80 @@ import javax.resource.spi.ManagedConnectionFactory;
  *
  * @author <a href="mailto:smarlow@redhat.com">Scott Marlow</a>
  */
-public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder {
+public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder
+{
 
    private ManagedConnectionFactory mcf;
    private Object cf;
    private String name;
 
-   public ConnectionFactoryBuilder setName(String name) {
+   /**
+    * @see ConnectionFactoryBuilder#setName
+    * @param name
+    * @return this
+    */
+   public ConnectionFactoryBuilder setName(String name)
+   {
       this.name = name;
       return this;
    }
 
-   public Reference getReference() throws DeployException  {
+   /**
+    * @see ConnectionFactoryBuilder#getReference
+    * @return Reference
+    * @throws DeployException
+    */
+   public Reference getReference() throws DeployException
+   {
       String className = cf.getClass().getName();
       String name = this.name;
       Reference ref = new Reference(
          cf.getClass().getName(),
-         new StringRefAddr("class",className),
+         new StringRefAddr("class", className),
          LocalApplicationServerJNDIHandler.class.getName(),
          null);
-      ref.add(new StringRefAddr("name", name ));
+      ref.add(new StringRefAddr("name", name));
       LocalApplicationServerJNDIHandler.register(name, className, this);
       return ref;
    }
 
-   public ConnectionFactoryBuilder setManagedConnectionFactory(ManagedConnectionFactory mcf) {
+   /**
+    * @see ConnectionFactoryBuilder#setManagedConnectionFactory
+    * @param mcf is the managed connection factory to be used by connection factory.
+    * @return this
+    */
+   public ConnectionFactoryBuilder setManagedConnectionFactory(ManagedConnectionFactory mcf)
+   {
       this.mcf = mcf;
       return this;
    }
 
-   public ManagedConnectionFactory getManagedConnectionFactory() {
+   /**
+    * @see ConnectionFactoryBuilder#getManagedConnectionFactory
+    * @return ManagedConnectionFactory
+    */
+   public ManagedConnectionFactory getManagedConnectionFactory()
+   {
       return mcf;
    }
 
-   public ConnectionFactoryBuilder setConnectionFactory(Object cf) {
+   /**
+    * @see ConnectionFactoryBuilder#setConnectionFactory
+    * @param cf is the connection factory that will be returned
+    * @return this
+    */
+   public ConnectionFactoryBuilder setConnectionFactory(Object cf)
+   {
       this.cf = cf;
       return this;
    }
 
-   public Object getConnectionFactory() {
+   /**
+    * @see ConnectionFactoryBuilder#getConnectionFactory
+    * @return connection factory
+    */
+   public Object getConnectionFactory()
+   {
       return cf;
    }
 }

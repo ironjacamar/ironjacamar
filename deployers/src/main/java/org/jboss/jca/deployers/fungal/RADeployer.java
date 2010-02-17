@@ -611,7 +611,8 @@ public final class RADeployer implements CloneableDeployer
       }
    }
 
-   private ConnectionFactoryBuilder getConnectionFactoryBuilder() {
+   private ConnectionFactoryBuilder getConnectionFactoryBuilder()
+   {
       return new LocalConnectionFactoryBuilder();
    }
 
@@ -749,7 +750,8 @@ public final class RADeployer implements CloneableDeployer
    private void bindConnectionFactory(String name, Serializable cf, ConnectionFactoryBuilder cfb) throws Exception
    {
       Context context = new InitialContext();
-      try {
+      try
+      {
 
          Referenceable referenceable = (Referenceable)cf;
          referenceable.setReference(cfb.getReference());
@@ -757,7 +759,8 @@ public final class RADeployer implements CloneableDeployer
          Util.bind(context, JNDI_PREFIX + name, cf);
 
       }
-      finally {
+      finally
+      {
          context.close();     // release connection
       }
    }

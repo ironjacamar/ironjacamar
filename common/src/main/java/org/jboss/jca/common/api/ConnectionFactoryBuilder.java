@@ -33,11 +33,13 @@ import javax.resource.spi.ManagedConnectionFactory;
  *
  * @author <a href="mailto:smarlow@redhat.com">Scott Marlow</a>
  */
-public interface ConnectionFactoryBuilder {
+public interface ConnectionFactoryBuilder
+{
 
    /**
     * Return the CF Reference.  The ConnectionFactory can be obtained from the Reference.
-    * @return The reference
+    * @return Reference
+    * @throws DeployException
     */
    Reference getReference() throws DeployException;
 
