@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,6 +22,8 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.common.api.ConnectionFactoryBuilder;
+import org.jboss.jca.common.util.LocalConnectionFactoryBuilder;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.deployers.common.validator.Failure;
@@ -57,8 +59,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-//import javax.naming.NamingException;
-import javax.naming.Reference;
 import javax.resource.Referenceable;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -379,6 +379,8 @@ public final class RADeployer implements CloneableDeployer
                         beanValidationObjects.add(mcf);
                         associationObjects.add(mcf);
 
+                        ConnectionFactoryBuilder cfb = getConnectionFactoryBuilder();
+
                         // ConnectionFactory
                         Object cf = mcf.createConnectionFactory(new NoTxConnectionManager());
 
@@ -399,7 +401,9 @@ public final class RADeployer implements CloneableDeployer
                                  jndiNames = new ArrayList<String>(1);
 
                               String jndiName = f.getName().substring(0, f.getName().indexOf(".rar"));
-                              bindConnectionFactory(jndiName, (Serializable)cf);
+
+                              cfb.setManagedConnectionFactory(mcf).setConnectionFactory(cf).setName(jndiName);
+                              bindConnectionFactory(jndiName, (Serializable)cf, cfb);
                               jndiNames.add(JNDI_PREFIX + jndiName);
                            }
                            else
@@ -607,6 +611,10 @@ public final class RADeployer implements CloneableDeployer
       }
    }
 
+   private ConnectionFactoryBuilder getConnectionFactoryBuilder() {
+      return new LocalConnectionFactoryBuilder();
+   }
+
    /**
     * Start the resource adapter
     * @param resourceAdapter The resource adapter
@@ -704,7 +712,7 @@ public final class RADeployer implements CloneableDeployer
 
    /**
     * Get the URLs for the directory and all libraries located in the directory
-    * @param directrory The directory
+    * @param directory The directory
     * @return The URLs
     * @exception MalformedURLException MalformedURLException
     * @exception IOException IOException
@@ -736,19 +744,24 @@ public final class RADeployer implements CloneableDeployer
     * Bind connection factory into JNDI
     * @param name The JNDI name
     * @param cf The connection factory
-    * @exception Thrown if an error occurs
+    * @exception Exception thrown if an error occurs
     */
-   private void bindConnectionFactory(String name, Serializable cf) throws Exception
+   private void bindConnectionFactory(String name, Serializable cf, ConnectionFactoryBuilder cfb) throws Exception
    {
       Context context = new InitialContext();
+      try {
 
-      Util.bind(context, JNDI_PREFIX + name, cf);
-      
-      Referenceable referenceable = (Referenceable)cf;
-      Reference ref = null;
+         Referenceable referenceable = (Referenceable)cf;
+         referenceable.setReference(cfb.getReference());
 
-      referenceable.setReference(ref);
+         Util.bind(context, JNDI_PREFIX + name, cf);
+
+      }
+      finally {
+         context.close();     // release connection
+      }
    }
+
 
    /**
     * Clone
