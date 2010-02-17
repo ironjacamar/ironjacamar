@@ -379,8 +379,6 @@ public final class RADeployer implements CloneableDeployer
                         beanValidationObjects.add(mcf);
                         associationObjects.add(mcf);
 
-                        ConnectionFactoryBuilder cfb = getConnectionFactoryBuilder();
-
                         // ConnectionFactory
                         Object cf = mcf.createConnectionFactory(new NoTxConnectionManager());
 
@@ -402,8 +400,7 @@ public final class RADeployer implements CloneableDeployer
 
                               String jndiName = f.getName().substring(0, f.getName().indexOf(".rar"));
 
-                              cfb.setManagedConnectionFactory(mcf).setConnectionFactory(cf).setName(jndiName);
-                              bindConnectionFactory(jndiName, (Serializable)cf, cfb);
+                              bindConnectionFactory(jndiName, (Serializable)cf, mcf);
                               jndiNames.add(JNDI_PREFIX + jndiName);
                            }
                            else
@@ -745,10 +742,13 @@ public final class RADeployer implements CloneableDeployer
     * Bind connection factory into JNDI
     * @param name The JNDI name
     * @param cf The connection factory
+    * @param mcf The managed connection factory
     * @exception Exception thrown if an error occurs
     */
-   private void bindConnectionFactory(String name, Serializable cf, ConnectionFactoryBuilder cfb) throws Exception
+   private void bindConnectionFactory(String name, Serializable cf, ManagedConnectionFactory mcf) throws Exception
    {
+      ConnectionFactoryBuilder cfb = getConnectionFactoryBuilder();
+      cfb.setManagedConnectionFactory(mcf).setConnectionFactory(cf).setName(name);
       Context context = new InitialContext();
       try
       {
