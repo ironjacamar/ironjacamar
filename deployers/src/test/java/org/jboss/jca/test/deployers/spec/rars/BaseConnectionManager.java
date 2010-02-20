@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,23 +19,44 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec.rars.ra16asso;
+package org.jboss.jca.test.deployers.spec.rars;
 
-import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnectionFactory;
+
+import org.jboss.logging.Logger;
 
 /**
- * TestManagedConnectionFactory
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * BaseConnectionManager
+ *
+ * @author  <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>.
  * @version $Revision: $
  */
-public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
+public class BaseConnectionManager implements ConnectionManager
 {
    private static final long serialVersionUID = 1L;
+   private static Logger log = Logger.getLogger(BaseConnectionManager.class);
 
    /**
     * Constructor
     */
-   public TestManagedConnectionFactory()
+   public BaseConnectionManager()
    {
+   }
+
+   /**
+    * Allocate a connection
+    * @param mcf The managed connection factory
+    * @param cri The connection request information
+    * @return The connection
+    * @exception ResourceException Thrown if an error occurs
+    */
+   public Object allocateConnection(ManagedConnectionFactory mcf,
+                                    ConnectionRequestInfo cxRequestInfo)
+      throws ResourceException
+   {
+      return null;
    }
 }

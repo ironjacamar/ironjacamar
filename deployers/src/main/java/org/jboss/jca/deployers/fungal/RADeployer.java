@@ -325,7 +325,6 @@ public final class RADeployer implements CloneableDeployer
          ResourceAdapter resourceAdapter = null;
          List<ValidateObject> archiveValidationObjects = new ArrayList<ValidateObject>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
-         List<Object> associationObjects = new ArrayList<Object>();
 
          List<String> jndiNames = null;
 
@@ -379,7 +378,7 @@ public final class RADeployer implements CloneableDeployer
                                                                         mcf,
                                                                         cdMeta.getConfigProps()));
                         beanValidationObjects.add(mcf);
-                        associationObjects.add(mcf);
+                        associateResourceAdapter(resourceAdapter, mcf);
 
                         // TODO: add proper configuration and use it (support TxConnectionManager as well)
                         NoTxConnectionManager noTxCm = new NoTxConnectionManager();
@@ -449,7 +448,7 @@ public final class RADeployer implements CloneableDeployer
 
                         archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o, cpm));
                         beanValidationObjects.add(o);
-                        associationObjects.add(o);
+                        associateResourceAdapter(resourceAdapter, o);
                      }
                   }
                }
@@ -592,9 +591,6 @@ public final class RADeployer implements CloneableDeployer
          }
          
          // Activate deployment
-         if (resourceAdapter != null && associationObjects.size() > 0)
-            associateResourceAdapter(resourceAdapter, associationObjects);
-
          if (resourceAdapter != null)
             startContext(resourceAdapter);
 
@@ -653,15 +649,14 @@ public final class RADeployer implements CloneableDeployer
    /**
     * Associate resource adapter with ojects if they implement ResourceAdapterAssociation
     * @param resourceAdapter The resource adapter
-    * @param associationObjects The list of possible objects
+    * @param object The of possible association object
     * @throws DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked") 
-   private void associateResourceAdapter(ResourceAdapter resourceAdapter, 
-                                         List<Object> associationObjects)
+   private void associateResourceAdapter(ResourceAdapter resourceAdapter, Object object)
       throws DeployException
    {
-      for (Object object : associationObjects)
+      if (resourceAdapter != null && object != null)
       {
          if (object instanceof ResourceAdapterAssociation)
          {

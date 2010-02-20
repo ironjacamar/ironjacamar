@@ -21,7 +21,14 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra10dtdout;
 
+import org.jboss.jca.test.deployers.spec.rars.BaseCciConnectionFactory;
+import org.jboss.jca.test.deployers.spec.rars.BaseConnectionManager;
 import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionManager;
+
+import org.jboss.logging.Logger;
 
 /**
  * TestManagedConnectionFactory
@@ -31,4 +38,32 @@ import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
 public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
 {
    private static final long serialVersionUID = 1L;
+   private static Logger log = Logger.getLogger(TestManagedConnectionFactory.class);
+
+   /**
+    * Creates a Connection Factory instance. 
+    *
+    *  @param    cxManager    ConnectionManager to be associated with created EIS connection factory instance
+    *  @return   EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    *  @throws   ResourceException     Generic exception
+    */
+   @Override
+   public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
+   {
+      log.debug("call createConnectionFactory");
+      return new BaseCciConnectionFactory();
+   }
+
+   /**
+    * Creates a Connection Factory instance. 
+    *
+    *  @return   EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    *  @throws   ResourceException     Generic exception
+    */
+   @Override
+   public Object createConnectionFactory() throws ResourceException
+   {
+      log.debug("call createConnectionFactory");
+      return createConnectionFactory(new BaseConnectionManager());
+   }
 }

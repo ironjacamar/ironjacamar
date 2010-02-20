@@ -29,6 +29,8 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterAssociation;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
@@ -39,11 +41,22 @@ import org.jboss.logging.Logger;
  * @author  <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>.
  * @version $Revision: $
  */
-public class BaseManagedConnectionFactory implements
-      ManagedConnectionFactory
+public class BaseManagedConnectionFactory implements ManagedConnectionFactory, ResourceAdapterAssociation
 {
    private static final long serialVersionUID = 1L;
    private static Logger log = Logger.getLogger(BaseManagedConnectionFactory.class);
+
+   private ResourceAdapter ra;
+   private PrintWriter logwriter;
+
+   /**
+    * Constructor
+    */
+   public BaseManagedConnectionFactory()
+   {
+      ra = null;
+      logwriter = null;
+   }
 
    /**
     * Creates a Connection Factory instance. 
@@ -54,6 +67,9 @@ public class BaseManagedConnectionFactory implements
     */
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
    {
+      if (ra == null)
+         throw new IllegalStateException("RA is null");
+
       log.debug("call createConnectionFactory");
       return new BaseCciConnectionFactory();
    }
@@ -66,8 +82,11 @@ public class BaseManagedConnectionFactory implements
     */
    public Object createConnectionFactory() throws ResourceException
    {
+      if (ra == null)
+         throw new IllegalStateException("RA is null");
+
       log.debug("call createConnectionFactory");
-      return createConnectionFactory((ConnectionManager)null);
+      return createConnectionFactory(new BaseConnectionManager());
    }
 
    /** 
@@ -79,8 +98,12 @@ public class BaseManagedConnectionFactory implements
     *  @return  ManagedConnection instance
     */
    public ManagedConnection createManagedConnection(Subject subject,
-         ConnectionRequestInfo cxRequestInfo) throws ResourceException
+                                                    ConnectionRequestInfo cxRequestInfo) 
+      throws ResourceException
    {
+      if (ra == null)
+         throw new IllegalStateException("RA is null");
+
       log.debug("call createManagedConnection");
       return null;
    }
@@ -95,9 +118,13 @@ public class BaseManagedConnectionFactory implements
     *  @return  ManagedConnection     if resource adapter finds an acceptable match otherwise null
     **/
    public ManagedConnection matchManagedConnections(Set connectionSet,
-      Subject subject, ConnectionRequestInfo cxRequestInfo)
+                                                    Subject subject, 
+                                                    ConnectionRequestInfo cxRequestInfo)
       throws ResourceException
    {
+      if (ra == null)
+         throw new IllegalStateException("RA is null");
+
       log.debug("call matchManagedConnections");
       return null;
    }
@@ -110,7 +137,7 @@ public class BaseManagedConnectionFactory implements
    public PrintWriter getLogWriter() throws ResourceException
    {
       log.debug("call getLogWriter");
-      return null;
+      return logwriter;
    }
 
    /** 
@@ -122,7 +149,27 @@ public class BaseManagedConnectionFactory implements
    public void setLogWriter(PrintWriter out) throws ResourceException
    {
       log.debug("call setLogWriter");
+      logwriter = out;
+   }
 
+   /**
+    * Get the resource adapter
+    * @return The handle
+    */
+   public ResourceAdapter getResourceAdapter()
+   {
+      log.debug("call getResourceAdapter");
+      return ra;
+   }
+
+   /**
+    * Set the resource adapter
+    * @param ra The handle
+    */
+   public void setResourceAdapter(ResourceAdapter ra)
+   {
+      log.debug("call setResourceAdapter(" + ra + ")");
+      this.ra = ra;
    }
 
    /**
