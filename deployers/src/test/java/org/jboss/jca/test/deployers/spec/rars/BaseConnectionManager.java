@@ -54,7 +54,7 @@ public class BaseConnectionManager implements ConnectionManager
     * @exception ResourceException Thrown if an error occurs
     */
    public Object allocateConnection(ManagedConnectionFactory mcf,
-                                    ConnectionRequestInfo cxRequestInfo)
+                                    ConnectionRequestInfo cri)
       throws ResourceException
    {
       return null;
