@@ -162,12 +162,13 @@ public class Annotations
          if (values.size() == 1)
          {
             Annotation annotation = values.iterator().next();
+            String raClass = annotation.getClassName();
             Connector c = (Connector)annotation.getAnnotation();
 
             if (trace)
-               log.trace("Processing: " + c);
+               log.trace("Processing: " + c + " for " + raClass);
 
-            md = attachConnector(md, c);
+            md = attachConnector(md, raClass, c);
          }
          else if (values.size() == 0)
          {
@@ -196,13 +197,20 @@ public class Annotations
    /**
     * Attach @Connector
     * @param md The metadata
+    * @param raClass The class name for the resource adapter
     * @param c The connector
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData attachConnector(ConnectorMetaData md, Connector c)
+   private ConnectorMetaData attachConnector(ConnectorMetaData md, String raClass, Connector c)
       throws Exception
    {
+      // Class definition
+      if (md.getRa() == null)
+         md.setRa(new ResourceAdapterMetaData());
+
+      md.getRa().setRaClass(raClass);
+
       // AuthenticationMechanism
       AuthenticationMechanism[] authMechanisms = c.authMechanisms();
       if (authMechanisms != null)
