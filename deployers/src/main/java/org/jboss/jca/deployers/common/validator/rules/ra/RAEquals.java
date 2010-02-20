@@ -67,8 +67,6 @@ public class RAEquals implements Rule
          boolean error = true;
          Class<?> clz = vo.getClazz();
 
-         System.out.println("Hello World");
-
          while (error && !clz.equals(Object.class))
          {
             try
