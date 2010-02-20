@@ -26,6 +26,8 @@ import org.jboss.jca.common.api.ConnectionFactoryBuilder;
 import org.jboss.jca.common.util.LocalConnectionFactoryBuilder;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
+import org.jboss.jca.core.connectionmanager.pool.PoolParams;
+import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.FailureHelper;
 import org.jboss.jca.deployers.common.validator.Key;
@@ -379,8 +381,15 @@ public final class RADeployer implements CloneableDeployer
                         beanValidationObjects.add(mcf);
                         associationObjects.add(mcf);
 
+                        // TODO: add proper configuration and use it (support TxConnectionManager as well)
+                        NoTxConnectionManager noTxCm = new NoTxConnectionManager();
+                        PoolParams poolParams = new PoolParams();
+                        OnePool onePool = new OnePool(mcf, poolParams, true);
+                        onePool.setConnectionListenerFactory(noTxCm);
+                        noTxCm.setPoolingStrategy(onePool);
+                        
                         // ConnectionFactory
-                        Object cf = mcf.createConnectionFactory(new NoTxConnectionManager());
+                        Object cf = mcf.createConnectionFactory(noTxCm);
 
                         if (trace)
                         {
