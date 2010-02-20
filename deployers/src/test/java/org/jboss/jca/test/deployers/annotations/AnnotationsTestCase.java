@@ -22,7 +22,7 @@
 
 package org.jboss.jca.test.deployers.annotations;
 
-import org.jboss.jca.deployers.fungal.Annotations;
+import org.jboss.jca.deployers.common.Annotations;
 import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.fungal.deployers.DeployException;
 

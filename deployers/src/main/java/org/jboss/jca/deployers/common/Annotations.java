@@ -20,13 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.fungal;
-
-import org.jboss.jca.fungal.deployers.DeployException;
+package org.jboss.jca.deployers.common;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -69,8 +68,11 @@ import org.jboss.metadata.rar.spec.OutboundRaMetaData;
 import org.jboss.metadata.rar.spec.ResourceAdapterMetaData;
 import org.jboss.metadata.rar.spec.SecurityPermissionMetaData;
 import org.jboss.metadata.rar.spec.TransactionSupportMetaData;
+
 import org.jboss.papaki.Annotation;
 import org.jboss.papaki.AnnotationRepository;
+import org.jboss.papaki.AnnotationScanner;
+import org.jboss.papaki.AnnotationScannerFactory;
 import org.jboss.papaki.AnnotationType;
 
 /**
@@ -90,6 +92,38 @@ public class Annotations
    }
 
    /**
+    * Scan for annotations in the URLs specified
+    * @param cmd The resource adapter metadata
+    * @param urls The URLs to be scanned
+    * @param cl The referenced classloader
+    * @return The updated metadata
+    * @exception Exception Thrown if an error occurs
+    */
+   public ConnectorMetaData scan(ConnectorMetaData cmd, URL[] urls, ClassLoader cl) throws Exception
+   {
+      // Process annotations
+      if (cmd == null || cmd.is16())
+      {
+         AnnotationScanner annotationScanner = 
+            AnnotationScannerFactory.getStrategy(AnnotationScannerFactory.JAVASSIST_INPUT_STREAM);
+         annotationScanner.configure().constructorLevel(false).parameterLevel(false);
+         AnnotationRepository annotationRepository = annotationScanner.scan(urls, cl);
+
+         boolean isMetadataComplete = false;
+         if (cmd != null && cmd instanceof JCA16Base)
+         {
+            JCA16Base jmd = (JCA16Base)cmd;
+            isMetadataComplete = jmd.isMetadataComplete();
+         }
+         
+         if (cmd == null || !isMetadataComplete)
+         {
+            cmd = process(cmd, annotationRepository);
+         }
+      }
+      return cmd;
+   }
+   /**
     * Process annotations
     * @param md The metadata
     * @param annotationRepository The annotation repository
@@ -100,7 +134,7 @@ public class Annotations
       throws Exception
    {
       if (annotationRepository == null)
-         throw new DeployException("AnnotationRepository reference is null");
+         throw new ValidateException("AnnotationRepository reference is null");
       /* Process
          -------
          javax.resource.spi.Activation 
@@ -176,7 +210,7 @@ public class Annotations
             if (md.getRa().getRaClass() == null || md.getRa().getRaClass().equals(""))
             {
                log.fatal("No @Connector was found and no definition in the ra.xml metadata either");
-               throw new DeployException("No @Connector defined");
+               throw new ValidateException("No @Connector defined");
             }
          }
          else
@@ -186,7 +220,7 @@ public class Annotations
             {
                log.fatal("More than one @Connector was found but the correct one " + 
                          "wasn't defined in the ra.xml metadata");
-               throw new DeployException("More than one @Connector defined");
+               throw new ValidateException("More than one @Connector defined");
             }
          }
       }
@@ -447,7 +481,7 @@ public class Annotations
             md = attachConnectionDefinitions(md , c, annotation.getClassName());
          }
          else
-            throw new DeployException("More than one @ConnectionDefinitions defined");
+            throw new ValidateException("More than one @ConnectionDefinitions defined");
       }
 
       return md;

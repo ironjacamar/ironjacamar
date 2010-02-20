@@ -20,9 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.fungal;
-
-import org.jboss.jca.fungal.deployers.DeployException;
+package org.jboss.jca.deployers.common;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,6 +46,7 @@ import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.metadata.rar.spec.MessageListenerMetaData;
 import org.jboss.metadata.rar.spec.OutboundRaMetaData;
 import org.jboss.metadata.rar.spec.RA10MetaData;
+
 import org.jboss.xb.binding.Unmarshaller;
 import org.jboss.xb.binding.UnmarshallerFactory;
 import org.jboss.xb.binding.resolver.MutableSchemaResolver;
@@ -301,13 +300,13 @@ public class Metadata
             || ra10.getManagedConnectionFactoryClass() == null
             || ra10.getManagedConnectionFactoryClass().equals(""))
          {
-            throw new DeployException("ManagedConnectionFactoryClass should be defined");
+            throw new ValidateException("ManagedConnectionFactoryClass should be defined");
          }
          return cmd;
       }
       //make sure all need metadata parsered and processed after annotation handle
       if (cmd.getRa() == null)
-         throw new DeployException("ResourceAdapter metadata should be defined");
+         throw new ValidateException("ResourceAdapter metadata should be defined");
       
       //make sure ra metadata contains inbound or outbound at least
       boolean inboundOrOutbound = false;
@@ -316,7 +315,7 @@ public class Metadata
       if (validateInbound(cmd.getRa().getInboundRa()) && cmd.getRa().getRaClass() != null)
          inboundOrOutbound = true;
       if (!inboundOrOutbound)
-         throw new DeployException("ResourceAdapter metadata should contains inbound or outbound at least");
+         throw new ValidateException("ResourceAdapter metadata should contains inbound or outbound at least");
       return cmd;
    }
    

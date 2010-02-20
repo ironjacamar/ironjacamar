@@ -28,6 +28,8 @@ import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.deployers.common.Annotations;
+import org.jboss.jca.deployers.common.Metadata;
 import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.FailureHelper;
 import org.jboss.jca.deployers.common.validator.Key;
@@ -76,13 +78,7 @@ import org.jboss.metadata.rar.spec.AdminObjectMetaData;
 import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
-import org.jboss.metadata.rar.spec.JCA16DTDMetaData;
-import org.jboss.metadata.rar.spec.JCA16DefaultNSMetaData;
-import org.jboss.metadata.rar.spec.JCA16MetaData;
 import org.jboss.metadata.rar.spec.MessageListenerMetaData;
-import org.jboss.papaki.AnnotationRepository;
-import org.jboss.papaki.AnnotationScanner;
-import org.jboss.papaki.AnnotationScannerFactory;
 import org.jboss.util.naming.Util;
 
 /**
@@ -275,42 +271,10 @@ public final class RADeployer implements CloneableDeployer
          Metadata metadataHandler = new Metadata();
          ConnectorMetaData cmd = metadataHandler.getStandardMetaData(root);
          JBossRAMetaData jrmd = metadataHandler.getJBossMetaData(root);
-         boolean isMetadataComplete = true;
 
-         // Process annotations
-         if (cmd == null || cmd.is16())
-         {
-            AnnotationScanner annotationScanner = 
-               AnnotationScannerFactory.getStrategy(AnnotationScannerFactory.JAVASSIST_INPUT_STREAM);
-            annotationScanner.configure().constructorLevel(false).parameterLevel(false);
-            AnnotationRepository annotationRepository = annotationScanner.scan(cl.getURLs(), cl);
-
-            isMetadataComplete = false;
-            if (cmd != null)
-            {
-               if (cmd instanceof JCA16MetaData)
-               {
-                  JCA16MetaData jmd = (JCA16MetaData)cmd;
-                  isMetadataComplete = jmd.isMetadataComplete();
-               }
-               else if (cmd instanceof JCA16DefaultNSMetaData)
-               {
-                  JCA16DefaultNSMetaData jmd = (JCA16DefaultNSMetaData)cmd;
-                  isMetadataComplete = jmd.isMetadataComplete();
-               }
-               else if (cmd instanceof JCA16DTDMetaData)
-               {
-                  JCA16DTDMetaData jmd = (JCA16DTDMetaData)cmd;
-                  isMetadataComplete = jmd.isMetadataComplete();
-               }
-            }
-            
-            if (cmd == null || !isMetadataComplete)
-            {
-               Annotations annotator = new Annotations();
-               cmd = annotator.process(cmd, annotationRepository);
-            }
-         }
+         // Annotation scanning
+         Annotations annotator = new Annotations();
+         cmd = annotator.scan(cmd, cl.getURLs(), cl);
          
          // Validate metadata
          metadataHandler.validate(cmd);
