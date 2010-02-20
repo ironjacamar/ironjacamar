@@ -23,8 +23,8 @@
 package org.jboss.jca.test.deployers.annotations;
 
 import org.jboss.jca.deployers.common.Annotations;
+import org.jboss.jca.deployers.common.ValidateException;
 import org.jboss.jca.embedded.EmbeddedJCA;
-import org.jboss.jca.fungal.deployers.DeployException;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class AnnotationsTestCase
     * Process: Null arguemnts
     * @throws Throwable throwable exception 
     */
-   @Test(expected = DeployException.class)
+   @Test(expected = ValidateException.class)
    public void testProcessNullArguments() throws Throwable
    {
       annotations.process(null, null);
@@ -88,7 +88,7 @@ public class AnnotationsTestCase
     * Process: Null arguemnt for annotation repository
     * @throws Throwable throwable exception 
     */
-   @Test(expected = DeployException.class)
+   @Test(expected = ValidateException.class)
    public void testProcessNullAnnotationRepository() throws Throwable
    {
       ConnectorMetaData cmd = new ConnectorMetaData();
