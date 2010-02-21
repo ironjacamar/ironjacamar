@@ -42,9 +42,7 @@ public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder
    private String name;
 
    /**
-    * @see ConnectionFactoryBuilder#setName
-    * @param name
-    * @return this
+    * {@inheritDoc}
     */
    public ConnectionFactoryBuilder setName(String name)
    {
@@ -53,11 +51,9 @@ public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder
    }
 
    /**
-    * @see ConnectionFactoryBuilder#getReference
-    * @return Reference
-    * @throws DeployException
+    * {@inheritDoc}
     */
-   public Reference getReference() throws DeployException
+   public Reference build() throws DeployException
    {
       String className = cf.getClass().getName();
       String name = this.name;
@@ -72,9 +68,7 @@ public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder
    }
 
    /**
-    * @see ConnectionFactoryBuilder#setManagedConnectionFactory
-    * @param mcf is the managed connection factory to be used by connection factory.
-    * @return this
+    * {@inheritDoc}
     */
    public ConnectionFactoryBuilder setManagedConnectionFactory(ManagedConnectionFactory mcf)
    {
@@ -83,8 +77,7 @@ public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder
    }
 
    /**
-    * @see ConnectionFactoryBuilder#getManagedConnectionFactory
-    * @return ManagedConnectionFactory
+    * {@inheritDoc}
     */
    public ManagedConnectionFactory getManagedConnectionFactory()
    {
@@ -92,9 +85,7 @@ public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder
    }
 
    /**
-    * @see ConnectionFactoryBuilder#setConnectionFactory
-    * @param cf is the connection factory that will be returned
-    * @return this
+    * {@inheritDoc}
     */
    public ConnectionFactoryBuilder setConnectionFactory(Object cf)
    {
@@ -103,8 +94,7 @@ public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder
    }
 
    /**
-    * @see ConnectionFactoryBuilder#getConnectionFactory
-    * @return connection factory
+    * {@inheritDoc}
     */
    public Object getConnectionFactory()
    {

@@ -37,15 +37,15 @@ public interface ConnectionFactoryBuilder
 {
 
    /**
-    * Return the CF Reference.  The ConnectionFactory can be obtained from the Reference.
-    * @return Reference
-    * @throws DeployException
+    * Returns the Reference which has the ConnectionFactory.
+    * @return Reference which represents the ConnectionFactory
+    * @throws DeployException if the ConnectionFactory has already been previously built
     */
-   Reference getReference() throws DeployException;
+   Reference build() throws DeployException;
 
    /**
-    * specify the unique name of the connection factory builder  
-    * @param name
+    * specify the unique name of the connection factory   
+    * @param name of connection factory which should be unique
     * @return this for convenience
     */
    ConnectionFactoryBuilder setName(String name);

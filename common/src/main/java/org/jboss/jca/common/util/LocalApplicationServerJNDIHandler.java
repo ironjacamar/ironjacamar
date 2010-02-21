@@ -48,13 +48,7 @@ public class LocalApplicationServerJNDIHandler implements ObjectFactory
 
    /**
     * Obtain the connection factory
-    * @see ObjectFactory#getObjectInstance(Object, javax.naming.Name, javax.naming.Context, java.util.Hashtable)
-    * @param obj Is the Reference that we bound to JNDI
-    * @param name
-    * @param nameCtx
-    * @param environment
-    * @return the connection factory
-    * @throws Exception
+    * {@inheritDoc}
     */
    public Object getObjectInstance(Object obj, Name name, Context nameCtx, Hashtable<?, ?> environment)
       throws Exception
@@ -68,15 +62,18 @@ public class LocalApplicationServerJNDIHandler implements ObjectFactory
 
    /**
     * Register a connection factory builder
-    * @param name
-    * @param className
-    * @param cfb
+    * @param name of the connection factory
+    * @param className connection factory class name
+    * @param connectionFactoryBuilder is the connection factory builder to be registered 
     * @throws DeployException if already registered and therefore deployed
     */
-   public static void register(String name, String className, ConnectionFactoryBuilder cfb) throws DeployException
+   public static void register(String name,
+                               String className,
+                               ConnectionFactoryBuilder connectionFactoryBuilder)
+      throws DeployException
    {
 
-      if (null != connectionFactories.putIfAbsent(qualifiedName(name, className), cfb))
+      if (connectionFactories.putIfAbsent(qualifiedName(name, className), connectionFactoryBuilder) != null)
       {
          throw new DeployException("Deployment " + className + " failed, " + name + " is already deployed");
       }

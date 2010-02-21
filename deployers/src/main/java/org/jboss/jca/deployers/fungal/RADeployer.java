@@ -722,7 +722,7 @@ public final class RADeployer implements CloneableDeployer
       {
 
          Referenceable referenceable = (Referenceable)cf;
-         referenceable.setReference(cfb.getReference());
+         referenceable.setReference(cfb.build());
 
          Util.bind(context, JNDI_PREFIX + name, cf);
 
