@@ -66,9 +66,10 @@ public class Main
    /**
     * validate
     * @param url The url
+    * @param output directory of output
     * @return The system exit code
     */
-   private static int validate(URL url)
+   private static int validate(URL url, String output)
    {
       if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
          return FAIL;
@@ -127,7 +128,7 @@ public class Main
          if (failures != null && failures.size() > 0)
          {
             FailureHelper fh = new FailureHelper(failures);
-            File reportDirectory = new File(".");
+            File reportDirectory = new File(output);
 
             if (reportDirectory.exists())
             {
@@ -377,6 +378,7 @@ public class Main
    public static void main(String[] args)
    {
       boolean quite = false;
+      String outputDir = "."; //put report into current directory by default
       int arg = 0;
       
       if (args.length > 0)
@@ -386,7 +388,14 @@ public class Main
             if (args[arg].startsWith("-"))
             {
                if (args[arg].endsWith("quite"))
+               {
                   quite = true;
+               }
+               else if (args[arg].endsWith("output"))
+               {
+                  arg++;
+                  outputDir = args[arg];
+               }
             }
             else
             {
@@ -398,7 +407,7 @@ public class Main
 
          try
          {
-            int systemExitCode = validate(new File(args[arg]).toURI().toURL());
+            int systemExitCode = validate(new File(args[arg]).toURI().toURL(), outputDir);
             
             if (!quite && systemExitCode == FAIL)
             {
