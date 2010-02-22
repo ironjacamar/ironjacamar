@@ -376,13 +376,31 @@ public class Main
     */
    public static void main(String[] args)
    {
-      if (args.length == 1)
+      boolean quite = false;
+      int arg = 0;
+      
+      if (args.length > 0)
       {
+         while (args.length > arg + 1)
+         {
+            if (args[arg].startsWith("-"))
+            {
+               if (args[arg].endsWith("quite"))
+                  quite = true;
+            }
+            else
+            {
+               usage();
+               System.exit(OTHER);
+            }
+            arg++;
+         }
+
          try
-         { 
-            int systemExitCode = validate(new File(args[0]).toURI().toURL());
+         {
+            int systemExitCode = validate(new File(args[arg]).toURI().toURL());
             
-            if (systemExitCode == FAIL)
+            if (!quite && systemExitCode == FAIL)
             {
                System.out.println("Validation errors");
             }
@@ -406,7 +424,7 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage: validator <file>");
+      System.out.println("Usage: validator [-quite] <file>");
    }
 
 
