@@ -69,6 +69,8 @@ import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
+import javax.resource.spi.TransactionSupport;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
 import org.jboss.logging.Logger;
 
@@ -365,6 +367,12 @@ public final class RADeployer implements CloneableDeployer
                                                                         cdMeta.getConfigProps()));
                         beanValidationObjects.add(mcf);
                         associateResourceAdapter(resourceAdapter, mcf);
+
+                        // Section 7.13 -- read from metadata -> overwrite with specified value if present
+                        TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
+
+                        if (mcf instanceof TransactionSupport)
+                           tsl = ((TransactionSupport)mcf).getTransactionSupport();
 
                         // TODO: add proper configuration and use it (support TxConnectionManager as well)
                         NoTxConnectionManager noTxCm = new NoTxConnectionManager();
