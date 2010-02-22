@@ -99,8 +99,8 @@
   <property name="version.jboss.mc.dependency" value="2.0.9.GA"/>
   <property name="version.jboss.mc.kernel" value="2.0.9.GA"/>
   <property name="version.jboss.mdr" value="2.0.2.GA"/>
-  <property name="version.jboss.metadata.common" value="2.0.0.Alpha8"/>
-  <property name="version.jboss.metadata.rar" value="2.0.0.Alpha5"/>
+  <property name="version.jboss.metadata.common" value="2.0.0.Alpha11"/>
+  <property name="version.jboss.metadata.rar" value="2.0.0.Alpha6"/>
   <property name="version.jboss.naming" value="5.0.3.GA"/>
   <property name="version.jboss.papaki" value="1.0.0.Beta2"/>
   <property name="version.jboss.reflect" value="2.0.2.GA"/>
