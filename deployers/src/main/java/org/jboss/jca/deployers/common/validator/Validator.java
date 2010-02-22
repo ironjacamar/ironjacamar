@@ -57,6 +57,7 @@ public class Validator
       "org.jboss.jca.deployers.common.validator.rules.cf.CFReferenceable",
       "org.jboss.jca.deployers.common.validator.rules.as.ASConstructor",
       "org.jboss.jca.deployers.common.validator.rules.as.ASConfigProperties",
+      "org.jboss.jca.deployers.common.validator.rules.ao.AOConstructor",
       "org.jboss.jca.deployers.common.validator.rules.ao.AOConfigProperties"
    };
    
