@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.common.validator.rules.mcf;
+package org.jboss.jca.deployers.common.validator.rules.ra;
 
 import org.jboss.jca.deployers.common.validator.Failure;
 import org.jboss.jca.deployers.common.validator.Key;
@@ -33,12 +33,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * A ManagedConnectionFactory must have a default constructor
+ * A ResourceAdapter must have a default constructor
  * 
  * @author Jeff Zhang</a>
  * @version $Revision: $
  */
-public class MCFConstructor implements Rule
+public class RAConstructor implements Rule
 {
    /** Section */
    private static final String SECTION = "19.3";
@@ -46,7 +46,7 @@ public class MCFConstructor implements Rule
    /**
     * Constructor
     */
-   public MCFConstructor()
+   public RAConstructor()
    {
    }
    
@@ -60,7 +60,7 @@ public class MCFConstructor implements Rule
    public List<Failure> validate(Validate vo, ResourceBundle rb)
    {
       if (vo != null && 
-          Key.MANAGED_CONNECTION_FACTORY == vo.getKey() &&
+          Key.RESOURCE_ADAPTER == vo.getKey() &&
           vo.getClazz() != null)
       {
          try
@@ -73,7 +73,7 @@ public class MCFConstructor implements Rule
 
             Failure failure = new Failure(Severity.ERROR,
                                           SECTION,
-                                          rb.getString("mcf.MCFConstructor"));
+                                          rb.getString("ra.RAConstructor"));
             failures.add(failure);
 
             return failures;
@@ -83,3 +83,4 @@ public class MCFConstructor implements Rule
       return null;
    }
 }
+

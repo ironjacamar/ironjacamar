@@ -48,6 +48,7 @@ public class Validator
       "org.jboss.jca.deployers.common.validator.rules.mc.MCGetMetaData",
       "org.jboss.jca.deployers.common.validator.rules.ra.RANull",
       "org.jboss.jca.deployers.common.validator.rules.ra.RA",
+      "org.jboss.jca.deployers.common.validator.rules.ra.RAConstructor",
       "org.jboss.jca.deployers.common.validator.rules.ra.RAHashCode",
       "org.jboss.jca.deployers.common.validator.rules.ra.RAEquals",
       "org.jboss.jca.deployers.common.validator.rules.ra.RAConfigProperties",
