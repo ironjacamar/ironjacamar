@@ -30,7 +30,7 @@ config/logging.properties
       <para>The configuration is done in the</para>
 
       <programlisting>
-config/jbossts-properties.xml
+config/transaction.xml
       </programlisting>
 
       <para>file.</para>
@@ -79,14 +79,6 @@ config/bootstrap/jca.xml
             </thead>
             <tbody>
               <row>
-                <entry><code>BeanValidation</code></entry>
-                <entry><code>boolean</code></entry>
-                <entry>
-                  Toggle bean validation (JSR-303) for the deployment units.
-                  <para>Default: <code>true</code></para>
-                </entry>
-              </row>
-              <row>
                 <entry><code>ArchiveValidation</code></entry>
                 <entry><code>boolean</code></entry>
                 <entry>
@@ -108,6 +100,28 @@ config/bootstrap/jca.xml
                 <entry>
                   Should an archive validation error report fail the deployment.
                   <para>Default: <code>true</code></para>
+                </entry>
+              </row>
+              <row>
+                <entry><code>BeanValidation</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Toggle bean validation (JSR-303) for the deployment units.
+                  <para>Default: <code>true</code></para>
+                </entry>
+              </row>
+              <row>
+                <entry><code>DefaultBootstrapContext</code></entry>
+                <entry><code>org.jboss.jca.core.api.CloneableBootstrapContext</code></entry>
+                <entry>
+                  Specifies the default bootstrap context for resource adapters
+                </entry>
+              </row>
+              <row>
+                <entry><code>PrintStream</code></entry>
+                <entry><code>java.io.PrintStream</code></entry>
+                <entry>
+                  Specifies which print stream that should be used to handle the <code>LogWriter</code>s
                 </entry>
               </row>
             </tbody>

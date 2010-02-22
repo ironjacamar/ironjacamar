@@ -8,6 +8,7 @@
         <!ENTITY configuration SYSTEM "modules/configuration.xml">
         <!ENTITY deployment SYSTEM "modules/deployment.xml">
         <!ENTITY running SYSTEM "modules/running.xml">
+        <!ENTITY validator SYSTEM "modules/validator.xml">
         <!ENTITY embedded SYSTEM "modules/embedded.xml">
         <!ENTITY community SYSTEM "modules/community.xml">
         <!ENTITY troubleshooting SYSTEM "modules/troubleshooting.xml">
@@ -35,6 +36,8 @@
    &deployment;
 
    &running;
+
+   &validator;
 
    &embedded;
 
