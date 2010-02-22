@@ -77,4 +77,12 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager
     * @param v The value
     */
    public void setSpecCompliant(boolean v);
+
+   /**
+    * Clone the WorkManager implementation
+    * @return A copy of the implementation
+    * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
+    *  
+    */
+   public WorkManager clone() throws CloneNotSupportedException;
 }

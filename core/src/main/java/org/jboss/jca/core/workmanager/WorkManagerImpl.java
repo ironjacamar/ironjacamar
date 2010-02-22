@@ -182,6 +182,23 @@ public class WorkManagerImpl implements WorkManager
    }
 
    /**
+    * Clone the WorkManager implementation
+    * @return A copy of the implementation
+    * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
+    *  
+    */
+   public WorkManager clone() throws CloneNotSupportedException
+   {
+      WorkManager wm = new WorkManagerImpl();
+      wm.setShortRunningThreadPool(getShortRunningThreadPool());
+      wm.setLongRunningThreadPool(getLongRunningThreadPool());
+      wm.setXATerminator(getXATerminator());
+      wm.setSpecCompliant(isSpecCompliant());
+      
+      return wm;
+   }
+
+   /**
     * {@inheritDoc}
     */
    public void doWork(Work work) throws WorkException

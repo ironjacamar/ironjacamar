@@ -59,6 +59,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.naming.Context;
@@ -111,6 +112,9 @@ public final class RADeployer implements CloneableDeployer
 
    /** Default bootstrap context */
    private static CloneableBootstrapContext defaultBootstrapContext = null;
+
+   /** Bootstrap contexts */
+   private static Map<String, CloneableBootstrapContext> bootstrapContexts = null;
 
    /**
     * Constructor
@@ -225,6 +229,24 @@ public final class RADeployer implements CloneableDeployer
    public synchronized CloneableBootstrapContext getDefaultBootstrapContext()
    {
       return defaultBootstrapContext;
+   }
+   
+   /**
+    * Set the bootstrap context map
+    * @param value The value
+    */
+   public synchronized void setBootstrapContexts(Map<String, CloneableBootstrapContext> value)
+   {
+      bootstrapContexts = value;
+   }
+   
+   /**
+    * Get the bootstrap context map
+    * @return The handle
+    */
+   public synchronized Map<String, CloneableBootstrapContext> getBootstrapContexts()
+   {
+      return bootstrapContexts;
    }
    
    /**
@@ -556,7 +578,17 @@ public final class RADeployer implements CloneableDeployer
          
          // Activate deployment
          if (resourceAdapter != null)
-            startContext(resourceAdapter);
+         {
+            String bootstrapIdentifier = null;
+
+            if (jrmd != null && jrmd instanceof JBossRA20Base)
+            {
+               JBossRA20Base jrmd20 = (JBossRA20Base)jrmd;
+               bootstrapIdentifier = jrmd20.getBootstrapContext();
+            }
+
+            startContext(resourceAdapter, bootstrapIdentifier);
+         }
 
          log.info("Deployed: " + url.toExternalForm());
 
@@ -585,17 +617,29 @@ public final class RADeployer implements CloneableDeployer
    /**
     * Start the resource adapter
     * @param resourceAdapter The resource adapter
+    * @param bootstrapIdentifier The bootstrap context identifier; may be <code>null</code> 
     * @throws DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked") 
-   private void startContext(ResourceAdapter resourceAdapter) throws DeployException
+   private void startContext(ResourceAdapter resourceAdapter, String bootstrapIdentifier) throws DeployException
    {
       try 
       {
          Class clz = resourceAdapter.getClass();
          Method start = clz.getMethod("start", new Class[] {BootstrapContext.class});
 
-         CloneableBootstrapContext cbc = defaultBootstrapContext.clone();
+         CloneableBootstrapContext cbc = null;
+
+         if (bootstrapIdentifier != null && bootstrapContexts != null)
+         {
+            CloneableBootstrapContext bc = bootstrapContexts.get(bootstrapIdentifier);
+            
+            if (bc != null)
+               cbc = bc.clone();
+         }
+
+         if (cbc == null)
+            cbc = defaultBootstrapContext.clone();
 
          start.invoke(resourceAdapter, new Object[] {cbc});
       }
@@ -729,10 +773,21 @@ public final class RADeployer implements CloneableDeployer
       }
       finally
       {
-         context.close();     // release connection
+         context.close();
       }
    }
 
+   /**
+    * Start
+    */
+   public void start()
+   {
+      if (defaultBootstrapContext == null)
+         throw new IllegalStateException("DefaultBootstrapContext not defined");
+
+      if (printStream == null)
+         throw new IllegalStateException("PrintStream not defined");
+   }
 
    /**
     * Clone

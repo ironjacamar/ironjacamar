@@ -23,6 +23,7 @@
 package org.jboss.jca.core.bootstrapcontext;
 
 import org.jboss.jca.core.api.CloneableBootstrapContext;
+import org.jboss.jca.core.api.WorkManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,7 +34,6 @@ import javax.resource.spi.work.HintsContext;
 import javax.resource.spi.work.SecurityContext;
 import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
 /**
@@ -152,7 +152,7 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
    {
       BaseCloneableBootstrapContext bcbc = new BaseCloneableBootstrapContext();
       bcbc.setTransactionSynchronizationRegistry(getTransactionSynchronizationRegistry());
-      bcbc.setWorkManager(getWorkManager());
+      bcbc.setWorkManager(getWorkManager().clone());
       bcbc.setXATerminator(getXATerminator());
 
       return bcbc;

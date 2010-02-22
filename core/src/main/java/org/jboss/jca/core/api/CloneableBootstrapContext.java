@@ -24,7 +24,6 @@ package org.jboss.jca.core.api;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.XATerminator;
-import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
 /**
