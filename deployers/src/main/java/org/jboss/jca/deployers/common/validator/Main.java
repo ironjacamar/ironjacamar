@@ -394,6 +394,11 @@ public class Main
                else if (args[arg].endsWith("output"))
                {
                   arg++;
+                  if (arg + 1 >= args.length)
+                  {
+                     usage();
+                     System.exit(OTHER);
+                  }
                   outputDir = args[arg];
                }
             }
@@ -433,7 +438,7 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage: validator [-quite] <file>");
+      System.out.println("Usage: validator [-quite] [-output directory] <file>");
    }
 
 
