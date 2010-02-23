@@ -32,6 +32,7 @@ import java.util.List;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 import org.jboss.util.naming.Util;
@@ -44,8 +45,11 @@ public class RADeployment implements Deployment
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
 
-   /** The resource adapter file */
-   private URL adapter;
+   /** The deployment */
+   private URL deployment;
+
+   /** The resource adapter instance */
+   private ResourceAdapter ra;
 
    /** JNDI names for connection factories */
    private List<String> jndiNames;
@@ -55,13 +59,15 @@ public class RADeployment implements Deployment
 
    /**
     * Constructor
-    * @param adapter The adapter
+    * @param deployment The deployment
+    * @param ra The resource adapter instance if present
     * @param jndiNames The JNDI names for connection factories
     * @param cl The classloader for the deployment
     */
-   public RADeployment(URL adapter, List<String> jndiNames, ClassLoader cl)
+   public RADeployment(URL deployment, ResourceAdapter ra, List<String> jndiNames, ClassLoader cl)
    {
-      this.adapter = adapter;
+      this.deployment = deployment;
+      this.ra = ra;
       this.jndiNames = jndiNames;
       this.cl = cl;
    }
@@ -72,7 +78,7 @@ public class RADeployment implements Deployment
     */
    public URL getURL()
    {
-      return adapter;
+      return deployment;
    }
 
    /**
@@ -85,11 +91,11 @@ public class RADeployment implements Deployment
    }
 
    /**
-    * Destroy
+    * Stop
     */
-   public void destroy()
+   public void stop()
    {
-      log.debug("Undeploying: " + adapter.toExternalForm());
+      log.debug("Undeploying: " + deployment.toExternalForm());
 
       if (jndiNames != null)
       {
@@ -130,7 +136,18 @@ public class RADeployment implements Deployment
          }
       }
 
+      if (ra != null)
+      {
+         ra.stop();
+         ra = null;
+      }
+   }
 
+   /**
+    * Destroy
+    */
+   public void destroy()
+   {
       if (cl != null && cl instanceof Closeable)
       {
          try
@@ -143,6 +160,6 @@ public class RADeployment implements Deployment
          }
       }
 
-      log.info("Undeployed: " + adapter.toExternalForm());
+      log.info("Undeployed: " + deployment.toExternalForm());
    }
 }

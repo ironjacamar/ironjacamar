@@ -600,7 +600,7 @@ public final class RADeployer implements CloneableDeployer
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new RADeployment(url, jndiNames, cl);
+         return new RADeployment(url, resourceAdapter, jndiNames, cl);
       }
       catch (DeployException de)
       {
