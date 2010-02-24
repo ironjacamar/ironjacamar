@@ -130,42 +130,45 @@ public class Main
             FailureHelper fh = new FailureHelper(failures);
             File reportDirectory = new File(output);
 
-            if (reportDirectory.exists())
+            if (!reportDirectory.mkdirs())
             {
-               String reportName = url.getFile();
-               int lastIndex = reportName.lastIndexOf(File.separator);
-               if (lastIndex != -1)
-                  reportName = reportName.substring(lastIndex + 1);
-               reportName += ".log";
+               throw new IOException(output + " can't be created");
+            }
 
-               File report = new File(reportDirectory, reportName);
-               FileWriter fw = null;
-               try
+            String reportName = url.getFile();
+            int lastIndex = reportName.lastIndexOf(File.separator);
+            if (lastIndex != -1)
+               reportName = reportName.substring(lastIndex + 1);
+            reportName += ".log";
+
+            File report = new File(reportDirectory, reportName);
+            FileWriter fw = null;
+            try
+            {
+               fw = new FileWriter(report);
+               BufferedWriter bw = new BufferedWriter(fw, 8192);
+               bw.write(fh.asText(validator.getResourceBundle()));
+               bw.flush();
+            }
+            catch (IOException ioe)
+            {
+               ioe.printStackTrace();
+            }
+            finally
+            {
+               if (fw != null)
                {
-                  fw = new FileWriter(report);
-                  BufferedWriter bw = new BufferedWriter(fw, 8192);
-                  bw.write(fh.asText(validator.getResourceBundle()));
-                  bw.flush();
-               }
-               catch (IOException ioe)
-               {
-                  ioe.printStackTrace();
-               }
-               finally
-               {
-                  if (fw != null)
+                  try
                   {
-                     try
-                     {
-                        fw.close();
-                     }
-                     catch (IOException ignore)
-                     {
-                        // Ignore
-                     }
+                     fw.close();
+                  }
+                  catch (IOException ignore)
+                  {
+                     // Ignore
                   }
                }
             }
+
             exitCode = FAIL;
          }
          exitCode = SUCCESS;
