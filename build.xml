@@ -105,7 +105,7 @@
   <property name="version.jboss.papaki" value="1.0.0.Beta2"/>
   <property name="version.jboss.reflect" value="2.0.2.GA"/>
   <property name="version.jboss.security" value="2.1.0.20090318"/>
-  <property name="version.jboss.shrinkwrap" value="1.0.0-alpha-4"/>
+  <property name="version.jboss.shrinkwrap" value="1.0.0-alpha-6"/>
   <property name="version.jboss.slf4j" value="1.0.2.GA"/>
   <property name="version.jboss.slf4j.logmanager" value="1.0.0.CR2"/>
   <property name="version.jboss.stdio" value="1.0.0.CR3"/>
