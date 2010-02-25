@@ -22,20 +22,14 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.common.Annotations;
+import org.jboss.jca.common.Metadata;
 import org.jboss.jca.common.api.ConnectionFactoryBuilder;
 import org.jboss.jca.common.util.LocalConnectionFactoryBuilder;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
-import org.jboss.jca.deployers.common.Annotations;
-import org.jboss.jca.deployers.common.Metadata;
-import org.jboss.jca.deployers.common.validator.Failure;
-import org.jboss.jca.deployers.common.validator.FailureHelper;
-import org.jboss.jca.deployers.common.validator.Key;
-import org.jboss.jca.deployers.common.validator.Severity;
-import org.jboss.jca.deployers.common.validator.ValidateObject;
-import org.jboss.jca.deployers.common.validator.Validator;
 import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.DeployException;
 import org.jboss.jca.fungal.deployers.Deployer;
@@ -43,6 +37,12 @@ import org.jboss.jca.fungal.deployers.Deployment;
 import org.jboss.jca.fungal.util.FileUtil;
 import org.jboss.jca.fungal.util.Injection;
 import org.jboss.jca.fungal.util.JarFilter;
+import org.jboss.jca.validator.Failure;
+import org.jboss.jca.validator.FailureHelper;
+import org.jboss.jca.validator.Key;
+import org.jboss.jca.validator.Severity;
+import org.jboss.jca.validator.ValidateObject;
+import org.jboss.jca.validator.Validator;
 
 import java.io.BufferedWriter;
 import java.io.File;

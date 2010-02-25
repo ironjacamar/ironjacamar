@@ -101,22 +101,6 @@
          manifest="src/main/resources/fungal-ra-manifest.mf"
          basedir="${build.deployers.dir}/jars/fungal"/>
 
-    <!-- Validator -->
-    <mkdir dir="${build.deployers.dir}/jars/validator" />
-
-    <copy todir="${build.deployers.dir}/jars/validator">
-      <fileset dir="${build.deployers.dir}/impl"
-               includes="**/common/**"/>
-    </copy>
-
-    <copy todir="${build.deployers.dir}/jars/validator">
-      <fileset dir="src/main/resources/"
-               includes="**/*.properties"/>
-    </copy>
-
-    <jar destfile="${target.dir}/jboss-jca-validator.jar"
-         manifest="src/main/resources/validator-manifest.mf"
-         basedir="${build.deployers.dir}/jars/validator"/>
   </target>
 
 

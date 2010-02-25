@@ -218,6 +218,7 @@
     <ant dir="api" inheritRefs="true" target="jars"/>
     <ant dir="common" inheritRefs="true" target="jars"/>
     <ant dir="core" inheritRefs="true" target="jars"/>
+    <ant dir="validator" inheritRefs="true" target="jars"/>
     <ant dir="deployers" inheritRefs="true" target="jars"/>
     <ant dir="embedded" inheritRefs="true" target="jars"/>
     <ant dir="web" inheritRefs="true" target="jars"/>
@@ -233,6 +234,7 @@
     <ant dir="api" inheritRefs="true" target="docs"/>
     <ant dir="common" inheritRefs="true" target="docs"/>
     <ant dir="core" inheritRefs="true" target="docs"/>
+    <ant dir="validator" inheritRefs="true" target="docs"/>
     <ant dir="deployers" inheritRefs="true" target="docs"/>
     <ant dir="embedded" inheritRefs="true" target="docs"/>
     <ant dir="web" inheritRefs="true" target="docs"/>
