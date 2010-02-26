@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
-	<classpathentry kind="src" output="eclipse-target/tests-classes" path="src/test/java"/>
-	<classpathentry excluding="**/*.java" kind="src" output="eclipse-target/tests-classes" path="src/test/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/metadata-rar"/>
+	<classpathentry kind="src" path="src/main/resources"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </classpath>

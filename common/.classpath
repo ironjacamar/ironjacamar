@@ -5,7 +5,14 @@
 	<classpathentry kind="src" output="eclipse-target/tests-classes" path="src/test/java"/>
 	<classpathentry excluding="**/*.java" kind="src" output="eclipse-target/tests-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/papaki-core.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-metadata-common.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-metadata-rar.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-logging-spi.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jbossxb.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-mdr.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-fungal"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-common-core.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

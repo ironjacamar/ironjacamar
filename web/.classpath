@@ -8,5 +8,11 @@
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-fungal"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-logging-spi.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jetty.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jetty-util.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-common-core.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/standalone/servlet-api-2.5.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
