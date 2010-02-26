@@ -46,6 +46,8 @@ public class LocalConnectionFactoryBuilder implements ConnectionFactoryBuilder
     */
    public ConnectionFactoryBuilder setName(String name)
    {
+      if (name == null || name.trim().equals(""))
+         throw new IllegalArgumentException("Name is null");
       this.name = name;
       return this;
    }
