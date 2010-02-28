@@ -81,7 +81,10 @@ public class EmbeddedJCA
    public void startup() throws Throwable
    {
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
+      kernelConfiguration = kernelConfiguration.name("jboss.jca");
+      kernelConfiguration = kernelConfiguration.parallelDeploy(false);
       kernelConfiguration = kernelConfiguration.remoteAccess(false);
+      kernelConfiguration = kernelConfiguration.hotDeployment(false);
 
       kernel = KernelFactory.create(kernelConfiguration);
       kernel.startup();

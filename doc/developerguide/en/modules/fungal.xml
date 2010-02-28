@@ -30,6 +30,9 @@
           Deployer framework
         </listitem>
         <listitem>
+          Hot deployment
+        </listitem>
+        <listitem>
           Communication protocol
         </listitem>
         <listitem>
@@ -44,22 +47,69 @@
     <section id="fungal_configuration">
       <title>Configuration</title>
 
+      <para>The kernel is configured through the</para>
+      <programlisting>
+org.jboss.jca.fungal.api.KernelConfiguration
+      </programlisting>
+
+      <para>class, which allows the developer to configure the kernel
+        in the most optimal way for the container configuration.</para>
+
+      <para>It is a best practice to give the configuration a name using the
+        <code>name</code> method, otherwise the kernel will use the default
+        name of <code>fungal</code>.</para>
+
+      <para>Based on the kernel configuration a number of system properties are
+        set</para>
+
+      <table frame="all">
+        <title>Kernel system properties</title>
+        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+          <colspec colname="c1"/>
+          <colspec colname="c2" colwidth="3*"/>
+          <thead>
+            <row>
+              <entry align="left">Name</entry>
+              <entry align="left">Description</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>&lt;name&gt;.home</entry>
+              <entry>The root of the container configuration</entry>
+            </row>
+            <row>
+              <entry>&lt;name&gt;.bindaddress</entry>
+              <entry>The network bind address of the container configuration</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>Furthermore, the kernel makes use the Java system property <code>java.io.tmpdir</code>
+        for temporary files if needed.</para>
+
+    </section>
+
+    <section id="fungal_booting">
+      <title>Booting the kernel</title>
+
       <para>The kernel is booted using a</para>
       <programlisting>
-$JBOSS_JCA_HOME/config/bootstrap.xml
+${&lt;name&gt;.home}/config/bootstrap.xml
       </programlisting>
 
       <para>file, where references to URLs for bean deployments.</para>
 
       <para>The layout of bootstrap.xml is defined in</para>
       <programlisting>
-$JBOSS_JCA_HOME/config/bootstrap.xsd
+${&lt;name&gt;.home}/config/bootstrap.xsd
       </programlisting>
 
       <para>The</para>
 
       <programlisting>
-$JBOSS_JCA_HOME/config/deployment.xsd
+${&lt;name&gt;.home}/config/deployment.xsd
       </programlisting>
 
       <para>file defines how bean deployments are constructed.</para>
@@ -135,12 +185,12 @@ $JBOSS_JCA_HOME/config/deployment.xsd
         </listitem>
       </itemizedlist>
 
-      <para>In order to define locations relative to the install root of the JBoss JCA
-        container the variable</para>
+      <para>In order to define locations relative to the install root of the Fungal
+        container configuration the variable</para>
       <programlisting>
-${jboss.jca.home}
+${&lt;name&gt;.home}
       </programlisting>
-      <para>can be used.</para>
+      <para>can be used. An example would be <code>${jboss.jca.home}</code>.</para>
 
       <para>There is support for accessing system properties using the "${property}" mechanism
         with an optional default value</para>
@@ -272,8 +322,13 @@ ${jboss.jca.host:localhost}
       <para>Furthermore the dependencies between beans are recorded in order to be able to safely shutdown
         deployments.</para>
 
-      <para>Note, that all deployment units in the <code>deploy</code> directory are booted in sequence
-        defined by the <code>File.listFiles()</code> method.</para>
+      <para>The Fungal kernel can deploy the archives in the <code>deploy</code> directory in parallel if specified
+        by the <code>KernelConfiguration.parallelDeploy()</code> method. Otherwise are all the deployment units
+        booted in sequence as defined by the <code>File.listFiles()</code> method.</para>
+
+      <para>The Fungal kernel features a hot deployer, which scans the deployment directory at the specified
+        intervals for new, changed or removed deployment units. The properties of the hot deployer can
+        be controlled through the <code>KernelConfiguration</code> object or through JMX.</para>
 
     </section>
 
@@ -536,7 +591,9 @@ import org.jboss.jca.fungal.api.MainDeployer;
 
 // Create a kernel configuration and start the kernel
 KernelConfiguration kernelConfiguration = new KernelConfiguration();
+kernelConfiguration = kernelConfiguration.name("jboss.jca");
 kernelConfiguration = kernelConfiguration.remoteAccess(false);
+kernelConfiguration = kernelConfiguration.hotDeployment(false);
 
 Kernel kernel = KernelFactory.create(kernelConfiguration);
 kernel.startup();

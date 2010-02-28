@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2009-2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -30,8 +30,23 @@ import java.net.URL;
  */
 public class KernelConfiguration
 {
+   /** Name */
+   private String name;
+
    /** Home */
    private URL home;
+
+   /** Library */
+   private String library;
+
+   /** Configuration */
+   private String configuration;
+
+   /** Deploy */
+   private String deploy;
+
+   /** Do parallel deployment in deploy */
+   private boolean parallelDeploy;
 
    /** Bind address */
    private String bindAddress;
@@ -45,20 +60,54 @@ public class KernelConfiguration
    /** Remote port */
    private int remotePort;
 
+   /** Hot deployment */
+   private boolean hotDeployment;
+
+   /** Hot deployment internal in seconds */
+   private int hotDeploymentInterval;
+
    /**
     * Constructor
     */
    public KernelConfiguration()
    {
+      name = "fungal";
       home = null;
+      library = "lib";
+      configuration = "config";
+      deploy = "deploy";
+      parallelDeploy = true;
       bindAddress = null;
       threadGroup = null;
       remoteAccess = true;
       remotePort = 1202;
+      hotDeployment = true;
+      hotDeploymentInterval = 5;
    }
 
    /**
-    * Set the home
+    * Set the name; default <code>fungal</code>
+    * @param n The name
+    * @return The configuration
+    */
+   public KernelConfiguration name(String n)
+   {
+      this.name = n;
+
+      return this;
+   }
+
+   /**
+    * Get the name
+    * @return The name
+    */
+   public String getName()
+   {
+      return name;
+   }
+
+   /**
+    * Set the home; default <code>null</code>
     * @param h The home
     * @return The configuration
     */
@@ -79,7 +128,93 @@ public class KernelConfiguration
    }
 
    /**
-    * Set the bind address
+    * Set the library directory; default <code>lib</code>
+    * @param value The value
+    * @return The configuration
+    */
+   public KernelConfiguration library(String value)
+   {
+      this.library = value;
+
+      return this;
+   }
+
+   /**
+    * Get the library directory
+    * @return The value
+    */
+   public String getLibrary()
+   {
+      return library;
+   }
+
+   /**
+    * Set the configuration directory; default <code>config</code>
+    * @param value The value
+    * @return The configuration
+    */
+   public KernelConfiguration configuration(String value)
+   {
+      this.configuration = value;
+
+      return this;
+   }
+
+   /**
+    * Get the configuration directory
+    * @return The value
+    */
+   public String getConfiguration()
+   {
+      return configuration;
+   }
+
+   /**
+    * Set the deploy directory; default <code>deploy</code>
+    * @param value The value
+    * @return The configuration
+    */
+   public KernelConfiguration deploy(String value)
+   {
+      this.deploy = value;
+
+      return this;
+   }
+
+   /**
+    * Get the deploy directory
+    * @return The value
+    */
+   public String getDeploy()
+   {
+      return deploy;
+   }
+
+   /**
+    * Set if the files in the deploy directory should deployed
+    * in parallel; default <code>true</code>
+    * @param value The value
+    * @return The configuration
+    */
+   public KernelConfiguration parallelDeploy(boolean value)
+   {
+      this.parallelDeploy = value;
+
+      return this;
+   }
+
+   /**
+    * Get if the files in the deploy directpry should be deployed
+    * in parallel
+    * @return The value
+    */
+   public boolean isParallelDeploy()
+   {
+      return parallelDeploy;
+   }
+
+   /**
+    * Set the bind address; default <code>null</code>
     * @param ba The value
     * @return The configuration
     */
@@ -100,7 +235,7 @@ public class KernelConfiguration
    }
 
    /**
-    * Set the thread group
+    * Set the thread group; default <code>null</code>
     * @param tg The value
     * @return The configuration
     */
@@ -121,7 +256,7 @@ public class KernelConfiguration
    }
 
    /**
-    * Set the remote access
+    * Set the remote access; default <code>true</code>
     * @param v The value
     * @return The configuration
     */
@@ -142,7 +277,7 @@ public class KernelConfiguration
    }
 
    /**
-    * Set the port for remote access
+    * Set the port for remote access; default <code>1202</code>
     * @param v The value
     * @return The configuration
     */
@@ -160,5 +295,47 @@ public class KernelConfiguration
    public int getRemotePort()
    {
       return remotePort;
+   }
+
+   /**
+    * Set the hot deployment; default <code>true</code>
+    * @param v The value
+    * @return The configuration
+    */
+   public KernelConfiguration hotDeployment(boolean v)
+   {
+      this.hotDeployment = v;
+
+      return this;
+   }
+
+   /**
+    * Is hot deployment enabled ?
+    * @return The value
+    */
+   public boolean isHotDeployment()
+   {
+      return hotDeployment;
+   }
+
+   /**
+    * Set the interval in seconds for hot deployment; default <code>5</code>
+    * @param v The value
+    * @return The configuration
+    */
+   public KernelConfiguration hotDeploymentInterval(int v)
+   {
+      this.hotDeploymentInterval = v;
+
+      return this;
+   }
+
+   /**
+    * Get the hot deployment interval in seconds
+    * @return The value
+    */
+   public int getHotDeploymentInterval()
+   {
+      return hotDeploymentInterval;
    }
 }

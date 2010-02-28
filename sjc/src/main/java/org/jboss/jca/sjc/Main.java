@@ -61,6 +61,8 @@ public class Main
       try
       {
          KernelConfiguration kernelConfiguration = new KernelConfiguration();
+         kernelConfiguration = kernelConfiguration.name("jboss.jca");
+         kernelConfiguration = kernelConfiguration.parallelDeploy(false);
 
          String home = SecurityActions.getSystemProperty("jboss.jca.home");
          if (home != null)

@@ -23,6 +23,7 @@
 package org.jboss.jca.fungal.impl.remote;
 
 import org.jboss.jca.fungal.api.MainDeployer;
+import org.jboss.jca.fungal.impl.HotDeployer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -45,6 +46,9 @@ public class Communication implements Runnable
    /** The main deployer */
    private MainDeployer mainDeployer;
 
+   /** The hot deployer */
+   private HotDeployer hotDeployer;
+
    /** Logging */
    private static Object logging;
 
@@ -52,11 +56,13 @@ public class Communication implements Runnable
     * Constructor
     * @param socket The socket
     * @param mainDeployer The main deployer
+    * @param hotDeployer The hot deployer
     */
-   public Communication(Socket socket, MainDeployer mainDeployer)
+   public Communication(Socket socket, MainDeployer mainDeployer, HotDeployer hotDeployer)
    {
       this.socket = socket;
       this.mainDeployer = mainDeployer;
+      this.hotDeployer = hotDeployer;
 
       if (logging == null)
          initLogging(SecurityActions.getThreadContextClassLoader());
@@ -76,11 +82,19 @@ public class Communication implements Runnable
          if (command == 0)
          {
             URL url = new URL(ois.readUTF());
+
+            if (hotDeployer != null)
+               hotDeployer.register(url);
+
             mainDeployer.deploy(url);
          }
          else if (command == 1)
          {
             URL url = new URL(ois.readUTF());
+
+            if (hotDeployer != null)
+               hotDeployer.unregister(url);
+
             mainDeployer.undeploy(url);
          }
          else

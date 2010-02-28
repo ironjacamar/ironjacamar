@@ -65,7 +65,7 @@ import javax.management.ObjectName;
 public class KernelImpl implements Kernel
 {
    /** Version information */
-   private static final String VERSION = "Fungal 0.5.1";
+   private static final String VERSION = "Fungal 0.6";
 
    /** Kernel configuration */
    private KernelConfiguration kernelConfiguration;
@@ -115,6 +115,9 @@ public class KernelImpl implements Kernel
    /** Callback beans */
    private ConcurrentMap<Object, List<Callback>> callbackBeans = new ConcurrentHashMap<Object, List<Callback>>();
 
+   /** Hot deployer */
+   private HotDeployer hotDeployer;
+
    /** Logging */
    private Object logging;
 
@@ -127,6 +130,7 @@ public class KernelImpl implements Kernel
       this.kernelConfiguration = kc;
       this.beanDeployments = new AtomicInteger(0);
       this.temporaryEnvironment = false;
+      this.hotDeployer = null;
    }
 
    /**
@@ -164,12 +168,12 @@ public class KernelImpl implements Kernel
       if (kernelConfiguration.getHome() != null)
       {
          root = new File(kernelConfiguration.getHome().toURI());
-         SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
+         SecurityActions.setSystemProperty(kernelConfiguration.getName() + ".home", root.getAbsolutePath());
       }
       else
       {
          File tmp = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
-         root = new File(tmp, "jboss-jca");
+         root = new File(tmp, kernelConfiguration.getName());
 
          if (root.exists())
          {
@@ -179,7 +183,7 @@ public class KernelImpl implements Kernel
          if (!root.mkdirs())
             throw new IOException("Could not create directory " + root.getAbsolutePath());
 
-         SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
+         SecurityActions.setSystemProperty(kernelConfiguration.getName() + ".home", root.getAbsolutePath());
          
          temporaryEnvironment = true;
       }
@@ -190,9 +194,9 @@ public class KernelImpl implements Kernel
 
       if (root != null && root.exists())
       {
-         libDirectory = new File(root, File.separator + "lib" + File.separator);
-         configDirectory = new File(root, File.separator + "config" + File.separator);
-         deployDirectory = new File(root, File.separator + "deploy" + File.separator);
+         libDirectory = new File(root, File.separator + kernelConfiguration.getLibrary() + File.separator);
+         configDirectory = new File(root, File.separator + kernelConfiguration.getConfiguration() + File.separator);
+         deployDirectory = new File(root, File.separator + kernelConfiguration.getDeploy() + File.separator);
       }
 
       oldClassLoader = SecurityActions.getThreadContextClassLoader();
@@ -211,17 +215,20 @@ public class KernelImpl implements Kernel
                                         "com.sun.xml.internal.stream.XMLInputFactoryImpl");
 
       if (kernelConfiguration.getBindAddress() != null)
-         SecurityActions.setSystemProperty("jboss.jca.bindaddress", kernelConfiguration.getBindAddress().trim());
+      {
+         SecurityActions.setSystemProperty(kernelConfiguration.getName() + ".bindaddress", 
+                                           kernelConfiguration.getBindAddress().trim());
+      }
 
       // Init logging
       initLogging(kernelClassLoader);
 
       // Create MBeanServer
-      mbeanServer = MBeanServerFactory.createMBeanServer("jboss.jca");
+      mbeanServer = MBeanServerFactory.createMBeanServer(kernelConfiguration.getName());
 
       // Main deployer
       mainDeployer = new MainDeployerImpl(this);
-      ObjectName mainDeployerObjectName = new ObjectName("jboss.jca:name=MainDeployer");
+      ObjectName mainDeployerObjectName = new ObjectName(kernelConfiguration.getName() + ":name=MainDeployer");
       mbeanServer.registerMBean(mainDeployer, mainDeployerObjectName);
 
       // Add the deployment deployer
@@ -268,28 +275,58 @@ public class KernelImpl implements Kernel
       // Deploy all files in deploy/
       if (deployDirectory != null && deployDirectory.exists() && deployDirectory.isDirectory())
       {
+         // Hot deployer
+         if (kernelConfiguration.isHotDeployment())
+         {
+            hotDeployer = new HotDeployer(kernelConfiguration.getHotDeploymentInterval(),
+                                          deployDirectory,
+                                          this);
+
+            ObjectName hotDeployerObjectName = new ObjectName(kernelConfiguration.getName() + ":name=HotDeployer");
+            mbeanServer.registerMBean(hotDeployer, hotDeployerObjectName);
+         }
+
          File[] files = deployDirectory.listFiles();
 
          if (files != null)
          {
+            List<URL> l = new ArrayList<URL>(files.length);
             int counter = 0;
+
             for (File f : files)
             {
-               if (f.toURI().toURL().toString().endsWith(".xml"))
+               URL u = f.toURI().toURL();
+               
+               l.add(u);
+
+               if (u.toString().endsWith(".xml"))
                   counter++;
+
+               if (hotDeployer != null)
+                  hotDeployer.register(u);
             }
 
             beanDeployments = new AtomicInteger(counter);
 
-            for (File f : files)
+            if (kernelConfiguration.isParallelDeploy())
             {
-               deployUrls(new URL[] {f.toURI().toURL()});
-            }                     
+               deployUrls(l.toArray(new URL[l.size()]));
+            }
+            else
+            {
+               for (URL u : l)
+               {
+                  deployUrls(new URL[] {u});
+               }
+            }
 
             if (counter > 0)
                incallback();
          }
       }
+
+      if (hotDeployer != null)
+         hotDeployer.start();
 
       // Remote MBeanServer access
       if (kernelConfiguration.isRemoteAccess())
@@ -362,6 +399,12 @@ public class KernelImpl implements Kernel
    {
       SecurityActions.setThreadContextClassLoader(kernelClassLoader);
 
+      // Stop hot deployer
+      if (hotDeployer != null)
+      {
+         hotDeployer.stop();
+      }
+
       // Stop the remote connector
       if (remote != null)
       {
@@ -379,6 +422,9 @@ public class KernelImpl implements Kernel
 
          for (Deployment deployment : shutdownDeployments)
          {
+            if (hotDeployer != null)
+               hotDeployer.unregister(deployment.getURL());
+
             shutdownDeployment(deployment);
          }
       }
@@ -403,10 +449,13 @@ public class KernelImpl implements Kernel
       if (temporaryEnvironment)
       {
          File tmp = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
-         File root = new File(tmp, "jboss-jca");
+         File root = new File(tmp, kernelConfiguration.getName());
 
          recursiveDelete(root);
       }
+
+      // Log shutdown
+      info(VERSION + " stopped");
 
       // Shutdown kernel class loader
       if (kernelClassLoader != null)
@@ -420,9 +469,6 @@ public class KernelImpl implements Kernel
             // Swallow
          }
       }
-
-      // Log shutdown
-      info(VERSION + " stopped");
 
       // Reset to the old class loader
       SecurityActions.setThreadContextClassLoader(oldClassLoader);
@@ -682,6 +728,15 @@ public class KernelImpl implements Kernel
       {
          return mainDeployer;
       }
+   }
+
+   /**
+    * Get the hot deployer
+    * @return The hot deployer
+    */
+   public HotDeployer getHotDeployer()
+   {
+      return hotDeployer;
    }
 
    /**

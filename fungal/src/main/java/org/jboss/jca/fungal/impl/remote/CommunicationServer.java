@@ -84,7 +84,7 @@ public class CommunicationServer implements Runnable
          {
             Socket socket = ss.accept();
 
-            Runnable r = new Communication(socket, kernel.getMainDeployer());
+            Runnable r = new Communication(socket, kernel.getMainDeployer(), kernel.getHotDeployer());
             Future<?> result = kernel.getExecutorService().submit(r);
          }
          catch (IOException ioe)
