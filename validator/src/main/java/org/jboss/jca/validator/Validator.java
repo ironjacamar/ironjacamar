@@ -52,6 +52,7 @@ public class Validator
       "org.jboss.jca.validator.rules.ra.RAHashCode",
       "org.jboss.jca.validator.rules.ra.RAEquals",
       "org.jboss.jca.validator.rules.ra.RAConfigProperties",
+      "org.jboss.jca.validator.rules.cf.CFConstructor",
       "org.jboss.jca.validator.rules.cf.CFNull",
       "org.jboss.jca.validator.rules.cf.CFSerializable",
       "org.jboss.jca.validator.rules.cf.CFReferenceable",
