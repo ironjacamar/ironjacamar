@@ -59,7 +59,8 @@ public class Validator
       "org.jboss.jca.validator.rules.as.ASConstructor",
       "org.jboss.jca.validator.rules.as.ASConfigProperties",
       "org.jboss.jca.validator.rules.ao.AOConstructor",
-      "org.jboss.jca.validator.rules.ao.AOConfigProperties"
+      "org.jboss.jca.validator.rules.ao.AOConfigProperties",
+      "org.jboss.jca.validator.rules.ao.AORAA"
    };
    
    private static final String[] OBJECT_RULES = {
