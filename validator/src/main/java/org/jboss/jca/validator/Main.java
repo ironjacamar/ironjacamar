@@ -120,8 +120,7 @@ public class Main
          validateClasses.addAll(createActivationSpec(cmd, failures, validator.getResourceBundle(), cl));
          validateClasses.addAll(createAdminObject(cmd, failures, validator.getResourceBundle(), cl));
 
-         List<Failure> classFailures = validator.validate(validateClasses.
-               toArray(new Validate[validateClasses.size()])); 
+         List<Failure> classFailures = validator.validate(validateClasses); 
          if (classFailures != null && classFailures.size() > 0)
             failures.addAll(classFailures);
 

@@ -207,7 +207,6 @@
       <fileset dir="src/test/resources"/>
     </copy>
 
-    <ant target="test-jars"/>
 
   </target>
 

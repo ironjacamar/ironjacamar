@@ -24,6 +24,7 @@ package org.jboss.jca.validator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -94,31 +95,28 @@ public class Validator
 
    /**
     * Validate
+    *
     * @param objects Objects that should be validated
     * @return The list of failures; <code>null</code> if no errors
     */
-   public List<Failure> validate(Validate[] objects)
+   public List<Failure> validate(List<Validate> objects)
    {
-      if (objects == null || objects.length == 0)
+      if (objects == null || objects.size() == 0)
          return null;
 
-      List<Rule> rules = new ArrayList<Rule>(allRules.length);
+      List<Rule> rules = extractRules(allRules);
 
-      for (int i = 0; i < allRules.length; i++)
-      {
-         try
-         {
-            Class clz = Class.forName(allRules[i], true, Validator.class.getClassLoader());
-            Rule rule = (Rule)clz.newInstance();
-
-            rules.add(rule);
-         }
-         catch (Throwable t)
-         {
-            throw new IllegalArgumentException(allRules[i], t);
-         }
+      return execRulesOnValidates(objects, rules);
       }
 
+   /**
+    * exec rules 
+    * @param objects to be validated 
+    * @param rules used for validation
+    * @return The list of failures; an Empty list if no errors
+    */
+   private List<Failure> execRulesOnValidates(List<Validate> objects, List<Rule> rules)
+   {
       ResourceBundle resourceBundle = getResourceBundle();
 
       List<Failure> result = null;
@@ -132,13 +130,39 @@ public class Validator
             if (failures != null)
             {
                if (result == null)
-                  result = new ArrayList<Failure>();
-
+               {
+                  result = new LinkedList<Failure>();
+               }
                result.addAll(failures);
             }
          }
       }
 
       return result;
+   }
+
+   /**
+    * @param rulesNameArray the rules name array
+    * @return the list of {@link Rule} instances for given rules names
+    */
+   private List<Rule> extractRules(String[] rulesNameArray)
+   {
+      List<Rule> rules = new ArrayList<Rule>(rulesNameArray.length);
+
+      for (int i = 0; i < rulesNameArray.length; i++)
+      {
+         try
+         {
+            Class clz = Class.forName(rulesNameArray[i], true, Validator.class.getClassLoader());
+            Rule rule = (Rule) clz.newInstance();
+
+            rules.add(rule);
+         }
+         catch (Throwable t)
+         {
+            throw new IllegalArgumentException(rulesNameArray[i], t);
+         }
+      }
+      return rules;
    }
 }

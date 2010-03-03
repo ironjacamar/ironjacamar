@@ -31,10 +31,10 @@ import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 public class ValidateClass implements Validate 
 {
    /** Key */
-   private int key;
+   private final int key;
 
    /** config-property */
-   private List<ConfigPropertyMetaData> configProperties;
+   private final List<ConfigPropertyMetaData> configProperties;
 
    /** Clazz */
    private Class<?> clazz;
@@ -65,6 +65,27 @@ public class ValidateClass implements Validate
       this.configProperties = configProperties;
    }
    
+   /**
+    * Constructor
+    * @param key The key
+    * @param className The class
+    * @param cl the class loader used to load class
+    * @param configProperties The list of config property metadata
+    */
+   public ValidateClass(int key, String className, ClassLoader cl, List<ConfigPropertyMetaData> configProperties)
+   {
+      this.key = key;
+      try
+      {
+         this.clazz = Class.forName(className, true, cl);
+      }
+      catch (Exception cne)
+      {
+         this.clazz = null;
+      }
+      this.configProperties = configProperties;
+   }
+
    /**
     * Get the key
     * @return The key

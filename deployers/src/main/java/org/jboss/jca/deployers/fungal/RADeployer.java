@@ -41,8 +41,11 @@ import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;
 import org.jboss.jca.validator.Severity;
+import org.jboss.jca.validator.Validate;
+import org.jboss.jca.validator.ValidateClass;
 import org.jboss.jca.validator.ValidateObject;
 import org.jboss.jca.validator.Validator;
+import org.jboss.jca.validator.ValidatorException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -57,9 +60,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.naming.Context;
@@ -73,7 +80,6 @@ import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
 import org.jboss.logging.Logger;
-
 import org.jboss.metadata.rar.jboss.BvGroupMetaData;
 import org.jboss.metadata.rar.jboss.JBossRA20Base;
 import org.jboss.metadata.rar.jboss.JBossRAMetaData;
@@ -88,10 +94,12 @@ import org.jboss.util.naming.Util;
  * The RA deployer for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
  */
 public final class RADeployer implements CloneableDeployer
 {
    private static Logger log = Logger.getLogger(RADeployer.class);
+
    private static boolean trace = log.isTraceEnabled();
 
    /** JNDI prefix */
@@ -263,6 +271,8 @@ public final class RADeployer implements CloneableDeployer
       if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
          return null;
 
+      Set<Failure> failures = null;
+
       log.debug("Deploying: " + url.toExternalForm());
 
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
@@ -311,7 +321,8 @@ public final class RADeployer implements CloneableDeployer
             log.info("Required license terms for " + url.toExternalForm());
 
          ResourceAdapter resourceAdapter = null;
-         List<ValidateObject> archiveValidationObjects = new ArrayList<ValidateObject>();
+         List<Validate> archiveValidationObjects = new ArrayList<Validate>();
+         List<Failure> partialFailures = null;
          List<Object> beanValidationObjects = new ArrayList<Object>();
 
          List<String> jndiNames = null;
@@ -322,19 +333,33 @@ public final class RADeployer implements CloneableDeployer
             // ResourceAdapter
             if (cmd.getRa() != null && cmd.getRa().getRaClass() != null)
             {
-               resourceAdapter =
-                  (ResourceAdapter)initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
-
-               if (trace)
+               partialFailures =
+                  validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER, 
+                                                                                  cmd.getRa().getRaClass(), 
+                                                                                  cl, 
+                                                                                  cmd.getRa().getConfigProperty())));
+               if (partialFailures != null)
                {
-                  log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
-                  log.trace("ResourceAdapter defined in classloader: " + resourceAdapter.getClass().getClassLoader());
+                  failures = new HashSet<Failure>();
+                  failures.addAll(partialFailures);
                }
 
-               archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, 
-                                                               resourceAdapter, 
-                                                               cmd.getRa().getConfigProperty()));
-               beanValidationObjects.add(resourceAdapter);
+               if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
+               {
+                  resourceAdapter =
+                     (ResourceAdapter)initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
+
+                  if (trace)
+                  {
+                     log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
+                     log.trace("ResourceAdapter defined in classloader: " + resourceAdapter.getClass().getClassLoader());
+                  }
+
+                  archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, 
+                                                                  resourceAdapter, 
+                                                                  cmd.getRa().getConfigProperty()));
+                  beanValidationObjects.add(resourceAdapter);
+               }
             }
             
             // ManagedConnectionFactory
@@ -479,80 +504,21 @@ public final class RADeployer implements CloneableDeployer
          }
 
          // Archive validation
-         if (getArchiveValidation())
+         partialFailures = validateArchive(url, archiveValidationObjects);
+
+         if (partialFailures != null)
          {
-            Validator validator = new Validator();
-            List<Failure> failures = validator.validate(archiveValidationObjects.toArray(
-               new ValidateObject[archiveValidationObjects.size()]));
+            failures.addAll(partialFailures);
+         }
 
-            if (failures != null && failures.size() > 0)
-            {
-               FailureHelper fh = new FailureHelper(failures);
-               File reportDirectory = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/log/");
-
-               boolean failureWarn = false;
-               boolean failureError = false;
-
-               for (Failure failure : failures)
-               {
-                  if (failure.getSeverity() == Severity.WARNING)
-                  {
-                     failureWarn = true;
-                  }
-                  else
-                  {
-                     failureError = true;
-                  }
-               }
-
-               String errorText = "";
-               if (reportDirectory.exists())
-               {
-                  String reportName = url.getFile();
-                  int lastIndex = reportName.lastIndexOf(File.separator);
-                  if (lastIndex != -1)
-                     reportName = reportName.substring(lastIndex + 1);
-                  reportName += ".log";
-
-                  File report = new File(reportDirectory, reportName);
-                  FileWriter fw = null;
-                  try
-                  {
-                     fw = new FileWriter(report);
-                     BufferedWriter bw = new BufferedWriter(fw, 8192);
-                     bw.write(fh.asText(validator.getResourceBundle()));
-                     bw.flush();
-
-                     errorText = "Validation failures - see: " + report.getAbsolutePath();
-                  }
-                  catch (IOException ioe)
-                  {
-                     log.warn(ioe.getMessage(), ioe);
-                  }
-                  finally
-                  {
-                     if (fw != null)
-                     {
-                        try
-                        {
-                           fw.close();
-                        }
-                        catch (IOException ignore)
-                        {
-                           // Ignore
-                        }
-                     }
-                  }
-               }
-               else
-               {
-                  errorText = fh.asText(validator.getResourceBundle());
-               }
-
-               if ((getArchiveValidationFailOnWarn() && failureWarn) ||
-                   (getArchiveValidationFailOnError() && failureError))
-                  throw new DeployException(errorText);
-            }
+         if ((getArchiveValidationFailOnWarn() && hasFailuresLevel(failures, Severity.WARNING)) ||
+             (getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
+         {
+            throw new ValidatorException(printFailuresLog(url.getPath(), new Validator(), failures, null), failures);
+         }
+         else
+         {
+            printFailuresLog(url.getPath(), new Validator(), failures, null);
          }
 
          // Bean validation
@@ -615,6 +581,130 @@ public final class RADeployer implements CloneableDeployer
       {
          SecurityActions.setThreadContextClassLoader(oldTCCL);
       }
+   }
+
+   /** 
+    * validate archive
+    * 
+    * @param url of the archive
+    * @param archiveValidation classes and/or to validate. 
+    * @return The list of failures gotten. Null in case of no failures or if validation is not run according to
+    *   {@link #getArchiveValidation()} Settin
+    */
+   //IT SHOULD BE PACKAGE PROTECTED ONLY FOR TESTS ACCESSIBILITY
+   public List<Failure> validateArchive(URL url, List<Validate> archiveValidation)
+   {
+      // Archive validation
+      if (!getArchiveValidation())
+      {
+         return null;
+      }
+      Validator validator = new Validator();
+      List<Failure> failures = validator.validate(archiveValidation);
+
+      return failures;
+   }
+
+   /**
+    * print Failures into Log files.
+    * 
+    * @param urlFileName filename Of deployed rar
+    * @param validator validator instance used to run validation rules
+    * @param failures the list of Failures to be printed
+    * @param reportDirectory where to put various logs
+    * @param fhInput optional parameter. Normally used only for test or in case of 
+    *   FailureHelper already present in context
+    * @return the error Text
+    * 
+    */
+   //IT SHOULD BE PACKAGE PROTECTED ONLY FOR TESTS ACCESSIBILITY
+   public String printFailuresLog(String urlFileName, Validator validator, Collection<Failure> failures,
+         File reportDirectory, FailureHelper... fhInput)
+   {
+      String errorText = "";
+      FailureHelper fh = null;
+      if (fhInput.length == 0)
+         fh = new FailureHelper(failures);
+      else
+         fh = fhInput[0];
+
+      if (failures != null && failures.size() > 0)
+      {
+         if (reportDirectory == null)
+         {
+            reportDirectory = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/log/");
+         }
+         if (reportDirectory.exists())
+         {
+
+            int lastIndex = urlFileName.lastIndexOf(File.separator);
+            if (lastIndex != -1)
+               urlFileName = urlFileName.substring(lastIndex + 1);
+            urlFileName += ".log";
+
+            File report = new File(reportDirectory, urlFileName);
+            FileWriter fw = null;
+            BufferedWriter bw = null;
+            try
+            {
+               fw = new FileWriter(report);
+               bw = new BufferedWriter(fw, 8192);
+               bw.write(fh.asText(validator.getResourceBundle()));
+               bw.flush();
+
+               errorText = "Validation failures - see: " + report.getAbsolutePath();
+            }
+            catch (IOException ioe)
+            {
+               log.warn(ioe.getMessage(), ioe);
+            }
+            finally
+            {
+               if (bw != null)
+               {
+                  try
+                  {
+                     bw.close();
+                  }
+                  catch (IOException ignore)
+                  {
+                     // Ignore
+                  }
+               }
+               if (fw != null)
+               {
+                  try
+                  {
+                     fw.close();
+                  }
+                  catch (IOException ignore)
+                  {
+                     // Ignore
+                  }
+               }
+            }
+         }
+         else
+         {
+            errorText = fh.asText(validator.getResourceBundle());
+         }
+      }
+      return errorText;
+   }
+
+   private boolean hasFailuresLevel(Collection<Failure> failures, int severity)
+   {
+      if (failures != null)
+      {
+         for (Failure failure : failures)
+         {
+            if (failure.getSeverity() == severity)
+            {
+               return true;
+            }
+         }
+      }
+      return false;
    }
 
    private ConnectionFactoryBuilder getConnectionFactoryBuilder()
@@ -802,6 +892,7 @@ public final class RADeployer implements CloneableDeployer
     * @return The copy of the object
     * @exception CloneNotSupportedException Thrown if a copy can't be created
     */
+   @Override
    public Deployer clone() throws CloneNotSupportedException
    {
       return new RADeployer();

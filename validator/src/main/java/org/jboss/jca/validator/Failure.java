@@ -33,16 +33,16 @@ public class Failure
    private static final String NEW_LINE = System.getProperty("line.separator");
 
    /** Severity */
-   private int severity;
+   private final int severity;
 
    /** Section */
-   private String section;
+   private final String section;
 
    /** Description */
-   private String description;
+   private final String description;
 
    /** Code */
-   private String code;
+   private final String code;
 
    /**
     * Constructor
@@ -50,9 +50,7 @@ public class Failure
     * @param section The section
     * @param description The description
     */
-   public Failure(int severity,
-                  String section,
-                  String description)
+   public Failure(int severity, String section, String description)
    {
       this(severity, section, description, null);
    }
@@ -64,10 +62,7 @@ public class Failure
     * @param description The description
     * @param code The code
     */
-   public Failure(int severity,
-                  String section,
-                  String description,
-                  String code)
+   public Failure(int severity, String section, String description, String code)
    {
       this.severity = severity;
       this.section = section;
@@ -161,5 +156,75 @@ public class Failure
    public String asXML(ResourceBundle rb)
    {
       return "";
+   }
+
+   /**
+    * {@inheritDoc}
+    *
+    * @see java.lang.Object#hashCode()
+    */
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((code == null) ? 0 : code.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((section == null) ? 0 : section.hashCode());
+      result = prime * result + severity;
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    *
+    * @see java.lang.Object#equals(java.lang.Object)
+    */
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (!(obj instanceof Failure))
+         return false;
+      Failure other = (Failure) obj;
+      if (code == null)
+      {
+         if (other.code != null)
+            return false;
+      }
+      else if (!code.equals(other.code))
+         return false;
+      if (description == null)
+      {
+         if (other.description != null)
+            return false;
+      }
+      else if (!description.equals(other.description))
+         return false;
+      if (section == null)
+      {
+         if (other.section != null)
+            return false;
+      }
+      else if (!section.equals(other.section))
+         return false;
+      if (severity != other.severity)
+         return false;
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    *
+    * @see java.lang.Object#toString()
+    */
+   @Override
+   public String toString()
+   {
+      return "Failure [severity=" + severity + ", section=" + section + ", description=" + description +
+         ", code=" + code + "]";
    }
 }

@@ -22,7 +22,7 @@
 
 package org.jboss.jca.validator;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.ResourceBundle;
 
 /**
@@ -34,13 +34,13 @@ public class FailureHelper
    private static final String NEW_LINE = System.getProperty("line.separator");
 
    /** List of failures */
-   private List<Failure> failures;
+   private final Collection<Failure> failures;
 
    /**
     * Constructor
     * @param failures The list of failures
     */
-   public FailureHelper(List<Failure> failures)
+   public FailureHelper(Collection<Failure> failures)
    {
       this.failures = failures;
    }
@@ -57,15 +57,17 @@ public class FailureHelper
       if (failures != null)
       {
          // PRE-TEXT
-
-         for (int i = 0; i < failures.size(); i++)
+         int i = 0;
+         for (Failure failure : failures)
          {
-            Failure f = failures.get(i);
+            Failure f = failure;
 
             sb = sb.append(f.asText(rb));
             
             if (i < failures.size() - 1)
                sb = sb.append(NEW_LINE);
+
+            i++;
          }
 
          // POST-TEXT
@@ -87,14 +89,16 @@ public class FailureHelper
       {
          // PRE-XML
 
-         for (int i = 0; i < failures.size(); i++)
+         int i = 0;
+         for (Failure failure : failures)
          {
-            Failure f = failures.get(i);
+            Failure f = failure;
 
             sb = sb.append(f.asXML(rb));
             
             if (i < failures.size() - 1)
                sb = sb.append(NEW_LINE);
+            i++;
          }
 
          // POST-XML

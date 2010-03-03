@@ -20,6 +20,11 @@
 	<classpathentry kind="src" output="build/standalone/impl" path="standalone/src/main/resources"/>
 	<classpathentry kind="src" output="build/web/impl" path="web/src/main/java"/>
 	<classpathentry kind="src" output="build/web/impl" path="web/src/main/resources"/>
+	<classpathentry kind="src" path="deployers/src/main/resources"/>
+	<classpathentry kind="src" path="validator/src/main/java"/>
+	<classpathentry kind="src" path="validator/src/main/resources"/>
+	<classpathentry kind="src" path="validator/src/test/java"/>
+	<classpathentry kind="src" path="validator/src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/sjc/activation.jar"/>
 	<classpathentry kind="lib" path="lib/sjc/apiviz.jar"/>
@@ -154,5 +159,6 @@
 	<classpathentry kind="lib" path="target/jboss-jca-standalone.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/sjc/jboss-threads.jar"/>
+	<classpathentry kind="lib" path="lib/test/mockito-all.jar"/>
 	<classpathentry kind="output" path="build/api"/>
 </classpath>
