@@ -23,9 +23,11 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.fungal.deployers.Deployment;
+import org.jboss.jca.fungal.util.FileUtil;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 
@@ -54,6 +56,9 @@ public class RADeployment implements Deployment
    /** JNDI names for connection factories */
    private List<String> jndiNames;
 
+   /** The temporary directory */
+   private File tmpDirectory;
+
    /** The classloader */
    private ClassLoader cl;
 
@@ -62,13 +67,15 @@ public class RADeployment implements Deployment
     * @param deployment The deployment
     * @param ra The resource adapter instance if present
     * @param jndiNames The JNDI names for connection factories
+    * @param tmpDirectory The temporary directory
     * @param cl The classloader for the deployment
     */
-   public RADeployment(URL deployment, ResourceAdapter ra, List<String> jndiNames, ClassLoader cl)
+   public RADeployment(URL deployment, ResourceAdapter ra, List<String> jndiNames, File tmpDirectory, ClassLoader cl)
    {
       this.deployment = deployment;
       this.ra = ra;
       this.jndiNames = jndiNames;
+      this.tmpDirectory = tmpDirectory;
       this.cl = cl;
    }
 
@@ -157,6 +164,19 @@ public class RADeployment implements Deployment
          catch (IOException ioe)
          {
             // Swallow
+         }
+      }
+
+      if (tmpDirectory != null && tmpDirectory.exists())
+      {
+         try
+         {
+            FileUtil fu = new FileUtil();
+            fu.recursiveDelete(tmpDirectory);
+         }
+         catch (IOException ioe)
+         {
+            // Ignore
          }
       }
 

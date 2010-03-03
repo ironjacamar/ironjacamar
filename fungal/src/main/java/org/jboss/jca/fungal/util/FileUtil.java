@@ -261,6 +261,8 @@ public class FileUtil
          }
       }
 
+      jar.close();
+
       return target;
    }
 

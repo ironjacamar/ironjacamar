@@ -23,8 +23,10 @@
 package org.jboss.jca.web;
 
 import org.jboss.jca.fungal.deployers.Deployment;
+import org.jboss.jca.fungal.util.FileUtil;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -46,6 +48,9 @@ public class WARDeployment implements Deployment
    /** The handler */
    private Handler handler;
 
+   /** The temporary directory */
+   private File tmpDirectory;
+
    /** The classloader */
    private ClassLoader cl;
 
@@ -53,12 +58,14 @@ public class WARDeployment implements Deployment
     * Constructor
     * @param archive The archive
     * @param handler The handler
+    * @param tmpDirectory The temporary directory
     * @param cl The classloader for the deployment
     */
-   public WARDeployment(URL archive, Handler handler, ClassLoader cl)
+   public WARDeployment(URL archive, Handler handler, File tmpDirectory, ClassLoader cl)
    {
       this.archive = archive;
       this.handler = handler;
+      this.tmpDirectory = tmpDirectory;
       this.cl = cl;
    }
 
@@ -87,6 +94,21 @@ public class WARDeployment implements Deployment
    {
       log.debug("Undeploying: " + archive.toExternalForm());
 
+      if (handler != null)
+      {
+         try
+         {
+            handler.stop();
+         }
+         catch (Exception e)
+         {
+            // Ignore
+         }
+
+         handler.destroy();
+         handler = null;
+      }
+
       if (cl != null && cl instanceof Closeable)
       {
          try
@@ -96,6 +118,19 @@ public class WARDeployment implements Deployment
          catch (IOException ioe)
          {
             // Swallow
+         }
+      }
+
+      if (tmpDirectory != null && tmpDirectory.exists())
+      {
+         try
+         {
+            FileUtil fu = new FileUtil();
+            fu.recursiveDelete(tmpDirectory);
+         }
+         catch (IOException ioe)
+         {
+            // Ignore
          }
       }
 

@@ -159,7 +159,7 @@ public class WARDeployer implements Deployer
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new WARDeployment(url, webapp, parent);
+         return new WARDeployment(url, webapp, tmpDeployment, parent);
       }
       catch (Exception e)
       {

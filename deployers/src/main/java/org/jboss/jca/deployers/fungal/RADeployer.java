@@ -284,11 +284,12 @@ public final class RADeployer implements CloneableDeployer
             throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
 
          File root = null;
+         File destination = null;
 
          if (f.isFile())
          {
             FileUtil fileUtil = new FileUtil();
-            File destination = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
+            destination = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
             root = fileUtil.extract(f, destination);
          }
          else
@@ -566,7 +567,7 @@ public final class RADeployer implements CloneableDeployer
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new RADeployment(url, resourceAdapter, jndiNames, cl);
+         return new RADeployment(url, resourceAdapter, jndiNames, destination, cl);
       }
       catch (DeployException de)
       {
