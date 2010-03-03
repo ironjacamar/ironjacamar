@@ -148,6 +148,7 @@
     <copy todir="${target.dir}/standalone/lib">
       <fileset dir="${lib.dir}/standalone">
         <include name="*.jar"/>
+        <exclude name="ant.jar"/>
         <exclude name="apiviz.jar"/>
         <exclude name="jaxb-api.jar"/>
         <exclude name="jdepend.jar"/>

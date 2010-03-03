@@ -148,6 +148,7 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${lib.dir}/sjc">
         <include name="*.jar"/>
+        <exclude name="ant.jar"/>
         <exclude name="apiviz.jar"/>
         <exclude name="dom4j.jar"/>
         <exclude name="jaxb-api.jar"/>
