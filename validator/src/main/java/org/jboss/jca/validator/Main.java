@@ -69,7 +69,7 @@ public class Main
     * @param output directory of output
     * @return The system exit code
     */
-   private static int validate(URL url, String output)
+   public static int validate(URL url, String output)
    {
       if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
          return FAIL;

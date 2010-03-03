@@ -73,6 +73,11 @@
          manifest="src/main/resources/validator-cli-manifest.mf"
          basedir="${build.validator.dir}/jars/validator"
          includes="**/Main*.class"/>
+  	
+    <jar destfile="${target.dir}/jboss-jca-validator-ant.jar"
+         manifest="src/main/resources/validator-ant-manifest.mf"
+         basedir="${build.validator.dir}/jars/validator"
+   	   includes="**/ant/**"/>
   </target>
 
   <!-- ================================= 

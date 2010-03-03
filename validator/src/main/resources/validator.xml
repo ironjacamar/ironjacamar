@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+
+<project name="ValidatorProject" default="validate" basedir="..">
+  <path id="validator.lib.path.id">
+    <fileset dir="${basedir}/lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <taskdef name="validator"
+         classname="org.jboss.jca.validator.ant.ValidatorTask"
+         classpathref="validator.lib.path.id"/>
+         
+  <target name="validate">
+    <validator outputDir="." rarFile="../deploy/ra16inout.rar"/>
+  </target>
+</project>
+
+
+
+

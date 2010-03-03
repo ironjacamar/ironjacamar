@@ -2,5 +2,4 @@ Implementation-Title: JBoss JCA Validator Command Line Tool
 Implementation-Vendor: Red Hat Middleware LLC
 Implementation-Vendor-Id: org.jboss
 Implementation-Version: 0.1
-Main-Class: org.jboss.jca.validator.Main
-Class-Path: jboss-jca-validator.jar
+Class-Path:  jboss-jca-validator-cli.jar

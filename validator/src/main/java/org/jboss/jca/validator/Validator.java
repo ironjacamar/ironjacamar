@@ -107,7 +107,7 @@ public class Validator
       List<Rule> rules = extractRules(allRules);
 
       return execRulesOnValidates(objects, rules);
-      }
+   }
 
    /**
     * exec rules 
