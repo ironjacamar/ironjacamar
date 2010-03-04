@@ -25,6 +25,8 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.common.Annotations;
 import org.jboss.jca.common.Metadata;
 import org.jboss.jca.common.api.ConnectionFactoryBuilder;
+import org.jboss.jca.common.api.ConnectionFactoryJndiNameBuilder;
+import org.jboss.jca.common.util.ContainerConnectionFactoryJndiNameBuilder;
 import org.jboss.jca.common.util.LocalConnectionFactoryBuilder;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
@@ -102,9 +104,6 @@ public final class RADeployer implements CloneableDeployer
 
    private static boolean trace = log.isTraceEnabled();
 
-   /** JNDI prefix */
-   private static final String JNDI_PREFIX = "java:/eis/";
-   
    /** Preform bean validation */
    private static AtomicBoolean beanValidation = new AtomicBoolean(true);
 
@@ -426,10 +425,14 @@ public final class RADeployer implements CloneableDeployer
                               if (jndiNames == null)
                                  jndiNames = new ArrayList<String>(1);
 
-                              String jndiName = f.getName().substring(0, f.getName().indexOf(".rar"));
+                              ConnectionFactoryJndiNameBuilder jndiNameBuilder = getJndiNameBuilder();
+                              String deploymentName =  f.getName().substring(0,  f.getName().indexOf(".rar"));
+                              jndiNameBuilder.setConnectionFactory(cf.getClass().getName());
+                              jndiNameBuilder.setDeploymentName(deploymentName);
+                              String jndiName = jndiNameBuilder.build();
 
                               bindConnectionFactory(jndiName, (Serializable)cf, mcf);
-                              jndiNames.add(JNDI_PREFIX + jndiName);
+                              jndiNames.add(jndiName);
                            }
                            else
                            {
@@ -713,6 +716,12 @@ public final class RADeployer implements CloneableDeployer
       return new LocalConnectionFactoryBuilder();
    }
 
+   private ConnectionFactoryJndiNameBuilder getJndiNameBuilder()
+   {
+      return new ContainerConnectionFactoryJndiNameBuilder();
+   }
+
+
    /**
     * Start the resource adapter
     * @param resourceAdapter The resource adapter
@@ -867,7 +876,7 @@ public final class RADeployer implements CloneableDeployer
          Referenceable referenceable = (Referenceable)cf;
          referenceable.setReference(cfb.build());
 
-         Util.bind(context, JNDI_PREFIX + name, cf);
+         Util.bind(context, name, cf);
 
       }
       finally
