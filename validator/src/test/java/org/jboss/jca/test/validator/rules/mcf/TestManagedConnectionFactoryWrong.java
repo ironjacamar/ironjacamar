@@ -19,30 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.validator.rules.ra;
-
-import org.jboss.jca.test.validator.rules.base.BaseResourceAdapter;
+package org.jboss.jca.test.validator.rules.mcf;
 
 
 /**
- * TestResourceAdapter
+ * TestManagedConnectionFactory
  * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
  * @version $Revision: $
  */
-public class TestResourceAdapterConstructorWrong extends BaseResourceAdapter
+public class TestManagedConnectionFactoryWrong
 {
-   private final int foo;
-
-   /**
-    * Class constructor. Having and not declaring default constructor the 
-    * ResourceAdapter is wrong-
-    * 
-    * @param foo a parameter
-    */
-   public TestResourceAdapterConstructorWrong(int foo)
-   {
-      super();
-      this.foo = foo;
-   }
+   private static final long serialVersionUID = 1L;
 
 }

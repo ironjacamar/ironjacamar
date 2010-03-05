@@ -47,6 +47,18 @@ public class ValidatorException extends Exception
    }
 
    /**
+    * Constructs a new exception with the specified detail message.
+    * @param message The message
+    * @param failures collection of failures
+    * @param cause the cause to be chained
+    */
+   public ValidatorException(String message, Collection<Failure> failures, Throwable cause)
+   {
+      super(message, cause);
+      this.failures = failures;
+   }
+
+   /**
     * Get the collection of failures
     * @return failures
     */

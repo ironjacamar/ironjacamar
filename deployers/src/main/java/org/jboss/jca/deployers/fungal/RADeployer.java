@@ -331,7 +331,8 @@ public final class RADeployer implements CloneableDeployer
          if (cmd != null)
          {
             // ResourceAdapter
-            if (cmd.getRa() != null && cmd.getRa().getRaClass() != null)
+            if (cmd.getRa() != null &&
+                (!cmd.is10() || cmd.getRa().getRaClass() != null))
             {
                partialFailures =
                   validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER, 
@@ -372,7 +373,17 @@ public final class RADeployer implements CloneableDeployer
                {
                   for (ConnectionDefinitionMetaData cdMeta : cdMetas)
                   {
-                     if (cdMeta.getManagedConnectionFactoryClass() != null)
+                     partialFailures =
+                           validateArchive(url, Arrays
+                                 .asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, cdMeta
+                                       .getManagedConnectionFactoryClass(), cl, cdMeta.getConfigProps())));
+                     if (partialFailures != null)
+                     {
+                        failures = new HashSet<Failure>();
+                        failures.addAll(partialFailures);
+                     }
+
+                     if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
                      {
                         ManagedConnectionFactory mcf =
                            (ManagedConnectionFactory)initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
@@ -579,7 +590,15 @@ public final class RADeployer implements CloneableDeployer
       }
       catch (Throwable t)
       {
+         if ((getArchiveValidationFailOnWarn() && hasFailuresLevel(failures, Severity.WARNING)) ||
+               (getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
+            throw new DeployException("Deployment " + url.toExternalForm() + " failed",
+                  new ValidatorException(printFailuresLog(url.getPath(), new Validator(), failures, null), failures));
+         else
+         {
+            printFailuresLog(url.getPath(), new Validator(), failures, null);
          throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
+      }
       }
       finally
       {

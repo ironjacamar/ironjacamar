@@ -160,5 +160,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/sjc/jboss-threads.jar"/>
 	<classpathentry kind="lib" path="lib/test/mockito-all.jar"/>
+	<classpathentry kind="lib" path="lib/standalone/ant.jar"/>
 	<classpathentry kind="output" path="build/api"/>
 </classpath>
