@@ -114,6 +114,15 @@ public final class HotDeployer implements HotDeployerMBean, Runnable
    }
 
    /**
+    * Is running
+    * @return The value
+    */
+   public boolean isRunning()
+   {
+      return running.get();
+   }
+
+   /**
     * Get the interval in seconds
     * @return The value
     */

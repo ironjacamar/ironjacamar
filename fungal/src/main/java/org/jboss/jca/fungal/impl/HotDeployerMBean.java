@@ -29,6 +29,12 @@ package org.jboss.jca.fungal.impl;
 public interface HotDeployerMBean
 {
    /**
+    * Is running
+    * @return The value
+    */
+   public boolean isRunning();
+
+   /**
     * Get the interval in seconds
     * @return The value
     */
