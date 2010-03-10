@@ -62,7 +62,7 @@ public class Main
    private static final int SUCCESS = 0;
    private static final int FAIL = 1;
    private static final int OTHER = 2;
-   
+
    /**
     * validate
     * @param url The url
@@ -70,6 +70,18 @@ public class Main
     * @return The system exit code
     */
    public static int validate(URL url, String output)
+   {
+      return validate(url, output, null);
+   }
+
+   /**
+    * validate
+    * @param url The url
+    * @param output directory of output
+    * @param classpath classpath of including
+    * @return The system exit code
+    */
+   public static int validate(URL url, String output, String[] classpath)
    {
       if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
          return FAIL;
@@ -97,8 +109,25 @@ public class Main
          }
       
          // Create classloader
+         URL[] allurls;
          URL[] urls = getUrls(root);
-         URLClassLoader cl = SecurityActions.createURLCLassLoader(urls, SecurityActions.getThreadContextClassLoader());
+         if (classpath != null && classpath.length > 0)
+         {
+            List<URL> listUrl = new ArrayList<URL>();
+            for (URL u : urls)
+               listUrl.add(u);
+            for (String jar : classpath)
+            {
+               if (jar.endsWith(".jar"))
+                  listUrl.add(new File(jar).toURI().toURL());
+            }
+            allurls = listUrl.toArray(new URL[listUrl.size()]);
+         }
+         else
+            allurls = urls;
+                  
+         URLClassLoader cl = SecurityActions.createURLCLassLoader(allurls, 
+            SecurityActions.getThreadContextClassLoader());
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Parse metadata
@@ -382,6 +411,7 @@ public class Main
       boolean quite = false;
       String outputDir = "."; //put report into current directory by default
       int arg = 0;
+      String[] classpath = null;
       
       if (args.length > 0)
       {
@@ -403,6 +433,12 @@ public class Main
                   }
                   outputDir = args[arg];
                }
+               else if (args[arg].endsWith("classpath"))
+               {
+                  arg++;
+                  classpath = args[arg].split(System.getProperty("path.separator"));
+
+               }
             }
             else
             {
@@ -414,13 +450,18 @@ public class Main
 
          try
          {
-            int systemExitCode = validate(new File(args[arg]).toURI().toURL(), outputDir);
+            int systemExitCode = validate(new File(args[arg]).toURI().toURL(), outputDir, classpath);
             
             if (!quite && systemExitCode == FAIL)
             {
                System.out.println("Validation errors");
             }
             System.exit(systemExitCode);
+         }
+         catch (ArrayIndexOutOfBoundsException oe)
+         {
+            usage();
+            System.exit(OTHER);
          }
          catch (MalformedURLException e)
          {
@@ -440,7 +481,7 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage: validator [-quite] [-output directory] <file>");
+      System.out.println("Usage: validator [-quite] [-output directory] [-classpath thirdparty.jar] <file>");
    }
 
 
