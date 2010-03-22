@@ -12,7 +12,13 @@
          classpathref="validator.lib.path.id"/>
          
   <target name="validate">
-    <validator outputDir="." rarFile="../deploy/ra16inout.rar"/>
+    <validator outputDir="." rarFile="../deploy/ra16inout.rar">
+     <classpath>
+       <fileset dir="${basedir}/lib">
+         <include name="**/*.jar"/>
+       </fileset>
+     </classpath>
+    </validator>
   </target>
 </project>
 

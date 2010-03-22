@@ -27,6 +27,8 @@ import java.io.File;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.CommandlineJava;
+import org.apache.tools.ant.types.Path;
 
 /**
  * A ValidatorTask.
@@ -42,6 +44,9 @@ public class ValidatorTask extends Task
    
    /** file need to be validated */
    private String rarFile;
+   
+   /** CommandlineJava */
+   private CommandlineJava cmdl = new CommandlineJava();
    
    /**
     * Constructor
@@ -92,6 +97,36 @@ public class ValidatorTask extends Task
    }
 
    /**
+    * Set the classpath to be used when running the Java class.
+    *
+    * @param s an Ant Path object containing the classpath.
+    */
+   public void setClasspath(Path s)
+   {
+      createClasspath().append(s);
+   }
+
+   /**
+    * Add a path to the classpath.
+    *
+    * @return created classpath.
+    */
+   public Path createClasspath()
+   {
+      return getCommandLine().createClasspath(getProject()).createPath();
+   }
+
+   /**
+    * Accessor to the command line.
+    *
+    * @return the current command line.
+    */
+   public CommandlineJava getCommandLine()
+   {
+      return cmdl;
+   }
+
+   /**
     * Execute
     * @exception BuildException If the build fails
     */
@@ -105,9 +140,7 @@ public class ValidatorTask extends Task
          
          Main main = new Main();
 
-         //main.setOutput(getOutput());
-
-         main.validate(new File(getRarFile()).toURI().toURL(), getOutputDir());
+         main.validate(new File(getRarFile()).toURI().toURL(), getOutputDir(), getCommandLine().getClasspath().list());
       }
       catch (Throwable t) 
       {
