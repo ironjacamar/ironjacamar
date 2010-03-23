@@ -31,7 +31,7 @@ import org.jboss.jca.common.api.ConnectionFactoryJndiNameBuilder;
  */
 public class ContainerConnectionFactoryJndiNameBuilder implements ConnectionFactoryJndiNameBuilder
 {
-   String deploymentName;
+   private String deploymentName;
 
    /** JNDI prefix */
    private static final String JNDI_PREFIX = "java:/eis/";
@@ -51,7 +51,9 @@ public class ContainerConnectionFactoryJndiNameBuilder implements ConnectionFact
    {
       if (deploymentName == null || deploymentName.trim().equals(""))
          throw new IllegalArgumentException("deploymentFile is null");
+
       this.deploymentName =  deploymentName;
+
       return this;
    }
 
@@ -62,5 +64,4 @@ public class ContainerConnectionFactoryJndiNameBuilder implements ConnectionFact
    {
       return this;
    }
-
 }

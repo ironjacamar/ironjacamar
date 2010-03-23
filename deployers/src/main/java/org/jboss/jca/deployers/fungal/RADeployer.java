@@ -353,7 +353,8 @@ public final class RADeployer implements CloneableDeployer
                   if (trace)
                   {
                      log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
-                     log.trace("ResourceAdapter defined in classloader: " + resourceAdapter.getClass().getClassLoader());
+                     log.trace("ResourceAdapter defined in classloader: " + 
+                               resourceAdapter.getClass().getClassLoader());
                   }
 
                   archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, 
@@ -597,8 +598,8 @@ public final class RADeployer implements CloneableDeployer
          else
          {
             printFailuresLog(url.getPath(), new Validator(), failures, null);
-         throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
-      }
+            throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
+         }
       }
       finally
       {

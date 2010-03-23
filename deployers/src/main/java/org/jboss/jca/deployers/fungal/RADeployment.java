@@ -26,8 +26,8 @@ import org.jboss.jca.fungal.deployers.Deployment;
 import org.jboss.jca.fungal.util.FileUtil;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 

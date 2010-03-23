@@ -22,8 +22,8 @@
 
 package org.jboss.jca.fungal.impl;
 
-import java.lang.reflect.Method;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
