@@ -22,6 +22,28 @@ ant -Dmodule=embedded -Dtest=org.jboss.jca.test.embedded.unit.ShrinkWrapTestCase
     <para>where <code>-Dmodule</code> specifies which module to execute the test case in. This parameter
       defaults to <code>core</code>. The <code>-Dtest</code> parameter specifies the test case itself.</para>
 
+    <para>You can also execute all test cases of a single module using</para>
+
+    <programlisting>
+ant -Dmodule=embedded module-test
+    </programlisting>
+
+    <para>where <code>-Dmodule</code> specifies which module to execute the test cases in. This
+      parameter defaults to <code>core</code>.</para>
+
+    <para>The build script does not fail in case of test errors or failure.</para>
+
+    <para>
+      You can control the behavior by using the <code>junit.haltonerror</code> and <code>junit.haltonfailure</code> 
+      properties in the main <code>build.xml</code> file. Default value for both is <code>no</code>.
+    </para>
+
+    <para>
+      You can of course change them statically in the <code>build.xml</code> file or temporary using <code>-Djunit.haltonerror=yes</code>.
+      There are other <code>jnuit.*</code> properties defined in the main <code>build.xml</code> that can be controlled in the same
+      way.
+    </para>
+
     <section id="spectest">
       <title>Specification</title>
       <para>The purpose of the specification tests is to test our implementation against the
@@ -96,7 +118,132 @@ org.jboss.jca.test.core.workmanager
         JUnit test cases.</para>
 
     </section>
+  </section>
 
+  <section id="style">
+    <title>Testing principle and style</title>
+    <para>
+      Our tests follows the Behavior Driven Development (BDD) technique. In BDD you focus on specifying the behaviors
+      of a class and write code (tests) that verify that behavior.
+    </para>
+    <para>
+      You may be thinking that BDD sounds awfully similar to Test Driven Development (TDD). 
+      In some ways they are similar: they both encourage writing the tests first and to provide full coverage of the 
+      code. However, TDD doesn't really provide a guide on which kind of tests you should be writing.
+    </para>
+    <para>
+      BDD provides you with guidance on how to do testing by focusing on what the behavior of a class is supposed to be.
+      We introduce BDD to our testing environment by extending the standard JUnit 4.x test framework with
+      BDD capabilities using assertion and mocking frameworks.
+    </para>
+    <para>
+      The BDD tests should
+    </para>
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para>
+          Clearly define <code>given-when-then</code> conditions
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          The method name defines what is expected: f.ex. shouldReturnFalseIfMethodXIsCalledWithNullString()
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Easy to read the assertions by using <ulink url="http://code.google.com/p/hamcrest/">Hamcrest Matchers</ulink>
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Use <code>given</code> facts whenever possible to make the test case more readable. It could be the
+          name of the deployed resource adapter, or using the 
+          <ulink url="http://mockito.googlecode.com/svn/branches/1.8.0/javadoc/org/mockito/BDDMockito.html">
+            BDD Mockito class</ulink> to mock the fact.
+        </para>
+      </listitem>
+    </itemizedlist>
+    
+    <para>We are using two different kind of tests:</para>
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para>
+          Integration Tests: The goal of these test cases is to validate the whole process of deployment, and
+          interacting with a sub-system by simulating a critical condition.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+          Unit Tests: The goal of these test cases is to stress test some internal behaviour by mocking classes
+          to perfectly reproduce conditions to test.
+        </para>
+      </listitem>
+    </itemizedlist>
+
+    <section id="integration">
+      <title>Integration Tests</title>
+      <para>
+        The integration tests simulate a real condition using a particular deployment artifacts packaged as 
+        resource adapters.
+      </para>
+
+      <para>
+        The resource adapters are created using either the main build environment or by using 
+        <ulink url="http://community.jboss.org/wiki/ShrinkWrap">ShrinkWrap</ulink>. Using resource adapters
+        within the test cases will allow you to debug both the resource adapters themself or the JCA container.
+      </para>
+
+      <para>
+        The resource adapters represent the <citation>given</citation> facts of our BDD tests, 
+        the deployment of the resource adapters represent the <citation>when</citation> phase, 
+        while the <citation>then</citation> phase is verified by assertion.
+      </para>
+
+      <para>
+        Note that some tests consider an exception a normal output condition using the JUnit 4.x 
+        <code>@Exception(expected = "SomeClass.class")</code> annotation to identify and verify this situation. 
+      </para>
+    </section>
+
+    <section id="unit">
+      <title>Unit Tests</title>
+      <para>
+        We are mocking our input/output conditions in our unit tests using the 
+        <ulink url="http://mockito.googlecode.com">Mockito</ulink> framework to verify class and method behaviors.
+      </para>
+      <para>An example:</para>
+      <programlisting>
+@Test
+public void printFailuresLogShouldReturnNotEmptyStringForWarning() throws Throwable
+{
+   //given
+   RADeployer deployer = new RADeployer();
+   File mockedDirectory = mock(File.class);
+   given(mockedDirectory.exists()).willReturn(false);
+
+   Failure failure = mock(Failure.class);
+   given(failure.getSeverity()).willReturn(Severity.WARNING);
+
+   List failures = Arrays.asList(failure);
+   FailureHelper fh = mock(FailureHelper.class);
+   given(fh.asText((ResourceBundle) anyObject())).willReturn("myText");
+  
+   deployer.setArchiveValidationFailOnWarn(true);
+  
+   //when
+   String returnValue = deployer.printFailuresLog(null, mock(Validator.class), 
+                                                  failures, mockedDirectory, fh);
+  
+   //then
+   assertThat(returnValue, is("myText"));
+}
+      </programlisting>
+      <para>
+        As you can see the BDD style respects the test method name and using the 
+        <code>given-when-then</code> sequence in order.
+      </para>
+    </section>
   </section>
 
   <section id="qa">

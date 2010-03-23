@@ -275,6 +275,17 @@
   </target>
 
   <!-- ================================= 
+       Target: module-test
+       ================================= -->
+  <target name="module-test" depends="jars">
+    <condition property="module" else="core">
+      <equals arg1="${module}" arg2="" trim="true"/> 
+    </condition>
+  	
+    <ant dir="${module}" inheritRefs="true" target="test"/>
+  </target>
+
+  <!-- ================================= 
        Target: sjc
        ================================= -->
   <target name="sjc" depends="jars">
