@@ -421,16 +421,22 @@ public final class RADeployer implements CloneableDeployer
                         // ConnectionFactory
                         Object cf = mcf.createConnectionFactory(noTxCm);
 
-                        if (trace)
+                        if (cf == null)
                         {
-                           log.trace("ConnectionFactory: " + cf.getClass().getName());
-                           log.trace("ConnectionFactory defined in classloader: " + 
-                                     cf.getClass().getClassLoader());
+                           log.error("ConnectionFactory is null");
+                        }
+                        else
+                        {
+                           if (trace)
+                           {
+                              log.trace("ConnectionFactory: " + cf.getClass().getName());
+                              log.trace("ConnectionFactory defined in classloader: " + cf.getClass().getClassLoader());
+                           }
                         }
 
                         archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
-                        if (cf instanceof Serializable && cf instanceof Referenceable)
+                        if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                         {
                            if (cdMetas.size() == 1)
                            {
@@ -470,20 +476,34 @@ public final class RADeployer implements CloneableDeployer
                   {
                      if (mlMeta.getActivationSpecType() != null && mlMeta.getActivationSpecType().getAsClass() != null)
                      {
-                        List<ConfigPropertyMetaData> cpm = mlMeta.getActivationSpecType().getConfigProps();
+                        partialFailures =
+                              validateArchive(url, Arrays
+                                    .asList((Validate) new ValidateClass(Key.ACTIVATION_SPEC, mlMeta
+                                          .getActivationSpecType()
+                                          .getAsClass(), cl, mlMeta.getActivationSpecType().getConfigProps())));
 
-                        Object o = initAndInject(mlMeta.getActivationSpecType().getAsClass(), cpm, cl);
-
-                        if (trace)
+                        if (partialFailures != null)
                         {
-                           log.trace("ActivationSpec: " + o.getClass().getName());
-                           log.trace("ActivationSpec defined in classloader: " + 
-                                     o.getClass().getClassLoader());
+                           failures = new HashSet<Failure>();
+                           failures.addAll(partialFailures);
                         }
 
-                        archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o, cpm));
-                        beanValidationObjects.add(o);
-                        associateResourceAdapter(resourceAdapter, o);
+                        if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
+                        {
+                           List<ConfigPropertyMetaData> cpm = mlMeta.getActivationSpecType().getConfigProps();
+
+                           Object o = initAndInject(mlMeta.getActivationSpecType().getAsClass(), cpm, cl);
+
+                           if (trace)
+                           {
+                              log.trace("ActivationSpec: " + o.getClass().getName());
+                              log.trace("ActivationSpec defined in classloader: " + o.getClass().getClassLoader());
+                           }
+
+                           archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o, cpm));
+                           beanValidationObjects.add(o);
+                           associateResourceAdapter(resourceAdapter, o);
+                        }
                      }
                   }
                }
@@ -500,19 +520,32 @@ public final class RADeployer implements CloneableDeployer
                   {
                      if (aoMeta.getAdminObjectImplementationClass() != null)
                      {
-                        Object o = initAndInject(aoMeta.getAdminObjectImplementationClass(), 
-                                                 aoMeta.getConfigProps(), cl);
+                        partialFailures =
+                           validateArchive(url, Arrays
+                                 .asList((Validate) new ValidateClass(Key.ADMIN_OBJECT,
+                                       aoMeta.getAdminObjectImplementationClass(), cl, aoMeta.getConfigProps())));
 
-                        if (trace)
+                        if (partialFailures != null)
                         {
-                           log.trace("AdminObject: " + o.getClass().getName());
-                           log.trace("AdminObject defined in classloader: " + 
-                                     o.getClass().getClassLoader());
+                           failures = new HashSet<Failure>();
+                           failures.addAll(partialFailures);
                         }
 
-                        archiveValidationObjects.add(
-                           new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProps()));
-                        beanValidationObjects.add(o);
+                        if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
+                        {
+                           Object o =
+                                 initAndInject(aoMeta.getAdminObjectImplementationClass(), aoMeta.getConfigProps(), cl);
+
+                           if (trace)
+                           {
+                              log.trace("AdminObject: " + o.getClass().getName());
+                              log.trace("AdminObject defined in classloader: " + o.getClass().getClassLoader());
+                           }
+                           
+                           archiveValidationObjects
+                              .add(new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProps()));
+                           beanValidationObjects.add(o);
+                        }
                      }
                   }
                }
@@ -524,6 +557,10 @@ public final class RADeployer implements CloneableDeployer
 
          if (partialFailures != null)
          {
+            if (failures == null)
+            {
+               failures = new HashSet<Failure>();
+            }
             failures.addAll(partialFailures);
          }
 

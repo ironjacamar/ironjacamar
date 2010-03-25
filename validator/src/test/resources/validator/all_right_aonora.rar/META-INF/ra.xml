@@ -2,11 +2,11 @@
 
 <!-- $Id $ -->
 
-<connector xmlns="http://java.sun.com/xml/ns/j2ee"
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
-           http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"
-           version="1.5">
+<connector xmlns="http://java.sun.com/xml/ns/javaee"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+   http://java.sun.com/xml/ns/j2ee/connector_1_6.xsd"
+   version="1.6" metadata-complete="false">
 
    <vendor-name>Red Hat Middleware LLC</vendor-name>
    <eis-type>Test RA</eis-type>
@@ -14,11 +14,16 @@
 
    <resourceadapter>
       <resourceadapter-class>org.jboss.jca.test.validator.rules.ra.TestResourceAdapterRight</resourceadapter-class>
+      <adminobject>
+         <adminobject-interface>org.jboss.jca.test.validator.rules.base.BaseAdminObject</adminobject-interface>
+         <adminobject-class>org.jboss.jca.test.validator.rules.base.BaseAdminObject</adminobject-class>
+      </adminobject>
       <config-property>
          <config-property-name>StringRAR</config-property-name>
          <config-property-type>java.lang.String</config-property-type>
          <config-property-value>StringFromRARProperties</config-property-value>
-      </config-property>   
+      </config-property>
+      
       <outbound-resourceadapter>
          <connection-definition>
             <managedconnectionfactory-class>org.jboss.jca.test.validator.rules.ra.TestManagedConnectionFactory</managedconnectionfactory-class>

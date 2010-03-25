@@ -43,7 +43,7 @@ import javax.resource.cci.ConnectionFactory;
 public class CFConstructor implements Rule
 {
    /** Section */
-   private static final String SECTION = "17.5.1.1 ";
+   private static final String SECTION = "17.5.1.1";
 
    /**
     * Constructor

@@ -19,53 +19,43 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.jca.test.validator.rules.ao;
 
-package org.jboss.jca.validator;
-
-import java.util.List;
-
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
+import javax.resource.spi.ConfigProperty;
 
 /**
- * Object wrapper for objects that should be validated
+ * An AdminObject with wrong property
+ * @author Stefano Maestri mailto:stefano.maestri@javalinux.it
+ *
  */
-public class ValidateObject extends ValidateClass
+public class TestAdminObjectConstructorWrong
 {
-   /** Onject */
-   private final Object object;
+   @ConfigProperty(type = String.class, defaultValue = "InAO")
+   private String myStringProperty;
 
    /**
-    * Constructor
-    * @param key The key
-    * @param object The key
+    * just hide default constructor
+    * @param foo unused param
     */
-   public ValidateObject(int key,
-                         Object object)
+   public TestAdminObjectConstructorWrong(String foo)
    {
-      this(key, object, null);
-   }
-   
-   /**
-    * Constructor
-    * @param key The key
-    * @param object The key
-    * @param configProperties The list of config property metadata
-    */
-   public ValidateObject(int key,
-                         Object object,
-                         List<ConfigPropertyMetaData> configProperties)
-   {
-      super(key, object != null ? object.getClass() : null, configProperties);
-      this.object = object;
+
    }
 
    /**
-    * Get the object
-    * @return The object
+    *
+    * @param myStringProperty the myStringProperty to set
     */
-   public Object getObject()
+   public void setMyStringProperty(String myStringProperty)
    {
-      return object;
+      this.myStringProperty = myStringProperty;
    }
 
+   /**
+    * @return the myStringProperty
+    */
+   public String getMyStringProperty()
+   {
+      return myStringProperty;
+   }
 }

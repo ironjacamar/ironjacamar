@@ -36,7 +36,7 @@
             <messagelistener>
                <messagelistener-type>org.jboss.jca.test.validator.rules.base.MessageListener</messagelistener-type>
                <activationspec>
-                  <activationspec-class>org.jboss.jca.test.validator.rules.base.BaseActivationSpec</activationspec-class>
+                  <activationspec-class>org.jboss.jca.test.validator.rules.as.TestActivationSpecWrongConstructor</activationspec-class>
                </activationspec>
             </messagelistener>
          </messageadapter>

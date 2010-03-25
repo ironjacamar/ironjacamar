@@ -21,7 +21,7 @@
       </config-property>   
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.validator.rules.ra.TestManagedConnectionFactory</managedconnectionfactory-class>
+            <managedconnectionfactory-class>org.jboss.jca.test.validator.rules.cf.TestManagedConnectionFactoryCreatingConnectionFactoryWithWrongSerializable</managedconnectionfactory-class>
 
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
             <connectionfactory-impl-class>org.jboss.jca.test.validator.rules.ra.TestManagedConnection</connectionfactory-impl-class>
@@ -31,15 +31,5 @@
          <transaction-support>LocalTransaction</transaction-support>
          <reauthentication-support>false</reauthentication-support>
       </outbound-resourceadapter>
-      <inbound-resourceadapter>
-         <messageadapter>        
-            <messagelistener>
-               <messagelistener-type>org.jboss.jca.test.validator.rules.base.MessageListener</messagelistener-type>
-               <activationspec>
-                  <activationspec-class>org.jboss.jca.test.validator.rules.base.BaseActivationSpec</activationspec-class>
-               </activationspec>
-            </messagelistener>
-         </messageadapter>
-      </inbound-resourceadapter>
    </resourceadapter>
 </connector>

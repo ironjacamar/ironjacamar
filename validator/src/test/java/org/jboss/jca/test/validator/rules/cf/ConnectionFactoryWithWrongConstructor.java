@@ -19,53 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.jca.test.validator.rules.cf;
 
-package org.jboss.jca.validator;
-
-import java.util.List;
-
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
+import org.jboss.jca.test.validator.rules.base.BaseCciConnectionFactory;
 
 /**
- * Object wrapper for objects that should be validated
+ * ConnectionFactoryWithWrongConstructor
+ *
+ * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
+ * @version $Revision: $
  */
-public class ValidateObject extends ValidateClass
+public class ConnectionFactoryWithWrongConstructor extends BaseCciConnectionFactory
 {
-   /** Onject */
-   private final Object object;
 
    /**
-    * Constructor
-    * @param key The key
-    * @param object The key
+    * Constructor just to hide default constructor
+    * @param foo unused parameter
     */
-   public ValidateObject(int key,
-                         Object object)
+   public ConnectionFactoryWithWrongConstructor(String foo)
    {
-      this(key, object, null);
-   }
-   
-   /**
-    * Constructor
-    * @param key The key
-    * @param object The key
-    * @param configProperties The list of config property metadata
-    */
-   public ValidateObject(int key,
-                         Object object,
-                         List<ConfigPropertyMetaData> configProperties)
-   {
-      super(key, object != null ? object.getClass() : null, configProperties);
-      this.object = object;
-   }
 
-   /**
-    * Get the object
-    * @return The object
-    */
-   public Object getObject()
-   {
-      return object;
    }
 
 }

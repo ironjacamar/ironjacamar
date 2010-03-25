@@ -44,7 +44,10 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
  * @version $Revision: $
  */
-public class TestManagedConnectionFactoryEqualsAndHashCodeWrong implements ManagedConnectionFactory, ResourceAdapterAssociation
+public class TestManagedConnectionFactoryEqualsAndHashCodeWrong
+      implements
+         ManagedConnectionFactory,
+         ResourceAdapterAssociation
 {
    private static final long serialVersionUID = 1L;
 

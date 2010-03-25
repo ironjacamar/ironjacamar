@@ -19,53 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.jca.test.validator.rules.as;
 
-package org.jboss.jca.validator;
-
-import java.util.List;
-
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
+import org.jboss.jca.test.validator.rules.base.BaseActivationSpec;
 
 /**
- * Object wrapper for objects that should be validated
+ * BaseActivationSpec
+ * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
+ *
  */
-public class ValidateObject extends ValidateClass
+
+public class TestActivationSpecWrongProperties extends BaseActivationSpec
 {
-   /** Onject */
-   private final Object object;
+   private String stringRar;
 
    /**
-    * Constructor
-    * @param key The key
-    * @param object The key
+    *
+    * @param s The value
     */
-   public ValidateObject(int key,
-                         Object object)
+   public void setStringRAR(String s)
    {
-      this(key, object, null);
-   }
-   
-   /**
-    * Constructor
-    * @param key The key
-    * @param object The key
-    * @param configProperties The list of config property metadata
-    */
-   public ValidateObject(int key,
-                         Object object,
-                         List<ConfigPropertyMetaData> configProperties)
-   {
-      super(key, object != null ? object.getClass() : null, configProperties);
-      this.object = object;
+      this.stringRar = s;
    }
 
    /**
-    * Get the object
-    * @return The object
+    *
     */
-   public Object getObject()
+   public void getStringRAR()
    {
-      return object;
+      //return stringRar;
    }
 
 }
