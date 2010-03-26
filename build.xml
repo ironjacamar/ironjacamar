@@ -554,6 +554,15 @@
       <fileset dir="fungal/src/main/java">
         <include name="**/*.java" />
       </fileset>
+      <fileset dir="sjc/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="standalone/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="validator/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
       <fileset dir="web/src/main/java">
         <include name="**/*.java" />
       </fileset>
@@ -578,6 +587,15 @@
         <include name="**/*.java" />
       </fileset>
       <fileset dir="fungal/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="sjc/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="standalone/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="validator/src/main/java">
         <include name="**/*.java" />
       </fileset>
       <fileset dir="web/src/main/java">
