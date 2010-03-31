@@ -8,11 +8,11 @@
       <para>The JBoss JCA container features a validator which checks resource adapter archives
         against the Java Connector Architecture (JCA) specification.</para>
 
-      <para>The validator works by doing a static analysis of the resource adapter classes
+      <para>The validator is doing a static analysis of the resource adapter classes
         and checks them against the rules defined in the validator.</para>
 
       <para>The validator is used in the deployer chain of the JCA container, and is available 
-        as a standalone tool too.</para>
+        as a standalone tool and an Apache Ant too.</para>
    </section>
 
    <section id="validator_reports">
@@ -93,7 +93,7 @@ Code: com.mycompany.myproject.ResourceAdapterImpl
 
    </section>
 
-   <section id="validator_running">
+   <section id="validator_standalone">
       <title>Running the standalone validator</title>
 
       <para>The validator can be run on the command line by</para>
@@ -107,5 +107,65 @@ java -jar jboss-jca-validator.jar &lt;file&gt;
 
    </section>
 
+   <section id="validator_ant">
+      <title>Apache Ant integration</title>
+
+      <para>The validator integrates with Apache Ant such that you can generate the reports directly from 
+        your build environment before deploying the resoruce adapter into the JBoss JCA container.</para>
+
+      <para>First you have to define the <code>taskdef</code> for the task</para>
+
+      <programlisting>
+&lt;taskdef name="validator"
+         classname="org.jboss.jca.validator.ant.ValidatorTask"
+         classpathref="jbossjca.lib.path.id"/&gt;
+      </programlisting>
+
+      <para>See the Apache Ant documentation for additional instructions on installation.</para>
+
+      <section id="validator_ant_usage">
+        <title>Usage</title>
+
+        <programlisting>
+&lt;validator rarFile="${myArchive.rar}" outputDir="${report.dir}"/&gt;
+        </programlisting>
+
+        <table frame="all">
+          <title>Apache Ant: validator</title>
+          <tgroup cols="2" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1"/>
+            <colspec colname="c2" colwidth="5*"/>
+            <thead>
+              <row>
+                <entry align="left">Key</entry>
+                <entry align="left">Value</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry><code>rarFile</code></entry>
+                <entry>
+                  The resource adapter file
+                </entry>
+              </row>
+              <row>
+                <entry><code>outputDir</code></entry>
+                <entry>
+                  The directory where the reports should be generated
+                </entry>
+              </row>
+              <row>
+                <entry><code>classpath</code></entry>
+                <entry>
+                  A classpath to resolve additional dependencies against
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        
+      </section>
+
+   </section>
 
 </chapter>
