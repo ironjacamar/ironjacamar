@@ -31,8 +31,8 @@ public interface Validate
     * Get the key
     * @return The key
     */
-   public int getKey();
-   
+   public Key getKey();
+
    /**
     * Get the class
     * @return The class

@@ -28,35 +28,35 @@ import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 /**
  * ValidateClass for objects that should be validated
  */
-public class ValidateClass implements Validate 
+public class ValidateClass implements Validate
 {
    /** Key */
-   private final int key;
+   private final Key key;
 
    /** config-property */
    private final List<ConfigPropertyMetaData> configProperties;
 
    /** Clazz */
    private Class<?> clazz;
-   
+
    /**
     * Constructor
     * @param key The key
     * @param clazz The class
     */
-   public ValidateClass(int key,
+   public ValidateClass(Key key,
                          Class<?> clazz)
    {
       this(key, clazz, null);
    }
-   
+
    /**
     * Constructor
     * @param key The key
     * @param clazz The class
     * @param configProperties The list of config property metadata
     */
-   public ValidateClass(int key,
+   public ValidateClass(Key key,
                          Class<?> clazz,
                          List<ConfigPropertyMetaData> configProperties)
    {
@@ -64,7 +64,7 @@ public class ValidateClass implements Validate
       this.clazz = clazz;
       this.configProperties = configProperties;
    }
-   
+
    /**
     * Constructor
     * @param key The key
@@ -72,7 +72,7 @@ public class ValidateClass implements Validate
     * @param cl the class loader used to load class
     * @param configProperties The list of config property metadata
     */
-   public ValidateClass(int key, String className, ClassLoader cl, List<ConfigPropertyMetaData> configProperties)
+   public ValidateClass(Key key, String className, ClassLoader cl, List<ConfigPropertyMetaData> configProperties)
    {
       this.key = key;
       try
@@ -90,7 +90,7 @@ public class ValidateClass implements Validate
     * Get the key
     * @return The key
     */
-   public int getKey()
+   public Key getKey()
    {
       return key;
    }
@@ -103,7 +103,7 @@ public class ValidateClass implements Validate
    {
       return clazz;
    }
-   
+
    /**
     * Get the list of config properties
     * @return The list

@@ -39,19 +39,19 @@ public class ValidateObject extends ValidateClass
     * @param key The key
     * @param object The key
     */
-   public ValidateObject(int key,
+   public ValidateObject(Key key,
                          Object object)
    {
       this(key, object, null);
    }
-   
+
    /**
     * Constructor
     * @param key The key
     * @param object The key
     * @param configProperties The list of config property metadata
     */
-   public ValidateObject(int key,
+   public ValidateObject(Key key,
                          Object object,
                          List<ConfigPropertyMetaData> configProperties)
    {

@@ -25,30 +25,18 @@ package org.jboss.jca.validator;
 /**
  * Key
  */
-public class Key
-{
-   /** Resource adapter */
-   public static final int RESOURCE_ADAPTER = 0;
+public enum Key {
 
-   /** Managed connection factory */
-   public static final int MANAGED_CONNECTION_FACTORY = 1;
-
-   /** Activation spec */
-   public static final int ACTIVATION_SPEC = 2;
-
-   /** Admin object */
-   public static final int ADMIN_OBJECT = 3;
-
-   /** Managed connection */
-   public static final int MANAGED_CONNECTION = 4;
-   
-   /** Connection factory */
-   public static final int CONNECTION_FACTORY = 5;
-
-   /**
-    * Constructor
-    */
-   private Key()
-   {
-   }
+    /** Resource adapter */
+    RESOURCE_ADAPTER,
+    /** Managed connection factory */
+    MANAGED_CONNECTION_FACTORY,
+    /** Activation spec */
+    ACTIVATION_SPEC,
+    /** Admin object */
+    ADMIN_OBJECT,
+    /** Managed connection */
+    MANAGED_CONNECTION,
+    /** Connection factory */
+    CONNECTION_FACTORY;
 }
