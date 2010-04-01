@@ -16,7 +16,7 @@ ant test
     <para>A single test case can be executed using</para>
 
     <programlisting>
-ant -Dmodule=embedded -Dtest=org.jboss.jca.test.embedded.unit.ShrinkWrapTestCase one-test
+ant -Dmodule=embedded -Dtest=org.jboss.jca.embedded.unit.ShrinkWrapTestCase one-test
     </programlisting>
 
     <para>where <code>-Dmodule</code> specifies which module to execute the test case in. This parameter
@@ -61,7 +61,7 @@ ant -Dmodule=embedded module-test
       <para>The test cases should be created in such a way such that they are easily identified
         by chapter, section and paragraph. For example:</para>
       <programlisting>
-org.jboss.jca.test.core.spec.chaper10.section3
+org.jboss.jca.core.spec.chaper10.section3
       </programlisting>
     </section>
 
@@ -82,7 +82,7 @@ org.jboss.jca.test.core.spec.chaper10.section3
       </itemizedlist>
       <para>The test cases lives in a package that have a meaningful name of the component it tests. For example:</para>
       <programlisting>
-org.jboss.jca.test.core.workmanager
+org.jboss.jca.core.workmanager
       </programlisting>
 
       <para>These test cases can use both the embedded JCA environment or be implemented as standard POJO based
@@ -111,7 +111,7 @@ org.jboss.jca.test.core.workmanager
       </itemizedlist>
       <para>The test cases lives in a package that have a meaningful name of the component it tests. For example:</para>
       <programlisting>
-org.jboss.jca.test.core.workmanager
+org.jboss.jca.core.workmanager
       </programlisting>
 
       <para>These test cases can use both the embedded JCA environment or be implemented as standard POJO based

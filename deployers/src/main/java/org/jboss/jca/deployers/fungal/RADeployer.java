@@ -140,7 +140,7 @@ public final class RADeployer implements CloneableDeployer
    {
       beanValidation.set(value);
    }
-   
+
    /**
     * Should bean validation be performed
     * @return True if validation; otherwise false
@@ -149,7 +149,7 @@ public final class RADeployer implements CloneableDeployer
    {
       return beanValidation.get();
    }
-   
+
    /**
     * Set if archive validation should be performed
     * @param value The value
@@ -158,7 +158,7 @@ public final class RADeployer implements CloneableDeployer
    {
       archiveValidation.set(value);
    }
-   
+
    /**
     * Should archive validation be performed
     * @return True if validation; otherwise false
@@ -167,7 +167,7 @@ public final class RADeployer implements CloneableDeployer
    {
       return archiveValidation.get();
    }
-   
+
    /**
     * Set if a failed warning archive validation report should fail the deployment
     * @param value The value
@@ -176,7 +176,7 @@ public final class RADeployer implements CloneableDeployer
    {
       archiveValidationFailOnWarn.set(value);
    }
-   
+
    /**
     * Does a failed archive validation warning report fail the deployment
     * @return True if failing; otherwise false
@@ -185,7 +185,7 @@ public final class RADeployer implements CloneableDeployer
    {
       return archiveValidationFailOnWarn.get();
    }
-   
+
    /**
     * Set if a failed error archive validation report should fail the deployment
     * @param value The value
@@ -194,7 +194,7 @@ public final class RADeployer implements CloneableDeployer
    {
       archiveValidationFailOnError.set(value);
    }
-   
+
    /**
     * Does a failed archive validation error report fail the deployment
     * @return True if failing; otherwise false
@@ -203,7 +203,7 @@ public final class RADeployer implements CloneableDeployer
    {
       return archiveValidationFailOnError.get();
    }
-   
+
    /**
     * Set the print stream
     * @param value The value
@@ -212,7 +212,7 @@ public final class RADeployer implements CloneableDeployer
    {
       printStream = value;
    }
-   
+
    /**
     * Get the print stream
     * @return The handle
@@ -221,7 +221,7 @@ public final class RADeployer implements CloneableDeployer
    {
       return printStream;
    }
-   
+
    /**
     * Set the default bootstrap context
     * @param value The value
@@ -230,7 +230,7 @@ public final class RADeployer implements CloneableDeployer
    {
       defaultBootstrapContext = value;
    }
-   
+
    /**
     * Get the default bootstrap context
     * @return The handle
@@ -239,7 +239,7 @@ public final class RADeployer implements CloneableDeployer
    {
       return defaultBootstrapContext;
    }
-   
+
    /**
     * Set the bootstrap context map
     * @param value The value
@@ -248,7 +248,7 @@ public final class RADeployer implements CloneableDeployer
    {
       bootstrapContexts = value;
    }
-   
+
    /**
     * Get the bootstrap context map
     * @return The handle
@@ -257,7 +257,7 @@ public final class RADeployer implements CloneableDeployer
    {
       return bootstrapContexts;
    }
-   
+
    /**
     * Deploy
     * @param url The url
@@ -278,7 +278,7 @@ public final class RADeployer implements CloneableDeployer
       try
       {
          File f = new File(url.toURI());
-      
+
          if (!f.exists())
             throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
 
@@ -295,7 +295,7 @@ public final class RADeployer implements CloneableDeployer
          {
             root = f;
          }
-      
+
          // Create classloader
          URL[] urls = getUrls(root);
          URLClassLoader cl = SecurityActions.createURLCLassLoader(urls, parent);
@@ -309,10 +309,10 @@ public final class RADeployer implements CloneableDeployer
          // Annotation scanning
          Annotations annotator = new Annotations();
          cmd = annotator.scan(cmd, cl.getURLs(), cl);
-         
+
          // Validate metadata
          metadataHandler.validate(cmd);
-         
+
          // Merge metadata
          cmd = metadataHandler.merge(cmd, jrmd);
 
@@ -335,9 +335,9 @@ public final class RADeployer implements CloneableDeployer
                 (!cmd.is10() || cmd.getRa().getRaClass() != null))
             {
                partialFailures =
-                  validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER, 
-                                                                                  cmd.getRa().getRaClass(), 
-                                                                                  cl, 
+                  validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER,
+                                                                                  cmd.getRa().getRaClass(),
+                                                                                  cl,
                                                                                   cmd.getRa().getConfigProperty())));
                if (partialFailures != null)
                {
@@ -353,20 +353,20 @@ public final class RADeployer implements CloneableDeployer
                   if (trace)
                   {
                      log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
-                     log.trace("ResourceAdapter defined in classloader: " + 
+                     log.trace("ResourceAdapter defined in classloader: " +
                                resourceAdapter.getClass().getClassLoader());
                   }
 
-                  archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, 
-                                                                  resourceAdapter, 
+                  archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER,
+                                                                  resourceAdapter,
                                                                   cmd.getRa().getConfigProperty()));
                   beanValidationObjects.add(resourceAdapter);
                }
             }
-            
+
             // ManagedConnectionFactory
             if (cmd.getRa() != null &&
-                cmd.getRa().getOutboundRa() != null && 
+                cmd.getRa().getOutboundRa() != null &&
                 cmd.getRa().getOutboundRa().getConDefs() != null)
             {
                List<ConnectionDefinitionMetaData> cdMetas = cmd.getRa().getOutboundRa().getConDefs();
@@ -387,13 +387,13 @@ public final class RADeployer implements CloneableDeployer
                      if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
                      {
                         ManagedConnectionFactory mcf =
-                           (ManagedConnectionFactory)initAndInject(cdMeta.getManagedConnectionFactoryClass(), 
+                           (ManagedConnectionFactory)initAndInject(cdMeta.getManagedConnectionFactoryClass(),
                                                                    cdMeta.getConfigProps(), cl);
 
                         if (trace)
                         {
                            log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                           log.trace("ManagedConnectionFactory defined in classloader: " + 
+                           log.trace("ManagedConnectionFactory defined in classloader: " +
                                      mcf.getClass().getClassLoader());
                         }
 
@@ -417,7 +417,7 @@ public final class RADeployer implements CloneableDeployer
                         OnePool onePool = new OnePool(mcf, poolParams, true);
                         onePool.setConnectionListenerFactory(noTxCm);
                         noTxCm.setPoolingStrategy(onePool);
-                        
+
                         // ConnectionFactory
                         Object cf = mcf.createConnectionFactory(noTxCm);
 
@@ -541,7 +541,7 @@ public final class RADeployer implements CloneableDeployer
                               log.trace("AdminObject: " + o.getClass().getName());
                               log.trace("AdminObject defined in classloader: " + o.getClass().getClassLoader());
                            }
-                           
+
                            archiveValidationObjects
                               .add(new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProps()));
                            beanValidationObjects.add(o);
@@ -592,7 +592,7 @@ public final class RADeployer implements CloneableDeployer
                   groupsClasses.add(Class.forName(group, true, cl));
                }
             }
-            
+
             if (beanValidationObjects.size() > 0)
             {
                BeanValidation beanValidator = new BeanValidation();
@@ -602,7 +602,7 @@ public final class RADeployer implements CloneableDeployer
                }
             }
          }
-         
+
          // Activate deployment
          if (resourceAdapter != null)
          {
@@ -644,16 +644,16 @@ public final class RADeployer implements CloneableDeployer
       }
    }
 
-   /** 
+   /**
     * validate archive
-    * 
+    *
     * @param url of the archive
-    * @param archiveValidation classes and/or to validate. 
+    * @param archiveValidation classes and/or to validate.
     * @return The list of failures gotten. Null in case of no failures or if validation is not run according to
     *   {@link #getArchiveValidation()} Settin
     */
-   //IT SHOULD BE PACKAGE PROTECTED ONLY FOR TESTS ACCESSIBILITY
-   public List<Failure> validateArchive(URL url, List<Validate> archiveValidation)
+   //IT IS PACKAGE PROTECTED ONLY FOR TESTS ACCESSIBILITY
+   List<Failure> validateArchive(URL url, List<Validate> archiveValidation)
    {
       // Archive validation
       if (!getArchiveValidation())
@@ -668,18 +668,18 @@ public final class RADeployer implements CloneableDeployer
 
    /**
     * print Failures into Log files.
-    * 
+    *
     * @param urlFileName filename Of deployed rar
     * @param validator validator instance used to run validation rules
     * @param failures the list of Failures to be printed
     * @param reportDirectory where to put various logs
-    * @param fhInput optional parameter. Normally used only for test or in case of 
+    * @param fhInput optional parameter. Normally used only for test or in case of
     *   FailureHelper already present in context
     * @return the error Text
-    * 
+    *
     */
-   //IT SHOULD BE PACKAGE PROTECTED ONLY FOR TESTS ACCESSIBILITY
-   public String printFailuresLog(String urlFileName, Validator validator, Collection<Failure> failures,
+   //IT IS PACKAGE PROTECTED ONLY FOR TESTS ACCESSIBILITY
+   String printFailuresLog(String urlFileName, Validator validator, Collection<Failure> failures,
          File reportDirectory, FailureHelper... fhInput)
    {
       String errorText = "";
@@ -782,13 +782,13 @@ public final class RADeployer implements CloneableDeployer
    /**
     * Start the resource adapter
     * @param resourceAdapter The resource adapter
-    * @param bootstrapIdentifier The bootstrap context identifier; may be <code>null</code> 
+    * @param bootstrapIdentifier The bootstrap context identifier; may be <code>null</code>
     * @throws DeployException Thrown if the resource adapter cant be started
     */
-   @SuppressWarnings("unchecked") 
+   @SuppressWarnings("unchecked")
    private void startContext(ResourceAdapter resourceAdapter, String bootstrapIdentifier) throws DeployException
    {
-      try 
+      try
       {
          Class clz = resourceAdapter.getClass();
          Method start = clz.getMethod("start", new Class[] {BootstrapContext.class});
@@ -798,7 +798,7 @@ public final class RADeployer implements CloneableDeployer
          if (bootstrapIdentifier != null && bootstrapContexts != null)
          {
             CloneableBootstrapContext bc = bootstrapContexts.get(bootstrapIdentifier);
-            
+
             if (bc != null)
                cbc = bc.clone();
          }
@@ -810,7 +810,7 @@ public final class RADeployer implements CloneableDeployer
       }
       catch (InvocationTargetException ite)
       {
-         throw new DeployException("Unable to start " + 
+         throw new DeployException("Unable to start " +
                                    resourceAdapter.getClass().getName(), ite.getTargetException());
       }
       catch (Throwable t)
@@ -825,7 +825,7 @@ public final class RADeployer implements CloneableDeployer
     * @param object The of possible association object
     * @throws DeployException Thrown if the resource adapter cant be started
     */
-   @SuppressWarnings("unchecked") 
+   @SuppressWarnings("unchecked")
    private void associateResourceAdapter(ResourceAdapter resourceAdapter, Object object)
       throws DeployException
    {
@@ -833,7 +833,7 @@ public final class RADeployer implements CloneableDeployer
       {
          if (object instanceof ResourceAdapterAssociation)
          {
-            try 
+            try
             {
                Class clz = object.getClass();
 
@@ -858,16 +858,16 @@ public final class RADeployer implements CloneableDeployer
     * @return The object
     * @throws DeployException Thrown if the object cant be initialized
     */
-   private Object initAndInject(String className, 
+   private Object initAndInject(String className,
                                 List<ConfigPropertyMetaData> configs,
                                 ClassLoader cl)
       throws DeployException
    {
-      try 
+      try
       {
          Class clz = Class.forName(className, true, cl);
          Object o = clz.newInstance();
-         
+
          if (configs != null)
          {
             Injection injector = new Injection();
@@ -912,7 +912,7 @@ public final class RADeployer implements CloneableDeployer
             }
          }
       }
-      return list.toArray(new URL[list.size()]);      
+      return list.toArray(new URL[list.size()]);
    }
 
    /**

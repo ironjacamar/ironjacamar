@@ -130,13 +130,13 @@ public class MyTestCase
         <programlisting>
 <![CDATA[
 import org.jboss.jca.embedded.EmbeddedJCA;
-import org.jboss.jca.test.embedded.rars.simple.MessageListener;
-import org.jboss.jca.test.embedded.rars.simple.TestActivationSpec;
-import org.jboss.jca.test.embedded.rars.simple.TestConnection;
-import org.jboss.jca.test.embedded.rars.simple.TestConnectionInterface;
-import org.jboss.jca.test.embedded.rars.simple.TestManagedConnection;
-import org.jboss.jca.test.embedded.rars.simple.TestManagedConnectionFactory;
-import org.jboss.jca.test.embedded.rars.simple.TestResourceAdapter;
+import org.jboss.jca.embedded.rars.simple.MessageListener;
+import org.jboss.jca.embedded.rars.simple.TestActivationSpec;
+import org.jboss.jca.embedded.rars.simple.TestConnection;
+import org.jboss.jca.embedded.rars.simple.TestConnectionInterface;
+import org.jboss.jca.embedded.rars.simple.TestManagedConnection;
+import org.jboss.jca.embedded.rars.simple.TestManagedConnectionFactory;
+import org.jboss.jca.embedded.rars.simple.TestResourceAdapter;
 
 import java.util.UUID;
 

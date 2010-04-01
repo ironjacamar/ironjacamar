@@ -25,8 +25,8 @@ package org.jboss.jca.validator;
 /**
  * Key
  */
-public enum Key {
-
+public enum Key
+{
     /** Resource adapter */
     RESOURCE_ADAPTER,
     /** Managed connection factory */

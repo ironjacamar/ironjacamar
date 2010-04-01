@@ -13,7 +13,7 @@
    <resourceadapter-version>0.1</resourceadapter-version>
 
    <resourceadapter>
-      <resourceadapter-class>org.jboss.jca.test.validator.rules.ra.TestResourceAdapterRight</resourceadapter-class>
+      <resourceadapter-class>org.jboss.jca.validator.rules.ra.TestResourceAdapterRight</resourceadapter-class>
       <config-property>
          <config-property-name>StringRAR</config-property-name>
          <config-property-type>java.lang.String</config-property-type>
@@ -21,12 +21,12 @@
       </config-property>   
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.validator.rules.ra.TestManagedConnectionFactory</managedconnectionfactory-class>
+            <managedconnectionfactory-class>org.jboss.jca.validator.rules.ra.TestManagedConnectionFactory</managedconnectionfactory-class>
 
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
-            <connectionfactory-impl-class>org.jboss.jca.test.validator.rules.ra.TestManagedConnection</connectionfactory-impl-class>
-            <connection-interface>org.jboss.jca.test.validator.rules.base.TestConnectionInterface</connection-interface>
-            <connection-impl-class>org.jboss.jca.test.validator.rules.base.TestConnection</connection-impl-class>
+            <connectionfactory-impl-class>org.jboss.jca.validator.rules.ra.TestManagedConnection</connectionfactory-impl-class>
+            <connection-interface>org.jboss.jca.validator.rules.base.TestConnectionInterface</connection-interface>
+            <connection-impl-class>org.jboss.jca.validator.rules.base.TestConnection</connection-impl-class>
          </connection-definition>
          <transaction-support>LocalTransaction</transaction-support>
          <reauthentication-support>false</reauthentication-support>
@@ -34,9 +34,9 @@
       <inbound-resourceadapter>
          <messageadapter>        
             <messagelistener>
-               <messagelistener-type>org.jboss.jca.test.validator.rules.base.MessageListener</messagelistener-type>
+               <messagelistener-type>org.jboss.jca.validator.rules.base.MessageListener</messagelistener-type>
                <activationspec>
-                  <activationspec-class>org.jboss.jca.test.validator.rules.as.TestActivationSpecWrongConstructor</activationspec-class>
+                  <activationspec-class>org.jboss.jca.validator.rules.as.TestActivationSpecWrongConstructor</activationspec-class>
                </activationspec>
             </messagelistener>
          </messageadapter>

@@ -13,11 +13,11 @@
    <resourceadapter-version>0.1</resourceadapter-version>
 
    <resourceadapter>
-      <resourceadapter-class>org.jboss.jca.test.validator.rules.ra.TestResourceAdapterPropertyWrong</resourceadapter-class>
+      <resourceadapter-class>org.jboss.jca.validator.rules.ra.TestResourceAdapterPropertyWrong</resourceadapter-class>
          
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.validator.rules.mcf.TestManagedConnectionFactoryPropertyWrong</managedconnectionfactory-class>
+            <managedconnectionfactory-class>org.jboss.jca.validator.rules.mcf.TestManagedConnectionFactoryPropertyWrong</managedconnectionfactory-class>
             <config-property>
                <config-property-name>StringRAR</config-property-name>
                <config-property-type>java.lang.String</config-property-type>
@@ -25,9 +25,9 @@
             </config-property> 
 
             <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
-            <connectionfactory-impl-class>org.jboss.jca.test.validator.rules.ra.TestManagedConnection</connectionfactory-impl-class>
-            <connection-interface>org.jboss.jca.test.validator.rules.base.TestConnectionInterface</connection-interface>
-            <connection-impl-class>org.jboss.jca.test.validator.rules.base.TestConnection</connection-impl-class>
+            <connectionfactory-impl-class>org.jboss.jca.validator.rules.ra.TestManagedConnection</connectionfactory-impl-class>
+            <connection-interface>org.jboss.jca.validator.rules.base.TestConnectionInterface</connection-interface>
+            <connection-impl-class>org.jboss.jca.validator.rules.base.TestConnection</connection-impl-class>
          </connection-definition>
          <transaction-support>LocalTransaction</transaction-support>
          <reauthentication-support>false</reauthentication-support>
