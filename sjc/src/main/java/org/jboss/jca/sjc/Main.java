@@ -22,6 +22,7 @@
 
 package org.jboss.jca.sjc;
 
+import org.jboss.jca.fungal.api.ClassLoaderFactory;
 import org.jboss.jca.fungal.api.Kernel;
 import org.jboss.jca.fungal.api.KernelConfiguration;
 import org.jboss.jca.fungal.api.KernelFactory;
@@ -60,6 +61,7 @@ public class Main
       {
          KernelConfiguration kernelConfiguration = new KernelConfiguration();
          kernelConfiguration = kernelConfiguration.name("jboss.jca");
+         kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
          kernelConfiguration = kernelConfiguration.parallelDeploy(false);
 
          String home = SecurityActions.getSystemProperty("jboss.jca.home");

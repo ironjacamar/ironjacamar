@@ -22,7 +22,9 @@
 
 package org.jboss.jca.fungal.impl;
 
+import org.jboss.jca.fungal.api.ClassLoaderFactory;
 import org.jboss.jca.fungal.api.Kernel;
+import org.jboss.jca.fungal.api.KernelClassLoader;
 import org.jboss.jca.fungal.api.KernelConfiguration;
 import org.jboss.jca.fungal.api.MainDeployer;
 import org.jboss.jca.fungal.deployers.Deployment;
@@ -68,7 +70,7 @@ import javax.management.ObjectName;
 public class KernelImpl implements Kernel
 {
    /** Version information */
-   private static final String VERSION = "Fungal 0.6.1";
+   private static final String VERSION = "Fungal 0.7";
 
    /** Kernel configuration */
    private KernelConfiguration kernelConfiguration;
@@ -209,7 +211,7 @@ public class KernelImpl implements Kernel
 
       URL[] urls = mergeUrls(libUrls, confUrls);
 
-      kernelClassLoader = SecurityActions.createKernelClassLoader(urls, oldClassLoader);
+      kernelClassLoader = ClassLoaderFactory.create(kernelConfiguration.getClassLoader(), urls, oldClassLoader);
       SecurityActions.setThreadContextClassLoader(kernelClassLoader);
 
       SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");

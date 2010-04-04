@@ -335,7 +335,7 @@ ${jboss.jca.host:localhost}
     <section id="fungal_classloading">
       <title>Classloading</title>
 
-      <para>JBoss JCA/Fungal features a simple 3-level classloader model:</para>
+      <para>JBoss JCA/Fungal features a 3-tier classloader model:</para>
 
       <orderedlist>
         <listitem>
@@ -345,15 +345,53 @@ ${jboss.jca.host:localhost}
         </listitem>
         <listitem>
           <para>Kernel classloader (KernelCL).</para>
-          <para>An URLClassLoader based class loader with AppCL as its parent which loads
+          <para>A class loader with AppCL as its parent which loads
             all libraries used by the kernel.</para>
         </listitem>
         <listitem>
           <para>Deployment classloader (DCL).</para>
-          <para>Each deployment is running in its own classloader with
-            KernelCL as its parent.</para>
+          <para>Each deployment can run in its own classloader with KernelCL as its parent.</para>
         </listitem>
       </orderedlist>
+
+      <section id="fungal_classloading_types">
+        <title>Class loader types</title>
+
+        <para>The JBoss JCA/Fungal kernel class loader mechanisms are controlled through
+          the</para>
+
+        <programlisting>
+org.jboss.jca.fungal.api.ClassLoaderFactory      
+        </programlisting>
+
+        <para>class which creates class loaders based on the parameters given.</para>
+
+        <para>The following types are supported:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><code>TYPE_PARENT_FIRST</code></para>
+            <para>The parent class loader is checked before the child class loader.</para>
+          </listitem>
+          <listitem>
+            <para><code>TYPE_PARENT_LAST</code></para>
+            <para>The parent class loader is after the child class loader.</para>
+          </listitem>
+          <listitem>
+            <para><code>TYPE_EXPORT</code></para>
+            <para>This class loader type can be compared to the OSGi class loader model
+              where each Java library that contains OSGi manifest information will be isolated.
+              This allows multiple versions of the same library to be active at the same time and
+              will allow deployment to declare their dependencies on a specific library version.</para>
+            <para>Note, that this type is not a valid OSGi class loader model implementation, but
+              only borrows some of the ideas in that model.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>All class loader types are implemented as a <code>org.jboss.jca.fungal.api.KernelClassLoader</code>
+          which extends the <code>java.net.URLClassLoader</code> class.</para>
+
+      </section>
 
     </section>
 

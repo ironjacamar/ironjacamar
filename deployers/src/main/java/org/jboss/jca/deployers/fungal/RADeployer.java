@@ -32,6 +32,8 @@ import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.fungal.api.ClassLoaderFactory;
+import org.jboss.jca.fungal.api.KernelClassLoader;
 import org.jboss.jca.fungal.deployers.CloneableDeployer;
 import org.jboss.jca.fungal.deployers.DeployException;
 import org.jboss.jca.fungal.deployers.Deployer;
@@ -60,7 +62,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -298,7 +299,7 @@ public final class RADeployer implements CloneableDeployer
 
          // Create classloader
          URL[] urls = getUrls(root);
-         URLClassLoader cl = SecurityActions.createURLCLassLoader(urls, parent);
+         KernelClassLoader cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_LAST, urls, parent);
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Parse metadata

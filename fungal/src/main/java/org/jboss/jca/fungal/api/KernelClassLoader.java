@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.fungal.impl;
+package org.jboss.jca.fungal.api;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -32,8 +32,9 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Kernel class loader
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @see org.jboss.jca.fungal.api.ClassLoaderFactory
  */
-public class KernelClassLoader extends URLClassLoader implements Closeable
+public abstract class KernelClassLoader extends URLClassLoader implements Closeable
 {
    /** Simple types */
    private static ConcurrentMap<String, Class<?>> simpleTypes = new ConcurrentHashMap<String, Class<?>>(9);
@@ -56,7 +57,7 @@ public class KernelClassLoader extends URLClassLoader implements Closeable
     * @param urls The URLs for JAR archives or directories
     * @param parent The parent class loader
     */
-   public KernelClassLoader(URL[] urls, ClassLoader parent)
+   protected KernelClassLoader(URL[] urls, ClassLoader parent)
    {
       super(urls, parent);
    }
@@ -67,13 +68,10 @@ public class KernelClassLoader extends URLClassLoader implements Closeable
     * @return The class
     * @throws ClassNotFoundException If the class could not be found 
     */
+   @Override
    public Class<?> loadClass(String name) throws ClassNotFoundException
    {
-      Class<?> result = simpleTypes.get(name);
-      if (result != null)
-         return result;
-
-      return loadClass(name, false);
+      return simpleTypes.get(name);
    }
 
    /**
@@ -90,6 +88,5 @@ public class KernelClassLoader extends URLClassLoader implements Closeable
     */
    public void shutdown() throws IOException
    {
-      // Implement this by calling super.close() when JDK7
    }
 }

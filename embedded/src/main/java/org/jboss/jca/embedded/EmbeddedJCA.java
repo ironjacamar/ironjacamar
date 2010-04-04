@@ -22,6 +22,7 @@
 
 package org.jboss.jca.embedded;
 
+import org.jboss.jca.fungal.api.ClassLoaderFactory;
 import org.jboss.jca.fungal.api.Kernel;
 import org.jboss.jca.fungal.api.KernelConfiguration;
 import org.jboss.jca.fungal.api.KernelFactory;
@@ -82,6 +83,7 @@ public class EmbeddedJCA
    {
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
       kernelConfiguration = kernelConfiguration.name("jboss.jca");
+      kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
       kernelConfiguration = kernelConfiguration.parallelDeploy(false);
       kernelConfiguration = kernelConfiguration.remoteAccess(false);
       kernelConfiguration = kernelConfiguration.hotDeployment(false);

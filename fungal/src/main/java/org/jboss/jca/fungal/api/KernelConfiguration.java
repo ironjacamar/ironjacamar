@@ -36,6 +36,9 @@ public class KernelConfiguration
    /** Home */
    private URL home;
 
+   /** Kernel class loader */
+   private int classLoader;
+
    /** Library */
    private String library;
 
@@ -73,6 +76,7 @@ public class KernelConfiguration
    {
       name = "fungal";
       home = null;
+      classLoader = ClassLoaderFactory.TYPE_EXPORT;
       library = "lib";
       configuration = "config";
       deploy = "deploy";
@@ -125,6 +129,27 @@ public class KernelConfiguration
    public URL getHome()
    {
       return home;
+   }
+
+   /**
+    * Set the kernel class loader type; default <code>ClassLoaderFactory.TYPE_EXPORT</code>
+    * @param type The type
+    * @return The configuration
+    */
+   public KernelConfiguration classLoader(int type)
+   {
+      this.classLoader = type;
+
+      return this;
+   }
+
+   /**
+    * Get the kernel class loader type
+    * @return The type
+    */
+   public int getClassLoader()
+   {
+      return classLoader;
    }
 
    /**
