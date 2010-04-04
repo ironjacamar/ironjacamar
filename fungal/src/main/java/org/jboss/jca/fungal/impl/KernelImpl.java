@@ -30,6 +30,9 @@ import org.jboss.jca.fungal.impl.remote.CommunicationServer;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -65,7 +68,7 @@ import javax.management.ObjectName;
 public class KernelImpl implements Kernel
 {
    /** Version information */
-   private static final String VERSION = "Fungal 0.6";
+   private static final String VERSION = "Fungal 0.6.1";
 
    /** Kernel configuration */
    private KernelConfiguration kernelConfiguration;
@@ -241,6 +244,43 @@ public class KernelImpl implements Kernel
       // Log version information
       info(VERSION + " started");
 
+      if (isDebugEnabled())
+      {
+         StringBuilder vmArgs = new StringBuilder();
+         RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
+         List<String> inputArguments = runtime.getInputArguments();
+         Iterator<String> it = inputArguments.iterator();
+         while (it.hasNext()) 
+         {
+            String arg = it.next();
+
+            vmArgs = vmArgs.append(arg);
+            
+            if (it.hasNext())
+               vmArgs = vmArgs.append(" ");
+         }
+
+         debug("Java version: " + 
+               SecurityActions.getSystemProperty("java.version") + "," +
+               SecurityActions.getSystemProperty("java.vendor"));
+         
+         debug("Java Runtime: " + 
+               SecurityActions.getSystemProperty("java.runtime.name") + " (build " + 
+               SecurityActions.getSystemProperty("java.runtime.version") + ")");      
+         
+         debug("Java VM: " + 
+               SecurityActions.getSystemProperty("java.vm.name") + " " + 
+               SecurityActions.getSystemProperty("java.vm.version") + "," +
+               SecurityActions.getSystemProperty("java.vm.vendor"));
+         
+         debug("OS-System: " + 
+               SecurityActions.getSystemProperty("os.name") + " " + 
+               SecurityActions.getSystemProperty("os.version") + "," + 
+               SecurityActions.getSystemProperty("os.arch"));
+         
+         debug("VM arguments: " + vmArgs.toString());
+      }
+
       // Start all URLs defined in bootstrap.xml
       if (configDirectory != null && configDirectory.exists() && configDirectory.isDirectory())
       {
@@ -335,6 +375,14 @@ public class KernelImpl implements Kernel
                                           kernelConfiguration.getBindAddress(),
                                           kernelConfiguration.getRemotePort());
          Future<?> f = threadPoolExecutor.submit(remote);
+      }
+
+      // Memory information
+      if (isDebugEnabled())
+      {
+         MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
+         debug("Heap memory: " + memoryBean.getHeapMemoryUsage().toString());
+         debug("NonHeap memory: " + memoryBean.getNonHeapMemoryUsage().toString());
       }
    }
 

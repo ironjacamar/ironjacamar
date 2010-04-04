@@ -27,8 +27,6 @@ import org.jboss.jca.fungal.api.KernelConfiguration;
 import org.jboss.jca.fungal.api.KernelFactory;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.lang.reflect.Method;
 import java.net.URI;
 
@@ -298,13 +296,6 @@ public class Main
                info("Shutdown complete");
             }
          });
-
-         if (isDebugEnabled())
-         {
-            MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
-            debug("Heap memory: " + memoryBean.getHeapMemoryUsage().toString());
-            debug("NonHeap memory: " + memoryBean.getNonHeapMemoryUsage().toString());
-         }
 
          long l2 = System.currentTimeMillis();
          info("Server started in " + (l2 - l1) + "ms");
