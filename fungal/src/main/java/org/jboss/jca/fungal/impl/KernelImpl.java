@@ -218,6 +218,7 @@ public class KernelImpl implements Kernel
       SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
       SecurityActions.setSystemProperty("javax.xml.stream.XMLInputFactory", 
                                         "com.sun.xml.internal.stream.XMLInputFactoryImpl");
+      SecurityActions.setSystemProperty("log4j.defaultInitOverride", "true");
 
       if (kernelConfiguration.getBindAddress() != null)
       {
