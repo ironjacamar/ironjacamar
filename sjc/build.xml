@@ -93,6 +93,8 @@
     <mkdir dir="${target.dir}/sjc/bin"/>
     <mkdir dir="${target.dir}/sjc/config"/>
     <mkdir dir="${target.dir}/sjc/config/bootstrap"/>
+    <mkdir dir="${target.dir}/sjc/doc"/>
+    <mkdir dir="${target.dir}/sjc/doc/codegenerator"/>
     <mkdir dir="${target.dir}/sjc/lib"/>
     <mkdir dir="${target.dir}/sjc/lib/endorsed"/>
     <mkdir dir="${target.dir}/sjc/log"/>
@@ -136,6 +138,7 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
+        <exclude name="jboss-jca-codegenerator.jar"/>
         <exclude name="jboss-jca-fungal.jar"/>
         <exclude name="jboss-jca-sjc.jar"/>
         <exclude name="jboss-jca-deployers-main.jar"/>
@@ -172,7 +175,21 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/doc/codegenerator">
+      <fileset dir="../codegenerator/src/main/resources/">
+        <include name="**/*.sh"/>
+        <include name="**/*.bat"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/doc/codegenerator">
+      <fileset dir="${target.dir}">
+        <include name="jboss-jca-codegenerator.jar"/>
+      </fileset>
+    </copy>
+
     <chmod dir="${target.dir}/sjc/bin" perm="ugo+rx" includes="**/*.sh"/>
+    <chmod dir="${target.dir}/sjc/doc/codegenerator" perm="ugo+rx" includes="**/*.sh"/>
 
   </target>
 
