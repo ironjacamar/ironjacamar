@@ -242,7 +242,7 @@
     <ant dir="web" inheritRefs="true" target="docs"/>
     <ant dir="sjc" inheritRefs="true" target="docs"/>
     <ant dir="standalone" inheritRefs="true" target="docs"/>
-    <ant dir="codegenerator" inheritRefs="true" target="jars"/>
+    <ant dir="codegenerator" inheritRefs="true" target="docs"/>
   </target>
   
   <!-- ================================= 
@@ -263,8 +263,7 @@
     <ant dir="embedded" inheritRefs="true" target="test"/>
     <ant dir="deployers" inheritRefs="true" target="test"/>
     <ant dir="validator" inheritRefs="true" target="test"/>
-    <ant dir="codegenerator" inheritRefs="true" target="jars"/>
-    <ant dir="codegenerator" inheritRefs="true" target="jars"/>
+    <ant dir="codegenerator" inheritRefs="true" target="test"/>
   </target>
   
   <!-- ================================= 
