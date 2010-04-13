@@ -253,6 +253,7 @@
     <ant dir="embedded" inheritRefs="true" target="prepare-test"/>
     <ant dir="deployers" inheritRefs="true" target="prepare-test"/>
     <ant dir="validator" inheritRefs="true" target="prepare-test"/>
+    <ant dir="codegenerator" inheritRefs="true" target="prepare-test"/>
   </target>
   
   <!-- ================================= 
@@ -392,6 +393,7 @@
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
+      <class location="${target.dir}/jboss-jca-codegenerator.jar" />
       <class location="${target.dir}/jboss-jca-common-api.jar" />
       <class location="${target.dir}/jboss-jca-common-impl.jar" />
       <class location="${target.dir}/jboss-jca-core-api.jar" />
@@ -406,6 +408,9 @@
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
+      <class location="${target.dir}/jboss-jca-validator.jar" />
+      <class location="${target.dir}/jboss-jca-validator-ant.jar" />
+      <class location="${target.dir}/jboss-jca-validator-cli.jar" />
       <class location="${target.dir}/jboss-jca-web.jar" />
       <class location="${target.dir}/jboss-jca-web-console.jar" />
     </findbugs>
@@ -420,6 +425,7 @@
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
+      <class location="${target.dir}/jboss-jca-codegenerator.jar" />
       <class location="${target.dir}/jboss-jca-common-api.jar" />
       <class location="${target.dir}/jboss-jca-common-impl.jar" />
       <class location="${target.dir}/jboss-jca-core-api.jar" />
@@ -434,6 +440,9 @@
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
+      <class location="${target.dir}/jboss-jca-validator.jar" />
+      <class location="${target.dir}/jboss-jca-validator-ant.jar" />
+      <class location="${target.dir}/jboss-jca-validator-cli.jar" />
       <class location="${target.dir}/jboss-jca-web.jar" />
       <class location="${target.dir}/jboss-jca-web-console.jar" />
     </findbugs>
@@ -536,10 +545,109 @@
       </batchtest>
     </junit>
 
+    <junit dir="embedded/src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="yes"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+
+      <classpath>
+        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+        <pathelement location="${build.dir}/embedded/test"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      <classpath refid="cobertura.lib.path.id" />
+      
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/cobertura/tests">
+        <fileset dir="${build.dir}/embedded/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <junit dir="validator/src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="yes"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+
+      <classpath>
+        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+        <pathelement location="${build.dir}/validator/test"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      <classpath refid="cobertura.lib.path.id" />
+      
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/cobertura/tests">
+        <fileset dir="${build.dir}/validator/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <junit dir="codegenerator/src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="yes"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+
+      <classpath>
+        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+        <pathelement location="${build.dir}/codegenerator/test"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      <classpath refid="cobertura.lib.path.id" />
+      
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/cobertura/tests">
+        <fileset dir="${build.dir}/codegenerator/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
     <cobertura-report format="html" 
                       destdir="${reports.dir}/cobertura/html" 
                       datafile="${reports.dir}/cobertura/cobertura.ser">
       <fileset dir="api/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="codegenerator/src/main/java">
         <include name="**/*.java" />
       </fileset>
       <fileset dir="common/src/main/java">
@@ -575,6 +683,9 @@
                       destdir="${reports.dir}/cobertura/xml" 
                       datafile="${reports.dir}/cobertura/cobertura.ser">
       <fileset dir="api/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="codegenerator/src/main/java">
         <include name="**/*.java" />
       </fileset>
       <fileset dir="common/src/main/java">
