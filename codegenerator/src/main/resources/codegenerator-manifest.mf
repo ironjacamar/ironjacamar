@@ -1,0 +1,5 @@
+Implementation-Title: JBoss JCA Codegenerator
+Implementation-Vendor: Red Hat Middleware LLC
+Implementation-Vendor-Id: org.jboss
+Implementation-Version: 0.1
+Main-Class: org.jboss.jca.codegenerator.Main
