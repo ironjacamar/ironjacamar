@@ -53,6 +53,13 @@ public class ClassLoaderFactory
       "org.jboss.jca.fungal.impl.classloader.ExportClassLoader";
 
    /**
+    * Constructor
+    */
+   private ClassLoaderFactory()
+   {
+   }
+
+   /**
     * Create a class loader
     * @param type The class loader type
     * @param urls The resource URLs
@@ -68,7 +75,7 @@ public class ClassLoaderFactory
       {
          try
          {
-            Class<?> clz = Class.forName(CLASSLOADER_PARENT_FIRST);
+            Class<?> clz = Class.forName(CLASSLOADER_PARENT_FIRST, true, ClassLoaderFactory.class.getClassLoader());
             Constructor<?> constructor = clz.getDeclaredConstructor(URL[].class, ClassLoader.class);
 
             return (KernelClassLoader)constructor.newInstance(urls, parent);
@@ -82,7 +89,7 @@ public class ClassLoaderFactory
       {
          try
          {
-            Class<?> clz = Class.forName(CLASSLOADER_PARENT_LAST);
+            Class<?> clz = Class.forName(CLASSLOADER_PARENT_LAST, true, ClassLoaderFactory.class.getClassLoader());
             Constructor<?> constructor = clz.getDeclaredConstructor(URL[].class, ClassLoader.class);
 
             return (KernelClassLoader)constructor.newInstance(urls, parent);
@@ -96,7 +103,7 @@ public class ClassLoaderFactory
       {
          try
          {
-            Class<?> clz = Class.forName(CLASSLOADER_EXPORT);
+            Class<?> clz = Class.forName(CLASSLOADER_EXPORT, true, ClassLoaderFactory.class.getClassLoader());
             Constructor<?> constructor = clz.getDeclaredConstructor(URL[].class, ClassLoader.class);
 
             return (KernelClassLoader)constructor.newInstance(urls, parent);
