@@ -24,6 +24,8 @@ package org.jboss.jca.codegenerator;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Code generator main class
@@ -48,12 +50,32 @@ public class Main
          String packageName = in.readLine();
          System.out.print("Please input ResourceAdapter class name: ");
          String className = in.readLine();
+         
 
          Template template = new SimpleTemplate();
          Definition def = new Definition();
          def.setRaPackage(packageName);
          def.setRaClass(className);
-
+         
+         List<ConfigPropType> props = new ArrayList<ConfigPropType>();
+         while (true)
+         {
+            System.out.println("Please input config properties [enter to quit]: ");
+            System.out.print("    Name: ");
+            String name = in.readLine();
+            if (name == null || name.equals(""))
+               break;
+            System.out.print("    Type: ");
+            String type = in.readLine();
+            System.out.print("    Value: ");
+            String value = in.readLine();
+            System.out.println();
+            
+            ConfigPropType config = new ConfigPropType(name, type, value);
+            props.add(config);
+         }
+         def.setRaConfigProps(props);
+         
          FileWriter fw = new FileWriter(className + ".java");
          template.process(def, fw);
          fw.close();

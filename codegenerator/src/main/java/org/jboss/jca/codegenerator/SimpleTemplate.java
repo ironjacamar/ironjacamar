@@ -217,6 +217,53 @@ public class SimpleTemplate implements Template
     */
    private void writeConfigProps(Definition def, Writer out, int indent) throws IOException
    {
+      if (def.getRaConfigProps() == null)
+         return;
+      
+      for (int i = 0; i < def.getRaConfigProps().size(); i++)
+      {
+         writeIndent(out, indent);
+         out.write("private " + 
+                   def.getRaConfigProps().get(i).getType() +
+                   " " +
+                   def.getRaConfigProps().get(i).getName() +
+                   ";");
+         writeEol(out);         
+      }
+      writeEol(out);  
+
+      for (int i = 0; i < def.getRaConfigProps().size(); i++)
+      {
+         String name = def.getRaConfigProps().get(i).getName();
+         String upcaseName = upcaseFisrt(name);
+         //set
+         writeIndent(out, indent);
+         out.write("public void set" + 
+                   upcaseName +
+                   "(" +
+                   def.getRaConfigProps().get(i).getType() +
+                   " " +
+                   name +
+                   ")");
+         writeLeftCurlyBracket(out, indent);
+         writeIndent(out, indent + 1);
+         out.write("this." + name + " = " + name + ";");
+         writeRightCurlyBracket(out, indent);
+         writeEol(out);
+         
+         //get
+         writeIndent(out, indent);
+         out.write("public " + 
+                   def.getRaConfigProps().get(i).getType() +
+                   " get" +
+                   upcaseName +
+                   "()");
+         writeLeftCurlyBracket(out, indent);
+         writeIndent(out, indent + 1);
+         out.write("return " + name + ";");
+         writeRightCurlyBracket(out, indent);
+         writeEol(out);
+      }
    }
 
    /**
