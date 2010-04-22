@@ -24,9 +24,6 @@ package org.jboss.jca.codegenerator;
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Code generator main class
@@ -47,19 +44,18 @@ public class Main
       try 
       {
          BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-         System.out.println("Please input ResourceAdapter package name: ");
+         System.out.print("Please input ResourceAdapter package name: ");
          String packageName = in.readLine();
-         System.out.println("Please input ResourceAdapter class name: ");
+         System.out.print("Please input ResourceAdapter class name: ");
          String className = in.readLine();
 
-         URL file = Main.class.getResource("/ResourceAdapter.template");
-         Template template = new SimpleTemplate(file);
-         Map<String, String> varMap = new HashMap<String, String>();
-         varMap.put("package.name", packageName);
-         varMap.put("class.name", className);
-         
+         Template template = new SimpleTemplate();
+         Definition def = new Definition();
+         def.setRaPackage(packageName);
+         def.setRaClass(className);
+
          FileWriter fw = new FileWriter(className + ".java");
-         template.process(varMap, fw);
+         template.process(def, fw);
          fw.close();
          System.out.println("Java file wrote");
       }

@@ -19,22 +19,3 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
-
-import java.io.Writer;
-
-/**
- * Template interface.
- * 
- * @author Jeff Zhang
- * @version $Revision: $
- */
-public interface Template
-{
-   /**
-    * Processes the template
-    * @param def Definition
-    * @param out the writer to output the text to.
-    */
-   public void process(Definition def, Writer out);
-}

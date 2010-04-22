@@ -23,9 +23,8 @@
 package org.jboss.jca.codegenerator;
 
 import java.io.StringWriter;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.logging.Logger;
 
@@ -42,81 +41,7 @@ public class SimpleTemplateTestCase
 {
    private static Logger log = Logger.getLogger(SimpleTemplateTestCase.class);
    
-   /**
-    * test process
-    * @throws Throwable throwable exception 
-    */
-   @Test
-   public void testProcessString() throws Throwable
-   {
-      Template template = new SimpleTemplate("Hello ${name}");
-      Map<String, String> varMap = new HashMap<String, String>();
-      varMap.put("name", "Jeff");
-      StringWriter writer = new StringWriter();
-      template.process(varMap, writer);
-      assertEquals(writer.toString(), "Hello Jeff");
-   }
-   
-   /**
-    * test replace
-    * @throws Throwable throwable exception 
-    */
-   @Test
-   public void testReplaceOk() throws Throwable
-   {
-      SimpleTemplate template = new SimpleTemplate("Hello ${firstname} ${lastname}");
-      Map<String, String> varMap = new HashMap<String, String>();
-      varMap.put("firstname", "Jeff");
-      varMap.put("lastname", "Zhang");
-      String replacedString = template.replace(varMap);
-      assertEquals(replacedString, "Hello Jeff Zhang");
-   }
-   
-   /**
-    * test replace
-    * @throws Throwable throwable exception 
-    */
-   @Test
-   public void testReplaceDouble() throws Throwable
-   {
-      SimpleTemplate template = new SimpleTemplate("Hello ${firstname} ${firstname}");
-      Map<String, String> varMap = new HashMap<String, String>();
-      varMap.put("firstname", "Jeff");
-      varMap.put("lastname", "Zhang");
-      String replacedString = template.replace(varMap);
-      assertEquals(replacedString, "Hello Jeff Jeff");
-   }
-   
-   /**
-    * test replace
-    * @throws Throwable throwable exception 
-    */
-   @Test
-   public void testReplaceNothing() throws Throwable
-   {
-      SimpleTemplate template = new SimpleTemplate("Hello ${firstname} ${firstname}");
-      Map<String, String> varMap = new HashMap<String, String>();
-      //varMap.put("firstname", "Jeff");
-      varMap.put("lastname", "Zhang");
-      String replacedString = template.replace(varMap);
-      assertEquals(replacedString, "Hello ${firstname} ${firstname}");
-   }
-   
-   /**
-    * test replace
-    * @throws Throwable throwable exception 
-    */
-   @Test
-   public void testReplaceJustOne() throws Throwable
-   {
-      SimpleTemplate template = new SimpleTemplate("Hello ${firstname ${firstname} ${lastname}");
-      Map<String, String> varMap = new HashMap<String, String>();
-      //varMap.put("firstname", "Jeff");
-      varMap.put("lastname", "Zhang");
-      String replacedString = template.replace(varMap);
-      assertEquals(replacedString, "Hello ${firstname ${firstname} Zhang");
-   }
-   
+  
    /**
     * test process
     * @throws Throwable throwable exception 
@@ -124,13 +49,19 @@ public class SimpleTemplateTestCase
    @Test
    public void testProcessFile() throws Throwable
    {
-      URL file = SimpleTemplateTestCase.class.getResource("/test.template");
-      SimpleTemplate template = new SimpleTemplate(file);
-      Map<String, String> varMap = new HashMap<String, String>();
-      varMap.put("package.name", "org.jboss.jca.test");
-      varMap.put("class.name", "BaseResourceAdapter");
+      SimpleTemplate template = new SimpleTemplate();
+      Definition def = new Definition();
+      def.setRaPackage("org.jboss.jca.test");
+      def.setRaClass("BaseResourceAdapter");
+
+      List<ConfigPropType> props = new ArrayList<ConfigPropType>();
+      ConfigPropType config = new ConfigPropType("myProp", "String", "Hello");
+      props.add(config);
+      def.setRaConfigProps(props);
+      
       StringWriter writer = new StringWriter();
-      template.process(varMap, writer);
+      template.process(def, writer);
       assertTrue(writer.toString().indexOf("org.jboss.jca.test") > 0);
+      //System.out.println(writer.toString());
    }
 }
