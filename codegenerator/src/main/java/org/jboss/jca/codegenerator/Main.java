@@ -22,7 +22,9 @@
 package org.jboss.jca.codegenerator;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +78,18 @@ public class Main
          }
          def.setRaConfigProps(props);
          
-         FileWriter fw = new FileWriter(className + ".java");
+         System.out.print("Please input output directory: ");
+         String output = in.readLine();
+         
+         File outDir = new File(output);
+
+         if (!outDir.mkdirs())
+         {
+            throw new IOException(output + " can't be created");
+         }
+         
+         File report = new File(outDir, className + ".java");
+         FileWriter fw = new FileWriter(report);
          template.process(def, fw);
          fw.close();
          System.out.println("Java file wrote");

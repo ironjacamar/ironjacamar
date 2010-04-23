@@ -302,9 +302,9 @@ public class SimpleTemplate implements Template
 
       writeIndent(out, indent);
       out.write("@Override");
+      writeEol(out);
       writeIndent(out, indent);
       out.write("public boolean equals(Object other)");
-      writeEol(out);
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("if (other == null)");
@@ -362,7 +362,6 @@ public class SimpleTemplate implements Template
 
       writeIndent(out, indent);
       out.write("public void stop()");
-      writeEol(out);
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call stop\");");
