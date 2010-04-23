@@ -62,6 +62,6 @@ public class SimpleTemplateTestCase
       StringWriter writer = new StringWriter();
       template.process(def, writer);
       assertTrue(writer.toString().indexOf("org.jboss.jca.test") > 0);
-      //System.out.println(writer.toString());
+      assertTrue(writer.toString().indexOf("getMyProp") > 0);
    }
 }

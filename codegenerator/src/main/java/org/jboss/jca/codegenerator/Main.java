@@ -24,10 +24,11 @@ package org.jboss.jca.codegenerator;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Code generator main class
@@ -45,12 +46,16 @@ public class Main
     */
    public static void main(String[] args)
    {
+      Locale locale = Locale.getDefault();
+      
       try 
       {
+         ResourceBundle dbconf = ResourceBundle.getBundle("codegenerator", locale);
+
          BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-         System.out.print("Please input ResourceAdapter package name: ");
+         System.out.print(dbconf.getString("package.name"));
          String packageName = in.readLine();
-         System.out.print("Please input ResourceAdapter class name: ");
+         System.out.print(dbconf.getString("class.name"));
          String className = in.readLine();
          
 
@@ -62,14 +67,14 @@ public class Main
          List<ConfigPropType> props = new ArrayList<ConfigPropType>();
          while (true)
          {
-            System.out.println("Please input config properties [enter to quit]: ");
-            System.out.print("    Name: ");
+            System.out.println(dbconf.getString("config.properties"));
+            System.out.print("    " + dbconf.getString("config.properties.name"));
             String name = in.readLine();
             if (name == null || name.equals(""))
                break;
-            System.out.print("    Type: ");
+            System.out.print("    " + dbconf.getString("config.properties.type"));
             String type = in.readLine();
-            System.out.print("    Value: ");
+            System.out.print("    " + dbconf.getString("config.properties.value"));
             String value = in.readLine();
             System.out.println();
             
@@ -78,21 +83,19 @@ public class Main
          }
          def.setRaConfigProps(props);
          
-         System.out.print("Please input output directory: ");
+         System.out.print(dbconf.getString("output.dir"));
          String output = in.readLine();
+         if (output == null || output.equals(""))
+            output = ".";
          
          File outDir = new File(output);
-
-         if (!outDir.mkdirs())
-         {
-            throw new IOException(output + " can't be created");
-         }
+         outDir.mkdirs();
          
          File report = new File(outDir, className + ".java");
          FileWriter fw = new FileWriter(report);
          template.process(def, fw);
          fw.close();
-         System.out.println("Java file wrote");
+         System.out.println(dbconf.getString("java.wrote"));
       }
       catch (Exception e)
       {

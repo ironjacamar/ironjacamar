@@ -61,7 +61,7 @@
 
     <copy todir="${build.codegenerator.dir}/jars/codegenerator">
       <fileset dir="src/main/resources/"
-               includes="**/*.template"/>
+               includes="**/*.template **/*.properties"/>
     </copy>
 
     <jar destfile="${target.dir}/jboss-jca-codegenerator.jar"
@@ -76,7 +76,7 @@
     <jar destfile="${target.dir}/jboss-jca-codegenerator-ant.jar"
          manifest="src/main/resources/codegenerator-ant-manifest.mf"
          basedir="${build.codegenerator.dir}/jars/codegenerator"
-   	   includes="**/ant/**"/>
+   	     includes="**/ant/**"/>
 -->
   </target>
 
