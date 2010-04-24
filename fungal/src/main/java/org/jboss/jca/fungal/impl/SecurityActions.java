@@ -24,7 +24,6 @@ package org.jboss.jca.fungal.impl;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Properties;
 
 /**
  * Privileged Blocks
@@ -45,6 +44,9 @@ class SecurityActions
     */
    static ClassLoader getThreadContextClassLoader()
    {
+      if (System.getSecurityManager() == null)
+         return Thread.currentThread().getContextClassLoader();
+
       return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction<Object>() 
       {
          public Object run()
@@ -60,29 +62,21 @@ class SecurityActions
     */
    static void setThreadContextClassLoader(final ClassLoader cl)
    {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      if (System.getSecurityManager() == null)
       {
-         public Object run()
-         {
-            Thread.currentThread().setContextClassLoader(cl);
-            return null;
-         }
-      });
-   }
-
-   /**
-    * Get the system properties
-    * @return The properties
-    */
-   static Properties getSystemProperties()
-   {
-      return (Properties)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+         Thread.currentThread().setContextClassLoader(cl);
+      }
+      else
       {
-         public Object run()
+         AccessController.doPrivileged(new PrivilegedAction<Object>() 
          {
-            return System.getProperties();
-         }
-      });
+            public Object run()
+            {
+               Thread.currentThread().setContextClassLoader(cl);
+               return null;
+            }
+         });
+      }
    }
 
    /**
@@ -92,13 +86,20 @@ class SecurityActions
     */
    static String getSystemProperty(final String name)
    {
-      return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      if (System.getSecurityManager() == null)
       {
-         public Object run()
+         return System.getProperty(name);
+      }
+      else
+      {
+         return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
          {
-            return System.getProperty(name);
-         }
-      });
+            public Object run()
+            {
+               return System.getProperty(name);
+            }
+         });
+      }
    }
 
    /**
@@ -108,13 +109,20 @@ class SecurityActions
     */
    static void setSystemProperty(final String name, final String value)
    {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      if (System.getSecurityManager() == null)
       {
-         public Object run()
+         System.setProperty(name, value);
+      }
+      else
+      {
+         AccessController.doPrivileged(new PrivilegedAction<Object>() 
          {
-            System.setProperty(name, value);
-            return null;
-         }
-      });
+            public Object run()
+            {
+               System.setProperty(name, value);
+               return null;
+            }
+         });
+      }
    }
 }

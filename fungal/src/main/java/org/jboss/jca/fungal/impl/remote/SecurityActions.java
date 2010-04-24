@@ -44,6 +44,9 @@ class SecurityActions
     */
    static ClassLoader getThreadContextClassLoader()
    {
+      if (System.getSecurityManager() == null)
+         return Thread.currentThread().getContextClassLoader();
+
       return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() 
       {
          public ClassLoader run()

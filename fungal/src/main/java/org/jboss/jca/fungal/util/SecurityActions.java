@@ -22,11 +22,8 @@
 
 package org.jboss.jca.fungal.util;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Properties;
 
 /**
  * Privileged Blocks
@@ -42,98 +39,25 @@ class SecurityActions
    }
 
    /**
-    * Get the thread context class loader
-    * @return The class loader
-    */
-   static ClassLoader getThreadContextClassLoader()
-   {
-      return (ClassLoader)AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            return Thread.currentThread().getContextClassLoader();
-         }
-      });
-   }
-
-   /**
-    * Set the thread context class loader
-    * @param cl The class loader
-    */
-   static void setThreadContextClassLoader(final ClassLoader cl)
-   {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            Thread.currentThread().setContextClassLoader(cl);
-            return null;
-         }
-      });
-   }
-
-   /**
-    * Get the system properties
-    * @return The properties
-    */
-   static Properties getSystemProperties()
-   {
-      return (Properties)AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            return System.getProperties();
-         }
-      });
-   }
-
-   /**
     * Get a system property
     * @param name The property name
     * @return The property value
     */
    static String getSystemProperty(final String name)
    {
-      return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      if (System.getSecurityManager() == null)
       {
-         public Object run()
-         {
-            return System.getProperty(name);
-         }
-      });
-   }
-
-   /**
-    * Set a system property
-    * @param name The property name
-    * @param value The property value
-    */
-   static void setSystemProperty(final String name, final String value)
-   {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
+         return System.getProperty(name);
+      }
+      else
       {
-         public Object run()
+         return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
          {
-            System.setProperty(name, value);
-            return null;
-         }
-      });
-   }
-
-   /**
-    * Create an URLClassLoader
-    * @param urls The urls
-    * @param parent The parent class loader
-    * @return The class loader
-    */
-   static URLClassLoader createURLCLassLoader(final URL[] urls, final ClassLoader parent)
-   {
-      return (URLClassLoader)AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            return new URLClassLoader(urls, parent);
-         }
-      });
+            public Object run()
+            {
+               return System.getProperty(name);
+            }
+         });
+      }
    }
 }
