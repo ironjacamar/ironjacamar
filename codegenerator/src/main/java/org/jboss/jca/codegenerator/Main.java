@@ -38,7 +38,8 @@ import java.util.ResourceBundle;
  */
 public class Main
 {
-
+   private static final int OTHER = 2;
+   
    /**
     * Code generator standalone tool
     * 
@@ -46,11 +47,37 @@ public class Main
     */
    public static void main(String[] args)
    {
-      Locale locale = Locale.getDefault();
-      
+      String outputDir = ".";
+      int arg = 0;
+ 
+      if (args.length > 0)
+      {
+         while (args.length > arg + 1)
+         {
+            if (args[arg].startsWith("-"))
+            {
+               if (args[arg].equals("-o"))
+               {
+                  arg++;
+                  if (arg >= args.length)
+                  {
+                     usage();
+                     System.exit(OTHER);
+                  }
+                  outputDir = args[arg];
+               }
+            } 
+            else
+            {
+               usage();
+               System.exit(OTHER);
+            }
+            arg++;
+         }
+      }
       try 
       {
-         ResourceBundle dbconf = ResourceBundle.getBundle("codegenerator", locale);
+         ResourceBundle dbconf = ResourceBundle.getBundle("codegenerator", Locale.getDefault());
 
          BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
          System.out.print(dbconf.getString("package.name"));
@@ -82,13 +109,9 @@ public class Main
             props.add(config);
          }
          def.setRaConfigProps(props);
+
          
-         System.out.print(dbconf.getString("output.dir"));
-         String output = in.readLine();
-         if (output == null || output.equals(""))
-            output = ".";
-         
-         File outDir = new File(output);
+         File outDir = new File(outputDir);
          outDir.mkdirs();
          
          File report = new File(outDir, className + ".java");
@@ -101,6 +124,14 @@ public class Main
       {
          e.printStackTrace();
       }
+   }
+
+   /**
+    * Tool usage
+    */
+   private static void usage()
+   {
+      System.out.println("Usage: codegenerator [-o directory]");
    }
 
 }
