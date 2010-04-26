@@ -111,7 +111,6 @@ public class Main
          def.setRaConfigProps(props);
 
          String dirname = outputDir + "/" + packageName.replace('.', '/');
-         System.out.println(dirname);
          File outDir = new File(dirname);
          outDir.mkdirs();
          
