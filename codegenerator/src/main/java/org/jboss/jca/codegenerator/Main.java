@@ -110,8 +110,9 @@ public class Main
          }
          def.setRaConfigProps(props);
 
-         
-         File outDir = new File(outputDir);
+         String dirname = outputDir + "/" + packageName.replace('.', '/');
+         System.out.println(dirname);
+         File outDir = new File(dirname);
          outDir.mkdirs();
          
          File report = new File(outDir, className + ".java");
