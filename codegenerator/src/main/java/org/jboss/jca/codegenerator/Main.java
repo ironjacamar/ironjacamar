@@ -24,6 +24,7 @@ package org.jboss.jca.codegenerator;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -110,12 +111,7 @@ public class Main
          }
          def.setRaConfigProps(props);
 
-         String dirname = outputDir + "/" + packageName.replace('.', '/');
-         File outDir = new File(dirname);
-         outDir.mkdirs();
-         
-         File report = new File(outDir, className + ".java");
-         FileWriter fw = new FileWriter(report);
+         FileWriter fw = createFile(className, packageName, outputDir);
          template.process(def, fw);
          fw.close();
          System.out.println(dbconf.getString("java.wrote"));
@@ -125,7 +121,37 @@ public class Main
          e.printStackTrace();
       }
    }
+   /**
+    * Create file
+    * @param name The name of the class
+    * @param packageName The package name
+    * @param outDir output directory
+    * @return The file
+    * @exception IOException Thrown if an error occurs 
+    */
+   public static FileWriter createFile(String name, String packageName, String outDir) throws IOException
+   {
+      File path = new File(".");
 
+      if (packageName != null && !packageName.trim().equals(""))
+      {
+         String directory = packageName.replace('.', File.separatorChar);
+         directory += File.separatorChar;
+
+         path = new File(outDir, directory);
+
+         if (!path.exists())
+            path.mkdirs();
+      }
+
+      File file = new File(path.getAbsolutePath() + File.separatorChar + name + ".java");
+
+      if (file.exists())
+         file.delete();
+
+      return new FileWriter(file);
+   }
+   
    /**
     * Tool usage
     */
