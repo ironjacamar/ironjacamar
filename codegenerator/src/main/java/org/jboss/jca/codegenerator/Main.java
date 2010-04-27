@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +49,7 @@ public class Main
     */
    public static void main(String[] args)
    {
-      String outputDir = ".";
+      String outputDir = "out"; //default output directory
       int arg = 0;
  
       if (args.length > 0)
@@ -111,9 +112,17 @@ public class Main
          }
          def.setRaConfigProps(props);
 
-         FileWriter fw = createFile(className, packageName, outputDir);
+         FileWriter fw = createSrcFile(className + ".java", packageName, outputDir);
          template.process(def, fw);
          fw.close();
+         
+         //ant build.xml
+         FileWriter antfw = createFile("build.xml", outputDir);
+         URL headerFile = SimpleTemplate.class.getResource("/build.xml.template");
+         String headerString = Utils.readFileIntoString(headerFile);
+         antfw.write(headerString);
+         antfw.close();
+         
          System.out.println(dbconf.getString("java.wrote"));
       }
       catch (Exception e)
@@ -121,30 +130,51 @@ public class Main
          e.printStackTrace();
       }
    }
+   
    /**
-    * Create file
+    * Create source file
     * @param name The name of the class
     * @param packageName The package name
     * @param outDir output directory
     * @return The file
     * @exception IOException Thrown if an error occurs 
     */
-   public static FileWriter createFile(String name, String packageName, String outDir) throws IOException
+   private static FileWriter createSrcFile(String name, String packageName, String outDir) throws IOException
    {
-      File path = new File(".");
+      String directory = "src";
 
       if (packageName != null && !packageName.trim().equals(""))
       {
-         String directory = packageName.replace('.', File.separatorChar);
-         directory += File.separatorChar;
-
-         path = new File(outDir, directory);
-
-         if (!path.exists())
-            path.mkdirs();
+         directory = directory + File.separatorChar +
+                     packageName.replace('.', File.separatorChar);
       }
 
-      File file = new File(path.getAbsolutePath() + File.separatorChar + name + ".java");
+      File path = new File(outDir, directory);
+      if (!path.exists())
+         path.mkdirs();
+      
+      File file = new File(path.getAbsolutePath() + File.separatorChar + name);
+
+      if (file.exists())
+         file.delete();
+
+      return new FileWriter(file);
+   }
+   
+   /**
+    * Create file
+    * @param name The name of the class
+    * @param outDir output directory
+    * @return The file
+    * @exception IOException Thrown if an error occurs 
+    */
+   private static FileWriter createFile(String name, String outDir) throws IOException
+   {
+      File path = new File(outDir);
+      if (!path.exists())
+         path.mkdirs();
+      
+      File file = new File(path.getAbsolutePath() + File.separatorChar + name);
 
       if (file.exists())
          file.delete();

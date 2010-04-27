@@ -1,0 +1,36 @@
+<project name="jca-test" basedir="." default="rar">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="target.dir" value="${basedir}/target" />
+  <property name="lib.dir" value="${basedir}/../../../lib" />
+
+  <path id="lib.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile">
+    <mkdir dir="${target.dir}" />
+
+    <javac srcdir="${basedir}/src"
+           destdir="${target.dir}"
+           classpathref="lib.path.id">
+    </javac> 
+  </target>
+  
+  <!-- ================================= 
+       Target: rar
+       ================================= -->
+  <target name="rar" depends="compile">
+    <mkdir dir="${basedir}/rar" />
+
+    <jar destfile="${basedir}/rar/jca-test.rar"
+         basedir="${basedir}/target"/>
+  </target>
+</project>

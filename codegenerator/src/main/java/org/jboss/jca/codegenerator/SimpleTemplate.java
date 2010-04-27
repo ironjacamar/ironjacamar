@@ -22,9 +22,6 @@
 package org.jboss.jca.codegenerator;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 
@@ -88,7 +85,7 @@ public class SimpleTemplate implements Template
    private void writeheader(Definition def, Writer out) throws IOException
    {
       URL headerFile = SimpleTemplate.class.getResource("/header.template");
-      String headerString = readFileIntoString(headerFile);
+      String headerString = Utils.readFileIntoString(headerFile);
       out.write(headerString);
       writeEol(out);
    }
@@ -392,7 +389,7 @@ public class SimpleTemplate implements Template
       out.write("public void endpointDeactivation(MessageEndpointFactory endpointFactory,");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("ActivationSpec spec) throws ResourceException");
+      out.write("ActivationSpec spec)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call endpointDeactivation\");");
@@ -400,54 +397,4 @@ public class SimpleTemplate implements Template
       writeEol(out);
    }
 
-
-   /**
-    *  Reads the contents of a file into a string variable.
-    * 
-    * @param input
-    * @return
-    * @throws IOException ioException
-    */
-   private String readFileIntoString(URL input) throws IOException
-   {
-      
-      InputStream stream = null;
-      InputStreamReader reader = null;
-      try
-      {
-         stream = input.openStream();
-         reader = new InputStreamReader(stream);
-         return readStreamIntoString(reader);
-      }
-      finally
-      {
-         if (reader != null)
-            reader.close();
-         if (stream != null)
-            stream.close();
-      }
-   }
-
-   /**
-    *  Reads the contents of a stream into a string variable.
-    * 
-    * @param reader
-    * @return
-    * @throws IOException ioException
-    */
-   private String readStreamIntoString(Reader reader) throws IOException
-   {
-      StringBuilder s = new StringBuilder();
-      char a[] = new char[0x10000];
-      while (true)
-      {
-         int l = reader.read(a);
-         if (l == -1)
-            break;
-         if (l <= 0)
-            throw new IOException();
-         s.append(a, 0, l);
-      }
-      return s.toString();
-   }
 }
