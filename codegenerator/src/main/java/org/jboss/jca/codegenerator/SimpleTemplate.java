@@ -118,6 +118,7 @@ public class SimpleTemplate implements Template
    {
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
+      writeEol(out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       out.write("import javax.resource.spi.ActivationSpec;");
@@ -130,9 +131,12 @@ public class SimpleTemplate implements Template
       writeEol(out);
       out.write("import javax.resource.spi.endpoint.MessageEndpointFactory;");
       writeEol(out);
+      writeEol(out);
       out.write("import javax.transaction.xa.XAResource;");
       writeEol(out);
+      writeEol(out);
       out.write("import org.jboss.logging.Logger;");
+      writeEol(out);
       writeEol(out);
    }
 
@@ -196,6 +200,11 @@ public class SimpleTemplate implements Template
       out.write("private static Logger log = Logger.getLogger(" + def.getRaClass() + ".class);");
       writeEol(out);
       writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("public " + def.getRaClass() + "()");
+      writeLeftCurlyBracket(out, indent);
+      writeRightCurlyBracket(out, indent);
       
       writeConfigProps(def, out, indent);
       writeEndpointLifecycle(def, out, indent);
