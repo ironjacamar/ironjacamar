@@ -125,6 +125,10 @@ public class SimpleTemplate implements Template
       writeEol(out);
       out.write("import javax.resource.spi.BootstrapContext;");
       writeEol(out);
+      out.write("import javax.resource.spi.ConfigProperty;");
+      writeEol(out);
+      out.write("import javax.resource.spi.Connector;");
+      writeEol(out);
       out.write("import javax.resource.spi.ResourceAdapter;");
       writeEol(out);
       out.write("import javax.resource.spi.ResourceAdapterInternalException;");
@@ -191,6 +195,8 @@ public class SimpleTemplate implements Template
     */
    private void writeClassBody(Definition def, Writer out) throws IOException
    {
+      out.write("@Connector");
+      writeEol(out);
       out.write("public class " + def.getRaClass() + " implements ResourceAdapter");
       writeLeftCurlyBracket(out, 0);
       writeEol(out);
@@ -201,10 +207,12 @@ public class SimpleTemplate implements Template
       writeEol(out);
       writeEol(out);
       
+      //constructor
       writeIndent(out, indent);
       out.write("public " + def.getRaClass() + "()");
       writeLeftCurlyBracket(out, indent);
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
       
       writeConfigProps(def, out, indent);
       writeEndpointLifecycle(def, out, indent);
@@ -229,14 +237,17 @@ public class SimpleTemplate implements Template
       for (int i = 0; i < def.getRaConfigProps().size(); i++)
       {
          writeIndent(out, indent);
+         out.write("@ConfigProperty(defaultValue=\"" + def.getRaConfigProps().get(i).getValue() + "\")");
+         writeEol(out);
+         writeIndent(out, indent);
          out.write("private " + 
                    def.getRaConfigProps().get(i).getType() +
                    " " +
                    def.getRaConfigProps().get(i).getName() +
                    ";");
-         writeEol(out);         
+         writeEol(out);
       }
-      writeEol(out);  
+      writeEol(out);
 
       for (int i = 0; i < def.getRaConfigProps().size(); i++)
       {
