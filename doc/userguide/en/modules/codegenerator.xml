@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="codegenerator">
+   <title>Code generator</title>
+
+   <section id="codegenerator_introduction">
+      <title>Introduction</title>
+
+      <para>The JBoss JCA project includes a resource adapter code generator which can
+        generate a complete code skeleton that will help developers get started with
+        their development tasks.</para>
+
+   </section>
+
+   <section id="codegenerator_functionality">
+      <title>Functionality</title>
+
+      <para>The code generator will generate a resource adapter code skeleton based
+        on the user input. Currently the focus is on</para>
+
+      <itemizedlist spacing="compact">
+        <listitem>
+          Resource adapter using JCA 1.6 annotations
+        </listitem>
+        <listitem>
+          Apache Ant build environment
+        </listitem>
+      </itemizedlist>
+
+   </section>
+
+   <section id="codegenerator_running">
+      <title>Running the tool</title>
+
+      <para>The code generator can be run on the command line by</para>
+
+      <programlisting>
+./codegenerator.sh
+      </programlisting>
+
+      <para>from the <code>doc/codegenerator</code> directory.</para>
+
+      <para>The code generator supports the following arguments</para>
+
+      <table frame="all">
+        <title>Code generator arguments</title>
+        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+          <colspec colname="c1" colwidth="2*"/>
+          <colspec colname="c2" colwidth="3*"/>
+          <thead>
+            <row>
+              <entry align="left">Argument</entry>
+              <entry align="left">Desciption</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><code>-o</code></entry>
+              <entry>
+                Specifies the output directory for the code skeleton.
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>The developer must then answer various questions regarding the
+        properties of the resource adapter.</para>
+
+   </section>
+
+</chapter>
