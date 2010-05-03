@@ -189,7 +189,7 @@ public class SimpleTemplate implements Template
    }
 
    /**
-    * Output class boby
+    * Output class body
     * @param def definition
     * @param out Writer
     */
@@ -218,13 +218,14 @@ public class SimpleTemplate implements Template
       writeEndpointLifecycle(def, out, indent);
       writeLifecycle(def, out, indent);
       writeXAResource(def, out, indent);
-      writeHashEquals(def, out, indent);
+      writeHashCode(def, out, indent);
+      writeEquals(def, out, indent);
       
       writeRightCurlyBracket(out, 0);
    }
 
    /**
-    * Output class boby
+    * Output Configuration Properties
     * @param def definition
     * @param out Writer
     * @param indent space number
@@ -246,8 +247,8 @@ public class SimpleTemplate implements Template
                    def.getRaConfigProps().get(i).getName() +
                    ";");
          writeEol(out);
+         writeEol(out);
       }
-      writeEol(out);
 
       for (int i = 0; i < def.getRaConfigProps().size(); i++)
       {
@@ -299,12 +300,12 @@ public class SimpleTemplate implements Template
 
 
    /**
-    * Output class boby
+    * Output hashCode method
     * @param def definition
     * @param out Writer
     * @param indent space number
     */
-   private void writeHashEquals(Definition def, Writer out, int indent) throws IOException
+   private void writeHashCode(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("@Override");
@@ -313,10 +314,61 @@ public class SimpleTemplate implements Template
       out.write("public int hashCode()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("return 43;");
+      out.write("int result = 17;");
+      writeEol(out);
+      for (int i = 0; i < def.getRaConfigProps().size(); i++)
+      {
+         writeIndent(out, indent + 1);
+         String type = def.getRaConfigProps().get(i).getType();
+         if (type.equals("int"))
+         {
+            out.write("result = 31 * result + " + def.getRaConfigProps().get(i).getName() + ";");
+         }
+         else if (type.equals("short") || type.equals("char") || type.equals("byte"))
+         {
+            out.write("result = 31 * result + (int)" + def.getRaConfigProps().get(i).getName() + ";");
+         }
+         else if (type.equals("boolean"))
+         {
+            out.write("result = 31 * result + (" + def.getRaConfigProps().get(i).getName() + " ? 0 : 1);");
+         }
+         else if (type.equals("long"))
+         {
+            out.write("result = 31 * result + (int)(" + def.getRaConfigProps().get(i).getName() +
+               " ^ (" + def.getRaConfigProps().get(i).getName() + " >>> 32));");
+         }
+         else if (type.equals("float"))
+         {
+            out.write("result = 31 * result + Float.floatToIntBits(" + def.getRaConfigProps().get(i).getName() + ");");
+         }
+         else if (type.equals("double"))
+         {
+            out.write("long tolong = Double.doubleToLongBits(" + def.getRaConfigProps().get(i).getName() + ");");
+            writeEol(out);
+            writeIndent(out, indent + 1);
+            out.write("result = 31 * result + (int)(tolong ^ (tolong >>> 32));");
+         }
+         else
+         {
+            out.write("result = 31 * result + " + def.getRaConfigProps().get(i).getName() + ".hashCode();");
+         }
+         writeEol(out);
+      }
+      writeIndent(out, indent + 1);
+      out.write("return result;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
+   }
 
+
+   /**
+    * Output equals method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    */
+   private void writeEquals(Definition def, Writer out, int indent) throws IOException
+   {
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
@@ -330,13 +382,39 @@ public class SimpleTemplate implements Template
       out.write("return false;");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return getClass().equals(other.getClass());");
+      out.write("if (other == this)");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("return true;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("if (!(other instanceof " + def.getRaClass() + "))");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("return false;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write(def.getRaClass() + " ra = (" + def.getRaClass() + ")other;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("return ");
+      for (int i = 0; i < def.getRaConfigProps().size(); i++)
+      {
+         if (i != 0)
+         {
+            writeEol(out);
+            writeIndent(out, indent + 2);
+            out.write("&& ");
+         }
+         out.write(def.getRaConfigProps().get(i).getName() + " == ra." + def.getRaConfigProps().get(i).getName());
+      }
+      out.write(";");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
 
    /**
-    * Output class boby
+    * Output getXAResources method
     * @param def definition
     * @param out Writer
     * @param indent space number
@@ -359,7 +437,7 @@ public class SimpleTemplate implements Template
    }
 
    /**
-    * Output class boby
+    * Output Lifecycle method
     * @param def definition
     * @param out Writer
     * @param indent space number
@@ -387,7 +465,7 @@ public class SimpleTemplate implements Template
    }
 
    /**
-    * Output class boby
+    * Output EndpointLifecycle method
     * @param def definition
     * @param out Writer
     * @param indent space number
