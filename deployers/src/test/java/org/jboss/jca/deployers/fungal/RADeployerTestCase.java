@@ -21,22 +21,25 @@
  */
 package org.jboss.jca.deployers.fungal;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Mockito.mock;
+import org.jboss.jca.validator.Failure;
+import org.jboss.jca.validator.FailureHelper;
+import org.jboss.jca.validator.Severity;
+import org.jboss.jca.validator.Validator;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import org.jboss.jca.validator.Failure;
-import org.jboss.jca.validator.FailureHelper;
-import org.jboss.jca.validator.Severity;
-import org.jboss.jca.validator.Validator;
+
 import org.junit.Test;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>

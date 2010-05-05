@@ -313,13 +313,18 @@ public class TxConnectionListener extends AbstractConnectionListener
       if (this.getManagedConnection() != (ManagedConnection)ce.getSource())
          throw new IllegalArgumentException("ConnectionClosed event received from wrong ManagedConnection! Expected: " +
                this.getManagedConnection() + ", actual: " + ce.getSource());
-      try
+
+      if (getCachedConnectionManager() != null)
       {
-         this.getCachedConnectionManager().unregisterConnection(this.getConnectionManager(), ce.getConnectionHandle());
-      }
-      catch (Throwable t)
-      {
-         getLog().info("throwable from unregister connection", t);
+         try
+         {
+            this.getCachedConnectionManager().unregisterConnection(this.getConnectionManager(), 
+                                                                   ce.getConnectionHandle());
+         }
+         catch (Throwable t)
+         {
+            getLog().info("throwable from unregister connection", t);
+         }
       }
 
       try

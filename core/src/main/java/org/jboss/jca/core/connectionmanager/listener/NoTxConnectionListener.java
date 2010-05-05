@@ -55,13 +55,16 @@ public class NoTxConnectionListener extends AbstractConnectionListener
     */
    public void connectionClosed(ConnectionEvent ce)
    {
-      try
+      if (getCachedConnectionManager() != null)
       {
-         getCachedConnectionManager().unregisterConnection(getConnectionManager(), ce.getConnectionHandle());
-      }
-      catch (Throwable t)
-      {
-         getLog().info("Throwable from unregisterConnection", t);
+         try
+         {
+            getCachedConnectionManager().unregisterConnection(getConnectionManager(), ce.getConnectionHandle());
+         }
+         catch (Throwable t)
+         {
+            getLog().info("Throwable from unregisterConnection", t);
+         }
       }
 
       getConnectionManager().unregisterAssociation(this, ce.getConnectionHandle());
