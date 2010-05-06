@@ -49,7 +49,6 @@ public class JCA16AnnoProfileTestCase
    @Test
    public void testProcessFile() throws Throwable
    {
-      JCA16AnnoProfile profile = new JCA16AnnoProfile();
       Definition def = new Definition();
       def.setRaPackage("org.jboss.jca.test");
       def.setRaClass("BaseResourceAdapter");
@@ -60,8 +59,10 @@ public class JCA16AnnoProfileTestCase
       def.setRaConfigProps(props);
       
       StringWriter writer = new StringWriter();
-      profile.writeDown(def, writer);
-      assertTrue(writer.toString().indexOf("org.jboss.jca.test") > 0);
+
+      RaCodeGen codeGen = new RaCodeGen();
+      codeGen.writeClassBody(def, writer);
+      assertTrue(writer.toString().indexOf("BaseResourceAdapter") > 0);
       assertTrue(writer.toString().indexOf("getMyProp") > 0);
    }
 }

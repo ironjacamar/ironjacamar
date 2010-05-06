@@ -37,9 +37,17 @@ public class Definition
    private String raPackage;
    /** resource adapter class name */
    private String raClass;
-   /** resource adapter config properties */
+   /** resource adapter configuration properties */
    private List<ConfigPropType> raConfigProps;
-
+   /** managed connection factory class name */
+   private String mcfClass;
+   /** managed connection class name */
+   private String mcClass;
+   /** connection interface name */
+   private String connInterfaceClass;
+   /** connection impl class name */
+   private String connImplClass;
+   
    /**
     * Set the outputDir.
     * 
@@ -119,4 +127,85 @@ public class Definition
    {
       return raConfigProps;
    }
+
+   /**
+    * Set the mcfClass.
+    * 
+    * @param mcfClass The mcfClass to set.
+    */
+   public void setMcfClass(String mcfClass)
+   {
+      this.mcfClass = mcfClass;
+   }
+
+   /**
+    * Get the mcfClass.
+    * 
+    * @return the mcfClass.
+    */
+   public String getMcfClass()
+   {
+      return mcfClass;
+   }
+
+   /**
+    * Set the mcClass.
+    * 
+    * @param mcClass The mcClass to set.
+    */
+   public void setMcClass(String mcClass)
+   {
+      this.mcClass = mcClass;
+   }
+
+   /**
+    * Get the mcClass.
+    * 
+    * @return the mcClass.
+    */
+   public String getMcClass()
+   {
+      return mcClass;
+   }
+
+   /**
+    * Set the connInterfaceClass.
+    * 
+    * @param connInterfaceClass The connInterfaceClass to set.
+    */
+   public void setConnInterfaceClass(String connInterfaceClass)
+   {
+      this.connInterfaceClass = connInterfaceClass;
+   }
+
+   /**
+    * Get the connInterfaceClass.
+    * 
+    * @return the connInterfaceClass.
+    */
+   public String getConnInterfaceClass()
+   {
+      return connInterfaceClass;
+   }
+
+   /**
+    * Set the connImplClass.
+    * 
+    * @param connImplClass The connImplClass to set.
+    */
+   public void setConnImplClass(String connImplClass)
+   {
+      this.connImplClass = connImplClass;
+   }
+
+   /**
+    * Get the connImplClass.
+    * 
+    * @return the connImplClass.
+    */
+   public String getConnImplClass()
+   {
+      return connImplClass;
+   }
+
 }

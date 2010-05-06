@@ -83,19 +83,19 @@ public class Main
          BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
          System.out.print(dbconf.getString("package.name"));
          String packageName = in.readLine();
-         System.out.print(dbconf.getString("class.name"));
-         String className = in.readLine();
+         System.out.print(dbconf.getString("ra.class.name"));
+         String raClassName = in.readLine();
          
 
-         Profile template = new JCA16AnnoProfile();
+         Profile profile = new JCA16AnnoProfile();
          Definition def = new Definition();
          def.setRaPackage(packageName);
-         def.setRaClass(className);
+         def.setRaClass(raClassName);
          
          List<ConfigPropType> props = new ArrayList<ConfigPropType>();
          while (true)
          {
-            System.out.println(dbconf.getString("config.properties"));
+            System.out.println(dbconf.getString("ra.config.properties"));
             System.out.print("    " + dbconf.getString("config.properties.name"));
             String name = in.readLine();
             if (name == null || name.equals(""))
@@ -111,15 +111,27 @@ public class Main
          }
          def.setRaConfigProps(props);
          
+         System.out.print(dbconf.getString("mcf.class.name"));
+         String mcfClassName = in.readLine();
+         def.setMcfClass(mcfClassName);
+         System.out.print(dbconf.getString("mc.class.name"));
+         String mcClassName = in.readLine();
+         def.setMcClass(mcClassName);
+         
+         System.out.print(dbconf.getString("conn.interface.name"));
+         String connInterfaceName = in.readLine();
+         def.setConnInterfaceClass(connInterfaceName);
+         System.out.print(dbconf.getString("conn.class.name"));
+         String connImplName = in.readLine();
+         def.setConnImplClass(connImplName);
+         
          def.setOutputDir(outputDir);
 
-         //FileWriter fw = Utils.createSrcFile(className + ".java", packageName, outputDir);
-         template.generate(def, packageName);
-         //fw.close();
+         profile.generate(def, packageName);
          
          generateAntXml(outputDir);
          
-         System.out.println(dbconf.getString("java.wrote"));
+         System.out.println(dbconf.getString("code.wrote"));
       }
       catch (Exception e)
       {
