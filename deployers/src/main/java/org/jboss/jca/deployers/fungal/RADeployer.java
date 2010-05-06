@@ -299,7 +299,7 @@ public final class RADeployer implements CloneableDeployer
 
          // Create classloader
          URL[] urls = getUrls(root);
-         KernelClassLoader cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_LAST, urls, parent);
+         KernelClassLoader cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_FIRST, urls, parent);
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Parse metadata
