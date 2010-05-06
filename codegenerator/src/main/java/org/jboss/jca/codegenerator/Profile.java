@@ -21,20 +21,19 @@
  */
 package org.jboss.jca.codegenerator;
 
-import java.io.Writer;
 
 /**
- * Template interface.
+ * Profile interface.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public interface Template
+public interface Profile
 {
    /**
-    * Processes the template
+    * generate code
     * @param def Definition
-    * @param out the writer to output the text to.
+    * @param packageName the writer to output the text to.
     */
-   public void process(Definition def, Writer out);
+   public void generate(Definition def, String packageName);
 }

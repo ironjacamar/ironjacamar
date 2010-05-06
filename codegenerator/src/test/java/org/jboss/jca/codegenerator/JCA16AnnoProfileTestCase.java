@@ -32,14 +32,14 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * A SimpleTemplate test case.
+ * A JCA16AnnoProfile test case.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class SimpleTemplateTestCase
+public class JCA16AnnoProfileTestCase
 {
-   private static Logger log = Logger.getLogger(SimpleTemplateTestCase.class);
+   private static Logger log = Logger.getLogger(JCA16AnnoProfileTestCase.class);
    
   
    /**
@@ -49,7 +49,7 @@ public class SimpleTemplateTestCase
    @Test
    public void testProcessFile() throws Throwable
    {
-      SimpleTemplate template = new SimpleTemplate();
+      JCA16AnnoProfile profile = new JCA16AnnoProfile();
       Definition def = new Definition();
       def.setRaPackage("org.jboss.jca.test");
       def.setRaClass("BaseResourceAdapter");
@@ -60,7 +60,7 @@ public class SimpleTemplateTestCase
       def.setRaConfigProps(props);
       
       StringWriter writer = new StringWriter();
-      template.process(def, writer);
+      profile.writeDown(def, writer);
       assertTrue(writer.toString().indexOf("org.jboss.jca.test") > 0);
       assertTrue(writer.toString().indexOf("getMyProp") > 0);
    }

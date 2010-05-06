@@ -31,12 +31,34 @@ import java.util.List;
  */
 public class Definition
 {
+   /** output directory  */
+   private String outputDir;
    /** resource adapter package name */
    private String raPackage;
    /** resource adapter class name */
    private String raClass;
    /** resource adapter config properties */
    private List<ConfigPropType> raConfigProps;
+
+   /**
+    * Set the outputDir.
+    * 
+    * @param outputDir The outputDir to set.
+    */
+   public void setOutputDir(String outputDir)
+   {
+      this.outputDir = outputDir;
+   }
+
+   /**
+    * Get the outputDir.
+    * 
+    * @return the outputDir.
+    */
+   public String getOutputDir()
+   {
+      return outputDir;
+   }
 
    /**
     * Set the raPackage.

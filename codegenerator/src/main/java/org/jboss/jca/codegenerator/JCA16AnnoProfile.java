@@ -21,39 +21,45 @@
  */
 package org.jboss.jca.codegenerator;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
 
 /**
- * A SimpleTemplate.
+ * A JCA16AnnoProfile.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class SimpleTemplate implements Template
+public class JCA16AnnoProfile implements Profile
 {
 
    /**
-    * SimpleTemplate
+    * JCA16AnnoProfile
     */
-   public SimpleTemplate()
+   public JCA16AnnoProfile()
    {
    }
    
   
    /**
-    * Processes the template
+    * generate code
     * @param def Definition 
-    * @param out the writer to output the text to.
+    * @param packageName the writer to output the text to.
     */
    @Override
-   public void process(Definition def, Writer out)
+   public void generate(Definition def, String packageName)
    {
+      FileWriter fw = null;
+      
       try
       {
-         writeDown(def, out);
-         out.flush();
+         fw = Utils.createSrcFile(def.getRaClass() + ".java", packageName, def.getOutputDir());
+
+         writeDown(def, fw);
+         fw.flush();
+         fw.close();
       }
       catch (IOException e)
       {
@@ -84,7 +90,7 @@ public class SimpleTemplate implements Template
     */
    private void writeheader(Definition def, Writer out) throws IOException
    {
-      URL headerFile = SimpleTemplate.class.getResource("/header.template");
+      URL headerFile = JCA16AnnoProfile.class.getResource("/header.template");
       String headerString = Utils.readFileIntoString(headerFile);
       out.write(headerString);
       writeEol(out);
@@ -398,6 +404,10 @@ public class SimpleTemplate implements Template
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return ");
+      if (def.getRaConfigProps().size() == 0)
+      {
+         out.write("true");
+      }
       for (int i = 0; i < def.getRaConfigProps().size(); i++)
       {
          if (i != 0)

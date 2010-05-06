@@ -22,7 +22,6 @@
 package org.jboss.jca.codegenerator;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -88,7 +87,7 @@ public class Main
          String className = in.readLine();
          
 
-         Template template = new SimpleTemplate();
+         Profile template = new JCA16AnnoProfile();
          Definition def = new Definition();
          def.setRaPackage(packageName);
          def.setRaClass(className);
@@ -111,17 +110,14 @@ public class Main
             props.add(config);
          }
          def.setRaConfigProps(props);
-
-         FileWriter fw = createSrcFile(className + ".java", packageName, outputDir);
-         template.process(def, fw);
-         fw.close();
          
-         //ant build.xml
-         FileWriter antfw = createFile("build.xml", outputDir);
-         URL headerFile = SimpleTemplate.class.getResource("/build.xml.template");
-         String headerString = Utils.readFileIntoString(headerFile);
-         antfw.write(headerString);
-         antfw.close();
+         def.setOutputDir(outputDir);
+
+         //FileWriter fw = Utils.createSrcFile(className + ".java", packageName, outputDir);
+         template.generate(def, packageName);
+         //fw.close();
+         
+         generateAntXml(outputDir);
          
          System.out.println(dbconf.getString("java.wrote"));
       }
@@ -130,57 +126,21 @@ public class Main
          e.printStackTrace();
       }
    }
-   
+
    /**
-    * Create source file
-    * @param name The name of the class
-    * @param packageName The package name
-    * @param outDir output directory
-    * @return The file
-    * @exception IOException Thrown if an error occurs 
+    * generateAnt build.xml
+    * @param outputDir output directory
     */
-   private static FileWriter createSrcFile(String name, String packageName, String outDir) throws IOException
+   private static void generateAntXml(String outputDir) throws IOException
    {
-      String directory = "src";
-
-      if (packageName != null && !packageName.trim().equals(""))
-      {
-         directory = directory + File.separatorChar +
-                     packageName.replace('.', File.separatorChar);
-      }
-
-      File path = new File(outDir, directory);
-      if (!path.exists())
-         path.mkdirs();
-      
-      File file = new File(path.getAbsolutePath() + File.separatorChar + name);
-
-      if (file.exists())
-         file.delete();
-
-      return new FileWriter(file);
+      //ant build.xml
+      FileWriter antfw = Utils.createFile("build.xml", outputDir);
+      URL headerFile = Main.class.getResource("/build.xml.template");
+      String headerString = Utils.readFileIntoString(headerFile);
+      antfw.write(headerString);
+      antfw.close();
    }
-   
-   /**
-    * Create file
-    * @param name The name of the class
-    * @param outDir output directory
-    * @return The file
-    * @exception IOException Thrown if an error occurs 
-    */
-   private static FileWriter createFile(String name, String outDir) throws IOException
-   {
-      File path = new File(outDir);
-      if (!path.exists())
-         path.mkdirs();
-      
-      File file = new File(path.getAbsolutePath() + File.separatorChar + name);
 
-      if (file.exists())
-         file.delete();
-
-      return new FileWriter(file);
-   }
    
    /**
     * Tool usage

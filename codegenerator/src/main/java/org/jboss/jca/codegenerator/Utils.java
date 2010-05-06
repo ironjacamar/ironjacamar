@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.codegenerator;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -81,5 +83,57 @@ public class Utils
          s.append(a, 0, l);
       }
       return s.toString();
+   }
+   
+   
+   /**
+    * Create source file
+    * @param name The name of the class
+    * @param packageName The package name
+    * @param outDir output directory
+    * @return The file
+    * @exception IOException Thrown if an error occurs 
+    */
+   public static FileWriter createSrcFile(String name, String packageName, String outDir) throws IOException
+   {
+      String directory = "src";
+
+      if (packageName != null && !packageName.trim().equals(""))
+      {
+         directory = directory + File.separatorChar +
+                     packageName.replace('.', File.separatorChar);
+      }
+
+      File path = new File(outDir, directory);
+      if (!path.exists())
+         path.mkdirs();
+      
+      File file = new File(path.getAbsolutePath() + File.separatorChar + name);
+
+      if (file.exists())
+         file.delete();
+
+      return new FileWriter(file);
+   }
+   
+   /**
+    * Create file
+    * @param name The name of the class
+    * @param outDir output directory
+    * @return The file
+    * @exception IOException Thrown if an error occurs 
+    */
+   public static FileWriter createFile(String name, String outDir) throws IOException
+   {
+      File path = new File(outDir);
+      if (!path.exists())
+         path.mkdirs();
+      
+      File file = new File(path.getAbsolutePath() + File.separatorChar + name);
+
+      if (file.exists())
+         file.delete();
+
+      return new FileWriter(file);
    }
 }
