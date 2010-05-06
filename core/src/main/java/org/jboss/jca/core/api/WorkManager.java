@@ -28,7 +28,7 @@ import org.jboss.tm.JBossXATerminator;
 /**
  * The JBoss specific work manager interface
  */
-public interface WorkManager extends javax.resource.spi.work.WorkManager
+public interface WorkManager extends javax.resource.spi.work.WorkManager, Cloneable
 {
    /**
     * Retrieve the executor for short running tasks
