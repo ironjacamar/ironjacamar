@@ -65,22 +65,29 @@ public class MCGetMetaData implements Rule
           ManagedConnection.class.isAssignableFrom(v.getClazz()))
       {
          boolean error = false;
-         ValidateObject vo = (ValidateObject)v;
-
-         try
+         ValidateObject vo = null;
+         if (v instanceof ValidateObject)
+            vo = (ValidateObject)v;
+         if (vo == null)
          {
-            Class clz = vo.getClazz();
-            Method gmd = clz.getMethod("getMetaData", (Class[])null);
-            Object md = gmd.invoke(vo.getObject(), (Object[])null);
-
-            if (md == null)
-               error = true;
+            error = true;
          }
-         catch (Throwable t)
+         else
          {
-            // Ignore
+            try
+            {
+               Class clz = vo.getClazz();
+               Method gmd = clz.getMethod("getMetaData", (Class[])null);
+               Object md = gmd.invoke(vo.getObject(), (Object[])null);
+   
+               if (md == null)
+                  error = true;
+            }
+            catch (Throwable t)
+            {
+               // Ignore
+            }
          }
-
          if (error)
          {
             List<Failure> failures = new ArrayList<Failure>(1);

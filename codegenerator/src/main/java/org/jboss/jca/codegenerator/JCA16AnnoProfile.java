@@ -22,6 +22,7 @@
 package org.jboss.jca.codegenerator;
 
 import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * A JCA16AnnoProfile.
@@ -62,7 +63,7 @@ public class JCA16AnnoProfile implements Profile
     */
    private void generateClassCode(Definition def, String className)
    {
-      if (className.equals("") || className == null)
+      if (className == null || className.equals(""))
          return;
       
       try
@@ -80,6 +81,10 @@ public class JCA16AnnoProfile implements Profile
          
          fw.flush();
          fw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
       }
       catch (Exception e)
       {

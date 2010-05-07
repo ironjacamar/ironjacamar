@@ -133,7 +133,7 @@ public class Main
          
          System.out.println(dbconf.getString("code.wrote"));
       }
-      catch (Exception e)
+      catch (IOException e)
       {
          e.printStackTrace();
       }

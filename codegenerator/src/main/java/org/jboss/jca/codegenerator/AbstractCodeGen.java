@@ -24,6 +24,7 @@ package org.jboss.jca.codegenerator;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
+import java.util.Locale;
 
 /**
  * Abstract CodeGenerator.
@@ -162,7 +163,7 @@ public abstract class AbstractCodeGen
    String upcaseFisrt(String name)
    {
       StringBuilder sb = new StringBuilder();
-      sb.append(name.substring(0, 1).toUpperCase());
+      sb.append(name.substring(0, 1).toUpperCase(Locale.ENGLISH));
       sb.append(name.substring(1));
       return sb.toString();
    }

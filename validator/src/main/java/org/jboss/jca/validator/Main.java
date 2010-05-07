@@ -171,10 +171,11 @@ public class Main
 
             File report = new File(reportDirectory, reportName);
             FileWriter fw = null;
+            BufferedWriter bw = null;
             try
             {
                fw = new FileWriter(report);
-               BufferedWriter bw = new BufferedWriter(fw, 8192);
+               bw = new BufferedWriter(fw, 8192);
                bw.write(fh.asText(validator.getResourceBundle()));
                bw.flush();
             }
@@ -184,16 +185,16 @@ public class Main
             }
             finally
             {
-               if (fw != null)
+               try
                {
-                  try
-                  {
+                  if (bw != null)
+                     bw.close();
+                  if (fw != null)
                      fw.close();
-                  }
-                  catch (IOException ignore)
-                  {
-                     // Ignore
-                  }
+               }
+               catch (IOException ignore)
+               {
+                  // Ignore
                }
             }
 

@@ -106,12 +106,18 @@ public class Utils
 
       File path = new File(outDir, directory);
       if (!path.exists())
-         path.mkdirs();
+      {
+         if (!path.mkdirs())
+            throw new IOException("outdir can't be created");
+      }
       
       File file = new File(path.getAbsolutePath() + File.separatorChar + name);
 
       if (file.exists())
-         file.delete();
+      {
+         if (!file.delete())
+            throw new IOException("there is exist file, please check");
+      }
 
       return new FileWriter(file);
    }
@@ -127,12 +133,18 @@ public class Utils
    {
       File path = new File(outDir);
       if (!path.exists())
-         path.mkdirs();
+      {
+         if (!path.mkdirs())
+            throw new IOException("outdir can't be created");
+      }
       
       File file = new File(path.getAbsolutePath() + File.separatorChar + name);
 
       if (file.exists())
-         file.delete();
+      {
+         if (!file.delete())
+            throw new IOException("there is exist file, please check");
+      }
 
       return new FileWriter(file);
    }

@@ -137,10 +137,8 @@ public class ValidatorTask extends Task
       try 
       {
          Thread.currentThread().setContextClassLoader(ValidatorTask.class.getClassLoader());
-         
-         Main main = new Main();
 
-         main.validate(new File(getRarFile()).toURI().toURL(), getOutputDir(), getCommandLine().getClasspath().list());
+         Main.validate(new File(getRarFile()).toURI().toURL(), getOutputDir(), getCommandLine().getClasspath().list());
       }
       catch (Throwable t) 
       {
