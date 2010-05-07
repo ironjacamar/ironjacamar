@@ -36,7 +36,7 @@
 
     <javac srcdir="src"
            destdir="${build.common.dir}"
-           classpathref="standalone.lib.path.id"
+           classpathref="sjc.lib.path.id"
            debug="${javac.debug}">
       <compilerarg value="-Xlint"/>
     </javac> 

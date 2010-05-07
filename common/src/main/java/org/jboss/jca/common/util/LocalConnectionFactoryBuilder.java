@@ -23,11 +23,12 @@
 package org.jboss.jca.common.util;
 
 import org.jboss.jca.common.api.ConnectionFactoryBuilder;
-import org.jboss.jca.fungal.deployers.DeployException;
 
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
 import javax.resource.spi.ManagedConnectionFactory;
+
+import com.github.fungal.deployers.DeployException;
 
 /**
  * Local only connection factory builder.

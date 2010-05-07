@@ -42,6 +42,7 @@
   <property name="central.repo" value="http://repo1.maven.org/maven2"/>
   <property name="jboss.repo" value="http://repository.jboss.org/maven2"/>
   <property name="snapshots.repo" value="http://snapshots.jboss.org/maven2"/>
+  <property name="fungal.repo" value="http://jesperpedersen.github.com/fungal/maven2"/>
   
   <!-- ================================= 
        Properties              
@@ -82,6 +83,7 @@
   <property name="version.dom4j" value="1.6.1"/>
   <property name="version.mockito" value="1.8.2"/>
   <property name="version.eclipse-jdt" value="3.1.1"/>
+  <property name="version.fungal" value="0.8.0.Beta1"/>
   <property name="version.hibernate-validator" value="4.0.2.GA"/>
   <property name="version.javassist" value="3.11.0.GA"/>
   <property name="version.jaxb.api" value="2.1"/>
@@ -128,15 +130,6 @@
        Paths              
        ================================= -->
   <path id="sjc.lib.path.id">
-    <fileset dir="${lib.dir}/sjc">
-      <include name="**/*.jar"/>
-    </fileset>
-    <fileset dir="${target.dir}">
-      <include name="**/*.jar"/>
-    </fileset>
-  </path>
-
-  <path id="fungal.lib.path.id">
     <fileset dir="${lib.dir}/sjc">
       <include name="**/*.jar"/>
     </fileset>
@@ -215,7 +208,6 @@
        Target: jars
        ================================= -->
   <target name="jars" depends="resolve">
-    <ant dir="fungal" inheritRefs="true" target="jars"/>
     <ant dir="api" inheritRefs="true" target="jars"/>
     <ant dir="common" inheritRefs="true" target="jars"/>
     <ant dir="core" inheritRefs="true" target="jars"/>
@@ -232,7 +224,6 @@
        Target: docs
        ================================= -->
   <target name="docs" depends="jars">
-    <ant dir="fungal" inheritRefs="true" target="docs"/>
     <ant dir="api" inheritRefs="true" target="docs"/>
     <ant dir="common" inheritRefs="true" target="docs"/>
     <ant dir="core" inheritRefs="true" target="docs"/>
@@ -403,9 +394,6 @@
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-embedded.jar" />
-      <class location="${target.dir}/jboss-jca-fungal-cli.jar" />
-      <class location="${target.dir}/jboss-jca-fungal-services.jar" />
-      <class location="${target.dir}/jboss-jca-fungal.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
@@ -435,9 +423,6 @@
       <class location="${target.dir}/jboss-jca-deployers-main.jar" />
       <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
       <class location="${target.dir}/jboss-jca-embedded.jar" />
-      <class location="${target.dir}/jboss-jca-fungal-cli.jar" />
-      <class location="${target.dir}/jboss-jca-fungal-services.jar" />
-      <class location="${target.dir}/jboss-jca-fungal.jar" />
       <class location="${target.dir}/jboss-jca-sjc.jar" />
       <class location="${target.dir}/jboss-jca-spec-api.jar" />
       <class location="${target.dir}/jboss-jca-standalone.jar" />
@@ -663,9 +648,6 @@
       <fileset dir="embedded/src/main/java">
         <include name="**/*.java" />
       </fileset>
-      <fileset dir="fungal/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
       <fileset dir="sjc/src/main/java">
         <include name="**/*.java" />
       </fileset>
@@ -699,9 +681,6 @@
         <include name="**/*.java" />
       </fileset>
       <fileset dir="embedded/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="fungal/src/main/java">
         <include name="**/*.java" />
       </fileset>
       <fileset dir="sjc/src/main/java">

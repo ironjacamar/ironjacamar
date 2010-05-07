@@ -22,16 +22,16 @@
 
 package org.jboss.jca.web;
 
-import org.jboss.jca.fungal.deployers.DeployException;
-import org.jboss.jca.fungal.deployers.Deployer;
-import org.jboss.jca.fungal.deployers.Deployment;
-import org.jboss.jca.fungal.util.FileUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
+
+import com.github.fungal.deployers.DeployException;
+import com.github.fungal.deployers.Deployer;
+import com.github.fungal.deployers.Deployment;
+import com.github.fungal.util.FileUtil;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;

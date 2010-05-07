@@ -23,7 +23,6 @@
 package org.jboss.jca.common.util;
 
 import org.jboss.jca.common.api.ConnectionFactoryBuilder;
-import org.jboss.jca.fungal.deployers.DeployException;
 
 import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,6 +31,8 @@ import javax.naming.Context;
 import javax.naming.Name;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
+
+import com.github.fungal.deployers.DeployException;
 
 /**
  * Local only support for connection factory

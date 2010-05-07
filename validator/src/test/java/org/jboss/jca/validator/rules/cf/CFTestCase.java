@@ -21,13 +21,14 @@
  */
 package org.jboss.jca.validator.rules.cf;
 
-import org.jboss.jca.fungal.deployers.DeployException;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.Severity;
 import org.jboss.jca.validator.ValidatorException;
 import org.jboss.jca.validator.rules.TestCaseAbstract;
 
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+
+import com.github.fungal.deployers.DeployException;
 
 import org.junit.Test;
 

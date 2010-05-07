@@ -1,5 +1,0 @@
-Main-Class: org.jboss.jca.fungal.cli.CLI
-Implementation-Title: JBoss JCA Fungal CLI
-Implementation-Vendor: Red Hat Middleware LLC
-Implementation-Vendor-Id: org.jboss
-Implementation-Version: 0.1

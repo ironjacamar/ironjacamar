@@ -57,8 +57,9 @@ cd $JBOSS_JCA_HOME/bin
       This standalone configuration is for development purposes only.
     </warning>
 
-    <para>The JBoss JCA/SJC uses the JBoss JCA/Fungal kernel for 
-      its run-time environment.</para>
+    <para>The JBoss JCA/SJC uses the Fungal kernel for its run-time environment.</para>
+
+    <para>The homepage for the Fungal is <ulink url="http://jesperpedersen.github.com/fungal">http://jesperpedersen.github.com/fungal</ulink>.
 
     <para>SJC is short for "Simple JCA Container".</para>
   </section>

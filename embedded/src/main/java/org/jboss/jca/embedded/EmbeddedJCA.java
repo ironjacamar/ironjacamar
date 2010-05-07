@@ -22,11 +22,6 @@
 
 package org.jboss.jca.embedded;
 
-import org.jboss.jca.fungal.api.ClassLoaderFactory;
-import org.jboss.jca.fungal.api.Kernel;
-import org.jboss.jca.fungal.api.KernelConfiguration;
-import org.jboss.jca.fungal.api.KernelFactory;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,6 +32,11 @@ import java.util.List;
 
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+
+import com.github.fungal.api.Kernel;
+import com.github.fungal.api.KernelFactory;
+import com.github.fungal.api.classloading.ClassLoaderFactory;
+import com.github.fungal.api.configuration.KernelConfiguration;
 
 /**
  * The embedded JBoss JCA container
@@ -87,6 +87,8 @@ public class EmbeddedJCA
       kernelConfiguration = kernelConfiguration.parallelDeploy(false);
       kernelConfiguration = kernelConfiguration.remoteAccess(false);
       kernelConfiguration = kernelConfiguration.hotDeployment(false);
+      kernelConfiguration = kernelConfiguration.eventListener(new PreClassLoaderEventListener());
+      kernelConfiguration = kernelConfiguration.eventListener(new PostClassLoaderEventListener());
 
       kernel = KernelFactory.create(kernelConfiguration);
       kernel.startup();

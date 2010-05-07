@@ -20,25 +20,51 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.fungal.deployers;
+package org.jboss.jca.sjc;
 
-import java.net.URL;
+import java.lang.reflect.Method;
+
+import com.github.fungal.api.Kernel;
+import com.github.fungal.api.events.Event;
+import com.github.fungal.api.events.EventListener;
 
 /**
- * The deployment interface for JCA/Fungal
+ * An event listener for the POST_CLASSLOADER event
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface Deployment
+class PostClassLoaderEventListener implements EventListener
 {
    /**
-    * Get the unique URL for the deployment
-    * @return The URL
+    * Default constructor
     */
-   public URL getURL();
+   PostClassLoaderEventListener()
+   {
+   }
 
    /**
-    * Get the classloader
-    * @return The classloader
+    * Event
+    * @param kernel The kernel
+    * @param event The event
     */
-   public ClassLoader getClassLoader();
+   public void event(Kernel kernel, Event event)
+   {
+      if (event == Event.POST_CLASSLOADER)
+      {
+         try
+         {
+            Class clz = Class.forName("org.jboss.logmanager.log4j.BridgeRepositorySelector", 
+                                      true, 
+                                      kernel.getKernelClassLoader());
+
+            Method mStart = clz.getMethod("start", (Class[])null);
+            Object brs = clz.newInstance();
+
+            mStart.invoke(brs, (Object[])null);
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+   }
 }

@@ -22,14 +22,14 @@
 
 package org.jboss.jca.sjc;
 
-import org.jboss.jca.fungal.api.ClassLoaderFactory;
-import org.jboss.jca.fungal.api.Kernel;
-import org.jboss.jca.fungal.api.KernelConfiguration;
-import org.jboss.jca.fungal.api.KernelFactory;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
+
+import com.github.fungal.api.Kernel;
+import com.github.fungal.api.KernelFactory;
+import com.github.fungal.api.classloading.ClassLoaderFactory;
+import com.github.fungal.api.configuration.KernelConfiguration;
 
 /**
  * The main class for JBoss JCA SJC
@@ -63,6 +63,10 @@ public class Main
          kernelConfiguration = kernelConfiguration.name("jboss.jca");
          kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
          kernelConfiguration = kernelConfiguration.parallelDeploy(false);
+         kernelConfiguration = kernelConfiguration.remoteAccess(true);
+         kernelConfiguration = kernelConfiguration.eventListener(new PreClassLoaderEventListener());
+         kernelConfiguration = kernelConfiguration.eventListener(new PostClassLoaderEventListener());
+         kernelConfiguration = kernelConfiguration.command(new Shutdown());
 
          String home = SecurityActions.getSystemProperty("jboss.jca.home");
          if (home != null)

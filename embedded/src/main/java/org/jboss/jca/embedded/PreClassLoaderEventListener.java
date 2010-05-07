@@ -20,25 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.fungal.util;
+package org.jboss.jca.embedded;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import com.github.fungal.api.Kernel;
+import com.github.fungal.api.events.Event;
+import com.github.fungal.api.events.EventListener;
 
 /**
- * Jar filter
+ * An event listener for the PRE_CLASSLOADER event
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class JarFilter implements FilenameFilter
+class PreClassLoaderEventListener implements EventListener
 {
    /**
-    * Accept
-    * @param dir The directory
-    * @param name The name
-    * @return True if accepts; otherwise false
+    * Default constructor
     */
-   public boolean accept(File dir, String name)
+   PreClassLoaderEventListener()
    {
-      return name.endsWith(".jar");
+   }
+
+   /**
+    * Event
+    * @param kernel The kernel
+    * @param event The event
+    */
+   public void event(Kernel kernel, Event event)
+   {
+      if (event == Event.PRE_CLASSLOADER)
+      {
+         SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
+         SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+         SecurityActions.setSystemProperty("javax.xml.stream.XMLInputFactory", 
+                                           "com.sun.xml.internal.stream.XMLInputFactoryImpl");
+         SecurityActions.setSystemProperty("log4j.defaultInitOverride", "true");
+      }
    }
 }

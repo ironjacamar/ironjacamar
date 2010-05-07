@@ -41,25 +41,7 @@
   <!--  org.jboss.jca.deployers filter -->
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.RADeployer"/>
-    <Bug code="DLS"/>
-  </Match>
-
-  <!--  org.jboss.jca.fungal filter -->
-  <Match>
-    <Class name="org.jboss.jca.fungal.impl.DeploymentDeployer"/>
-    <Bug code="DLS,UPM"/>
-  </Match>
-  <Match>
-    <Class name="org.jboss.jca.fungal.impl.KernelImpl"/>
-    <Bug code="DLS,UPM"/>
-  </Match>
-  <Match>
-    <Class name="org.jboss.jca.fungal.impl.remote.Communication"/>
-    <Bug code="UPM"/>
-  </Match>
-  <Match>
-    <Class name="org.jboss.jca.fungal.impl.remote.CommunicationServer"/>
-    <Bug code="DLS,UPM"/>
+    <Bug code="DLS,ST"/>
   </Match>
 
   <!--  org.jboss.jca.sjc filter -->
@@ -70,6 +52,10 @@
   <Match>
     <Class name="org.jboss.jca.sjc.Main$LifeThread"/>
     <Bug code="UW,Wa"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.sjc.Shutdown"/>
+    <Bug code="Dm,PZLA"/>
   </Match>
 
   <!--  org.jboss.jca.standalone filter -->

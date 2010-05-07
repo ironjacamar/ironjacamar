@@ -9,7 +9,6 @@
         <!ENTITY metadata SYSTEM "modules/metadata.xml">
         <!ENTITY deployers SYSTEM "modules/deployers.xml">
         <!ENTITY standalone SYSTEM "modules/standalone.xml">
-        <!ENTITY fungal SYSTEM "modules/fungal.xml">
         ]>
 <book lang="en">
    <bookinfo>
@@ -36,7 +35,5 @@
    &deployers;
 
    &standalone;
-
-   &fungal;
 
 </book>

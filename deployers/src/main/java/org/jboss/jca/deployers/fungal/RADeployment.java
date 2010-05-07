@@ -22,9 +22,6 @@
 
 package org.jboss.jca.deployers.fungal;
 
-import org.jboss.jca.fungal.deployers.Deployment;
-import org.jboss.jca.fungal.util.FileUtil;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +35,9 @@ import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 import org.jboss.util.naming.Util;
+
+import com.github.fungal.deployers.Deployment;
+import com.github.fungal.util.FileUtil;
 
 /**
  * A resource adapter deployment for JCA/SJC

@@ -22,15 +22,15 @@
 
 package org.jboss.jca.web;
 
-import org.jboss.jca.fungal.deployers.Deployment;
-import org.jboss.jca.fungal.util.FileUtil;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
+
+import com.github.fungal.deployers.Deployment;
+import com.github.fungal.util.FileUtil;
 
 import org.mortbay.jetty.Handler;
 

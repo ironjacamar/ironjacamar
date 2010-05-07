@@ -32,15 +32,6 @@ import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
-import org.jboss.jca.fungal.api.ClassLoaderFactory;
-import org.jboss.jca.fungal.api.KernelClassLoader;
-import org.jboss.jca.fungal.deployers.CloneableDeployer;
-import org.jboss.jca.fungal.deployers.DeployException;
-import org.jboss.jca.fungal.deployers.Deployer;
-import org.jboss.jca.fungal.deployers.Deployment;
-import org.jboss.jca.fungal.util.FileUtil;
-import org.jboss.jca.fungal.util.Injection;
-import org.jboss.jca.fungal.util.JarFilter;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;
@@ -92,6 +83,16 @@ import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.MessageListenerMetaData;
 import org.jboss.util.naming.Util;
+
+import com.github.fungal.api.classloading.ClassLoaderFactory;
+import com.github.fungal.api.classloading.KernelClassLoader;
+import com.github.fungal.deployers.CloneableDeployer;
+import com.github.fungal.deployers.DeployException;
+import com.github.fungal.deployers.Deployer;
+import com.github.fungal.deployers.Deployment;
+import com.github.fungal.util.FileUtil;
+import com.github.fungal.util.Injection;
+import com.github.fungal.util.JarFilter;
 
 /**
  * The RA deployer for JCA/SJC

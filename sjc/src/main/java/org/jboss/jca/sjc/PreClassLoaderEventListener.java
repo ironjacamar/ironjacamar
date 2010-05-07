@@ -20,44 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.fungal.util;
+package org.jboss.jca.sjc;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+import com.github.fungal.api.Kernel;
+import com.github.fungal.api.events.Event;
+import com.github.fungal.api.events.EventListener;
 
 /**
- * Privileged Blocks
+ * An event listener for the PRE_CLASSLOADER event
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-class SecurityActions
-{ 
+class PreClassLoaderEventListener implements EventListener
+{
    /**
-    * Constructor
+    * Default constructor
     */
-   private SecurityActions()
+   PreClassLoaderEventListener()
    {
    }
 
    /**
-    * Get a system property
-    * @param name The property name
-    * @return The property value
+    * Event
+    * @param kernel The kernel
+    * @param event The event
     */
-   static String getSystemProperty(final String name)
+   public void event(Kernel kernel, Event event)
    {
-      if (System.getSecurityManager() == null)
+      if (event == Event.PRE_CLASSLOADER)
       {
-         return System.getProperty(name);
-      }
-      else
-      {
-         return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
-         {
-            public Object run()
-            {
-               return System.getProperty(name);
-            }
-         });
+         SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
+         SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+         SecurityActions.setSystemProperty("javax.xml.stream.XMLInputFactory", 
+                                           "com.sun.xml.internal.stream.XMLInputFactoryImpl");
+         SecurityActions.setSystemProperty("log4j.defaultInitOverride", "true");
       }
    }
 }

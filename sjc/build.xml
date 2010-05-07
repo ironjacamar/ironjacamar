@@ -68,7 +68,7 @@
              sourcepath="src/main/java"
              destdir="${target.dir}/docs/sjc"
              doclet="org.jboss.apiviz.APIviz"
-             docletpathref="fungal.lib.path.id"
+             docletpathref="sjc.lib.path.id"
              author="true"
              version="true"
              windowtitle="JBoss JCA SJC"
@@ -109,7 +109,7 @@
 
     <!-- Build a jboss-jca-sjc.jar containing all dependencies -->
     <mkdir dir="${build.sjc.dir}/tmp"/>
-    <unjar src="${target.dir}/jboss-jca-fungal.jar" dest="${build.sjc.dir}/tmp"/>
+    <unjar src="${lib.dir}/sjc/fungal.jar" dest="${build.sjc.dir}/tmp"/>
     <unjar src="${target.dir}/jboss-jca-sjc.jar" dest="${build.sjc.dir}/tmp"/>
     <jar destfile="${target.dir}/sjc/bin/jboss-jca-sjc.jar"
          manifest="${build.sjc.dir}/tmp/META-INF/MANIFEST.MF"
@@ -139,7 +139,6 @@
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
         <exclude name="jboss-jca-codegenerator.jar"/>
-        <exclude name="jboss-jca-fungal.jar"/>
         <exclude name="jboss-jca-sjc.jar"/>
         <exclude name="jboss-jca-deployers-main.jar"/>
         <exclude name="jboss-jca-deployers-rar.jar"/>

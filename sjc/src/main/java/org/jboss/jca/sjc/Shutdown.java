@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,58 +20,68 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.fungal.deployment;
+package org.jboss.jca.sjc;
+
+import java.io.Serializable;
+import java.util.Arrays;
+
+import com.github.fungal.api.remote.Command;
 
 /**
- * Represents an entry
+ * Shutdown command
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EntryType
+class Shutdown implements Command
 {
-   private KeyType key;
-   private ValueType value;
-   
+   /** Command name */
+   private static final String NAME = "shutdown";
+
    /**
     * Constructor
     */
-   public EntryType()
+   Shutdown()
    {
-      key = null;
-      value = null;
    }
 
    /**
-    * Get the key
-    * @return The value
+    * Get the name of the command
+    * @return The name
     */
-   public KeyType getKey()
+   public String getName()
    {
-      return key;
-   }
-   
-   /**
-    * Set the key
-    * @param value The value
-    */
-   public void setKey(KeyType value)
-   {
-      key = value;
+      return NAME;
    }
 
    /**
-    * Get the value
-    * @return The value
+    * Get the parameter types of the command; <code>null</code> if none
+    * @return The types
     */
-   public ValueType getValue()
+   public Class[] getParameterTypes()
    {
-      return value;
+      return null;
    }
-   
+
    /**
-    * Set the value
-    * @param value The value
+    * Invoke
+    * @param args The arguments
+    * @return The return value
     */
-   public void setValue(ValueType value)
+   public Serializable invoke(Serializable[] args)
    {
-      this.value = value;
+      if (args != null)
+         return new IllegalArgumentException("Unsupported argument list: " + Arrays.toString(args));
+
+      System.exit(0);
+
+      return null;
+   }
+
+   /**
+    * Is it a public command
+    * @return True if system-wide; false if internal
+    */
+   public boolean isPublic()
+   {
+      return true;
    }
 }

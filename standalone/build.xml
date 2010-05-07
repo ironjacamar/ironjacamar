@@ -138,8 +138,6 @@
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
         <exclude name="jboss-jca-deployers-fungal.jar"/>
-        <exclude name="jboss-jca-fungal-services.jar"/>
-        <exclude name="jboss-jca-fungal.jar"/>
         <exclude name="jboss-jca-sjc.jar"/>
         <exclude name="jboss-jca-standalone.jar"/>
       </fileset>
@@ -150,6 +148,8 @@
         <include name="*.jar"/>
         <exclude name="ant.jar"/>
         <exclude name="apiviz.jar"/>
+        <exclude name="fungal.jar"/>
+        <exclude name="fungal-cli.jar"/>
         <exclude name="jaxb-api.jar"/>
         <exclude name="jdepend.jar"/>
         <exclude name="stax-api.jar"/>
