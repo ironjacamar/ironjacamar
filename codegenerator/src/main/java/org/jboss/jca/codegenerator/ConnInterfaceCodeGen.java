@@ -48,7 +48,6 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
 
       writeIndent(out, indent);
       out.write("public void callMe();");
-      writeEol(out);
 
       writeRightCurlyBracket(out, 0);
    }

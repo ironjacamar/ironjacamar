@@ -23,6 +23,7 @@ package org.jboss.jca.codegenerator;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 /**
  * A McfCodeGen.
@@ -30,7 +31,7 @@ import java.io.Writer;
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class McfCodeGen extends AbstractCodeGen
+public class McfCodeGen extends PropsCodeGen
 {
 
    /**
@@ -80,6 +81,7 @@ public class McfCodeGen extends AbstractCodeGen
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
+      writeConfigProps(def, out, indent);
       writeConnectionFactory(def, out, indent);
       writeManagedConnection(def, out, indent);
       writeLogWriter(def, out, indent);
@@ -109,6 +111,8 @@ public class McfCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
+      writeEol(out);
+      out.write("import javax.resource.spi.ConfigProperty;");
       writeEol(out);
       out.write("import javax.resource.spi.ConnectionDefinition;");
       writeEol(out);
@@ -142,6 +146,17 @@ public class McfCodeGen extends AbstractCodeGen
    public String getClassName(Definition def)
    {
       return def.getMcfClass();
+   }
+   
+   /**
+    * get list of ConfigPropType
+    * @param def definition
+    * @return List<ConfigPropType> List of ConfigPropType
+    */
+   @Override
+   public List<ConfigPropType> getConfigProps(Definition def)
+   {
+      return def.getMcfConfigProps();
    }
    
    /**

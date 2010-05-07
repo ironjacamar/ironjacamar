@@ -92,7 +92,7 @@ public class Main
          def.setRaPackage(packageName);
          def.setRaClass(raClassName);
          
-         List<ConfigPropType> props = new ArrayList<ConfigPropType>();
+         List<ConfigPropType> raProps = new ArrayList<ConfigPropType>();
          while (true)
          {
             System.out.println(dbconf.getString("ra.config.properties"));
@@ -107,13 +107,33 @@ public class Main
             System.out.println();
             
             ConfigPropType config = new ConfigPropType(name, type, value);
-            props.add(config);
+            raProps.add(config);
          }
-         def.setRaConfigProps(props);
+         def.setRaConfigProps(raProps);
          
          System.out.print(dbconf.getString("mcf.class.name"));
          String mcfClassName = in.readLine();
          def.setMcfClass(mcfClassName);
+         
+         List<ConfigPropType> mcfProps = new ArrayList<ConfigPropType>();
+         while (true)
+         {
+            System.out.println(dbconf.getString("mcf.config.properties"));
+            System.out.print("    " + dbconf.getString("config.properties.name"));
+            String name = in.readLine();
+            if (name == null || name.equals(""))
+               break;
+            System.out.print("    " + dbconf.getString("config.properties.type"));
+            String type = in.readLine();
+            System.out.print("    " + dbconf.getString("config.properties.value"));
+            String value = in.readLine();
+            System.out.println();
+            
+            ConfigPropType config = new ConfigPropType(name, type, value);
+            mcfProps.add(config);
+         }
+         def.setMcfConfigProps(mcfProps);
+         
          System.out.print(dbconf.getString("mc.class.name"));
          String mcClassName = in.readLine();
          def.setMcClass(mcClassName);

@@ -39,8 +39,12 @@ public class Definition
    private String raClass;
    /** resource adapter configuration properties */
    private List<ConfigPropType> raConfigProps;
+   
    /** managed connection factory class name */
    private String mcfClass;
+   /** resource adapter configuration properties */
+   private List<ConfigPropType> mcfConfigProps;
+   
    /** managed connection class name */
    private String mcClass;
    /** connection interface name */
@@ -206,6 +210,26 @@ public class Definition
    public String getConnImplClass()
    {
       return connImplClass;
+   }
+
+   /**
+    * Set the mcfConfigProps.
+    * 
+    * @param mcfConfigProps The mcfConfigProps to set.
+    */
+   public void setMcfConfigProps(List<ConfigPropType> mcfConfigProps)
+   {
+      this.mcfConfigProps = mcfConfigProps;
+   }
+
+   /**
+    * Get the mcfConfigProps.
+    * 
+    * @return the mcfConfigProps.
+    */
+   public List<ConfigPropType> getMcfConfigProps()
+   {
+      return mcfConfigProps;
    }
 
 }

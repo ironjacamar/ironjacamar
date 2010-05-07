@@ -42,16 +42,17 @@ public class ConnImplCodeGen extends AbstractCodeGen
    @Override
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
-      int indent = 1;
+
       out.write("public class " + getClassName(def) + " implements " + def.getConnInterfaceClass());
       writeLeftCurlyBracket(out, 0);
+      int indent = 1;
       writeIndent(out, indent);
       out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
       writeEol(out);
       writeEol(out);
       writeIndent(out, indent);
       out.write("public void callMe()");
-      writeLeftCurlyBracket(out, 0);
+      writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call callMe\");");
 
