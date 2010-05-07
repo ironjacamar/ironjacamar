@@ -115,6 +115,13 @@ public class Main
          String mcfClassName = in.readLine();
          def.setMcfClass(mcfClassName);
          
+         System.out.print(dbconf.getString("mcf.impl.raa"));
+         String raAssociation = in.readLine();
+         if (raAssociation.equals("Y") || raAssociation.equals("y") || raAssociation.equals("Yes"))
+            def.setImplRaAssociation(true);
+         else
+            def.setImplRaAssociation(false);
+         
          List<ConfigPropType> mcfProps = new ArrayList<ConfigPropType>();
          while (true)
          {

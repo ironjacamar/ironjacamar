@@ -55,8 +55,11 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("connectionImpl = " + def.getConnImplClass() + ".class)");
       writeEol(out);
-      out.write("public class " + getClassName(def) + 
-                " implements ManagedConnectionFactory, ResourceAdapterAssociation");
+      out.write("public class " + getClassName(def) + " implements ManagedConnectionFactory");
+      if (def.isImplRaAssociation())
+      {
+         out.write(", ResourceAdapterAssociation");
+      }
       writeLeftCurlyBracket(out, 0);
       writeEol(out);
 
@@ -85,7 +88,10 @@ public class McfCodeGen extends PropsCodeGen
       writeConnectionFactory(def, out, indent);
       writeManagedConnection(def, out, indent);
       writeLogWriter(def, out, indent);
-      writeResourceAdapter(def, out, indent);
+      if (def.isImplRaAssociation())
+      {
+         writeResourceAdapter(def, out, indent);
+      }
       
       writeHashCode(def, out, indent);
       writeEquals(def, out, indent);

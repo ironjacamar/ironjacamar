@@ -52,6 +52,9 @@ public class Definition
    /** connection impl class name */
    private String connImplClass;
    
+   /** ResourceAdapterAssociation optional  */
+   private boolean implRaAssociation;
+   
    /**
     * Set the outputDir.
     * 
@@ -230,6 +233,26 @@ public class Definition
    public List<ConfigPropType> getMcfConfigProps()
    {
       return mcfConfigProps;
+   }
+
+   /**
+    * Set the implRaAssociation.
+    * 
+    * @param implRaAssociation The implRaAssociation to set.
+    */
+   public void setImplRaAssociation(boolean implRaAssociation)
+   {
+      this.implRaAssociation = implRaAssociation;
+   }
+
+   /**
+    * Get the implRaAssociation.
+    * 
+    * @return the implRaAssociation.
+    */
+   public boolean isImplRaAssociation()
+   {
+      return implRaAssociation;
    }
 
 }
