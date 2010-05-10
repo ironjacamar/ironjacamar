@@ -55,7 +55,7 @@ config/bootstrap/jca.xml
 
         <programlisting>
 &lt;bean name="RADeployer" 
-      interface="org.jboss.jca.fungal.deployers.Deployer" 
+      interface="com.github.fungal.spi.deployers.Deployer" 
       class="org.jboss.jca.deployers.fungal.RADeployer"&gt;
   &lt;depends&gt;BeanValidation&lt;/depends&gt;
   &lt;depends&gt;WorkManager&lt;/depends&gt;
