@@ -29,8 +29,11 @@
        ================================= -->
   <target name="rar" depends="compile">
     <mkdir dir="${basedir}/rar" />
-
+    <jar destfile="${basedir}/rar/jca-ra.jar"
+         basedir="${basedir}/target"
+         includes="**/*.class"/>
     <jar destfile="${basedir}/rar/jca-test.rar"
-         basedir="${basedir}/target"/>
+         basedir="${basedir}/rar"
+         includes="**/*.jar"/>
   </target>
 </project>
