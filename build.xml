@@ -85,7 +85,7 @@
   <property name="version.eclipse-jdt" value="3.1.1"/>
   <property name="version.fungal" value="0.8.0.Beta2"/>
   <property name="version.hibernate-validator" value="4.0.2.GA"/>
-  <property name="version.javassist" value="3.11.0.GA"/>
+  <property name="version.javassist" value="3.12.0.GA"/>
   <property name="version.jaxb.api" value="2.1"/>
   <property name="version.jaxb.impl" value="2.1.9"/>
   <property name="version.jboss.bootstrap" value="1.0.0-Beta-3"/>
