@@ -164,7 +164,11 @@ public class Main
             }
 
             String reportName = url.getFile();
-            int lastIndex = reportName.lastIndexOf(File.separator);
+
+            int lastSlashIndex = reportName.lastIndexOf("/");
+            int lastSepaIndex = reportName.lastIndexOf(File.separator);
+
+            int lastIndex = lastSlashIndex > lastSepaIndex ? lastSlashIndex : lastSepaIndex;
             if (lastIndex != -1)
                reportName = reportName.substring(lastIndex + 1);
             reportName += ".log";

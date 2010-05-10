@@ -699,8 +699,10 @@ public final class RADeployer implements CloneableDeployer
          }
          if (reportDirectory.exists())
          {
+            int lastSlashIndex = urlFileName.lastIndexOf("/");
+            int lastSepaIndex = urlFileName.lastIndexOf(File.separator);
 
-            int lastIndex = urlFileName.lastIndexOf(File.separator);
+            int lastIndex = lastSlashIndex > lastSepaIndex ? lastSlashIndex : lastSepaIndex;
             if (lastIndex != -1)
                urlFileName = urlFileName.substring(lastIndex + 1);
             urlFileName += ".log";
