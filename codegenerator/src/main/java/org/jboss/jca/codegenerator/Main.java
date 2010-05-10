@@ -41,8 +41,20 @@ public class Main
 {
    private static final int OTHER = 2;
    
+   private enum PropsType 
+   {
+      String,
+      Boolean,
+      Integer,
+      Double,
+      Byte,
+      Short,
+      Long,
+      Float,
+      Character
+   }
    /**
-    * Code generator standalone tool
+    * Code generator stand alone tool
     * 
     * @param args command line arguments
     */
@@ -92,23 +104,7 @@ public class Main
          def.setRaPackage(packageName);
          def.setRaClass(raClassName);
          
-         List<ConfigPropType> raProps = new ArrayList<ConfigPropType>();
-         while (true)
-         {
-            System.out.println(dbconf.getString("ra.config.properties"));
-            System.out.print("    " + dbconf.getString("config.properties.name"));
-            String name = in.readLine();
-            if (name == null || name.equals(""))
-               break;
-            System.out.print("    " + dbconf.getString("config.properties.type"));
-            String type = in.readLine();
-            System.out.print("    " + dbconf.getString("config.properties.value"));
-            String value = in.readLine();
-            System.out.println();
-            
-            ConfigPropType config = new ConfigPropType(name, type, value);
-            raProps.add(config);
-         }
+         List<ConfigPropType> raProps = inputProperties("ra", dbconf, in);
          def.setRaConfigProps(raProps);
          
          System.out.print(dbconf.getString("mcf.class.name"));
@@ -117,28 +113,17 @@ public class Main
          
          System.out.print(dbconf.getString("mcf.impl.raa"));
          String raAssociation = in.readLine();
-         if (raAssociation.equals("Y") || raAssociation.equals("y") || raAssociation.equals("Yes"))
-            def.setImplRaAssociation(true);
-         else
+         if (raAssociation == null)
             def.setImplRaAssociation(false);
-         
-         List<ConfigPropType> mcfProps = new ArrayList<ConfigPropType>();
-         while (true)
+         else
          {
-            System.out.println(dbconf.getString("mcf.config.properties"));
-            System.out.print("    " + dbconf.getString("config.properties.name"));
-            String name = in.readLine();
-            if (name == null || name.equals(""))
-               break;
-            System.out.print("    " + dbconf.getString("config.properties.type"));
-            String type = in.readLine();
-            System.out.print("    " + dbconf.getString("config.properties.value"));
-            String value = in.readLine();
-            System.out.println();
-            
-            ConfigPropType config = new ConfigPropType(name, type, value);
-            mcfProps.add(config);
+            if (raAssociation.equals("Y") || raAssociation.equals("y") || raAssociation.equals("Yes"))
+               def.setImplRaAssociation(true);
+            else
+               def.setImplRaAssociation(false);
          }
+         
+         List<ConfigPropType> mcfProps = inputProperties("mcf", dbconf, in);
          def.setMcfConfigProps(mcfProps);
          
          System.out.print(dbconf.getString("mc.class.name"));
@@ -164,6 +149,57 @@ public class Main
       {
          e.printStackTrace();
       }
+   }
+
+   /**
+    * Input Properties
+    * @param classname belong to which java class
+    * @param dbconf ResourceBundle
+    * @param in BufferedReader
+    * @return List<ConfigPropType> list of properties
+    * @throws IOException ioException
+    */
+   private static List<ConfigPropType> inputProperties(String classname, ResourceBundle dbconf, BufferedReader in) 
+      throws IOException
+   {
+      List<ConfigPropType> props = new ArrayList<ConfigPropType>();
+      while (true)
+      {
+         System.out.println(dbconf.getString(classname + ".config.properties"));
+         System.out.print("    " + dbconf.getString("config.properties.name"));
+         String name = in.readLine();
+         if (name == null || name.equals(""))
+            break;
+         System.out.print("    " + dbconf.getString("config.properties.type"));
+         String type = in.readLine();
+         boolean correctType = false;
+         for (PropsType pt : PropsType.values())
+         {
+            if (type.equals(pt.toString()))
+            {
+               correctType = true;
+               break;
+            }
+         }
+         if (!correctType)
+         {
+            System.out.print(dbconf.getString("config.properties.type.tip") + " [");
+            for (PropsType pt : PropsType.values())
+            {
+               System.out.print(pt.toString());
+               System.out.print(", ");
+            }
+            System.out.println("]");
+            continue;
+         }
+         System.out.print("    " + dbconf.getString("config.properties.value"));
+         String value = in.readLine();
+         System.out.println();
+         
+         ConfigPropType config = new ConfigPropType(name, type, value);
+         props.add(config);
+      }
+      return props;
    }
 
    /**

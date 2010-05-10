@@ -116,39 +116,8 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       for (int i = 0; i < getConfigProps(def).size(); i++)
       {
          writeIndent(out, indent + 1);
-         String type = getConfigProps(def).get(i).getType();
-         if (type.equals("int"))
-         {
-            out.write("result = 31 * result + " + getConfigProps(def).get(i).getName() + ";");
-         }
-         else if (type.equals("short") || type.equals("char") || type.equals("byte"))
-         {
-            out.write("result = 31 * result + (int)" + getConfigProps(def).get(i).getName() + ";");
-         }
-         else if (type.equals("boolean"))
-         {
-            out.write("result = 31 * result + (" + getConfigProps(def).get(i).getName() + " ? 0 : 1);");
-         }
-         else if (type.equals("long"))
-         {
-            out.write("result = 31 * result + (int)(" + getConfigProps(def).get(i).getName() +
-               " ^ (" + getConfigProps(def).get(i).getName() + " >>> 32));");
-         }
-         else if (type.equals("float"))
-         {
-            out.write("result = 31 * result + Float.floatToIntBits(" + getConfigProps(def).get(i).getName() + ");");
-         }
-         else if (type.equals("double"))
-         {
-            out.write("long tolong = Double.doubleToLongBits(" + getConfigProps(def).get(i).getName() + ");");
-            writeEol(out);
-            writeIndent(out, indent + 1);
-            out.write("result = 31 * result + (int)(tolong ^ (tolong >>> 32));");
-         }
-         else
-         {
-            out.write("result = 31 * result + " + getConfigProps(def).get(i).getName() + ".hashCode();");
-         }
+         out.write("result = 31 * result + " + getConfigProps(def).get(i).getName() + ".hashCode();");
+
          writeEol(out);
       }
       writeIndent(out, indent + 1);
@@ -209,7 +178,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
             writeIndent(out, indent + 2);
             out.write("&& ");
          }
-         out.write(getConfigProps(def).get(i).getName() + " == obj." + getConfigProps(def).get(i).getName());
+         out.write(getConfigProps(def).get(i).getName() + ".equals(obj." + getConfigProps(def).get(i).getName() + ")");
       }
       out.write(";");
       writeRightCurlyBracket(out, indent);
