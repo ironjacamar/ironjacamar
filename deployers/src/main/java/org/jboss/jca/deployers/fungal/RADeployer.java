@@ -86,13 +86,13 @@ import org.jboss.util.naming.Util;
 
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
-import com.github.fungal.deployers.CloneableDeployer;
-import com.github.fungal.deployers.DeployException;
-import com.github.fungal.deployers.Deployer;
-import com.github.fungal.deployers.Deployment;
-import com.github.fungal.util.FileUtil;
-import com.github.fungal.util.Injection;
-import com.github.fungal.util.JarFilter;
+import com.github.fungal.api.util.FileUtil;
+import com.github.fungal.api.util.Injection;
+import com.github.fungal.api.util.JarFilter;
+import com.github.fungal.spi.deployers.CloneableDeployer;
+import com.github.fungal.spi.deployers.DeployException;
+import com.github.fungal.spi.deployers.Deployer;
+import com.github.fungal.spi.deployers.Deployment;
 
 /**
  * The RA deployer for JCA/SJC

@@ -28,10 +28,10 @@ import java.net.URL;
 
 import org.jboss.logging.Logger;
 
-import com.github.fungal.deployers.DeployException;
-import com.github.fungal.deployers.Deployer;
-import com.github.fungal.deployers.Deployment;
-import com.github.fungal.util.FileUtil;
+import com.github.fungal.api.util.FileUtil;
+import com.github.fungal.spi.deployers.DeployException;
+import com.github.fungal.spi.deployers.Deployer;
+import com.github.fungal.spi.deployers.Deployment;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.webapp.WebAppContext;

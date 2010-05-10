@@ -36,8 +36,8 @@ import javax.resource.spi.ResourceAdapter;
 import org.jboss.logging.Logger;
 import org.jboss.util.naming.Util;
 
-import com.github.fungal.deployers.Deployment;
-import com.github.fungal.util.FileUtil;
+import com.github.fungal.api.util.FileUtil;
+import com.github.fungal.spi.deployers.Deployment;
 
 /**
  * A resource adapter deployment for JCA/SJC

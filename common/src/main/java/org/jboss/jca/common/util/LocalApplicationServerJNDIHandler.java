@@ -32,7 +32,7 @@ import javax.naming.Name;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 
-import com.github.fungal.deployers.DeployException;
+import com.github.fungal.spi.deployers.DeployException;
 
 /**
  * Local only support for connection factory

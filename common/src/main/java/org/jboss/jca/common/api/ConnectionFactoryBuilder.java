@@ -25,7 +25,7 @@ package org.jboss.jca.common.api;
 import javax.naming.Reference;
 import javax.resource.spi.ManagedConnectionFactory;
 
-import com.github.fungal.deployers.DeployException;
+import com.github.fungal.spi.deployers.DeployException;
 
 /**
  * Used for building the ConnectionFactory.  This is starting as a "simple as possible"

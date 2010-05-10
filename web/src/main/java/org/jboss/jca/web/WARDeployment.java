@@ -29,8 +29,8 @@ import java.net.URL;
 
 import org.jboss.logging.Logger;
 
-import com.github.fungal.deployers.Deployment;
-import com.github.fungal.util.FileUtil;
+import com.github.fungal.api.util.FileUtil;
+import com.github.fungal.spi.deployers.Deployment;
 
 import org.mortbay.jetty.Handler;
 
