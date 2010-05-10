@@ -30,11 +30,11 @@ import java.io.Writer;
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class ConnImplCodeGen extends AbstractCodeGen
+public class CmCodeGen extends AbstractCodeGen
 {
 
    /**
-    * Output class
+    * Output ResourceAdapater class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -43,20 +43,18 @@ public class ConnImplCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements " + def.getConnInterfaceClass());
+      out.write("public class " + getClassName(def) + " implements ConnectionManager");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
+      
+      //constructor
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
-      writeEol(out);
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public void callMe()");
+      out.write("public " + getClassName(def) + "()");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.debug(\"call callMe\");");
-
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeAllocateConn(def, out, indent);
       writeRightCurlyBracket(out, 0);
    }
    
@@ -72,7 +70,13 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import org.jboss.logging.Logger;");
+      out.write("import javax.resource.ResourceException;");
+      writeEol(out);
+      out.write("import javax.resource.spi.ConnectionManager;");
+      writeEol(out);
+      out.write("import javax.resource.spi.ConnectionRequestInfo;");
+      writeEol(out);
+      out.write("import javax.resource.spi.ManagedConnectionFactory;");
       writeEol(out);
       writeEol(out);
    }
@@ -85,6 +89,28 @@ public class ConnImplCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getConnImplClass();
+      return def.getCmClass();
+   }
+   
+   /**
+    * Output allocateConnection method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeAllocateConn(Definition def, Writer out, int indent) throws IOException
+   {
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public Object allocateConnection(ManagedConnectionFactory mcf," +
+         "ConnectionRequestInfo cri) throws ResourceException");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return null;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
    }
 }

@@ -35,7 +35,7 @@ public class McfCodeGen extends PropsCodeGen
 {
 
    /**
-    * Output ResourceAdapater class
+    * Output class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -187,7 +187,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("log.debug(\"call createConnectionFactory\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return new MyCciConnectionFactory();");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -200,11 +200,9 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("throw new IllegalStateException(\"RA is null\");");
       writeEol(out);
+
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call createConnectionFactory\");");
-      writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return createConnectionFactory(new MyConnectionManager());");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

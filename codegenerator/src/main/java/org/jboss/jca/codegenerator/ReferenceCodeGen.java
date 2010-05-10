@@ -30,11 +30,11 @@ import java.io.Writer;
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class ConnImplCodeGen extends AbstractCodeGen
+public class ReferenceCodeGen extends AbstractCodeGen
 {
 
    /**
-    * Output class
+    * Output ResourceAdapater class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -43,20 +43,18 @@ public class ConnImplCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements " + def.getConnInterfaceClass());
+      out.write("public class " + getClassName(def) + " extends Reference");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
+      
+      //constructor
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
-      writeEol(out);
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public void callMe()");
+      out.write("public " + getClassName(def) + "(String className)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call callMe\");");
-
+      out.write("super(className);");
       writeRightCurlyBracket(out, indent);
+
       writeRightCurlyBracket(out, 0);
    }
    
@@ -72,7 +70,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import org.jboss.logging.Logger;");
+      out.write("import javax.naming.Reference;");
       writeEol(out);
       writeEol(out);
    }
@@ -85,6 +83,6 @@ public class ConnImplCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getConnImplClass();
+      return def.getReferenceClass();
    }
 }

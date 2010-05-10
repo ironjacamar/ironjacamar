@@ -54,6 +54,17 @@ public class Definition
    
    /** ResourceAdapterAssociation optional  */
    private boolean implRaAssociation;
+
+   /** cci connection factory class name */
+   private String cciConnFactoryClass;
+   /** cci connection class name */
+   private String cciConnClass;
+   /** managed connection metadata class name */
+   private String mcMetaClass;
+   /** connection manage class name */
+   private String cmClass;
+   /** reference class name */
+   private String referenceClass;
    
    /**
     * Set the outputDir.
@@ -253,6 +264,116 @@ public class Definition
    public boolean isImplRaAssociation()
    {
       return implRaAssociation;
+   }
+
+   /**
+    * Set the cciConnFactoryClass.
+    * 
+    * @param cciConnFactoryClass The cciConnFactoryClass to set.
+    */
+   public void setCciConnFactoryClass(String cciConnFactoryClass)
+   {
+      this.cciConnFactoryClass = cciConnFactoryClass;
+   }
+
+   /**
+    * Get the cciConnFactoryClass.
+    * 
+    * @return the cciConnFactoryClass.
+    */
+   public String getCciConnFactoryClass()
+   {
+      if (cciConnFactoryClass == null || cciConnFactoryClass.equals(""))
+         cciConnFactoryClass = "MyCciConnectionFactory";
+      return cciConnFactoryClass;
+   }
+
+   /**
+    * Set the cciConnClass.
+    * 
+    * @param cciConnClass The cciConnClass to set.
+    */
+   public void setCciConnClass(String cciConnClass)
+   {
+      this.cciConnClass = cciConnClass;
+   }
+
+   /**
+    * Get the cciConnClass.
+    * 
+    * @return the cciConnClass.
+    */
+   public String getCciConnClass()
+   {
+      if (cciConnClass == null || cciConnClass.equals(""))
+         cciConnClass = "MyCciConnection";
+      return cciConnClass;
+   }
+
+   /**
+    * Set the mcMetaClass.
+    * 
+    * @param mcMetaClass The mcMetaClass to set.
+    */
+   public void setMcMetaClass(String mcMetaClass)
+   {
+      this.mcMetaClass = mcMetaClass;
+   }
+
+   /**
+    * Get the mcMetaClass.
+    * 
+    * @return the mcMetaClass.
+    */
+   public String getMcMetaClass()
+   {
+      if (mcMetaClass == null || mcMetaClass.equals(""))
+         mcMetaClass = "MyConnectionMetaData";
+      return mcMetaClass;
+   }
+
+   /**
+    * Set the cmClass.
+    * 
+    * @param cmClass The cmClass to set.
+    */
+   public void setCmClass(String cmClass)
+   {
+      this.cmClass = cmClass;
+   }
+
+   /**
+    * Get the cmClass.
+    * 
+    * @return the cmClass.
+    */
+   public String getCmClass()
+   {
+      if (cmClass == null || cmClass.equals(""))
+         cmClass = "MyConnectionManager";
+      return cmClass;
+   }
+
+   /**
+    * Set the referenceClass.
+    * 
+    * @param referenceClass The referenceClass to set.
+    */
+   public void setReferenceClass(String referenceClass)
+   {
+      this.referenceClass = referenceClass;
+   }
+
+   /**
+    * Get the referenceClass.
+    * 
+    * @return the referenceClass.
+    */
+   public String getReferenceClass()
+   {
+      if (referenceClass == null || referenceClass.equals(""))
+         referenceClass = "MyReference";
+      return referenceClass;
    }
 
 }

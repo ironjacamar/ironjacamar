@@ -54,6 +54,11 @@ public class JCA16AnnoProfile implements Profile
       generateClassCode(def, "Mc");
       generateClassCode(def, "ConnInterface");
       generateClassCode(def, "ConnImpl");
+      generateClassCode(def, "CciConn");
+      generateClassCode(def, "CciConnFactory");
+      generateClassCode(def, "McMeta");
+      generateClassCode(def, "Cm");
+      generateClassCode(def, "Reference");
    }
 
    /**

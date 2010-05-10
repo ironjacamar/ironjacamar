@@ -34,7 +34,7 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
 {
 
    /**
-    * Output ResourceAdapater class
+    * Output class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException

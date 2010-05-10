@@ -35,7 +35,7 @@ public class McCodeGen extends AbstractCodeGen
 {
 
    /**
-    * Output ResourceAdapater class
+    * Output class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -286,7 +286,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("log.debug(\"call getMetaData\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return new MyConnectionMetaData();");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
