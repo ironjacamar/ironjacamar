@@ -91,7 +91,7 @@
              sourcepath="src/main/java"
              destdir="${target.dir}/docs/web"
              doclet="org.jboss.apiviz.APIviz"
-             docletpathref="fungal.lib.path.id"
+             docletpathref="sjc.lib.path.id"
              author="true"
              version="true"
              windowtitle="JBoss JCA Web"
