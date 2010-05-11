@@ -63,8 +63,6 @@ public class Definition
    private String mcMetaClass;
    /** connection manage class name */
    private String cmClass;
-   /** reference class name */
-   private String referenceClass;
    
    /**
     * Set the outputDir.
@@ -353,27 +351,4 @@ public class Definition
          cmClass = "MyConnectionManager";
       return cmClass;
    }
-
-   /**
-    * Set the referenceClass.
-    * 
-    * @param referenceClass The referenceClass to set.
-    */
-   public void setReferenceClass(String referenceClass)
-   {
-      this.referenceClass = referenceClass;
-   }
-
-   /**
-    * Get the referenceClass.
-    * 
-    * @return the referenceClass.
-    */
-   public String getReferenceClass()
-   {
-      if (referenceClass == null || referenceClass.equals(""))
-         referenceClass = "MyReference";
-      return referenceClass;
-   }
-
 }

@@ -45,10 +45,6 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write("public class " + getClassName(def) + " implements ConnectionFactory");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
-      writeIndent(out, indent);
-      out.write("private Reference reference;");
-      writeEol(out);
-      writeEol(out);
       
       writeDefaultConstructor(def, out, indent);
 
@@ -194,16 +190,9 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeEol(out);
       writeIndent(out, indent);
       out.write("public Reference getReference() throws NamingException");
-      writeEol(out);
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("if (reference == null)");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("reference = new MyReference(this.getClass().getName());");
-      writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write("return reference;");
+      out.write("return null;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -213,8 +202,6 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void setReference(Reference reference)");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("this.reference = reference;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
