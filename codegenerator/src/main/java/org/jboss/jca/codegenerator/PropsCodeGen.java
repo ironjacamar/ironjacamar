@@ -63,7 +63,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       for (int i = 0; i < getConfigProps(def).size(); i++)
       {
          String name = getConfigProps(def).get(i).getName();
-         String upcaseName = upcaseFisrt(name);
+         String upcaseName = upcaseFirst(name);
          //set
          writeIndent(out, indent);
          out.write("public void set" + 
@@ -116,8 +116,17 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       for (int i = 0; i < getConfigProps(def).size(); i++)
       {
          writeIndent(out, indent + 1);
-         out.write("result = 31 * result + " + getConfigProps(def).get(i).getName() + ".hashCode();");
-
+         out.write("if (" + getConfigProps(def).get(i).getName() + " != null)");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("result += 31 * result + 7 * " + getConfigProps(def).get(i).getName() + ".hashCode();");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         
+         out.write("else");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("result += 31 * result + 7;");
          writeEol(out);
       }
       writeIndent(out, indent + 1);
@@ -164,23 +173,30 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write(getClassName(def) + " obj = (" + getClassName(def) + ")other;");
       writeEol(out);
+      
       writeIndent(out, indent + 1);
-      out.write("return ");
-      if (getConfigProps(def).size() == 0)
-      {
-         out.write("true");
-      }
+      out.write("boolean result = true; ");
+      writeEol(out);
+
       for (int i = 0; i < getConfigProps(def).size(); i++)
       {
-         if (i != 0)
-         {
-            writeEol(out);
-            writeIndent(out, indent + 2);
-            out.write("&& ");
-         }
-         out.write(getConfigProps(def).get(i).getName() + ".equals(obj." + getConfigProps(def).get(i).getName() + ")");
+         writeIndent(out, indent + 1);
+         out.write("if (result && " + getConfigProps(def).get(i).getName() + " == null)");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("result = obj.get" + upcaseFirst(getConfigProps(def).get(i).getName()) + "() == null;");
+         writeEol(out);
+         
+         writeIndent(out, indent + 1);
+         out.write("else");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("result = " + getConfigProps(def).get(i).getName() + ".equals(obj.get" + 
+            upcaseFirst(getConfigProps(def).get(i).getName()) + "());");
+         writeEol(out);
       }
-      out.write(";");
+      writeIndent(out, indent + 1);
+      out.write("return result;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

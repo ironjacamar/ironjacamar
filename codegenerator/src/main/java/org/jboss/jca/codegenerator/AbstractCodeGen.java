@@ -160,7 +160,7 @@ public abstract class AbstractCodeGen
     * @param name string
     * @return String name string
     */
-   String upcaseFisrt(String name)
+   String upcaseFirst(String name)
    {
       StringBuilder sb = new StringBuilder();
       sb.append(name.substring(0, 1).toUpperCase(Locale.ENGLISH));
