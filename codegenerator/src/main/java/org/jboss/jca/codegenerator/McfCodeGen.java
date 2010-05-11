@@ -67,10 +67,13 @@ public class McfCodeGen extends PropsCodeGen
       out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
       writeEol(out);
       writeEol(out);
-      writeIndent(out, indent);
-      out.write("private ResourceAdapter ra;");
-      writeEol(out);
-      writeEol(out);
+      if (def.isImplRaAssociation())
+      {
+         writeIndent(out, indent);
+         out.write("private ResourceAdapter ra;");
+         writeEol(out);
+         writeEol(out);
+      }
       writeIndent(out, indent);
       out.write("private PrintWriter logwriter;");
       writeEol(out);
@@ -177,12 +180,10 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("if (ra == null)");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("throw new IllegalStateException(\"RA is null\");");
-      writeEol(out);
+      if (def.isImplRaAssociation())
+      {
+         writeIfRaNull(out, indent);
+      }
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call createConnectionFactory\");");
       writeEol(out);
@@ -194,16 +195,30 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public Object createConnectionFactory() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
+      if (def.isImplRaAssociation())
+      {
+         writeIfRaNull(out, indent);
+      }
+
+      writeIndent(out, indent + 1);
+      out.write("return createConnectionFactory(new MyConnectionManager());");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+   }
+
+   /**
+    * Output if (ra == null) 
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeIfRaNull(Writer out, int indent) throws IOException
+   {
       writeIndent(out, indent + 1);
       out.write("if (ra == null)");
       writeEol(out);
       writeIndent(out, indent + 2);
       out.write("throw new IllegalStateException(\"RA is null\");");
-      writeEol(out);
-
-      writeIndent(out, indent + 1);
-      out.write("return createConnectionFactory(new MyConnectionManager());");
-      writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
    
@@ -222,12 +237,10 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("if (ra == null)");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("throw new IllegalStateException(\"RA is null\");");
-      writeEol(out);
+      if (def.isImplRaAssociation())
+      {
+         writeIfRaNull(out, indent);
+      }
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call createManagedConnection\");");
       writeEol(out);
@@ -242,12 +255,10 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("if (ra == null)");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("throw new IllegalStateException(\"RA is null\");");
-      writeEol(out);
+      if (def.isImplRaAssociation())
+      {
+         writeIfRaNull(out, indent);
+      }
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call matchManagedConnections\");");
       writeEol(out);
