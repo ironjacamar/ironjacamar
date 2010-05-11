@@ -3,6 +3,7 @@
   <!-- ================================= 
        Properties              
        ================================= -->
+  <property name="build.dir" value="${basedir}/build" />
   <property name="target.dir" value="${basedir}/target" />
   <property name="lib.dir" value="${basedir}/../../../lib" />
 
@@ -16,10 +17,10 @@
        Target: compile
        ================================= -->
   <target name="compile">
-    <mkdir dir="${target.dir}" />
+    <mkdir dir="${build.dir}" />
 
     <javac srcdir="${basedir}/src"
-           destdir="${target.dir}"
+           destdir="${build.dir}"
            classpathref="lib.path.id">
     </javac> 
   </target>
@@ -28,12 +29,12 @@
        Target: rar
        ================================= -->
   <target name="rar" depends="compile">
-    <mkdir dir="${basedir}/rar" />
-    <jar destfile="${basedir}/rar/jca-ra.jar"
-         basedir="${basedir}/target"
+    <mkdir dir="${target.dir}" />
+    <jar destfile="${build.dir}/jca-ra.jar"
+         basedir="${build.dir}"
          includes="**/*.class"/>
-    <jar destfile="${basedir}/rar/jca-test.rar"
-         basedir="${basedir}/rar"
+    <jar destfile="${target.dir}/jca-test.rar"
+         basedir="${build.dir}"
          includes="**/*.jar"/>
   </target>
 </project>
