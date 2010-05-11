@@ -32,7 +32,7 @@ import java.io.FileReader;
 
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import com.github.fungal.deployers.DeployException;
+import com.github.fungal.spi.deployers.DeployException;
 
 import org.junit.Test;
 

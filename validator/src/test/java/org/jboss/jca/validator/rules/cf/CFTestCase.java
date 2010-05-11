@@ -28,7 +28,7 @@ import org.jboss.jca.validator.rules.TestCaseAbstract;
 
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import com.github.fungal.deployers.DeployException;
+import com.github.fungal.spi.deployers.DeployException;
 
 import org.junit.Test;
 
