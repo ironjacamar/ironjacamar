@@ -53,12 +53,7 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
 
-      //constructor
-      writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "()");
-      writeLeftCurlyBracket(out, indent);
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
+      writeDefaultConstructor(def, out, indent);
       
       writeConnection(def, out, indent);
       writeLifecycle(def, out, indent);

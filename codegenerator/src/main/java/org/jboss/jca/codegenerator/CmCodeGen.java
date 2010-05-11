@@ -47,12 +47,7 @@ public class CmCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
-      //constructor
-      writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "()");
-      writeLeftCurlyBracket(out, indent);
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
+      writeDefaultConstructor(def, out, indent);
       
       writeAllocateConn(def, out, indent);
       writeRightCurlyBracket(out, 0);

@@ -80,12 +80,7 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       
       
-      //constructor
-      writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "()");
-      writeLeftCurlyBracket(out, indent);
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
+      writeDefaultConstructor(def, out, indent);
       
       writeConfigProps(def, out, indent);
       writeConnectionFactory(def, out, indent);

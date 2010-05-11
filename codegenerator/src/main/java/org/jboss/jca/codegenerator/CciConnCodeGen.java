@@ -45,6 +45,8 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write("public class " + getClassName(def) + " implements Connection");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
+      
+      writeDefaultConstructor(def, out, indent);
 
       writeClose(def, out, indent);
       writeInteraction(def, out, indent);
@@ -54,6 +56,7 @@ public class CciConnCodeGen extends AbstractCodeGen
       
       writeRightCurlyBracket(out, 0);
    }
+
    
    /**
     * Output class import

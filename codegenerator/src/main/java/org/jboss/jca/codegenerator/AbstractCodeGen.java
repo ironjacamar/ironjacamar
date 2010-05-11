@@ -156,6 +156,23 @@ public abstract class AbstractCodeGen
    }
 
    /**
+    * Output Default Constructor
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   void writeDefaultConstructor(Definition def, Writer out, int indent) throws IOException
+   {
+      //constructor
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "()");
+      writeLeftCurlyBracket(out, indent);
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+   }
+   
+   /**
     * Upcase first letter
     * @param name string
     * @return String name string

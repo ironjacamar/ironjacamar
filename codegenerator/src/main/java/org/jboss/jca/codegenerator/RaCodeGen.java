@@ -54,12 +54,7 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       writeEol(out);
       
-      //constructor
-      writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "()");
-      writeLeftCurlyBracket(out, indent);
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
+      writeDefaultConstructor(def, out, indent);
       
       writeConfigProps(def, out, indent);
       writeEndpointLifecycle(def, out, indent);

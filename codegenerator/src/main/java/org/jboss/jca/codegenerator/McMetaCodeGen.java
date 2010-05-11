@@ -45,6 +45,8 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write("public class " + getClassName(def) + " implements ManagedConnectionMetaData");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
+      
+      writeDefaultConstructor(def, out, indent);
 
       writeEIS(def, out, indent);
       writeMaxConnection(def, out, indent);

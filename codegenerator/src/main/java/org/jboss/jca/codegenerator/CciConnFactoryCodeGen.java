@@ -49,6 +49,8 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write("private Reference reference;");
       writeEol(out);
       writeEol(out);
+      
+      writeDefaultConstructor(def, out, indent);
 
       writeConnection(def, out, indent);
       writeMetaData(def, out, indent);
