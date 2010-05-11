@@ -32,7 +32,7 @@ export PATH
 
     <section id="ant">
       <title>Apache Ant</title>
-      <para>You must have Apache Ant 1.7.1+ installed on your system.</para>
+      <para>You must have Apache Ant 1.8.1+ installed on your system.</para>
       <para>Remember to ensure that "ant" are in your path (or symlinked).</para>
 
       <programlisting>
@@ -47,19 +47,10 @@ export PATH
 
     <section id="ivy">
       <title>Apache Ivy</title>
-      <para>You must have Apache Ivy 2.1.0-RC2+ installed in your Apache Ant installation.</para>
+      <para>The JBoss JCA project uses Apache Ivy for dependency management.</para>
 
-      <programlisting>
-cp ivy.jar $ANT_HOME/lib
-      </programlisting>
-
-      <para>If you have problems in building the JBoss JCA project checkout the Apache Ivy source code 
-        from trunk and build it yourself.</para>
-
-      <programlisting>
-svn co http://svn.apache.org/repos/asf/ant/ivy/core/trunk ivy
-ant jar
-      </programlisting>
+      <para>Apache Ivy is automatically downloaded and included in the development
+        environment, so no additional setup is required.</para>
 
     </section>
 

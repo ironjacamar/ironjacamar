@@ -37,6 +37,13 @@
   <property name="type" value="Alpha12"/>
 
   <!-- ================================= 
+       Ivy              
+       ================================= -->
+  <property name="ivy.version" value="2.1.0"/>
+  <property name="ivy.dir" value="${user.home}/.ivy2/cache/org.apache.ivy/jars"/>
+  <property name="ivy.jar.name" value="ivy-${ivy.version}.jar"/>
+
+  <!-- ================================= 
        Repositories              
        ================================= -->
   <property name="central.repo" value="http://repo1.maven.org/maven2"/>
@@ -75,7 +82,7 @@
        Versions              
        ================================= -->
   <property name="version.activation" value="1.1.1"/>
-  <property name="version.ant" value="1.7.1"/>
+  <property name="version.ant" value="1.8.1"/>
   <property name="version.apache-log4j" value="1.2.16"/>
   <property name="version.apache-logging" value="1.1.0.jboss"/>
   <property name="version.apache-xerces" value="2.9.1"/>
@@ -182,6 +189,13 @@
        Target: init              
        ================================= -->
   <target name="init">
+    <!-- Bootstrap Ivy -->
+    <mkdir dir="${ivy.dir}"/>
+    <get usetimestamp="true" src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/${ivy.jar.name}" 
+         skipexisting="true"
+         dest="${ivy.dir}/${ivy.jar.name}"/>
+    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.dir}/${ivy.jar.name}"/>
+
     <ivy:settings file="${basedir}/ivy.settings.xml"/>
 
     <fail message="JBoss JCA requires JDK6+" unless="HAVE_JDK_1.6"/>
