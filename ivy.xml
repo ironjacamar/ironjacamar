@@ -36,7 +36,6 @@
   </configurations>
 
   <dependencies>
-    <dependency org="apache-log4j" name="log4j" rev="${version.apache-log4j}" conf="standalone->default;sjc->*"/>
     <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="*"/>
     <dependency org="com.github.fungal" name="fungal" rev="${version.fungal}" conf="standalone->default;sjc->*"/>
     <dependency org="com.github.fungal" name="fungal-cli" rev="${version.fungal}" conf="standalone->default;sjc->*"/>
@@ -49,9 +48,9 @@
     <dependency org="jboss.jbossts" name="jbossjts" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
     <dependency org="jboss.jbossts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="standalone->default;sjc->*"/>
     <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="standalone->default;sjc->*"/>
-    <dependency org="org.apache.ant" name="ant" rev="${version.ant}" conf="standalone->default;sjc->*"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test->default"/>
-    <dependency org="org.mockito" name="mockito-all" rev="${version.mockito}" conf="test->default"/>
+    <dependency org="log4j" name="log4j" rev="${version.apache-log4j}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.apache.ant" name="ant" rev="${version.ant}" conf="standalone->default;sjc->*"/>
     <dependency org="org.eclipse.jdt" name="core" rev="${version.eclipse-jdt}" conf="standalone->default;sjc->*"/>
     <dependency org="org.hibernate" name="hibernate-validator" rev="${version.hibernate-validator}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="standalone->default;sjc->*"/>
@@ -100,11 +99,12 @@
     <dependency org="org.jboss.stdio" name="jboss-stdio" rev="${version.jboss.stdio}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.threads" name="jboss-threads" rev="${version.jboss.threads}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.threads" name="jboss-threads-metadata" rev="${version.jboss.threads}" conf="standalone->default"/>
+    <dependency org="org.mockito" name="mockito-all" rev="${version.mockito}" conf="test->default"/>
     <dependency org="org.mortbay.jetty" name="jetty" rev="${version.jetty}" conf="standalone->default;sjc->*"/>
     <dependency org="org.mortbay.jetty" name="jetty-util" rev="${version.jetty}" conf="standalone->default;sjc->*"/>
-    <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
     <dependency org="org.mortbay.jetty" name="jsp-2.1" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
     <dependency org="org.mortbay.jetty" name="jsp-api-2.1" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="stax" name="stax-api" rev="${version.stax}" conf="standalone->default;sjc->*"/>
