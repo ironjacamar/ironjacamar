@@ -153,6 +153,7 @@
         <exclude name="ant.jar"/>
         <exclude name="apiviz.jar"/>
         <exclude name="dom4j.jar"/>
+        <exclude name="fungal.jar"/>
         <exclude name="jaxb-api.jar"/>
         <exclude name="jdepend.jar"/>
         <exclude name="xercesImpl.jar"/>
