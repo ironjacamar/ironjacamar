@@ -110,7 +110,10 @@ public class Main
          System.out.print(dbconf.getString("mcf.class.name"));
          String mcfClassName = in.readLine();
          def.setMcfClass(mcfClassName);
-         
+
+         List<ConfigPropType> mcfProps = inputProperties("mcf", dbconf, in);
+         def.setMcfConfigProps(mcfProps);
+
          System.out.print(dbconf.getString("mcf.impl.raa"));
          String raAssociation = in.readLine();
          if (raAssociation == null)
@@ -123,19 +126,38 @@ public class Main
                def.setImplRaAssociation(false);
          }
          
-         List<ConfigPropType> mcfProps = inputProperties("mcf", dbconf, in);
-         def.setMcfConfigProps(mcfProps);
+         System.out.print(dbconf.getString("mcf.use.cci"));
+         String useCciConnection = in.readLine();
+         if (useCciConnection == null)
+            def.setUseCciConnection(false);
+         else
+         {
+            if (useCciConnection.equals("Y") || useCciConnection.equals("y") || useCciConnection.equals("Yes"))
+               def.setUseCciConnection(true);
+            else
+               def.setUseCciConnection(false);
+         }
          
          System.out.print(dbconf.getString("mc.class.name"));
          String mcClassName = in.readLine();
          def.setMcClass(mcClassName);
          
-         System.out.print(dbconf.getString("conn.interface.name"));
-         String connInterfaceName = in.readLine();
-         def.setConnInterfaceClass(connInterfaceName);
-         System.out.print(dbconf.getString("conn.class.name"));
-         String connImplName = in.readLine();
-         def.setConnImplClass(connImplName);
+         if (!def.isUseCciConnection())
+         {
+            System.out.print(dbconf.getString("cf.interface.name"));
+            String cfInterfaceName = in.readLine();
+            def.setCfInterfaceClass(cfInterfaceName);
+            System.out.print(dbconf.getString("cf.class.name"));
+            String cfClassName = in.readLine();
+            def.setCfClass(cfClassName);
+
+            System.out.print(dbconf.getString("conn.interface.name"));
+            String connInterfaceName = in.readLine();
+            def.setConnInterfaceClass(connInterfaceName);
+            System.out.print(dbconf.getString("conn.class.name"));
+            String connImplName = in.readLine();
+            def.setConnImplClass(connImplName);
+         }
          
          def.setOutputDir(outputDir);
 

@@ -181,19 +181,22 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       for (int i = 0; i < getConfigProps(def).size(); i++)
       {
          writeIndent(out, indent + 1);
-         out.write("if (result && " + getConfigProps(def).get(i).getName() + " == null)");
-         writeEol(out);
+         out.write("if (result)");
+         writeLeftCurlyBracket(out, indent + 1);
          writeIndent(out, indent + 2);
+         out.write("if (" + getConfigProps(def).get(i).getName() + " == null)");
+         writeEol(out);
+         writeIndent(out, indent + 3);
          out.write("result = obj.get" + upcaseFirst(getConfigProps(def).get(i).getName()) + "() == null;");
          writeEol(out);
          
-         writeIndent(out, indent + 1);
+         writeIndent(out, indent + 2);
          out.write("else");
          writeEol(out);
-         writeIndent(out, indent + 2);
+         writeIndent(out, indent + 3);
          out.write("result = " + getConfigProps(def).get(i).getName() + ".equals(obj.get" + 
             upcaseFirst(getConfigProps(def).get(i).getName()) + "());");
-         writeEol(out);
+         writeRightCurlyBracket(out, indent + 1);
       }
       writeIndent(out, indent + 1);
       out.write("return result;");

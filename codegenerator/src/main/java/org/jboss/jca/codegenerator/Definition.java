@@ -51,10 +51,16 @@ public class Definition
    private String connInterfaceClass;
    /** connection impl class name */
    private String connImplClass;
+   /** connection factory interface name */
+   private String cfInterfaceClass;
+   /** connection factory class name */
+   private String cfClass;
    
    /** ResourceAdapterAssociation optional  */
    private boolean implRaAssociation;
-
+   /** ResourceAdapterAssociation optional  */
+   private boolean useCciConnection;
+   
    /** cci connection factory class name */
    private String cciConnFactoryClass;
    /** cci connection class name */
@@ -265,6 +271,26 @@ public class Definition
    }
 
    /**
+    * Set the useCciConnection.
+    * 
+    * @param useCciConnection The useCciConnection to set.
+    */
+   public void setUseCciConnection(boolean useCciConnection)
+   {
+      this.useCciConnection = useCciConnection;
+   }
+
+   /**
+    * Get the useCciConnection.
+    * 
+    * @return the useCciConnection.
+    */
+   public boolean isUseCciConnection()
+   {
+      return useCciConnection;
+   }
+   
+   /**
     * Set the cciConnFactoryClass.
     * 
     * @param cciConnFactoryClass The cciConnFactoryClass to set.
@@ -351,4 +377,45 @@ public class Definition
          cmClass = "MyConnectionManager";
       return cmClass;
    }
+
+   /**
+    * Set the cfClass.
+    * 
+    * @param cfClass The cfClass to set.
+    */
+   public void setCfClass(String cfClass)
+   {
+      this.cfClass = cfClass;
+   }
+
+   /**
+    * Get the cfClass.
+    * 
+    * @return the cfClass.
+    */
+   public String getCfClass()
+   {
+      return cfClass;
+   }
+
+   /**
+    * Set the cfInterfaceClass.
+    * 
+    * @param cfInterfaceClass The cfInterfaceClass to set.
+    */
+   public void setCfInterfaceClass(String cfInterfaceClass)
+   {
+      this.cfInterfaceClass = cfInterfaceClass;
+   }
+
+   /**
+    * Get the cfInterfaceClass.
+    * 
+    * @return the cfInterfaceClass.
+    */
+   public String getCfInterfaceClass()
+   {
+      return cfInterfaceClass;
+   }
+
 }

@@ -280,8 +280,12 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call getMetaData\");");
       writeEol(out);
+      
       writeIndent(out, indent + 1);
-      out.write("return new MyConnectionMetaData();");
+      if (def.isUseCciConnection())
+         out.write("return new MyConnectionMetaData();");
+      else
+         out.write("return null;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

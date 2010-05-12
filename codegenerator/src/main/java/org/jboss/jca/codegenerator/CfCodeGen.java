@@ -25,15 +25,15 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A managed connection MetaData class CodeGen.
+ * A connection factory class CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class McMetaCodeGen extends AbstractCodeGen
+public class CfCodeGen extends AbstractCodeGen
 {
    /**
-    * Output Metadata class
+    * Output class code
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -42,16 +42,14 @@ public class McMetaCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements ManagedConnectionMetaData");
+      out.write("public class " + getClassName(def) + " implements " + def.getCfInterfaceClass());
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
       writeDefaultConstructor(def, out, indent);
 
-      writeEIS(def, out, indent);
-      writeMaxConnection(def, out, indent);
-      writeUsername (def, out, indent);
-      
+      writeConnection(def, out, indent);
+      writeReference(def, out, indent);
       writeRightCurlyBracket(out, 0);
    }
    
@@ -67,10 +65,17 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
+      out.write("import java.io.Serializable;");
+      writeEol(out);
+      writeEol(out);
+      out.write("import javax.naming.NamingException;");
+      writeEol(out);
+      out.write("import javax.naming.Reference;");
+      writeEol(out);
+      writeEol(out);
+      out.write("import javax.resource.Referenceable;");
+      writeEol(out);
       out.write("import javax.resource.ResourceException;");
-      writeEol(out);
-      writeEol(out);
-      out.write("import javax.resource.spi.ManagedConnectionMetaData;");
       writeEol(out);
       writeEol(out);
    }
@@ -83,81 +88,57 @@ public class McMetaCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getMcMetaClass();
+      return def.getCfClass();
    }
    
    /**
-    * Output close method
+    * Output Connection method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeEIS(Definition def, Writer out, int indent) throws IOException
+   private void writeConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public String getEISProductName() throws ResourceException");
-      writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("@Override");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public String getEISProductVersion() throws ResourceException");
-      writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
-   }
-
-   /**
-    * Output Interaction method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeMaxConnection(Definition def, Writer out, int indent) throws IOException
-   {
-      writeIndent(out, indent);
-      out.write("@Override");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public int getMaxConnections() throws ResourceException");
+      out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return 0; //TODO");
+      out.write("return new " + def.getConnImplClass() + "();");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
    
    /**
-    * Output LocalTransaction method
+    * Output Reference method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeUsername(Definition def, Writer out, int indent) throws IOException
+   private void writeReference(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public String getUserName() throws ResourceException");
+      out.write("public Reference getReference() throws NamingException");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
+      out.write("return null;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public void setReference(Reference reference)");
+      writeLeftCurlyBracket(out, indent);
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

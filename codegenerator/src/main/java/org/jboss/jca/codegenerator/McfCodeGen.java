@@ -44,17 +44,36 @@ public class McfCodeGen extends PropsCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
       int indent = 1;
-      out.write("@ConnectionDefinition(connectionFactory = ManagedConnection.class,");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("connectionFactoryImpl = " + def.getMcClass() + ".class,");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("connection = " + def.getConnInterfaceClass() + ".class,");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("connectionImpl = " + def.getConnImplClass() + ".class)");
-      writeEol(out);
+      if (!def.isUseCciConnection())
+      {
+         out.write("@ConnectionDefinition(connectionFactory = " + def.getCfInterfaceClass() + ".class,");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("connectionFactoryImpl = " + def.getCfClass() + ".class,");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("connection = " + def.getConnInterfaceClass() + ".class,");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("connectionImpl = " + def.getConnImplClass() + ".class)");
+         writeEol(out);
+      }
+      else
+      {
+         out.write("@ConnectionDefinition(connectionFactory = ConnectionFactory.class,");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("connectionFactoryImpl = " + def.getCciConnFactoryClass() + ".class,");
+         writeEol(out);
+         
+         writeIndent(out, indent);
+         out.write("connection = Connection.class,");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("connectionImpl = " + def.getCciConnClass() + ".class)");
+         writeEol(out);
+      }
+
       out.write("public class " + getClassName(def) + " implements ManagedConnectionFactory");
       if (def.isImplRaAssociation())
       {
@@ -116,6 +135,15 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
+      
+      if (def.isUseCciConnection())
+      {
+         out.write("import javax.resource.cci.Connection;");
+         writeEol(out);
+         out.write("import javax.resource.cci.ConnectionFactory;");
+         writeEol(out);
+      }
+      
       out.write("import javax.resource.spi.ConfigProperty;");
       writeEol(out);
       out.write("import javax.resource.spi.ConnectionDefinition;");
@@ -183,7 +211,11 @@ public class McfCodeGen extends PropsCodeGen
       out.write("log.debug(\"call createConnectionFactory\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return new MyCciConnectionFactory();");
+      if (def.isUseCciConnection())
+         out.write("return new MyCciConnectionFactory();");
+      else
+         out.write("return new " + def.getCfClass() + "();");
+      
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -196,7 +228,10 @@ public class McfCodeGen extends PropsCodeGen
       }
 
       writeIndent(out, indent + 1);
-      out.write("return createConnectionFactory(new MyConnectionManager());");
+      if (def.isUseCciConnection())
+         out.write("return createConnectionFactory(new MyConnectionManager());");
+      else
+         out.write("return createConnectionFactory(null);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
