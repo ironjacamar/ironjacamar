@@ -25,12 +25,12 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A managed connection MetaData class CodeGen.
+ * A resource adapter MetaData class CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class McMetaCodeGen extends AbstractCodeGen
+public class RaMetaCodeGen extends AbstractCodeGen
 {
    /**
     * Output Metadata class
@@ -42,15 +42,14 @@ public class McMetaCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements ManagedConnectionMetaData");
+      out.write("public class " + getClassName(def) + " implements ResourceAdapterMetaData");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
       writeDefaultConstructor(def, out, indent);
 
-      writeEIS(def, out, indent);
-      writeMaxConnection(def, out, indent);
-      writeUsername (def, out, indent);
+      writeInfo(def, out, indent);
+      writeSupport (def, out, indent);
       
       writeRightCurlyBracket(out, 0);
    }
@@ -67,10 +66,7 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.ResourceException;");
-      writeEol(out);
-      writeEol(out);
-      out.write("import javax.resource.spi.ManagedConnectionMetaData;");
+      out.write("import javax.resource.cci.ResourceAdapterMetaData;");
       writeEol(out);
       writeEol(out);
    }
@@ -83,23 +79,23 @@ public class McMetaCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getMcMetaClass();
+      return def.getRaMetaClass();
    }
    
    /**
-    * Output eis info method
+    * Output info method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeEIS(Definition def, Writer out, int indent) throws IOException
+   private void writeInfo(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public String getEISProductName() throws ResourceException");
+      out.write("public String getAdapterVersion()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
@@ -110,54 +106,97 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public String getEISProductVersion() throws ResourceException");
+      out.write("public String getAdapterVendorName()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
-   }
-
-   /**
-    * Output max connection method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeMaxConnection(Definition def, Writer out, int indent) throws IOException
-   {
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public int getMaxConnections() throws ResourceException");
+      out.write("public String getAdapterName()");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return 0; //TODO");
+      out.write("return null; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public String getAdapterShortDescription()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return null; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public String getSpecVersion()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
    
    /**
-    * Output username method
+    * Output support method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeUsername(Definition def, Writer out, int indent) throws IOException
+   private void writeSupport(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public String getUserName() throws ResourceException");
+      out.write("public String[] getInteractionSpecsSupported()");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public boolean supportsExecuteWithInputAndOutputRecord()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return false; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public boolean supportsExecuteWithInputRecordOnly()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return false; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public boolean supportsLocalTransactionDemarcation()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return false; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

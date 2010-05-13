@@ -283,7 +283,7 @@ public class McCodeGen extends AbstractCodeGen
       
       writeIndent(out, indent + 1);
       if (def.isUseCciConnection())
-         out.write("return new MyConnectionMetaData();");
+         out.write("return new MyManagedConnectionMetaData();");
       else
          out.write("return null;");
       writeRightCurlyBracket(out, indent);

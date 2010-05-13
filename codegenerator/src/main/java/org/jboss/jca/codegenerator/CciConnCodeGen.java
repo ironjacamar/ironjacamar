@@ -178,7 +178,7 @@ public class CciConnCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return new MyConnectionMetaData();");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

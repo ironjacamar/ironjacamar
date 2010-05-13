@@ -25,12 +25,12 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A managed connection MetaData class CodeGen.
+ * A connection MetaData class CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class McMetaCodeGen extends AbstractCodeGen
+public class ConnMetaCodeGen extends AbstractCodeGen
 {
    /**
     * Output Metadata class
@@ -42,14 +42,13 @@ public class McMetaCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements ManagedConnectionMetaData");
+      out.write("public class " + getClassName(def) + " implements ConnectionMetaData");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
       writeDefaultConstructor(def, out, indent);
 
       writeEIS(def, out, indent);
-      writeMaxConnection(def, out, indent);
       writeUsername (def, out, indent);
       
       writeRightCurlyBracket(out, 0);
@@ -70,7 +69,7 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.spi.ManagedConnectionMetaData;");
+      out.write("import javax.resource.cci.ConnectionMetaData;");
       writeEol(out);
       writeEol(out);
    }
@@ -83,7 +82,7 @@ public class McMetaCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getMcMetaClass();
+      return def.getConnMetaClass();
    }
    
    /**
@@ -114,28 +113,6 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
-   }
-
-   /**
-    * Output max connection method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeMaxConnection(Definition def, Writer out, int indent) throws IOException
-   {
-      writeIndent(out, indent);
-      out.write("@Override");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public int getMaxConnections() throws ResourceException");
-      writeLeftCurlyBracket(out, indent);
-
-      writeIndent(out, indent + 1);
-      out.write("return 0; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

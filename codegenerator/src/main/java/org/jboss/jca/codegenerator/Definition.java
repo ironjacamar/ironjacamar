@@ -70,6 +70,13 @@ public class Definition
    /** connection manage class name */
    private String cmClass;
    
+   /** connection metadata class name */
+   private String connMetaClass;
+   /** connection spec class name */
+   private String connSpecClass;
+   /** resource adapater metadata class name */
+   private String raMetaClass;
+   
    /**
     * Set the outputDir.
     * 
@@ -352,7 +359,7 @@ public class Definition
    public String getMcMetaClass()
    {
       if (mcMetaClass == null || mcMetaClass.equals(""))
-         mcMetaClass = "MyConnectionMetaData";
+         mcMetaClass = "MyManagedConnectionMetaData";
       return mcMetaClass;
    }
 
@@ -416,6 +423,72 @@ public class Definition
    public String getCfInterfaceClass()
    {
       return cfInterfaceClass;
+   }
+
+   /**
+    * Set the connMetaClass.
+    * 
+    * @param connMetaClass The connMetaClass to set.
+    */
+   public void setConnMetaClass(String connMetaClass)
+   {
+      this.connMetaClass = connMetaClass;
+   }
+
+   /**
+    * Get the connMetaClass.
+    * 
+    * @return the connMetaClass.
+    */
+   public String getConnMetaClass()
+   {
+      if (connMetaClass == null || connMetaClass.equals(""))
+         connMetaClass = "MyConnectionMetaData";
+      return connMetaClass;
+   }
+
+   /**
+    * Set the connSpecClass.
+    * 
+    * @param connSpecClass The connSpecClass to set.
+    */
+   public void setConnSpecClass(String connSpecClass)
+   {
+      this.connSpecClass = connSpecClass;
+   }
+
+   /**
+    * Get the connSpecClass.
+    * 
+    * @return the connSpecClass.
+    */
+   public String getConnSpecClass()
+   {
+      if (connSpecClass == null || connSpecClass.equals(""))
+         connSpecClass = "MyConnectionSpec";
+      return connSpecClass;
+   }
+
+   /**
+    * Set the raMetaClass.
+    * 
+    * @param raMetaClass The raMetaClass to set.
+    */
+   public void setRaMetaClass(String raMetaClass)
+   {
+      this.raMetaClass = raMetaClass;
+   }
+
+   /**
+    * Get the raMetaClass.
+    * 
+    * @return the raMetaClass.
+    */
+   public String getRaMetaClass()
+   {
+      if (raMetaClass == null || raMetaClass.equals(""))
+         raMetaClass = "MyRaMetaData";
+      return raMetaClass;
    }
 
 }
