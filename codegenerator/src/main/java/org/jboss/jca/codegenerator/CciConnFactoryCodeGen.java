@@ -46,7 +46,19 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
+      writeIndent(out, indent);
+      out.write("private Reference reference;");
+      writeEol(out);
+      writeEol(out);
+      
       writeDefaultConstructor(def, out, indent);
+      
+      //constructor
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "(ConnectionManager cxManager)");
+      writeLeftCurlyBracket(out, indent);
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
 
       writeConnection(def, out, indent);
       writeMetaData(def, out, indent);
@@ -84,6 +96,8 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import javax.resource.cci.ResourceAdapterMetaData;");
       writeEol(out);
+      out.write("import javax.resource.spi.ConnectionManager;");
+      writeEol(out);
       writeEol(out);
    }
    
@@ -115,7 +129,7 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return new MyCciConnection();");
+      out.write("return new " + def.getCciConnClass() + "(new " + def.getConnSpecClass() + "());");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -123,11 +137,11 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public Connection getConnection(ConnectionSpec properties) throws ResourceException");
+      out.write("public Connection getConnection(ConnectionSpec connSpec) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return new MyCciConnection();");
+      out.write("return new " + def.getCciConnClass() + "(connSpec);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -149,7 +163,7 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return new MyRaMetaData();");
+      out.write("return new " + def.getRaMetaClass() + "();");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -192,7 +206,7 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write("public Reference getReference() throws NamingException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return reference;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -202,6 +216,8 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void setReference(Reference reference)");
       writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this.reference = reference;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

@@ -52,6 +52,8 @@ public class JCA16AnnoProfile implements Profile
       generateClassCode(def, "Ra");
       generateClassCode(def, "Mcf");
       generateClassCode(def, "Mc");
+      generateClassCode(def, "McMeta");
+      generateClassCode(def, "Cm");
 
       if (!def.isUseCciConnection())
       {
@@ -64,8 +66,6 @@ public class JCA16AnnoProfile implements Profile
       {
          generateClassCode(def, "CciConn");
          generateClassCode(def, "CciConnFactory");
-         generateClassCode(def, "McMeta");
-         generateClassCode(def, "Cm");
          generateClassCode(def, "ConnMeta");
          generateClassCode(def, "RaMeta");
          generateClassCode(def, "ConnSpec");

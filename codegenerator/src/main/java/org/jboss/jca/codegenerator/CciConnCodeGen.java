@@ -47,6 +47,13 @@ public class CciConnCodeGen extends AbstractCodeGen
       int indent = 1;
       
       writeDefaultConstructor(def, out, indent);
+      
+      //constructor
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "(ConnectionSpec connSpec)");
+      writeLeftCurlyBracket(out, indent);
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
 
       writeClose(def, out, indent);
       writeInteraction(def, out, indent);
@@ -76,6 +83,8 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write("import javax.resource.cci.Connection;");
       writeEol(out);
       out.write("import javax.resource.cci.ConnectionMetaData;");
+      writeEol(out);
+      out.write("import javax.resource.cci.ConnectionSpec;");
       writeEol(out);
       out.write("import javax.resource.cci.Interaction;");
       writeEol(out);
@@ -178,7 +187,7 @@ public class CciConnCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return new MyConnectionMetaData();");
+      out.write("return new " + def.getConnMetaClass() + "();");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

@@ -282,10 +282,8 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent + 1);
-      if (def.isUseCciConnection())
-         out.write("return new MyManagedConnectionMetaData();");
-      else
-         out.write("return null;");
+      out.write("return new " + def.getMcMetaClass() + "();");
+
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

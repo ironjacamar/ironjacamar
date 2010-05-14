@@ -212,9 +212,9 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       writeIndent(out, indent + 1);
       if (def.isUseCciConnection())
-         out.write("return new MyCciConnectionFactory();");
+         out.write("return new " + def.getCciConnFactoryClass() + "(cxManager);");
       else
-         out.write("return new " + def.getCfClass() + "();");
+         out.write("return new " + def.getCfClass() + "(cxManager);");
       
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -229,9 +229,11 @@ public class McfCodeGen extends PropsCodeGen
 
       writeIndent(out, indent + 1);
       if (def.isUseCciConnection())
-         out.write("return createConnectionFactory(new MyConnectionManager());");
+         out.write("return new " + def.getCciConnFactoryClass() + "(new " + def.getCmClass() + "());");
       else
-         out.write("return createConnectionFactory(null);");
+      {
+         out.write("return new " + def.getCfClass() + "(new " + def.getCmClass() + "());");
+      }
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
