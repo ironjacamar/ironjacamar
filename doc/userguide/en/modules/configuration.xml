@@ -124,6 +124,15 @@ config/bootstrap/jca.xml
                   Specifies which print stream that should be used to handle the <code>LogWriter</code>s
                 </entry>
               </row>
+              <row>
+                <entry><code>ScopeDeployment</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should each deployment be scoped (isolated) from the container. This feature allows
+                  deployment of libraries of a different version than used in the container environment.
+                  <para>Default: <code>false</code></para>
+                </entry>
+              </row>
             </tbody>
           </tgroup>
         </table>

@@ -127,6 +127,9 @@ public final class RADeployer implements CloneableDeployer
    /** Bootstrap contexts */
    private static Map<String, CloneableBootstrapContext> bootstrapContexts = null;
 
+   /** Scope deployment */
+   private static AtomicBoolean scopeDeployment = new AtomicBoolean(false);
+
    /**
     * Constructor
     */
@@ -261,6 +264,24 @@ public final class RADeployer implements CloneableDeployer
    }
 
    /**
+    * Set if deployments should be scoped
+    * @param value The value
+    */
+   public void setScopeDeployment(boolean value)
+   {
+      scopeDeployment.set(value);
+   }
+
+   /**
+    * Are the deployments scoped
+    * @return True if scoped; otherwise false
+    */
+   public boolean getScopeDeployment()
+   {
+      return scopeDeployment.get();
+   }
+
+   /**
     * Deploy
     * @param url The url
     * @param parent The parent classloader
@@ -300,7 +321,15 @@ public final class RADeployer implements CloneableDeployer
 
          // Create classloader
          URL[] urls = getUrls(root);
-         KernelClassLoader cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_FIRST, urls, parent);
+         KernelClassLoader cl = null;
+         if (scopeDeployment.get())
+         {
+            cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_LAST, urls, parent);
+         }
+         else
+         {
+            cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_FIRST, urls, parent);
+         }
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Parse metadata
