@@ -61,7 +61,7 @@ http://localhost:8080
         <para>You can deploy a resource adapter archive (.rar) using</para>
 
         <programlisting>
-java -jar jboss-jca-fungal-cli.jar deploy &lt;file&gt;
+java -jar fungal-cli.jar deploy &lt;file&gt;
         </programlisting>
 
         <para>where <code>file</code> specifies the resource adapter archive.</para>
@@ -74,10 +74,21 @@ java -jar jboss-jca-fungal-cli.jar deploy &lt;file&gt;
         <para>You can undeploy a resource adapter archive (.rar) using</para>
 
         <programlisting>
-java -jar jboss-jca-fungal-cli.jar undeploy &lt;file&gt;
+java -jar fungal-cli.jar undeploy &lt;file&gt;
         </programlisting>
 
         <para>where <code>file</code> specifies the resource adapter archive.</para>
+
+      </section>
+
+      <section id="cli_shutdown">
+        <title>Shutdown</title>
+
+        <para>You can shutdown the JBoss JCA environment by</para>
+
+        <programlisting>
+java -jar fungal-cli.jar shutdown
+        </programlisting>
 
       </section>
 
