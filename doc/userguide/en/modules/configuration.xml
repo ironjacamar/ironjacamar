@@ -118,6 +118,15 @@ config/bootstrap/jca.xml
                 </entry>
               </row>
               <row>
+                <entry><code>BootstrapContexts</code></entry>
+                <entry><code>Map&lt;String, org.jboss.jca.core.api.CloneableBootstrapContext&gt;</code></entry>
+                <entry>
+                  Bootstrap context map (unique name to a cloneable bootstrap context) which allows
+                  developers to bind (through <code>jboss-ra.xml</code>) their resource adapter to
+                  a specific bootstrap context instance.
+                </entry>
+              </row>
+              <row>
                 <entry><code>PrintStream</code></entry>
                 <entry><code>java.io.PrintStream</code></entry>
                 <entry>
