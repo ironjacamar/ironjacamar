@@ -906,7 +906,8 @@ public final class RADeployer implements CloneableDeployer
             Injection injector = new Injection();
             for (ConfigPropertyMetaData cpmd : configs)
             {
-               injector.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), o);
+               if (cpmd.isValueSet())
+                  injector.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), o);
             }
          }
 

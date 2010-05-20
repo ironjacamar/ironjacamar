@@ -637,7 +637,10 @@ public class Annotations
 
       ConfigPropertyMetaData cfgMeta = new ConfigPropertyMetaData();
       cfgMeta.setName(getConfigPropertyName(annotation));
-      cfgMeta.setValue(configProperty.defaultValue());
+
+      if (configProperty.defaultValue() != null && !configProperty.defaultValue().equals(""))
+         cfgMeta.setValue(configProperty.defaultValue());
+
       if (!Object.class.equals(configProperty.type()))
       {
          cfgMeta.setType(configProperty.type().getName());
