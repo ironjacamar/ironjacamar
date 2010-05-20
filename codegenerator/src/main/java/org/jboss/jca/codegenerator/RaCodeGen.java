@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import javax.resource.ResourceException;
+import javax.resource.spi.ResourceAdapterInternalException;
+
 /**
  * A resource adapter code generator
  * 
@@ -113,6 +116,28 @@ public class RaCodeGen extends PropsCodeGen
    private void writeXAResource(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * This method is called by the application server during crash recovery.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param specs an array of ActivationSpec JavaBeans ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException generic exception ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return an array of XAResource objects");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public XAResource[] getXAResources(ActivationSpec[] specs)");
       writeEol(out);
       writeIndent(out, indent + 1);
@@ -137,6 +162,25 @@ public class RaCodeGen extends PropsCodeGen
    private void writeLifecycle(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * This is called when a resource adapter instance is bootstrapped.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param ctx a bootstrap context containing references ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceAdapterInternalException indicates bootstrap failure.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public void start(BootstrapContext ctx)");
       writeEol(out);
       writeIndent(out, indent + 1);
@@ -147,6 +191,19 @@ public class RaCodeGen extends PropsCodeGen
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * This is called when a resource adapter instance is undeployed or");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * during application server shutdown. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("public void stop()");
       writeLeftCurlyBracket(out, indent);
@@ -166,6 +223,28 @@ public class RaCodeGen extends PropsCodeGen
    private void writeEndpointLifecycle(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * This is called during the activation of a message endpoint.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param endpointFactory a message endpoint factory instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param spec an activation spec JavaBean instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException generic exception ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public void endpointActivation(MessageEndpointFactory endpointFactory,");
       writeEol(out);
       writeIndent(out, indent + 1);
@@ -176,6 +255,25 @@ public class RaCodeGen extends PropsCodeGen
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * This is called when a message endpoint is deactivated. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param endpointFactory a message endpoint factory instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param spec an activation spec JavaBean instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("public void endpointDeactivation(MessageEndpointFactory endpointFactory,");
       writeEol(out);

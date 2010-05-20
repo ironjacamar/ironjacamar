@@ -24,6 +24,8 @@ package org.jboss.jca.codegenerator;
 import java.io.IOException;
 import java.io.Writer;
 
+import javax.resource.ResourceException;
+
 
 /**
  * A managed connection CodeGen.
@@ -126,12 +128,39 @@ public class McCodeGen extends AbstractCodeGen
    private void writeConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Creates a new connection handle for the underlying physical connection ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * represented by the ManagedConnection instance. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param        subject        security context as JAAS subject");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param        cxRequestInfo  ConnectionRequestInfo instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return       generic Object instance representing the connection handle. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException     generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public Object getConnection(Subject subject,");
       writeEol(out);
       writeIndent(out, indent + 2);
       out.write("ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call getConnection\");");
       writeEol(out);
@@ -139,14 +168,34 @@ public class McCodeGen extends AbstractCodeGen
       out.write("return null;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
+
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Used by the container to change the association of an ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * application-level connection handle with a ManagedConneciton instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   connection  Application-level connection handle");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException     generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
       
       writeIndent(out, indent);
       out.write("public void associateConnection(Object connection) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call associateConnection\");");
-
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -161,6 +210,22 @@ public class McCodeGen extends AbstractCodeGen
    private void writeLifecycle(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Application server calls this method to force any cleanup on the ManagedConnection instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws    ResourceException     generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public void cleanup() throws ResourceException");
       writeEol(out);
       writeLeftCurlyBracket(out, indent);
@@ -169,6 +234,22 @@ public class McCodeGen extends AbstractCodeGen
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Destroys the physical connection to the underlying resource manager.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws    ResourceException     generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("public void destroy() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
@@ -188,11 +269,43 @@ public class McCodeGen extends AbstractCodeGen
    private void writeConnectionEventListener(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Adds a connection event listener to the ManagedConnection instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param  listener   a new ConnectionEventListener to be registered");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public void addConnectionEventListener(ConnectionEventListener listener)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call addConnectionEventListener\");");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Removes an already registered connection event listener from the ManagedConnection instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param  listener   already registered connection event listener to be removed");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -214,6 +327,25 @@ public class McCodeGen extends AbstractCodeGen
    private void writeLogWriter(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets the log writer for this ManagedConnection instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return  Character ourput stream associated with this Managed-Connection instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException     generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public PrintWriter getLogWriter() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
@@ -222,6 +354,25 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return null;");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Sets the log writer for this ManagedConnection instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param      out        Character Output stream to be associated");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws     ResourceException  generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -243,6 +394,25 @@ public class McCodeGen extends AbstractCodeGen
    private void writeTransaction(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns an <code>javax.resource.spi.LocalTransaction</code> instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return     LocalTransaction instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException     generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+            
+      writeIndent(out, indent);
       out.write("public LocalTransaction getLocalTransaction() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
@@ -253,6 +423,25 @@ public class McCodeGen extends AbstractCodeGen
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns an <code>javax.transaction.xa.XAresource</code> instance. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return     XAResource instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException     generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+            
       writeIndent(out, indent);
       out.write("public XAResource getXAResource() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
@@ -274,6 +463,25 @@ public class McCodeGen extends AbstractCodeGen
     */
    private void writeMetaData(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets the metadata information for this connection's underlying EIS resource manager instance. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return ManagedConnectionMetaData instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException     generic exception if operation fails");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("public ManagedConnectionMetaData getMetaData() throws ResourceException");
       writeLeftCurlyBracket(out, indent);

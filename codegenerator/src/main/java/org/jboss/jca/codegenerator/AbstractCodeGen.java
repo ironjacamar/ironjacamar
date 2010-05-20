@@ -164,6 +164,16 @@ public abstract class AbstractCodeGen
     */
    void writeDefaultConstructor(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       //constructor
       writeIndent(out, indent);
       out.write("public " + getClassName(def) + "()");

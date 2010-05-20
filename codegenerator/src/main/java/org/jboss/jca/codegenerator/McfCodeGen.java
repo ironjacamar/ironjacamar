@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
+import javax.resource.ResourceException;
+
 /**
  * A McfCodeGen.
  * 
@@ -201,6 +203,30 @@ public class McfCodeGen extends PropsCodeGen
    private void writeConnectionFactory(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Creates a Connection Factory instance. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param    cxManager    ConnectionManager to be " + 
+         "associated with created EIS connection factory instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   EIS-specific Connection Factory instance or " +
+         "javax.resource.cci.ConnectionFactory instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws   ResourceException Generic exception");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       if (def.isImplRaAssociation())
@@ -217,6 +243,26 @@ public class McfCodeGen extends PropsCodeGen
          out.write("return new " + def.getCfClass() + "(cxManager);");
       
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Creates a Connection Factory instance. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   EIS-specific Connection Factory instance or " +
+         "javax.resource.cci.ConnectionFactory instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws   ResourceException Generic exception");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -264,6 +310,32 @@ public class McfCodeGen extends PropsCodeGen
    private void writeManagedConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Creates a new physical connection to the underlying EIS resource manager.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   subject        Caller's security information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   cxRequestInfo  Additional resource adapter " +
+         "specific connection request information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException     generic exception");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return  ManagedConnection instance ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public ManagedConnection createManagedConnection(Subject subject,");
       writeEol(out);
       writeIndent(out, indent + 2);
@@ -279,6 +351,35 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("return null;");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns a matched connection from the candidate set of connections. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   connectionSet   candidate connection set");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   subject        Caller's security information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   cxRequestInfo  Additional resource adapter " +
+         "specific connection request information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException     generic exception");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return  ManagedConnection if resource adapter finds an acceptable match otherwise null ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -309,6 +410,25 @@ public class McfCodeGen extends PropsCodeGen
    private void writeLogWriter(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Get the log writer for this ManagedConnectionFactory instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return  PrintWriter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException     generic exception");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public PrintWriter getLogWriter() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
@@ -317,6 +437,25 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("return logwriter;");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Set the log writer for this ManagedConnectionFactory instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   out PrintWriter - an out stream for error logging and tracing");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException     generic exception");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -339,7 +478,23 @@ public class McfCodeGen extends PropsCodeGen
     * @throws IOException ioException
     */
    private void writeResourceAdapter(Definition def, Writer out, int indent) throws IOException
-   {
+   {      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Get the resource adapter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return The handle");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("public ResourceAdapter getResourceAdapter()");
       writeLeftCurlyBracket(out, indent);
@@ -349,6 +504,22 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("return ra;");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Set the resource adapter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param ra The handle");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
