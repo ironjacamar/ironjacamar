@@ -195,7 +195,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       out.write(" * Indicates whether some other object is equal to this one.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   obj   the reference object with which to compare.");
+      out.write(" * @param   other   the reference object with which to compare.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @return true if this object is the same as the obj argument; false otherwise.");

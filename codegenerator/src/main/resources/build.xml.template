@@ -37,4 +37,16 @@
          basedir="${build.dir}"
          includes="**/*.jar"/>
   </target>
+  
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs" depends="compile">
+    <mkdir dir="${target.dir}/docs"/>
+    <javadoc packagenames="*"
+             sourcepath="src"
+             destdir="${target.dir}/docs"
+             classpathref="lib.path.id">
+    </javadoc>
+  </target>
 </project>
