@@ -24,9 +24,6 @@ package org.jboss.jca.codegenerator;
 import java.io.IOException;
 import java.io.Writer;
 
-import javax.resource.ResourceException;
-
-
 /**
  * A managed connection CodeGen.
  * 
@@ -50,6 +47,9 @@ public class McCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, 0);
       writeEol(out);
 
+      writeIndent(out, indent);
+      out.write("/** The logger */");
+      writeEol(out);
       writeIndent(out, indent);
       out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
       writeEol(out);

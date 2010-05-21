@@ -25,8 +25,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-import javax.resource.ResourceException;
-
 /**
  * A McfCodeGen.
  * 
@@ -85,6 +83,9 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
 
       writeIndent(out, indent);
+      out.write("/** The logger */");
+      writeEol(out);
+      writeIndent(out, indent);
       out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
       writeEol(out);
       writeEol(out);
@@ -95,6 +96,10 @@ public class McfCodeGen extends PropsCodeGen
          writeEol(out);
          writeEol(out);
       }
+      
+      writeIndent(out, indent);
+      out.write("/** The logwriter */");
+      writeEol(out);
       writeIndent(out, indent);
       out.write("private PrintWriter logwriter;");
       writeEol(out);

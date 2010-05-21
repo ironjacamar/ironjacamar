@@ -25,9 +25,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ResourceAdapterInternalException;
-
 /**
  * A resource adapter code generator
  * 
@@ -52,6 +49,10 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       
       int indent = 1;
+      writeIndent(out, indent);
+      out.write("/** The logger */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
       writeEol(out);
