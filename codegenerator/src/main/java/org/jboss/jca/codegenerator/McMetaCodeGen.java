@@ -96,6 +96,25 @@ public class McMetaCodeGen extends AbstractCodeGen
    private void writeEIS(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns Product name of the underlying EIS instance connected through the ManagedConnection.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Product name of the EIS instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -104,6 +123,25 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns Product version of the underlying EIS instance connected through the ManagedConnection.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Product version of the EIS instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -128,6 +166,25 @@ public class McMetaCodeGen extends AbstractCodeGen
    private void writeMaxConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns maximum limit on number of active concurrent connections ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Maximum limit for number of active concurrent connections");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -149,6 +206,25 @@ public class McMetaCodeGen extends AbstractCodeGen
     */
    private void writeUsername(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns name of the user associated with the ManagedConnection instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return  name of the user");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);

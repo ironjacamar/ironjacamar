@@ -47,11 +47,24 @@ public class ConnImplCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       writeIndent(out, indent);
+      out.write("/** The logger */");
+      writeEol(out);
+      writeIndent(out, indent);
       out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
       writeEol(out);
       writeEol(out);
       
       writeDefaultConstructor(def, out, indent);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * call me");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
       
       writeIndent(out, indent);
       out.write("public void callMe()");

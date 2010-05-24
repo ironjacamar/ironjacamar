@@ -55,6 +55,19 @@ public class CfCodeGen extends AbstractCodeGen
       
       //constructor
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   cxManager ConnectionManager");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public " + getClassName(def) + "(ConnectionManager cxManager)");
       writeLeftCurlyBracket(out, indent);
       writeRightCurlyBracket(out, indent);
@@ -115,6 +128,22 @@ public class CfCodeGen extends AbstractCodeGen
    private void writeConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/** ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * get connection from factory");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return " + def.getConnInterfaceClass() + " instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -137,6 +166,22 @@ public class CfCodeGen extends AbstractCodeGen
    private void writeReference(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Get the Reference instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Reference instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -147,6 +192,22 @@ public class CfCodeGen extends AbstractCodeGen
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Set the Reference instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   reference  A Reference instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);

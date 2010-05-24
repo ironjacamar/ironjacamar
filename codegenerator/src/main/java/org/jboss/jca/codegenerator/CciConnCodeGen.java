@@ -50,6 +50,19 @@ public class CciConnCodeGen extends AbstractCodeGen
       
       //constructor
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   connSpec ConnectionSpec");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public " + getClassName(def) + "(ConnectionSpec connSpec)");
       writeLeftCurlyBracket(out, indent);
       writeRightCurlyBracket(out, indent);
@@ -116,6 +129,22 @@ public class CciConnCodeGen extends AbstractCodeGen
    private void writeClose(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Initiates close of the connection handle at the application level.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException  Exception thrown if close on a connection handle fails.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -135,6 +164,25 @@ public class CciConnCodeGen extends AbstractCodeGen
     */
    private void writeInteraction(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Creates an Interaction associated with this Connection. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return  Interaction instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException     Failed to create an Interaction");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
@@ -158,6 +206,31 @@ public class CciConnCodeGen extends AbstractCodeGen
    private void writeLocalTransaction(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns an LocalTransaction instance that enables a component to ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * demarcate resource manager local transactions on the Connection.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   LocalTransaction instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws   ResourceException   Failed to return a LocalTransaction");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws   javax.resource.NotSupportedException Demarcation of Resource manager ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -179,6 +252,25 @@ public class CciConnCodeGen extends AbstractCodeGen
     */
    private void writeMetaData(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets the information on the underlying EIS instance represented through an active connection.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   ConnectionMetaData instance representing information about the EIS instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws  ResourceException Failed to get information about the connected EIS instance. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
@@ -202,6 +294,31 @@ public class CciConnCodeGen extends AbstractCodeGen
     */
    private void writeResultSetInfo(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets the information on the ResultSet functionality supported by ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * a connected EIS instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   ResultSetInfo instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws   ResourceException Failed to get ResultSet related information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws   javax.resource.NotSupportedException ResultSet functionality is not supported");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);

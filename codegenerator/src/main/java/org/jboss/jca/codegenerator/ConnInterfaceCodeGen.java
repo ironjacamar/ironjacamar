@@ -43,9 +43,20 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
       int indent = 1;
+      
       out.write("public interface " + getClassName(def));
       writeLeftCurlyBracket(out, 0);
-
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * call me");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("public void callMe();");
 

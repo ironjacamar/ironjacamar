@@ -55,6 +55,19 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       
       //constructor
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   cxManager ConnectionManager");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public " + getClassName(def) + "(ConnectionManager cxManager)");
       writeLeftCurlyBracket(out, indent);
       writeRightCurlyBracket(out, indent);
@@ -122,6 +135,25 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
    private void writeConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets a connection to an EIS instance. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Connection instance the EIS instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException   Failed to get a connection to");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -131,6 +163,29 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return new " + def.getCciConnClass() + "(new " + def.getConnSpecClass() + "());");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets a connection to an EIS instance. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param  connSpec Connection parameters and security information specified as " +
+         "ConnectionSpec instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Connection instance the EIS instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException   Failed to get a connection to");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -156,6 +211,25 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
    private void writeMetaData(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets metadata for the Resource Adapter. ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return ResourceAdapterMetaData instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Failed to get metadata information ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -177,6 +251,28 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
     */
    private void writeRecordFactory(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets a RecordFactory instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return RecordFactory instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws   ResourceException   Failed to create a RecordFactory");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws   javax.resource.NotSupportedException Operation not supported");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
@@ -200,6 +296,22 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
    private void writeReference(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Get the Reference instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Reference instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -210,6 +322,22 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Set the Reference instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   reference  A Reference instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);

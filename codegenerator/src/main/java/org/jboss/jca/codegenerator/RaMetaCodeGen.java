@@ -92,6 +92,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
    private void writeInfo(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets the version of the resource adapter.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   String representing version of the resource adapter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -100,6 +116,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets the name of the vendor that has provided the resource adapter.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   String representing name of the vendor ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -114,6 +146,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets a tool displayable name of the resource adapter.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   String representing the name of the resource adapter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -125,6 +173,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Gets a tool displayable short desription of the resource adapter.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   String describing the resource adapter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -133,6 +197,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns a string representation of the version");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   String representing the supported version of the connector architecture");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -157,6 +237,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
    private void writeSupport(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns an array of fully-qualified names of InteractionSpec");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Array of fully-qualified class names of InteractionSpec classes");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -165,6 +261,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns true if the implementation class for the Interaction");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   boolean depending on method support");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -179,6 +291,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns true if the implementation class for the Interaction");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   boolean depending on method support");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -187,6 +315,22 @@ public class RaMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return false; //TODO");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns true if the resource adapter implements the LocalTransaction");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   true if resource adapter supports resource manager local transaction demarcation ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);

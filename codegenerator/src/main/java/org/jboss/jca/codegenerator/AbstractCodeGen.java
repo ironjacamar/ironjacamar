@@ -75,6 +75,8 @@ public abstract class AbstractCodeGen
       writeEol(out);
       out.write(" * " + getClassName(def));
       writeEol(out);
+      out.write(" *");
+      writeEol(out);
       out.write(" * @version $Revision: $");
       writeEol(out);
       out.write(" */");
@@ -206,6 +208,19 @@ public abstract class AbstractCodeGen
    void writeHashCode(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/** ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns a hash code value for the object.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return a hash code value for this object.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -228,6 +243,22 @@ public abstract class AbstractCodeGen
     */
    void writeEquals(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/** ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Indicates whether some other object is equal to this one.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   other   the reference object with which to compare.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return true if this object is the same as the obj argument; false otherwise.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);

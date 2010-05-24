@@ -95,6 +95,25 @@ public class ConnMetaCodeGen extends AbstractCodeGen
    private void writeEIS(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns product name of the underlying EIS instance connected");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Product name of the EIS instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException  Failed to get the information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
@@ -103,6 +122,25 @@ public class ConnMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
+
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns product version of the underlying EIS instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Product version of the EIS instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException  Failed to get the information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
@@ -126,6 +164,25 @@ public class ConnMetaCodeGen extends AbstractCodeGen
     */
    private void writeUsername(Definition def, Writer out, int indent) throws IOException
    {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns the user name for an active connection as known to the underlying EIS instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return String representing the user name");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException  Failed to get the information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
       writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);

@@ -92,6 +92,9 @@ public class McfCodeGen extends PropsCodeGen
       if (def.isImplRaAssociation())
       {
          writeIndent(out, indent);
+         out.write("/** The resource adapter */");
+         writeEol(out);
+         writeIndent(out, indent);
          out.write("private ResourceAdapter ra;");
          writeEol(out);
          writeEol(out);

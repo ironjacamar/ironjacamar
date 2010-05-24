@@ -97,6 +97,31 @@ public class CmCodeGen extends AbstractCodeGen
    private void writeAllocateConn(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Allocate a connection");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param mcf The managed connection factory");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param cri The connection request information");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Object The connection");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @exception ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);

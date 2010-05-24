@@ -93,6 +93,22 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
    private void writeConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
+      out.write("/** ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * get connection from factory");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return " + def.getConnInterfaceClass() + " instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException;");
       writeEol(out);
    }
