@@ -51,9 +51,12 @@ public abstract class PropsCodeGen extends AbstractCodeGen
          out.write("/** " + getConfigProps(def).get(i).getName() + " */");
          writeEol(out);
          
-         writeIndent(out, indent);
-         out.write("@ConfigProperty(defaultValue=\"" + getConfigProps(def).get(i).getValue() + "\")");
-         writeEol(out);
+         if (def.isUseAnnotation())
+         {
+            writeIndent(out, indent);
+            out.write("@ConfigProperty(defaultValue=\"" + getConfigProps(def).get(i).getValue() + "\")");
+            writeEol(out);
+         }
          writeIndent(out, indent);
          out.write("private " + 
                    getConfigProps(def).get(i).getType() +

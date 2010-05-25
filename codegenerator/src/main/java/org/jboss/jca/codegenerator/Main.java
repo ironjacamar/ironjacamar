@@ -22,13 +22,16 @@
 package org.jboss.jca.codegenerator;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -93,6 +96,20 @@ public class Main
          ResourceBundle dbconf = ResourceBundle.getBundle("codegenerator", Locale.getDefault());
 
          BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+         Definition def = new Definition();
+
+         System.out.print(dbconf.getString("use.annotation"));
+         String useAnnotation = in.readLine();
+         if (useAnnotation == null)
+            def.setUseAnnotation(false);
+         else
+         {
+            if (useAnnotation.equals("Y") || useAnnotation.equals("y") || useAnnotation.equals("Yes"))
+               def.setUseAnnotation(true);
+            else
+               def.setUseAnnotation(false);
+         }
+         
          System.out.print(dbconf.getString("package.name"));
          String packageName = in.readLine();
          System.out.print(dbconf.getString("ra.class.name"));
@@ -100,7 +117,6 @@ public class Main
          
 
          Profile profile = new JCA16AnnoProfile();
-         Definition def = new Definition();
          def.setRaPackage(packageName);
          def.setRaClass(raClassName);
          
@@ -165,12 +181,85 @@ public class Main
          
          generateAntXml(outputDir);
          
+         if (!def.isUseAnnotation())
+            generateRaXml(def, outputDir);
+         
          System.out.println(dbconf.getString("code.wrote"));
       }
       catch (IOException e)
       {
          e.printStackTrace();
       }
+   }
+
+   /**
+    * generate ra.xml
+    * @param def Definition
+    * @param outputDir output directory
+    * @throws IOException ioException
+    */
+   private static void generateRaXml(Definition def, String outputDir) throws IOException
+   {
+      FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
+      URL templateFile = Main.class.getResource("/ra.xml.template");
+      String raString = Utils.readFileIntoString(templateFile);
+      Template template = new SimpleTemplate(raString);
+      Map<String, String> varMap = new HashMap<String, String>();
+      varMap.put("package.name", def.getRaPackage());
+      varMap.put("ra.class", def.getRaPackage() + "." + def.getRaClass());
+      varMap.put("mcf.class", def.getRaPackage() + "." + def.getMcfClass());
+      if (!def.isUseCciConnection())
+      {
+         varMap.put("cf.interface", def.getRaPackage() + "." + def.getCfInterfaceClass());
+         varMap.put("cf.class", def.getRaPackage() + "." + def.getCfClass());
+         varMap.put("conn.interface", def.getRaPackage() + "." + def.getConnInterfaceClass());
+         varMap.put("conn.class", def.getRaPackage() + "." + def.getConnImplClass());
+      }
+      else
+      {
+         varMap.put("cf.interface", "javax.resource.cci.ConnectionFactory");
+         varMap.put("cf.class", def.getRaPackage() + "." + def.getCciConnFactoryClass());
+         varMap.put("conn.interface", "javax.resource.cci.Connection");
+         varMap.put("conn.class", def.getRaPackage() + "." + def.getCciConnClass());
+      }
+      List<ConfigPropType> listRaProps = def.getRaConfigProps();
+      if (listRaProps.size() > 0)
+      {
+         String raProps = extractPropString(listRaProps);
+         varMap.put("ra.config.props", raProps);
+      }
+      List<ConfigPropType> listMcfProps = def.getMcfConfigProps();
+      if (listMcfProps.size() > 0)
+      {
+         String raProps = extractPropString(listMcfProps);
+         varMap.put("mcf.config.props", raProps);
+      }
+      
+      template.process(varMap, rafw);
+      rafw.close();
+   }
+
+   /**
+    * extract properties string
+    * 
+    * @param listPropType
+    * @return String properties string
+    */
+   private static String extractPropString(List<ConfigPropType> listPropType)
+   {
+      StringBuilder props = new StringBuilder();
+      if (listPropType.size() > 0)
+      {
+         props.append("<config-property>\n");
+         for (ConfigPropType prop : listPropType)
+         {
+            props.append("         <config-property-name>" + prop.getName() + "</config-property-name>\n");
+            props.append("         <config-property-type>java.lang." + prop.getType() + "</config-property-type>\n");
+            props.append("         <config-property-value>" + prop.getValue() + "</config-property-value>\n");
+         }
+         props.append("      </config-property>\n");
+      }
+      return props.toString();
    }
 
    /**
@@ -225,16 +314,17 @@ public class Main
    }
 
    /**
-    * generateAnt build.xml
+    * generate ant build.xml
     * @param outputDir output directory
+    * @throws IOException ioException
     */
    private static void generateAntXml(String outputDir) throws IOException
    {
       //ant build.xml
       FileWriter antfw = Utils.createFile("build.xml", outputDir);
-      URL headerFile = Main.class.getResource("/build.xml.template");
-      String headerString = Utils.readFileIntoString(headerFile);
-      antfw.write(headerString);
+      URL buildFile = Main.class.getResource("/build.xml.template");
+      String buildString = Utils.readFileIntoString(buildFile);
+      antfw.write(buildString);
       antfw.close();
    }
 

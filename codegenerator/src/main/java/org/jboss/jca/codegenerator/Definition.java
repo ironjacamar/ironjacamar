@@ -77,6 +77,9 @@ public class Definition
    /** resource adapater metadata class name */
    private String raMetaClass;
    
+   /** use annotation or ra.xml  */
+   private boolean useAnnotation;
+   
    /**
     * Set the outputDir.
     * 
@@ -489,6 +492,26 @@ public class Definition
       if (raMetaClass == null || raMetaClass.equals(""))
          raMetaClass = "MyRaMetaData";
       return raMetaClass;
+   }
+
+   /**
+    * Set the useAnnotation.
+    * 
+    * @param useAnnotation The useAnnotation to set.
+    */
+   public void setUseAnnotation(boolean useAnnotation)
+   {
+      this.useAnnotation = useAnnotation;
+   }
+
+   /**
+    * Get the useAnnotation.
+    * 
+    * @return the useAnnotation.
+    */
+   public boolean isUseAnnotation()
+   {
+      return useAnnotation;
    }
 
 }

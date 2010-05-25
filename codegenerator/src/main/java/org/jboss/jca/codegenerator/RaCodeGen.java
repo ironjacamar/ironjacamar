@@ -42,8 +42,11 @@ public class RaCodeGen extends PropsCodeGen
    @Override
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
-      out.write("@Connector");
-      writeEol(out);
+      if (def.isUseAnnotation())
+      {
+         out.write("@Connector");
+         writeEol(out);
+      }
       out.write("public class " + getClassName(def) + " implements ResourceAdapter");
       writeLeftCurlyBracket(out, 0);
       writeEol(out);
@@ -88,10 +91,13 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       out.write("import javax.resource.spi.BootstrapContext;");
       writeEol(out);
-      out.write("import javax.resource.spi.ConfigProperty;");
-      writeEol(out);
-      out.write("import javax.resource.spi.Connector;");
-      writeEol(out);
+      if (def.isUseAnnotation())
+      {
+         out.write("import javax.resource.spi.ConfigProperty;");
+         writeEol(out);
+         out.write("import javax.resource.spi.Connector;");
+         writeEol(out);
+      }
       out.write("import javax.resource.spi.ResourceAdapter;");
       writeEol(out);
       out.write("import javax.resource.spi.ResourceAdapterInternalException;");

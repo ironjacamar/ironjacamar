@@ -33,9 +33,10 @@
     <jar destfile="${build.dir}/jca-ra.jar"
          basedir="${build.dir}"
          includes="**/*.class"/>
-    <jar destfile="${target.dir}/jca-test.rar"
-         basedir="${build.dir}"
-         includes="**/*.jar"/>
+    <jar destfile="${target.dir}/jca-test.rar">
+      <fileset dir="${basedir}" includes="META-INF/*"/>
+      <fileset dir="${build.dir}" includes="**/*.jar"/>
+    </jar>
   </target>
   
   <!-- ================================= 
