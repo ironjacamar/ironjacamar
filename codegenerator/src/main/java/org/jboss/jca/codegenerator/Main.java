@@ -175,6 +175,28 @@ public class Main
             def.setConnImplClass(connImplName);
          }
          
+         System.out.print(dbconf.getString("support.inbound"));
+         String inbound = in.readLine();
+         if (inbound == null)
+            def.setSupportInbound(false);
+         else
+         {
+            if (inbound.equals("Y") || inbound.equals("y") || inbound.equals("Yes"))
+               def.setSupportInbound(true);
+            else
+               def.setSupportInbound(false);
+         }
+         
+         if (def.isSupportInbound())
+         {
+            System.out.print(dbconf.getString("ml.interface.name"));
+            String mlClassName = in.readLine();
+            def.setMlClass(mlClassName);
+            System.out.print(dbconf.getString("as.class.name"));
+            String asClassName = in.readLine();
+            def.setAsClass(asClassName);
+         }
+         
          def.setOutputDir(outputDir);
 
          profile.generate(def, packageName);
@@ -233,6 +255,26 @@ public class Main
       {
          String raProps = extractPropString(listMcfProps);
          varMap.put("mcf.config.props", raProps);
+      }
+      
+      if (def.isSupportInbound() && !def.isUseAnnotation())
+      {
+         StringBuilder inboundString = new StringBuilder();
+         inboundString.append("<inbound-resourceadapter>\n");
+         inboundString.append("         <messageadapter>\n");
+         inboundString.append("           <messagelistener>\n");
+         inboundString.append("             <messagelistener-type>");
+         inboundString.append(def.getRaPackage()).append(".").append(def.getMlClass());
+         inboundString.append("</messagelistener-type>\n");
+         inboundString.append("             <activationspec>\n");
+         inboundString.append("                <activationspec-class>");
+         inboundString.append(def.getRaPackage()).append(".").append(def.getAsClass());
+         inboundString.append("</activationspec-class>\n");
+         inboundString.append("             </activationspec>\n");
+         inboundString.append("           </messagelistener>\n");
+         inboundString.append("         </messageadapter>\n");
+         inboundString.append("      </inbound-resourceadapter>\n");
+         varMap.put("inbound", inboundString.toString());
       }
       
       template.process(varMap, rafw);

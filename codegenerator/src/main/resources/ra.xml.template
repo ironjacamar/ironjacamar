@@ -29,5 +29,7 @@
          <transaction-support>NoTransaction</transaction-support>
          <reauthentication-support>false</reauthentication-support>
       </outbound-resourceadapter>
+      
+      ${inbound}
    </resourceadapter>
 </connector>

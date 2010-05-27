@@ -80,6 +80,13 @@ public class Definition
    /** use annotation or ra.xml  */
    private boolean useAnnotation;
    
+   /** support inbound  */
+   private boolean supportInbound;
+   /** connection metadata class name */
+   private String mlClass;
+   /** connection spec class name */
+   private String asClass;
+   
    /**
     * Set the outputDir.
     * 
@@ -514,4 +521,63 @@ public class Definition
       return useAnnotation;
    }
 
+   /**
+    * Set the supportInbound.
+    * 
+    * @param supportInbound The supportInbound to set.
+    */
+   public void setSupportInbound(boolean supportInbound)
+   {
+      this.supportInbound = supportInbound;
+   }
+
+   /**
+    * Get the supportInbound.
+    * 
+    * @return the supportInbound.
+    */
+   public boolean isSupportInbound()
+   {
+      return supportInbound;
+   }
+
+   /**
+    * Set the messageListenerClass.
+    * 
+    * @param messageListenerClass The messageListenerClass to set.
+    */
+   public void setMlClass(String messageListenerClass)
+   {
+      this.mlClass = messageListenerClass;
+   }
+
+   /**
+    * Get the messageListenerClass.
+    * 
+    * @return the messageListenerClass.
+    */
+   public String getMlClass()
+   {
+      return mlClass;
+   }
+
+   /**
+    * Set the activationSpecClass.
+    * 
+    * @param activationSpecClass The activationSpecClass to set.
+    */
+   public void setAsClass(String activationSpecClass)
+   {
+      this.asClass = activationSpecClass;
+   }
+
+   /**
+    * Get the activationSpecClass.
+    * 
+    * @return the activationSpecClass.
+    */
+   public String getAsClass()
+   {
+      return asClass;
+   }
 }

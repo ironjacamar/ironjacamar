@@ -70,6 +70,12 @@ public class JCA16AnnoProfile implements Profile
          generateClassCode(def, "RaMeta");
          generateClassCode(def, "ConnSpec");
       }
+      
+      if (def.isSupportInbound())
+      {
+         generateClassCode(def, "Ml");
+         generateClassCode(def, "As");
+      }
    }
 
    /**
