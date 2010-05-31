@@ -54,7 +54,7 @@ public class JCA16AnnoProfileTestCase
       def.setRaClass("BaseResourceAdapter");
 
       List<ConfigPropType> props = new ArrayList<ConfigPropType>();
-      ConfigPropType config = new ConfigPropType("myProp", "String", "Hello");
+      ConfigPropType config = new ConfigPropType("myProp", "String", "Hello", false);
       props.add(config);
       def.setRaConfigProps(props);
       

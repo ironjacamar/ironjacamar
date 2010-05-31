@@ -26,12 +26,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
@@ -217,96 +214,6 @@ public class Main
    }
 
    /**
-    * generate ra.xml
-    * @param def Definition
-    * @param outputDir output directory
-    * @throws IOException ioException
-    */
-   private static void generateRaXml(Definition def, String outputDir) throws IOException
-   {
-      FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
-      URL templateFile = Main.class.getResource("/ra.xml.template");
-      String raString = Utils.readFileIntoString(templateFile);
-      Template template = new SimpleTemplate(raString);
-      Map<String, String> varMap = new HashMap<String, String>();
-      varMap.put("package.name", def.getRaPackage());
-      varMap.put("ra.class", def.getRaPackage() + "." + def.getRaClass());
-      varMap.put("mcf.class", def.getRaPackage() + "." + def.getMcfClass());
-      if (!def.isUseCciConnection())
-      {
-         varMap.put("cf.interface", def.getRaPackage() + "." + def.getCfInterfaceClass());
-         varMap.put("cf.class", def.getRaPackage() + "." + def.getCfClass());
-         varMap.put("conn.interface", def.getRaPackage() + "." + def.getConnInterfaceClass());
-         varMap.put("conn.class", def.getRaPackage() + "." + def.getConnImplClass());
-      }
-      else
-      {
-         varMap.put("cf.interface", "javax.resource.cci.ConnectionFactory");
-         varMap.put("cf.class", def.getRaPackage() + "." + def.getCciConnFactoryClass());
-         varMap.put("conn.interface", "javax.resource.cci.Connection");
-         varMap.put("conn.class", def.getRaPackage() + "." + def.getCciConnClass());
-      }
-      List<ConfigPropType> listRaProps = def.getRaConfigProps();
-      if (listRaProps.size() > 0)
-      {
-         String raProps = extractPropString(listRaProps);
-         varMap.put("ra.config.props", raProps);
-      }
-      List<ConfigPropType> listMcfProps = def.getMcfConfigProps();
-      if (listMcfProps.size() > 0)
-      {
-         String raProps = extractPropString(listMcfProps);
-         varMap.put("mcf.config.props", raProps);
-      }
-      
-      if (def.isSupportInbound() && !def.isUseAnnotation())
-      {
-         StringBuilder inboundString = new StringBuilder();
-         inboundString.append("<inbound-resourceadapter>\n");
-         inboundString.append("         <messageadapter>\n");
-         inboundString.append("           <messagelistener>\n");
-         inboundString.append("             <messagelistener-type>");
-         inboundString.append(def.getRaPackage()).append(".").append(def.getMlClass());
-         inboundString.append("</messagelistener-type>\n");
-         inboundString.append("             <activationspec>\n");
-         inboundString.append("                <activationspec-class>");
-         inboundString.append(def.getRaPackage()).append(".").append(def.getAsClass());
-         inboundString.append("</activationspec-class>\n");
-         inboundString.append("             </activationspec>\n");
-         inboundString.append("           </messagelistener>\n");
-         inboundString.append("         </messageadapter>\n");
-         inboundString.append("      </inbound-resourceadapter>\n");
-         varMap.put("inbound", inboundString.toString());
-      }
-      
-      template.process(varMap, rafw);
-      rafw.close();
-   }
-
-   /**
-    * extract properties string
-    * 
-    * @param listPropType
-    * @return String properties string
-    */
-   private static String extractPropString(List<ConfigPropType> listPropType)
-   {
-      StringBuilder props = new StringBuilder();
-      if (listPropType.size() > 0)
-      {
-         props.append("<config-property>\n");
-         for (ConfigPropType prop : listPropType)
-         {
-            props.append("         <config-property-name>" + prop.getName() + "</config-property-name>\n");
-            props.append("         <config-property-type>java.lang." + prop.getType() + "</config-property-type>\n");
-            props.append("         <config-property-value>" + prop.getValue() + "</config-property-value>\n");
-         }
-         props.append("      </config-property>\n");
-      }
-      return props.toString();
-   }
-
-   /**
     * Input Properties
     * @param classname belong to which java class
     * @param dbconf ResourceBundle
@@ -383,12 +290,24 @@ public class Main
    {
       //ant build.xml
       FileWriter antfw = Utils.createFile("build.xml", outputDir);
-      URL buildFile = Main.class.getResource("/build.xml.template");
-      String buildString = Utils.readFileIntoString(buildFile);
-      antfw.write(buildString);
+      BuildXmlGen bxGen = new BuildXmlGen();
+      bxGen.generate(null, antfw);
       antfw.close();
    }
 
+   /**
+    * generate ra.xml
+    * @param def Definition
+    * @param outputDir output directory
+    * @throws IOException ioException
+    */
+   private static void generateRaXml(Definition def, String outputDir) throws IOException
+   {
+      FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
+      RaXmlGen raGen = new RaXmlGen();
+      raGen.generate(def, rafw);
+      rafw.close();
+   }
    
    /**
     * Tool usage

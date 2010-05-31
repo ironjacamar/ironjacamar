@@ -23,7 +23,6 @@ package org.jboss.jca.codegenerator;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URL;
 import java.util.Locale;
 
 /**
@@ -32,7 +31,7 @@ import java.util.Locale;
  * @author Jeff Zhang
  * @version $Revision:$
  */
-public abstract class AbstractCodeGen
+public abstract class AbstractCodeGen extends BaseGen
 {
    /**
     * generate code
@@ -48,20 +47,6 @@ public abstract class AbstractCodeGen
       writeClassBody(def, out);
    }
    
-
-   /**
-    * Output class head, for example license
-    * @param def definition
-    * @param out Writer
-    * @throws IOException ioException
-    */
-   void writeheader(Definition def, Writer out) throws IOException
-   {
-      URL headerFile = AbstractCodeGen.class.getResource("/header.template");
-      String headerString = Utils.readFileIntoString(headerFile);
-      out.write(headerString);
-      writeEol(out);
-   }
 
    /**
     * Output class comment
@@ -100,23 +85,13 @@ public abstract class AbstractCodeGen
 
 
    /**
-    * Output ResourceAdapater class
+    * Output class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
     */
    public abstract void writeClassBody(Definition def, Writer out) throws IOException;
 
-   /**
-    * Output eol 
-    * @param out Writer
-    * @throws IOException ioException
-    */
-   void writeEol(Writer out) throws IOException
-   {
-      out.write("\n");
-   }
-   
    /**
     * Output left curly bracket
     * @param out Writer
@@ -143,18 +118,6 @@ public abstract class AbstractCodeGen
       writeIndent(out, indent);
       out.write("}");
       writeEol(out);
-   }
-   
-   /**
-    * Output space
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   void writeIndent(Writer out, int indent) throws IOException
-   {
-      for (int i = 0; i < indent; i++)
-         out.write("   ");      
    }
 
    /**
