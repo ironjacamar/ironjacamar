@@ -23,6 +23,7 @@ package org.jboss.jca.codegenerator;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 /**
  * A ActivationSpec CodeGen.
@@ -30,7 +31,7 @@ import java.io.Writer;
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class AsCodeGen extends AbstractCodeGen
+public class AsCodeGen extends PropsCodeGen
 {
 
    /**
@@ -59,9 +60,18 @@ public class AsCodeGen extends AbstractCodeGen
       out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
       writeEol(out);
       writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/** The resource adapter */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private ResourceAdapter ra;");
+      writeEol(out);
+      writeEol(out);
 
       writeDefaultConstructor(def, out, indent);
       
+      writeConfigProps(def, out, indent);
       writeValidate(def, out, indent);
       writeResourceAdapter(def, out, indent);
       
@@ -89,6 +99,13 @@ public class AsCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import javax.resource.spi.ActivationSpec;");
       writeEol(out);
+      if (def.isUseAnnotation())
+      {
+         out.write("import javax.resource.spi.ConfigProperty;");
+         writeEol(out);
+         out.write("import javax.resource.spi.Connector;");
+         writeEol(out);
+      }
       out.write("import javax.resource.spi.InvalidPropertyException;");
       writeEol(out);
       out.write("import javax.resource.spi.ResourceAdapter;");
@@ -108,6 +125,17 @@ public class AsCodeGen extends AbstractCodeGen
    public String getClassName(Definition def)
    {
       return def.getAsClass();
+   }
+   
+   /**
+    * get list of ConfigPropType
+    * @param def definition
+    * @return List<ConfigPropType> List of ConfigPropType
+    */
+   @Override
+   public List<ConfigPropType> getConfigProps(Definition def)
+   {
+      return def.getAsConfigProps();
    }
    
    /**
@@ -180,7 +208,7 @@ public class AsCodeGen extends AbstractCodeGen
       out.write("log.debug(\"call getResourceAdapter\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return ra;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -205,6 +233,9 @@ public class AsCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call setResourceAdapter\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("this.ra = ra;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

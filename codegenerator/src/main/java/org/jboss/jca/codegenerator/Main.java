@@ -120,14 +120,14 @@ public class Main
          def.setRaPackage(packageName);
          def.setRaClass(raClassName);
          
-         List<ConfigPropType> raProps = inputProperties("ra", dbconf, in);
+         List<ConfigPropType> raProps = inputProperties("ra", dbconf, in, false);
          def.setRaConfigProps(raProps);
          
          System.out.print(dbconf.getString("mcf.class.name"));
          String mcfClassName = in.readLine();
          def.setMcfClass(mcfClassName);
 
-         List<ConfigPropType> mcfProps = inputProperties("mcf", dbconf, in);
+         List<ConfigPropType> mcfProps = inputProperties("mcf", dbconf, in, false);
          def.setMcfConfigProps(mcfProps);
 
          System.out.print(dbconf.getString("mcf.impl.raa"));
@@ -195,6 +195,8 @@ public class Main
             System.out.print(dbconf.getString("as.class.name"));
             String asClassName = in.readLine();
             def.setAsClass(asClassName);
+            List<ConfigPropType> asProps = inputProperties("as", dbconf, in, true);
+            def.setAsConfigProps(asProps);
          }
          
          def.setOutputDir(outputDir);
@@ -309,10 +311,12 @@ public class Main
     * @param classname belong to which java class
     * @param dbconf ResourceBundle
     * @param in BufferedReader
+    * @param supportRequired need input required property
     * @return List<ConfigPropType> list of properties
     * @throws IOException ioException
     */
-   private static List<ConfigPropType> inputProperties(String classname, ResourceBundle dbconf, BufferedReader in) 
+   private static List<ConfigPropType> inputProperties(String classname, 
+      ResourceBundle dbconf, BufferedReader in, boolean supportRequired) 
       throws IOException
    {
       List<ConfigPropType> props = new ArrayList<ConfigPropType>();
@@ -347,9 +351,24 @@ public class Main
          }
          System.out.print("    " + dbconf.getString("config.properties.value"));
          String value = in.readLine();
+         boolean required = false;
+         if (supportRequired)
+         {
+            System.out.print("    " + dbconf.getString("config.properties.required"));
+            String propRequired = in.readLine();
+            if (propRequired == null)
+               required = false;
+            else
+            {
+               if (propRequired.equals("Y") || propRequired.equals("y") || propRequired.equals("Yes"))
+                  required = true;
+               else
+                  required = false;
+            }
+         }
          System.out.println();
          
-         ConfigPropType config = new ConfigPropType(name, type, value);
+         ConfigPropType config = new ConfigPropType(name, type, value, required);
          props.add(config);
       }
       return props;

@@ -84,8 +84,10 @@ public class Definition
    private boolean supportInbound;
    /** connection metadata class name */
    private String mlClass;
-   /** connection spec class name */
+   /** ActivationSpec class name */
    private String asClass;
+   /** ActivationSpec configuration properties */
+   private List<ConfigPropType> asConfigProps;
    
    /**
     * Set the outputDir.
@@ -579,5 +581,25 @@ public class Definition
    public String getAsClass()
    {
       return asClass;
+   }
+
+   /**
+    * Set the asConfigProps.
+    * 
+    * @param asConfigProps The asConfigProps to set.
+    */
+   public void setAsConfigProps(List<ConfigPropType> asConfigProps)
+   {
+      this.asConfigProps = asConfigProps;
+   }
+
+   /**
+    * Get the asConfigProps.
+    * 
+    * @return the asConfigProps.
+    */
+   public List<ConfigPropType> getAsConfigProps()
+   {
+      return asConfigProps;
    }
 }

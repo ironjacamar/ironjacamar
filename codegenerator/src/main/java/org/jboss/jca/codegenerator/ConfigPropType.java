@@ -35,6 +35,8 @@ public class ConfigPropType
    private String type;
    /** value */
    private String value;
+   /** required */
+   private boolean required;
 
    /**
     * Set the name.
@@ -42,13 +44,15 @@ public class ConfigPropType
     * @param name The name to set.
     * @param type The type to set.
     * @param value The value to set.
+    * @param required The required to set.
     */
-   public ConfigPropType(String name, String type, String value)
+   public ConfigPropType(String name, String type, String value, boolean required)
    {
    
       this.name = name;
       this.type = type;
       this.value = value;
+      this.required = required;
    }
    
    /**
@@ -109,5 +113,25 @@ public class ConfigPropType
    public String getValue()
    {
       return value;
+   }
+
+   /**
+    * Set the required.
+    * 
+    * @param required The required to set.
+    */
+   public void setRequired(boolean required)
+   {
+      this.required = required;
+   }
+
+   /**
+    * Get the required.
+    * 
+    * @return the required.
+    */
+   public boolean isRequired()
+   {
+      return required;
    }
 }
