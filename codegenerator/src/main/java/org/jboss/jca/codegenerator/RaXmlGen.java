@@ -113,30 +113,30 @@ public class RaXmlGen extends AbstractXmlGen
          }
          writeEol(out);
       }
-      
-
-      for (ConfigPropType prop : props)
+      else
       {
-         writeIndent(out, indent);
-         out.write("<config-property>");
-         writeEol(out);
+         for (ConfigPropType prop : props)
+         {
+            writeIndent(out, indent);
+            out.write("<config-property>");
+            writeEol(out);
          
-         writeIndent(out, indent + 1);
-         out.write("<config-property-name>" + prop.getName() + "</config-property-name>");
-         writeEol(out);
-         writeIndent(out, indent + 1);
-         out.write("<config-property-type>java.lang." + prop.getType() + "</config-property-type>");
-         writeEol(out);
-         writeIndent(out, indent + 1);
-         out.write("<config-property-value>" + prop.getValue() + "</config-property-value>");
-         writeEol(out);
+            writeIndent(out, indent + 1);
+            out.write("<config-property-name>" + prop.getName() + "</config-property-name>");
+            writeEol(out);
+            writeIndent(out, indent + 1);
+            out.write("<config-property-type>java.lang." + prop.getType() + "</config-property-type>");
+            writeEol(out);
+            writeIndent(out, indent + 1);
+            out.write("<config-property-value>" + prop.getValue() + "</config-property-value>");
+            writeEol(out);
          
-         writeIndent(out, indent);
-         out.write("</config-property>");
-         writeEol(out);
-         writeEol(out);
+            writeIndent(out, indent);
+            out.write("</config-property>");
+            writeEol(out);
+            writeEol(out);
+         }
       }
-
    }
    
    /**
