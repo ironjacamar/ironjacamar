@@ -61,7 +61,19 @@
     <jar destfile="${target.dir}/jboss-jca-embedded.jar"
          manifest="src/main/resources/embedded-manifest.mf"
          basedir="${build.embedded.dir}/impl"
-         excludes="**/*.java"/>
+         excludes="META-INF/services/**,**/arquillian/**,**/*.java"/>
+
+    <mkdir dir="${build.embedded.dir}/impl/META-INF"/>
+    <mkdir dir="${build.embedded.dir}/impl/META-INF/services"/>
+    <copy todir="${build.embedded.dir}/impl/META-INF/services">
+      <fileset dir="src/main/resources/services" includes="*"/>
+    </copy>
+
+    <jar destfile="${target.dir}/jboss-jca-embedded-arquillian.jar"
+         manifest="src/main/resources/arquillian-manifest.mf"
+         basedir="${build.embedded.dir}/impl"
+         includes="META-INF/**,**/arquillian/**"
+         excludes="**/*.xml,**/*.java"/>
   </target>
 
   <!-- ================================= 

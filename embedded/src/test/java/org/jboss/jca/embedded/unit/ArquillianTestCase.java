@@ -1,4 +1,4 @@
-/*
+/*/*
  * JBoss, Home of Professional Open Source.
  * Copyright 2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
@@ -22,7 +22,6 @@
 
 package org.jboss.jca.embedded.unit;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
 import org.jboss.jca.embedded.rars.simple.MessageListener;
 import org.jboss.jca.embedded.rars.simple.TestActivationSpec;
 import org.jboss.jca.embedded.rars.simple.TestConnection;
@@ -39,88 +38,45 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
 /**
- * Test cases for deploying resource adapter archives (.RAR)
- * using ShrinkWrap
+ * Unit test for Arquillian integration
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision: $
  */
-public class ShrinkWrapTestCase
+@RunWith(Arquillian.class)
+public class ArquillianTestCase
 {
-
    // --------------------------------------------------------------------------------||
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
-   private static Logger log = Logger.getLogger(ShrinkWrapTestCase.class);
+   private static Logger log = Logger.getLogger(ArquillianTestCase.class);
 
    private static final String JNDI_PREFIX = "java:/eis/";
-
-   /*
-    * Embedded
-    */
-   private static EmbeddedJCA embedded;
-
-   // --------------------------------------------------------------------------------||
-   // Tests --------------------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
+   private static String deploymentName = null;
 
    /**
-    * Null ShrinkWrap ResourceAdapterArchive test case
-    * @exception Throwable Thrown if case of an error
+    * Define the deployment
+    * @return The deployment archive
     */
-   @Test
-   public void testNull() throws Throwable
+   @Deployment
+   public static ResourceAdapterArchive createDeployment()
    {
-      ResourceAdapterArchive raa = null; 
-
-      try
-      {
-         embedded.deploy(raa);
-         fail("Null deployment successful");
-      }
-      catch (Throwable t)
-      {
-         // Ok
-      }
-      finally
-      {
-         try
-         {
-            embedded.undeploy(raa);
-            fail("Null undeployment successful");
-         }
-         catch (Throwable t)
-         {
-            // Ok
-         }
-      }
-   }
-
-   /**
-    * Basic ShrinkWrap ResourceAdapterArchive test case
-    * @exception Throwable Thrown if case of an error
-    */
-   @Test
-   public void testBasic() throws Throwable
-   {
-      Context context = null;
-
-      String name = UUID.randomUUID().toString();
+      deploymentName = UUID.randomUUID().toString();
 
       ResourceAdapterArchive raa =
-         ShrinkWrap.create(ResourceAdapterArchive.class, name + ".rar");
+         ShrinkWrap.create(ResourceAdapterArchive.class, deploymentName + ".rar");
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
       ja.addClasses(MessageListener.class, TestActivationSpec.class, TestConnection.class,
@@ -131,12 +87,26 @@ public class ShrinkWrapTestCase
       raa.addLibrary(ja);
       raa.addManifestResource("simple.rar/META-INF/ra.xml", "ra.xml");
 
+      return raa;
+   }
+
+   //-------------------------------------------------------------------------------------||
+   // Tests ------------------------------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
+
+   /**
+    * Basic
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testBasic() throws Throwable
+   {
+      Context context = null;
+ 
       try
       {
-         embedded.deploy(raa);
-
          context = new InitialContext();
-         Object o = context.lookup(JNDI_PREFIX + name);
+         Object o = context.lookup(JNDI_PREFIX + deploymentName);
          assertNotNull(o);
       }
       catch (Throwable t)
@@ -157,40 +127,6 @@ public class ShrinkWrapTestCase
                // Ignore
             }
          }
-
-         embedded.undeploy(raa);
       }
-   }
-
-   // --------------------------------------------------------------------------------||
-   // Lifecycle Methods --------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-
-   /**
-    * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
-    */
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA();
-
-      // Startup
-      embedded.startup();
-   }
-
-   /**
-    * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
-    */
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      // Shutdown embedded
-      embedded.shutdown();
-
-      // Set embedded to null
-      embedded = null;
    }
 }

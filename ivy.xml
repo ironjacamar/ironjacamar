@@ -57,6 +57,11 @@
     <dependency org="org.jboss" name="jboss-vfs" rev="${version.jboss.vfs}" conf="standalone->default"/>
     <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-api" rev="${version.arquillian}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-impl-base" rev="${version.arquillian}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-junit" rev="${version.arquillian}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-spi" rev="${version.arquillian}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.jboss.arquillian.protocol" name="arquillian-protocol-local" rev="${version.arquillian}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.bootstrap" name="jboss-bootstrap" rev="${version.jboss.bootstrap}" conf="standalone->default"/>
     <dependency org="org.jboss.cl" name="jboss-classloader" rev="${version.jboss.classloading}" conf="standalone->default"/>
     <dependency org="org.jboss.cl" name="jboss-classloading" rev="${version.jboss.classloading}" conf="standalone->default"/>
