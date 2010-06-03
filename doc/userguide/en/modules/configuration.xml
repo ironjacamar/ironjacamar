@@ -157,7 +157,7 @@ config/bootstrap/jca.xml
       <para>The configuration is done in the</para>
 
       <programlisting>
-config/bootstrap/web.xml
+system/web.xml
       </programlisting>
 
       <para>file.</para>
@@ -188,14 +188,14 @@ config/bootstrap/web.xml
         </tgroup>
       </table>
 
-      <para>The web server can be removed from the environment by removing the reference to <code>web.xml</code>
-        in</para>
+      <para>The web server can be removed from the environment by removing the <code>web.xml</code>
+        file in</para>
 
       <programlisting>
-config/bootstrap.xml
+system/
       </programlisting>
 
-      <para>file.</para>
+      <para>Furthermore all .WAR files in the same directory should be removed too.</para>
 
    </section>
 

@@ -65,6 +65,9 @@ jboss-jca-1.0.0
         log: Contains the log files for the container.
       </listitem>
       <listitem>
+        system: Contains system deployments.
+      </listitem>
+      <listitem>
         tmp: Contains temporary files.
       </listitem>
     </itemizedlist>

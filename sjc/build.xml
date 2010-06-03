@@ -99,6 +99,7 @@
     <mkdir dir="${target.dir}/sjc/lib/endorsed"/>
     <mkdir dir="${target.dir}/sjc/log"/>
     <mkdir dir="${target.dir}/sjc/deploy"/>
+    <mkdir dir="${target.dir}/sjc/system"/>
 
     <copy todir="${target.dir}/sjc/bin">
       <fileset dir="src/main/resources/">
@@ -131,6 +132,12 @@
 
     <copy todir="${target.dir}/sjc/config/bootstrap">
       <fileset dir="src/main/resources/bootstrap">
+        <include name="*.xml"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/system">
+      <fileset dir="src/main/resources/system">
         <include name="*.xml"/>
       </fileset>
     </copy>
@@ -169,7 +176,7 @@
       </fileset>
     </copy>
 
-    <copy todir="${target.dir}/sjc/deploy">
+    <copy todir="${target.dir}/sjc/system">
       <fileset dir="${target.dir}">
         <include name="*.war"/>
       </fileset>
@@ -236,7 +243,7 @@
 
     <delete dir="${build.dir}/en"/>
 
-    <copy todir="${target.dir}/sjc/deploy">
+    <copy todir="${target.dir}/sjc/system">
       <fileset dir="${target.dir}">
         <include name="*.war"/>
       </fileset>
