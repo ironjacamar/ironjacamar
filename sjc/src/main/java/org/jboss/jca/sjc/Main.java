@@ -301,7 +301,7 @@ public class Main
                   error(t.getMessage(), t);
                }
                long l2 = System.currentTimeMillis();
-               info("Shutdown complete in " + (l2 - l1) + " ms");
+               info("Server stopped in " + (l2 - l1) + "ms");
             }
          });
 
