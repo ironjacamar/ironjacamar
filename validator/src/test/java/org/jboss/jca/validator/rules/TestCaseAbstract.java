@@ -30,7 +30,7 @@ import org.jboss.jca.validator.rules.ra.TestResourceAdapterWrong;
 import java.io.File;
 import java.util.UUID;
 
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
@@ -60,9 +60,9 @@ public abstract class TestCaseAbstract
     */
    protected ResourceAdapterArchive getArchive(String archiveName) throws Throwable
    {
-      ResourceAdapterArchive raa = Archives.create(archiveName, ResourceAdapterArchive.class);
+      ResourceAdapterArchive raa = ShrinkWrap.create(archiveName, ResourceAdapterArchive.class);
 
-      JavaArchive ja = Archives.create(UUID.randomUUID().toString() + ".jar", JavaArchive.class);
+      JavaArchive ja = ShrinkWrap.create(UUID.randomUUID().toString() + ".jar", JavaArchive.class);
       ja.addClasses(TestActivationSpec.class, TestManagedConnection.class, TestResourceAdapterRight.class,
             TestResourceAdapterWrong.class);
 
