@@ -19,22 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A connection impl class CodeGen.
+ * A connection factory interface CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class CmCodeGen extends AbstractCodeGen
+public class CfInterfaceCodeGen extends AbstractCodeGen
 {
-
    /**
-    * Output ResourceAdapater class
+    * Output class code
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -43,13 +44,11 @@ public class CmCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements ConnectionManager");
+      out.write("public interface " + getClassName(def) + " extends Serializable, Referenceable");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
-      
-      writeDefaultConstructor(def, out, indent);
-      
-      writeAllocateConn(def, out, indent);
+
+      writeConnection(def, out, indent);
       writeRightCurlyBracket(out, 0);
    }
    
@@ -65,13 +64,12 @@ public class CmCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
+      out.write("import java.io.Serializable;");
+      writeEol(out);
+      writeEol(out);
+      out.write("import javax.resource.Referenceable;");
+      writeEol(out);
       out.write("import javax.resource.ResourceException;");
-      writeEol(out);
-      out.write("import javax.resource.spi.ConnectionManager;");
-      writeEol(out);
-      out.write("import javax.resource.spi.ConnectionRequestInfo;");
-      writeEol(out);
-      out.write("import javax.resource.spi.ManagedConnectionFactory;");
       writeEol(out);
       writeEol(out);
    }
@@ -84,53 +82,36 @@ public class CmCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getCmClass();
+      return def.getCfInterfaceClass();
    }
    
    /**
-    * Output allocateConnection method
+    * Output Connection method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeAllocateConn(Definition def, Writer out, int indent) throws IOException
+   private void writeConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
-      out.write("/**");
+      out.write("/** ");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Allocate a connection");
+      out.write(" * get connection from factory");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param mcf The managed connection factory");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @param cri The connection request information");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @return Object The connection");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @exception ResourceException Thrown if an error occurs");
+      out.write(" * @return " + def.getConnInterfaceClass() + " instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("@Override");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public Object allocateConnection(ManagedConnectionFactory mcf," +
-         "ConnectionRequestInfo cri) throws ResourceException");
-      writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("return null;");
-      writeRightCurlyBracket(out, indent);
+      out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException;");
       writeEol(out);
    }
 }

@@ -21,22 +21,27 @@
  */
 package org.jboss.jca.codegenerator;
 
+import org.jboss.jca.codegenerator.code.AbstractCodeGen;
+import org.jboss.jca.codegenerator.xml.BuildXmlGen;
+import org.jboss.jca.codegenerator.xml.RaXmlGen;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * A JCA16AnnoProfile.
+ * A JCA16Profile.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class JCA16AnnoProfile implements Profile
+public class JCA16Profile implements Profile
 {
 
    /**
-    * JCA16AnnoProfile
+    * JCA16Profile
     */
-   public JCA16AnnoProfile()
+   public JCA16Profile()
    {
    }
    
@@ -76,6 +81,11 @@ public class JCA16AnnoProfile implements Profile
          generateClassCode(def, "Ml");
          generateClassCode(def, "As");
       }
+      
+      generateAntXml(def.getOutputDir());
+      
+      if (!def.isUseAnnotation())
+         generateRaXml(def, def.getOutputDir());
    }
 
    /**
@@ -91,7 +101,7 @@ public class JCA16AnnoProfile implements Profile
       try
       {
 
-         String clazzName = this.getClass().getPackage().getName() + "." + className + "CodeGen";
+         String clazzName = this.getClass().getPackage().getName() + ".code." + className + "CodeGen";
          String javaFile = (String)Definition.class.getMethod(
             "get" + className + "Class").invoke(def, (Object[])null) + ".java";
          FileWriter fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
@@ -111,6 +121,46 @@ public class JCA16AnnoProfile implements Profile
       catch (Exception e)
       {
          e.printStackTrace();
+      }
+   }
+   
+   /**
+    * generate ant build.xml
+    * @param outputDir output directory
+    */
+   private void generateAntXml(String outputDir)
+   {
+      try
+      {
+         //ant build.xml
+         FileWriter antfw = Utils.createFile("build.xml", outputDir);
+         BuildXmlGen bxGen = new BuildXmlGen();
+         bxGen.generate(null, antfw);
+         antfw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+   }
+
+   /**
+    * generate ra.xml
+    * @param def Definition
+    * @param outputDir output directory
+    */
+   private void generateRaXml(Definition def, String outputDir)
+   {
+      try
+      {
+         FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
+         RaXmlGen raGen = new RaXmlGen();
+         raGen.generate(def, rafw);
+         rafw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
       }
    }
 }

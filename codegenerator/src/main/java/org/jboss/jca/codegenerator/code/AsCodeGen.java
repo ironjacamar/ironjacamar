@@ -19,21 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.ConfigPropType;
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 /**
- * A managed connection MetaData class CodeGen.
+ * A ActivationSpec CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class McMetaCodeGen extends AbstractCodeGen
+public class AsCodeGen extends PropsCodeGen
 {
+
    /**
-    * Output Metadata class
+    * Output class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -41,16 +46,37 @@ public class McMetaCodeGen extends AbstractCodeGen
    @Override
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
-
-      out.write("public class " + getClassName(def) + " implements ManagedConnectionMetaData");
+      if (def.isUseAnnotation())
+      {
+         out.write("@Activation(messageListeners = {" + def.getRaPackage() + "." + def.getMlClass() + ".class})");
+         writeEol(out);
+      }
+      out.write("public class " + getClassName(def) + " implements ActivationSpec");
       writeLeftCurlyBracket(out, 0);
-      int indent = 1;
-      
-      writeDefaultConstructor(def, out, indent);
+      writeEol(out);
 
-      writeEIS(def, out, indent);
-      writeMaxConnection(def, out, indent);
-      writeUsername (def, out, indent);
+      int indent = 1;
+      writeIndent(out, indent);
+      out.write("/** The logger */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
+      writeEol(out);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/** The resource adapter */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private ResourceAdapter ra;");
+      writeEol(out);
+      writeEol(out);
+
+      writeDefaultConstructor(def, out, indent);
+      
+      writeConfigProps(def, out, indent);
+      writeValidate(def, out, indent);
+      writeResourceAdapter(def, out, indent);
       
       writeRightCurlyBracket(out, 0);
    }
@@ -67,10 +93,28 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
+      out.write("import java.io.PrintWriter;");
+      writeEol(out);
+      writeEol(out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
+      out.write("import javax.resource.spi.Activation;");
       writeEol(out);
-      out.write("import javax.resource.spi.ManagedConnectionMetaData;");
+      out.write("import javax.resource.spi.ActivationSpec;");
+      writeEol(out);
+      if (def.isUseAnnotation())
+      {
+         out.write("import javax.resource.spi.ConfigProperty;");
+         writeEol(out);
+         out.write("import javax.resource.spi.Connector;");
+         writeEol(out);
+      }
+      out.write("import javax.resource.spi.InvalidPropertyException;");
+      writeEol(out);
+      out.write("import javax.resource.spi.ResourceAdapter;");
+      writeEol(out);
+      writeEol(out);
+      out.write("import org.jboss.logging.Logger;");
       writeEol(out);
       writeEol(out);
    }
@@ -83,157 +127,118 @@ public class McMetaCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getMcMetaClass();
+      return def.getAsClass();
    }
    
    /**
-    * Output eis info method
+    * get list of ConfigPropType
     * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
+    * @return List<ConfigPropType> List of ConfigPropType
     */
-   private void writeEIS(Definition def, Writer out, int indent) throws IOException
+   @Override
+   public List<ConfigPropType> getConfigProps(Definition def)
    {
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * Returns Product name of the underlying EIS instance connected through the ManagedConnection.");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" *");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @return Product name of the EIS instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws ResourceException Thrown if an error occurs");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("@Override");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public String getEISProductName() throws ResourceException");
-      writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * Returns Product version of the underlying EIS instance connected through the ManagedConnection.");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" *");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @return Product version of the EIS instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws ResourceException Thrown if an error occurs");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("@Override");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public String getEISProductVersion() throws ResourceException");
-      writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
+      return def.getAsConfigProps();
    }
-
+   
    /**
-    * Output max connection method
+    * Output validate method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeMaxConnection(Definition def, Writer out, int indent) throws IOException
+   private void writeValidate(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Returns maximum limit on number of active concurrent connections ");
+      out.write(" * This method may be called by a deployment tool to validate the overall");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * activation configuration information provided by the endpoint deployer.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return Maximum limit for number of active concurrent connections");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws ResourceException Thrown if an error occurs");
+      out.write(" * @throws InvalidPropertyException indicates invalid onfiguration property settings.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("@Override");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public int getMaxConnections() throws ResourceException");
+      out.write("public void validate() throws InvalidPropertyException");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return 0; //TODO");
+      out.write("log.debug(\"call validate\");");
+
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
    
    /**
-    * Output username method
+    * Output ResourceAdapter method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeUsername(Definition def, Writer out, int indent) throws IOException
-   {
+   private void writeResourceAdapter(Definition def, Writer out, int indent) throws IOException
+   {      
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Returns name of the user associated with the ManagedConnection instance");
+      out.write(" * Get the resource adapter");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return  name of the user");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws ResourceException Thrown if an error occurs");
+      out.write(" * @return The handle");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("@Override");
+      out.write("public ResourceAdapter getResourceAdapter()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("log.debug(\"call getResourceAdapter\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("return ra;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public String getUserName() throws ResourceException");
+      out.write(" * Set the resource adapter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param ra The handle");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("public void setResourceAdapter(ResourceAdapter ra)");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
+      out.write("log.debug(\"call setResourceAdapter\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("this.ra = ra;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

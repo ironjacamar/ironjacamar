@@ -19,21 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A cci connection class CodeGen.
+ * A resource adapter MetaData class CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class CciConnCodeGen extends AbstractCodeGen
+public class RaMetaCodeGen extends AbstractCodeGen
 {
    /**
-    * Output ResourceAdapater class
+    * Output Metadata class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -42,41 +44,17 @@ public class CciConnCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements Connection");
+      out.write("public class " + getClassName(def) + " implements ResourceAdapterMetaData");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
       writeDefaultConstructor(def, out, indent);
-      
-      //constructor
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * default constructor");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @param   connSpec ConnectionSpec");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "(ConnectionSpec connSpec)");
-      writeLeftCurlyBracket(out, indent);
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
 
-      writeClose(def, out, indent);
-      writeInteraction(def, out, indent);
-      writeLocalTransaction (def, out, indent);
-      writeMetaData(def, out, indent);
-      writeResultSetInfo(def, out, indent);
+      writeInfo(def, out, indent);
+      writeSupport (def, out, indent);
       
       writeRightCurlyBracket(out, 0);
    }
-
    
    /**
     * Output class import
@@ -90,20 +68,7 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.ResourceException;");
-      writeEol(out);
-      writeEol(out);
-      out.write("import javax.resource.cci.Connection;");
-      writeEol(out);
-      out.write("import javax.resource.cci.ConnectionMetaData;");
-      writeEol(out);
-      out.write("import javax.resource.cci.ConnectionSpec;");
-      writeEol(out);
-      out.write("import javax.resource.cci.Interaction;");
-      writeEol(out);
-      out.write("import javax.resource.cci.LocalTransaction;");
-      writeEol(out);
-      out.write("import javax.resource.cci.ResultSetInfo;");
+      out.write("import javax.resource.cci.ResourceAdapterMetaData;");
       writeEol(out);
       writeEol(out);
    }
@@ -116,29 +81,29 @@ public class CciConnCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getCciConnClass();
+      return def.getRaMetaClass();
    }
    
    /**
-    * Output close method
+    * Output info method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeClose(Definition def, Writer out, int indent) throws IOException
+   private void writeInfo(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Initiates close of the connection handle at the application level.");
+      out.write(" * Gets the version of the resource adapter.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws  ResourceException  Exception thrown if close on a connection handle fails.");
+      out.write(" * @return   String representing version of the resource adapter");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -148,36 +113,24 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public void close() throws ResourceException");
+      out.write("public String getAdapterVersion()");
       writeLeftCurlyBracket(out, indent);
-
+      writeIndent(out, indent + 1);
+      out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
-   }
-
-   /**
-    * Output Interaction method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeInteraction(Definition def, Writer out, int indent) throws IOException
-   {
+      
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Creates an Interaction associated with this Connection. ");
+      out.write(" * Gets the name of the vendor that has provided the resource adapter.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return  Interaction instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws  ResourceException     Failed to create an Interaction");
+      out.write(" * @return   String representing name of the vendor ");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -187,44 +140,24 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public Interaction createInteraction() throws ResourceException");
+      out.write("public String getAdapterVendorName()");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
-   }
-   
-   /**
-    * Output LocalTransaction method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeLocalTransaction(Definition def, Writer out, int indent) throws IOException
-   {
+      
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Returns an LocalTransaction instance that enables a component to ");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * demarcate resource manager local transactions on the Connection.");
+      out.write(" * Gets a tool displayable name of the resource adapter.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   LocalTransaction instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws   ResourceException   Failed to return a LocalTransaction");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws   javax.resource.NotSupportedException Demarcation of Resource manager ");
+      out.write(" * @return   String representing the name of the resource adapter");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -234,38 +167,24 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public LocalTransaction getLocalTransaction() throws ResourceException");
+      out.write("public String getAdapterName()");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
-   }
-   
-   /**
-    * Output MetaData method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeMetaData(Definition def, Writer out, int indent) throws IOException
-   {
+      
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Gets the information on the underlying EIS instance represented through an active connection.");
+      out.write(" * Gets a tool displayable short desription of the resource adapter.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   ConnectionMetaData instance representing information about the EIS instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws  ResourceException Failed to get information about the connected EIS instance. ");
+      out.write(" * @return   String describing the resource adapter");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -275,45 +194,61 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public ConnectionMetaData getMetaData() throws ResourceException");
+      out.write("public String getAdapterShortDescription()");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getConnMetaClass() + "();");
+      out.write("return null; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns a string representation of the version");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   String representing the supported version of the connector architecture");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public String getSpecVersion()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
    
-   
    /**
-    * Output ResultSetInfo method
+    * Output support method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeResultSetInfo(Definition def, Writer out, int indent) throws IOException
+   private void writeSupport(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Gets the information on the ResultSet functionality supported by ");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * a connected EIS instance.");
+      out.write(" * Returns an array of fully-qualified names of InteractionSpec");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   ResultSetInfo instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws   ResourceException Failed to get ResultSet related information");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws   javax.resource.NotSupportedException ResultSet functionality is not supported");
+      out.write(" * @return Array of fully-qualified class names of InteractionSpec classes");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -323,11 +258,91 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public ResultSetInfo getResultSetInfo() throws ResourceException");
+      out.write("public String[] getInteractionSpecsSupported()");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return null; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns true if the implementation class for the Interaction");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   boolean depending on method support");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public boolean supportsExecuteWithInputAndOutputRecord()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return false; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns true if the implementation class for the Interaction");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   boolean depending on method support");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public boolean supportsExecuteWithInputRecordOnly()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return false; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns true if the resource adapter implements the LocalTransaction");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return   true if resource adapter supports resource manager local transaction demarcation ");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public boolean supportsLocalTransactionDemarcation()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return false; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

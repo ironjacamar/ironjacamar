@@ -19,21 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A connection factory class CodeGen.
+ * A managed connection MetaData class CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class CfCodeGen extends AbstractCodeGen
+public class McMetaCodeGen extends AbstractCodeGen
 {
    /**
-    * Output class code
+    * Output Metadata class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -42,39 +44,16 @@ public class CfCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements " + def.getCfInterfaceClass());
+      out.write("public class " + getClassName(def) + " implements ManagedConnectionMetaData");
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
-      writeIndent(out, indent);
-      out.write("private Reference reference;");
-      writeEol(out);
-      writeEol(out);
-      
       writeDefaultConstructor(def, out, indent);
-      
-      //constructor
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * default constructor");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @param   cxManager ConnectionManager");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "(ConnectionManager cxManager)");
-      writeLeftCurlyBracket(out, indent);
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
 
-      writeConnection(def, out, indent);
-      writeReference(def, out, indent);
+      writeEIS(def, out, indent);
+      writeMaxConnection(def, out, indent);
+      writeUsername (def, out, indent);
+      
       writeRightCurlyBracket(out, 0);
    }
    
@@ -90,19 +69,10 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import java.io.Serializable;");
-      writeEol(out);
-      writeEol(out);
-      out.write("import javax.naming.NamingException;");
-      writeEol(out);
-      out.write("import javax.naming.Reference;");
-      writeEol(out);
-      writeEol(out);
-      out.write("import javax.resource.Referenceable;");
-      writeEol(out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
-      out.write("import javax.resource.spi.ConnectionManager;");
+      writeEol(out);
+      out.write("import javax.resource.spi.ManagedConnectionMetaData;");
       writeEol(out);
       writeEol(out);
    }
@@ -115,29 +85,32 @@ public class CfCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getCfClass();
+      return def.getMcMetaClass();
    }
    
    /**
-    * Output Connection method
+    * Output eis info method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeConnection(Definition def, Writer out, int indent) throws IOException
+   private void writeEIS(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
-      out.write("/** ");
+      out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * get connection from factory");
+      out.write(" * Returns Product name of the underlying EIS instance connected through the ManagedConnection.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return " + def.getConnInterfaceClass() + " instance");
+      out.write(" * @return Product name of the EIS instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -147,35 +120,67 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException");
+      out.write("public String getEISProductName() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getConnImplClass() + "();");
+      out.write("return null; //TODO");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Returns Product version of the underlying EIS instance connected through the ManagedConnection.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Product version of the EIS instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public String getEISProductVersion() throws ResourceException");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
-   
+
    /**
-    * Output Reference method
+    * Output max connection method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeReference(Definition def, Writer out, int indent) throws IOException
+   private void writeMaxConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Get the Reference instance.");
+      out.write(" * Returns maximum limit on number of active concurrent connections ");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return Reference instance");
+      out.write(" * @return Maximum limit for number of active concurrent connections");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -185,24 +190,38 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public Reference getReference() throws NamingException");
+      out.write("public int getMaxConnections() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
+
       writeIndent(out, indent + 1);
-      out.write("return reference;");
+      out.write("return 0; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
-
+   }
+   
+   /**
+    * Output username method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeUsername(Definition def, Writer out, int indent) throws IOException
+   {
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Set the Reference instance.");
+      out.write(" * Returns name of the user associated with the ManagedConnection instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   reference  A Reference instance");
+      out.write(" * @return  name of the user");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -212,10 +231,11 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public void setReference(Reference reference)");
+      out.write("public String getUserName() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
+
       writeIndent(out, indent + 1);
-      out.write("this.reference = reference;");
+      out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

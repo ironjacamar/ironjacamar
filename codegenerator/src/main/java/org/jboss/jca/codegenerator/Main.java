@@ -22,8 +22,6 @@
 package org.jboss.jca.codegenerator;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -113,7 +111,7 @@ public class Main
          String raClassName = in.readLine();
          
 
-         Profile profile = new JCA16AnnoProfile();
+         Profile profile = new JCA16Profile();
          def.setRaPackage(packageName);
          def.setRaClass(raClassName);
          
@@ -200,11 +198,6 @@ public class Main
 
          profile.generate(def, packageName);
          
-         generateAntXml(outputDir);
-         
-         if (!def.isUseAnnotation())
-            generateRaXml(def, outputDir);
-         
          System.out.println(dbconf.getString("code.wrote"));
       }
       catch (IOException e)
@@ -281,34 +274,6 @@ public class Main
       return props;
    }
 
-   /**
-    * generate ant build.xml
-    * @param outputDir output directory
-    * @throws IOException ioException
-    */
-   private static void generateAntXml(String outputDir) throws IOException
-   {
-      //ant build.xml
-      FileWriter antfw = Utils.createFile("build.xml", outputDir);
-      BuildXmlGen bxGen = new BuildXmlGen();
-      bxGen.generate(null, antfw);
-      antfw.close();
-   }
-
-   /**
-    * generate ra.xml
-    * @param def Definition
-    * @param outputDir output directory
-    * @throws IOException ioException
-    */
-   private static void generateRaXml(Definition def, String outputDir) throws IOException
-   {
-      FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
-      RaXmlGen raGen = new RaXmlGen();
-      raGen.generate(def, rafw);
-      rafw.close();
-   }
-   
    /**
     * Tool usage
     */

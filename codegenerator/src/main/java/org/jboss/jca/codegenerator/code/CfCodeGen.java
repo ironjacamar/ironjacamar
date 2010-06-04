@@ -19,21 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A connection MetaData class CodeGen.
+ * A connection factory class CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class ConnMetaCodeGen extends AbstractCodeGen
+public class CfCodeGen extends AbstractCodeGen
 {
    /**
-    * Output Metadata class
+    * Output class code
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -42,15 +44,39 @@ public class ConnMetaCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements ConnectionMetaData");
+      out.write("public class " + getClassName(def) + " implements " + def.getCfInterfaceClass());
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
-      writeDefaultConstructor(def, out, indent);
-
-      writeEIS(def, out, indent);
-      writeUsername (def, out, indent);
+      writeIndent(out, indent);
+      out.write("private Reference reference;");
+      writeEol(out);
+      writeEol(out);
       
+      writeDefaultConstructor(def, out, indent);
+      
+      //constructor
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param   cxManager ConnectionManager");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "(ConnectionManager cxManager)");
+      writeLeftCurlyBracket(out, indent);
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+
+      writeConnection(def, out, indent);
+      writeReference(def, out, indent);
       writeRightCurlyBracket(out, 0);
    }
    
@@ -66,10 +92,19 @@ public class ConnMetaCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
+      out.write("import java.io.Serializable;");
+      writeEol(out);
+      writeEol(out);
+      out.write("import javax.naming.NamingException;");
+      writeEol(out);
+      out.write("import javax.naming.Reference;");
+      writeEol(out);
+      writeEol(out);
+      out.write("import javax.resource.Referenceable;");
+      writeEol(out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
-      writeEol(out);
-      out.write("import javax.resource.cci.ConnectionMetaData;");
+      out.write("import javax.resource.spi.ConnectionManager;");
       writeEol(out);
       writeEol(out);
    }
@@ -82,32 +117,29 @@ public class ConnMetaCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getConnMetaClass();
+      return def.getCfClass();
    }
    
    /**
-    * Output eis info method
+    * Output Connection method
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   private void writeEIS(Definition def, Writer out, int indent) throws IOException
+   private void writeConnection(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
-      out.write("/**");
+      out.write("/** ");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Returns product name of the underlying EIS instance connected");
+      out.write(" * get connection from factory");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return Product name of the EIS instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws ResourceException  Failed to get the information");
+      out.write(" * @return " + def.getConnInterfaceClass() + " instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -117,10 +149,48 @@ public class ConnMetaCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public String getEISProductName() throws ResourceException");
+      out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException");
+      writeLeftCurlyBracket(out, indent);
+
+      writeIndent(out, indent + 1);
+      out.write("return new " + def.getConnImplClass() + "();");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+   }
+   
+   /**
+    * Output Reference method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeReference(Definition def, Writer out, int indent) throws IOException
+   {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Get the Reference instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Reference instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public Reference getReference() throws NamingException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
+      out.write("return reference;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -128,16 +198,13 @@ public class ConnMetaCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * Returns product version of the underlying EIS instance.");
+      out.write(" * Set the Reference instance.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return Product version of the EIS instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws ResourceException  Failed to get the information");
+      out.write(" * @param   reference  A Reference instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -147,51 +214,10 @@ public class ConnMetaCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public String getEISProductVersion() throws ResourceException");
+      out.write("public void setReference(Reference reference)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
-      writeRightCurlyBracket(out, indent);
-      writeEol(out);
-   }
-   
-   /**
-    * Output username method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeUsername(Definition def, Writer out, int indent) throws IOException
-   {
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * Returns the user name for an active connection as known to the underlying EIS instance.");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" *");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @return String representing the user name");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @throws ResourceException  Failed to get the information");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("@Override");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public String getUserName() throws ResourceException");
-      writeLeftCurlyBracket(out, indent);
-
-      writeIndent(out, indent + 1);
-      out.write("return null; //TODO");
+      out.write("this.reference = reference;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

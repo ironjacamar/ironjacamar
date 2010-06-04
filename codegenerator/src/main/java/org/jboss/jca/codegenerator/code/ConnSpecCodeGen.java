@@ -19,22 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A connection interface CodeGen.
+ * A connection Spec class CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class ConnInterfaceCodeGen extends AbstractCodeGen
+public class ConnSpecCodeGen extends AbstractCodeGen
 {
-
    /**
-    * Output class
+    * Output connection Spec class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -42,24 +43,13 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
    @Override
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
+
+      out.write("public class " + getClassName(def) + " implements ConnectionSpec");
+      writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
-      out.write("public interface " + getClassName(def));
-      writeLeftCurlyBracket(out, 0);
+      writeDefaultConstructor(def, out, indent);
       
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * call me");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("public void callMe();");
-
       writeRightCurlyBracket(out, 0);
    }
    
@@ -75,6 +65,9 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
+      out.write("import javax.resource.cci.ConnectionSpec ;");
+      writeEol(out);
+      writeEol(out);
    }
    
    /**
@@ -85,6 +78,7 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getConnInterfaceClass();
+      return def.getConnSpecClass();
    }
+
 }

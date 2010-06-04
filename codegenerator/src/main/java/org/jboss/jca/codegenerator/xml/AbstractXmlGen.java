@@ -19,73 +19,38 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.xml;
+
+import org.jboss.jca.codegenerator.BaseGen;
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A message listener CodeGen.
+ * A AbstractXmlGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class MlCodeGen extends AbstractCodeGen
+public abstract class AbstractXmlGen extends BaseGen
 {
-
    /**
-    * Output class
+    * generate code
+    * @param def Definition 
+    * @param out Writer
+    * @throws IOException ioException
+    */
+   public void generate(Definition def, Writer out) throws IOException
+   {
+      writeXmlBody(def, out);
+   }
+   
+   /**
+    * Output xml
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
     */
-   @Override
-   public void writeClassBody(Definition def, Writer out) throws IOException
-   {
-      int indent = 1;
-      out.write("public interface " + getClassName(def));
-      writeLeftCurlyBracket(out, 0);
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * receive message");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @param msg String.");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("public void onMessage(String msg);");
-
-      writeRightCurlyBracket(out, 0);
-   }
-   
-   /**
-    * Output class import
-    * @param def definition
-    * @param out Writer
-    * @throws IOException ioException
-    */
-   @Override
-   public void writeImport(Definition def, Writer out) throws IOException
-   {
-      out.write("package " + def.getRaPackage() + ";");
-      writeEol(out);
-      writeEol(out);
-   }
-   
-   /**
-    * get this class name
-    * @param def definition
-    * @return String class name
-    */
-   @Override
-   public String getClassName(Definition def)
-   {
-      return def.getMlClass();
-   }
+   public abstract void writeXmlBody(Definition def, Writer out) throws IOException;
 }

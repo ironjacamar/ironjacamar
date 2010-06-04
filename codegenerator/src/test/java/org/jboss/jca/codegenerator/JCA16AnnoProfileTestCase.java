@@ -22,6 +22,8 @@
 
 package org.jboss.jca.codegenerator;
 
+import org.jboss.jca.codegenerator.code.RaCodeGen;
+
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;

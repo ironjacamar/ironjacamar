@@ -19,35 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.xml;
+
+import org.jboss.jca.codegenerator.Definition;
+import org.jboss.jca.codegenerator.Utils;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
 
 /**
- * A AbstractXmlGen.
+ * A BuildXmlGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public abstract class AbstractXmlGen extends BaseGen
+public class BuildXmlGen extends AbstractXmlGen
 {
-   /**
-    * generate code
-    * @param def Definition 
-    * @param out Writer
-    * @throws IOException ioException
-    */
-   public void generate(Definition def, Writer out) throws IOException
+   @Override
+   public void writeXmlBody(Definition def, Writer out) throws IOException
    {
-      writeXmlBody(def, out);
+      out.write("<!--");
+      writeEol(out);
+      writeheader(def, out);
+      out.write("-->");
+      writeEol(out);
+      writeEol(out);
+      
+      URL buildFile = BuildXmlGen.class.getResource("/build.xml.template");
+      String buildString = Utils.readFileIntoString(buildFile);
+      out.write(buildString);
    }
-   
-   /**
-    * Output xml
-    * @param def definition
-    * @param out Writer
-    * @throws IOException ioException
-    */
-   public abstract void writeXmlBody(Definition def, Writer out) throws IOException;
 }

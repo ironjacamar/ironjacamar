@@ -19,21 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A connection factory interface CodeGen.
+ * A connection impl class CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class CfInterfaceCodeGen extends AbstractCodeGen
+public class ConnImplCodeGen extends AbstractCodeGen
 {
+
    /**
-    * Output class code
+    * Output class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -42,11 +45,36 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public interface " + getClassName(def) + " extends Serializable, Referenceable");
+      out.write("public class " + getClassName(def) + " implements " + def.getConnInterfaceClass());
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
+      writeIndent(out, indent);
+      out.write("/** The logger */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
+      writeEol(out);
+      writeEol(out);
+      
+      writeDefaultConstructor(def, out, indent);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * call me");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("public void callMe()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("log.debug(\"call callMe\");");
 
-      writeConnection(def, out, indent);
+      writeRightCurlyBracket(out, indent);
       writeRightCurlyBracket(out, 0);
    }
    
@@ -62,12 +90,7 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import java.io.Serializable;");
-      writeEol(out);
-      writeEol(out);
-      out.write("import javax.resource.Referenceable;");
-      writeEol(out);
-      out.write("import javax.resource.ResourceException;");
+      out.write("import org.jboss.logging.Logger;");
       writeEol(out);
       writeEol(out);
    }
@@ -80,36 +103,6 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getCfInterfaceClass();
-   }
-   
-   /**
-    * Output Connection method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeConnection(Definition def, Writer out, int indent) throws IOException
-   {
-      writeIndent(out, indent);
-      out.write("/** ");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * get connection from factory");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" *");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @return " + def.getConnInterfaceClass() + " instance");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException;");
-      writeEol(out);
+      return def.getConnImplClass();
    }
 }

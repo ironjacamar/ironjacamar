@@ -38,7 +38,7 @@ public class BaseGen
     * @param out Writer
     * @throws IOException ioException
     */
-   void writeEol(Writer out) throws IOException
+   public void writeEol(Writer out) throws IOException
    {
       out.write("\n");
    }
@@ -49,7 +49,7 @@ public class BaseGen
     * @param indent space number
     * @throws IOException ioException
     */
-   void writeIndent(Writer out, int indent) throws IOException
+   public void writeIndent(Writer out, int indent) throws IOException
    {
       for (int i = 0; i < indent; i++)
          out.write("   ");      
@@ -61,7 +61,7 @@ public class BaseGen
     * @param out Writer
     * @throws IOException ioException
     */
-   void writeheader(Definition def, Writer out) throws IOException
+   public void writeheader(Definition def, Writer out) throws IOException
    {
       URL headerFile = BaseGen.class.getResource("/header.template");
       String headerString = Utils.readFileIntoString(headerFile);

@@ -19,21 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A connection Spec class CodeGen.
+ * A message listener CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class ConnSpecCodeGen extends AbstractCodeGen
+public class MlCodeGen extends AbstractCodeGen
 {
+
    /**
-    * Output connection Spec class
+    * Output class
     * @param def definition
     * @param out Writer
     * @throws IOException ioException
@@ -41,13 +44,25 @@ public class ConnSpecCodeGen extends AbstractCodeGen
    @Override
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
-
-      out.write("public class " + getClassName(def) + " implements ConnectionSpec");
-      writeLeftCurlyBracket(out, 0);
       int indent = 1;
+      out.write("public interface " + getClassName(def));
+      writeLeftCurlyBracket(out, 0);
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * receive message");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param msg String.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
       
-      writeDefaultConstructor(def, out, indent);
-      
+      writeIndent(out, indent);
+      out.write("public void onMessage(String msg);");
+
       writeRightCurlyBracket(out, 0);
    }
    
@@ -63,9 +78,6 @@ public class ConnSpecCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.cci.ConnectionSpec ;");
-      writeEol(out);
-      writeEol(out);
    }
    
    /**
@@ -76,7 +88,6 @@ public class ConnSpecCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getConnSpecClass();
+      return def.getMlClass();
    }
-
 }

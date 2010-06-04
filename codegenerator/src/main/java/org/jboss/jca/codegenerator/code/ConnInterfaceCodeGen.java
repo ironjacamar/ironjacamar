@@ -19,18 +19,20 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.codegenerator;
+package org.jboss.jca.codegenerator.code;
+
+import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A connection impl class CodeGen.
+ * A connection interface CodeGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class ConnImplCodeGen extends AbstractCodeGen
+public class ConnInterfaceCodeGen extends AbstractCodeGen
 {
 
    /**
@@ -42,19 +44,10 @@ public class ConnImplCodeGen extends AbstractCodeGen
    @Override
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
-
-      out.write("public class " + getClassName(def) + " implements " + def.getConnInterfaceClass());
-      writeLeftCurlyBracket(out, 0);
       int indent = 1;
-      writeIndent(out, indent);
-      out.write("/** The logger */");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
-      writeEol(out);
-      writeEol(out);
       
-      writeDefaultConstructor(def, out, indent);
+      out.write("public interface " + getClassName(def));
+      writeLeftCurlyBracket(out, 0);
       
       writeIndent(out, indent);
       out.write("/**");
@@ -67,12 +60,8 @@ public class ConnImplCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("public void callMe()");
-      writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.debug(\"call callMe\");");
+      out.write("public void callMe();");
 
-      writeRightCurlyBracket(out, indent);
       writeRightCurlyBracket(out, 0);
    }
    
@@ -88,9 +77,6 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import org.jboss.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
    }
    
    /**
@@ -101,6 +87,6 @@ public class ConnImplCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getConnImplClass();
+      return def.getConnInterfaceClass();
    }
 }
