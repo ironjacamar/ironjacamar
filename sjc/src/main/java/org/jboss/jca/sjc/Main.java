@@ -290,6 +290,7 @@ public class Main
             @Override
             public void run()
             {
+               long l1 = System.currentTimeMillis();
                try
                {
                   if (kernel != null)
@@ -299,7 +300,8 @@ public class Main
                {
                   error(t.getMessage(), t);
                }
-               info("Shutdown complete");
+               long l2 = System.currentTimeMillis();
+               info("Shutdown complete in " + (l2 - l1) + " ms");
             }
          });
 
