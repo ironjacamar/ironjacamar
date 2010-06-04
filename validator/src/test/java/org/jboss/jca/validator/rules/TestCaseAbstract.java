@@ -60,9 +60,9 @@ public abstract class TestCaseAbstract
     */
    protected ResourceAdapterArchive getArchive(String archiveName) throws Throwable
    {
-      ResourceAdapterArchive raa = ShrinkWrap.create(archiveName, ResourceAdapterArchive.class);
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, archiveName);
 
-      JavaArchive ja = ShrinkWrap.create(UUID.randomUUID().toString() + ".jar", JavaArchive.class);
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
       ja.addClasses(TestActivationSpec.class, TestManagedConnection.class, TestResourceAdapterRight.class,
             TestResourceAdapterWrong.class);
 
