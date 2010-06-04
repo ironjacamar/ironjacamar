@@ -29,8 +29,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jboss.logging.Logger;
 
-import org.mortbay.component.AbstractLifeCycle;
-import org.mortbay.thread.ThreadPool;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
 /**
  * An implementation of the Jetty ThreadPool interface using an ExecutorService

@@ -26,15 +26,19 @@ import java.util.concurrent.ExecutorService;
 
 import org.jboss.logging.Logger;
 
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
+import com.github.fungal.spi.deployers.DeployerPhases;
+
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.bio.SocketConnector;
+import org.eclipse.jetty.server.handler.HandlerList;
 
 /**
  * The web server
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class WebServer
+public class WebServer implements DeployerPhases
 {
    private static Logger log = Logger.getLogger(WebServer.class);
    private static boolean trace = log.isTraceEnabled();
@@ -51,6 +55,9 @@ public class WebServer
    /** Executor service */
    private ExecutorService executorService;
 
+    /** Handlers for web apps **/
+   private HandlerList handlers;
+
    /**
     * Constructs the web server
     */
@@ -60,24 +67,7 @@ public class WebServer
       this.host = "localhost";
       this.port = 8080;
       this.executorService = null;
-   }
-
-   /**
-    * Get the web server
-    * @return The server
-    */
-   public Server getServer()
-   {
-      return server;
-   }
-
-   /**
-    * Get the host
-    * @return The host
-    */
-   public String getHost()
-   {
-      return host;
+      this.handlers = new HandlerList();
    }
 
    /**
@@ -135,8 +125,6 @@ public class WebServer
       if (executorService != null)
          server.setThreadPool(new ExecutorThreadPool(executorService));
 
-      server.start();
-
       log.info("Jetty " + Server.getVersion() + " started");
    }
 
@@ -149,8 +137,61 @@ public class WebServer
       if (server != null && server.isRunning())
       {
          server.stop();
+         handlers = new HandlerList();
 
          log.info("Jetty " + Server.getVersion() + " stopped");
       }
+   }
+
+   /**
+    * Pre deploy
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void preDeploy() throws Throwable
+   {
+   }
+
+   /**
+    * Post deploy
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void postDeploy() throws Throwable
+   {
+      try
+      {
+         server.setHandler(handlers);
+      
+         server.start();
+      }
+      catch (Exception e)
+      {
+         log.error("Could not start Jetty webserver");
+      }
+   }
+
+   /**
+    * Pre undeploy
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void preUndeploy() throws Throwable
+   {
+   }
+
+   /**
+    * Post undeploy
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void postUndeploy() throws Throwable
+   {
+   }
+
+   /**
+    * Add a handle
+    * @param handler The handle
+    */
+   void addHandler(Handler handler)
+   {
+      handler.setServer(server);
+      handlers.addHandler(handler);
    }
 }

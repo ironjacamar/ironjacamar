@@ -9,7 +9,7 @@
 
   <!-- WAR deployer -->
   <bean name="WARDeployer" class="org.jboss.jca.web.WARDeployer">
-    <property name="server"><inject bean="WebServer" property="Server"/></property>
+    <property name="WebServer"><inject bean="WebServer"/></property>
     <depends>WebServer</depends>
   </bean>
 

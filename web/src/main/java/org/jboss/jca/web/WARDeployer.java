@@ -32,10 +32,7 @@ import com.github.fungal.api.util.FileUtil;
 import com.github.fungal.spi.deployers.DeployException;
 import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
-
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.webapp.WebAppContext;
-
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * The WAR deployer for JCA/SJC
@@ -46,32 +43,32 @@ public class WARDeployer implements Deployer
    private static Logger log = Logger.getLogger(WARDeployer.class);
    private static boolean trace = log.isTraceEnabled();
 
-   private Server server;
-   
+   private WebServer webServer;
+       
    /**
     * Constructor
     */
    public WARDeployer()
    {
-      this.server = null;
+      this.webServer = null;
    }
 
    /**
-    * Get the server
+    * Get the web server
     * @return The server
     */
-   public Server getServer()
+   public WebServer getWebServer()
    {
-      return server;
+      return webServer;
    }
 
    /**
-    * Set the server
+    * Set the web server
     * @param server The server
     */
-   public void setServer(Server server)
+   public void setWebServer(WebServer server)
    {
-      this.server = server;
+      this.webServer = server;
    }
 
    /**
@@ -148,14 +145,11 @@ public class WARDeployer implements Deployer
          log.debug("ContextPath=" + contextPath);
 
          WebAppContext webapp = new WebAppContext();
-         webapp.setServer(server);
          webapp.setContextPath(contextPath);
          webapp.setWar(url.toString());
-         webapp.setTempDirectory(tmpDeployment); 
+         webapp.setTempDirectory(tmpDeployment);
 
-         server.stop();
-         server.addHandler(webapp);
-         server.start();
+         webServer.addHandler(webapp);
 
          log.info("Deployed: " + url.toExternalForm());
 

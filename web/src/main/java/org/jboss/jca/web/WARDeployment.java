@@ -32,7 +32,7 @@ import org.jboss.logging.Logger;
 import com.github.fungal.api.util.FileUtil;
 import com.github.fungal.spi.deployers.Deployment;
 
-import org.mortbay.jetty.Handler;
+import org.eclipse.jetty.server.Handler;
 
 /**
  * A web archive deployment for JCA/SJC
@@ -100,7 +100,7 @@ public class WARDeployment implements Deployment
          {
             handler.stop();
          }
-         catch (Exception e)
+         catch (Throwable t)
          {
             // Ignore
          }
