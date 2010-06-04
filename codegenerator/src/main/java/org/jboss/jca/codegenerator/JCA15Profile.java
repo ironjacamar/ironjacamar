@@ -23,25 +23,25 @@ package org.jboss.jca.codegenerator;
 
 import org.jboss.jca.codegenerator.code.AbstractCodeGen;
 import org.jboss.jca.codegenerator.xml.BuildXmlGen;
-import org.jboss.jca.codegenerator.xml.Ra16XmlGen;
+import org.jboss.jca.codegenerator.xml.Ra15XmlGen;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * A JCA16Profile.
+ * A JCA15Profile.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class JCA16Profile implements Profile
+public class JCA15Profile implements Profile
 {
 
    /**
-    * JCA16Profile
+    * JCA15Profile
     */
-   public JCA16Profile()
+   public JCA15Profile()
    {
    }
    
@@ -83,9 +83,8 @@ public class JCA16Profile implements Profile
       }
       
       generateAntXml(def.getOutputDir());
-      
-      if (!def.isUseAnnotation())
-         generateRaXml(def, def.getOutputDir());
+
+      generateRaXml(def, def.getOutputDir());
    }
 
    /**
@@ -154,7 +153,7 @@ public class JCA16Profile implements Profile
       try
       {
          FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
-         Ra16XmlGen raGen = new Ra16XmlGen();
+         Ra15XmlGen raGen = new Ra15XmlGen();
          raGen.generate(def, rafw);
          rafw.close();
       }

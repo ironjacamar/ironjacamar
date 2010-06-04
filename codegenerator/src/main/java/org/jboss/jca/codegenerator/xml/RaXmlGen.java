@@ -34,25 +34,13 @@ import java.util.List;
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class RaXmlGen extends AbstractXmlGen
+public abstract class RaXmlGen extends AbstractXmlGen
 {
    @Override
    public void writeXmlBody(Definition def, Writer out) throws IOException
    {
-      out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-      writeEol(out);
-      writeEol(out);
-      out.write("<connector xmlns=\"http://java.sun.com/xml/ns/javaee\"");
-      writeEol(out);
-      out.write("           xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-      writeEol(out);
-      out.write("           xsi:schemaLocation=\"http://java.sun.com/xml/ns/javaee");
-      writeEol(out);
-      out.write("           http://java.sun.com/xml/ns/j2ee/connector_1_6.xsd\"");
-      writeEol(out);
-      out.write("           version=\"1.6\" metadata-complete=\"true\">");
-      writeEol(out);
-      writeEol(out);
+      writeConnectorVersion(out);
+      
       int indent = 1;
       writeIndent(out, indent);
       out.write("<vendor-name>Red Hat Middleware LLC</vendor-name>");
@@ -81,6 +69,14 @@ public class RaXmlGen extends AbstractXmlGen
       out.write("</connector>");
       writeEol(out);
    }
+
+   /**
+    * write Connector Version
+    * 
+    * @param out output writer
+    * @throws IOException io exception
+    */
+   abstract void writeConnectorVersion(Writer out) throws IOException;
    
    /**
     * Output config props xml part

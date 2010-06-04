@@ -92,26 +92,39 @@ public class Main
 
          BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
          Definition def = new Definition();
-
-         System.out.print(dbconf.getString("use.annotation"));
-         String useAnnotation = in.readLine();
-         if (useAnnotation == null)
-            def.setUseAnnotation(false);
-         else
+         
+         String version = null;
+         do
          {
-            if (useAnnotation.equals("Y") || useAnnotation.equals("y") || useAnnotation.equals("Yes"))
-               def.setUseAnnotation(true);
-            else
-               def.setUseAnnotation(false);
+            System.out.print(dbconf.getString("profile.version"));
+            version = in.readLine();
+            if (version == null || version.equals(""))
+               version = "1.6";
          }
+         while (!(version.equals("1.6") || version.equals("1.5")));
+         
+         if (version.equals("1.6"))
+         {
+            System.out.print(dbconf.getString("use.annotation"));
+            String useAnnotation = in.readLine();
+            if (useAnnotation == null)
+               def.setUseAnnotation(false);
+            else
+            {
+               if (useAnnotation.equals("Y") || useAnnotation.equals("y") || useAnnotation.equals("Yes"))
+                  def.setUseAnnotation(true);
+               else
+                  def.setUseAnnotation(false);
+            }
+         }
+         else
+            def.setUseAnnotation(false);
          
          System.out.print(dbconf.getString("package.name"));
          String packageName = in.readLine();
          System.out.print(dbconf.getString("ra.class.name"));
          String raClassName = in.readLine();
          
-
-         Profile profile = new JCA16Profile();
          def.setRaPackage(packageName);
          def.setRaClass(raClassName);
          
@@ -195,6 +208,17 @@ public class Main
          }
          
          def.setOutputDir(outputDir);
+
+         Profile profile;
+
+         if (version.equals("1.6"))
+         {
+            profile = new JCA16Profile();
+         }
+         else
+         {
+            profile = new JCA15Profile();
+         }
 
          profile.generate(def, packageName);
          
