@@ -93,6 +93,7 @@ public class Main
          BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
          Definition def = new Definition();
          
+         //profile version
          String version = null;
          do
          {
@@ -103,98 +104,147 @@ public class Main
          }
          while (!(version.equals("1.6") || version.equals("1.5")));
          
+         //bound
+         System.out.print(dbconf.getString("support.bound"));
+         String bound = in.readLine();
+         if (bound == null || bound.equals("") || bound.equals("O") || bound.equals("o") || bound.equals("Outbound"))
+         {
+            def.setSupportOutbound(true);
+            def.setSupportInbound(false);
+         }
+         else if (bound.equals("I") || bound.equals("i") || bound.equals("Inbound"))
+         {
+            def.setSupportOutbound(false);
+            def.setSupportInbound(true);
+         }
+         else if (bound.equals("B") || bound.equals("b") || bound.equals("Bidirectional"))
+         {
+            def.setSupportOutbound(true);
+            def.setSupportInbound(true);
+         }
+         else
+         {
+            def.setSupportOutbound(true);
+            def.setSupportInbound(false);
+         }
+         
+         //package name
+         System.out.print(dbconf.getString("package.name"));
+         String packageName = in.readLine();
+         def.setRaPackage(packageName);
+         
+         //support annotation
          if (version.equals("1.6"))
          {
             System.out.print(dbconf.getString("use.annotation"));
             String useAnnotation = in.readLine();
             if (useAnnotation == null)
-               def.setUseAnnotation(false);
+               def.setUseAnnotation(true);
             else
             {
-               if (useAnnotation.equals("Y") || useAnnotation.equals("y") || useAnnotation.equals("Yes"))
-                  def.setUseAnnotation(true);
-               else
+               if (useAnnotation.equals("N") || useAnnotation.equals("n") || useAnnotation.equals("No"))
                   def.setUseAnnotation(false);
+               else
+                  def.setUseAnnotation(true);
             }
          }
          else
+         {
             def.setUseAnnotation(false);
-         
-         System.out.print(dbconf.getString("package.name"));
-         String packageName = in.readLine();
-         System.out.print(dbconf.getString("ra.class.name"));
-         String raClassName = in.readLine();
-         
-         def.setRaPackage(packageName);
-         def.setRaClass(raClassName);
-         
-         List<ConfigPropType> raProps = inputProperties("ra", dbconf, in, false);
-         def.setRaConfigProps(raProps);
-         
-         System.out.print(dbconf.getString("mcf.class.name"));
-         String mcfClassName = in.readLine();
-         def.setMcfClass(mcfClassName);
+         }
 
-         List<ConfigPropType> mcfProps = inputProperties("mcf", dbconf, in, false);
-         def.setMcfConfigProps(mcfProps);
-
-         System.out.print(dbconf.getString("mcf.impl.raa"));
-         String raAssociation = in.readLine();
-         if (raAssociation == null)
-            def.setImplRaAssociation(false);
+         //use resource adapter
+         if (def.isSupportOutbound() && !def.isSupportInbound() && (version.equals("1.6") || version.equals("1.5")))
+         {
+            System.out.print(dbconf.getString("use.ra"));
+            String useRa = in.readLine();
+            if (useRa == null)
+               def.setUseRa(true);
+            else
+            {
+               if (useRa.equals("N") || useRa.equals("n") || useRa.equals("No"))
+                  def.setUseRa(false);
+               else
+                  def.setUseRa(true);
+            }
+         }
          else
          {
-            if (raAssociation.equals("Y") || raAssociation.equals("y") || raAssociation.equals("Yes"))
-               def.setImplRaAssociation(true);
-            else
-               def.setImplRaAssociation(false);
+            def.setUseRa(true);
          }
          
-         System.out.print(dbconf.getString("mcf.use.cci"));
-         String useCciConnection = in.readLine();
-         if (useCciConnection == null)
-            def.setUseCciConnection(false);
-         else
+         //input ra class name
+         if (def.isUseRa() || def.isSupportInbound())
          {
-            if (useCciConnection.equals("Y") || useCciConnection.equals("y") || useCciConnection.equals("Yes"))
-               def.setUseCciConnection(true);
-            else
+            System.out.print(dbconf.getString("ra.class.name"));
+            String raClassName = in.readLine();
+            def.setRaClass(raClassName);
+            
+            List<ConfigPropType> raProps = inputProperties("ra", dbconf, in, false);
+            def.setRaConfigProps(raProps);
+         }
+         
+         //outbound
+         if (def.isSupportOutbound())
+         {
+            System.out.print(dbconf.getString("mcf.class.name"));
+            String mcfClassName = in.readLine();
+            def.setMcfClass(mcfClassName);
+   
+            List<ConfigPropType> mcfProps = inputProperties("mcf", dbconf, in, false);
+            def.setMcfConfigProps(mcfProps);
+
+            if (def.isUseRa())
+            {
+               System.out.print(dbconf.getString("mcf.impl.raa"));
+               String raAssociation = in.readLine();
+               if (raAssociation == null)
+                  def.setImplRaAssociation(false);
+               else
+               {
+                  if (raAssociation.equals("Y") || raAssociation.equals("y") || raAssociation.equals("Yes"))
+                     def.setImplRaAssociation(true);
+                  else
+                     def.setImplRaAssociation(false);
+               }
+            }
+            
+            System.out.print(dbconf.getString("mc.class.name"));
+            String mcClassName = in.readLine();
+            def.setMcClass(mcClassName);
+            
+            System.out.print(dbconf.getString("mcf.use.cci"));
+            String useCciConnection = in.readLine();
+            if (useCciConnection == null)
                def.setUseCciConnection(false);
-         }
-         
-         System.out.print(dbconf.getString("mc.class.name"));
-         String mcClassName = in.readLine();
-         def.setMcClass(mcClassName);
-         
-         if (!def.isUseCciConnection())
-         {
-            System.out.print(dbconf.getString("cf.interface.name"));
-            String cfInterfaceName = in.readLine();
-            def.setCfInterfaceClass(cfInterfaceName);
-            System.out.print(dbconf.getString("cf.class.name"));
-            String cfClassName = in.readLine();
-            def.setCfClass(cfClassName);
-
-            System.out.print(dbconf.getString("conn.interface.name"));
-            String connInterfaceName = in.readLine();
-            def.setConnInterfaceClass(connInterfaceName);
-            System.out.print(dbconf.getString("conn.class.name"));
-            String connImplName = in.readLine();
-            def.setConnImplClass(connImplName);
-         }
-         
-         System.out.print(dbconf.getString("support.inbound"));
-         String inbound = in.readLine();
-         if (inbound == null)
-            def.setSupportInbound(false);
-         else
-         {
-            if (inbound.equals("Y") || inbound.equals("y") || inbound.equals("Yes"))
-               def.setSupportInbound(true);
             else
-               def.setSupportInbound(false);
+            {
+               if (useCciConnection.equals("Y") || useCciConnection.equals("y") || useCciConnection.equals("Yes"))
+                  def.setUseCciConnection(true);
+               else
+                  def.setUseCciConnection(false);
+            }
+            
+            if (!def.isUseCciConnection())
+            {
+               System.out.print(dbconf.getString("cf.interface.name"));
+               String cfInterfaceName = in.readLine();
+               def.setCfInterfaceClass(cfInterfaceName);
+               System.out.print(dbconf.getString("cf.class.name"));
+               String cfClassName = in.readLine();
+               def.setCfClass(cfClassName);
+   
+               System.out.print(dbconf.getString("conn.interface.name"));
+               String connInterfaceName = in.readLine();
+               def.setConnInterfaceClass(connInterfaceName);
+               System.out.print(dbconf.getString("conn.class.name"));
+               String connImplName = in.readLine();
+               def.setConnImplClass(connImplName);
+            }
          }
          
+
+         //inbound
          if (def.isSupportInbound())
          {
             System.out.print(dbconf.getString("ml.interface.name"));
@@ -210,7 +260,6 @@ public class Main
          def.setOutputDir(outputDir);
 
          Profile profile;
-
          if (version.equals("1.6"))
          {
             profile = new JCA16Profile();
@@ -219,8 +268,7 @@ public class Main
          {
             profile = new JCA15Profile();
          }
-
-         profile.generate(def, packageName);
+         profile.generate(def);
          
          System.out.println(dbconf.getString("code.wrote"));
       }

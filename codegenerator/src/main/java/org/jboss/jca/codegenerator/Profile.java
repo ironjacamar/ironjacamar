@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.codegenerator;
 
-
 /**
  * Profile interface.
  * 
@@ -33,7 +32,6 @@ public interface Profile
    /**
     * generate code
     * @param def Definition
-    * @param packageName the writer to output the text to.
     */
-   public void generate(Definition def, String packageName);
+   public void generate(Definition def);
 }

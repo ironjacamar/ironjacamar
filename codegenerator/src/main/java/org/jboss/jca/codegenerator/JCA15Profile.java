@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.codegenerator;
 
-import org.jboss.jca.codegenerator.code.AbstractCodeGen;
-import org.jboss.jca.codegenerator.xml.BuildXmlGen;
 import org.jboss.jca.codegenerator.xml.Ra15XmlGen;
 
 import java.io.File;
@@ -35,7 +33,7 @@ import java.io.IOException;
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class JCA15Profile implements Profile
+public class JCA15Profile extends BaseProfile
 {
 
    /**
@@ -49,98 +47,16 @@ public class JCA15Profile implements Profile
    /**
     * generate code
     * @param def Definition 
-    * @param packageName the writer to output the text to.
     */
    @Override
-   public void generate(Definition def, String packageName)
+   public void generate(Definition def)
    {
-      generateClassCode(def, "Ra");
-      generateClassCode(def, "Mcf");
-      generateClassCode(def, "Mc");
-      generateClassCode(def, "McMeta");
-      generateClassCode(def, "Cm");
+      generateRaCode(def);
+      generateOutboundCode(def);
+      generateInboundCode(def);
 
-      if (!def.isUseCciConnection())
-      {
-         generateClassCode(def, "CfInterface");
-         generateClassCode(def, "Cf");
-         generateClassCode(def, "ConnInterface");
-         generateClassCode(def, "ConnImpl");
-      }
-      else
-      {
-         generateClassCode(def, "CciConn");
-         generateClassCode(def, "CciConnFactory");
-         generateClassCode(def, "ConnMeta");
-         generateClassCode(def, "RaMeta");
-         generateClassCode(def, "ConnSpec");
-      }
-      
-      if (def.isSupportInbound())
-      {
-         generateClassCode(def, "Ml");
-         generateClassCode(def, "As");
-      }
-      
       generateAntXml(def.getOutputDir());
-
       generateRaXml(def, def.getOutputDir());
-   }
-
-   /**
-    * generate ResourceAdapater code
-    * @param def Definition 
-    * @param packageName the writer to output the text to.
-    */
-   private void generateClassCode(Definition def, String className)
-   {
-      if (className == null || className.equals(""))
-         return;
-      
-      try
-      {
-
-         String clazzName = this.getClass().getPackage().getName() + ".code." + className + "CodeGen";
-         String javaFile = (String)Definition.class.getMethod(
-            "get" + className + "Class").invoke(def, (Object[])null) + ".java";
-         FileWriter fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
-
-         Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
-         AbstractCodeGen codeGen = (AbstractCodeGen)clazz.newInstance();
-         
-         codeGen.generate(def, fw);
-         
-         fw.flush();
-         fw.close();
-      }
-      catch (IOException ioe)
-      {
-         ioe.printStackTrace();
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-   }
-   
-   /**
-    * generate ant build.xml
-    * @param outputDir output directory
-    */
-   private void generateAntXml(String outputDir)
-   {
-      try
-      {
-         //ant build.xml
-         FileWriter antfw = Utils.createFile("build.xml", outputDir);
-         BuildXmlGen bxGen = new BuildXmlGen();
-         bxGen.generate(null, antfw);
-         antfw.close();
-      }
-      catch (IOException ioe)
-      {
-         ioe.printStackTrace();
-      }
    }
 
    /**
@@ -148,7 +64,8 @@ public class JCA15Profile implements Profile
     * @param def Definition
     * @param outputDir output directory
     */
-   private void generateRaXml(Definition def, String outputDir)
+   @Override
+   void generateRaXml(Definition def, String outputDir)
    {
       try
       {

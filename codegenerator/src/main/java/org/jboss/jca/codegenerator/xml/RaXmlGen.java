@@ -54,14 +54,24 @@ public abstract class RaXmlGen extends AbstractXmlGen
       writeIndent(out, indent);
       out.write("<resourceadapter>");
       writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write("<resourceadapter-class>" + def.getRaPackage() + "." + def.getRaClass() + "</resourceadapter-class>");
-      writeEol(out);
       
-      writeConfigPropsXml(def.getRaConfigProps(), out, indent + 1, false);
-      writeOutbound(def, out, indent + 1);
+      if (def.isUseRa())
+      {
+         writeIndent(out, indent + 1);
+         out.write("<resourceadapter-class>" + def.getRaPackage() + "." + 
+            def.getRaClass() + "</resourceadapter-class>");
+         writeEol(out);
+         writeConfigPropsXml(def.getRaConfigProps(), out, indent + 1, false);
+      }
+
+      if (def.isSupportOutbound())
+      {
+         writeOutbound(def, out, indent + 1);
+      }
       if (def.isSupportInbound())
+      {
          writeInbound(def, out, indent + 1);
+      }
       
       writeIndent(out, indent);
       out.write("</resourceadapter>");

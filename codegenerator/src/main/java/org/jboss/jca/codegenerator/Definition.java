@@ -35,6 +35,13 @@ public class Definition
    private String outputDir;
    /** resource adapter package name */
    private String raPackage;
+   
+   
+   /** use annotation or ra.xml  */
+   private boolean useAnnotation;
+   /** use resource adapter  */
+   private boolean useRa;
+
    /** resource adapter class name */
    private String raClass;
    /** resource adapter configuration properties */
@@ -76,10 +83,9 @@ public class Definition
    private String connSpecClass;
    /** resource adapater metadata class name */
    private String raMetaClass;
-   
-   /** use annotation or ra.xml  */
-   private boolean useAnnotation;
-   
+
+   /** support outbound  */
+   private boolean supportOutbound;
    /** support inbound  */
    private boolean supportInbound;
    /** connection metadata class name */
@@ -524,6 +530,26 @@ public class Definition
    }
 
    /**
+    * Set the supportOutbound.
+    * 
+    * @param supportOutbound The supportOutbound to set.
+    */
+   public void setSupportOutbound(boolean supportOutbound)
+   {
+      this.supportOutbound = supportOutbound;
+   }
+
+   /**
+    * Get the supportOutbound.
+    * 
+    * @return the supportOutbound.
+    */
+   public boolean isSupportOutbound()
+   {
+      return supportOutbound;
+   }
+   
+   /**
     * Set the supportInbound.
     * 
     * @param supportInbound The supportInbound to set.
@@ -602,4 +628,25 @@ public class Definition
    {
       return asConfigProps;
    }
+
+   /**
+    * Set the useRa.
+    * 
+    * @param useRa The useRa to set.
+    */
+   public void setUseRa(boolean useRa)
+   {
+      this.useRa = useRa;
+   }
+
+   /**
+    * Get the useRa.
+    * 
+    * @return the useRa.
+    */
+   public boolean isUseRa()
+   {
+      return useRa;
+   }
+
 }
