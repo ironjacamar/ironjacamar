@@ -115,6 +115,7 @@
     <dependency org="org.jboss.stdio" name="jboss-stdio" rev="${version.jboss.stdio}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.threads" name="jboss-threads" rev="${version.jboss.threads}" conf="standalone->default;sjc->*"/>
     <dependency org="org.jboss.threads" name="jboss-threads-metadata" rev="${version.jboss.threads}" conf="standalone->default"/>
+    <dependency org="org.mockito" name="mockito-all" rev="${version.mockito}" conf="test->default"/>
     <dependency org="org.mortbay.jetty" name="jsp-api-2.1-glassfish"  rev="${version.jetty.glassfish}" conf="standalone->default;sjc->*"/>
     <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="standalone->default;sjc->*"/>
