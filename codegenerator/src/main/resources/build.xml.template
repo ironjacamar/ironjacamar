@@ -19,7 +19,7 @@
   <target name="compile">
     <mkdir dir="${build.dir}" />
 
-    <javac srcdir="${basedir}/src"
+    <javac srcdir="${basedir}/src/main/java"
            destdir="${build.dir}"
            classpathref="lib.path.id">
     </javac> 
@@ -34,7 +34,7 @@
          basedir="${build.dir}"
          includes="**/*.class"/>
     <jar destfile="${target.dir}/jca-test.rar">
-      <fileset dir="${basedir}" includes="META-INF/*"/>
+      <fileset dir="${basedir}/src/main/resources" includes="META-INF/*"/>
       <fileset dir="${build.dir}" includes="**/*.jar"/>
     </jar>
   </target>
@@ -45,7 +45,7 @@
   <target name="docs" depends="compile">
     <mkdir dir="${target.dir}/docs"/>
     <javadoc packagenames="*"
-             sourcepath="src"
+             sourcepath="src/main/java"
              destdir="${target.dir}/docs"
              classpathref="lib.path.id">
     </javadoc>

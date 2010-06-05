@@ -96,7 +96,7 @@ public class Utils
     */
    public static FileWriter createSrcFile(String name, String packageName, String outDir) throws IOException
    {
-      String directory = "src";
+      String directory = "src" + File.separatorChar + "main" + File.separatorChar + "java";
 
       if (packageName != null && !packageName.trim().equals(""))
       {

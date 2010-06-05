@@ -23,7 +23,9 @@ package org.jboss.jca.codegenerator;
 
 import org.jboss.jca.codegenerator.code.AbstractCodeGen;
 import org.jboss.jca.codegenerator.xml.BuildXmlGen;
+import org.jboss.jca.codegenerator.xml.RaXmlGen;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -163,7 +165,6 @@ public class BaseProfile implements Profile
    {
       try
       {
-         //ant build.xml
          FileWriter antfw = Utils.createFile("build.xml", outputDir);
          BuildXmlGen bxGen = new BuildXmlGen();
          bxGen.generate(null, antfw);
@@ -182,5 +183,28 @@ public class BaseProfile implements Profile
     */
    void generateRaXml(Definition def, String outputDir)
    {
+      try
+      {
+         outputDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
+            "main" + File.separatorChar + "resources";
+         FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
+         RaXmlGen raGen = getRaXmlGen(def);
+         raGen.generate(def, rafw);
+         rafw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+   }
+   
+   /**
+    * get right profile ra xmlGen
+    * @param def Definition
+    * @return RaXmlGen profile ra xmlGen
+    */
+   RaXmlGen getRaXmlGen(Definition def)
+   {
+      return null;
    }
 }

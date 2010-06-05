@@ -22,10 +22,7 @@
 package org.jboss.jca.codegenerator;
 
 import org.jboss.jca.codegenerator.xml.Ra15XmlGen;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import org.jboss.jca.codegenerator.xml.RaXmlGen;
 
 /**
  * A JCA15Profile.
@@ -59,24 +56,15 @@ public class JCA15Profile extends BaseProfile
       generateRaXml(def, def.getOutputDir());
    }
 
+
    /**
-    * generate ra.xml
+    * get right profile ra xmlGen
     * @param def Definition
-    * @param outputDir output directory
+    * @return RaXmlGen profile ra xmlGen
     */
    @Override
-   void generateRaXml(Definition def, String outputDir)
+   RaXmlGen getRaXmlGen(Definition def)
    {
-      try
-      {
-         FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
-         Ra15XmlGen raGen = new Ra15XmlGen();
-         raGen.generate(def, rafw);
-         rafw.close();
-      }
-      catch (IOException ioe)
-      {
-         ioe.printStackTrace();
-      }
+      return new Ra15XmlGen();
    }
 }
