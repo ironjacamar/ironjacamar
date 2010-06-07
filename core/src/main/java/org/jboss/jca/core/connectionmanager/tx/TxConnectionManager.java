@@ -146,7 +146,7 @@ public class TxConnectionManager extends AbstractConnectionManager
    private boolean padXid;
    
    /**XA resource wrapped or not*/
-   private boolean wrapXAResource;
+   private boolean wrapXAResource = true;
 
    /**Same RM override*/
    private Boolean isSameRMOverrideValue;
@@ -471,8 +471,11 @@ public class TxConnectionManager extends AbstractConnectionManager
 
             try
             {
-               eisProductName = mc.getMetaData().getEISProductName();
-               eisProductVersion = mc.getMetaData().getEISProductVersion();
+               if (mc.getMetaData() != null)
+               {
+                  eisProductName = mc.getMetaData().getEISProductName();
+                  eisProductVersion = mc.getMetaData().getEISProductVersion();
+               }
             }
             catch (ResourceException re)
             {
