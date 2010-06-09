@@ -102,30 +102,31 @@ public class Main
             if (version == null || version.equals(""))
                version = "1.6";
          }
-         while (!(version.equals("1.6") || version.equals("1.5")));
+         while (!(version.equals("1.6") || version.equals("1.5") || version.equals("1.0")));
+         
+         //by default, support outbound, but not inbound
+         def.setSupportOutbound(true);
+         def.setSupportInbound(false);
          
          //bound
-         System.out.print(dbconf.getString("support.bound"));
-         String bound = in.readLine();
-         if (bound == null || bound.equals("") || bound.equals("O") || bound.equals("o") || bound.equals("Outbound"))
+         if (!version.equals("1.0"))
          {
-            def.setSupportOutbound(true);
-            def.setSupportInbound(false);
-         }
-         else if (bound.equals("I") || bound.equals("i") || bound.equals("Inbound"))
-         {
-            def.setSupportOutbound(false);
-            def.setSupportInbound(true);
-         }
-         else if (bound.equals("B") || bound.equals("b") || bound.equals("Bidirectional"))
-         {
-            def.setSupportOutbound(true);
-            def.setSupportInbound(true);
-         }
-         else
-         {
-            def.setSupportOutbound(true);
-            def.setSupportInbound(false);
+            System.out.print(dbconf.getString("support.bound"));
+            String bound = in.readLine();
+            if (bound == null || bound.equals("") || bound.equals("O") || bound.equals("o") || bound.equals("Outbound"))
+            {
+               //keep default bound 
+            }
+            else if (bound.equals("I") || bound.equals("i") || bound.equals("Inbound"))
+            {
+               def.setSupportOutbound(false);
+               def.setSupportInbound(true);
+            }
+            else if (bound.equals("B") || bound.equals("b") || bound.equals("Bidirectional"))
+            {
+               def.setSupportOutbound(true);
+               def.setSupportInbound(true);
+            }
          }
          
          //package name
@@ -167,6 +168,10 @@ public class Main
                else
                   def.setUseRa(true);
             }
+         }
+         else if (version.equals("1.0"))
+         {
+            def.setUseRa(false);
          }
          else
          {
@@ -264,9 +269,13 @@ public class Main
          {
             profile = new JCA16Profile();
          }
-         else
+         else if (version.equals("1.5"))
          {
             profile = new JCA15Profile();
+         }
+         else
+         {
+            profile = new JCA10Profile();
          }
          profile.generate(def);
          

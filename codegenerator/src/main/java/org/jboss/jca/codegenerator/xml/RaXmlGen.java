@@ -36,6 +36,12 @@ import java.util.List;
  */
 public abstract class RaXmlGen extends AbstractXmlGen
 {
+   /**
+    * Output xml
+    * @param def definition
+    * @param out Writer
+    * @throws IOException ioException
+    */
    @Override
    public void writeXmlBody(Definition def, Writer out) throws IOException
    {
@@ -96,7 +102,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
     * @param required support required
     * @throws IOException ioException
     */
-   private void writeConfigPropsXml(List<ConfigPropType> props, 
+   void writeConfigPropsXml(List<ConfigPropType> props, 
       Writer out, int indent, boolean required) throws IOException
    {
       if (props == null || props.size() == 0)
