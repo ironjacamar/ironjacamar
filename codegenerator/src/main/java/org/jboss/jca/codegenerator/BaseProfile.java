@@ -117,9 +117,9 @@ public class BaseProfile implements Profile
    {
       if (def.isSupportInbound())
       {
-         generateClassCode(def, "Ml");
-         generateClassCode(def, "As");
-         generateClassCode(def, "Activation");
+         generateClassCode(def, "Ml", true);
+         generateClassCode(def, "As", true);
+         generateClassCode(def, "Activation", true);
       }
    }
 
@@ -130,6 +130,18 @@ public class BaseProfile implements Profile
     */
    void generateClassCode(Definition def, String className)
    {
+      //by default inflow is false
+      generateClassCode(def, className, false);
+   }
+
+   /**
+    * generate class code
+    * @param def Definition 
+    * @param className class name 
+    * @param inflow inbound class put into sub-directory
+    */
+   void generateClassCode(Definition def, String className, boolean inflow)
+   {
       if (className == null || className.equals(""))
          return;
       
@@ -138,7 +150,11 @@ public class BaseProfile implements Profile
          String clazzName = this.getClass().getPackage().getName() + ".code." + className + "CodeGen";
          String javaFile = (String)Definition.class.getMethod(
             "get" + className + "Class").invoke(def, (Object[])null) + ".java";
-         FileWriter fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
+         FileWriter fw = null;
+         if (!inflow)
+            fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
+         else
+            fw = Utils.createSrcFile(javaFile, def.getRaPackage() + ".inflow", def.getOutputDir());
 
          Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
          AbstractCodeGen codeGen = (AbstractCodeGen)clazz.newInstance();

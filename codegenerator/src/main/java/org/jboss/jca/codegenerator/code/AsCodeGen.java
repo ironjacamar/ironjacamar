@@ -48,7 +48,8 @@ public class AsCodeGen extends PropsCodeGen
    {
       if (def.isUseAnnotation())
       {
-         out.write("@Activation(messageListeners = {" + def.getRaPackage() + "." + def.getMlClass() + ".class})");
+         out.write("@Activation(messageListeners = {" + def.getRaPackage() + 
+            ".inflow." + def.getMlClass() + ".class})");
          writeEol(out);
       }
       out.write("public class " + getClassName(def) + " implements ActivationSpec");
@@ -90,7 +91,7 @@ public class AsCodeGen extends PropsCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      out.write("package " + def.getRaPackage() + ".inflow;");
       writeEol(out);
       writeEol(out);
       out.write("import java.io.PrintWriter;");

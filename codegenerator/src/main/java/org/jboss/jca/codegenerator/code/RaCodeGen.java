@@ -101,6 +101,11 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       if (def.isSupportInbound())
       {
+         out.write("import " + def.getRaPackage() + ".inflow." + def.getActivationClass() + ";");
+         writeEol(out);
+         out.write("import " + def.getRaPackage() + ".inflow." + def.getAsClass() + ";");
+         writeEol(out);
+         writeEol(out);
          out.write("import java.util.HashMap;");
          writeEol(out);
          writeEol(out);

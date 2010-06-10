@@ -133,7 +133,10 @@ public class ActivationCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      out.write("package " + def.getRaPackage() + ".inflow;");
+      writeEol(out);
+      writeEol(out);
+      out.write("import " + def.getRaPackage() + "." + def.getRaClass() + ";");
       writeEol(out);
       writeEol(out);
       out.write("import javax.resource.ResourceException;");

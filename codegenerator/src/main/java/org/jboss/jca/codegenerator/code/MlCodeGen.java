@@ -75,7 +75,7 @@ public class MlCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      out.write("package " + def.getRaPackage() + ".inflow;");
       writeEol(out);
       writeEol(out);
    }
