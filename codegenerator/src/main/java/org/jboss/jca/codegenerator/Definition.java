@@ -94,6 +94,8 @@ public class Definition
    private String asClass;
    /** ActivationSpec configuration properties */
    private List<ConfigPropType> asConfigProps;
+   /** Activation class name */
+   private String activationClass;
    
    /**
     * Set the outputDir.
@@ -647,6 +649,26 @@ public class Definition
    public boolean isUseRa()
    {
       return useRa;
+   }
+
+   /**
+    * Set the activationClass.
+    * 
+    * @param activationClass The activationClass to set.
+    */
+   public void setActivationClass(String activationClass)
+   {
+      this.activationClass = activationClass;
+   }
+
+   /**
+    * Get the activationClass.
+    * 
+    * @return the activationClass.
+    */
+   public String getActivationClass()
+   {
+      return activationClass;
    }
 
 }

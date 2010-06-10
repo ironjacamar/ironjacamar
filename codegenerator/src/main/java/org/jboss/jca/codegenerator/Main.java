@@ -264,6 +264,9 @@ public class Main
             def.setAsClass(asClassName);
             List<ConfigPropType> asProps = inputProperties("as", dbconf, in, true);
             def.setAsConfigProps(asProps);
+            System.out.print(dbconf.getString("acti.class.name"));
+            String actiClassName = in.readLine();
+            def.setActivationClass(actiClassName);
          }
          
          def.setOutputDir(outputDir);

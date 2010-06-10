@@ -30,6 +30,7 @@
        ================================= -->
   <target name="rar" depends="compile">
     <mkdir dir="${target.dir}" />
+    <mkdir dir="${basedir}/src/main/resources" />
     <jar destfile="${build.dir}/jca-ra.jar"
          basedir="${build.dir}"
          includes="**/*.class"/>

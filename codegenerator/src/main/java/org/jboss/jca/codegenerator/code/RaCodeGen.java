@@ -64,6 +64,17 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       writeEol(out);
       
+      if (def.isSupportInbound())
+      {
+         writeIndent(out, indent);
+         out.write("/** The activations by activation spec */");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("private HashMap activations = new HashMap();");
+         writeEol(out);
+         writeEol(out);
+      }
+      
       writeDefaultConstructor(def, out, indent);
       
       writeConfigProps(def, out, indent);
@@ -88,6 +99,12 @@ public class RaCodeGen extends PropsCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
+      if (def.isSupportInbound())
+      {
+         out.write("import java.util.HashMap;");
+         writeEol(out);
+         writeEol(out);
+      }
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       out.write("import javax.resource.spi.ActivationSpec;");
@@ -260,6 +277,19 @@ public class RaCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("ActivationSpec spec) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
+      
+      if (def.isSupportInbound())
+      {
+         writeIndent(out, indent + 1);
+         out.write(def.getActivationClass() + " activation = new " + def.getActivationClass() + 
+            "(this, endpointFactory, (" + def.getAsClass() + ")spec);");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("activations.put(spec, activation);");
+         writeEol(out);
+         writeEol(out);
+      }
+      
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call endpointActivation\");");
       writeRightCurlyBracket(out, indent);
@@ -290,6 +320,14 @@ public class RaCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("ActivationSpec spec)");
       writeLeftCurlyBracket(out, indent);
+      
+      if (def.isSupportInbound())
+      {
+         writeIndent(out, indent + 1);
+         out.write("activations.remove(spec);");
+         writeEol(out);
+         writeEol(out);
+      }
       writeIndent(out, indent + 1);
       out.write("log.debug(\"call endpointDeactivation\");");
       writeRightCurlyBracket(out, indent);

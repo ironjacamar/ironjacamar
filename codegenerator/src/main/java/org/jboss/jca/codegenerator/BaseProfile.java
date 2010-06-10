@@ -119,6 +119,7 @@ public class BaseProfile implements Profile
       {
          generateClassCode(def, "Ml");
          generateClassCode(def, "As");
+         generateClassCode(def, "Activation");
       }
    }
 
