@@ -152,7 +152,7 @@ public class Ra10XmlGen extends RaXmlGen
 
       writeEol(out);
       writeIndent(out, indent);
-      out.write("<transaction-support>NoTransaction</transaction-support>");
+      out.write("<transaction-support>" + def.getSupportTransaction() + "</transaction-support>");
       writeEol(out);
       
       writeConfigPropsXml(def.getMcfConfigProps(), out, indent, false);

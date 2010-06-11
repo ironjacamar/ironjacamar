@@ -134,6 +134,27 @@ public class Main
             }
          }
          
+         //transaction
+         if (def.isSupportOutbound())
+         {
+            System.out.print(dbconf.getString("support.transaction"));
+            String trans = in.readLine();
+            if (trans == null || trans.equals(""))
+               def.setSupportTransaction("NoTransaction");
+            else if (trans.equals("L") || trans.equals("l") || trans.equals("LocalTransaction"))
+            {
+               def.setSupportTransaction("LocalTransaction");
+            }
+            else if (trans.equals("X") || trans.equals("x") || trans.equals("XATransaction"))
+            {
+               def.setSupportTransaction("XATransaction");
+            }
+            else
+            {
+               def.setSupportTransaction("NoTransaction");
+            }
+         }
+         
          //package name
          System.out.print(dbconf.getString("package.name"));
          String packageName = in.readLine();

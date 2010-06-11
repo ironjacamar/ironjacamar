@@ -43,6 +43,8 @@ public class Definition
    private boolean useAnnotation;
    /** use resource adapter  */
    private boolean useRa;
+   /** support transaction  */
+   private String supportTransaction;
 
    /** resource adapter class name */
    private String raClass;
@@ -691,6 +693,26 @@ public class Definition
    public String getActivationClass()
    {
       return activationClass;
+   }
+
+   /**
+    * Set the supportTransaction.
+    * 
+    * @param supportTransaction The supportTransaction to set.
+    */
+   public void setSupportTransaction(String supportTransaction)
+   {
+      this.supportTransaction = supportTransaction;
+   }
+
+   /**
+    * Get the supportTransaction.
+    * 
+    * @return the supportTransaction.
+    */
+   public String getSupportTransaction()
+   {
+      return supportTransaction;
    }
 
 }

@@ -48,6 +48,14 @@ public class RaCodeGen extends PropsCodeGen
       if (def.isUseAnnotation())
       {
          out.write("@Connector");
+         if (def.isSupportOutbound())
+         {
+            out.write("(");
+            writeEol(out);
+            writeIndent(out, 1);
+            out.write("transactionSupport = TransactionSupport.TransactionSupportLevel." + 
+               def.getSupportTransaction() + ")");
+         }
          writeEol(out);
       }
       out.write("public class " + getClassName(def) + " implements ResourceAdapter");
@@ -172,6 +180,11 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       out.write("import javax.resource.spi.ResourceAdapterInternalException;");
       writeEol(out);
+      if (def.isUseAnnotation() && def.isSupportOutbound())
+      {
+         out.write("import javax.resource.spi.TransactionSupport;");
+         writeEol(out);
+      }
       out.write("import javax.resource.spi.endpoint.MessageEndpointFactory;");
       writeEol(out);
       writeEol(out);

@@ -261,7 +261,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
       out.write("</connection-definition>");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("<transaction-support>NoTransaction</transaction-support>");
+      out.write("<transaction-support>" + def.getSupportTransaction() + "</transaction-support>");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("<reauthentication-support>false</reauthentication-support>");
