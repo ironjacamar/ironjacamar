@@ -70,12 +70,44 @@ public class RaCodeGen extends PropsCodeGen
          out.write("/** The activations by activation spec */");
          writeEol(out);
          writeIndent(out, indent);
-         out.write("private HashMap activations = new HashMap();");
+         if (def.getVersion().equals("1.6"))
+         {
+            out.write("ConcurrentHash");
+         }
+         out.write("Map<" + def.getAsClass() + ", " + def.getActivationClass() + "> activations;");
          writeEol(out);
          writeEol(out);
       }
       
-      writeDefaultConstructor(def, out, indent);
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "()");
+      writeLeftCurlyBracket(out, indent);
+      if (def.isSupportInbound())
+      {
+         writeIndent(out, indent + 1);
+         if (def.getVersion().equals("1.6"))
+         {
+            out.write("this.activations = new ConcurrentHashMap<" + 
+               def.getAsClass() + ", " + def.getActivationClass() + ">();");
+         }
+         else
+         {
+            out.write("this.activations = Collections.synchronizedMap(new HashMap<" + 
+               def.getAsClass() + ", " + def.getActivationClass() + ">());");
+         }
+         writeEol(out);
+      }
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
       
       writeConfigProps(def, out, indent);
       writeEndpointLifecycle(def, out, indent);
@@ -106,9 +138,22 @@ public class RaCodeGen extends PropsCodeGen
          out.write("import " + def.getRaPackage() + ".inflow." + def.getAsClass() + ";");
          writeEol(out);
          writeEol(out);
-         out.write("import java.util.HashMap;");
-         writeEol(out);
-         writeEol(out);
+         if (def.getVersion().equals("1.5"))
+         {
+            out.write("import java.util.Collections;");
+            writeEol(out);
+            out.write("import java.util.HashMap;");
+            writeEol(out);
+            out.write("import java.util.Map;");
+            writeEol(out);
+            writeEol(out);
+         }
+         else if (def.getVersion().equals("1.6"))
+         {
+            out.write("import java.util.concurrent.ConcurrentHashMap;");
+            writeEol(out);
+            writeEol(out);
+         }
       }
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
@@ -290,7 +335,10 @@ public class RaCodeGen extends PropsCodeGen
             "(this, endpointFactory, (" + def.getAsClass() + ")spec);");
          writeEol(out);
          writeIndent(out, indent + 1);
-         out.write("activations.put(spec, activation);");
+         out.write("activations.put((" + def.getAsClass() + ")spec, activation);");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("activation.start();");
          writeEol(out);
          writeEol(out);
       }
@@ -329,7 +377,14 @@ public class RaCodeGen extends PropsCodeGen
       if (def.isSupportInbound())
       {
          writeIndent(out, indent + 1);
-         out.write("activations.remove(spec);");
+         out.write(def.getActivationClass() + " activation = (" + def.getActivationClass() + 
+            ")activations.remove(spec);");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("if (activation != null)");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("activation.stop();");
          writeEol(out);
          writeEol(out);
       }

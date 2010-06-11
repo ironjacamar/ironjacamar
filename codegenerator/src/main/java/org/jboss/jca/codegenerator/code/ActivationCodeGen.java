@@ -74,7 +74,25 @@ public class ActivationCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
 
-      writeDefaultConstructor(def, out, indent);
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @exception ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "() throws ResourceException");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this(null, null, null);");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
       
       //constructor
       writeIndent(out, indent);
@@ -93,6 +111,9 @@ public class ActivationCodeGen extends AbstractCodeGen
       out.write(" * @param spec " + def.getAsClass());
       writeEol(out);
       writeIndent(out, indent);
+      out.write(" * @exception ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
       out.write(" */");
       writeEol(out);
       
@@ -106,13 +127,13 @@ public class ActivationCodeGen extends AbstractCodeGen
       out.write(def.getAsClass() + " spec) throws ResourceException");
       writeEol(out);
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 2);
+      writeIndent(out, indent + 1);
       out.write("this.ra = ra;");
       writeEol(out);
-      writeIndent(out, indent + 2);
+      writeIndent(out, indent + 1);
       out.write("this.endpointFactory = endpointFactory;");
       writeEol(out);
-      writeIndent(out, indent + 2);
+      writeIndent(out, indent + 1);
       out.write("this.spec = spec;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -120,6 +141,7 @@ public class ActivationCodeGen extends AbstractCodeGen
 
       writeGetAs(def, out, indent);
       writeMef(def, out, indent);
+      writeStartStop(def, out, indent);
       
       writeRightCurlyBracket(out, 0);
    }
@@ -219,6 +241,49 @@ public class ActivationCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return endpointFactory;");
 
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+   }
+   
+   /**
+    * Output start and stop  method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeStartStop(Definition def, Writer out, int indent) throws IOException
+   {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Start the activation");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @throws ResourceException Thrown if an error occurs");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public void start() throws ResourceException");
+      writeLeftCurlyBracket(out, indent);
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Stop the activation");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public void stop()");
+      writeLeftCurlyBracket(out, indent);
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

@@ -107,6 +107,7 @@ public class Main
                version = "1.6";
          }
          while (!(version.equals("1.6") || version.equals("1.5") || version.equals("1.0")));
+         def.setVersion(version);
          
          //by default, support outbound, but not inbound
          def.setSupportOutbound(true);

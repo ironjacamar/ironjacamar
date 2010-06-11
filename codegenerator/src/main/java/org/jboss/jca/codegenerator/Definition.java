@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class Definition
 {
+   /** jca version  */
+   private String version;
    /** output directory  */
    private String outputDir;
    /** resource adapter package name */
@@ -97,6 +99,26 @@ public class Definition
    /** Activation class name */
    private String activationClass;
    
+   /**
+    * Set the version.
+    * 
+    * @param version The version to set.
+    */
+   public void setVersion(String version)
+   {
+      this.version = version;
+   }
+
+   /**
+    * Get the version.
+    * 
+    * @return the version.
+    */
+   public String getVersion()
+   {
+      return version;
+   }
+
    /**
     * Set the outputDir.
     * 
