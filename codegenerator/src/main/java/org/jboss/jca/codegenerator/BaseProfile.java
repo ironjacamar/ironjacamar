@@ -28,6 +28,7 @@ import org.jboss.jca.codegenerator.xml.RaXmlGen;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * A BaseProfile.
@@ -56,11 +57,11 @@ public class BaseProfile implements Profile
       generateRaCode(def);
       generateOutboundCode(def);
       generateInboundCode(def);
-      
+
+      generateTestCode(def);
+
       generateAntXml(def.getOutputDir());
-      
-      if (!def.isUseAnnotation())
-         generateRaXml(def, def.getOutputDir());
+      generateRaXml(def, def.getOutputDir());
    }
 
    /**
@@ -200,18 +201,21 @@ public class BaseProfile implements Profile
     */
    void generateRaXml(Definition def, String outputDir)
    {
-      try
+      if (!def.isUseAnnotation())
       {
-         outputDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
-            "main" + File.separatorChar + "resources";
-         FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
-         RaXmlGen raGen = getRaXmlGen(def);
-         raGen.generate(def, rafw);
-         rafw.close();
-      }
-      catch (IOException ioe)
-      {
-         ioe.printStackTrace();
+         try
+         {
+            outputDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
+               "main" + File.separatorChar + "resources";
+            FileWriter rafw = Utils.createFile("ra.xml", outputDir + File.separatorChar + "META-INF");
+            RaXmlGen raGen = getRaXmlGen(def);
+            raGen.generate(def, rafw);
+            rafw.close();
+         }
+         catch (IOException ioe)
+         {
+            ioe.printStackTrace();
+         }
       }
    }
    
@@ -224,4 +228,64 @@ public class BaseProfile implements Profile
    {
       return null;
    }
+   
+   
+   /**
+    * generate test code
+    * 
+    * @param def Definition 
+    */
+   void generateTestCode(Definition def)
+   {
+      if (!def.isSupportOutbound())
+         return;
+      
+      try
+      {
+         String clazzName = this.getClass().getPackage().getName() + ".code.TestCodeGen";
+         String javaFile = "ConnectorTestCase.java";
+         FileWriter fw = Utils.createTestFile(javaFile, def.getRaPackage(), def.getOutputDir());
+
+         Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+         AbstractCodeGen codeGen = (AbstractCodeGen)clazz.newInstance();
+         
+         codeGen.generate(def, fw);
+         
+         fw.flush();
+         fw.close();
+         
+         copyTestResourceFiles(def.getOutputDir(), "jca.xml");
+         copyTestResourceFiles(def.getOutputDir(), "naming.xml");
+         copyTestResourceFiles(def.getOutputDir(), "stdio.xml");
+         copyTestResourceFiles(def.getOutputDir(), "transaction.xml");
+         copyTestResourceFiles(def.getOutputDir(), "logging.properties");
+         copyTestResourceFiles(def.getOutputDir(), "jndi.properties");
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+   }
+
+   /**
+    * copy some test resource files
+    * 
+    * @param outputDir output directory
+    * @param filename filename
+    * @throws IOException ioException
+    */
+   private void copyTestResourceFiles(String outputDir, String filename) throws IOException
+   {
+      String testResourceDir = outputDir + "/src/test/resources";
+      FileWriter fw = Utils.createFile(filename, testResourceDir);
+      URL buildFile = BaseProfile.class.getResource("/" + filename + ".template");
+      String buildString = Utils.readFileIntoString(buildFile);
+      fw.write(buildString);
+      fw.close();
+   }
+
 }

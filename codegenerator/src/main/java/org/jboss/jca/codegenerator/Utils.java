@@ -101,6 +101,36 @@ public class Utils
    {
       String directory = "src" + File.separatorChar + "main" + File.separatorChar + "java";
 
+      return createPackageFile(name, packageName, directory, outDir);
+   }
+   
+   /**
+    * Create test file
+    * @param name The name of the class
+    * @param packageName The package name
+    * @param outDir output directory
+    * @return The file
+    * @exception IOException Thrown if an error occurs 
+    */
+   public static FileWriter createTestFile(String name, String packageName, String outDir) throws IOException
+   {
+      String directory = "src" + File.separatorChar + "test" + File.separatorChar + "java";
+
+      return createPackageFile(name, packageName, directory, outDir);
+   }
+   
+   /**
+    * Create file in the package
+    * @param name The name of the class
+    * @param packageName The package name
+    * @param directory layout directory
+    * @param outDir output directory
+    * @return The file
+    * @exception IOException Thrown if an error occurs 
+    */
+   private static FileWriter createPackageFile(String name, String packageName, 
+         String directory, String outDir) throws IOException
+   {
       if (packageName != null && !packageName.trim().equals(""))
       {
          directory = directory + File.separatorChar +

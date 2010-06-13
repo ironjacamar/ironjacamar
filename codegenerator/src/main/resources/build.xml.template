@@ -7,8 +7,32 @@
   <property name="target.dir" value="${basedir}/target" />
   <property name="lib.dir" value="${basedir}/lib" />
 
+  <property name="javac.debug" value="on" />
+  <property name="javac.deprecation" value="on" />
+  <property name="javac.optimize" value="off" />
+
+  <property name="junit.printsummary" value="yes" />
+  <property name="junit.haltonerror" value="no" />
+  <property name="junit.haltonfailure" value="no" />
+  <property name="junit.fork" value="yes" />
+  <property name="junit.timeout" value="60000" />
+  <property name="junit.jvm" value="" />
+  <property name="junit.jvm.options" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m" />
+  <property name="junit.batchtest.haltonerror" value="no" />
+  <property name="junit.batchtest.haltonfailure" value="no" />
+  <property name="junit.batchtest.fork" value="yes" />
+  
   <path id="lib.path.id">
     <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+    
+  <path id="test.lib.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${build.dir}">
       <include name="**/*.jar"/>
     </fileset>
   </path>
@@ -38,6 +62,73 @@
       <fileset dir="${basedir}/src/main/resources" includes="META-INF/*"/>
       <fileset dir="${build.dir}" includes="**/*.jar"/>
     </jar>
+  </target>
+  
+      
+  <!-- ================================= 
+       Target: prepare-test
+       ================================= -->
+  <target name="prepare-test">
+    <mkdir dir="${build.dir}/test" />
+
+    <javac srcdir="src/test"
+           destdir="${build.dir}/test"
+           classpathref="test.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
+    <copy todir="${build.dir}/test">
+      <fileset dir="src/main/resources"/>
+      <fileset dir="src/test/resources"/>
+    </copy>
+  </target>
+
+  <!-- ================================= 
+       Target: test
+       ================================= -->
+  <target name="test" depends="rar, prepare-test">
+    <mkdir dir="${basedir}/reports"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${target.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${build.dir}/test"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      
+      <classpath>
+        <fileset dir="${lib.dir}" includes="*.jar" />
+        <fileset dir="${build.dir}" includes="*.jar" />
+        <pathelement location="${build.dir}/test"/>
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${basedir}/reports"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.dir}/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+    
   </target>
   
   <!-- ================================= 

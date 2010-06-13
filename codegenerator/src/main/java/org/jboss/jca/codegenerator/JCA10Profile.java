@@ -40,21 +40,6 @@ public class JCA10Profile extends BaseProfile
    {
    }
    
-  
-   /**
-    * generate code
-    * @param def Definition 
-    */
-   @Override
-   public void generate(Definition def)
-   {
-      generateOutboundCode(def);
-
-      generateAntXml(def.getOutputDir());
-      generateRaXml(def, def.getOutputDir());
-   }
-
-
    /**
     * get right profile ra xmlGen
     * @param def Definition
