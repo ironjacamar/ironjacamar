@@ -22,7 +22,10 @@
 package org.jboss.jca.codegenerator;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -176,6 +179,76 @@ public class Utils
          }
          if (!f.delete())
             throw new IOException("Could not delete " + f);
+      }
+   }
+   
+   /**
+    * copy folders
+    * 
+    * @param sourcePath source folder
+    * @param targetPath target folder
+    * @param filterName filter name
+    * @exception IOException Thrown if an error occurs 
+    */
+   public static void copyFolder(String sourcePath, String targetPath, final String filterName) throws IOException
+   {
+      new File(targetPath).mkdirs();
+      File a = new File(sourcePath);
+      String[] file = a.list(new FilenameFilter()
+      {
+         public boolean accept(File dir, String fname)
+         {
+            if (dir.isDirectory())
+               return true;
+            return fname.endsWith(filterName);
+         }
+
+      });
+      File jarFile = null;
+      for (int i = 0; i < file.length; i++)
+      {
+         jarFile = new File(sourcePath + File.separator + file[i]);
+
+         if (jarFile.isFile())
+         {
+            FileInputStream from = null;
+            FileOutputStream to = null;
+            try
+            {
+               from = new FileInputStream(jarFile);
+               to = new FileOutputStream(targetPath + File.separator + jarFile.getName());
+               byte[] buffer = new byte[4096];
+               int bytesRead;
+
+               while ((bytesRead = from.read(buffer)) != -1)
+                  to.write(buffer, 0, bytesRead);
+            }
+            finally
+            {
+               if (from != null)
+                  try
+                  {
+                     from.close();
+                  }
+                  catch (IOException e)
+                  {
+                     ;
+                  }
+               if (to != null)
+                  try
+                  {
+                     to.close();
+                  }
+                  catch (IOException e)
+                  {
+                     ;
+                  }
+            }
+         }
+         if (jarFile.isDirectory())
+         {
+            copyFolder(sourcePath + File.separator + file[i], targetPath + File.separator + file[i], filterName);
+         }
       }
    }
 }

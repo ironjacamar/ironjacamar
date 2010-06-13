@@ -308,12 +308,29 @@ public class Main
          }
          profile.generate(def);
          
+         copyAllJars(outputDir);
+         
          System.out.println(dbconf.getString("code.wrote"));
       }
       catch (IOException e)
       {
          e.printStackTrace();
       }
+   }
+
+   /**
+    * copy all jars
+    * @param outputDir output directory
+    * @throws IOException ioException
+    */
+   private static void copyAllJars(String outputDir) throws IOException
+   {
+      File out = new File(outputDir);
+      String path = out.getAbsolutePath();
+      String sourcePath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
+         ".." + File.separatorChar + "lib";
+      String targetPath = path + File.separatorChar + "lib";
+      Utils.copyFolder(sourcePath, targetPath, "jar");
    }
 
    /**

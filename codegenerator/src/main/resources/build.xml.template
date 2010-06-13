@@ -5,7 +5,7 @@
        ================================= -->
   <property name="build.dir" value="${basedir}/build" />
   <property name="target.dir" value="${basedir}/target" />
-  <property name="lib.dir" value="${basedir}/../../../lib" />
+  <property name="lib.dir" value="${basedir}/lib" />
 
   <path id="lib.path.id">
     <fileset dir="${lib.dir}">
