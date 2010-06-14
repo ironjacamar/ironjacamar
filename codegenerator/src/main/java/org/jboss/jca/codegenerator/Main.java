@@ -334,8 +334,8 @@ public class Main
       Utils.copyFolder(libPath, targetPath, "jar");
 
       String binPath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
-         ".." + File.separatorChar + "lib";
-      Utils.copyFolder(sourcePath, targetPath, "jar");
+         ".." + File.separatorChar + "bin";
+      Utils.copyFolder(binPath, targetPath, "jar");
    }
 
    /**
