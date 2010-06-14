@@ -362,36 +362,38 @@ public final class RADeployer implements CloneableDeployer
          if (cmd != null)
          {
             // ResourceAdapter
-            if (cmd.getRa() != null &&
-                (!cmd.is10() || cmd.getRa().getRaClass() != null))
+            if (!cmd.is10())
             {
-               partialFailures =
-                  validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER,
-                                                                                  cmd.getRa().getRaClass(),
-                                                                                  cl,
-                                                                                  cmd.getRa().getConfigProperty())));
-               if (partialFailures != null)
+               if (cmd.getRa() != null && cmd.getRa().getRaClass() != null)
                {
-                  failures = new HashSet<Failure>();
-                  failures.addAll(partialFailures);
-               }
-
-               if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
-               {
-                  resourceAdapter =
-                     (ResourceAdapter)initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
-
-                  if (trace)
+                  partialFailures =
+                     validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER,
+                                                                                     cmd.getRa().getRaClass(),
+                                                                                     cl,
+                                                                                     cmd.getRa().getConfigProperty())));
+                  if (partialFailures != null)
                   {
-                     log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
-                     log.trace("ResourceAdapter defined in classloader: " +
-                               resourceAdapter.getClass().getClassLoader());
+                     failures = new HashSet<Failure>();
+                     failures.addAll(partialFailures);
                   }
 
-                  archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER,
-                                                                  resourceAdapter,
-                                                                  cmd.getRa().getConfigProperty()));
-                  beanValidationObjects.add(resourceAdapter);
+                  if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
+                  {
+                     resourceAdapter =
+                        (ResourceAdapter)initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
+
+                     if (trace)
+                     {
+                        log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
+                        log.trace("ResourceAdapter defined in classloader: " +
+                                  resourceAdapter.getClass().getClassLoader());
+                     }
+
+                     archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER,
+                                                                     resourceAdapter,
+                                                                     cmd.getRa().getConfigProperty()));
+                     beanValidationObjects.add(resourceAdapter);
+                  }
                }
             }
 
