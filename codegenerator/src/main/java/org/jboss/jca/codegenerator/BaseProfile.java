@@ -254,10 +254,6 @@ public class BaseProfile implements Profile
          fw.flush();
          fw.close();
          
-         copyTestResourceFiles(def.getOutputDir(), "jca.xml");
-         copyTestResourceFiles(def.getOutputDir(), "naming.xml");
-         copyTestResourceFiles(def.getOutputDir(), "stdio.xml");
-         copyTestResourceFiles(def.getOutputDir(), "transaction.xml");
          copyTestResourceFiles(def.getOutputDir(), "logging.properties");
          copyTestResourceFiles(def.getOutputDir(), "jndi.properties");
       }

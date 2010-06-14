@@ -176,6 +176,13 @@
       </fileset>
     </copy>
 
+    <!-- HACK: remove -->
+    <copy todir="${target.dir}/sjc/lib">
+      <fileset dir="${lib.dir}/test">
+        <include name="junit.jar"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/system">
       <fileset dir="${target.dir}">
         <include name="*.war"/>

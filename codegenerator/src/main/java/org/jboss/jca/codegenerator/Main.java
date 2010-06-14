@@ -327,9 +327,14 @@ public class Main
    {
       File out = new File(outputDir);
       String path = out.getAbsolutePath();
-      String sourcePath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
-         ".." + File.separatorChar + "lib";
       String targetPath = path + File.separatorChar + "lib";
+
+      String libPath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
+         ".." + File.separatorChar + "lib";
+      Utils.copyFolder(libPath, targetPath, "jar");
+
+      String binPath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
+         ".." + File.separatorChar + "lib";
       Utils.copyFolder(sourcePath, targetPath, "jar");
    }
 
