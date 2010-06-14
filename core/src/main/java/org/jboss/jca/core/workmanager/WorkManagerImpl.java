@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager;
 
 import org.jboss.jca.common.util.ClassUtil;
 import org.jboss.jca.core.api.WorkManager;
+import org.jboss.jca.core.spi.security.Callback;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -91,6 +92,9 @@ public class WorkManagerImpl implements WorkManager
 
    /** Validated work instances */
    private Set<String> validatedWork;
+
+   /** Security module for callback */
+   private Callback callbackSecurity;
 
    /**Default supported workcontext types*/
    static
@@ -182,6 +186,24 @@ public class WorkManagerImpl implements WorkManager
    }
 
    /**
+    * Get the callback security module
+    * @return The value
+    */
+   public Callback getCallbackSecurity()
+   {
+      return callbackSecurity;
+   }
+
+   /**
+    * Set callback security module
+    * @param v The value
+    */
+   public void setCallbackSecurity(Callback v)
+   {
+      callbackSecurity = v;
+   }
+
+   /**
     * Clone the WorkManager implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
@@ -194,6 +216,7 @@ public class WorkManagerImpl implements WorkManager
       wm.setLongRunningThreadPool(getLongRunningThreadPool());
       wm.setXATerminator(getXATerminator());
       wm.setSpecCompliant(isSpecCompliant());
+      wm.setCallbackSecurity(getCallbackSecurity());
       
       return wm;
    }

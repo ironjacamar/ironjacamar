@@ -54,10 +54,15 @@
          basedir="${build.core.dir}/impl"
          includes="**/core/api/**"/>
 
+    <jar destfile="${target.dir}/jboss-jca-core-spi.jar"
+         manifest="src/main/resources/spi-manifest.mf"
+         basedir="${build.core.dir}/impl"
+         includes="**/core/spi/**"/>
+
     <jar destfile="${target.dir}/jboss-jca-core-impl.jar"
          manifest="src/main/resources/impl-manifest.mf"
          basedir="${build.core.dir}/impl"
-         excludes="**/*.java, **/core/api/**"/>
+         excludes="**/*.java, **/core/api/**, **/core/spi/**"/>
   </target>
 
   <!-- ================================= 

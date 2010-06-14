@@ -56,7 +56,7 @@
   <target name="jars" depends="compile">
     <copy todir="${build.embedded.dir}/impl">
       <fileset dir="src/main/resources"
-               includes="*.xml"/>
+               includes="*.xml,*.properties"/>
     </copy>
     <jar destfile="${target.dir}/jboss-jca-embedded.jar"
          manifest="src/main/resources/embedded-manifest.mf"

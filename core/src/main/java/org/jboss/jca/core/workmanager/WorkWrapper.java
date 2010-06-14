@@ -22,8 +22,12 @@
 
 package org.jboss.jca.core.workmanager;
 
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.work.ExecutionContext;
@@ -31,13 +35,25 @@ import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkContext;
+import javax.resource.spi.work.WorkContextErrorCodes;
 import javax.resource.spi.work.WorkContextLifecycleListener;
 import javax.resource.spi.work.WorkEvent;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
+import javax.security.auth.Subject;
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.message.callback.CallerPrincipalCallback;
+import javax.security.auth.message.callback.GroupPrincipalCallback;
+import javax.security.auth.message.callback.PasswordValidationCallback;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
+
+import org.jboss.security.SecurityContextAssociation;
+import org.jboss.security.SecurityContextFactory;
+import org.jboss.security.SimplePrincipal;
+import org.jboss.security.auth.callback.JASPICallbackHandler;
 
 /**
  * Wraps the resource adapter's work.
@@ -172,6 +188,8 @@ public class WorkWrapper implements Runnable
       if (trace)
          log.trace("Starting work " + this);  
 
+      org.jboss.security.SecurityContext oldSC = SecurityContextAssociation.getSecurityContext();
+
       try
       {
          start();
@@ -199,6 +217,8 @@ public class WorkWrapper implements Runnable
             workListener.workCompleted(event);
          }
 
+         SecurityContextAssociation.setSecurityContext(oldSC);
+
          if (startedLatch != null)
          {
             while (startedLatch.getCount() != 0)
@@ -224,6 +244,7 @@ public class WorkWrapper implements Runnable
          log.trace("Starting work " + this);  
       }
 
+      // Transaction setup
       ExecutionContext ctx = getWorkContext(TransactionContext.class);
       if (ctx == null)
       {
@@ -239,6 +260,73 @@ public class WorkWrapper implements Runnable
             long timeout = (ctx.getTransactionTimeout() * 1000);
             workManager.getXATerminator().registerWork(work, xid, timeout);
          }
+      }
+
+      // Security setup
+      javax.resource.spi.work.SecurityContext securityContext = 
+         getWorkContext(javax.resource.spi.work.SecurityContext.class);
+      if (securityContext != null && workManager.getCallbackSecurity() != null)
+      {
+         try
+         {
+            org.jboss.security.SecurityContext sc = SecurityContextFactory.createSecurityContext("work");  
+            SecurityContextAssociation.setSecurityContext(sc);
+
+            // Setup callbacks
+            CallbackHandler cbh = new JASPICallbackHandler();
+            List<Callback> callbacks = new ArrayList<Callback>();
+
+            Set<String> users = workManager.getCallbackSecurity().getUsers();
+
+            if (users != null && users.size() > 0)
+            {
+               for (String user : users)
+               {
+                  Subject subject = new Subject();
+                  Principal principal = new SimplePrincipal(user);
+                  char[] cred = workManager.getCallbackSecurity().getCredential(user);
+                  String[] roles = workManager.getCallbackSecurity().getRoles(user);
+
+                  GroupPrincipalCallback gpc = new GroupPrincipalCallback(subject, roles);
+                  CallerPrincipalCallback cpc = new CallerPrincipalCallback(subject, principal);
+                  PasswordValidationCallback pvc = new PasswordValidationCallback(subject, principal.getName(), cred);
+
+                  callbacks.add(gpc);
+                  callbacks.add(cpc);
+                  callbacks.add(pvc);
+               }
+            }
+            else
+            {
+               if (log.isDebugEnabled())
+                  log.debug("No users defined");
+            }
+
+            Callback[] cb = new Callback[callbacks.size()];
+            cbh.handle(callbacks.toArray(cb));
+
+            // Subjects for execution environment
+            Subject executionSubject = new Subject();
+            Subject serviceSubject = null;
+         
+            // Resource adapter callback
+            securityContext.setupSecurityContext(cbh, executionSubject, serviceSubject);
+
+            // Set the authenticated subject
+            sc.getSubjectInfo().setAuthenticatedSubject(executionSubject);
+         }
+         catch (Throwable t)
+         {
+            log.error("SecurityContext setup failed: " + t.getMessage(), t);
+            fireWorkContextSetupFailed(ctx);
+            throw new WorkException("SecurityContext setup failed: " + t.getMessage(), t);
+         }
+      }
+      else if (securityContext != null && workManager.getCallbackSecurity() == null)
+      {
+         log.error("SecurityContext setup failed since CallbackSecurity was null");
+         fireWorkContextSetupFailed(ctx);
+         throw new WorkException("SecurityContext setup failed since CallbackSecurity was null");
       }
       
       //Fires Context setup complete
@@ -378,6 +466,19 @@ public class WorkWrapper implements Runnable
       {
          WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
          listener.contextSetupComplete();   
+      }
+   }
+   
+   /**
+    * Calls listener if setup failed
+    * @param listener work context listener
+    */
+   private void fireWorkContextSetupFailed(Object workContext)
+   {
+      if (workContext != null && workContext instanceof WorkContextLifecycleListener)
+      {
+         WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
+         listener.contextSetupFailed(WorkContextErrorCodes.CONTEXT_SETUP_FAILED);   
       }
    }
    

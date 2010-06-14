@@ -45,6 +45,14 @@
     </constructor>
   </bean>
 
+  <!-- Users / roles -->
+  <bean name="UsersRoles"
+        interface="org.jboss.jca.core.spi.security.Callback"
+        class="org.jboss.jca.core.security.UsersRoles">
+    <property name="UsersProperties">${jboss.jca.home}/config/users.properties</property>
+    <property name="RolesProperties">${jboss.jca.home}/config/roles.properties</property>
+  </bean>
+
   <!-- Work Manager -->
   <bean name="WorkManager" interface="org.jboss.jca.core.api.WorkManager" class="org.jboss.jca.core.workmanager.WorkManagerImpl">
     <!-- The short running thread pool -->
@@ -55,6 +63,9 @@
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
+
+    <!-- The callback security module -->
+    <property name="CallbackSecurity"><inject bean="UsersRoles"/></property>
   </bean>
   
   <!-- Default Bootstrap context -->

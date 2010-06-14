@@ -22,6 +22,8 @@
 
 package org.jboss.jca.core.api;
 
+import org.jboss.jca.core.spi.security.Callback;
+
 import org.jboss.threads.BlockingExecutor;
 import org.jboss.tm.JBossXATerminator;
 
@@ -77,6 +79,18 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Clonea
     * @param v The value
     */
    public void setSpecCompliant(boolean v);
+
+   /**
+    * Get the callback security module
+    * @return The value
+    */
+   public Callback getCallbackSecurity();
+
+   /**
+    * Set callback security module
+    * @param v The value
+    */
+   public void setCallbackSecurity(Callback v);
 
    /**
     * Clone the WorkManager implementation

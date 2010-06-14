@@ -118,6 +118,9 @@
     <dependency org="org.mockito" name="mockito-all" rev="${version.mockito}" conf="test->default"/>
     <dependency org="org.mortbay.jetty" name="jsp-api-2.1-glassfish"  rev="${version.jetty.glassfish}" conf="standalone->default;sjc->*"/>
     <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.picketbox" name="jboss-security-spi" rev="${version.jboss.picketbox}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.picketbox" name="jbosssx" rev="${version.jboss.picketbox}" conf="standalone->default;sjc->*"/>
+    <dependency org="org.picketbox" name="picketbox-bare" rev="${version.jboss.picketbox.bare}" conf="standalone->default;sjc->*"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="standalone->default;sjc->*"/>
     <dependency org="stax" name="stax-api" rev="${version.stax}" conf="standalone->default;sjc->*"/>
