@@ -91,6 +91,7 @@
     <property name="BeanValidation">true</property>
     <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
     <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
+    <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
   </bean>

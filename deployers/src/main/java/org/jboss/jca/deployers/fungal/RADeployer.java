@@ -29,9 +29,11 @@ import org.jboss.jca.common.api.ConnectionFactoryJndiNameBuilder;
 import org.jboss.jca.common.util.ContainerConnectionFactoryJndiNameBuilder;
 import org.jboss.jca.common.util.LocalConnectionFactoryBuilder;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
+import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;
@@ -72,6 +74,7 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.metadata.rar.jboss.BvGroupMetaData;
@@ -81,7 +84,9 @@ import org.jboss.metadata.rar.spec.AdminObjectMetaData;
 import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
 import org.jboss.metadata.rar.spec.ConnectorMetaData;
+import org.jboss.metadata.rar.spec.JCA10DTDMetaData;
 import org.jboss.metadata.rar.spec.MessageListenerMetaData;
+import org.jboss.metadata.rar.spec.TransactionSupportMetaData;
 import org.jboss.util.naming.Util;
 
 import com.github.fungal.api.classloading.ClassLoaderFactory;
@@ -105,6 +110,9 @@ public final class RADeployer implements CloneableDeployer
    private static Logger log = Logger.getLogger(RADeployer.class);
 
    private static boolean trace = log.isTraceEnabled();
+
+   /** The transaction manager */
+   private static TransactionManager transactionManager = null;
 
    /** Preform bean validation */
    private static AtomicBoolean beanValidation = new AtomicBoolean(true);
@@ -135,6 +143,24 @@ public final class RADeployer implements CloneableDeployer
     */
    public RADeployer()
    {
+   }
+
+   /**
+    * Set the transaction manager
+    * @param value The value
+    */
+   public synchronized void setTransactionManager(TransactionManager value)
+   {
+      transactionManager = value;
+   }
+
+   /**
+    * Get the transaction manager
+    * @return The value
+    */
+   public synchronized TransactionManager getTransactionManager()
+   {
+      return transactionManager;
    }
 
    /**
@@ -437,22 +463,71 @@ public final class RADeployer implements CloneableDeployer
                                                                         cdMeta.getConfigProps()));
                         beanValidationObjects.add(mcf);
                         associateResourceAdapter(resourceAdapter, mcf);
-
-                        // Section 7.13 -- read from metadata -> overwrite with specified value if present
+                        
+                        // Add a connection manager
+                        AbstractConnectionManager cm = null;
                         TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
+                        TransactionSupportMetaData tsmd = TransactionSupportMetaData.NoTransaction;
+                        
+                        if (cmd instanceof JCA10DTDMetaData)
+                        {
+                           tsmd = ((JCA10DTDMetaData)cmd).getRa10().getTransSupport();
+                        }
+                        else
+                        {
+                           tsmd = cmd.getRa().getOutboundRa().getTransSupport();
+                        }
 
+                        if (tsmd == TransactionSupportMetaData.NoTransaction)
+                        {
+                           tsl = TransactionSupportLevel.NoTransaction;
+                        }
+                        else if (tsmd == TransactionSupportMetaData.LocalTransaction)
+                        {
+                           tsl = TransactionSupportLevel.LocalTransaction;
+                        }
+                        else if (tsmd == TransactionSupportMetaData.XATransaction)
+                        {
+                           tsl = TransactionSupportLevel.XATransaction;
+                        }
+
+                        // Section 7.13 -- Read from metadata -> overwrite with specified value if present
                         if (mcf instanceof TransactionSupport)
                            tsl = ((TransactionSupport)mcf).getTransactionSupport();
 
-                        // TODO: add proper configuration and use it (support TxConnectionManager as well)
-                        NoTxConnectionManager noTxCm = new NoTxConnectionManager();
+                        // Select the correct connection manager
+                        if (tsl == TransactionSupportLevel.NoTransaction)
+                        {
+                           NoTxConnectionManager noTxCm = new NoTxConnectionManager();
+                           cm = noTxCm;
+                        }
+                        else if (tsl == TransactionSupportLevel.LocalTransaction)
+                        {
+                           if (transactionManager == null)
+                              throw new IllegalStateException("TransactionManager is null");
+
+                           TxConnectionManager txCm = new TxConnectionManager();
+                           txCm.setTransactionManager(transactionManager);
+                           txCm.setLocalTransactions(true);
+                           cm = txCm;
+                        }
+                        else if (tsl == TransactionSupportLevel.XATransaction)
+                        {
+                           if (transactionManager == null)
+                              throw new IllegalStateException("TransactionManager is null");
+
+                           TxConnectionManager txCm = new TxConnectionManager();
+                           txCm.setTransactionManager(transactionManager);
+                           cm = txCm;
+                        }
+
                         PoolParams poolParams = new PoolParams();
                         OnePool onePool = new OnePool(mcf, poolParams, true);
-                        onePool.setConnectionListenerFactory(noTxCm);
-                        noTxCm.setPoolingStrategy(onePool);
+                        onePool.setConnectionListenerFactory(cm);
+                        cm.setPoolingStrategy(onePool);
 
                         // ConnectionFactory
-                        Object cf = mcf.createConnectionFactory(noTxCm);
+                        Object cf = mcf.createConnectionFactory(cm);
 
                         if (cf == null)
                         {
