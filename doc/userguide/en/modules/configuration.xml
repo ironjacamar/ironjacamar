@@ -147,6 +147,61 @@ config/bootstrap/jca.xml
         </table>
       </section>
 
+      <section id="jca_security">
+        <title>Security</title>
+
+        <para>The Java EE Connector Architecture 1.6 specification allows units of 
+          <code>javax.resource.spi.Work</code> to be executed in a specific security context.</para>
+
+        <para>This is done through the use of Java Authentication Service Provider Interface for Containers (JSR-196)
+          call backs using the <code>javax.security.auth.callback.Callback</code> interface.</para>
+        
+        <para>The support is activated by letting the work instance implement the</para>
+
+        <programlisting>
+javax.resource.spi.work.WorkContextProvider
+        </programlisting>
+
+        <para>interface and returning an instance of <code>javax.resource.spi.work.SecurityContext</code>.</para>
+
+        <para>There is currently support for injecting a user/roles setup based on the files</para>
+
+        <programlisting>
+config/users.properties
+config/roles.properties
+        </programlisting>
+
+        <para>The format of the <code>users.properties</code> file is</para>
+
+        <programlisting>
+username1=password1
+username2=password2
+        </programlisting>
+
+        <para>The format of the <code>roles.properties</code> file is</para>
+
+        <programlisting>
+username1=role1,role2
+username2=role3,role4
+        </programlisting>
+        
+        <para>The user/roles setup can be configured through the <code>UsersRoles</code> bean in the 
+          <code>config/bootstrap/jca.xml</code> file.</para>
+        
+        <programlisting>
+          <![CDATA[
+<!-- Users / roles -->
+<bean name="UsersRoles"
+      interface="org.jboss.jca.core.spi.security.Callback"
+      class="org.jboss.jca.core.security.UsersRoles">
+  <property name="UsersProperties">${jboss.jca.home}/config/users.properties</property>
+  <property name="RolesProperties">${jboss.jca.home}/config/roles.properties</property>
+</bean>
+           ]]>
+        </programlisting>
+
+      </section>
+
    </section>
 
    <section id="webserver">
