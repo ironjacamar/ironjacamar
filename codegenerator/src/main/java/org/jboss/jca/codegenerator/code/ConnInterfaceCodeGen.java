@@ -22,6 +22,7 @@
 package org.jboss.jca.codegenerator.code;
 
 import org.jboss.jca.codegenerator.Definition;
+import org.jboss.jca.codegenerator.MethodForConnection;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -49,18 +50,86 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
       out.write("public interface " + getClassName(def));
       writeLeftCurlyBracket(out, 0);
       
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * call me");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-      
-      writeIndent(out, indent);
-      out.write("public void callMe();");
+      if (def.isDefineMethodInConnection())
+      {
+         if (def.getMethods().size() > 0)
+         {
+            for (MethodForConnection method : def.getMethods())
+            {
+               writeIndent(out, indent);
+               out.write("/**");
+               writeEol(out);
+               writeIndent(out, indent);
+               out.write(" * " + method.getMethodName());
+               writeEol(out);
+               for (MethodForConnection.Param param : method.getParams())
+               {
+                  writeIndent(out, indent);
+                  out.write(" * @param " + param.getName() + " " + param.getName());
+                  writeEol(out);
+               }
+               if (!method.getReturnType().equals("void"))
+               {
+                  writeIndent(out, indent);
+                  out.write(" * @return " + method.getReturnType());
+                  writeEol(out);
+               }
+               for (String ex : method.getExceptionType())
+               {
+                  writeIndent(out, indent);
+                  out.write(" * @throws " + ex + " " + ex);
+                  writeEol(out);
+               }
+               
+               writeIndent(out, indent);
+               out.write(" */");
+               writeEol(out);
+               
+               writeIndent(out, indent);
+               out.write("public " + method.getReturnType() + " " +
+                  method.getMethodName() + "(");
+               int paramSize = method.getParams().size();
+               for (int i = 0; i < paramSize; i++)
+               {
+                  MethodForConnection.Param param = method.getParams().get(i);
+                  out.write(param.getType());
+                  out.write(" ");
+                  out.write(param.getName());
+                  if (i + 1 < paramSize)
+                     out.write(", ");
+               }
+               out.write(")");
+               int exceptionSize = method.getExceptionType().size();
+               for (int i = 0; i < exceptionSize; i++)
+               {
+                  if (i == 0)
+                     out.write(" throws ");
+                  String ex = method.getExceptionType().get(i);
+                  out.write(ex);
+                  if (i + 1 < exceptionSize)
+                     out.write(", ");
+               }
+
+               out.write(";");
+               writeEol(out);
+            }
+         }
+      }
+      else
+      {
+         writeIndent(out, indent);
+         out.write("/**");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" * call me");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" */");
+         writeEol(out);
+         
+         writeIndent(out, indent);
+         out.write("public void callMe();");
+      }
 
       writeRightCurlyBracket(out, 0);
    }

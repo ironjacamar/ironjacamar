@@ -101,6 +101,11 @@ public class Definition
    /** Activation class name */
    private String activationClass;
    
+   /** support self deined method in connection interface  */
+   private boolean defineMethodInConnection;
+   /** connection metadata class name */
+   private List<MethodForConnection> methods;
+   
    /**
     * Set the version.
     * 
@@ -713,6 +718,46 @@ public class Definition
    public String getSupportTransaction()
    {
       return supportTransaction;
+   }
+
+   /**
+    * Set the defineMethodInConnection.
+    * 
+    * @param defineMethodInConnection The defineMethodInConnection to set.
+    */
+   public void setDefineMethodInConnection(boolean defineMethodInConnection)
+   {
+      this.defineMethodInConnection = defineMethodInConnection;
+   }
+
+   /**
+    * Get the defineMethodInConnection.
+    * 
+    * @return the defineMethodInConnection.
+    */
+   public boolean isDefineMethodInConnection()
+   {
+      return defineMethodInConnection;
+   }
+
+   /**
+    * Set the methods.
+    * 
+    * @param methods The methods to set.
+    */
+   public void setMethods(List<MethodForConnection> methods)
+   {
+      this.methods = methods;
+   }
+
+   /**
+    * Get the methods.
+    * 
+    * @return the methods.
+    */
+   public List<MethodForConnection> getMethods()
+   {
+      return methods;
    }
 
 }

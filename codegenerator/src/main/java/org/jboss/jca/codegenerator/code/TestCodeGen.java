@@ -21,7 +21,9 @@
  */
 package org.jboss.jca.codegenerator.code;
 
+import org.jboss.jca.codegenerator.BasicType;
 import org.jboss.jca.codegenerator.Definition;
+import org.jboss.jca.codegenerator.MethodForConnection;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -60,7 +62,13 @@ public class TestCodeGen extends AbstractCodeGen
       writeEol(out);
 
       writeDeployment(def, out, indent);
-      writeTestBasic(def, out, indent);
+      
+      if (def.isDefineMethodInConnection())
+      {
+         writeTestMethod(def, out, indent);
+      }
+      else
+         writeTestBasic(def, out, indent);
 
       writeRightCurlyBracket(out, 0);
    }
@@ -283,5 +291,109 @@ public class TestCodeGen extends AbstractCodeGen
       writeRightCurlyBracket(out, indent + 2);
       writeRightCurlyBracket(out, indent + 1);
       writeRightCurlyBracket(out, indent);
+   }
+   
+   /**
+    * Output test generated method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeTestMethod(Definition def, Writer out, int indent) throws IOException
+   {
+      for (MethodForConnection method : def.getMethods())
+      {
+         writeIndent(out, indent);
+         out.write("/**");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" * Test " + method.getMethodName());
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" *");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" * @exception Throwable Thrown if case of an error");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" */");
+         writeEol(out);
+   
+         writeIndent(out, indent);
+         out.write("@Test");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("public void test" + upcaseFirst(method.getMethodName()) + "() throws Throwable");
+         writeLeftCurlyBracket(out, indent);
+         
+         writeIndent(out, indent + 1);
+         out.write("Context context = null;");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("try");
+         writeLeftCurlyBracket(out, indent + 1);
+         writeIndent(out, indent + 2);
+         out.write("context = new InitialContext();");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write(def.getCfInterfaceClass() + " cf = (" + def.getCfInterfaceClass() + 
+            ")context.lookup(JNDI_PREFIX + deploymentName);");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("assertNotNull(cf);");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write(def.getConnInterfaceClass() + " c = cf.getConnection();");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("assertNotNull(c);");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("c." + method.getMethodName() + "(");
+         int paramSize = method.getParams().size();
+         for (int i = 0; i < paramSize; i++)
+         {
+            MethodForConnection.Param param = method.getParams().get(i);
+            out.write(BasicType.defaultValue(param.getType()));
+            if (i + 1 < paramSize)
+               out.write(", ");
+         }
+         out.write(");");
+         writeEol(out);
+         
+         writeRightCurlyBracket(out, indent + 1);
+         writeIndent(out, indent + 1);
+         out.write("catch (Throwable t)");
+         writeLeftCurlyBracket(out, indent + 1);
+         writeIndent(out, indent + 2);
+         out.write("log.error(t.getMessage(), t);");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("fail(t.getMessage());");
+         writeRightCurlyBracket(out, indent + 1);
+         writeIndent(out, indent + 1);
+         out.write("finally");
+         writeLeftCurlyBracket(out, indent + 1);
+         writeIndent(out, indent + 2);
+         out.write("if (context != null)");
+         writeLeftCurlyBracket(out, indent + 2);
+         writeIndent(out, indent + 3);
+         out.write("try");
+         writeLeftCurlyBracket(out, indent + 3);
+         writeIndent(out, indent + 4);
+         out.write("context.close();");
+         writeRightCurlyBracket(out, indent + 3);
+         writeIndent(out, indent + 3);
+         out.write("catch (NamingException ne)");
+         writeLeftCurlyBracket(out, indent + 3);
+         writeIndent(out, indent + 4);
+         out.write("// Ignore");
+         writeRightCurlyBracket(out, indent + 3);
+         writeRightCurlyBracket(out, indent + 2);
+         writeRightCurlyBracket(out, indent + 1);
+         writeRightCurlyBracket(out, indent);
+         writeEol(out);
+      }
    }
 }

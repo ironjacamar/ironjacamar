@@ -39,19 +39,7 @@ import java.util.ResourceBundle;
 public class Main
 {
    private static final int OTHER = 2;
-   
-   private enum PropsType 
-   {
-      String,
-      Boolean,
-      Integer,
-      Double,
-      Byte,
-      Short,
-      Long,
-      Float,
-      Character
-   }
+
    /**
     * Code generator stand alone tool
     * 
@@ -271,6 +259,22 @@ public class Main
                System.out.print(dbconf.getString("conn.class.name"));
                String connImplName = in.readLine();
                def.setConnImplClass(connImplName);
+               
+               System.out.print(dbconf.getString("connection.method.support"));
+               String supportMethod = in.readLine();
+               if (supportMethod == null)
+                  def.setDefineMethodInConnection(false);
+               else
+               {
+                  if (supportMethod.equals("Y") || supportMethod.equals("y") || supportMethod.equals("Yes"))
+                     def.setDefineMethodInConnection(true);
+                  else
+                     def.setDefineMethodInConnection(false);
+               }
+               if (def.isDefineMethodInConnection())
+               {
+                  def.setMethods(inputMethod(dbconf, in));
+               }
             }
          }
          
@@ -361,24 +365,11 @@ public class Main
             break;
          System.out.print("    " + dbconf.getString("config.properties.type"));
          String type = in.readLine();
-         boolean correctType = false;
-         for (PropsType pt : PropsType.values())
-         {
-            if (type.equals(pt.toString()))
-            {
-               correctType = true;
-               break;
-            }
-         }
-         if (!correctType)
+
+         if (!BasicType.isBasicType(type))
          {
             System.out.print(dbconf.getString("config.properties.type.tip") + " [");
-            for (PropsType pt : PropsType.values())
-            {
-               System.out.print(pt.toString());
-               System.out.print(", ");
-            }
-            System.out.println("]");
+            System.out.println(BasicType.allType() + "]");
             continue;
          }
          System.out.print("    " + dbconf.getString("config.properties.value"));
@@ -404,6 +395,65 @@ public class Main
          props.add(config);
       }
       return props;
+   }
+   
+   /**
+    * Input Methods
+    * @param dbconf ResourceBundle
+    * @param in BufferedReader
+    * @return List<MethodForConnection> list of properties
+    * @throws IOException ioException
+    */
+   private static List<MethodForConnection> inputMethod(ResourceBundle dbconf, BufferedReader in) 
+      throws IOException
+   {
+      List<MethodForConnection> methods = new ArrayList<MethodForConnection>();
+      while (true)
+      {
+         System.out.print("    " + dbconf.getString("connection.method.name"));
+         String methodName = in.readLine();
+         if (methodName == null || methodName.equals(""))
+            break;
+         MethodForConnection method = new MethodForConnection();
+         method.setMethodName(methodName);
+         System.out.print("    " + dbconf.getString("connection.method.return"));
+         String methodReturn = in.readLine();
+         if (!(methodReturn == null || methodReturn.equals("")))
+            method.setReturnType(methodReturn);
+         while (true)
+         {
+            System.out.print("    " + dbconf.getString("connection.method.param.name"));
+            String paramName = in.readLine();
+            if (paramName == null || paramName.equals(""))
+               break;
+            String paramType = null;
+            while (true)
+            {
+               System.out.print("    " + dbconf.getString("connection.method.param.type"));
+               paramType = in.readLine();
+               if (BasicType.isBasicType(paramType))
+                  break;
+               System.out.print(dbconf.getString("config.properties.type.tip") + " [");
+               System.out.println(BasicType.allType() + "]");
+            }
+            
+            MethodForConnection.Param param = method.newParam(paramName, paramType);
+            method.getParams().add(param);
+         }
+         
+         while (true)
+         {
+            System.out.print("    " + dbconf.getString("connection.method.exception"));
+            String exceptions = in.readLine();
+            if (exceptions == null || exceptions.equals(""))
+               break;
+            method.getExceptionType().add(exceptions);
+         }
+         methods.add(method);
+      }
+      
+      return methods;
+   
    }
 
    /**
