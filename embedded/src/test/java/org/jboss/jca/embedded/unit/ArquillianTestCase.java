@@ -35,9 +35,6 @@ import org.jboss.jca.embedded.rars.simple.TestResourceAdapter;
 import java.util.UUID;
 
 import javax.annotation.Resource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

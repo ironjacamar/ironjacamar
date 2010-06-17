@@ -34,8 +34,19 @@ import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
  */
 public class EmbeddedJCATestEnricher extends ResourceInjectionEnricher
 {
-   /* (non-Javadoc)
+   /**
+    * Constructor
+    */
+   public EmbeddedJCATestEnricher()
+   {
+   }
+
+   /** 
+    * Lookup an object in JNDI
+    * @param jndiName The JNDI name
+    * @return The object
     * @see org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher#lookup(java.lang.String)
+    * @exception Exception Thrown if the lookup can't be performed
     */
    protected Object lookup(String jndiName) throws Exception 
    {
