@@ -104,6 +104,9 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
+      out.write(" * @exception ResourceException Thrown if a connection can't be obtained");
+      writeEol(out);
+      writeIndent(out, indent);
       out.write(" * @return " + def.getConnInterfaceClass() + " instance");
       writeEol(out);
       writeIndent(out, indent);

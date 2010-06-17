@@ -142,6 +142,9 @@ public class CfCodeGen extends AbstractCodeGen
       out.write(" * @return " + def.getConnInterfaceClass() + " instance");
       writeEol(out);
       writeIndent(out, indent);
+      out.write(" * @exception ResourceException Thrown if a connection can't be obtained");
+      writeEol(out);
+      writeIndent(out, indent);
       out.write(" */");
       writeEol(out);
       
@@ -178,6 +181,9 @@ public class CfCodeGen extends AbstractCodeGen
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @return Reference instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @exception NamingException Thrown if a reference can't be obtained");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
