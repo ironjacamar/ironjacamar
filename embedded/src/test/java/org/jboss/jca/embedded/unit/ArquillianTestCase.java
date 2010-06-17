@@ -34,6 +34,7 @@ import org.jboss.jca.embedded.rars.simple.TestResourceAdapter;
 
 import java.util.UUID;
 
+import javax.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -63,8 +64,7 @@ public class ArquillianTestCase
 
    private static Logger log = Logger.getLogger(ArquillianTestCase.class);
 
-   private static final String JNDI_PREFIX = "java:/eis/";
-   private static String deploymentName = null;
+   private static String deploymentName = "ArquillianTest";
 
    /**
     * Define the deployment
@@ -73,8 +73,6 @@ public class ArquillianTestCase
    @Deployment
    public static ResourceAdapterArchive createDeployment()
    {
-      deploymentName = UUID.randomUUID().toString();
-
       ResourceAdapterArchive raa =
          ShrinkWrap.create(ResourceAdapterArchive.class, deploymentName + ".rar");
 
@@ -94,6 +92,9 @@ public class ArquillianTestCase
    // Tests ------------------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
+   @Resource(mappedName = "java:/eis/ArquillianTest")
+   private TestConnectionFactory connectionFactory;
+   
    /**
     * Basic
     * @exception Throwable Thrown if case of an error
@@ -101,32 +102,6 @@ public class ArquillianTestCase
    @Test
    public void testBasic() throws Throwable
    {
-      Context context = null;
- 
-      try
-      {
-         context = new InitialContext();
-         Object o = context.lookup(JNDI_PREFIX + deploymentName);
-         assertNotNull(o);
-      }
-      catch (Throwable t)
-      {
-         log.error(t.getMessage(), t);
-         fail(t.getMessage());
-      }
-      finally
-      {
-         if (context != null)
-         {
-            try
-            {
-               context.close();
-            }
-            catch (NamingException ne)
-            {
-               // Ignore
-            }
-         }
-      }
+      assertNotNull(connectionFactory);
    }
 }

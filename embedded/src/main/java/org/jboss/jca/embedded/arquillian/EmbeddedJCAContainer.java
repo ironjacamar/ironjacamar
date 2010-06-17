@@ -62,12 +62,12 @@ public class EmbeddedJCAContainer implements DeployableContainer
       if (archive == null)
          throw new DeploymentException("Could not deploy a null application");
 
-      if (!(archive instanceof ResourceAdapterArchive))
+      if (!(ResourceAdapterArchive.class.isInstance(archive)))
          throw new DeploymentException("Could not deploy a non resource adapter application");
 
       try
       {
-         embedded.deploy((ResourceAdapterArchive)archive);
+         embedded.deploy(ResourceAdapterArchive.class.cast(archive));
       }
       catch (Exception e)
       {
@@ -92,12 +92,12 @@ public class EmbeddedJCAContainer implements DeployableContainer
       if (archive == null)
          throw new DeploymentException("Could not undeploy a null application");
 
-      if (!(archive instanceof ResourceAdapterArchive))
+      if (!(ResourceAdapterArchive.class.isInstance(archive)))
          throw new DeploymentException("Could not undeploy a non resource adapter application");
 
       try
       {
-         embedded.undeploy((ResourceAdapterArchive)archive);
+         embedded.undeploy(ResourceAdapterArchive.class.cast(archive));
       }
       catch (Exception e)
       {

@@ -21,44 +21,25 @@
  */
 package org.jboss.jca.embedded.arquillian;
 
-import java.lang.reflect.Method;
 import java.util.Properties;
 
 import javax.naming.InitialContext;
 
-import org.jboss.arquillian.spi.Context;
-import org.jboss.arquillian.spi.TestEnricher;
+import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
 
 /**
  * {@link TestEnricher} implementation specific to the EmbeddedJCA container
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EmbeddedJCATestEnricher implements TestEnricher 
+public class EmbeddedJCATestEnricher extends ResourceInjectionEnricher
 {
-   /**
-    * Constructor
+   /* (non-Javadoc)
+    * @see org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher#lookup(java.lang.String)
     */
-   public EmbeddedJCATestEnricher()
+   protected Object lookup(String jndiName) throws Exception 
    {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void enrich(final Context context, final Object testCase)
-   {
-      // Nothing for now
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Object[] resolve(Context context, Method method)
-   {
-      return null;
+      return createContext().lookup(jndiName);
    }
 
    /**
