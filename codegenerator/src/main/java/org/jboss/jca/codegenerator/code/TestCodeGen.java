@@ -349,7 +349,12 @@ public class TestCodeGen extends AbstractCodeGen
          writeIndent(out, indent + 2);
          out.write("assertNotNull(c);");
          writeEol(out);
+         
          writeIndent(out, indent + 2);
+         if (!method.getReturnType().equals("void"))
+         {
+            out.write(method.getReturnType() + " result = ");
+         }
          out.write("c." + method.getMethodName() + "(");
          int paramSize = method.getParams().size();
          for (int i = 0; i < paramSize; i++)

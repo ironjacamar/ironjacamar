@@ -48,6 +48,16 @@ public enum BasicType
    /** char */
    Character;
    
+   private static String[] primitive = {
+      "int",
+      "boolean",
+      "double",
+      "byte",
+      "short",
+      "long",
+      "float",
+      "char"
+   };
    /**
     * is basic type
     * @param type type string
@@ -66,12 +76,49 @@ public enum BasicType
    }
    
    /**
-    * return string include all types
+    * is primitive type
+    * @param type type string
+    * @return boolean true if basic type
+    */
+   public static boolean isPrimitiveType(String type)
+   {
+      for (String ptype : primitive)
+      {
+         if (type.equals(ptype))
+            return true;
+      }
+      return false;
+   }
+   
+   /**
+    * return string include all basic types
+    * @return String all types
+    */
+   public static String allBasicType()
+   {
+      StringBuilder sb = new StringBuilder();
+      BasicType[] types = BasicType.values();
+      for (int i = 0; i < types.length; i++)
+      {
+         sb.append(types[i].toString());
+         if (i + 1 < types.length)
+            sb.append(", ");
+      }
+      return sb.toString();
+   }
+   
+   /**
+    * return string include all basic and primitive types
     * @return String all types
     */
    public static String allType()
    {
       StringBuilder sb = new StringBuilder();
+      for (String ptype : primitive)
+      {
+         sb.append(ptype);
+         sb.append(", ");
+      }
       BasicType[] types = BasicType.values();
       for (int i = 0; i < types.length; i++)
       {
@@ -91,22 +138,22 @@ public enum BasicType
    {
       if (type.equals("String"))
          return "null";
-      else if (type.equals("Boolean"))
+      else if (type.equals("boolean") || type.equals("Boolean"))
          return "false";
-      else if (type.equals("Integer"))
+      else if (type.equals("int") || type.equals("Integer"))
          return "0";
-      else if (type.equals("Double"))
+      else if (type.equals("double") || type.equals("Double"))
          return "0.0";
-      else if (type.equals("Long"))
+      else if (type.equals("long") || type.equals("Long"))
          return "0l";
-      else if (type.equals("Byte"))
+      else if (type.equals("byte") || type.equals("Byte"))
          return "0";
-      else if (type.equals("Short"))
+      else if (type.equals("short") || type.equals("Short"))
          return "0";
-      else if (type.equals("Float"))
+      else if (type.equals("float") || type.equals("Float"))
          return "0.0f";
-      else if (type.equals("Character"))
-         return "0";
-      return "";
+      else if (type.equals("char") || type.equals("Character"))
+         return "''";
+      return null;
    }
 }

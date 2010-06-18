@@ -369,7 +369,7 @@ public class Main
          if (!BasicType.isBasicType(type))
          {
             System.out.print(dbconf.getString("config.properties.type.tip") + " [");
-            System.out.println(BasicType.allType() + "]");
+            System.out.println(BasicType.allBasicType() + "]");
             continue;
          }
          System.out.print("    " + dbconf.getString("config.properties.value"));
@@ -431,7 +431,7 @@ public class Main
             {
                System.out.print("    " + dbconf.getString("connection.method.param.type"));
                paramType = in.readLine();
-               if (BasicType.isBasicType(paramType))
+               if (BasicType.isBasicType(paramType) || BasicType.isPrimitiveType(paramType))
                   break;
                System.out.print(dbconf.getString("config.properties.type.tip") + " [");
                System.out.println(BasicType.allType() + "]");
