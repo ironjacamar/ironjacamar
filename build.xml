@@ -34,7 +34,7 @@
   <property name="major" value="1"/>
   <property name="minor" value="0"/>
   <property name="patch" value="0"/>
-  <property name="type" value="Alpha13"/>
+  <property name="type" value="Alpha14"/>
 
   <!-- ================================= 
        Ivy              
