@@ -54,14 +54,14 @@ public class TestCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
       writeEol(out);
-      writeIndent(out, indent);
-      out.write("private static final String JNDI_PREFIX = \"java:/eis/\";");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private static String deploymentName = null;");
+      out.write("private static String deploymentName = \"" + getClassName(def) + "\";");
+      writeEol(out);
       writeEol(out);
 
       writeDeployment(def, out, indent);
+      writeResource(def, out, indent);
       
       if (def.isDefineMethodInConnection())
       {
@@ -87,11 +87,16 @@ public class TestCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import java.util.UUID;");
       writeEol(out);
+      writeEol(out);
+      out.write("import javax.annotation.Resource;");
+      writeEol(out);
+      writeEol(out);
       out.write("import javax.naming.Context;");
       writeEol(out);
       out.write("import javax.naming.InitialContext;");
       writeEol(out);
       out.write("import javax.naming.NamingException;");
+      writeEol(out);
       writeEol(out);
       out.write("import org.jboss.arquillian.api.Deployment;");
       writeEol(out);
@@ -159,10 +164,7 @@ public class TestCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public static ResourceAdapterArchive createDeployment()");
       writeLeftCurlyBracket(out, indent);
-      
-      writeIndent(out, indent + 1);
-      out.write("deploymentName = UUID.randomUUID().toString();");
-      writeEol(out);
+
       writeIndent(out, indent + 1);
       out.write("ResourceAdapterArchive raa =");
       writeEol(out);
@@ -208,12 +210,34 @@ public class TestCodeGen extends AbstractCodeGen
       }
       writeIndent(out, indent + 1);
       out.write("return raa;");
-      writeEol(out);
       
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
    
+   /**
+    * Output resource for conection factory
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeResource(Definition def, Writer out, int indent) throws IOException
+   {
+      writeIndent(out, indent);
+      out.write("/** resource */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("@Resource(mappedName = \"java:/eis/" + getClassName(def) + "\")");
+      writeEol(out);
+      writeIndent(out, indent);
+      if (def.isDefineMethodInConnection())
+         out.write("private " + def.getCfInterfaceClass() + " connectionFactory;");
+      else
+         out.write("private Object connectionFactory;");
+      writeEol(out);
+      writeEol(out);
+   }
    /**
     * Output test basic method
     * @param def definition
@@ -247,49 +271,8 @@ public class TestCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       
       writeIndent(out, indent + 1);
-      out.write("Context context = null;");
-      writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write("try");
-      writeLeftCurlyBracket(out, indent + 1);
-      writeIndent(out, indent + 2);
-      out.write("context = new InitialContext();");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("Object o = context.lookup(JNDI_PREFIX + deploymentName);");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("assertNotNull(o);");
-      writeRightCurlyBracket(out, indent + 1);
-      writeIndent(out, indent + 1);
-      out.write("catch (Throwable t)");
-      writeLeftCurlyBracket(out, indent + 1);
-      writeIndent(out, indent + 2);
-      out.write("log.error(t.getMessage(), t);");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("fail(t.getMessage());");
-      writeRightCurlyBracket(out, indent + 1);
-      writeIndent(out, indent + 1);
-      out.write("finally");
-      writeLeftCurlyBracket(out, indent + 1);
-      writeIndent(out, indent + 2);
-      out.write("if (context != null)");
-      writeLeftCurlyBracket(out, indent + 2);
-      writeIndent(out, indent + 3);
-      out.write("try");
-      writeLeftCurlyBracket(out, indent + 3);
-      writeIndent(out, indent + 4);
-      out.write("context.close();");
-      writeRightCurlyBracket(out, indent + 3);
-      writeIndent(out, indent + 3);
-      out.write("catch (NamingException ne)");
-      writeLeftCurlyBracket(out, indent + 3);
-      writeIndent(out, indent + 4);
-      out.write("// Ignore");
-      writeRightCurlyBracket(out, indent + 3);
-      writeRightCurlyBracket(out, indent + 2);
-      writeRightCurlyBracket(out, indent + 1);
+      out.write("assertNotNull(connectionFactory);");
+
       writeRightCurlyBracket(out, indent);
    }
    
@@ -327,35 +310,23 @@ public class TestCodeGen extends AbstractCodeGen
          out.write("public void test" + upcaseFirst(method.getMethodName()) + "() throws Throwable");
          writeLeftCurlyBracket(out, indent);
          
+
          writeIndent(out, indent + 1);
-         out.write("Context context = null;");
+         out.write("assertNotNull(connectionFactory);");
          writeEol(out);
          writeIndent(out, indent + 1);
-         out.write("try");
-         writeLeftCurlyBracket(out, indent + 1);
-         writeIndent(out, indent + 2);
-         out.write("context = new InitialContext();");
+         out.write(def.getConnInterfaceClass() + " connection = connectionFactory.getConnection();");
          writeEol(out);
-         writeIndent(out, indent + 2);
-         out.write(def.getCfInterfaceClass() + " cf = (" + def.getCfInterfaceClass() + 
-            ")context.lookup(JNDI_PREFIX + deploymentName);");
-         writeEol(out);
-         writeIndent(out, indent + 2);
-         out.write("assertNotNull(cf);");
-         writeEol(out);
-         writeIndent(out, indent + 2);
-         out.write(def.getConnInterfaceClass() + " c = cf.getConnection();");
-         writeEol(out);
-         writeIndent(out, indent + 2);
-         out.write("assertNotNull(c);");
+         writeIndent(out, indent + 1);
+         out.write("assertNotNull(connection);");
          writeEol(out);
          
-         writeIndent(out, indent + 2);
+         writeIndent(out, indent + 1);
          if (!method.getReturnType().equals("void"))
          {
             out.write(method.getReturnType() + " result = ");
          }
-         out.write("c." + method.getMethodName() + "(");
+         out.write("connection." + method.getMethodName() + "(");
          int paramSize = method.getParams().size();
          for (int i = 0; i < paramSize; i++)
          {
@@ -365,38 +336,7 @@ public class TestCodeGen extends AbstractCodeGen
                out.write(", ");
          }
          out.write(");");
-         writeEol(out);
-         
-         writeRightCurlyBracket(out, indent + 1);
-         writeIndent(out, indent + 1);
-         out.write("catch (Throwable t)");
-         writeLeftCurlyBracket(out, indent + 1);
-         writeIndent(out, indent + 2);
-         out.write("log.error(t.getMessage(), t);");
-         writeEol(out);
-         writeIndent(out, indent + 2);
-         out.write("fail(t.getMessage());");
-         writeRightCurlyBracket(out, indent + 1);
-         writeIndent(out, indent + 1);
-         out.write("finally");
-         writeLeftCurlyBracket(out, indent + 1);
-         writeIndent(out, indent + 2);
-         out.write("if (context != null)");
-         writeLeftCurlyBracket(out, indent + 2);
-         writeIndent(out, indent + 3);
-         out.write("try");
-         writeLeftCurlyBracket(out, indent + 3);
-         writeIndent(out, indent + 4);
-         out.write("context.close();");
-         writeRightCurlyBracket(out, indent + 3);
-         writeIndent(out, indent + 3);
-         out.write("catch (NamingException ne)");
-         writeLeftCurlyBracket(out, indent + 3);
-         writeIndent(out, indent + 4);
-         out.write("// Ignore");
-         writeRightCurlyBracket(out, indent + 3);
-         writeRightCurlyBracket(out, indent + 2);
-         writeRightCurlyBracket(out, indent + 1);
+
          writeRightCurlyBracket(out, indent);
          writeEol(out);
       }
