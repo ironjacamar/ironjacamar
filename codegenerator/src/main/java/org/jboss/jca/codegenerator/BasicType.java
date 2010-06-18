@@ -138,22 +138,22 @@ public enum BasicType
    {
       if (type.equals("String"))
          return "null";
-      else if (type.equals("boolean") || type.equals("Boolean"))
+      else if (type.equals("boolean"))
          return "false";
-      else if (type.equals("int") || type.equals("Integer"))
+      else if (type.equals("int"))
          return "0";
-      else if (type.equals("double") || type.equals("Double"))
+      else if (type.equals("double"))
          return "0.0";
-      else if (type.equals("long") || type.equals("Long"))
-         return "0l";
-      else if (type.equals("byte") || type.equals("Byte"))
+      else if (type.equals("long"))
          return "0";
-      else if (type.equals("short") || type.equals("Short"))
+      else if (type.equals("byte"))
          return "0";
-      else if (type.equals("float") || type.equals("Float"))
-         return "0.0f";
-      else if (type.equals("char") || type.equals("Character"))
+      else if (type.equals("short"))
+         return "0";
+      else if (type.equals("float"))
+         return "0.0";
+      else if (type.equals("char"))
          return "''";
-      return null;
+      return "null";
    }
 }
