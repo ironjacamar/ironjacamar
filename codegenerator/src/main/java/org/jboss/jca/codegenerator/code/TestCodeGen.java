@@ -91,13 +91,6 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("import javax.annotation.Resource;");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.naming.Context;");
-      writeEol(out);
-      out.write("import javax.naming.InitialContext;");
-      writeEol(out);
-      out.write("import javax.naming.NamingException;");
-      writeEol(out);
-      writeEol(out);
       out.write("import org.jboss.arquillian.api.Deployment;");
       writeEol(out);
       out.write("import org.jboss.arquillian.junit.Arquillian;");
