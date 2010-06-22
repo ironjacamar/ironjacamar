@@ -489,6 +489,7 @@
     <copy todir="${build.dir}/instrumented">
       <fileset dir="${target.dir}">
         <include name="jboss-jca-core-api.jar"/>
+        <include name="jboss-jca-core-spi.jar"/>
       </fileset>
     </copy>
 
