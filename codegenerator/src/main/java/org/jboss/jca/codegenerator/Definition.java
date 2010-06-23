@@ -38,6 +38,8 @@ public class Definition
    /** resource adapter package name */
    private String raPackage;
    
+   /** default value for proper input */
+   private String defaultValue = "Acme";
    
    /** use annotation or ra.xml  */
    private boolean useAnnotation;
@@ -183,6 +185,10 @@ public class Definition
     */
    public String getRaClass()
    {
+      if (raClass == null || raClass.equals(""))
+      {
+         raClass =  getDefaultValue() + "ResourceAdpater";
+      }
       return raClass;
    }
 
@@ -223,6 +229,10 @@ public class Definition
     */
    public String getMcfClass()
    {
+      if (mcfClass == null || mcfClass.equals(""))
+      {
+         mcfClass =  getDefaultValue() + "ManagedConnectionFactory";
+      }
       return mcfClass;
    }
 
@@ -243,6 +253,10 @@ public class Definition
     */
    public String getMcClass()
    {
+      if (mcClass == null || mcClass.equals(""))
+      {
+         mcClass =  getDefaultValue() + "ManagedConnection";
+      }
       return mcClass;
    }
 
@@ -263,6 +277,10 @@ public class Definition
     */
    public String getConnInterfaceClass()
    {
+      if (connInterfaceClass == null || connInterfaceClass.equals(""))
+      {
+         connInterfaceClass =  getDefaultValue() + "ConnectionInterface";
+      }
       return connInterfaceClass;
    }
 
@@ -283,6 +301,10 @@ public class Definition
     */
    public String getConnImplClass()
    {
+      if (connImplClass == null || connImplClass.equals(""))
+      {
+         connImplClass =  getDefaultValue() + "ConnectionImpl";
+      }
       return connImplClass;
    }
 
@@ -451,6 +473,10 @@ public class Definition
     */
    public String getCfClass()
    {
+      if (cfClass == null || cfClass.equals(""))
+      {
+         cfClass =  getDefaultValue() + "ConnectionFactory";
+      }
       return cfClass;
    }
 
@@ -471,6 +497,10 @@ public class Definition
     */
    public String getCfInterfaceClass()
    {
+      if (cfInterfaceClass == null || cfInterfaceClass.equals(""))
+      {
+         cfInterfaceClass =  getDefaultValue() + "ConnectionFactoryInterface";
+      }
       return cfInterfaceClass;
    }
 
@@ -617,6 +647,10 @@ public class Definition
     */
    public String getMlClass()
    {
+      if (mlClass == null || mlClass.equals(""))
+      {
+         mlClass =  getDefaultValue() + "MessageListener";
+      }
       return mlClass;
    }
 
@@ -637,6 +671,10 @@ public class Definition
     */
    public String getAsClass()
    {
+      if (asClass == null || asClass.equals(""))
+      {
+         asClass =  getDefaultValue() + "ActivationSpec";
+      }
       return asClass;
    }
 
@@ -697,6 +735,10 @@ public class Definition
     */
    public String getActivationClass()
    {
+      if (activationClass == null || activationClass.equals(""))
+      {
+         activationClass =  getDefaultValue() + "Activation";
+      }
       return activationClass;
    }
 
@@ -758,6 +800,26 @@ public class Definition
    public List<MethodForConnection> getMethods()
    {
       return methods;
+   }
+
+   /**
+    * Set the defaultValue.
+    * 
+    * @param defaultValue The defaultValue to set.
+    */
+   public void setDefaultValue(String defaultValue)
+   {
+      this.defaultValue = defaultValue;
+   }
+
+   /**
+    * Get the defaultValue.
+    * 
+    * @return the defaultValue.
+    */
+   public String getDefaultValue()
+   {
+      return defaultValue;
    }
 
 }
