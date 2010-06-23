@@ -23,55 +23,79 @@ package org.jboss.jca.codegenerator;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * A Definition.
  * 
  * @author Jeff Zhang</a>
  * @version $Revision: $
  */
+@XmlRootElement(name = "definition")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Definition
 {
    /** jca version  */
+   @XmlElement(name = "version")
    private String version;
    /** output directory  */
    private String outputDir;
    /** resource adapter package name */
+   @XmlElement(name = "package")
    private String raPackage;
    
    /** default value for proper input */
    private String defaultValue = "Acme";
    
    /** use annotation or ra.xml  */
+   @XmlElement(name = "annotation")
    private boolean useAnnotation;
    /** use resource adapter  */
+   @XmlElement(name = "UseResourceAdapter")
    private boolean useRa;
-   /** support transaction  */
-   private String supportTransaction;
 
    /** resource adapter class name */
+   @XmlElement(name = "ResourceAdapter")
    private String raClass;
    /** resource adapter configuration properties */
+   @XmlElement(name = "RaConfigProp") 
    private List<ConfigPropType> raConfigProps;
    
    /** managed connection factory class name */
+   @XmlElement(name = "ManagedConnectionFactory")
    private String mcfClass;
    /** resource adapter configuration properties */
+   @XmlElement(name = "McfConfigProp") 
    private List<ConfigPropType> mcfConfigProps;
    
+   /** support transaction  */
+   @XmlElement(name = "Transaction") 
+   private String supportTransaction;
+
    /** managed connection class name */
+   @XmlElement(name = "ManagedConnection")
    private String mcClass;
    /** connection interface name */
+   @XmlElement(name = "ConnectionInterface")
    private String connInterfaceClass;
    /** connection impl class name */
+   @XmlElement(name = "ConnectionImpl")
    private String connImplClass;
    /** connection factory interface name */
+   @XmlElement(name = "ConnectionFactoryInterface")
    private String cfInterfaceClass;
    /** connection factory class name */
+   @XmlElement(name = "ConnectionFactoryImpl")
    private String cfClass;
    
    /** ResourceAdapterAssociation optional  */
+   @XmlElement(name = "ImplRaAssociation")
    private boolean implRaAssociation;
    /** ResourceAdapterAssociation optional  */
+   @XmlElement(name = "UseCciConnection")
    private boolean useCciConnection;
    
    /** cci connection factory class name */
@@ -91,21 +115,29 @@ public class Definition
    private String raMetaClass;
 
    /** support outbound  */
+   @XmlElement(name = "SupportOutbound")
    private boolean supportOutbound;
    /** support inbound  */
+   @XmlElement(name = "SupportInbound")
    private boolean supportInbound;
-   /** connection metadata class name */
+   /** connection message listener class name */
+   @XmlElement(name = "MessageListener")
    private String mlClass;
    /** ActivationSpec class name */
+   @XmlElement(name = "ActivationSpec")
    private String asClass;
    /** ActivationSpec configuration properties */
+   @XmlElement(name = "AsConfigProp")
    private List<ConfigPropType> asConfigProps;
    /** Activation class name */
+   @XmlElement(name = "Activation")
    private String activationClass;
    
-   /** support self deined method in connection interface  */
+   /** support self defined method in connection class  */
+   @XmlElement(name = "DefineMethod") 
    private boolean defineMethodInConnection;
-   /** connection metadata class name */
+   /** define methods */
+   @XmlElement(name = "Method") 
    private List<MethodForConnection> methods;
    
    /**

@@ -39,7 +39,14 @@ public class ConfigPropType
    private boolean required;
 
    /**
-    * Set the name.
+    * constructor
+    */
+   public ConfigPropType()
+   {
+   }
+   
+   /**
+    * constructor with initial value
     * 
     * @param name The name to set.
     * @param type The type to set.

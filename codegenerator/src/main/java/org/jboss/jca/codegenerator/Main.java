@@ -30,6 +30,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+
 /**
  * Code generator main class
  * 
@@ -38,6 +43,8 @@ import java.util.ResourceBundle;
  */
 public class Main
 {
+   private static final int SUCCESS = 0;
+   private static final int ERROR = 1;
    private static final int OTHER = 2;
 
    /** ResourceBundle */
@@ -51,6 +58,7 @@ public class Main
    public static void main(String[] args)
    {
       String outputDir = "out"; //default output directory
+      String defxml = null;
       int arg = 0;
  
       if (args.length > 0)
@@ -69,6 +77,16 @@ public class Main
                   }
                   outputDir = args[arg];
                }
+               else if (args[arg].equals("-f"))
+               {
+                  arg++;
+                  if (arg >= args.length)
+                  {
+                     usage();
+                     System.exit(OTHER);
+                  }
+                  defxml = args[arg];
+               }
             } 
             else
             {
@@ -83,25 +101,73 @@ public class Main
          File out = new File(outputDir);
          Utils.recursiveDelete(out);
 
-         inputFromCommandLine(outputDir);
+         Definition def = null;
+         
+         if (defxml == null)
+            def = inputFromCommandLine();
+         else
+            def = inputFromXml(defxml);
+         
+         if (def == null)
+            System.exit(ERROR);
+         
+         def.setOutputDir(outputDir);
+
+         Profile profile;
+         if (def.getVersion().equals("1.6"))
+         {
+            profile = new JCA16Profile();
+         }
+         else if (def.getVersion().equals("1.5"))
+         {
+            profile = new JCA15Profile();
+         }
+         else
+         {
+            profile = new JCA10Profile();
+         }
+         profile.generate(def);
          
          copyAllJars(outputDir);
          
          System.out.println(rb.getString("code.wrote"));
+         System.exit(SUCCESS);
       }
       catch (IOException e)
       {
          e.printStackTrace();
       }
+      catch (JAXBException e)
+      {
+         e.printStackTrace();
+      }
+   }
+   
+   /**
+    * input from xml file
+    * 
+    * @param defxml definition xml file
+    * @throws IOException ioException
+    * @throws JAXBException jaxb exception
+    * @return Definition definition from input
+    */
+   private static Definition inputFromXml(String defxml) throws IOException, JAXBException
+   {
+      JAXBContext context = JAXBContext.newInstance("org.jboss.jca.codegenerator");
+      Unmarshaller unmarshaller = context.createUnmarshaller();
+      Definition def = (Definition)unmarshaller.unmarshal(new File(defxml));
+      //System.out.println(def.getVersion());
+
+      return def;
    }
 
    /**
     * input from command line 
     * 
-    * @param outputDir output directory
     * @throws IOException ioException
+    * @return Definition definition from input
     */
-   private static void inputFromCommandLine(String outputDir) throws IOException
+   private static Definition inputFromCommandLine() throws IOException
    {
       BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
       Definition def = new Definition();
@@ -322,7 +388,6 @@ public class Main
             }
          }
       }
-      
 
       //inbound
       if (def.isSupportInbound())
@@ -336,7 +401,7 @@ public class Main
             setDefaultValue(def, mlClassName, "MessageListener");
             setDefaultValue(def, mlClassName, "Ml");
          }
-         
+
          System.out.print(rb.getString("as.class.name"));
          System.out.print("[" + def.getAsClass() + "] ");
          String asClassName = in.readLine();
@@ -352,23 +417,8 @@ public class Main
          if (actiClassName != null && !actiClassName.equals(""))
             def.setActivationClass(actiClassName);
       }
-      
-      def.setOutputDir(outputDir);
 
-      Profile profile;
-      if (version.equals("1.6"))
-      {
-         profile = new JCA16Profile();
-      }
-      else if (version.equals("1.5"))
-      {
-         profile = new JCA15Profile();
-      }
-      else
-      {
-         profile = new JCA10Profile();
-      }
-      profile.generate(def);
+      return def;
    }
 
    /**

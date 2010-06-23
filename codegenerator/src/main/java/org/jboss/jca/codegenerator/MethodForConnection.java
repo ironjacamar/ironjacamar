@@ -24,21 +24,29 @@ package org.jboss.jca.codegenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  * A MethodForConnection.
  * 
  * @author Jeff Zhang</a>
  * @version $Revision: $
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class MethodForConnection
 {
    /** name */
+   @XmlElement(name = "MethodName")
    private String methodName;
    /** type */
+   @XmlElement(name = "ReturnType")
    private String returnType = "void";
    /** value */
    private List<MethodParam> params = new ArrayList<MethodParam>();
    /** required */
+   @XmlElement(name = "ExceptionType")
    private List<String> exceptionType = new ArrayList<String>();
 
    /**
