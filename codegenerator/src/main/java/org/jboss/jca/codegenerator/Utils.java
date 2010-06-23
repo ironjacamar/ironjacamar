@@ -222,7 +222,12 @@ public class Utils
     */
    public static void copyFolder(String sourcePath, String targetPath, final String filterName) throws IOException
    {
-      new File(targetPath).mkdirs();
+      File path = new File(targetPath);
+      if (!path.exists())
+      {
+         if (!path.mkdirs())
+            throw new IOException("outdir can't be created");
+      }
       File a = new File(sourcePath);
       String[] file = a.list(new FilenameFilter()
       {

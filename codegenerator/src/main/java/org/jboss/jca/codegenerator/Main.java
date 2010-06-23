@@ -437,7 +437,7 @@ public class Main
                System.out.println(BasicType.allType() + "]");
             }
             
-            MethodForConnection.Param param = method.newParam(paramName, paramType);
+            MethodParam param = method.newParam(paramName, paramType);
             method.getParams().add(param);
          }
          

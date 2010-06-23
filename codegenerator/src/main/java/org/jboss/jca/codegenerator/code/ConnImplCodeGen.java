@@ -23,6 +23,7 @@ package org.jboss.jca.codegenerator.code;
 
 import org.jboss.jca.codegenerator.Definition;
 import org.jboss.jca.codegenerator.MethodForConnection;
+import org.jboss.jca.codegenerator.MethodParam;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -122,7 +123,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
                int paramSize = method.getParams().size();
                for (int i = 0; i < paramSize; i++)
                {
-                  MethodForConnection.Param param = method.getParams().get(i);
+                  MethodParam param = method.getParams().get(i);
                   out.write(param.getType());
                   out.write(" ");
                   out.write(param.getName());

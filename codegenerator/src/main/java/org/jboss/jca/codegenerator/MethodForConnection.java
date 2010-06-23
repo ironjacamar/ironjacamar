@@ -37,58 +37,9 @@ public class MethodForConnection
    /** type */
    private String returnType = "void";
    /** value */
-   private List<Param> params = new ArrayList<Param>();
+   private List<MethodParam> params = new ArrayList<MethodParam>();
    /** required */
    private List<String> exceptionType = new ArrayList<String>();
-   
-   /** param */
-   public class Param
-   {
-      /** name */
-      private String name;
-      /** type */
-      private String type;
-      
-      /**
-       * Set the name.
-       * 
-       * @param name The name to set.
-       */
-      public void setName(String name)
-      {
-         this.name = name;
-      }
-      
-      /**
-       * Get the name.
-       * 
-       * @return the name.
-       */
-      public String getName()
-      {
-         return name;
-      }
-      
-      /**
-       * Set the type.
-       * 
-       * @param type The type to set.
-       */
-      public void setType(String type)
-      {
-         this.type = type;
-      }
-      
-      /**
-       * Get the type.
-       * 
-       * @return the type.
-       */
-      public String getType()
-      {
-         return type;
-      }
-   }
 
    /**
     * new param
@@ -97,9 +48,9 @@ public class MethodForConnection
     * @param type param type
     * @return new param
     */
-   public Param newParam(String name, String type)
+   public MethodParam newParam(String name, String type)
    {
-      Param p = new Param();
+      MethodParam p = new MethodParam();
       p.setName(name);
       p.setType(type);
       return p;
@@ -150,7 +101,7 @@ public class MethodForConnection
     * 
     * @param params The params to set.
     */
-   public void setParams(List<Param> params)
+   public void setParams(List<MethodParam> params)
    {
       this.params = params;
    }
@@ -160,7 +111,7 @@ public class MethodForConnection
     * 
     * @return the params.
     */
-   public List<Param> getParams()
+   public List<MethodParam> getParams()
    {
       return params;
    }
