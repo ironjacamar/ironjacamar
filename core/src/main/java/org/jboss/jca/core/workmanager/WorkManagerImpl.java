@@ -211,7 +211,7 @@ public class WorkManagerImpl implements WorkManager
     */
    public WorkManager clone() throws CloneNotSupportedException
    {
-      WorkManager wm = new WorkManagerImpl();
+      WorkManager wm = (WorkManager)super.clone();
       wm.setShortRunningThreadPool(getShortRunningThreadPool());
       wm.setLongRunningThreadPool(getLongRunningThreadPool());
       wm.setXATerminator(getXATerminator());

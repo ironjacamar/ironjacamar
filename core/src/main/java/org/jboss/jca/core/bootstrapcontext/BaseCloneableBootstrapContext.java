@@ -150,7 +150,7 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
     */
    public CloneableBootstrapContext clone() throws CloneNotSupportedException
    {
-      BaseCloneableBootstrapContext bcbc = new BaseCloneableBootstrapContext();
+      BaseCloneableBootstrapContext bcbc = (BaseCloneableBootstrapContext)super.clone();
       bcbc.setTransactionSynchronizationRegistry(getTransactionSynchronizationRegistry());
       bcbc.setWorkManager(getWorkManager().clone());
       bcbc.setXATerminator(getXATerminator());
