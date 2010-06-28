@@ -52,6 +52,47 @@ public class RaCodeGen extends PropsCodeGen
          {
             out.write("(");
             writeEol(out);
+            if (def.getAuthenMechanisms() != null && def.getAuthenMechanisms().size() > 0)
+            {
+               writeIndent(out, 1);
+               out.write("authMechanisms = {");
+               writeEol(out);
+               for (int i = 0; i < def.getAuthenMechanisms().size(); i++)
+               {
+                  writeIndent(out, 2);
+                  out.write("@AuthenticationMechanism(");
+                  out.write("authMechanism = \"" + def.getAuthenMechanisms().get(i).getAuthMechanism());
+                  out.write("\", credentialInterface = CredentialInterface." + 
+                     def.getAuthenMechanisms().get(i).getCredentialInterface());
+                  if (i + 1 < def.getAuthenMechanisms().size())
+                     out.write("),");
+                  else
+                     out.write(")},");
+                  writeEol(out);
+               }
+            }
+            writeIndent(out, 1);
+            out.write("reauthenticationSupport = " + def.isSupportReauthen() + ",");
+            writeEol(out);
+            if (def.getSecurityPermissions() != null && def.getSecurityPermissions().size() > 0)
+            {
+               writeIndent(out, 1);
+               out.write("securityPermissions = {");
+               writeEol(out);
+
+               for (int i = 0; i < def.getSecurityPermissions().size(); i++)
+               {
+                  writeIndent(out, 2);
+                  out.write("@SecurityPermission(");
+                  out.write("permissionSpec = \"" + 
+                     def.getSecurityPermissions().get(i).getPermissionSpec() + "\")");
+                  if (i + 1 < def.getSecurityPermissions().size())
+                     out.write(",");
+                  else
+                     out.write("},");
+                  writeEol(out);
+               }
+            }
             writeIndent(out, 1);
             out.write("transactionSupport = TransactionSupport.TransactionSupportLevel." + 
                def.getSupportTransaction() + ")");
@@ -167,6 +208,14 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       out.write("import javax.resource.spi.ActivationSpec;");
       writeEol(out);
+      if (def.isUseAnnotation() && 
+         def.getAuthenMechanisms() != null && def.getAuthenMechanisms().size() > 0)
+      {
+         out.write("import javax.resource.spi.AuthenticationMechanism;");
+         writeEol(out);
+         out.write("import javax.resource.spi.AuthenticationMechanism.CredentialInterface;");
+         writeEol(out);
+      }
       out.write("import javax.resource.spi.BootstrapContext;");
       writeEol(out);
       if (def.isUseAnnotation())
@@ -180,6 +229,12 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       out.write("import javax.resource.spi.ResourceAdapterInternalException;");
       writeEol(out);
+      if (def.isUseAnnotation() && 
+         def.getSecurityPermissions() != null && def.getSecurityPermissions().size() > 0)
+      {
+         out.write("import javax.resource.spi.SecurityPermission;");
+         writeEol(out);
+      }
       if (def.isUseAnnotation() && def.isSupportOutbound())
       {
          out.write("import javax.resource.spi.TransactionSupport;");

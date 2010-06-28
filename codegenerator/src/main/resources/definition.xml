@@ -13,7 +13,7 @@
    <ResourceAdapter>AcmeResourceAdapter</ResourceAdapter>
    <RaConfigProp>
       <name>p1</name>
-      <type>java.lang.String</type>
+      <type>String</type>
       <value>hello</value>
    </RaConfigProp>
    <RaAssociation/>
@@ -22,12 +22,22 @@
    <ManagedConnectionFactory>AcmeManagedConnectionFactory</ManagedConnectionFactory>
    <McfConfigProp>
       <name>p2</name>
-      <type>java.lang.Integer</type>
+      <type>Integer</type>
       <value>13</value>
    </McfConfigProp>
    <ManagedConnection>AcmeManagedConnection</ManagedConnection>
 
    <Transaction>LocalTransaction</Transaction>
+   <SupportReauthen>false</SupportReauthen>
+   <SecurityPermission><permissionSpec>MyPermissionSpec</permissionSpec></SecurityPermission>
+   <AuthenMechanism>
+      <authMechanism>BasicPassword</authMechanism>
+      <credentialInterface>PasswordCredential</credentialInterface>
+   </AuthenMechanism>
+   <AuthenMechanism>
+      <authMechanism>BasicPassword</authMechanism>
+      <credentialInterface>GenericCredential</credentialInterface>
+   </AuthenMechanism>
 
    <UseCciConnection>false</UseCciConnection>
    <ConnectionFactoryInterface>AcmeConnectionFactoryInterface</ConnectionFactoryInterface>
@@ -41,11 +51,11 @@
       <ReturnType>void</ReturnType>
       <params>
          <name>m1</name>
-         <type>java.lang.Integer</type>
+         <type>Integer</type>
       </params>
       <params>
          <name>m2</name>
-         <type>java.lang.String</type>
+         <type>String</type>
       </params>
       <ExceptionType>Exception</ExceptionType>
    </Method>
@@ -55,7 +65,7 @@
    <ActivationSpec>AcmeActivationSpec</ActivationSpec>
    <AsConfigProp>
       <name>p3</name>
-      <type>java.lang.Float</type>
+      <type>Float</type>
       <value>3.14</value>
       <required>3.14</required>
    </AsConfigProp>

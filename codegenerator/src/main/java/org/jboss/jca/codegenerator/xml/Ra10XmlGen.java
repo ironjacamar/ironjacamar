@@ -158,7 +158,7 @@ public class Ra10XmlGen extends RaXmlGen
       writeConfigPropsXml(def.getMcfConfigProps(), out, indent, false);
       
       writeIndent(out, indent);
-      out.write("<reauthentication-support>false</reauthentication-support>");
+      out.write("<reauthentication-support>" + def.isSupportReauthen() + "</reauthentication-support>");
       writeEol(out);
    }
 }

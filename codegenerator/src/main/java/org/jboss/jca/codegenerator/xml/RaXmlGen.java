@@ -78,7 +78,24 @@ public abstract class RaXmlGen extends AbstractXmlGen
       {
          writeInbound(def, out, indent + 1);
       }
-      
+
+      if (def.getSecurityPermissions() != null && def.getSecurityPermissions().size() > 0)
+      {
+         for (int i = 0; i < def.getSecurityPermissions().size(); i++)
+         {
+            writeIndent(out, indent + 1);
+            out.write("<security-permission>");
+            writeEol(out);
+            writeIndent(out, indent + 2);
+            out.write("<security-permission-spec>" + def.getSecurityPermissions().get(i).getPermissionSpec() + 
+               "</security-permission-spec>");
+            writeEol(out);
+            writeIndent(out, indent + 1);
+            out.write("</security-permission>");
+            writeEol(out);
+         }
+      }
+   
       writeIndent(out, indent);
       out.write("</resourceadapter>");
       writeEol(out);
@@ -263,8 +280,34 @@ public abstract class RaXmlGen extends AbstractXmlGen
       writeIndent(out, indent + 1);
       out.write("<transaction-support>" + def.getSupportTransaction() + "</transaction-support>");
       writeEol(out);
+      
+      if (def.getAuthenMechanisms() != null && def.getAuthenMechanisms().size() > 0)
+      {
+         for (int i = 0; i < def.getAuthenMechanisms().size(); i++)
+         {
+            writeIndent(out, indent + 1);
+            out.write("<authentication-mechanism>");
+            writeEol(out);
+            writeIndent(out, indent + 2);
+            out.write("<authentication-mechanism-type>" + def.getAuthenMechanisms().get(i).getAuthMechanism() + 
+               "</authentication-mechanism-type>");
+            writeEol(out);
+            writeIndent(out, indent + 2);
+            out.write("<credential-interface>");
+            if (def.getAuthenMechanisms().get(i).getCredentialInterface().equals("GSSCredential"))
+               out.write("org.ietf.jgss.GSSCredential");
+            else
+               out.write("javax.resource.spi.security." + def.getAuthenMechanisms().get(i).getCredentialInterface());
+            out.write("</credential-interface>");
+            writeEol(out);
+            writeIndent(out, indent + 1);
+            out.write("</authentication-mechanism>");
+            writeEol(out);
+         }
+      }
+      
       writeIndent(out, indent + 1);
-      out.write("<reauthentication-support>false</reauthentication-support>");
+      out.write("<reauthentication-support>" + def.isSupportReauthen() + "</reauthentication-support>");
       writeEol(out);
       writeIndent(out, indent);
       out.write("</outbound-resourceadapter>");

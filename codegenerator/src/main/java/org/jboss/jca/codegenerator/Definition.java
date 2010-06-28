@@ -74,7 +74,16 @@ public class Definition
    /** support transaction  */
    @XmlElement(name = "Transaction") 
    private String supportTransaction;
-
+   /** support re-authentication */
+   @XmlElement(name = "SupportReauthen")
+   private boolean supportReauthen = false;
+   /** define SecurityPermission */
+   @XmlElement(name = "SecurityPermission") 
+   private List<SecurityPermissionType> securityPermissions;
+   /** define AuthenMechanism */
+   @XmlElement(name = "AuthenMechanism") 
+   private List<AuthenMechanismType> authenMechanisms;
+   
    /** managed connection class name */
    @XmlElement(name = "ManagedConnection")
    private String mcClass;
@@ -140,6 +149,7 @@ public class Definition
    @XmlElement(name = "Method") 
    private List<MethodForConnection> methods;
    
+
    /**
     * Set the version.
     * 
@@ -852,6 +862,66 @@ public class Definition
    public String getDefaultValue()
    {
       return defaultValue;
+   }
+
+   /**
+    * Set the supportReauthen.
+    * 
+    * @param supportReauthen The supportReauthen to set.
+    */
+   public void setSupportReauthen(boolean supportReauthen)
+   {
+      this.supportReauthen = supportReauthen;
+   }
+
+   /**
+    * Get the supportReauthen.
+    * 
+    * @return the supportReauthen.
+    */
+   public boolean isSupportReauthen()
+   {
+      return supportReauthen;
+   }
+
+   /**
+    * Set the securityPermissions.
+    * 
+    * @param securityPermissions The securityPermissions to set.
+    */
+   public void setSecurityPermissions(List<SecurityPermissionType> securityPermissions)
+   {
+      this.securityPermissions = securityPermissions;
+   }
+
+   /**
+    * Get the securityPermissions.
+    * 
+    * @return the securityPermissions.
+    */
+   public List<SecurityPermissionType> getSecurityPermissions()
+   {
+      return securityPermissions;
+   }
+
+   /**
+    * Set the authenMechanisms.
+    * 
+    * @param authenMechanisms The authenMechanisms to set.
+    */
+   public void setAuthenMechanisms(List<AuthenMechanismType> authenMechanisms)
+   {
+      this.authenMechanisms = authenMechanisms;
+   }
+
+   /**
+    * Get the authenMechanisms.
+    * 
+    * @return the authenMechanisms.
+    */
+   public List<AuthenMechanismType> getAuthenMechanisms()
+   {
+      return authenMechanisms;
    }
 
 }
