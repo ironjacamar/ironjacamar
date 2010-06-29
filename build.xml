@@ -407,8 +407,7 @@
         </fileset>
       </auxClasspath>
       <class location="${target.dir}/jboss-jca-codegenerator.jar" />
-      <class location="${target.dir}/jboss-jca-common-api.jar" />
-      <class location="${target.dir}/jboss-jca-common-impl.jar" />
+      <class location="${target.dir}/jboss-jca-common.jar" />
       <class location="${target.dir}/jboss-jca-core-api.jar" />
       <class location="${target.dir}/jboss-jca-core-impl.jar" />
       <class location="${target.dir}/jboss-jca-core-spi.jar" />
@@ -438,8 +437,7 @@
         </fileset>
       </auxClasspath>
       <class location="${target.dir}/jboss-jca-codegenerator.jar" />
-      <class location="${target.dir}/jboss-jca-common-api.jar" />
-      <class location="${target.dir}/jboss-jca-common-impl.jar" />
+      <class location="${target.dir}/jboss-jca-common.jar" />
       <class location="${target.dir}/jboss-jca-core-api.jar" />
       <class location="${target.dir}/jboss-jca-core-impl.jar" />
       <class location="${target.dir}/jboss-jca-core-spi.jar" />

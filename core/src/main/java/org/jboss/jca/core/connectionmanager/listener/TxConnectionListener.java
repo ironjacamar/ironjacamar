@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
-import org.jboss.jca.common.api.JBossResourceException;
+import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;

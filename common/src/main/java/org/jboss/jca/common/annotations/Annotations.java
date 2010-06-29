@@ -20,7 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.common;
+package org.jboss.jca.common.annotations;
+
+import org.jboss.jca.common.validator.ValidateException;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;

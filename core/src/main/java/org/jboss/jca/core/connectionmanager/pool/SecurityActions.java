@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * distribution for a full listing of individual contributors. 
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -20,33 +20,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.common;
+package org.jboss.jca.core.connectionmanager.pool;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * The validate exception
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * Privileged Blocks
+ * 
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  */
-public class ValidateException extends Exception
+class SecurityActions
 {
-   /** Serial version UID */
-   static final long serialVersionUID = 3820032266224196804L;
-
    /**
-    * Constructs a new exception with the specified detail message.
-    * @param message The message
+    * Set the context classloader.
+    * @param cl classloader
     */
-   public ValidateException(String message)
+   public static void setThreadContextClassLoader(final ClassLoader cl)
    {
-      super(message);
-   }
+      if (System.getSecurityManager() == null)
+      {
+         Thread.currentThread().setContextClassLoader(cl);
+      }
+      else
+      {
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
+         {
+            public Object run()
+            {
+               Thread.currentThread().setContextClassLoader(cl);
 
-   /**
-    * Constructs a new exception with the specified detail message and cause.
-    * @param message The message
-    * @param cause The cause
-    */
-   public ValidateException(String message, Throwable cause)
-   {
-      super(message, cause);
+               return null;
+            }
+         });
+      }
    }
 }

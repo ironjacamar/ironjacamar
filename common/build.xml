@@ -47,15 +47,9 @@
        Target: jars
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/jboss-jca-common-api.jar"
-         manifest="src/main/resources/api-manifest.mf"
-         basedir="${build.common.dir}"
-         includes="**/api/**"
-         excludes="**/*.java"/>
-    <jar destfile="${target.dir}/jboss-jca-common-impl.jar"
-         manifest="src/main/resources/impl-manifest.mf"
-         basedir="${build.common.dir}"
-         excludes="**/api/**, **/*.java"/>
+    <jar destfile="${target.dir}/jboss-jca-common.jar"
+         manifest="src/main/resources/common-manifest.mf"
+         basedir="${build.common.dir}"/>
   </target>
 
   <!-- ================================= 

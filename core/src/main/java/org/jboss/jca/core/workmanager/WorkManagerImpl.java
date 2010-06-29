@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.workmanager;
 
-import org.jboss.jca.common.util.ClassUtil;
 import org.jboss.jca.core.api.WorkManager;
 import org.jboss.jca.core.spi.security.Callback;
 

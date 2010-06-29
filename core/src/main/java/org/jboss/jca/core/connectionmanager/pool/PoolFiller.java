@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
-import org.jboss.jca.common.util.SecurityActions;
-
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
@@ -91,7 +89,7 @@ public class PoolFiller implements Runnable
    public void run()
    {
       final ClassLoader myClassLoader = getClass().getClassLoader();
-      SecurityActions.setTCL(myClassLoader);
+      SecurityActions.setThreadContextClassLoader(myClassLoader);
 
       // keep going unless interrupted
       while (true)

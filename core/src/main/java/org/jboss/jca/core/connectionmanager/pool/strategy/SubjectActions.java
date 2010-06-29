@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.util;
+package org.jboss.jca.core.connectionmanager.pool.strategy;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -32,7 +32,7 @@ import javax.security.auth.Subject;
  * @version $Rev$ $Date$
  *
  */
-public class SubjectActions implements PrivilegedAction<Object>
+class SubjectActions implements PrivilegedAction<Object>
 {  
    /**First subject instance*/
    private Subject subject;

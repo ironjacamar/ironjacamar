@@ -22,8 +22,6 @@
 
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
-import org.jboss.jca.common.util.SubjectActions;
-
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.security.auth.Subject;
 

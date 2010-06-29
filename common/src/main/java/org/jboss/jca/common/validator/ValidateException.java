@@ -1,8 +1,8 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors. 
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -20,35 +20,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.common.util;
-
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+package org.jboss.jca.common.validator;
 
 /**
- * Privileged Blocks
- * 
- * @author Anil.Saldhana@redhat.com
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @since Nov 7, 2008
+ * The validate exception
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class SecurityActions
+public class ValidateException extends Exception
 {
-   /**
-    * Set context classloader.
-    * 
-    * @param cl classloader
-    */
-   public static void setTCL(final ClassLoader cl)
-   {
-      AccessController.doPrivileged(new PrivilegedAction<Object>()
-      {
-         public Object run()
-         {
-            Thread.currentThread().setContextClassLoader(cl);
+   /** Serial version UID */
+   static final long serialVersionUID = 3820032266224196804L;
 
-            return null;
-         }
-      });
+   /**
+    * Constructs a new exception with the specified detail message.
+    * @param message The message
+    */
+   public ValidateException(String message)
+   {
+      super(message);
+   }
+
+   /**
+    * Constructs a new exception with the specified detail message and cause.
+    * @param message The message
+    * @param cause The cause
+    */
+   public ValidateException(String message, Throwable cause)
+   {
+      super(message, cause);
    }
 }

@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.common.util;
+package org.jboss.jca.core.workmanager;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -30,15 +30,16 @@ import java.lang.reflect.Modifier;
  * 
  * @version $Rev$ $Date$
  */
-public final class ClassUtil
+final class ClassUtil
 {
    /** Empty class array */
    private static final Class<?>[] EMPTY_CLASS_ARRAY = new Class[0];
 
-   // Not-instantiate me
+   /**
+    * Private constructor
+    */
    private ClassUtil()
    {
-      // Empty
    }
 
    /**
@@ -48,17 +49,13 @@ public final class ClassUtil
     * @param to assigned class
     * @return true if <b>from</b> is assignable to <b>to</b>, false ow.
     */
-   public static boolean isClassAssignable(Class<?> from, Class<?> to)
+   static boolean isClassAssignable(Class<?> from, Class<?> to)
    {
       if (from == null)
-      {
          throw new IllegalArgumentException("from is null");
-      }
 
       if (to == null)
-      {
          throw new IllegalArgumentException("to is null");
-      }
 
       return to.isAssignableFrom(from);
    }
@@ -69,7 +66,7 @@ public final class ClassUtil
     * @param modifiers member modifieres
     * @return true if <b>synchronized</b> keyword exists, false otherwise
     */
-   public static boolean modifiersHasSynchronizedKeyword(int modifiers)
+   static boolean modifiersHasSynchronizedKeyword(int modifiers)
    {
       return Modifier.isSynchronized(modifiers);
    }
@@ -82,23 +79,18 @@ public final class ClassUtil
     * @return method
     * @throws NoSuchMethodException if not method exist
     */
-   public static Method getClassMethod(Class<?> clazz, String methodName, 
-         Class<?>[] parameterTypes) throws NoSuchMethodException
+   static Method getClassMethod(Class<?> clazz, String methodName, 
+                                Class<?>[] parameterTypes) throws NoSuchMethodException
    {
       if (clazz == null)
-      {
          throw new IllegalArgumentException("Class is null");
-      }
+
 
       if (methodName == null || methodName.equals(""))
-      {
          throw new IllegalArgumentException("Method name is null or empty");
-      }
 
       if (parameterTypes == null)
-      {
          parameterTypes = EMPTY_CLASS_ARRAY;
-      }
 
       return clazz.getDeclaredMethod(methodName, parameterTypes);
    }

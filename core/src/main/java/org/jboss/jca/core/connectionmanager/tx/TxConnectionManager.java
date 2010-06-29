@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.tx;
 
-import org.jboss.jca.common.api.JBossResourceException;
+import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;

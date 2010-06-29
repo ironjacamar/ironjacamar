@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool;
 
-import org.jboss.jca.common.api.JBossResourceException;
+import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.exception.RetryableResourceException;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;

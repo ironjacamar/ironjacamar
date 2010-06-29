@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.validator;
 
-import org.jboss.jca.common.Annotations;
-import org.jboss.jca.common.Metadata;
+import org.jboss.jca.common.annotations.Annotations;
+import org.jboss.jca.common.metadata.Metadata;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
