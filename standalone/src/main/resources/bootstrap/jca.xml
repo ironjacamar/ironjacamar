@@ -78,4 +78,9 @@
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
   </bean>
   
+  <!-- JNDI strategy -->
+  <bean name="JNDIStrategy"
+        interface="org.jboss.jca.core.spi.naming.JndiStrategy"
+        class="org.jboss.jca.core.naming.SimpleJndiStrategy"/>
+
 </deployment>

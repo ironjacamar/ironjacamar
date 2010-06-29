@@ -23,17 +23,14 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.api.ConnectionFactoryBuilder;
-import org.jboss.jca.common.api.ConnectionFactoryJndiNameBuilder;
 import org.jboss.jca.common.metadata.Metadata;
-import org.jboss.jca.common.util.ContainerConnectionFactoryJndiNameBuilder;
-import org.jboss.jca.common.util.LocalConnectionFactoryBuilder;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
+import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;
@@ -65,8 +62,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.resource.Referenceable;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -87,7 +82,6 @@ import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.metadata.rar.spec.JCA10DTDMetaData;
 import org.jboss.metadata.rar.spec.MessageListenerMetaData;
 import org.jboss.metadata.rar.spec.TransactionSupportMetaData;
-import org.jboss.util.naming.Util;
 
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
@@ -137,6 +131,9 @@ public final class RADeployer implements CloneableDeployer
 
    /** Scope deployment */
    private static AtomicBoolean scopeDeployment = new AtomicBoolean(false);
+
+   /** JNDI strategy */
+   private static JndiStrategy jndiStrategy = null;
 
    /**
     * Constructor
@@ -308,6 +305,24 @@ public final class RADeployer implements CloneableDeployer
    }
 
    /**
+    * Set the JNDI strategy
+    * @param value The value
+    */
+   public synchronized void setJndiStrategy(JndiStrategy value)
+   {
+      jndiStrategy = value;
+   }
+
+   /**
+    * Get the JNDI strategy
+    * @return The handle
+    */
+   public synchronized JndiStrategy getJndiStrategy()
+   {
+      return jndiStrategy;
+   }
+
+   /**
     * Deploy
     * @param url The url
     * @param parent The parent classloader
@@ -382,7 +397,7 @@ public final class RADeployer implements CloneableDeployer
          List<Failure> partialFailures = null;
          List<Object> beanValidationObjects = new ArrayList<Object>();
 
-         List<String> jndiNames = null;
+         String[] jndiNames = null;
 
          // Create objects and inject values
          if (cmd != null)
@@ -548,17 +563,11 @@ public final class RADeployer implements CloneableDeployer
                         {
                            if (cdMetas.size() == 1)
                            {
-                              if (jndiNames == null)
-                                 jndiNames = new ArrayList<String>(1);
-
-                              ConnectionFactoryJndiNameBuilder jndiNameBuilder = getJndiNameBuilder();
                               String deploymentName =  f.getName().substring(0,  f.getName().indexOf(".rar"));
-                              jndiNameBuilder.setConnectionFactory(cf.getClass().getName());
-                              jndiNameBuilder.setDeploymentName(deploymentName);
-                              String jndiName = jndiNameBuilder.build();
+                              String[] jns = bindConnectionFactory(deploymentName, cf);
 
-                              bindConnectionFactory(jndiName, (Serializable)cf, mcf);
-                              jndiNames.add(jndiName);
+                              if (jns != null)
+                                 jndiNames = jns;
                            }
                            else
                            {
@@ -727,7 +736,7 @@ public final class RADeployer implements CloneableDeployer
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new RADeployment(url, resourceAdapter, jndiNames, destination, cl);
+         return new RADeployment(url, resourceAdapter, jndiStrategy, jndiNames, destination, cl);
       }
       catch (DeployException de)
       {
@@ -878,17 +887,6 @@ public final class RADeployer implements CloneableDeployer
       return false;
    }
 
-   private ConnectionFactoryBuilder getConnectionFactoryBuilder()
-   {
-      return new LocalConnectionFactoryBuilder();
-   }
-
-   private ConnectionFactoryJndiNameBuilder getJndiNameBuilder()
-   {
-      return new ContainerConnectionFactoryJndiNameBuilder();
-   }
-
-
    /**
     * Start the resource adapter
     * @param resourceAdapter The resource adapter
@@ -1028,29 +1026,16 @@ public final class RADeployer implements CloneableDeployer
 
    /**
     * Bind connection factory into JNDI
-    * @param name The JNDI name
+    * @param deployment The deployment name
     * @param cf The connection factory
-    * @param mcf The managed connection factory
+    * @return The JNDI names bound
     * @exception Exception thrown if an error occurs
     */
-   private void bindConnectionFactory(String name, Serializable cf, ManagedConnectionFactory mcf) throws Exception
+   private String[] bindConnectionFactory(String deployment, Object cf) throws Throwable
    {
-      ConnectionFactoryBuilder cfb = getConnectionFactoryBuilder();
-      cfb.setManagedConnectionFactory(mcf).setConnectionFactory(cf).setName(name);
-      Context context = new InitialContext();
-      try
-      {
+      JndiStrategy js = jndiStrategy.clone();
 
-         Referenceable referenceable = (Referenceable)cf;
-         referenceable.setReference(cfb.build());
-
-         Util.bind(context, name, cf);
-
-      }
-      finally
-      {
-         context.close();
-      }
+      return js.bindConnectionFactories(deployment, new Object[] {cf});
    }
 
    /**

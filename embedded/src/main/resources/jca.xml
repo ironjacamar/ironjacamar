@@ -80,6 +80,11 @@
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
   </bean>
 
+  <!-- JNDI strategy -->
+  <bean name="JNDIStrategy"
+        interface="org.jboss.jca.core.spi.naming.JndiStrategy"
+        class="org.jboss.jca.core.naming.SimpleJndiStrategy"/>
+
   <!-- RA deployer -->
   <bean name="RADeployer" interface="com.github.fungal.spi.deployers.Deployer" class="org.jboss.jca.deployers.fungal.RADeployer">
     <property name="ArchiveValidation">true</property>
@@ -88,6 +93,7 @@
     <property name="BeanValidation">true</property>
     <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
     <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
+    <property name="JndiStrategy"><inject bean="JNDIStrategy"/></property>
     <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
