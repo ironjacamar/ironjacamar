@@ -40,7 +40,7 @@ public class Definition
 {
    /** jca version  */
    @XmlElement(name = "version")
-   private String version;
+   private String version = "1.6";
    /** output directory  */
    private String outputDir;
    /** resource adapter package name */
@@ -229,7 +229,7 @@ public class Definition
    {
       if (raClass == null || raClass.equals(""))
       {
-         raClass =  getDefaultValue() + "ResourceAdpater";
+         raClass = getDefaultValue() + "ResourceAdpater";
       }
       return raClass;
    }
@@ -273,7 +273,7 @@ public class Definition
    {
       if (mcfClass == null || mcfClass.equals(""))
       {
-         mcfClass =  getDefaultValue() + "ManagedConnectionFactory";
+         mcfClass = getDefaultValue() + "ManagedConnectionFactory";
       }
       return mcfClass;
    }
@@ -297,7 +297,7 @@ public class Definition
    {
       if (mcClass == null || mcClass.equals(""))
       {
-         mcClass =  getDefaultValue() + "ManagedConnection";
+         mcClass = getDefaultValue() + "ManagedConnection";
       }
       return mcClass;
    }
@@ -321,7 +321,7 @@ public class Definition
    {
       if (connInterfaceClass == null || connInterfaceClass.equals(""))
       {
-         connInterfaceClass =  getDefaultValue() + "ConnectionInterface";
+         connInterfaceClass = getDefaultValue() + "Connection";
       }
       return connInterfaceClass;
    }
@@ -345,7 +345,7 @@ public class Definition
    {
       if (connImplClass == null || connImplClass.equals(""))
       {
-         connImplClass =  getDefaultValue() + "ConnectionImpl";
+         connImplClass = getDefaultValue() + "ConnectionImpl";
       }
       return connImplClass;
    }
@@ -428,7 +428,7 @@ public class Definition
    public String getCciConnFactoryClass()
    {
       if (cciConnFactoryClass == null || cciConnFactoryClass.equals(""))
-         cciConnFactoryClass = "MyCciConnectionFactory";
+         cciConnFactoryClass = getDefaultValue() + "CciConnectionFactory";
       return cciConnFactoryClass;
    }
 
@@ -450,7 +450,7 @@ public class Definition
    public String getCciConnClass()
    {
       if (cciConnClass == null || cciConnClass.equals(""))
-         cciConnClass = "MyCciConnection";
+         cciConnClass = getDefaultValue() + "CciConnection";
       return cciConnClass;
    }
 
@@ -472,7 +472,7 @@ public class Definition
    public String getMcMetaClass()
    {
       if (mcMetaClass == null || mcMetaClass.equals(""))
-         mcMetaClass = "MyManagedConnectionMetaData";
+         mcMetaClass = getDefaultValue() + "ManagedConnectionMetaData";
       return mcMetaClass;
    }
 
@@ -494,7 +494,7 @@ public class Definition
    public String getCmClass()
    {
       if (cmClass == null || cmClass.equals(""))
-         cmClass = "MyConnectionManager";
+         cmClass = getDefaultValue() + "ConnectionManager";
       return cmClass;
    }
 
@@ -517,7 +517,7 @@ public class Definition
    {
       if (cfClass == null || cfClass.equals(""))
       {
-         cfClass =  getDefaultValue() + "ConnectionFactory";
+         cfClass =  getDefaultValue() + "ConnectionFactoryImpl";
       }
       return cfClass;
    }
@@ -541,7 +541,7 @@ public class Definition
    {
       if (cfInterfaceClass == null || cfInterfaceClass.equals(""))
       {
-         cfInterfaceClass =  getDefaultValue() + "ConnectionFactoryInterface";
+         cfInterfaceClass =  getDefaultValue() + "ConnectionFactory";
       }
       return cfInterfaceClass;
    }
@@ -564,7 +564,7 @@ public class Definition
    public String getConnMetaClass()
    {
       if (connMetaClass == null || connMetaClass.equals(""))
-         connMetaClass = "MyConnectionMetaData";
+         connMetaClass = getDefaultValue() + "ConnectionMetaData";
       return connMetaClass;
    }
 
@@ -586,7 +586,7 @@ public class Definition
    public String getConnSpecClass()
    {
       if (connSpecClass == null || connSpecClass.equals(""))
-         connSpecClass = "MyConnectionSpec";
+         connSpecClass = getDefaultValue() + "ConnectionSpec";
       return connSpecClass;
    }
 
@@ -608,7 +608,7 @@ public class Definition
    public String getRaMetaClass()
    {
       if (raMetaClass == null || raMetaClass.equals(""))
-         raMetaClass = "MyRaMetaData";
+         raMetaClass = getDefaultValue() + "RaMetaData";
       return raMetaClass;
    }
 

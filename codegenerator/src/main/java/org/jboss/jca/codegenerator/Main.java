@@ -283,7 +283,7 @@ public class Main
       if (def.isUseRa() || def.isSupportInbound())
       {
          System.out.print(rb.getString("ra.class.name"));
-         System.out.print("[" + def.getRaClass() + "] ");
+         System.out.print("[" + def.getRaClass() + "]: ");
          String raClassName = in.readLine();
          if (raClassName != null && !raClassName.equals(""))
          {
@@ -300,7 +300,7 @@ public class Main
       if (def.isSupportOutbound())
       {
          System.out.print(rb.getString("mcf.class.name"));
-         System.out.print("[" + def.getMcfClass() + "] ");
+         System.out.print("[" + def.getMcfClass() + "]: ");
          String mcfClassName = in.readLine();
          if (mcfClassName != null && !mcfClassName.equals(""))
          {
@@ -328,7 +328,7 @@ public class Main
          }
          
          System.out.print(rb.getString("mc.class.name"));
-         System.out.print("[" + def.getMcClass() + "] ");
+         System.out.print("[" + def.getMcClass() + "]: ");
          String mcClassName = in.readLine();
          if (mcClassName != null && !mcClassName.equals(""))
             def.setMcClass(mcClassName);
@@ -348,25 +348,25 @@ public class Main
          if (!def.isUseCciConnection())
          {
             System.out.print(rb.getString("cf.interface.name"));
-            System.out.print("[" + def.getCfInterfaceClass() + "] ");
+            System.out.print("[" + def.getCfInterfaceClass() + "]: ");
             String cfInterfaceName = in.readLine();
             if (cfInterfaceName != null && !cfInterfaceName.equals(""))
                def.setCfInterfaceClass(cfInterfaceName);
             
             System.out.print(rb.getString("cf.class.name"));
-            System.out.print("[" + def.getCfClass() + "] ");
+            System.out.print("[" + def.getCfClass() + "]: ");
             String cfClassName = in.readLine();
             if (cfClassName != null && !cfClassName.equals(""))
                def.setCfClass(cfClassName);
   
             System.out.print(rb.getString("conn.interface.name"));
-            System.out.print("[" + def.getConnInterfaceClass() + "] ");
+            System.out.print("[" + def.getConnInterfaceClass() + "]: ");
             String connInterfaceName = in.readLine();
             if (connInterfaceName != null && !connInterfaceName.equals(""))
                def.setConnInterfaceClass(connInterfaceName);
             
             System.out.print(rb.getString("conn.class.name"));
-            System.out.print("[" + def.getConnImplClass() + "] ");
+            System.out.print("[" + def.getConnImplClass() + "]: ");
             String connImplName = in.readLine();
             if (connImplName != null && !connImplName.equals(""))
                def.setConnImplClass(connImplName);
@@ -393,7 +393,7 @@ public class Main
       if (def.isSupportInbound())
       {
          System.out.print(rb.getString("ml.interface.name"));
-         System.out.print("[" + def.getMlClass() + "] ");
+         System.out.print("[" + def.getMlClass() + "]: ");
          String mlClassName = in.readLine();
          if (mlClassName != null && !mlClassName.equals(""))
          {
@@ -403,7 +403,7 @@ public class Main
          }
 
          System.out.print(rb.getString("as.class.name"));
-         System.out.print("[" + def.getAsClass() + "] ");
+         System.out.print("[" + def.getAsClass() + "]: ");
          String asClassName = in.readLine();
          if (asClassName != null && !asClassName.equals(""))
             def.setAsClass(asClassName);
@@ -412,7 +412,7 @@ public class Main
          def.setAsConfigProps(asProps);
          
          System.out.print(rb.getString("acti.class.name"));
-         System.out.print("[" + def.getActivationClass() + "] ");
+         System.out.print("[" + def.getActivationClass() + "]: ");
          String actiClassName = in.readLine();
          if (actiClassName != null && !actiClassName.equals(""))
             def.setActivationClass(actiClassName);
