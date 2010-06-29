@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.validator.ant;
 
-import org.jboss.jca.validator.Main;
+import org.jboss.jca.validator.Validation;
 
 import java.io.File;
 
@@ -138,7 +138,8 @@ public class ValidatorTask extends Task
       {
          Thread.currentThread().setContextClassLoader(ValidatorTask.class.getClassLoader());
 
-         Main.validate(new File(getRarFile()).toURI().toURL(), getOutputDir(), getCommandLine().getClasspath().list());
+         Validation.validate(new File(getRarFile()).toURI().toURL(), 
+            getOutputDir(), getCommandLine().getClasspath().list());
       }
       catch (Throwable t) 
       {
