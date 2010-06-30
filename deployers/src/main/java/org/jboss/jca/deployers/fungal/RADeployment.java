@@ -32,7 +32,6 @@ import java.net.URL;
 import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
-import org.jboss.util.naming.Util;
 
 import com.github.fungal.api.util.FileUtil;
 import com.github.fungal.spi.deployers.Deployment;

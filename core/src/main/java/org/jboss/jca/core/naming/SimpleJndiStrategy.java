@@ -40,7 +40,8 @@ import org.jboss.logging.Logger;
 import org.jboss.util.naming.Util;
 
 /**
- * A simple JNDI strategy
+ * A simple JNDI strategy that bind a single connection factory under the
+ * name of "java:/eis/&lt;deployment&gt;"
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
