@@ -19,7 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.validator;
+package org.jboss.jca.validator.cli;
+
+import org.jboss.jca.validator.Validation;
 
 import java.io.File;
 

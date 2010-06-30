@@ -67,12 +67,12 @@
     <jar destfile="${target.dir}/jboss-jca-validator.jar"
          manifest="src/main/resources/validator-manifest.mf"
          basedir="${build.validator.dir}/jars/validator"
-         excludes="**/Main*.*, **/ant/**"/>
+         excludes="**/cli/**, **/ant/**"/>
 
     <jar destfile="${target.dir}/jboss-jca-validator-cli.jar"
          manifest="src/main/resources/validator-cli-manifest.mf"
          basedir="${build.validator.dir}/jars/validator"
-         includes="**/Main*.class"/>
+         includes="**/cli/**"/>
   	
     <jar destfile="${target.dir}/jboss-jca-validator-ant.jar"
          manifest="src/main/resources/validator-ant-manifest.mf"
