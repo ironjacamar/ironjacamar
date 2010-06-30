@@ -176,7 +176,7 @@ public class Main
       String version = null;
       do
       {
-         System.out.print(rb.getString("profile.version"));
+         System.out.print(rb.getString("profile.version") + "[1.6]: ");
          version = in.readLine();
          if (version == null || version.equals(""))
             version = "1.6";
@@ -191,7 +191,7 @@ public class Main
       //bound
       if (!version.equals("1.0"))
       {
-         System.out.print(rb.getString("support.bound"));
+         System.out.print(rb.getString("support.bound") + "[O]: ");
          String bound = in.readLine();
          if (bound == null || bound.equals("") || bound.equals("O") || bound.equals("o") || bound.equals("Outbound"))
          {
@@ -212,7 +212,7 @@ public class Main
       //transaction
       if (def.isSupportOutbound())
       {
-         System.out.print(rb.getString("support.transaction"));
+         System.out.print(rb.getString("support.transaction") + "[N]: ");
          String trans = in.readLine();
          if (trans == null || trans.equals(""))
             def.setSupportTransaction("NoTransaction");
@@ -238,7 +238,7 @@ public class Main
       //support annotation
       if (version.equals("1.6"))
       {
-         System.out.print(rb.getString("use.annotation"));
+         System.out.print(rb.getString("use.annotation") + "[Y]: ");
          String useAnnotation = in.readLine();
          if (useAnnotation == null)
             def.setUseAnnotation(true);
@@ -258,7 +258,7 @@ public class Main
       //use resource adapter
       if (def.isSupportOutbound() && !def.isSupportInbound() && (version.equals("1.6") || version.equals("1.5")))
       {
-         System.out.print(rb.getString("use.ra"));
+         System.out.print(rb.getString("use.ra") + "[Y]: ");
          String useRa = in.readLine();
          if (useRa == null)
             def.setUseRa(true);
@@ -314,7 +314,7 @@ public class Main
 
          if (def.isUseRa())
          {
-            System.out.print(rb.getString("mcf.impl.raa"));
+            System.out.print(rb.getString("mcf.impl.raa") + "[N]: ");
             String raAssociation = in.readLine();
             if (raAssociation == null)
                def.setImplRaAssociation(false);
@@ -333,7 +333,7 @@ public class Main
          if (mcClassName != null && !mcClassName.equals(""))
             def.setMcClass(mcClassName);
          
-         System.out.print(rb.getString("mcf.use.cci"));
+         System.out.print(rb.getString("mcf.use.cci") + "[N]: ");
          String useCciConnection = in.readLine();
          if (useCciConnection == null)
             def.setUseCciConnection(false);
@@ -371,7 +371,7 @@ public class Main
             if (connImplName != null && !connImplName.equals(""))
                def.setConnImplClass(connImplName);
             
-            System.out.print(rb.getString("connection.method.support"));
+            System.out.print(rb.getString("connection.method.support") + "[N]: ");
             String supportMethod = in.readLine();
             if (supportMethod == null)
                def.setDefineMethodInConnection(false);
@@ -488,7 +488,7 @@ public class Main
          boolean required = false;
          if (supportRequired)
          {
-            System.out.print("    " + rb.getString("config.properties.required"));
+            System.out.print("    " + rb.getString("config.properties.required") + "[N]: ");
             String propRequired = in.readLine();
             if (propRequired == null)
                required = false;
