@@ -314,10 +314,10 @@ public class Main
 
          if (def.isUseRa())
          {
-            System.out.print(rb.getString("mcf.impl.raa") + "[N]: ");
+            System.out.print(rb.getString("mcf.impl.raa") + "[Y]: ");
             String raAssociation = in.readLine();
-            if (raAssociation == null)
-               def.setImplRaAssociation(false);
+            if (raAssociation == null || raAssociation.equals(""))
+               def.setImplRaAssociation(true);
             else
             {
                if (raAssociation.equals("Y") || raAssociation.equals("y") || raAssociation.equals("Yes"))
