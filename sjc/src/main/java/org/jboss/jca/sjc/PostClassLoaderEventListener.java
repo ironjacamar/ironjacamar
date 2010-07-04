@@ -46,6 +46,7 @@ class PostClassLoaderEventListener implements EventListener
     * @param kernel The kernel
     * @param event The event
     */
+   @SuppressWarnings("unchecked") 
    public void event(Kernel kernel, Event event)
    {
       if (event == Event.POST_CLASSLOADER)

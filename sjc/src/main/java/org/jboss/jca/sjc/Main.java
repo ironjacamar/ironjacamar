@@ -114,21 +114,6 @@ public class Main
    {
       try
       {
-         Class clz = Class.forName("org.jboss.logmanager.log4j.BridgeRepositorySelector", true, cl);
-         Method mStart = clz.getMethod("start", (Class[])null);
-
-         Object brs = clz.newInstance();
-
-         logging = mStart.invoke(brs, (Object[])null);
-      }
-      catch (Throwable t)
-      {
-         // Nothing we can do
-      }
-
-
-      try
-      {
          Class clz = Class.forName("org.jboss.logging.Logger", true, cl);
          
          Method mGetLogger = clz.getMethod("getLogger", String.class);
@@ -143,11 +128,11 @@ public class Main
 
    /**
     * Logging: ERROR
-    * @param s The string
+    * @param o The object
     * @param t The throwable
     */
    @SuppressWarnings("unchecked") 
-   private static void error(String s, Throwable t)
+   private static void error(Object o, Throwable t)
    {
       if (logging != null)
       {
@@ -155,7 +140,7 @@ public class Main
          {
             Class clz = logging.getClass();
             Method mError = clz.getMethod("error", Object.class, Throwable.class);
-            mError.invoke(logging, new Object[] {s, t});
+            mError.invoke(logging, new Object[] {o, t});
          }
          catch (Throwable th)
          {
@@ -164,17 +149,17 @@ public class Main
       }
       else
       {
-         System.out.println(s);
+         System.out.println(o.toString());
          t.printStackTrace(System.out);
       }
    }
 
    /**
     * Logging: WARN
-    * @param s The string
+    * @param o The object
     */
    @SuppressWarnings("unchecked") 
-   private static void warn(String s)
+   private static void warn(Object o)
    {
       if (logging != null)
       {
@@ -182,7 +167,7 @@ public class Main
          {
             Class clz = logging.getClass();
             Method mWarn = clz.getMethod("warn", Object.class);
-            mWarn.invoke(logging, new Object[] {s});
+            mWarn.invoke(logging, new Object[] {o});
          }
          catch (Throwable t)
          {
@@ -191,16 +176,16 @@ public class Main
       }
       else
       {
-         System.out.println(s);
+         System.out.println(o.toString());
       }
    }
 
    /**
     * Logging: INFO
-    * @param s The string
+    * @param o The object
     */
    @SuppressWarnings("unchecked") 
-   private static void info(String s)
+   private static void info(Object o)
    {
       if (logging != null)
       {
@@ -208,7 +193,7 @@ public class Main
          {
             Class clz = logging.getClass();
             Method mInfo = clz.getMethod("info", Object.class);
-            mInfo.invoke(logging, new Object[] {s});
+            mInfo.invoke(logging, new Object[] {o});
          }
          catch (Throwable t)
          {
@@ -217,7 +202,7 @@ public class Main
       }
       else
       {
-         System.out.println(s);
+         System.out.println(o.toString());
       }
    }
 
@@ -246,10 +231,10 @@ public class Main
 
    /**
     * Logging: DEBUG
-    * @param s The string
+    * @param o The object
     */
    @SuppressWarnings("unchecked") 
-   private static void debug(String s)
+   private static void debug(Object o)
    {
       if (logging != null)
       {
@@ -257,7 +242,7 @@ public class Main
          {
             Class clz = logging.getClass();
             Method mDebug = clz.getMethod("debug", Object.class);
-            mDebug.invoke(logging, new Object[] {s});
+            mDebug.invoke(logging, new Object[] {o});
          }
          catch (Throwable t)
          {
@@ -266,7 +251,7 @@ public class Main
       }
       else
       {
-         System.out.println(s);
+         System.out.println(o.toString());
       }
    }
 
