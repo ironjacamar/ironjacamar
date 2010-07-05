@@ -288,7 +288,7 @@ public class Main
          if (raClassName != null && !raClassName.equals(""))
          {
             def.setRaClass(raClassName);
-            setDefaultValue(def, raClassName, "ResourceAdpater");
+            setDefaultValue(def, raClassName, "ResourceAdapter");
             setDefaultValue(def, raClassName, "Ra");
          }
          

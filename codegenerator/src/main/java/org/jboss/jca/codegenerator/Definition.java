@@ -229,7 +229,7 @@ public class Definition
    {
       if (raClass == null || raClass.equals(""))
       {
-         raClass = getDefaultValue() + "ResourceAdpater";
+         raClass = getDefaultValue() + "ResourceAdapter";
       }
       return raClass;
    }
