@@ -109,7 +109,7 @@
       <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       
       <classpath>
-        <fileset dir="${lib.dir}" includes="*.jar" />
+        <fileset dir="${lib.dir}" includes="**/*.jar" />
         <fileset dir="${build.dir}" includes="*.jar" />
         <pathelement location="${build.dir}/test"/>
       </classpath>
