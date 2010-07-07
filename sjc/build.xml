@@ -96,7 +96,9 @@
     <mkdir dir="${target.dir}/sjc/doc"/>
     <mkdir dir="${target.dir}/sjc/doc/codegenerator"/>
     <mkdir dir="${target.dir}/sjc/lib"/>
+    <mkdir dir="${target.dir}/sjc/lib/embedded"/>
     <mkdir dir="${target.dir}/sjc/lib/endorsed"/>
+    <mkdir dir="${target.dir}/sjc/lib/jetty"/>
     <mkdir dir="${target.dir}/sjc/log"/>
     <mkdir dir="${target.dir}/sjc/deploy"/>
     <mkdir dir="${target.dir}/sjc/system"/>
@@ -146,21 +148,29 @@
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
         <exclude name="jboss-jca-codegenerator.jar"/>
-        <exclude name="jboss-jca-sjc.jar"/>
         <exclude name="jboss-jca-deployers-main.jar"/>
         <exclude name="jboss-jca-deployers-rar.jar"/>
+        <exclude name="jboss-jca-embedded-arquillian.jar"/>
+        <exclude name="jboss-jca-embedded.jar"/>
+        <exclude name="jboss-jca-sjc.jar"/>
         <exclude name="jboss-jca-standalone.jar"/>
         <exclude name="jboss-jca-web-console.jar"/>
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/lib/embedded">
+      <fileset dir="${target.dir}">
+        <include name="jboss-jca-embedded-arquillian.jar"/>
+        <include name="jboss-jca-embedded.jar"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/lib">
-      <fileset dir="${lib.dir}/sjc">
+      <fileset dir="${lib.dir}/common">
         <include name="*.jar"/>
         <exclude name="ant.jar"/>
         <exclude name="apiviz.jar"/>
         <exclude name="dom4j.jar"/>
-        <exclude name="fungal.jar"/>
         <exclude name="jaxb-api.jar"/>
         <exclude name="jdepend.jar"/>
         <exclude name="xercesImpl.jar"/>
@@ -168,18 +178,35 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/lib/embedded">
+      <fileset dir="${lib.dir}/embedded">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/lib/embedded">
+      <fileset dir="${lib.dir}/test">
+        <include name="junit.jar"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/lib/endorsed">
-      <fileset dir="${lib.dir}/sjc">
+      <fileset dir="${lib.dir}/common">
         <include name="jaxb-api.jar"/>
         <include name="xercesImpl.jar"/>
         <include name="stax-api.jar"/>
       </fileset>
     </copy>
 
-    <!-- HACK: remove -->
-    <copy todir="${target.dir}/sjc/lib">
-      <fileset dir="${lib.dir}/test">
-        <include name="junit.jar"/>
+    <copy todir="${target.dir}/sjc/lib/jetty">
+      <fileset dir="${lib.dir}/common">
+        <include name="dom4j.jar"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/lib/jetty">
+      <fileset dir="${lib.dir}/jetty">
+        <include name="*.jar"/>
       </fileset>
     </copy>
 

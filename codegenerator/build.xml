@@ -132,6 +132,9 @@
       <classpath>
         <pathelement location="${build.codegenerator.dir}/test"/>
         <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
       
@@ -179,6 +182,9 @@
       <classpath>
         <pathelement location="${build.codegenerator.dir}/test"/>
         <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
       

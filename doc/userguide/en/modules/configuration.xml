@@ -260,6 +260,14 @@ system/
 
       <para>Furthermore all .WAR files in the same directory should be removed too.</para>
 
+      <para>All the Jetty libraries can be removed by deleting the</para>
+
+      <programlisting>
+lib/jetty
+      </programlisting>
+
+      <para>directory.</para>
+
    </section>
 
 

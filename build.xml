@@ -142,6 +142,15 @@
        Paths              
        ================================= -->
   <path id="sjc.lib.path.id">
+    <fileset dir="${lib.dir}/common">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/embedded">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/jetty">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${lib.dir}/sjc">
       <include name="**/*.jar"/>
     </fileset>
@@ -151,6 +160,12 @@
   </path>
 
   <path id="standalone.lib.path.id">
+    <fileset dir="${lib.dir}/common">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/sjc">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${lib.dir}/standalone">
       <include name="**/*.jar"/>
     </fileset>
@@ -160,6 +175,18 @@
   </path>
 
   <path id="test.lib.path.id">
+    <fileset dir="${lib.dir}/common">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/standalone">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/sjc">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/embedded">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${lib.dir}/test">
       <include name="**/*.jar"/>
     </fileset>
@@ -170,7 +197,19 @@
 
   <path id="checkstyle.lib.path.id">
     <fileset dir="${tools.dir}/checkstyle/lib"/>
-    <fileset dir="${lib.dir}/standalone">
+    <fileset dir="${lib.dir}/common">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/embedded">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/jetty">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/sjc">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/test">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${target.dir}">
@@ -402,7 +441,22 @@
               excludeFilter="${basedir}/tools/findbugs/filter.xml"
               reportLevel="low">
       <auxClasspath>
+        <fileset dir="${lib.dir}/common">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/embedded">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/jetty">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/sjc">
+          <include name="*.jar"/>
+        </fileset>
         <fileset dir="${lib.dir}/standalone">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
@@ -432,7 +486,22 @@
               excludeFilter="${basedir}/tools/findbugs/filter.xml"
               reportLevel="low">
       <auxClasspath>
+        <fileset dir="${lib.dir}/common">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/embedded">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/jetty">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/sjc">
+          <include name="*.jar"/>
+        </fileset>
         <fileset dir="${lib.dir}/standalone">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
@@ -510,6 +579,10 @@
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
         <pathelement location="${build.dir}/core/test"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
@@ -542,6 +615,10 @@
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
         <pathelement location="${build.dir}/deployers/test"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
@@ -574,6 +651,10 @@
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
         <pathelement location="${build.dir}/embedded/test"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
@@ -606,6 +687,10 @@
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
         <pathelement location="${build.dir}/validator/test"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
@@ -638,6 +723,10 @@
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
         <pathelement location="${build.dir}/codegenerator/test"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
