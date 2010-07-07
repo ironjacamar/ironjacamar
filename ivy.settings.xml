@@ -29,8 +29,6 @@
       <ivy pattern="${ivy.cache.dir}/[module]/ivy-[revision].xml"/>
       <artifact pattern="${ivy.cache.dir}/[module]/[artifact]-[revision](-[classifier]).[ext]"/>
     </filesystem>
-    <ibiblio name="nexus" m2compatible="true" usepoms="false" root="${nexus.repo}"
-             pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     <ibiblio name="jboss" m2compatible="true" usepoms="false" root="${jboss.repo}"
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     <ibiblio name="snapshots" m2compatible="true" usepoms="false" root="${snapshots.repo}" useMavenMetadata="true"
@@ -41,7 +39,6 @@
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     <chain name="default" returnFirst="true">
       <resolver ref="local"/>
-      <resolver ref="nexus"/>
       <resolver ref="jboss"/>
       <resolver ref="snapshots"/>
       <resolver ref="central"/>
