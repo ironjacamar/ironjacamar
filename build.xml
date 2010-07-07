@@ -127,7 +127,7 @@
   <property name="version.jboss.vfs" value="2.1.3.SP1"/>
   <property name="version.jboss.xb" value="2.0.1.GA"/>
   <property name="version.jdepend" value="2.9.1"/>
-  <property name="version.jetty" value="7.1.4.v20100610"/>
+  <property name="version.jetty" value="7.1.5.v20100705"/>
   <property name="version.jetty.servlet" value="6.1.14"/>
   <property name="version.jetty.glassfish" value="2.1.v20100127"/>
   <property name="version.jasper" value="glassfish_2.1.0.v201004190952"/>
