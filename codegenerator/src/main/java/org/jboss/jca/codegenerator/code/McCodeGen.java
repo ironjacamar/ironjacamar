@@ -88,8 +88,6 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import javax.resource.spi.ConnectionEventListener;");
       writeEol(out);
-      out.write("import javax.resource.spi.ConnectionDefinition;");
-      writeEol(out);
       out.write("import javax.resource.spi.ConnectionRequestInfo;");
       writeEol(out);
       out.write("import javax.resource.spi.LocalTransaction;");

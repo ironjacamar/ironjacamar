@@ -142,4 +142,13 @@
              classpathref="lib.path.id">
     </javadoc>
   </target>
+  
+  <!-- ================================= 
+       Target: clean              
+       ================================= -->
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${target.dir}"/>
+  </target>
+
 </project>
