@@ -47,14 +47,17 @@ public class RADeployment implements Deployment
    /** The deployment */
    private URL deployment;
 
+   /** The deployment name */
+   private String deploymentName;
+
    /** The resource adapter instance */
    private ResourceAdapter ra;
 
    /** The JNDI strategy */
    private JndiStrategy jndiStrategy;
 
-   /** JNDI names for connection factories */
-   private String[] jndiNames;
+   /** The connection factories */
+   private Object[] cfs;
 
    /** The temporary directory */
    private File tmpDirectory;
@@ -65,23 +68,26 @@ public class RADeployment implements Deployment
    /**
     * Constructor
     * @param deployment The deployment
+    * @param deploymentName The deployment name
     * @param ra The resource adapter instance if present
     * @param jndiStrategy The JNDI strategy
-    * @param jndiNames The JNDI names for connection factories
+    * @param cfs The connection factories
     * @param tmpDirectory The temporary directory
     * @param cl The classloader for the deployment
     */
    public RADeployment(URL deployment, 
+                       String deploymentName,
                        ResourceAdapter ra, 
                        JndiStrategy jndiStrategy,
-                       String[] jndiNames, 
+                       Object[] cfs, 
                        File tmpDirectory, 
                        ClassLoader cl)
    {
       this.deployment = deployment;
+      this.deploymentName = deploymentName;
       this.ra = ra;
       this.jndiStrategy = jndiStrategy;
-      this.jndiNames = jndiNames;
+      this.cfs = cfs;
       this.tmpDirectory = tmpDirectory;
       this.cl = cl;
    }
@@ -111,11 +117,11 @@ public class RADeployment implements Deployment
    {
       log.debug("Undeploying: " + deployment.toExternalForm());
 
-      if (jndiNames != null)
+      if (cfs != null)
       {
          try
          {
-            jndiStrategy.unbindConnectionFactories(null, jndiNames);
+            jndiStrategy.unbindConnectionFactories(deploymentName, cfs);
          }
          catch (Throwable t)
          {

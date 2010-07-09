@@ -121,6 +121,9 @@ public class SimpleJndiStrategy implements JndiStrategy
          referenceable.setReference(ref);
 
          Util.bind(context, jndiName, cf);
+
+         if (log.isDebugEnabled())
+            log.debug("Bound " + cf.getClass().getName() + " under " + jndiName);
       }
       finally
       {
@@ -133,36 +136,38 @@ public class SimpleJndiStrategy implements JndiStrategy
    /**
     * Unbind connection factories for a deployment
     * @param deployment The deployment name
-    * @param jndiNames The JNDI names for the connection factories
+    * @param cfs The connection factories
     * @exception Throwable Thrown if an error occurs
     */
-   public void unbindConnectionFactories(String deployment, String[] jndiNames) throws Throwable
+   public void unbindConnectionFactories(String deployment, Object[] cfs) throws Throwable
    {
-      if (jndiNames == null)
-         throw new IllegalArgumentException("JndiNames is null");
+      if (cfs == null)
+         throw new IllegalArgumentException("CFS is null");
+
+      if (cfs.length == 0)
+         throw new IllegalArgumentException("CFS is empty");
+
+      if (cfs.length > 1)
+         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
+                                            "a single connection factory per deployment");
+
+      String jndiName = JNDI_PREFIX + deployment;
+
+      Object cf = cfs[0];
+      String className = cf.getClass().getName();
 
       Context context = null;
       try
       {
          context = new InitialContext();
 
-         for (String jndiName : jndiNames)
-         {
-            connectionFactories.remove(jndiName);
+         Util.unbind(context, jndiName);
 
-            try
-            {
-               Util.unbind(context, jndiName);
-            }
-            catch (Throwable it)
-            {
-               log.warn("Exception during JNDI unbind for: " + jndiName, it);
-            }
-         }
+         connectionFactories.remove(qualifiedName(jndiName, className));
       }
       catch (Throwable t)
       {
-         log.warn("Exception during JNDI initialization", t);
+         log.warn("Exception during unbind", t);
       }
       finally
       {

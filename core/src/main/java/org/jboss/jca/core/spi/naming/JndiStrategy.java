@@ -43,10 +43,10 @@ public interface JndiStrategy extends Cloneable, ObjectFactory
    /**
     * Unbind connection factories for a deployment
     * @param deployment The deployment name
-    * @param jndiNames The JNDI names for the connection factories
+    * @param cfs The connection factories
     * @exception Throwable Thrown if an error occurs
     */
-   public void unbindConnectionFactories(String deployment, String[] jndiNames) throws Throwable;
+   public void unbindConnectionFactories(String deployment, Object[] cfs) throws Throwable;
 
    /**
     * Clone the JNDI strategy implementation
