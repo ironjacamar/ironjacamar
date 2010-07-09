@@ -29,19 +29,60 @@
     </constructor>
   </bean>
 
-  <!-- Short running thread pool -->
-  <bean name="ShortRunningThreadPool">
-    <constructor factoryMethod="threadFactoryExecutor" 
+  <!-- Rejecting executor -->
+  <bean name="RejectingExecutor">
+    <constructor factoryMethod="rejectingExecutor" 
                  factoryClass="org.jboss.threads.JBossExecutors">
+    </constructor>
+  </bean>
+
+  <!-- TimeUnit -->
+  <bean name="KeepAliveTimeUnit">
+    <constructor factoryMethod="valueOf" 
+                 factoryClass="java.util.concurrent.TimeUnit">
+      <parameter>SECONDS</parameter>
+    </constructor>
+  </bean>
+
+  <!-- Short running thread pool -->
+  <bean name="ShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+    <constructor>
+      <!-- Core threads -->
+      <parameter>20</parameter>
+      <!-- Max threads -->
+      <parameter>100</parameter>
+      <!-- 60 seconds keepalive -->
+      <parameter>60</parameter>
+      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
+      <!-- Queue size -->
+      <parameter>1024</parameter>
+      <!-- Thread factory -->
       <parameter><inject bean="ThreadFactory"/></parameter>
+      <!-- Blocking -->
+      <parameter>true</parameter>
+      <!-- Handoff executor -->
+      <parameter><inject bean="RejectingExecutor"/></parameter>
     </constructor>
   </bean>
 
   <!-- Long running thread pool -->
-  <bean name="LongRunningThreadPool">
-    <constructor factoryMethod="threadFactoryExecutor" 
-                 factoryClass="org.jboss.threads.JBossExecutors">
+  <bean name="LongRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+    <constructor>
+      <!-- Core threads -->
+      <parameter>20</parameter>
+      <!-- Max threads -->
+      <parameter>100</parameter>
+      <!-- 60 seconds keepalive -->
+      <parameter>60</parameter>
+      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
+      <!-- Queue size -->
+      <parameter>1024</parameter>
+      <!-- Thread factory -->
       <parameter><inject bean="ThreadFactory"/></parameter>
+      <!-- Blocking -->
+      <parameter>true</parameter>
+      <!-- Handoff executor -->
+      <parameter><inject bean="RejectingExecutor"/></parameter>
     </constructor>
   </bean>
 
