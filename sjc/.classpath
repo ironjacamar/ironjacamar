@@ -5,6 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-fungal"/>
+	<classpathentry kind="var" path="JBJCA_LIB/sjc/fungal.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

@@ -2,6 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-transaction-api.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-transaction-api.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

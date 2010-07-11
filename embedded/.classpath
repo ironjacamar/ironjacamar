@@ -7,9 +7,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-fungal"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/shrinkwrap-api.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-logging-spi.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/sjc/fungal.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/embedded/shrinkwrap-api.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-api.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-junit.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-spi.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-protocol-local.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-testenricher-resource.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-logging-spi.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/test/junit.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

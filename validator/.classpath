@@ -7,7 +7,12 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-metadata-rar.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/ant.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/sjc/fungal.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-metadata-rar.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/common/ant.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-logging-spi.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/test/junit.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-embedded"/>
+	<classpathentry kind="var" path="JBJCA_LIB/embedded/shrinkwrap-api.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
