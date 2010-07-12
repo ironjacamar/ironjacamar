@@ -22,8 +22,7 @@
 <ivysettings>
   <settings defaultResolver="default"/>
   <caches defaultCacheDir="${user.home}/.ivy2/cache"
-          artifactPattern="[organisation]/[module]/[type]s/[artifact]-[revision](-[classifier]).[ext]" 
-          checkUpToDate="true"/>
+          artifactPattern="[organisation]/[module]/[type]s/[artifact]-[revision](-[classifier]).[ext]"/>
   <resolvers>
     <filesystem name="local">
       <ivy pattern="${ivy.cache.dir}/[module]/ivy-[revision].xml"/>
