@@ -1,5 +1,0 @@
-Implementation-Title: JBoss JCA Validator
-Implementation-Vendor: Red Hat Middleware LLC
-Implementation-Vendor-Id: org.jboss
-Implementation-Version: 0.1
-Class-Path: jbossxb.jar jboss-logging-spi.jar jboss-common-core.jar jboss-metadata-rar.jar jboss-metadata-common.jar jboss-reflect.jar jboss-mdr.jar jboss-jca-spec-api.jar papaki-core.jar javassist.jar jboss-jca-common.jar

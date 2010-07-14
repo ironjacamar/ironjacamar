@@ -5,7 +5,7 @@
    <section id="codegenerator_introduction">
       <title>Introduction</title>
 
-      <para>The JBoss JCA project includes a resource adapter code generator which can
+      <para>The IronJacamar project includes a resource adapter code generator which can
         generate a complete code skeleton that will help developers get started with
         their development tasks.</para>
 

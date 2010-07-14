@@ -32,7 +32,7 @@ import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.configuration.KernelConfiguration;
 
 /**
- * The main class for JBoss JCA SJC
+ * The main class for IronJacamar SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class Main
@@ -60,7 +60,7 @@ public class Main
       try
       {
          KernelConfiguration kernelConfiguration = new KernelConfiguration();
-         kernelConfiguration = kernelConfiguration.name("jboss.jca");
+         kernelConfiguration = kernelConfiguration.name("iron.jacamar");
          kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
          kernelConfiguration = kernelConfiguration.parallelDeploy(false);
          kernelConfiguration = kernelConfiguration.remoteAccess(true);
@@ -68,7 +68,7 @@ public class Main
          kernelConfiguration = kernelConfiguration.eventListener(new PostClassLoaderEventListener());
          kernelConfiguration = kernelConfiguration.command(new Shutdown());
 
-         String home = SecurityActions.getSystemProperty("jboss.jca.home");
+         String home = SecurityActions.getSystemProperty("iron.jacamar.home");
          if (home != null)
          {
             kernelConfiguration.home(new File(home).toURI().toURL());

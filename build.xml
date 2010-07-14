@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca" 
+<project name="ironjacamar" 
          default="jars" 
          basedir="." 
          xmlns:ivy="antlib:org.apache.ivy.ant">
@@ -30,7 +30,7 @@
   <!-- ================================= 
        Project              
        ================================= -->
-  <property name="name" value="jboss-jca"/>
+  <property name="name" value="ironjacamar"/>
   <property name="major" value="1"/>
   <property name="minor" value="0"/>
   <property name="patch" value="0"/>
@@ -242,7 +242,7 @@
        Target: init              
        ================================= -->
   <target name="init">
-    <fail message="JBoss JCA requires JDK6+" unless="HAVE_JDK_1.6"/>
+    <fail message="IronJacamar requires JDK6+" unless="HAVE_JDK_1.6"/>
   
     <ivy:settings file="${basedir}/ivy.settings.xml"/>
 
@@ -453,31 +453,26 @@
         <fileset dir="${lib.dir}/sjc">
           <include name="*.jar"/>
         </fileset>
-        <fileset dir="${lib.dir}/standalone">
-          <include name="*.jar"/>
-        </fileset>
         <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
-      <class location="${target.dir}/jboss-jca-codegenerator.jar" />
-      <class location="${target.dir}/jboss-jca-common.jar" />
-      <class location="${target.dir}/jboss-jca-core-api.jar" />
-      <class location="${target.dir}/jboss-jca-core-impl.jar" />
-      <class location="${target.dir}/jboss-jca-core-spi.jar" />
-      <class location="${target.dir}/jboss-jca-deployers-fungal.jar" />
-      <class location="${target.dir}/jboss-jca-deployers-main.jar" />
-      <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
-      <class location="${target.dir}/jboss-jca-embedded.jar" />
-      <class location="${target.dir}/jboss-jca-embedded-arquillian.jar" />
-      <class location="${target.dir}/jboss-jca-sjc.jar" />
-      <class location="${target.dir}/jboss-jca-spec-api.jar" />
-      <class location="${target.dir}/jboss-jca-standalone.jar" />
-      <class location="${target.dir}/jboss-jca-validator.jar" />
-      <class location="${target.dir}/jboss-jca-validator-ant.jar" />
-      <class location="${target.dir}/jboss-jca-validator-cli.jar" />
-      <class location="${target.dir}/jboss-jca-web.jar" />
-      <class location="${target.dir}/jboss-jca-web-console.jar" />
+      <class location="${target.dir}/${name}-codegenerator.jar" />
+      <class location="${target.dir}/${name}-common.jar" />
+      <class location="${target.dir}/${name}-core-api.jar" />
+      <class location="${target.dir}/${name}-core-impl.jar" />
+      <class location="${target.dir}/${name}-core-spi.jar" />
+      <class location="${target.dir}/${name}-deployers-fungal.jar" />
+      <class location="${target.dir}/${name}-embedded.jar" />
+      <class location="${target.dir}/${name}-embedded-arquillian.jar" />
+      <class location="${target.dir}/${name}-sjc.jar" />
+      <class location="${target.dir}/${name}-spec-api.jar" />
+      <class location="${target.dir}/${name}-standalone.jar" />
+      <class location="${target.dir}/${name}-validator.jar" />
+      <class location="${target.dir}/${name}-validator-ant.jar" />
+      <class location="${target.dir}/${name}-validator-cli.jar" />
+      <class location="${target.dir}/${name}-web.jar" />
+      <class location="${target.dir}/${name}-web-console.jar" />
     </findbugs>
 
     <findbugs home="${basedir}/tools/findbugs/lib/"
@@ -498,31 +493,26 @@
         <fileset dir="${lib.dir}/sjc">
           <include name="*.jar"/>
         </fileset>
-        <fileset dir="${lib.dir}/standalone">
-          <include name="*.jar"/>
-        </fileset>
         <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
-      <class location="${target.dir}/jboss-jca-codegenerator.jar" />
-      <class location="${target.dir}/jboss-jca-common.jar" />
-      <class location="${target.dir}/jboss-jca-core-api.jar" />
-      <class location="${target.dir}/jboss-jca-core-impl.jar" />
-      <class location="${target.dir}/jboss-jca-core-spi.jar" />
-      <class location="${target.dir}/jboss-jca-deployers-fungal.jar" />
-      <class location="${target.dir}/jboss-jca-deployers-main.jar" />
-      <class location="${target.dir}/jboss-jca-deployers-rar.jar" />
-      <class location="${target.dir}/jboss-jca-embedded.jar" />
-      <class location="${target.dir}/jboss-jca-embedded-arquillian.jar" />
-      <class location="${target.dir}/jboss-jca-sjc.jar" />
-      <class location="${target.dir}/jboss-jca-spec-api.jar" />
-      <class location="${target.dir}/jboss-jca-standalone.jar" />
-      <class location="${target.dir}/jboss-jca-validator.jar" />
-      <class location="${target.dir}/jboss-jca-validator-ant.jar" />
-      <class location="${target.dir}/jboss-jca-validator-cli.jar" />
-      <class location="${target.dir}/jboss-jca-web.jar" />
-      <class location="${target.dir}/jboss-jca-web-console.jar" />
+      <class location="${target.dir}/${name}-codegenerator.jar" />
+      <class location="${target.dir}/${name}-common.jar" />
+      <class location="${target.dir}/${name}-core-api.jar" />
+      <class location="${target.dir}/${name}-core-impl.jar" />
+      <class location="${target.dir}/${name}-core-spi.jar" />
+      <class location="${target.dir}/${name}-deployers-fungal.jar" />
+      <class location="${target.dir}/${name}-embedded.jar" />
+      <class location="${target.dir}/${name}-embedded-arquillian.jar" />
+      <class location="${target.dir}/${name}-sjc.jar" />
+      <class location="${target.dir}/${name}-spec-api.jar" />
+      <class location="${target.dir}/${name}-standalone.jar" />
+      <class location="${target.dir}/${name}-validator.jar" />
+      <class location="${target.dir}/${name}-validator-ant.jar" />
+      <class location="${target.dir}/${name}-validator-cli.jar" />
+      <class location="${target.dir}/${name}-web.jar" />
+      <class location="${target.dir}/${name}-web-console.jar" />
     </findbugs>
   </target>
 
@@ -555,8 +545,8 @@
 
     <copy todir="${build.dir}/instrumented">
       <fileset dir="${target.dir}">
-        <include name="jboss-jca-core-api.jar"/>
-        <include name="jboss-jca-core-spi.jar"/>
+        <include name="${name}-core-api.jar"/>
+        <include name="${name}-core-spi.jar"/>
       </fileset>
     </copy>
 

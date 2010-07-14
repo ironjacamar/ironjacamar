@@ -45,7 +45,7 @@
 
   <bean name="ObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
     <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getObjectStoreEnvironmentBean"/>
-    <property name="objectStoreDir">${jboss.jca.home}/tmp/tx-object-store</property>
+    <property name="objectStoreDir">${iron.jacamar.home}/tmp/tx-object-store</property>
   </bean>
 
   <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBean">

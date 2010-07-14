@@ -2,12 +2,12 @@
 <chapter id="configuration">
    <title>Configuration</title>
 
-   <para>The configuration for the JBoss JCA container is located in the config/ directory.</para>
+   <para>The configuration for the IronJacamar container is located in the config/ directory.</para>
 
    <section id="logging">
       <title>Logging service</title>
 
-      <para>The JBoss JCA container uses JBoss Logging framework as the implementation.</para>
+      <para>The IronJacamar container uses JBoss Logging framework as the implementation.</para>
 
       <para>The configuration is done in the</para>
 
@@ -25,7 +25,7 @@ config/logging.properties
    <section id="transaction">
       <title>Transaction service</title>
 
-      <para>The JBoss JCA container uses the JBoss Transaction Manager as its transaction implementation.</para>
+      <para>The IronJacamar container uses the JBoss Transaction Manager as its transaction implementation.</para>
 
       <para>The configuration is done in the</para>
 
@@ -45,7 +45,7 @@ config/transaction.xml
       <section id="jca_deployer">
         <title>Deployer</title>
 
-        <para>The JBoss JCA deployer is configured in the</para>
+        <para>The IronJacamar deployer is configured in the</para>
 
         <programlisting>
 config/bootstrap/jca.xml
@@ -202,8 +202,8 @@ username2=role3,role4
 <bean name="UsersRoles"
       interface="org.jboss.jca.core.spi.security.Callback"
       class="org.jboss.jca.core.security.UsersRoles">
-  <property name="UsersProperties">${jboss.jca.home}/config/users.properties</property>
-  <property name="RolesProperties">${jboss.jca.home}/config/roles.properties</property>
+  <property name="UsersProperties">${iron.jacamar.home}/config/users.properties</property>
+  <property name="RolesProperties">${iron.jacamar.home}/config/roles.properties</property>
 </bean>
            ]]>
         </programlisting>
@@ -215,7 +215,7 @@ username2=role3,role4
    <section id="webserver">
       <title>Web server</title>
 
-      <para>The JBoss JCA project features a web server which is used to serve web archive deployments.</para>
+      <para>The IronJacamar project features a web server which is used to serve web archive deployments.</para>
 
       <para>The configuration is done in the</para>
 

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-common" 
+<project name="ironjacamar-common" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -47,9 +47,15 @@
        Target: jars
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/jboss-jca-common.jar"
-         manifest="src/main/resources/common-manifest.mf"
-         basedir="${build.common.dir}"/>
+    <jar destfile="${target.dir}/${name}-common.jar"
+         basedir="${build.common.dir}">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Common"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- ================================= 
@@ -64,8 +70,8 @@
              docletpathref="sjc.lib.path.id"
              author="true"
              version="true"
-             windowtitle="JBoss JCA Common"
-             doctitle="JBoss JCA Common"
+             windowtitle="IronJacamar Common"
+             doctitle="IronJacamar Common"
              use="true"
              additionalparam="-author -version"
              classpath="${build.common.dir}"

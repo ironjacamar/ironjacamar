@@ -1,2 +1,2 @@
 #!/bin/sh
-java -jar jboss-jca-codegenerator.jar $*
+java -jar ironjacamar-codegenerator.jar $*

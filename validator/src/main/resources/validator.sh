@@ -1,3 +1,3 @@
 #!/bin/sh
-java -jar jboss-jca-validator-cli.jar $*
+java -jar ironjacamar-validator-cli.jar $*
 

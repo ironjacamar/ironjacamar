@@ -47,7 +47,7 @@ export PATH
 
     <section id="ivy">
       <title>Apache Ivy</title>
-      <para>The JBoss JCA project uses Apache Ivy for dependency management.</para>
+      <para>The IronJacamar project uses Apache Ivy for dependency management.</para>
 
       <para>Apache Ivy is automatically downloaded and included in the development
         environment, so no additional setup is required.</para>
@@ -70,7 +70,7 @@ export PATH
       <para>The anonymous SVN repository is located under:</para>
 
       <programlisting>
-svn co http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ jbossjca-trunk
+svn co http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ ironjacamar-trunk
       </programlisting>
       
     </section>
@@ -80,7 +80,7 @@ svn co http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ jbossjca
       <para>The developer SVN repository is located under:</para>
       
       <programlisting>
-svn co https://svn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ jbossjca-trunk
+svn co https://svn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ ironjacamar-trunk
       </programlisting>
       
     </section>
@@ -100,7 +100,7 @@ svn co https://svn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ jbossjca-tr
 
   <section id="compiling">
     <title>Compiling the source code</title>
-    <para>In order to build the JBoss JCA project you execute:</para>
+    <para>In order to build the IronJacamar project you execute:</para>
     <programlisting>
 ant &lt;target&gt;
     </programlisting>
@@ -124,7 +124,7 @@ ant &lt;target&gt;
       </listitem>
       <listitem>
         <para>sjc</para>
-        <para>Builds the standalone environment using JBoss JCA/SJC.</para>
+        <para>Builds the standalone environment using IronJacamar/SJC.</para>
       </listitem>
       <listitem>
         <para>release</para>
@@ -141,7 +141,7 @@ ant &lt;target&gt;
     </itemizedlist>
     <para>See the full list of targets in the main build.xml file.</para>
 
-    <para>An example to get the JBoss JCA/SJC built and running:</para>
+    <para>An example to get the IronJacamar/SJC built and running:</para>
     <programlisting>
 ant clean sjc
 cd target/sjc/bin

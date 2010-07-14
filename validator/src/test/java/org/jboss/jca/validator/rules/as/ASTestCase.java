@@ -111,7 +111,7 @@ public class ASTestCase extends TestCaseAbstract
    {
       //given
       ResourceAdapterArchive archive = getArchive("as_property_wrong.rar");
-      System.setProperty("jboss.jca.home", ".");
+      System.setProperty("iron.jacamar.home", ".");
       File directory = new File("./log");
       directory.mkdir();
       BufferedReader input = null;

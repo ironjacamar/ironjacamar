@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-sjc" 
+<project name="ironjacamar-sjc" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -54,9 +54,16 @@
        Target: jars 
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/jboss-jca-sjc.jar"
-         manifest="src/main/resources/sjc-manifest.mf"
-         basedir="${build.sjc.dir}/impl"/>
+    <jar destfile="${target.dir}/${name}-sjc.jar"
+         basedir="${build.sjc.dir}/impl">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar SJC"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+        <attribute name="Main-Class" value="org.jboss.jca.sjc.Main"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- ================================= 
@@ -71,8 +78,8 @@
              docletpathref="sjc.lib.path.id"
              author="true"
              version="true"
-             windowtitle="JBoss JCA SJC"
-             doctitle="JBoss JCA SJC"
+             windowtitle="IronJacamar SJC"
+             doctitle="IronJacamar SJC"
              use="true"
              additionalparam="-author -version"
              classpath="${build.sjc.dir}/impl"
@@ -110,11 +117,11 @@
       </fileset>
     </copy>
 
-    <!-- Build a jboss-jca-sjc.jar containing all dependencies -->
+    <!-- Build a ${name}-sjc.jar containing all dependencies -->
     <mkdir dir="${build.sjc.dir}/tmp"/>
     <unjar src="${lib.dir}/sjc/fungal.jar" dest="${build.sjc.dir}/tmp"/>
-    <unjar src="${target.dir}/jboss-jca-sjc.jar" dest="${build.sjc.dir}/tmp"/>
-    <jar destfile="${target.dir}/sjc/bin/jboss-jca-sjc.jar"
+    <unjar src="${target.dir}/${name}-sjc.jar" dest="${build.sjc.dir}/tmp"/>
+    <jar destfile="${target.dir}/sjc/bin/${name}-sjc.jar"
          manifest="${build.sjc.dir}/tmp/META-INF/MANIFEST.MF"
          basedir="${build.sjc.dir}/tmp"/>
     <delete dir="${build.sjc.dir}/tmp"/>
@@ -147,21 +154,21 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
-        <exclude name="jboss-jca-codegenerator.jar"/>
-        <exclude name="jboss-jca-deployers-main.jar"/>
-        <exclude name="jboss-jca-deployers-rar.jar"/>
-        <exclude name="jboss-jca-embedded-arquillian.jar"/>
-        <exclude name="jboss-jca-embedded.jar"/>
-        <exclude name="jboss-jca-sjc.jar"/>
-        <exclude name="jboss-jca-standalone.jar"/>
-        <exclude name="jboss-jca-web-console.jar"/>
+        <exclude name="${name}-codegenerator.jar"/>
+        <exclude name="${name}-deployers-main.jar"/>
+        <exclude name="${name}-deployers-rar.jar"/>
+        <exclude name="${name}-embedded-arquillian.jar"/>
+        <exclude name="${name}-embedded.jar"/>
+        <exclude name="${name}-sjc.jar"/>
+        <exclude name="${name}-standalone.jar"/>
+        <exclude name="${name}-web-console.jar"/>
       </fileset>
     </copy>
 
     <copy todir="${target.dir}/sjc/lib/embedded">
       <fileset dir="${target.dir}">
-        <include name="jboss-jca-embedded-arquillian.jar"/>
-        <include name="jboss-jca-embedded.jar"/>
+        <include name="${name}-embedded-arquillian.jar"/>
+        <include name="${name}-embedded.jar"/>
       </fileset>
     </copy>
 
@@ -225,7 +232,7 @@
 
     <copy todir="${target.dir}/sjc/doc/codegenerator">
       <fileset dir="${target.dir}">
-        <include name="jboss-jca-codegenerator.jar"/>
+        <include name="${name}-codegenerator.jar"/>
       </fileset>
     </copy>
 

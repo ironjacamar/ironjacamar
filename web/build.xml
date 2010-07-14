@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-web" 
+<project name="ironjacamar-web" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -58,22 +58,34 @@
       <fileset dir="src/main/resources"
                includes="*.xml"/>
     </copy>
-    <jar destfile="${target.dir}/jboss-jca-web.jar"
-         manifest="src/main/resources/web-manifest.mf"
+    <jar destfile="${target.dir}/${name}-web.jar"
          basedir="${build.web.dir}/impl"
-         excludes="**/console/**,**/*.java"/>
+         excludes="**/console/**,**/*.java">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Web"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
 
-    <jar destfile="${target.dir}/jboss-jca-web-console.jar"
-         manifest="src/main/resources/console-manifest.mf"
+    <jar destfile="${target.dir}/${name}-web-console.jar"
          basedir="${build.web.dir}/impl"
          includes="**/console/**"
-         excludes="**/*.java"/>
+         excludes="**/*.java">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Web Console"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
 
     <war destfile="${target.dir}/console.war"
          webxml="src/main/resources/console/WEB-INF/web.xml">
       <fileset dir="src/main/resources/console"/>
       <lib dir="${target.dir}">
-        <include name="jboss-jca-web-console.jar"/>
+        <include name="${name}-web-console.jar"/>
       </lib>
       <lib dir="${lib.dir}/sjc">
         <include name="dom4j.jar"/>
@@ -94,8 +106,8 @@
              docletpathref="sjc.lib.path.id"
              author="true"
              version="true"
-             windowtitle="JBoss JCA Web"
-             doctitle="JBoss JCA Web"
+             windowtitle="IronJacamar Web"
+             doctitle="IronJacamar Web"
              use="true"
              additionalparam="-author -version"
              classpath="${build.web.dir}/impl"

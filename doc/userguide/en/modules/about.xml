@@ -1,22 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="about">
-  <title>About JBoss JCA</title>
+  <title>About IronJacamar</title>
 
-  <para>The goal of the JBoss JCA project is to provide an implementation of the Java Connector
+  <para>The goal of the IronJacamar project is to provide an implementation of the Java Connector
     Architecture 1.6 specification.</para>
 
   <para>The specification can be found here: <ulink url="http://www.jcp.org/en/jsr/detail?id=322">http://www.jcp.org/en/jsr/detail?id=322</ulink>.</para>
 
+  <section id="whythename">
+    <title>Why IronJacamar ?</title>
+
+    <para>The Java EE Connector Architecture container can be viewed as a foundation inside an application server
+      as it provides connectivity to the other containers such that they can communicate with EISes. Iron is offen
+      used as foundation in building houses too.</para>
+
+    <para>The Jacamar bird family which lives in Central and South America are glossy elegant birds with long bills 
+      and tails. Why we picked the Jacamar family is left as an exercise for the reader :)</para>
+
+  </section>
+
   <section id="theteam">
     <title>The team</title>
 
-    <para>Jesper Pedersen acts as the lead for the JBoss JCA project. He can be reached at jesper (dot) pedersen (at) jboss (dot) org.</para>
+    <para>Jesper Pedersen acts as the lead for the IronJacamar project. He can be reached at jesper (dot) pedersen (at) jboss (dot) org.</para>
     
-    <para>Jeff Zhang is a core developer on the JBoss JCA project. He can be reached at jizhang (at) redhat (dot) com.</para>
+    <para>Jeff Zhang is a core developer on the IronJacamar project. He can be reached at jizhang (at) redhat (dot) com.</para>
 
-    <para>Gurkan Erdogdu is a core developer on the JBoss JCA project. He can be reached at gurkanerdogdu (at) yahoo (dot) com.</para>
+    <para>Stefano Maestri is a core developer on the IronJacamar project. He can be reached at stefano.maestri (at) redhat (dot) com.</para>
 
-    <para>Stefano Maestri is a core developer on the JBoss JCA project. He can be reached at stefano.maestri (at) javalinux (dot) it.</para>
+    <para>Gurkan Erdogdu is a core developer on the IronJacamar project. He can be reached at gurkanerdogdu (at) yahoo (dot) com.</para>
 
   </section>
 

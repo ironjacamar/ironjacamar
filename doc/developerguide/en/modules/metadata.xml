@@ -4,7 +4,7 @@
 
   <section id="coremetadata">
     <title>Core Metadata</title>
-    <para>The metadata for the JBoss JCA project is split up into the following areas</para>
+    <para>The metadata for the IronJacamar project is split up into the following areas</para>
 
     <itemizedlist spacing="compact">
       <listitem>

@@ -323,7 +323,7 @@ public class MCFTestCase extends TestCaseAbstract
    {
       //given
       ResourceAdapterArchive archive = getArchive("mcf_property_wrong.rar");
-      System.setProperty("jboss.jca.home", ".");
+      System.setProperty("iron.jacamar.home", ".");
       File directory = new File("./log");
       directory.mkdir();
       BufferedReader input = null;

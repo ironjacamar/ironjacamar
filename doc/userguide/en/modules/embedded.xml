@@ -5,7 +5,7 @@
    <section id="embedded_overview">
       <title>Overview</title>
 
-      <para>The JBoss JCA embedded configuration provides a way of running a JCA container
+      <para>The IronJacamar embedded configuration provides a way of running a JCA container
         in-VM.</para>
 
       <para>The configuration is useful when you want a</para>
@@ -46,14 +46,14 @@ java -classpath allthejarfiles.jar yourapp
    <section id="embedded_usage">
       <title>Usage</title>
 
-      <para>JBoss JCA Embedded supports both a simple and an advanced usage model, using pre-assembled
+      <para>IronJacamar Embedded supports both a simple and an advanced usage model, using pre-assembled
         resource adapter archives (.rar) or dynamic resource adapter archives based on ShrinkWrap.</para>
 
       <section id="embedded_usage_simple">
         <title>Simple usage</title>
 
         <para>The code sample below shows a simple usage of deploying a pre-assembled resource adapter archive
-          into the JBoss JCA Embedded environment.</para>
+          into the IronJacamar Embedded environment.</para>
 
         <programlisting>
 import org.jboss.jca.embedded.EmbeddedJCA;
@@ -142,14 +142,14 @@ public class MyTestCase
             - either representing a file or a directory.</note>
         </callout>
 
-        <para>See the JBoss JCA Embedded API documentation for additional functionality.</para>
+        <para>See the IronJacamar Embedded API documentation for additional functionality.</para>
 
       </section>
 
       <section id="embedded_usage_advanced">
         <title>Advanced usage</title>
 
-        <para>The JBoss JCA Embedded container environment supports the following open source
+        <para>The IronJacamar Embedded container environment supports the following open source
           testing projects:</para>
 
         <orderedlist>
@@ -172,7 +172,7 @@ public class MyTestCase
           <title>ShrinkWrap integration</title>
 
           <para>The code sample below shows an advanced usage of deploying a dynamic ShrinkWrap resource adapter archive
-            into the JBoss JCA Embedded environment.</para>
+            into the IronJacamar Embedded environment.</para>
 
           <programlisting>
 <![CDATA[
@@ -312,9 +312,9 @@ public class ShrinkWrapTestCase
           <title>Arquillian integration</title>
 
           <para>The code sample below shows an advanced usage of deploying a dynamic ShrinkWrap resource adapter archive
-            into the JBoss JCA Embedded environment using Arquillian.</para>
+            into the IronJacamar Embedded environment using Arquillian.</para>
 
-          <para>This setup allows the developer to skip the entire JBoss JCA Embedded container setup and handling of its
+          <para>This setup allows the developer to skip the entire IronJacamar Embedded container setup and handling of its
             lifecycle methods.</para>
 
           <programlisting>

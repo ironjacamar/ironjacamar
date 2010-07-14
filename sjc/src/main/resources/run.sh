@@ -1,7 +1,7 @@
 #!/bin/sh
 ### ====================================================================== ###
 ##                                                                          ##
-##  JBoss JCA Script                                                        ##
+##  IronJacamar Script                                                      ##
 ##                                                                          ##
 ### ====================================================================== ###
 
@@ -9,15 +9,15 @@
 
 DIRNAME=`dirname $0`
 
-# Setup JBOSS_JCA_HOME
-if [ "x$JBOSS_JCA_HOME" = "x" ]; then
+# Setup IRON_JACAMAR_HOME
+if [ "x$IRON_JACAMAR_HOME" = "x" ]; then
     # get the full path (without any relative bits)
-    JBOSS_JCA_HOME=`cd $DIRNAME/..; pwd`
+    IRON_JACAMAR_HOME=`cd $DIRNAME/..; pwd`
 fi
-export JBOSS_JCA_HOME
+export IRON_JACAMAR_HOME
 
 # Setup the java endorsed dirs
-JBOSS_JCA_ENDORSED_DIRS="$JBOSS_JCA_HOME/lib/endorsed"
+IRON_JACAMAR_ENDORSED_DIRS="$IRON_JACAMAR_HOME/lib/endorsed"
 
 # Setup the JVM
 if [ "x$JAVA" = "x" ]; then
@@ -34,9 +34,9 @@ JAVA_OPTS="$JAVA_OPTS -Xmx512m"
 # Display the environment
 echo "========================================================================="
 echo ""
-echo "  JBoss JCA"
+echo "  IronJacamar"
 echo ""
-echo "  JBOSS_JCA_HOME: $JBOSS_JCA_HOME"
+echo "  IRON_JACAMAR_HOME: $IRON_JACAMAR_HOME"
 echo ""
 echo "  JAVA: $JAVA"
 echo ""
@@ -45,9 +45,9 @@ echo ""
 echo "========================================================================="
 echo ""
 
-# Start JBoss JCA
+# Start IronJacamar
 "$JAVA" $JAVA_OPTS \
-    -Djava.endorsed.dirs="$JBOSS_JCA_ENDORSED_DIRS" \
+    -Djava.endorsed.dirs="$IRON_JACAMAR_ENDORSED_DIRS" \
     -Dorg.jboss.logging.Logger.pluginClass=org.jboss.logging.logmanager.LoggerPluginImpl \
     -Dlog4j.defaultInitOverride=true \
-    -jar jboss-jca-sjc.jar "$@"
+    -jar ironjacamar-sjc.jar "$@"

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-spec-api" 
+<project name="ironjacamar-spec-api" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -47,10 +47,17 @@
        Target: jars
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/jboss-jca-spec-api.jar"
-         manifest="src/main/resources/manifest.mf"
+    <jar destfile="${target.dir}/${name}-spec-api.jar"
          basedir="${build.api.dir}"
-         excludes="**/*.java"/>
+         excludes="**/*.java">
+      <manifest>
+        <attribute name="Implementation-Title" value="The Java EE Connector Architecture 1.6 API"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
   </target>
 
   <!-- ================================= 

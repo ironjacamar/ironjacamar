@@ -216,7 +216,7 @@ public class AOTestCase extends TestCaseAbstract
    {
       //given
       ResourceAdapterArchive archive = getArchive("ao_property_wrong.rar");
-      System.setProperty("jboss.jca.home", ".");
+      System.setProperty("iron.jacamar.home", ".");
       File directory = new File("./log");
       directory.mkdir();
       BufferedReader input = null;

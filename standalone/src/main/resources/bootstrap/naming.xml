@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-    JBoss JCA
--->
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
   <classloader><inject bean="naming-classloader:0.0.0"/></classloader>
@@ -42,13 +39,13 @@
     <!-- The bootstrap JNP server bind address. This also sets the default
          RMI service bind address. Empty == all addresses
       -->
-    <property name="bindAddress">${jboss.jca.bindaddress:localhost}</property>
+    <property name="bindAddress">${iron.jacamar.bindaddress:localhost}</property>
 
     <!-- The port of the RMI naming service, 0 == anonymous -->
     <property name="rmiPort">0</property>
 
     <!-- The RMI service bind address. Empty == all addresses -->
-    <property name="rmiBindAddress">${jboss.jca.bindaddress:localhost}</property>
+    <property name="rmiBindAddress">${iron.jacamar.bindaddress:localhost}</property>
 
     <!-- Set the java.rmi.server.hostname system property to rmiBindAddress -->
     <property name="enableRmiServerHostname">true</property>

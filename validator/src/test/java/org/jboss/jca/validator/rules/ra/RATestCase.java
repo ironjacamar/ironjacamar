@@ -373,7 +373,7 @@ public class RATestCase extends TestCaseAbstract
    {
       //given
       ResourceAdapterArchive archive = getArchive("ra_property_wrong.rar");
-      System.setProperty("jboss.jca.home", ".");
+      System.setProperty("iron.jacamar.home", ".");
       File directory = new File("./log");
       directory.mkdir();
       BufferedReader input = null;

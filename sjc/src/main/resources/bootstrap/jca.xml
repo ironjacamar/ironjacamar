@@ -90,8 +90,8 @@
   <bean name="UsersRoles"
         interface="org.jboss.jca.core.spi.security.Callback"
         class="org.jboss.jca.core.security.UsersRoles">
-    <property name="UsersProperties">${jboss.jca.home}/config/users.properties</property>
-    <property name="RolesProperties">${jboss.jca.home}/config/roles.properties</property>
+    <property name="UsersProperties">${iron.jacamar.home}/config/users.properties</property>
+    <property name="RolesProperties">${iron.jacamar.home}/config/roles.properties</property>
   </bean>
 
   <!-- Work Manager -->

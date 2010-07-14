@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-codegenerator" 
+<project name="ironjacamar-codegenerator" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -64,20 +64,16 @@
                includes="**/*.template **/*.properties"/>
     </copy>
 
-    <jar destfile="${target.dir}/jboss-jca-codegenerator.jar"
-         manifest="src/main/resources/codegenerator-manifest.mf"
-         basedir="${build.codegenerator.dir}/jars/codegenerator"/>
-<!--
-    <jar destfile="${target.dir}/jboss-jca-codegenerator-cli.jar"
-         manifest="src/main/resources/codegenerator-cli-manifest.mf"
-         basedir="${build.codegenerator.dir}/jars/codegenerator"
-         includes="**/Main*.class"/>
-  	
-    <jar destfile="${target.dir}/jboss-jca-codegenerator-ant.jar"
-         manifest="src/main/resources/codegenerator-ant-manifest.mf"
-         basedir="${build.codegenerator.dir}/jars/codegenerator"
-   	     includes="**/ant/**"/>
--->
+    <jar destfile="${target.dir}/${name}-codegenerator.jar"
+         basedir="${build.codegenerator.dir}/jars/codegenerator">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Common"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+        <attribute name="Main-Class" value="org.jboss.jca.codegenerator.Main"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- ================================= 
@@ -92,8 +88,8 @@
              docletpathref="standalone.lib.path.id"
              author="true"
              version="true"
-             windowtitle="JBoss JCA codegenerator"
-             doctitle="JBoss JCA codegenerator"
+             windowtitle="IronJacamar Code Generator"
+             doctitle="IronJacamar Code Generator"
              use="true"
              additionalparam="-author -version"
              classpath="${build.codegenerator.dir}/impl"

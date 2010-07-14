@@ -1,6 +1,6 @@
 @echo off
 rem -------------------------------------------------------------------------
-rem JBoss JCA Script for Windows
+rem IronJacamar Script for Windows
 rem -------------------------------------------------------------------------
 
 rem $Id: $
@@ -15,8 +15,8 @@ if "%OS%" == "Windows_NT" (
 )
 
 pushd %DIRNAME%..
-if "x%JBOSS_JCA_HOME%" == "x" (
-  set "JBOSS_JCA_HOME=%CD%"
+if "x%IRON_JACAMAR_HOME%" == "x" (
+  set "IRON_JACAMAR_HOME=%CD%"
 )
 popd
 
@@ -36,10 +36,10 @@ if "x%JAVA_HOME%" == "x" (
   set "JAVA=%JAVA_HOME%\bin\java"
 )
 
-rem Setup JBoss specific properties
+rem Setup IronJacamar specific properties
 
 rem Setup the java endorsed dirs
-set JBOSS_JCA_ENDORSED_DIRS=%JBOSS_JCA_HOME%\lib\endorsed
+set IRON_JACAMAR_ENDORSED_DIRS=%IRON_JACAMAR_HOME%\lib\endorsed
 
 if "x%JAVA_OPTS%" == "x" (
   set "JAVA_OPTS=-Xmx512m"
@@ -49,9 +49,9 @@ if "x%JAVA_OPTS%" == "x" (
 
 echo ===============================================================================
 echo.
-echo   JBoss JCA
+echo   IronJacamar
 echo.
-echo   JBOSS_JCA_HOME: %JBOSS_HOME%
+echo   IRON_JACAMAR_HOME: %IRON_JACAMAR_HOME%
 echo.
 echo   JAVA: %JAVA%
 echo.
@@ -62,10 +62,10 @@ echo.
 
 :RESTART
 "%JAVA%" %JAVA_OPTS% ^
-   -Djava.endorsed.dirs="%JBOSS_JCA_ENDORSED_DIRS%" ^
+   -Djava.endorsed.dirs="%IRON_JACAMAR_ENDORSED_DIRS%" ^
    -Dorg.jboss.logging.Logger.pluginClass=org.jboss.logging.logmanager.LoggerPluginImpl ^
    -Dlog4j.defaultInitOverride=true ^
-   -jar jboss-jca-sjc.jar %*
+   -jar ironjacamar-sjc.jar %*
 
 if ERRORLEVEL 10 goto RESTART
 

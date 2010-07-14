@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-core" 
+<project name="ironjacamar-core" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -49,20 +49,38 @@
        Target: jars 
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/jboss-jca-core-api.jar"
-         manifest="src/main/resources/api-manifest.mf"
+    <jar destfile="${target.dir}/${name}-core-api.jar"
          basedir="${build.core.dir}/impl"
-         includes="**/core/api/**"/>
+         includes="**/core/api/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Core API"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
 
-    <jar destfile="${target.dir}/jboss-jca-core-spi.jar"
-         manifest="src/main/resources/spi-manifest.mf"
+    <jar destfile="${target.dir}/${name}-core-spi.jar"
          basedir="${build.core.dir}/impl"
-         includes="**/core/spi/**"/>
+         includes="**/core/spi/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Core SPI"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
 
-    <jar destfile="${target.dir}/jboss-jca-core-impl.jar"
-         manifest="src/main/resources/impl-manifest.mf"
+    <jar destfile="${target.dir}/${name}-core-impl.jar"
          basedir="${build.core.dir}/impl"
-         excludes="**/*.java, **/core/api/**, **/core/spi/**"/>
+         excludes="**/*.java, **/core/api/**, **/core/spi/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Core Implementation"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- ================================= 
@@ -77,8 +95,8 @@
              docletpathref="sjc.lib.path.id"
              author="true"
              version="true"
-             windowtitle="JBoss JCA Core"
-             doctitle="JBoss JCA Core"
+             windowtitle="IronJacamar Core"
+             doctitle="IronJacamar Core"
              use="true"
              additionalparam="-author -version"
              classpath="${build.core.dir}/impl"

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-deployers" 
+<project name="ironjacamar-deployers" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -51,39 +51,6 @@
   <target name="jars" depends="compile">
     <mkdir dir="${build.deployers.dir}/jars" />
 
-    <!-- Main -->
-    <mkdir dir="${build.deployers.dir}/jars/main" />
-
-    <copy todir="${build.deployers.dir}/jars/main">
-      <fileset dir="${build.deployers.dir}/impl"
-               includes="**/mc/hack/**"/>
-    </copy>
-
-    <jar destfile="${target.dir}/jboss-jca-deployers-main.jar"
-         manifest="src/main/resources/main-manifest.mf"
-         basedir="${build.deployers.dir}/jars/main"/>
-
-    <!-- RAR -->
-    <mkdir dir="${build.deployers.dir}/jars/rar" />
-    <mkdir dir="${build.deployers.dir}/jars/rar/META-INF" />
-
-    <copy todir="${build.deployers.dir}/jars/rar">
-      <fileset dir="${build.deployers.dir}/impl"
-               includes="**/common/**,**/mc/rar/**"/>
-    </copy>
-
-    <copy file="src/main/resources/jca-deployers-jboss-beans.xml" 
-          tofile="${build.deployers.dir}/jars/rar/META-INF/jboss-beans.xml"/>
-
-    <copy todir="${build.deployers.dir}/jars/rar">
-      <fileset dir="src/main/resources/"
-               includes="**/*.properties"/>
-    </copy>
-
-    <jar destfile="${target.dir}/jboss-jca-deployers-rar.jar"
-         manifest="src/main/resources/rar-manifest.mf"
-         basedir="${build.deployers.dir}/jars/rar"/>
-
     <!-- Fungal -->
     <mkdir dir="${build.deployers.dir}/jars/fungal" />
 
@@ -97,9 +64,15 @@
                includes="**/*.properties"/>
     </copy>
 
-    <jar destfile="${target.dir}/jboss-jca-deployers-fungal.jar"
-         manifest="src/main/resources/fungal-ra-manifest.mf"
-         basedir="${build.deployers.dir}/jars/fungal"/>
+    <jar destfile="${target.dir}/${name}-deployers-fungal.jar"
+         basedir="${build.deployers.dir}/jars/fungal">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Deployers (Fungal)"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
 
   </target>
 
@@ -108,152 +81,133 @@
        Target: test-jars 
        ================================= -->
   <target name="test-jars">
-    <jar destfile="${build.deployers.dir}/ra15out.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra15out.rar">
        <fileset dir="${build.deployers.dir}/test"
     	    includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra15out/*.class"/>
        <fileset dir="src/test/resources/ra15out.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra15inout.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra15inout.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra15inout/*.class"/>
        <fileset dir="src/test/resources/ra15inout.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra15dtdinout.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra15dtdinout.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra15dtdinout/*.class"/>
        <fileset dir="src/test/resources/ra15dtdinout.rar"/>
     </jar>
-  	<jar destfile="${build.deployers.dir}/ra15outjbossra.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+  	<jar destfile="${build.deployers.dir}/ra15outjbossra.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra15outjbossra/*.class"/>
        <fileset dir="src/test/resources/ra15outjbossra.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra15outjbossradefaultns.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra15outjbossradefaultns.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra15outjbossradefaultns/*.class"/>
        <fileset dir="src/test/resources/ra15outjbossradefaultns.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra15inoutjbossra.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra15inoutjbossra.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra15inoutjbossra/*.class"/>
        <fileset dir="src/test/resources/ra15inoutjbossra.rar"/>
     </jar>
-   <jar destfile="${build.deployers.dir}/ra16out.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16out.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16out/*.class"/>
       <fileset dir="src/test/resources/ra16out.rar"/>
    </jar>  	
-   <jar destfile="${build.deployers.dir}/ra16inout.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16inout.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16inout/*.class"/>
       <fileset dir="src/test/resources/ra16inout.rar"/>
    </jar>   
-    <jar destfile="${build.deployers.dir}/ra16dtdinout.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16dtdinout.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16dtdinout/*.class"/>
        <fileset dir="src/test/resources/ra16dtdinout.rar"/>
     </jar>   
-   <jar destfile="${build.deployers.dir}/ra16outjbossra.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16outjbossra.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16outjbossra/*.class"/>
       <fileset dir="src/test/resources/ra16outjbossra.rar"/>
    </jar>
-   <jar destfile="${build.deployers.dir}/ra16outjbossradefaultns.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16outjbossradefaultns.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16outjbossradefaultns/*.class"/>
       <fileset dir="src/test/resources/ra16outjbossradefaultns.rar"/>
    </jar>
-   <jar destfile="${build.deployers.dir}/ra16inoutjbossra.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16inoutjbossra.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutjbossra/*.class"/>
       <fileset dir="src/test/resources/ra16inoutjbossra.rar"/>
    </jar>   
-   <jar destfile="${build.deployers.dir}/ra16outnora.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16outnora.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16outnora/*.class"/>
       <fileset dir="src/test/resources/ra16outnora.rar"/>
    </jar>  
-   <jar destfile="${build.deployers.dir}/ra16inoutnora.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16inoutnora.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutnora/*.class"/>
       <fileset dir="src/test/resources/ra16inoutnora.rar"/>
    </jar>  
-   <jar destfile="${build.deployers.dir}/ra16inoutoverwrite.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16inoutoverwrite.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutoverwrite/*.class"/>
       <fileset dir="src/test/resources/ra16inoutoverwrite.rar"/>
    </jar>  
-   <jar destfile="${build.deployers.dir}/ra16standard303.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16standard303.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16standard303/*.class"/>
       <fileset dir="src/test/resources/ra16standard303.rar"/>
    </jar>
-   <jar destfile="${build.deployers.dir}/ra16standard303jbossra.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16standard303jbossra.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16standard303jbossra/*.class"/>
       <fileset dir="src/test/resources/ra16standard303jbossra.rar"/>
    </jar>
-   <jar destfile="${build.deployers.dir}/ra16user303.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16user303.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16user303/*.class"/>
       <fileset dir="src/test/resources/ra16user303.rar"/>
    </jar>
-   <jar destfile="${build.deployers.dir}/ra16user303jbossra.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16user303jbossra.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
@@ -267,15 +221,13 @@
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutjar/*.class"/>
    </jar>
-   <jar destfile="${build.deployers.dir}/ra16inoutjar.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16inoutjar.rar">
    	<filelist dir="${build.deployers.dir}" files="ra16inoutjar.jar"/> 
       <fileset dir="src/test/resources/ra16inoutjar.rar"/>
    </jar>
    <delete file="${build.deployers.dir}/ra16inoutjar.jar"/>
   	
-    <jar destfile="${build.deployers.dir}/ra10dtdout.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra10dtdout.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
@@ -283,8 +235,7 @@
        <fileset dir="src/test/resources/ra10dtdout.rar"/>
     </jar>     	
   	
-    <jar destfile="${build.deployers.dir}/rafail2connector.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/rafail2connector.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
@@ -292,72 +243,63 @@
        <fileset dir="src/test/resources/rafail2connector.rar"/>
     </jar>
   	
-    <jar destfile="${build.deployers.dir}/ra16inoutanno.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16inoutanno.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutanno/*.class"/>
        <fileset dir="src/test/resources/ra16inoutanno.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra16inoutmultianno.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16inoutmultianno.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutmultianno/*.class"/>
        <fileset dir="src/test/resources/ra16inoutmultianno.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoconndefs.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16annoconndefs.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16annoconndefs/*.class"/>
        <fileset dir="src/test/resources/ra16annoconndefs.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoconndef.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16annoconndef.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16annoconndef/*.class"/>
        <fileset dir="src/test/resources/ra16annoconndef.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoadminobj.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16annoadminobj.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16annoadminobj/*.class"/>
        <fileset dir="src/test/resources/ra16annoadminobj.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoauthmech.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16annoauthmech.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16annoauthmech/*.class"/>
        <fileset dir="src/test/resources/ra16annoauthmech.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoactiv.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16annoactiv.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16annoactiv/*.class"/>
        <fileset dir="src/test/resources/ra16annoactiv.rar"/>
     </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoconfprop.rar"
-         manifest="src/main/resources/rar-manifest.mf">
+    <jar destfile="${build.deployers.dir}/ra16annoconfprop.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/ra16annoconfprop/*.class"/>
        <fileset dir="src/test/resources/ra16annoconfprop.rar"/>
     </jar>
-   <jar destfile="${build.deployers.dir}/ra16asso.rar"
-        manifest="src/main/resources/rar-manifest.mf">
+   <jar destfile="${build.deployers.dir}/ra16asso.rar">
       <fileset dir="${build.deployers.dir}/test"
          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
       <fileset dir="${build.deployers.dir}/test"
@@ -378,8 +320,8 @@
              docletpathref="standalone.lib.path.id"
              author="true"
              version="true"
-             windowtitle="JBoss JCA Deployers"
-             doctitle="JBoss JCA Deployers"
+             windowtitle="IronJacamar Deployers"
+             doctitle="IronJacamar Deployers"
              use="true"
              additionalparam="-author -version"
              classpath="${build.deployers.dir}/impl"

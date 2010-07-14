@@ -1,4 +1,0 @@
-Implementation-Title: JBoss JCA Deployers Main
-Implementation-Vendor: Red Hat Middleware LLC
-Implementation-Vendor-Id: org.jboss
-Implementation-Version: 0.1

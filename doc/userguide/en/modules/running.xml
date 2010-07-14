@@ -5,10 +5,10 @@
    <section id="startingthecontainer">
       <title>Starting the container</title>
 
-      <para>The JBoss JCA container is started by entering the bin/ directory</para>
+      <para>The IronJacamar container is started by entering the bin/ directory</para>
 
      <programlisting>
-cd jboss-jca-1.0.0/bin
+cd ironjacamar-1.0.0/bin
      </programlisting>
 
      <para>and executing</para>
@@ -53,7 +53,7 @@ http://localhost:8080
    <section id="cli">
       <title>Command line interface</title>
 
-      <para>The JBoss JCA container can be controlled by a command line interface.</para>
+      <para>The IronJacamar container can be controlled by a command line interface.</para>
 
       <section id="cli_deploy">
         <title>Deploy</title>
@@ -84,7 +84,7 @@ java -jar fungal-cli.jar undeploy &lt;file&gt;
       <section id="cli_shutdown">
         <title>Shutdown</title>
 
-        <para>You can shutdown the JBoss JCA environment by</para>
+        <para>You can shutdown the IronJacamar environment by</para>
 
         <programlisting>
 java -jar fungal-cli.jar shutdown

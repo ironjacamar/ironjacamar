@@ -74,7 +74,7 @@ org.jboss.jca.core.spec.chaper10.section3
             <para>The official Java Connector Architecture API (javax.resource)</para>
          </listitem>
          <listitem>
-            <para>The JBoss JCA specific APIs (org.jboss.jca.xxx.api)</para>
+            <para>The IronJacamar specific APIs (org.jboss.jca.xxx.api)</para>
          </listitem>
          <listitem>
             <para>Interfaces and classes in the test suite that extends/implements these APIs</para>
@@ -100,10 +100,10 @@ org.jboss.jca.core.workmanager
             <para>The official Java Connector Architecture API (javax.resource)</para>
          </listitem>
          <listitem>
-            <para>The JBoss JCA specific APIs (org.jboss.jca.xxx.api)</para>
+            <para>The IronJacamar specific APIs (org.jboss.jca.xxx.api)</para>
          </listitem>
          <listitem>
-            <para>The JBoss JCA specific implementation (org.jboss.jca.xxx.yyy)</para>
+            <para>The IronJacamar specific implementation (org.jboss.jca.xxx.yyy)</para>
          </listitem>
          <listitem>
             <para>Interfaces and classes in the test suite</para>
@@ -248,7 +248,7 @@ public void printFailuresLogShouldReturnNotEmptyStringForWarning() throws Throwa
 
   <section id="qa">
     <title>Quality Assurance</title>
-    <para>In addition to the test suite the JBoss JCA project deploys various
+    <para>In addition to the test suite the IronJacamar project deploys various
       tools to increase the stability of the project.</para>
     <para>The following sections will describe each of these tools.</para>
 
@@ -281,7 +281,7 @@ reports/checkstyle
       <para>Findbugs is a tool that scans your project for bugs and provides reports based on its
         findings.</para>
 
-      <para>This tool helps lower of the number of bugs found in the JBoss JCA project.</para>
+      <para>This tool helps lower of the number of bugs found in the IronJacamar project.</para>
 
       <para>The goal is to have zero errors in the report and as few exclusions in the filter as possible.
         The findbugs report is generated using</para>
@@ -305,7 +305,7 @@ reports/findbugs
       <para>Cobertura generates a test suite matrix for your project which helps you identify
         where you need additional test coverage.</para>
 
-      <para>The reports that the tool provides makes sure that the JBoss JCA project has the correct test coverage.</para>
+      <para>The reports that the tool provides makes sure that the IronJacamar project has the correct test coverage.</para>
 
       <para>The goal is to have as high code coverage as possible in all areas. The Cobertura report is
         generated using</para>
@@ -328,7 +328,7 @@ reports/cobertura
       <title>Tattletale</title>
       <para>Tattletale generates reports about different quality matrix of the dependencies within the project.</para>
 
-      <para>The reports that the tool provides makes sure that the JBoss JCA project doesn't for example have
+      <para>The reports that the tool provides makes sure that the IronJacamar project doesn't for example have
         cyclic dependencies within the project.</para>
 
       <para>The goal is to have as no issues flagged by the tool. The Tattletale reports are

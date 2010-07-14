@@ -126,7 +126,7 @@ public class WARDeployer implements Deployer
          }
 
          // Setup temporary work directory
-         File tmp = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
+         File tmp = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/tmp/");
          File tmpDeployment = new File(tmp, "/web" + contextPath);
 
          if (tmpDeployment.exists())

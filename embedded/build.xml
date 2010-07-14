@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-embedded" 
+<project name="ironjacamar-embedded" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -58,10 +58,16 @@
       <fileset dir="src/main/resources"
                includes="*.xml,*.properties"/>
     </copy>
-    <jar destfile="${target.dir}/jboss-jca-embedded.jar"
-         manifest="src/main/resources/embedded-manifest.mf"
+    <jar destfile="${target.dir}/${name}-embedded.jar"
          basedir="${build.embedded.dir}/impl"
-         excludes="META-INF/services/**,**/arquillian/**,**/*.java"/>
+         excludes="META-INF/services/**,**/arquillian/**,**/*.java">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Embedded"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
 
     <mkdir dir="${build.embedded.dir}/impl/META-INF"/>
     <mkdir dir="${build.embedded.dir}/impl/META-INF/services"/>
@@ -69,11 +75,17 @@
       <fileset dir="src/main/resources/services" includes="*"/>
     </copy>
 
-    <jar destfile="${target.dir}/jboss-jca-embedded-arquillian.jar"
-         manifest="src/main/resources/arquillian-manifest.mf"
+    <jar destfile="${target.dir}/${name}-embedded-arquillian.jar"
          basedir="${build.embedded.dir}/impl"
          includes="META-INF/**,**/arquillian/**"
-         excludes="**/*.xml,**/*.java"/>
+         excludes="**/*.xml,**/*.java">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Embedded"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- ================================= 
@@ -88,8 +100,8 @@
              docletpathref="sjc.lib.path.id"
              author="true"
              version="true"
-             windowtitle="JBoss JCA Embedded"
-             doctitle="JBoss JCA Embedded"
+             windowtitle="IronJacamar Embedded"
+             doctitle="IronJacamar Embedded"
              use="true"
              additionalparam="-author -version"
              classpath="${build.embedded.dir}/impl"

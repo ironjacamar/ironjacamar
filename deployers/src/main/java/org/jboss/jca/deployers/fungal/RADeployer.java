@@ -352,7 +352,7 @@ public final class RADeployer implements CloneableDeployer
          if (f.isFile())
          {
             FileUtil fileUtil = new FileUtil();
-            destination = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/tmp/");
+            destination = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/tmp/");
             root = fileUtil.extract(f, destination);
          }
          else
@@ -809,7 +809,7 @@ public final class RADeployer implements CloneableDeployer
       {
          if (reportDirectory == null)
          {
-            reportDirectory = new File(SecurityActions.getSystemProperty("jboss.jca.home"), "/log/");
+            reportDirectory = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/log/");
          }
          if (reportDirectory.exists())
          {

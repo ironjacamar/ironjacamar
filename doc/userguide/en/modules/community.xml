@@ -14,7 +14,7 @@
    <section id="userforum">
       <title>User forum</title>
 
-      <para>The user forum is where we discuss matters about the usage of the JBoss JCA project.</para>
+      <para>The user forum is where we discuss matters about the usage of the IronJacamar project.</para>
 
       <para>Our forum is located at <ulink url="http://www.jboss.org/index.html?module=bb&amp;op=viewforum&amp;f=136">http://www.jboss.org/index.html?module=bb&amp;op=viewforum&amp;f=136</ulink></para>
 
@@ -23,7 +23,7 @@
    <section id="developerforum">
       <title>Developer forum</title>
 
-      <para>The developer forum is where we discuss the implementation of the JBoss JCA project. This means the internals of the project and 
+      <para>The developer forum is where we discuss the implementation of the IronJacamar project. This means the internals of the project and 
         not how the project is used.</para>
 
       <para>User questions doesn't belong here - they should go in the user forum instead.</para>

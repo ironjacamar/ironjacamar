@@ -39,7 +39,7 @@ import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.configuration.KernelConfiguration;
 
 /**
- * The embedded JBoss JCA container
+ * The embedded IronJacamar container
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class EmbeddedJCA
@@ -82,7 +82,8 @@ public class EmbeddedJCA
    public void startup() throws Throwable
    {
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
-      kernelConfiguration = kernelConfiguration.name("jboss.jca");
+      kernelConfiguration = kernelConfiguration.name("iron.jacamar");
+      kernelConfiguration = kernelConfiguration.home(null);
       kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
       kernelConfiguration = kernelConfiguration.parallelDeploy(false);
       kernelConfiguration = kernelConfiguration.remoteAccess(false);

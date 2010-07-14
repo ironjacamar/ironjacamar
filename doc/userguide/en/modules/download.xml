@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <chapter id="gettingstarted">
    <title>Download</title>
-   <para>The official JBoss JCA project page is <ulink
+   <para>The official IronJacamar project page is <ulink
    url="http://www.jboss.org/jca/">http://www.jboss.org/jca/</ulink> where you can download the software.</para>
 
    <section id="download">
@@ -12,7 +12,7 @@
       <para>Each release is labelled with a version number and an identifier.</para>
 
       <programlisting>
-jboss-jca-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
+ironjacamar-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
       </programlisting>
 
       <para>where</para>
@@ -49,7 +49,7 @@ jboss-jca-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
       <para>An example</para>
 
       <programlisting>
-jboss-jca-1.0.0.tar.gz
+ironjacamar-1.0.0.tar.gz
       </programlisting>
 
       <para>which is the first stable release of the project.</para>
@@ -65,7 +65,7 @@ jboss-jca-1.0.0.tar.gz
       <para>The anonymous SVN repository is located under:</para>
 
       <programlisting>
-svn co http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ jbossjca-trunk
+svn co http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ ironjacamar-trunk
       </programlisting>
 
       <para>You can find additional information about this in the developer guide.</para>

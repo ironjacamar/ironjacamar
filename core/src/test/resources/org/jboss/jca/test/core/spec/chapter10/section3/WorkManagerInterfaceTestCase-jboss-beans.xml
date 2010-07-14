@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-    JBoss JCA
--->
 <deployment>
 
   <bean name="SimpleBootstrapContext" interface="javax.resource.spi.BootstrapContext" class="org.jboss.jca.test.core.spec.chapter10.SimpleBootstrapContext">

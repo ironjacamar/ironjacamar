@@ -50,4 +50,4 @@ echo ""
     -Djava.endorsed.dirs="$JBOSS_JCA_ENDORSED_DIRS" \
     -Dorg.jboss.logging.Logger.pluginClass=org.jboss.logging.logmanager.LoggerPluginImpl \
     -Dlog4j.defaultInitOverride=true \
-    -jar jboss-jca-standalone.jar "$@"
+    -jar ironjacamar-standalone.jar "$@"

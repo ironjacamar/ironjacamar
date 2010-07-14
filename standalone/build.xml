@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 -->
-<project name="jboss-jca-standalone" 
+<project name="ironjacamar-standalone" 
          default="compile" 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -49,10 +49,16 @@
        Target: jars 
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/jboss-jca-standalone.jar"
-         manifest="src/main/resources/standalone-manifest.mf"
+    <jar destfile="${target.dir}/${name}-standalone.jar"
          basedir="${build.standalone.dir}/impl"
-         excludes="**/*.java"/>
+         excludes="**/*.java">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Standalone"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
   </target>
 
   <!-- ================================= 
@@ -67,8 +73,8 @@
              docletpathref="standalone.lib.path.id"
              author="true"
              version="true"
-             windowtitle="JBoss JCA Standalone"
-             doctitle="JBoss JCA Standalone"
+             windowtitle="IronJacamar Standalone"
+             doctitle="IronJacamar Standalone"
              use="true"
              additionalparam="-author -version"
              classpath="${build.standalone.dir}/impl"
@@ -106,7 +112,7 @@
 
     <copy todir="${target.dir}/standalone/bin">
       <fileset dir="${target.dir}">
-        <include name="jboss-jca-standalone.jar"/>
+        <include name="${name}-standalone.jar"/>
       </fileset>
     </copy>
 
@@ -137,9 +143,9 @@
     <copy todir="${target.dir}/standalone/lib">
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
-        <exclude name="jboss-jca-deployers-fungal.jar"/>
-        <exclude name="jboss-jca-sjc.jar"/>
-        <exclude name="jboss-jca-standalone.jar"/>
+        <exclude name="${name}-deployers-fungal.jar"/>
+        <exclude name="${name}-sjc.jar"/>
+        <exclude name="${name}-standalone.jar"/>
       </fileset>
     </copy>
 

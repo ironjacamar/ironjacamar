@@ -68,7 +68,7 @@ public class Main
    {
       try
       {
-         String home = SecurityActions.getSystemProperty("jboss.jca.home");
+         String home = SecurityActions.getSystemProperty("iron.jacamar.home");
          File root = null;
 
          if (home != null)
@@ -79,7 +79,7 @@ public class Main
          {
             home = new File(".").toURI().toURL().toString();
             root = new File(new URI(home.substring(0, home.lastIndexOf("bin"))));
-            SecurityActions.setSystemProperty("jboss.jca.home", root.getAbsolutePath());
+            SecurityActions.setSystemProperty("iron.jacamar.home", root.getAbsolutePath());
          }
 
          if (args != null && args.length > 0)
@@ -88,7 +88,7 @@ public class Main
             {
                if ("-b".equals(args[i]))
                {
-                  SecurityActions.setSystemProperty("jboss.jca.bindaddress", args[++i]);
+                  SecurityActions.setSystemProperty("iron.jacamar.bindaddress", args[++i]);
                }
             }
          }

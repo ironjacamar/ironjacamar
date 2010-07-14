@@ -5,7 +5,7 @@
    <section id="validator_introduction">
       <title>Introduction</title>
 
-      <para>The JBoss JCA container features a validator which checks resource adapter archives
+      <para>The IronJacamar container features a validator which checks resource adapter archives
         against the Java Connector Architecture (JCA) specification.</para>
 
       <para>The validator is doing a static analysis of the resource adapter classes
@@ -99,7 +99,7 @@ Code: com.mycompany.myproject.ResourceAdapterImpl
       <para>The validator can be run on the command line by</para>
 
       <programlisting>
-java -jar jboss-jca-validator.jar &lt;file&gt;
+java -jar ironjacamar-validator.jar &lt;file&gt;
       </programlisting>
 
       <para>The reports will be generated into the current directory under the name of 
@@ -111,14 +111,14 @@ java -jar jboss-jca-validator.jar &lt;file&gt;
       <title>Apache Ant integration</title>
 
       <para>The validator integrates with Apache Ant such that you can generate the reports directly from 
-        your build environment before deploying the resoruce adapter into the JBoss JCA container.</para>
+        your build environment before deploying the resoruce adapter into the IronJacamar container.</para>
 
       <para>First you have to define the <code>taskdef</code> for the task</para>
 
       <programlisting>
 &lt;taskdef name="validator"
          classname="org.jboss.jca.validator.ant.ValidatorTask"
-         classpathref="jbossjca.lib.path.id"/&gt;
+         classpathref="ironjacamar.lib.path.id"/&gt;
       </programlisting>
 
       <para>See the Apache Ant documentation for additional instructions on installation.</para>

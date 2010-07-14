@@ -10,13 +10,13 @@
      <para>Extract the distribution using</para>
 
      <programlisting>
-tar xzf jboss-jca-1.0.0.tar.gz
+tar xzf ironjacamar-1.0.0.tar.gz
      </programlisting>
 
      <para>The distribution will be located in a directory named</para>
 
      <programlisting>
-jboss-jca-1.0.0
+ironjacamar-1.0.0
      </programlisting>
 
    </section>
@@ -27,7 +27,7 @@ jboss-jca-1.0.0
      <para>Extract the distribution using</para>
 
      <programlisting>
-unzip jboss-jca-1.0.0.tar.gz
+unzip ironjacamar-1.0.0.tar.gz
      </programlisting>
 
      <para>or any program capable of handling Zip archives such as WinZip and WinRar.</para>
@@ -35,7 +35,7 @@ unzip jboss-jca-1.0.0.tar.gz
      <para>The distribution will be located in a directory named</para>
 
      <programlisting>
-jboss-jca-1.0.0
+ironjacamar-1.0.0
      </programlisting>
 
    </section>
@@ -43,7 +43,7 @@ jboss-jca-1.0.0
    <section id="directorystructure">
      <title>Directory structure</title>
 
-     <para>The JBoss JCA container has the following directory structure:</para>
+     <para>The IronJacamar container has the following directory structure:</para>
 
     <itemizedlist spacing="compact">
       <listitem>

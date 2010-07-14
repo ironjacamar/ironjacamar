@@ -1,7 +1,7 @@
 <project name="userguide" default="all" basedir=".">
 
   <property name="build.dir" value="${basedir}/../../target/docs/userguide"/>
-  <property name="pdf.name"  value="JBossJCAUsersGuide.pdf"/>
+  <property name="pdf.name"  value="IronJacamarUsersGuide.pdf"/>
   <import file="${basedir}/../../tools/docbook/support.xml"/>
 
   <target name="all" depends="clean">
