@@ -62,6 +62,7 @@ import org.jboss.xb.binding.sunday.unmarshalling.SingletonSchemaResolverFactory;
 public class Metadata
 {
    private static Logger log = Logger.getLogger(Metadata.class);
+
    private static boolean trace = log.isTraceEnabled();
 
    /**
@@ -101,15 +102,15 @@ public class Metadata
          {
             long start = System.currentTimeMillis();
 
-            result = (ConnectorMetaData)unmarshaller.unmarshal(url, resolver);
-            
+            result = (ConnectorMetaData) unmarshaller.unmarshal(url, resolver);
+
             log.debug("Total parse for " + url + " took " + (System.currentTimeMillis() - start) + "ms");
 
             if (trace)
             {
                log.trace("successful parse " + result.getVersion() + " rar package " + result);
             }
-               
+
          }
          catch (Exception e)
          {
@@ -117,7 +118,7 @@ public class Metadata
             throw e;
          }
       }
-      
+
       return result;
    }
 
@@ -148,8 +149,8 @@ public class Metadata
          {
             long start = System.currentTimeMillis();
 
-            result = (JBossRAMetaData)unmarshaller.unmarshal(url, resolver);
-            
+            result = (JBossRAMetaData) unmarshaller.unmarshal(url, resolver);
+
             log.debug("Total parse for " + url + " took " + (System.currentTimeMillis() - start) + "ms");
 
             if (trace)
@@ -161,7 +162,7 @@ public class Metadata
             throw e;
          }
       }
-      
+
       return result;
    }
 
@@ -184,7 +185,7 @@ public class Metadata
          <xs:enumeration value="adminobject"/>
          </xs:restriction>
          */
-         
+
          List<RaConfigPropertyMetaData> props = jmd.getRaConfigProps();
 
          List<ConfigPropertyMetaData> append = null;
@@ -204,52 +205,48 @@ public class Metadata
                }
                else if (override.equals("connection-definition"))
                {
-                  if (cmd.getRa() != null &&
-                     cmd.getRa().getOutboundRa() != null &&
-                     cmd.getRa().getOutboundRa().getConDefs() != null &&
-                     cmd.getRa().getOutboundRa().getConDefs().size() > 0 &&
-                     cmd.getRa().getOutboundRa().getConDefs().get(0) != null)
+                  if (cmd.getRa() != null && cmd.getRa().getOutboundRa() != null
+                        && cmd.getRa().getOutboundRa().getConDefs() != null
+                        && cmd.getRa().getOutboundRa().getConDefs().size() > 0
+                        && cmd.getRa().getOutboundRa().getConDefs().get(0) != null)
                   {
                      listConfigProp = cmd.getRa().getOutboundRa().getConDefs().get(0).getConfigProps();
                   }
-               } 
+               }
                else if (override.equals("activationspec"))
                {
-                  if (cmd.getRa() != null &&
-                     cmd.getRa().getInboundRa() != null &&
-                     cmd.getRa().getInboundRa().getMessageAdapter() != null &&
-                     cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners() != null &&
-                     cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().size() > 0 &&
-                     cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().get(0) != null &&
-                     cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().get(0).
-                        getActivationSpecType() != null)
+                  if (cmd.getRa() != null
+                        && cmd.getRa().getInboundRa() != null
+                        && cmd.getRa().getInboundRa().getMessageAdapter() != null
+                        && cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners() != null
+                        && cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().size() > 0
+                        && cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().get(0) != null
+                        && cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().get(0)
+                              .getActivationSpecType() != null)
                   {
-                     listConfigProp = cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().
-                        get(0).getActivationSpecType().getConfigProps();
+                     listConfigProp = cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners().get(0)
+                           .getActivationSpecType().getConfigProps();
                   }
                }
                else if (override.equals("adminobject"))
                {
-                  if (cmd.getRa() != null &&
-                     cmd.getRa().getAdminObjects() != null &&
-                     cmd.getRa().getAdminObjects().size() > 0 &&
-                     cmd.getRa().getAdminObjects().get(0) != null)
+                  if (cmd.getRa() != null && cmd.getRa().getAdminObjects() != null
+                        && cmd.getRa().getAdminObjects().size() > 0 && cmd.getRa().getAdminObjects().get(0) != null)
                   {
                      listConfigProp = cmd.getRa().getAdminObjects().get(0).getConfigProps();
                   }
                }
-               
+
                boolean found = false;
 
                if (listConfigProp != null)
                {
                   Iterator<ConfigPropertyMetaData> it = listConfigProp.iterator();
-                  
+
                   while (!found && it.hasNext())
                   {
                      ConfigPropertyMetaData cpmd = it.next();
-                     if (cpmd.getName().equals(rcmd.getName()) &&
-                         cpmd.getType().equals(rcmd.getType()))
+                     if (cpmd.getName().equals(rcmd.getName()) && cpmd.getType().equals(rcmd.getType()))
                      {
                         cpmd.setValue(rcmd.getValue());
                         found = true;
@@ -266,7 +263,7 @@ public class Metadata
                   cpmd.setName(rcmd.getName());
                   cpmd.setType(rcmd.getType());
                   cpmd.setValue(rcmd.getValue());
-                  
+
                   append.add(cpmd);
                }
             }
@@ -286,7 +283,7 @@ public class Metadata
 
       return cmd;
    }
-   
+
    /**
     * Validate specification metadata
     * @param cmd The specification metadata
@@ -297,10 +294,9 @@ public class Metadata
    {
       if (cmd.is10() && (cmd instanceof JCA10DTDMetaData))
       {
-         RA10MetaData ra10 = ((JCA10DTDMetaData)cmd).getRa10();
-         if (ra10 == null 
-            || ra10.getManagedConnectionFactoryClass() == null
-            || ra10.getManagedConnectionFactoryClass().equals(""))
+         RA10MetaData ra10 = ((JCA10DTDMetaData) cmd).getRa10();
+         if (ra10 == null || ra10.getManagedConnectionFactoryClass() == null
+               || ra10.getManagedConnectionFactoryClass().equals(""))
          {
             throw new ValidateException("ManagedConnectionFactoryClass should be defined");
          }
@@ -309,7 +305,7 @@ public class Metadata
       //make sure all need metadata parsered and processed after annotation handle
       if (cmd.getRa() == null)
          throw new ValidateException("ResourceAdapter metadata should be defined");
-      
+
       //make sure ra metadata contains inbound or outbound at least
       boolean inboundOrOutbound = false;
       if (validateOutbound(cmd.getRa().getOutboundRa()))
@@ -320,7 +316,7 @@ public class Metadata
          throw new ValidateException("ResourceAdapter metadata should contains inbound or outbound at least");
       return cmd;
    }
-   
+
    /**
     * Validate outbound metadata
     * @param omd The specification metadata
@@ -334,16 +330,14 @@ public class Metadata
       if (omd.getConDefs() == null || omd.getConDefs().size() == 0)
          return false;
       ConnectionDefinitionMetaData cdm = omd.getConDefs().get(0);
-      if (cdm.getManagedConnectionFactoryClass() == null ||
-         cdm.getConnectionFactoryInterfaceClass() == null ||
-         cdm.getConnectionFactoryImplementationClass() == null ||
-         cdm.getConnectionInterfaceClass() == null ||
-         cdm.getConnectionImplementationClass() == null)
+      if (cdm.getManagedConnectionFactoryClass() == null || cdm.getConnectionFactoryInterfaceClass() == null
+            || cdm.getConnectionFactoryImplementationClass() == null || cdm.getConnectionInterfaceClass() == null
+            || cdm.getConnectionImplementationClass() == null)
          return false;
-   
+
       return true;
    }
-   
+
    /**
     * Validate inbound metadata
     * @param cmd The specification metadata
@@ -354,14 +348,12 @@ public class Metadata
    {
       if (imd == null)
          return false;
-      if (imd.getMessageAdapter() == null ||
-         imd.getMessageAdapter().getMessageListeners() == null ||
-         imd.getMessageAdapter().getMessageListeners().size() == 0)
+      if (imd.getMessageAdapter() == null || imd.getMessageAdapter().getMessageListeners() == null
+            || imd.getMessageAdapter().getMessageListeners().size() == 0)
          return false;
       MessageListenerMetaData mlmd = imd.getMessageAdapter().getMessageListeners().get(0);
-      if (mlmd.getType() == null ||
-         mlmd.getActivationSpecType() == null ||
-         mlmd.getActivationSpecType().getAsClass() == null)
+      if (mlmd.getType() == null || mlmd.getActivationSpecType() == null
+            || mlmd.getActivationSpecType().getAsClass() == null)
          return false;
       return true;
    }
