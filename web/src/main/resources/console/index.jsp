@@ -6,7 +6,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
-    <title>JBoss JCA Management Console</title>
+    <title>IronJacamar Management Console</title>
   </head>
   <frameset>
     <frame name="ObjectNodeView" src="HtmlAdaptor?action=displayMBeans" scrolling="auto" frameborder="0"/>

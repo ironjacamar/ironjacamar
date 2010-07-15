@@ -57,7 +57,7 @@ public class Server
    private static Logger log = Logger.getLogger(Server.class);
    private static boolean trace = log.isTraceEnabled();
 
-   private static final String DOMAIN = "jboss.jca";
+   private static final String DOMAIN = "iron.jacamar";
 
    private static MBeanServer mbeanServer = null;
 

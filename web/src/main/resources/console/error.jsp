@@ -8,7 +8,7 @@
 
 <html>
   <head>
-     <title>JBoss JCA Management Console</title>
+     <title>IronJacamar Management Console</title>
      <link rel="stylesheet" href="jboss.css" type="text/css" />
      <meta http-equiv="cache-control" content="no-cache" />
   </head>
@@ -21,7 +21,7 @@
     <table width="100%" class="copyright">
       <tr>
         <td class="copyright">
-          Copyright &#169; 2009  <a href="http://www.jboss.org/jca" target="_blank">JBoss, by Red Hat</a>
+          Copyright &#169; 2010  <a href="http://www.jboss.org/jca" target="_blank">JBoss, by Red Hat</a>
         </td>
       </tr>
     </table>
