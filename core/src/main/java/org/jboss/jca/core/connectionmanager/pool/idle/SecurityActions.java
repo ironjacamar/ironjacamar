@@ -2,7 +2,7 @@
  * JBoss, Home of Professional Open Source.
  * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * distribution for a full listing of individual contributors. 
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -19,21 +19,43 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager;
+
+package org.jboss.jca.core.connectionmanager.pool.idle;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * A IdleConnectionRemovalSupport specified contract for a pool that is able
- * to remove an idle connection.
+ * Privileged Blocks
  * 
- * @author gurkanerdogdu
- * @author <a href="weston.price@jboss.com">Weston Price</a>
- * @version $Revision$
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface IdleConnectionRemovalSupport
+class SecurityActions
 {
    /**
-    * Pool removes idle connections.
+    * Set the context classloader.
+    * @param cl classloader
     */
-   public void removeIdleConnections();
-   
+   public static void setThreadContextClassLoader(final ClassLoader cl)
+   {
+      if (cl == null)
+         return;
+
+      if (System.getSecurityManager() == null)
+      {
+         Thread.currentThread().setContextClassLoader(cl);
+      }
+      else
+      {
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
+         {
+            public Object run()
+            {
+               Thread.currentThread().setContextClassLoader(cl);
+
+               return null;
+            }
+         });
+      }
+   }
 }

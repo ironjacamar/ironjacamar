@@ -20,10 +20,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.connectionmanager;
+package org.jboss.jca.core.connectionmanager.pool.idle;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,7 +37,7 @@ import org.jboss.logging.Logger;
  * Connection validator class.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev: $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class IdleRemover
 {
@@ -49,6 +47,9 @@ public class IdleRemover
    /**Validator thread name*/
    private static final String VALIDATOR_THREAD_NAME = "JBossConnectionValidator";
    
+   /**Singleton instance*/
+   private static final IdleRemover INSTANCE = new IdleRemover();
+   
    /**Registered internal pool instances*/
    private CopyOnWriteArrayList<IdleConnectionRemovalSupport> registeredPools = 
       new CopyOnWriteArrayList<IdleConnectionRemovalSupport>();
@@ -56,14 +57,10 @@ public class IdleRemover
    /**Validator executor service*/
    private ExecutorService executorService = null;
    
-   /**Singleton instance*/
-   private static IdleRemover instance = new IdleRemover();
-   
    /** The interval */
    private long interval = Long.MAX_VALUE;
 
-   /** The next */
- //important initialization!
+   /** The next - important initialization! */
    private long next = Long.MAX_VALUE;
    
    /**Lock for condition*/
@@ -71,7 +68,6 @@ public class IdleRemover
    
    /**Condition*/
    private Condition condition = lock.newCondition();
-   
    
    /**
     * Private constructor.
@@ -89,7 +85,7 @@ public class IdleRemover
     */
    public static void registerPool(IdleConnectionRemovalSupport mcp, long interval)
    {
-      instance.internalRegisterPool(mcp, interval);
+      INSTANCE.internalRegisterPool(mcp, interval);
    }
    
    /**
@@ -98,7 +94,7 @@ public class IdleRemover
     */
    public static void unregisterPool(IdleConnectionRemovalSupport mcp)
    {
-      instance.internalUnregisterPool(mcp);
+      INSTANCE.internalUnregisterPool(mcp);
    }
    
    private void internalRegisterPool(IdleConnectionRemovalSupport mcp, long interval)
@@ -125,8 +121,7 @@ public class IdleRemover
                this.condition.signal();
                
             }
-         }
-         
+         }         
       } 
       finally
       {
@@ -148,54 +143,7 @@ public class IdleRemover
          interval = Long.MAX_VALUE;
       }
    }
-   
-   /**
-    * Setup context class loader.
-    */
-   private void setupContextClassLoader()
-   {
-      // Could be null if loaded from system classloader
-      final ClassLoader cl = IdleRemover.class.getClassLoader();
-      if (cl == null)
-      {
-         return;  
-      }
-      
-      SecurityManager sm = System.getSecurityManager();
-      
-      if (sm == null)
-      {
-         Thread.currentThread().setContextClassLoader(cl);
          
-         return;
-      }
-      
-      AccessController.doPrivileged(new ClassLoaderAction(cl));
-      
-   }
-   
-   /**
-    * Priviledge action. 
-    */
-   private static class ClassLoaderAction implements PrivilegedAction<Object>
-   {
-      private ClassLoader classLoader;
-      
-      public ClassLoaderAction(ClassLoader cl)
-      {
-         this.classLoader = cl;
-      }
-      
-      public Object run()
-      {
-         Thread.currentThread().setContextClassLoader(classLoader);
-         
-         return null;
-      }
-      
-   }   
-   
-   
    /**
     * Wait for background thread.
     */
@@ -203,15 +151,14 @@ public class IdleRemover
    {
       try
       {
-         instance.lock.lock();
+         INSTANCE.lock.lock();
          
       }
       finally
       {
-         instance.lock.unlock();  
+         INSTANCE.lock.unlock();  
       }
    }
-   
    
    /**
     * Thread factory.
@@ -236,13 +183,19 @@ public class IdleRemover
     */
    private class JBossConnectionValidator implements Runnable
    {
-      
+      /**
+       * Constructor
+       */
+      public JBossConnectionValidator()
+      {
+      }
+
       /**
        * {@inheritDoc}
        */
       public void run()
       {
-         setupContextClassLoader();
+         SecurityActions.setThreadContextClassLoader(IdleRemover.class.getClassLoader());
          
          try
          {
@@ -250,7 +203,7 @@ public class IdleRemover
             
             while (true)
             {
-               boolean result = instance.condition.await(instance.interval, TimeUnit.MILLISECONDS);
+               boolean result = INSTANCE.condition.await(INSTANCE.interval, TimeUnit.MILLISECONDS);
 
                if (logger.isTraceEnabled())
                {

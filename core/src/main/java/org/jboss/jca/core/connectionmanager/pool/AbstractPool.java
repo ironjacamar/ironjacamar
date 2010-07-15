@@ -23,7 +23,6 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.common.JBossResourceException;
-import org.jboss.jca.core.connectionmanager.exception.RetryableResourceException;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.ManagedConnectionPool;
@@ -35,6 +34,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.RetryableException;
 import javax.security.auth.Subject;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -279,31 +279,32 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
          return cl;
 
       }
-      catch (RetryableResourceException e)
+      catch (ResourceException re)
       {
-         if (log.isDebugEnabled())
+         if (re instanceof RetryableException)
          {
-            log.debug("Got a RetryableResourceException - trying to reinitialize the pool");  
-         }
+            if (log.isDebugEnabled())
+               log.debug("Got a RetryableException - trying to reinitialize the pool");  
 
-         // The IMCP is down - retry
-         imcp = subPoolContext.getSubPool();
+            // The IMCP is down - retry
+            imcp = subPoolContext.getSubPool();
 
-         // Make sure that IMCP is running
-         if (!imcp.isRunning())
-         {
-            imcp.initialize();  
-         }
+            // Make sure that IMCP is running
+            if (!imcp.isRunning())
+               imcp.initialize();  
          
-         //Getting connection from pool
-         cl = imcp.getConnection(subject, cri);
-         if (trace)
-         {
-            dump("Got connection from pool (retried) " + cl);  
-         }
+            //Getting connection from pool
+            cl = imcp.getConnection(subject, cri);
+            if (trace)
+               dump("Got connection from pool (retried) " + cl);  
 
-         return cl;            
-      } //end of catch
+            return cl;
+         }
+         else
+         {
+            throw re;
+         }
+      }
       
    }
    

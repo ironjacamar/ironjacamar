@@ -22,7 +22,6 @@
 package org.jboss.jca.core.connectionmanager.xa;
 
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
-import org.jboss.jca.core.connectionmanager.exception.JBossLocalXAException;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 
 import javax.resource.ResourceException;

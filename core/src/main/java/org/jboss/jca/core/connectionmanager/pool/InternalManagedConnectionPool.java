@@ -23,13 +23,12 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.common.JBossResourceException;
-import org.jboss.jca.core.connectionmanager.ConnectionValidator;
-import org.jboss.jca.core.connectionmanager.IdleConnectionRemovalSupport;
-import org.jboss.jca.core.connectionmanager.IdleRemover;
-import org.jboss.jca.core.connectionmanager.exception.RetryableResourceException;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
+import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSupport;
+import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
+import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +45,7 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
@@ -185,7 +185,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
                if (this.shutdown.get())
                {
                   permits.release();
-                  throw new RetryableResourceException("The pool has been shut down");
+                  throw new RetryableUnavailableException("The pool has been shut down");
                }
                
                if (cls.size() > 0)

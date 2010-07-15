@@ -22,7 +22,7 @@
 package org.jboss.jca.core.connectionmanager.unit;
 
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
-import org.jboss.jca.core.connectionmanager.CachedConnectionManager;
+import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
