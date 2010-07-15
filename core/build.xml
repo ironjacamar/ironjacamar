@@ -37,7 +37,7 @@
 
     <javac srcdir="src/main"
            destdir="${build.core.dir}/impl"
-           classpathref="standalone.lib.path.id"
+           classpathref="sjc.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}">

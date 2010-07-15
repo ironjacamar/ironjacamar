@@ -29,9 +29,8 @@
     <repository name="jboss" url="http://repository.jboss.org"/>
   </info>
 
-  <configurations defaultconfmapping="common->default;standalone->default;sjc->default;embedded->default;jetty->default;test->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;jetty->default;test->default">
     <conf name="common" transitive="false"/>
-    <conf name="standalone" transitive="false"/>
     <conf name="sjc" transitive="false"/>
     <conf name="embedded" transitive="false"/>
     <conf name="jetty" transitive="false"/>
@@ -68,7 +67,6 @@
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common"/>
     <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="common"/>
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="common"/>
-    <dependency org="org.jboss" name="jboss-vfs" rev="${version.jboss.vfs}" conf="standalone"/>
     <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="common"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="common"/>
     <dependency org="org.jboss.arquillian" name="arquillian-api" rev="${version.arquillian}" conf="embedded"/>
@@ -77,19 +75,6 @@
     <dependency org="org.jboss.arquillian" name="arquillian-spi" rev="${version.arquillian}" conf="embedded"/>
     <dependency org="org.jboss.arquillian.testenricher" name="arquillian-testenricher-resource" rev="${version.arquillian}" conf="embedded"/>
     <dependency org="org.jboss.arquillian.protocol" name="arquillian-protocol-local" rev="${version.arquillian}" conf="embedded"/>
-    <dependency org="org.jboss.bootstrap" name="jboss-bootstrap" rev="${version.jboss.bootstrap}" conf="standalone"/>
-    <dependency org="org.jboss.cl" name="jboss-classloader" rev="${version.jboss.classloading}" conf="standalone"/>
-    <dependency org="org.jboss.cl" name="jboss-classloading" rev="${version.jboss.classloading}" conf="standalone"/>
-    <dependency org="org.jboss.cl" name="jboss-classloading-vfs" rev="${version.jboss.classloading}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-client" rev="${version.jboss.deployers}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-client-spi" rev="${version.jboss.deployers}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-core" rev="${version.jboss.deployers}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-core-spi" rev="${version.jboss.deployers}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-impl" rev="${version.jboss.deployers}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-spi" rev="${version.jboss.deployers}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-structure-spi" rev="${version.jboss.deployers}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-vfs" rev="${version.jboss.deployers}" conf="standalone"/>
-    <dependency org="org.jboss.deployers" name="jboss-deployers-vfs-spi" rev="${version.jboss.deployers}" conf="standalone"/>
     <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}" conf="common"/>
     <dependency org="org.jboss.javaee" name="jboss-jaspi-api" rev="${version.jboss.jaspi.api}" conf="common"/>
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="common"/>
@@ -102,12 +87,8 @@
     <dependency org="org.jboss.logging" name="logging-service-metadata" rev="${version.jboss.logging.metadata}" conf="common"/>
     <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common"/>
     <dependency org="org.jboss.logmanager" name="jboss-logmanager-log4j" rev="${version.jboss.logmanager.log4j}" conf="common"/>
-    <dependency org="org.jboss.man" name="jboss-managed" rev="${version.jboss.managed}" conf="standalone"/>
-    <dependency org="org.jboss.man" name="jboss-metatype" rev="${version.jboss.managed}" conf="standalone"/>
     <dependency org="org.jboss.metadata" name="jboss-metadata-common" rev="${version.jboss.metadata.common}" conf="common"/>
     <dependency org="org.jboss.metadata" name="jboss-metadata-rar" rev="${version.jboss.metadata.rar}" conf="common"/>
-    <dependency org="org.jboss.microcontainer" name="jboss-dependency" rev="${version.jboss.mc.dependency}" conf="standalone"/>
-    <dependency org="org.jboss.microcontainer" name="jboss-kernel" rev="${version.jboss.mc.kernel}" conf="standalone"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common"/>
     <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common"/>
     <dependency org="org.jboss.security" name="jboss-security-spi-bare" rev="${version.jboss.security}" conf="common"/>
@@ -118,7 +99,6 @@
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logmanager" rev="${version.jboss.slf4j.logmanager}" conf="common"/>
     <dependency org="org.jboss.stdio" name="jboss-stdio" rev="${version.jboss.stdio}" conf="common"/>
     <dependency org="org.jboss.threads" name="jboss-threads" rev="${version.jboss.threads}" conf="common"/>
-    <dependency org="org.jboss.threads" name="jboss-threads-metadata" rev="${version.jboss.threads}" conf="standalone"/>
     <dependency org="org.mockito" name="mockito-all" rev="${version.mockito}" conf="test"/>
     <dependency org="org.mortbay.jetty" name="jsp-api-2.1-glassfish"  rev="${version.jetty.glassfish}" conf="jetty"/>
     <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="jetty"/>
@@ -128,7 +108,6 @@
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="common"/>
     <dependency org="stax" name="stax-api" rev="${version.stax}" conf="common"/>
-    <dependency org="trove" name="trove" rev="${version.trove}" conf="standalone"/>
     <dependency org="xerces" name="xercesImpl" rev="${version.apache-xerces}" conf="common"/>
   </dependencies>
 

@@ -119,10 +119,6 @@ ant &lt;target&gt;
         <para>Builds the API documentation for the project.</para>
       </listitem>
       <listitem>
-        <para>standalone</para>
-        <para>Builds the standalone environment using JBoss Microcontainer.</para>
-      </listitem>
-      <listitem>
         <para>sjc</para>
         <para>Builds the standalone environment using IronJacamar/SJC.</para>
       </listitem>

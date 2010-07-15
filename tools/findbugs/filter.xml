@@ -58,12 +58,6 @@
     <Bug code="Dm,PZLA"/>
   </Match>
 
-  <!--  org.jboss.jca.standalone filter -->
-  <Match>
-    <Class name="org.jboss.jca.standalone.Main"/>
-    <Bug code="UPM"/>
-  </Match>
-
   <!--  org.jboss.jca.web filter -->
   <Match>
     <Class name="org.jboss.jca.web.WARDeployer"/>
