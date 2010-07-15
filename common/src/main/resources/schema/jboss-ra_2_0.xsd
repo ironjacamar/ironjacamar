@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.jboss.org/schema/ra"
+    xmlns:ra="http://www.jboss.org/schema/ra" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:javaee="http://java.sun.com/xml/ns/javaee"
+    elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
+
+
+    <xs:import namespace="http://java.sun.com/xml/ns/javaee" schemaLocation="http://java.sun.com/xml/ns/javaee/javaee_5.xsd"/>
+    
+    <xs:element name="jboss-ra" type="ra:jbossRaType"/>                              
+    
+    <xs:complexType name="jbossRaType">           
+        
+        <xs:sequence>
+            <xs:element name="ra-config-property" type="ra:ra-config-property-type" minOccurs="0" maxOccurs="unbounded"/>  
+            
+            <xs:element name="bean-validation-groups" type="ra:bean-validation-groups-type" minOccurs="0" maxOccurs="unbounded"/>
+
+            <xs:element name="bootstrap-context" type="xs:token" minOccurs="0" maxOccurs="1"/> 
+        </xs:sequence>
+        
+    </xs:complexType>
+    
+    <xs:complexType name="ra-config-property-type">
+
+        <xs:sequence>
+            <xs:element name="ra-config-property-name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ra-config-property-type" type="ra:ra-config-property-typeType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ra-config-property-value" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="override-element" type="xs:string" default="resourceadapter"/>
+    </xs:complexType>
+
+     <xs:complexType name="bean-validation-groups-type">
+       <xs:sequence>
+         <xs:element name="bean-validation-group" nillable="true" minOccurs="0" maxOccurs="unbounded">
+           <xs:complexType>
+             <xs:simpleContent>
+               <xs:extension base="xs:string">
+               </xs:extension>
+             </xs:simpleContent>
+           </xs:complexType>
+         </xs:element>
+       </xs:sequence>
+     </xs:complexType>
+     
+      <xs:complexType name="ra-config-property-typeType">
+	    <xs:simpleContent>
+	      <xs:restriction base="javaee:string">
+		    <xs:enumeration value="java.lang.Boolean"/>
+		    <xs:enumeration value="java.lang.String"/>
+		    <xs:enumeration value="java.lang.Integer"/>
+		    <xs:enumeration value="java.lang.Double"/>
+		    <xs:enumeration value="java.lang.Byte"/>
+		    <xs:enumeration value="java.lang.Short"/>
+		    <xs:enumeration value="java.lang.Long"/>
+		    <xs:enumeration value="java.lang.Float"/>
+		    <xs:enumeration value="java.lang.Character"/>
+	      </xs:restriction>
+	    </xs:simpleContent>
+      </xs:complexType>
+      
+      <xs:complexType name="override-elementType">
+        <xs:simpleContent>
+          <xs:restriction base="javaee:string">
+            <xs:enumeration value="connection-definition"/>
+            <xs:enumeration value="resourceadapter"/>
+            <xs:enumeration value="activationspec"/>
+            <xs:enumeration value="adminobject"/>
+            <xs:enumeration value="authentication-mechanism"/>
+          </xs:restriction>
+        </xs:simpleContent>
+      </xs:complexType>      
+</xs:schema>
