@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.common.metadata.jbossra.jbossra20;
 
-import org.jboss.jca.common.metadata.JCAMetadata;
+import org.jboss.jca.common.metadata.jbossra.JbossRa;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,14 +29,12 @@ import java.util.List;
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  */
-public class JbossRa implements JCAMetadata
+public class JbossRa20 extends JbossRa
 {
 
    /**
     */
    private static final long serialVersionUID = -1494921311038998843L;
-
-   private final List<RaConfigProperty<?>> raConfigProperties;
 
    private final String bootstrapContext;
 
@@ -47,21 +45,12 @@ public class JbossRa implements JCAMetadata
     * @param bootstrapContext String representing the bootstrap context name
     * @param beanValidationGroups for validations
     */
-   public JbossRa(List<RaConfigProperty<?>> raConfigProperties, String bootstrapContext,
+   public JbossRa20(List<RaConfigProperty<?>> raConfigProperties, String bootstrapContext,
          List<BeanValidationGroups> beanValidationGroups)
    {
-      super();
-      this.raConfigProperties = raConfigProperties;
+      super(raConfigProperties);
       this.bootstrapContext = bootstrapContext;
       this.beanValidationGroups = beanValidationGroups;
-   }
-
-   /**
-    * @return raConfigProperties
-    */
-   public List<RaConfigProperty<?>> getRaConfigProperties()
-   {
-      return Collections.unmodifiableList(raConfigProperties);
    }
 
    /**
@@ -92,7 +81,7 @@ public class JbossRa implements JCAMetadata
       int result = 1;
       result = prime * result + ((beanValidationGroups == null) ? 0 : beanValidationGroups.hashCode());
       result = prime * result + ((bootstrapContext == null) ? 0 : bootstrapContext.hashCode());
-      result = prime * result + ((raConfigProperties == null) ? 0 : raConfigProperties.hashCode());
+      result = prime * result + ((getRaConfigProperties() == null) ? 0 : getRaConfigProperties().hashCode());
       return result;
    }
 
@@ -108,9 +97,9 @@ public class JbossRa implements JCAMetadata
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof JbossRa))
+      if (!(obj instanceof JbossRa20))
          return false;
-      JbossRa other = (JbossRa) obj;
+      JbossRa20 other = (JbossRa20) obj;
       if (beanValidationGroups == null)
       {
          if (other.beanValidationGroups != null)
@@ -125,12 +114,12 @@ public class JbossRa implements JCAMetadata
       }
       else if (!bootstrapContext.equals(other.bootstrapContext))
          return false;
-      if (raConfigProperties == null)
+      if (getRaConfigProperties() == null)
       {
-         if (other.raConfigProperties != null)
+         if (other.getRaConfigProperties() != null)
             return false;
       }
-      else if (!raConfigProperties.equals(other.raConfigProperties))
+      else if (!getRaConfigProperties().equals(other.getRaConfigProperties()))
          return false;
       return true;
    }

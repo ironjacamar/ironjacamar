@@ -40,16 +40,33 @@ public class RaConfigProperty<T> implements JCAMetadata
 
    private final T value;
 
+   private final String typeName;
+
    /**
     * @param name the name of the property
     * @param value the value of the property
     */
-   public RaConfigProperty(String name, T value)
+   private RaConfigProperty(String name, T value)
    {
       super();
       this.name = name;
       this.value = value;
+      this.typeName = value.getClass().getName();
    }
+
+   /**
+    * @param name the name of the property
+    * @param value the value of the property
+    * @param typeName full qualified name of value's type
+    */
+   private RaConfigProperty(String name, T value, String type)
+   {
+      super();
+      this.name = name;
+      this.value = value;
+      this.typeName = value.getClass().getName();
+   }
+
 
    /**
     *
@@ -65,6 +82,12 @@ public class RaConfigProperty<T> implements JCAMetadata
     *   java.lang.Float
     *   java.lang.Character
     *
+    *   In case passed type is one of above ones a correct actualised {@link RaConfigProperty} is returned.
+    *   TypeName field will be set accordly
+    *
+    *   In case the passed type isn't one of above ones (possible for jboss-ra_1_0.xsd) an RaConfigProperty<Object>
+    *   is returned and typeName will be set as passed parameter type.
+    *
     *
     * @param name name of the property
     * @param value value of the property.
@@ -73,7 +96,7 @@ public class RaConfigProperty<T> implements JCAMetadata
     * @throws NumberFormatException in case passed value isn't assignable to type class
     */
    public static RaConfigProperty<?> buildRaConfigProperty(String name, String value, String type)
-      throws NumberFormatException
+         throws NumberFormatException
    {
       if (type == null || type.trim().length() == 0)
       {
@@ -113,7 +136,7 @@ public class RaConfigProperty<T> implements JCAMetadata
       }
       else
       {
-         return new RaConfigProperty<String>(name, value);
+         return new RaConfigProperty<Object>(name, value, type);
       }
 
    }
