@@ -1,0 +1,31 @@
+.project
+.settings
+.classpath
+standalone/**
+# /
+/build
+/target
+/reports
+/*.zip
+/*.tar.gz
+/*.tar.bz2
+/transaction.log
+
+# /
+/build
+/target
+/reports
+/*.zip
+/*.tar.gz
+/*.tar.bz2
+/transaction.log
+
+# /lib/
+/lib/*.jar
+/lib/standalone
+/lib/test
+/lib/qe
+/lib/sjc
+/lib/common
+/lib/embedded
+/lib/jetty

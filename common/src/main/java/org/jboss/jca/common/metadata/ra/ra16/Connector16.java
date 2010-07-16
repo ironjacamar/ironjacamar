@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
+import org.jboss.jca.common.metadata.ra.Connector;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +30,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public final class Connector16 implements IdDecoratedMetadata
+public final class Connector16 implements IdDecoratedMetadata, Connector
 {
 
    /**
