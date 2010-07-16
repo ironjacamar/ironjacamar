@@ -35,7 +35,7 @@ public interface MetadataParser<T extends JCAMetadata>
 {
 
    /**
-    * Get the JCAMetaData for the file parser is designed
+    * Parse the xml file and return the JCAMetaData for which the concrete parser is designed
     * @param xmlFile The xml file to parse
     * @return The metadata
     * @exception Exception Thrown if an error occurs
