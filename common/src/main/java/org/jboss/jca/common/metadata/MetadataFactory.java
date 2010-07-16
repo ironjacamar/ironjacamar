@@ -32,9 +32,11 @@ import java.io.File;
 import org.jboss.logging.Logger;
 
 /**
- * The metadata processor for JCA 1.x
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @author <a href="mailto:jeff.zhang@redhat.com">Jeff Zhang</a>
+ *
+ * A MetadataFactory.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ *
  */
 public class MetadataFactory
 {

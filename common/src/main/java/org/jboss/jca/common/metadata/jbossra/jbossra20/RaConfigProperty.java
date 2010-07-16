@@ -67,7 +67,6 @@ public class RaConfigProperty<T> implements JCAMetadata
       this.typeName = value.getClass().getName();
    }
 
-
    /**
     *
     * Static method to build actualised implementation of this generic class.
@@ -96,7 +95,7 @@ public class RaConfigProperty<T> implements JCAMetadata
     * @throws NumberFormatException in case passed value isn't assignable to type class
     */
    public static RaConfigProperty<?> buildRaConfigProperty(String name, String value, String type)
-         throws NumberFormatException
+      throws NumberFormatException
    {
       if (type == null || type.trim().length() == 0)
       {

@@ -24,7 +24,10 @@ package org.jboss.jca.common.metadata;
 import java.io.Serializable;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ *
+ * A generic JCAMetadata.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
 public interface JCAMetadata extends Serializable
