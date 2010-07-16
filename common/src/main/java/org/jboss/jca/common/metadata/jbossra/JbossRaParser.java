@@ -24,6 +24,14 @@ package org.jboss.jca.common.metadata.jbossra;
 import org.jboss.jca.common.metadata.MetadataParser;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
+import org.jboss.as.model.Domain;
+import org.jboss.as.model.Element;
 
 /**
  * A JbossRaParser.
@@ -44,7 +52,35 @@ public class JbossRaParser implements MetadataParser<JbossRa>
    @Override
    public JbossRa parse(File xmlFile) throws Exception
    {
-      return null;
+      XMLInputFactory inputFactory=XMLInputFactory.newInstance();
+      InputStream input=new FileInputStream(xmlFile);
+      XMLStreamReader  reader =inputFactory.createXMLStreamReader(input);
+
+      while (reader.hasNext()) {
+         switch (reader.nextTag()) {
+             case END_ELEMENT: {
+                 // should mean we're done, so ignore it.
+                 break;
+             }
+             case START_ELEMENT: {
+                 if (Domain.NAMESPACES.contains(reader.getNamespaceURI())) {
+                     switch (Element.forName(reader.getLocalName())) {
+                         case SERVER_GROUPS: {
+                             readServerGroupsElement(reader, domain);
+                             break;
+                         }
+                         default: throw unexpectedElement(reader);
+                     }
+                 } else {
+                     // handle foreign root elements
+                     reader.handleAny(domain);
+                 }
+                 break;
+             }
+             default: throw new IllegalStateException();
+         }
+     }
+
    }
 
 }
