@@ -24,7 +24,9 @@ package org.jboss.jca.common.metadata.jbossra.jbossra20;
 import org.jboss.jca.common.metadata.jbossra.JbossRa;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -33,7 +35,10 @@ public class JbossRa20 extends JbossRa
 {
 
    /**
+    * NAMESPACE of xml file for which this metadata is generated
     */
+   public static final String NAMESPACE = "http://www.jboss.org/schema/ra/1.0";
+
    private static final long serialVersionUID = -1494921311038998843L;
 
    private final String bootstrapContext;
@@ -122,6 +127,77 @@ public class JbossRa20 extends JbossRa
       else if (!getRaConfigProperties().equals(other.getRaConfigProperties()))
          return false;
       return true;
+   }
+
+   /**
+    *
+    * A Tag.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Tag
+   {
+      /**always first
+       *
+       */
+      UNKNOWN(null),
+
+      /** ra-config-property tag name
+       *
+       */
+      RA_CONFIG_PROPERTY("ra-config-property");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
    }
 
 }

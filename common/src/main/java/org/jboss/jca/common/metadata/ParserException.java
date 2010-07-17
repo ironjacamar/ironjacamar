@@ -19,51 +19,59 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.jbossra.jbossra10;
+package org.jboss.jca.common.metadata;
 
-import java.util.HashMap;
-import java.util.Map;
+/**
+ *
+ * A ParserException.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ *
+ */
+public class ParserException extends Exception
+{
 
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
 
-public enum Tag {
-// always first
-   UNKNOWN(null),
-
-   // domain 1.0 attributes in alpha order
-   NAME("name"),
-
-
-   ;
-
-   private final String name;
-
-   Tag(final String name) {
-       this.name = name;
+   /**
+    * Create a new ParserException.
+    *
+    */
+   public ParserException()
+   {
+      super();
    }
 
    /**
-    * Get the local name of this element.
+    * Create a new ParserException.
     *
-    * @return the local name
+    * @param message a message
+    * @param cause a cause
     */
-   public String getLocalName() {
-       return name;
+   public ParserException(String message, Throwable cause)
+   {
+      super(message, cause);
    }
 
-   private static final Map<String, Tag> MAP;
-
-   static {
-       final Map<String, Tag> map = new HashMap<String, Tag>();
-       for (Tag element : values()) {
-           final String name = element.getLocalName();
-           if (name != null) map.put(name, element);
-       }
-       MAP = map;
+   /**
+    * Create a new ParserException.
+    *
+    * @param message a message
+    */
+   public ParserException(String message)
+   {
+      super(message);
    }
 
-   public static Tag forName(String localName) {
-       final Tag element = MAP.get(localName);
-       return element == null ? UNKNOWN : element;
+   /**
+    * Create a new ParserException.
+    *
+    * @param cause a cause
+    */
+   public ParserException(Throwable cause)
+   {
+      super(cause);
    }
 
 }
