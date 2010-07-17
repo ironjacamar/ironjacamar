@@ -30,6 +30,7 @@ import org.jboss.jca.common.metadata.jbossra.jbossra20.RaConfigProperty;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -120,7 +121,7 @@ public class JbossRaParser implements MetadataParser<JbossRa>
 
    private JbossRa10 parseJbossRa10(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      List<RaConfigProperty<?>> raConfigProperties = new LinkedList<RaConfigProperty<?>>();
+      ArrayList<RaConfigProperty<?>> raConfigProperties = new ArrayList<RaConfigProperty<?>>();
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -128,6 +129,7 @@ public class JbossRaParser implements MetadataParser<JbossRa>
             case END_ELEMENT : {
                if (Tag.forName(reader.getLocalName()) == Tag.JBOSSRA)
                {
+                  raConfigProperties.trimToSize();
                   return new JbossRa10(raConfigProperties);
                }
                else
