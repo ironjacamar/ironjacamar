@@ -61,58 +61,72 @@ public class JbossRaParser implements MetadataParser<JbossRa>
    @Override
    public JbossRa parse(File xmlFile) throws Exception
    {
-      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-      InputStream input = new FileInputStream(xmlFile);
-      XMLStreamReader reader = inputFactory.createXMLStreamReader(input);
-      JbossRa jbossRa = null;
+      InputStream input = null;
+      XMLStreamReader reader = null;
 
-      while (reader.hasNext())
+      try
       {
-         switch (reader.nextTag())
+         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+         input = new FileInputStream(xmlFile);
+         reader = inputFactory.createXMLStreamReader(input);
+         JbossRa jbossRa = null;
+
+         while (reader.hasNext())
          {
-            case END_ELEMENT : {
-               // should mean we're done, so ignore it.
-               break;
-            }
-            case START_ELEMENT : {
-               if (JbossRa10.NAMESPACE.equals(reader.getNamespaceURI()))
-               {
-                  switch (Tag.forName(reader.getLocalName()))
+            switch (reader.nextTag())
+            {
+               case END_ELEMENT : {
+                  // should mean we're done, so ignore it.
+                  break;
+               }
+               case START_ELEMENT : {
+                  if (JbossRa10.NAMESPACE.equals(reader.getNamespaceURI()))
                   {
-                     case JBOSSRA : {
-                        jbossRa = parseJbossRa10(reader);
-                        break;
+                     switch (Tag.forName(reader.getLocalName()))
+                     {
+                        case JBOSSRA : {
+                           jbossRa = parseJbossRa10(reader);
+                           break;
+                        }
+                        default :
+                           throw new ParserException("Unexpected element:" + reader.getLocalName());
                      }
-                     default :
-                        throw new ParserException("Unexpected element:" + reader.getLocalName());
+
+                  }
+                  else if (JbossRa20.NAMESPACE.equals(reader.getNamespaceURI()))
+                  {
+                     switch (Tag.forName(reader.getLocalName()))
+                     {
+                        case JBOSSRA : {
+                           jbossRa = parseJbossRa20(reader, jbossRa);
+                           break;
+                        }
+                        default :
+                           throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     }
+                  }
+                  else
+                  {
+                     throw new ParserException(String.format("Namespace %s is not supported by %s parser",
+                           reader.getNamespaceURI(), this.getClass().getName()));
                   }
 
+                  break;
                }
-               else if (JbossRa20.NAMESPACE.equals(reader.getNamespaceURI()))
-               {
-                  switch (Tag.forName(reader.getLocalName()))
-                  {
-                     case JBOSSRA : {
-                        jbossRa = parseJbossRa20(reader, jbossRa);
-                        break;
-                     }
-                     default :
-                        throw new ParserException("Unexpected element:" + reader.getLocalName());
-                  }
-               }
-               else
-               {
-                  throw new ParserException(String.format("Namespace %s is not supported by %s parser",
-                        reader.getNamespaceURI(), this.getClass().getName()));
-               }
-
-               break;
+               default :
+                  throw new IllegalStateException();
             }
-            default :
-               throw new IllegalStateException();
          }
+         return jbossRa;
       }
-      return jbossRa;
+      finally
+      {
+         if (reader != null)
+            reader.close();
+         if (input != null)
+            input.close();
+
+      }
 
    }
 

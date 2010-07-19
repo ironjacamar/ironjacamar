@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:jboss-ra xmlns:ns1="http://www.jboss.org/schema/ra"
+ xmlns:ns2="http://java.sun.com/xml/ns/j2ee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.jboss.org/schema/ra file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/jboss-ra_1_0.xsd">
+    
+</ns1:jboss-ra>
