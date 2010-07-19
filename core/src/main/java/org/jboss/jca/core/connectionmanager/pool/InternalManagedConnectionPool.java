@@ -115,7 +115,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
    private final CopyOnWriteArraySet<ConnectionListener> checkedOut = new CopyOnWriteArraySet<ConnectionListener>();
 
    /** Whether the pool has been started */
-   private boolean started = false;
+   private AtomicBoolean started = new AtomicBoolean(false);
 
    /** Whether the pool has been shutdown */
    private AtomicBoolean shutdown = new AtomicBoolean(false);
@@ -147,7 +147,6 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       {
          PoolFiller.fillPool(this);
       }
-      
    }
    
    /**
@@ -335,20 +334,17 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
             maxUsedConnections = size;  
          }
 
-         //lack of synch on "started" probably ok, if 2 reads occur we will just
-         //run fillPool twice, no harm done.
-         if (!started)
+         if (!started.get())
          {
-            started = true;
+            started.set(true);
             if (poolParams.getMinSize() > 0)
             {
                PoolFiller.fillPool(this);  
             }
          }
+
          if (trace)
-         {
             log.trace("supplying new ManagedConnection: " + cl);  
-         }
          
          cl.grantPermit(true);
          

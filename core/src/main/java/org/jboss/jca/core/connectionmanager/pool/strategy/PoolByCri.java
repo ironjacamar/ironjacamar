@@ -34,7 +34,7 @@ import javax.security.auth.Subject;
  * Pool implementation that uses subject.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev: $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class PoolByCri extends AbstractPool
 {
@@ -59,32 +59,4 @@ public class PoolByCri extends AbstractPool
    {
       return new CriKey(cri, separateNoTx);
    }
-
-   /**
-    * Prefill.
-    * @param subject subject instance
-    * @param cri connection request info
-    */
-   public void prefill(Subject subject, ConnectionRequestInfo cri)
-   {
-      prefill(subject, cri, false);
-
-   }
-   
-   /**
-    * {@inheritDoc}
-    */
-   public void prefill(Subject subject, ConnectionRequestInfo cri, boolean noTxSeperatePool)
-   {
-      if (getPreFill())
-      {
-         log.warn("Prefill pool option was selected for pool with JNDI name " + getPoolName()
-               + " that does not support this feature.");
-         
-         log.warn("Please verify your *-ds.xml file that corresponds with this resource and " + 
-               "either remove " + "the <prefill>true|false</prefill element or explicitly set this value to false.");
-
-      }
-   }
-   
 }

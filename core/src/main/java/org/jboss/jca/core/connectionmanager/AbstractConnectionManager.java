@@ -56,8 +56,7 @@ import org.jboss.util.NotImplementedException;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @version $Rev$
  */
-public  abstract class AbstractConnectionManager implements InternalConnectionManager 
-
+public abstract class AbstractConnectionManager implements ConnectionManager 
 {
    /**Log instance*/
    private Logger log = Logger.getLogger(getClass());

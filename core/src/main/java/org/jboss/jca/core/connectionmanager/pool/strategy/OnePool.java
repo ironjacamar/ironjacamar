@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
-import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
+import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.InternalManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.PoolParams;
 
@@ -35,9 +35,9 @@ import javax.security.auth.Subject;
  * Single pool implementation.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev: $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class OnePool extends AbstractPool
+public class OnePool extends AbstractPrefillPool
 {
    /**
     * Creates a new instance.
@@ -74,20 +74,18 @@ public class OnePool extends AbstractPool
     */
    public void prefill(Subject sub)
    {
-
-      log.debug("Attempting to prefill pool" + getClass());
+      if (log.isDebugEnabled())
+         log.debug("Attempting to prefill pool" + getClass());
 
       try
       {
          // WMP is this really the best way to do this?
          getSubPool(getKey(null, null, false), null, null);
-
       }
       catch (ResourceException e)
       {
          log.error("Prefill failed for pool instance " + getClass(), e);
       }
-
    }
 
    /**
@@ -97,5 +95,4 @@ public class OnePool extends AbstractPool
    {
       // No-operation
    }
-
 }

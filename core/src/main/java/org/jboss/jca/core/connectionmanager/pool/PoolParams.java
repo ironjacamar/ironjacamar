@@ -33,16 +33,16 @@ public class PoolParams
    private int minSize;
 
    /** Maximum size of the pool */
-   private int maxSize = 10;
+   private int maxSize;
 
    /**Blocking timeout. In milliseconds*/
-   private int blockingTimeout = 30000;
+   private int blockingTimeout;
    
    /**Idle timeout period. Default 30 mins. In milliseconds*/
-   private long idleTimeout = 1000 * 60 * 30;
+   private long idleTimeout;
    
    /**Background validation interval*/
-   private long backgroundValidationInterval = 0;
+   private long backgroundValidationInterval;
    
    /**Prefill pool*/
    private boolean prefill;
@@ -54,6 +54,21 @@ public class PoolParams
    *  not evaluate the rest of the pool? 
    */
    private boolean useFastFail;
+
+   /**
+    * Constructor
+    */
+   public PoolParams()
+   {
+      minSize = 0;
+      maxSize = 10;
+      blockingTimeout = 30000;
+      idleTimeout = 1000 * 60 * 30;
+      backgroundValidationInterval = 0;
+      prefill = false;
+      strictMin = false;
+      useFastFail = false;
+   }
 
    /**
     * @return the minSize

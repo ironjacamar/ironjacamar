@@ -61,5 +61,5 @@ public interface PreFillPoolSupport
     * 
     * @return true or false depending on whether or not to prefill this pool.
     */
-   public boolean shouldPreFill();
+   public boolean shouldPrefill();
 }

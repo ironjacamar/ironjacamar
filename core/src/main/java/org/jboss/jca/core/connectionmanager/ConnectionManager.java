@@ -21,14 +21,9 @@
  */
 package org.jboss.jca.core.connectionmanager;
 
-import org.jboss.jca.core.api.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
-
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
 
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
@@ -45,23 +40,13 @@ import org.jboss.tm.TransactionTimeoutConfiguration;
  * </ul>
  * </p> 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev: $
- *
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
-public interface InternalConnectionManager extends
-   ConnectionManager,
+public interface ConnectionManager extends
+   org.jboss.jca.core.api.ConnectionManager,
    ConnectionCacheListener, 
    ConnectionListenerFactory, 
    TransactionTimeoutConfiguration, 
    JTATransactionChecker
-
 {
-   /**
-    * Gets connection handle instance.
-    * @param mcf managed connection factory
-    * @param cri connection request info
-    * @return ne wconnection
-    * @throws ResourceException for exception
-    */
-   public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException;
 }

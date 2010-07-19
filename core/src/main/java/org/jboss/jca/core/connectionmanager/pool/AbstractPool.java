@@ -54,11 +54,14 @@ import org.jboss.tm.TransactionLocal;
  * @version $Rev$
  *
  */
-public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoolSupport
+public abstract class AbstractPool implements ManagedConnectionPool
 {
    /** The logger */
    protected final Logger log = Logger.getLogger(getClass());
 
+   /** Is trace enabled */
+   private boolean trace = false;
+   
    /** The subpools, maps key --> pool */
    private final ConcurrentMap<Object, SubPoolContext> subPools = new ConcurrentHashMap<Object, SubPoolContext>();
 
@@ -77,9 +80,6 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
    /** The poolName */
    private String poolName;
 
-   /** Is trace enabled */
-   private boolean trace = false;
-   
    /**
     * Create a new base pool.
     * 
@@ -90,6 +90,12 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
    protected AbstractPool(final ManagedConnectionFactory mcf, final PoolParams poolParams,
                    final boolean noTxSeparatePools)
    {
+      if (mcf == null)
+         throw new IllegalArgumentException("MCF is null");
+
+      if (poolParams == null)
+         throw new IllegalArgumentException("PoolParams is null");
+
       this.mcf = mcf;
       this.poolParams = poolParams;
       this.noTxSeparatePools = noTxSeparatePools;
@@ -103,6 +109,15 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
    public void setPoolName(String poolName)
    {
       this.poolName = poolName;
+   }
+   
+   /**
+    * Gets pool name.
+    * @return pool name
+    */
+   public String getPoolName()
+   {
+      return poolName;
    }
    
    /**
@@ -480,75 +495,6 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
 
       subPools.clear();
    }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public void prefill()
-   {      
-      prefill(null, null, false);
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public void prefill(boolean noTxSeperatePool)
-   {
-      prefill(null, null, noTxSeperatePool);      
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public void prefill(Subject subject, ConnectionRequestInfo cri, boolean noTxnSeperatePool)
-   {
-      if (getPreFill())
-      {
-         log.debug("Attempting to prefill pool for pool with jndi name" + poolName);
-
-         try
-         {
-            //Get sub-pool key
-            Object key = getKey(subject, cri, noTxnSeperatePool);
-            
-            //Get sub-pool automatically initializes pool
-            getSubPool(key, subject, cri);
-         }
-         catch (Throwable t)
-         {
-            //No real need to throw here being that pool remains in the same state as before.
-            log.error("Unable to prefill pool with jndi name" + getPoolName(), t);
-         }
-
-      }
-            
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public boolean shouldPreFill()
-   {
-      return getPreFill();
-   }
-   
-   /**
-    * Gets pool name.
-    * @return pool name
-    */
-   public String getPoolName()
-   {
-      return poolName;
-   }
-   
-   /**
-    * Gets prefill flag.
-    * @return prefill or not
-    */
-   public boolean getPreFill()
-   {
-      return poolParams.isPrefill();
-   }
    
    /**
     * Dump the stats to the trace log
@@ -556,15 +502,18 @@ public  abstract class AbstractPool implements ManagedConnectionPool, PreFillPoo
     */
    private void dump(String info)
    {
-      StringBuffer toLog = new StringBuffer(100);
-      toLog.append(info);
-      /*
-         .append(" [InUse/Available/Max]: [");
-      toLog.append(getInUseConnectionCount()).append("/");
-      toLog.append(getAvailableConnectionCount()).append("/");
-      toLog.append(poolParams.getMaxSize());
-      toLog.append("]");
-      */
-      log.trace(toLog);
+      if (trace)
+      {
+         StringBuffer toLog = new StringBuffer(100);
+         toLog.append(info);
+         /*
+           .append(" [InUse/Available/Max]: [");
+           toLog.append(getInUseConnectionCount()).append("/");
+           toLog.append(getAvailableConnectionCount()).append("/");
+           toLog.append(poolParams.getMaxSize());
+           toLog.append("]");
+         */
+         log.trace(toLog);
+      }
    }
 }
