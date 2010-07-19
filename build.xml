@@ -272,6 +272,7 @@
        Target: prepare test
        ================================= -->
   <target name="prepare-test" depends="jars">
+    <ant dir="common" inheritRefs="true" target="prepare-test"/>
     <ant dir="core" inheritRefs="true" target="prepare-test"/>
     <ant dir="embedded" inheritRefs="true" target="prepare-test"/>
     <ant dir="deployers" inheritRefs="true" target="prepare-test"/>
@@ -283,6 +284,7 @@
        Target: test
        ================================= -->
   <target name="test" depends="prepare-test">
+    <ant dir="common" inheritRefs="true" target="test"/>
     <ant dir="core" inheritRefs="true" target="test"/>
     <ant dir="embedded" inheritRefs="true" target="test"/>
     <ant dir="deployers" inheritRefs="true" target="test"/>
