@@ -63,61 +63,62 @@ public class JbossRaParser implements MetadataParser<JbossRa>
    {
       InputStream input = null;
       XMLStreamReader reader = null;
+      JbossRa jbossRa = null;
 
       try
       {
          XMLInputFactory inputFactory = XMLInputFactory.newInstance();
          input = new FileInputStream(xmlFile);
          reader = inputFactory.createXMLStreamReader(input);
-         JbossRa jbossRa = null;
 
-         while (reader.hasNext())
+         //iterate over tags
+         switch (reader.nextTag())
          {
-            switch (reader.nextTag())
-            {
-               case END_ELEMENT : {
-                  // should mean we're done, so ignore it.
-                  break;
-               }
-               case START_ELEMENT : {
-                  if (JbossRa10.NAMESPACE.equals(reader.getNamespaceURI()))
-                  {
-                     switch (Tag.forName(reader.getLocalName()))
-                     {
-                        case JBOSSRA : {
-                           jbossRa = parseJbossRa10(reader);
-                           break;
-                        }
-                        default :
-                           throw new ParserException("Unexpected element:" + reader.getLocalName());
-                     }
-
-                  }
-                  else if (JbossRa20.NAMESPACE.equals(reader.getNamespaceURI()))
-                  {
-                     switch (Tag.forName(reader.getLocalName()))
-                     {
-                        case JBOSSRA : {
-                           jbossRa = parseJbossRa20(reader, jbossRa);
-                           break;
-                        }
-                        default :
-                           throw new ParserException("Unexpected element:" + reader.getLocalName());
-                     }
-                  }
-                  else
-                  {
-                     throw new ParserException(String.format("Namespace %s is not supported by %s parser",
-                           reader.getNamespaceURI(), this.getClass().getName()));
-                  }
-
-                  break;
-               }
-               default :
-                  throw new IllegalStateException();
+            case END_ELEMENT : {
+               // should mean we're done, so ignore it.
+               break;
             }
+            case START_ELEMENT : {
+               if (JbossRa10.NAMESPACE.equals(reader.getNamespaceURI()))
+               {
+                  switch (Tag.forName(reader.getLocalName()))
+                  {
+                     case JBOSSRA : {
+                        jbossRa = parseJbossRa10(reader);
+                        break;
+                     }
+                     default :
+                        throw new ParserException("Unexpected element:" + reader.getLocalName());
+                  }
+
+               }
+               else if (JbossRa20.NAMESPACE.equals(reader.getNamespaceURI()))
+               {
+                  switch (Tag.forName(reader.getLocalName()))
+                  {
+                     case JBOSSRA : {
+                        jbossRa = parseJbossRa20(reader, jbossRa);
+                        break;
+                     }
+                     default :
+                        throw new ParserException("Unexpected element:" + reader.getLocalName());
+                  }
+               }
+               else
+               {
+                  throw new ParserException(String.format("Namespace %s is not supported by %s parser",
+                        reader.getNamespaceURI(), this.getClass().getName()));
+               }
+
+               break;
+            }
+            default :
+               throw new IllegalStateException();
          }
-         return jbossRa;
+      }
+      catch (XMLStreamException e)
+      {
+         //ignore it. It is just saying that it isn't a tag
       }
       finally
       {
@@ -125,8 +126,8 @@ public class JbossRaParser implements MetadataParser<JbossRa>
             reader.close();
          if (input != null)
             input.close();
-
       }
+      return jbossRa;
 
    }
 
