@@ -24,13 +24,15 @@ package org.jboss.jca.common.metadata.jbossra.jbossra20;
 import org.jboss.jca.common.metadata.JCAMetadata;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class BeanValidationGroups implements JCAMetadata
+public class BeanValidationGroup implements JCAMetadata
 {
 
    /**
@@ -42,7 +44,7 @@ public class BeanValidationGroups implements JCAMetadata
    /**
     * @param beanValidationGroup List of bean validation group
     */
-   public BeanValidationGroups(List<String> beanValidationGroup)
+   public BeanValidationGroup(List<String> beanValidationGroup)
    {
       super();
       this.beanValidationGroup = beanValidationGroup;
@@ -82,9 +84,9 @@ public class BeanValidationGroups implements JCAMetadata
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof BeanValidationGroups))
+      if (!(obj instanceof BeanValidationGroup))
          return false;
-      BeanValidationGroups other = (BeanValidationGroups) obj;
+      BeanValidationGroup other = (BeanValidationGroup) obj;
       if (beanValidationGroup == null)
       {
          if (other.beanValidationGroup != null)
@@ -105,6 +107,77 @@ public class BeanValidationGroups implements JCAMetadata
    {
       return "BeanValidationGroups [beanValidationGroup=" + beanValidationGroup + ", getBeanValidationGroup()="
             + getBeanValidationGroup() + ", hashCode()=" + hashCode() + "]";
+   }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /**always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * bean-validation-group tag name
+       */
+      BEAN_VALIDATION_GROUP("bean-validation-group");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
    }
 
 }

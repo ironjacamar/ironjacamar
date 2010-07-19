@@ -37,13 +37,13 @@ public class JbossRa20 extends JbossRa
    /**
     * NAMESPACE of xml file for which this metadata is generated
     */
-   public static final String NAMESPACE = "http://www.jboss.org/schema/ra/1.0";
+   public static final String NAMESPACE = "http://www.jboss.org/schema/ra/2.0";
 
    private static final long serialVersionUID = -1494921311038998843L;
 
    private final String bootstrapContext;
 
-   private final List<BeanValidationGroups> beanValidationGroups;
+   private final List<BeanValidationGroup> beanValidationGroups;
 
    /**
     * @param raConfigProperties List of properties for configuration
@@ -51,7 +51,7 @@ public class JbossRa20 extends JbossRa
     * @param beanValidationGroups for validations
     */
    public JbossRa20(List<RaConfigProperty<?>> raConfigProperties, String bootstrapContext,
-         List<BeanValidationGroups> beanValidationGroups)
+         List<BeanValidationGroup> beanValidationGroups)
    {
       super(raConfigProperties);
       this.bootstrapContext = bootstrapContext;
@@ -69,7 +69,7 @@ public class JbossRa20 extends JbossRa
    /**
     * @return beanValidationGroups
     */
-   public List<BeanValidationGroups> getBeanValidationGroups()
+   public List<BeanValidationGroup> getBeanValidationGroups()
    {
       return Collections.unmodifiableList(beanValidationGroups);
    }
@@ -146,7 +146,17 @@ public class JbossRa20 extends JbossRa
       /** ra-config-property tag name
        *
        */
-      RA_CONFIG_PROPERTY("ra-config-property");
+      RA_CONFIG_PROPERTY("ra-config-property"),
+
+      /**
+       * bootstrap-context tag name
+       */
+      BOOTSTRAP_CONTEXT("bootstrap-context"),
+
+      /**
+       * bean-validation-groups tag name
+       */
+      BEAN_VALIDATION_GROUPS ("bean-validation-groups");
 
       private final String name;
 

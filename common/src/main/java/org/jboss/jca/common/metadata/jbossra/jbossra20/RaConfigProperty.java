@@ -22,14 +22,14 @@
 package org.jboss.jca.common.metadata.jbossra.jbossra20;
 
 import org.jboss.jca.common.metadata.JCAMetadata;
-import org.jboss.jca.common.metadata.jbossra.JbossRaParser.Tag;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
- * @param <T> generic type of this property. See {@link #buildRaConfigProperty(String, String, String)}
+ * @param <T> generic type of this property.
+ * See {@link #buildRaConfigProperty(String, String, String, OverrideElementAttribute))}
  *  for build right implementation
  *
  */
@@ -46,29 +46,39 @@ public class RaConfigProperty<T> implements JCAMetadata
 
    private final String typeName;
 
+   private final OverrideElementAttribute overrideElementAttribute;
+
    /**
     * @param name the name of the property
     * @param value the value of the property
+    * @param overrideElementAttribute the override-element attribute
     */
-   private RaConfigProperty(String name, T value)
+   private RaConfigProperty(String name, T value, OverrideElementAttribute overrideElementAttribute)
    {
       super();
       this.name = name;
       this.value = value;
       this.typeName = value.getClass().getName();
+      this.overrideElementAttribute = overrideElementAttribute == null
+            ? OverrideElementAttribute.RESOURCE_ADAPTER
+            : overrideElementAttribute;
    }
 
    /**
     * @param name the name of the property
     * @param value the value of the property
     * @param typeName full qualified name of value's type
+    * @param overrideElementAttribute the override-element attribute
     */
-   private RaConfigProperty(String name, T value, String type)
+   private RaConfigProperty(String name, T value, String typeName, OverrideElementAttribute overrideElementAttribute)
    {
       super();
       this.name = name;
       this.value = value;
-      this.typeName = value.getClass().getName();
+      this.typeName = typeName;
+      this.overrideElementAttribute = overrideElementAttribute == null
+            ? OverrideElementAttribute.RESOURCE_ADAPTER
+            : overrideElementAttribute;
    }
 
    /**
@@ -92,54 +102,58 @@ public class RaConfigProperty<T> implements JCAMetadata
     *   is returned and typeName will be set as passed parameter type.
     *
     *
+    *
+    *
     * @param name name of the property
     * @param value value of the property.
     * @param type the full qualified name of the class to be actualised
     * @return the actualised instance
+    * @param overrideElementAttribute the override-element attribute. Possible value are defined in the enumeration;
+    *  if it is null the default RESOURCEADAPTER is used
     * @throws NumberFormatException in case passed value isn't assignable to type class
     */
-   public static RaConfigProperty<?> buildRaConfigProperty(String name, String value, String type)
-      throws NumberFormatException
+   public static RaConfigProperty<?> buildRaConfigProperty(String name, String value, String type,
+         OverrideElementAttribute overrideElementAttribute) throws NumberFormatException
    {
       if (type == null || type.trim().length() == 0)
       {
-         return new RaConfigProperty<String>(name, value);
+         return new RaConfigProperty<String>(name, value, overrideElementAttribute);
       }
       if ("java.lang.Boolean".equals(type))
       {
-         return new RaConfigProperty<Boolean>(name, Boolean.valueOf(value));
+         return new RaConfigProperty<Boolean>(name, Boolean.valueOf(value), overrideElementAttribute);
       }
       else if ("java.lang.String".equals(type))
       {
-         return new RaConfigProperty<String>(name, value);
+         return new RaConfigProperty<String>(name, value, overrideElementAttribute);
       }
       else if ("java.lang.Integer".equals(type))
       {
-         return new RaConfigProperty<Integer>(name, Integer.valueOf(value));
+         return new RaConfigProperty<Integer>(name, Integer.valueOf(value), overrideElementAttribute);
       }
       else if ("java.lang.Double".equals(type))
       {
-         return new RaConfigProperty<Double>(name, Double.valueOf(value));
+         return new RaConfigProperty<Double>(name, Double.valueOf(value), overrideElementAttribute);
       }
       else if ("java.lang.Byte".equals(type))
       {
-         return new RaConfigProperty<Byte>(name, Byte.valueOf(value));
+         return new RaConfigProperty<Byte>(name, Byte.valueOf(value), overrideElementAttribute);
       }
       else if ("java.lang.Long".equals(type))
       {
-         return new RaConfigProperty<Long>(name, Long.valueOf(value));
+         return new RaConfigProperty<Long>(name, Long.valueOf(value), overrideElementAttribute);
       }
       else if ("java.lang.Float".equals(type))
       {
-         return new RaConfigProperty<Float>(name, Float.valueOf(value));
+         return new RaConfigProperty<Float>(name, Float.valueOf(value), overrideElementAttribute);
       }
       else if ("java.lang.Character".equals(type))
       {
-         return new RaConfigProperty<Character>(name, Character.valueOf(value.charAt(0)));
+         return new RaConfigProperty<Character>(name, Character.valueOf(value.charAt(0)), overrideElementAttribute);
       }
       else
       {
-         return new RaConfigProperty<Object>(name, value, type);
+         return new RaConfigProperty<Object>(name, value, type, overrideElementAttribute);
       }
 
    }
@@ -230,6 +244,28 @@ public class RaConfigProperty<T> implements JCAMetadata
    public String toString()
    {
       return "RaConfigProperty [name=" + name + ", value=" + value + "]";
+   }
+
+   /**
+    *
+    * typeName getter
+    *
+    * @return the typeName
+    */
+   public String getTypeName()
+   {
+      return typeName;
+   }
+
+   /**
+    *
+    * override-element-attribute metadata getter
+    *
+    * @return the enum instance {@link OverrideElementAttribute}
+    */
+   public OverrideElementAttribute getOverrideElementAttribute()
+   {
+      return overrideElementAttribute;
    }
 
    /**

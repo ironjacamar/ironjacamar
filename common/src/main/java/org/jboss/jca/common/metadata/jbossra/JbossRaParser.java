@@ -24,7 +24,9 @@ package org.jboss.jca.common.metadata.jbossra;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.jbossra.jbossra10.JbossRa10;
+import org.jboss.jca.common.metadata.jbossra.jbossra20.BeanValidationGroup;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.JbossRa20;
+import org.jboss.jca.common.metadata.jbossra.jbossra20.OverrideElementAttribute;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.RaConfigProperty;
 
 import java.io.File;
@@ -32,14 +34,14 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import static javax.xml.stream.XMLStreamConstants.*;
+
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 /**
  * A JbossRaParser.
@@ -114,9 +116,54 @@ public class JbossRaParser implements MetadataParser<JbossRa>
 
    }
 
-   private JbossRa20 parseJbossRa20(XMLStreamReader reader, JbossRa jbossRa) throws XMLStreamException
+   private JbossRa20 parseJbossRa20(XMLStreamReader reader, JbossRa jbossRa) throws XMLStreamException, ParserException
    {
-      return null;
+      ArrayList<RaConfigProperty<?>> raConfigProperties = new ArrayList<RaConfigProperty<?>>();
+      ArrayList<BeanValidationGroup> beanValidationGroups = new ArrayList<BeanValidationGroup>();
+      String bootStrapContext = null;
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (Tag.forName(reader.getLocalName()) == Tag.JBOSSRA)
+               {
+                  raConfigProperties.trimToSize();
+                  beanValidationGroups.trimToSize();
+                  return new JbossRa20(raConfigProperties, bootStrapContext, beanValidationGroups);
+               }
+               else
+               {
+                  if (JbossRa10.Tag.forName(reader.getLocalName()) == JbossRa10.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (JbossRa20.Tag.forName(reader.getLocalName()))
+               {
+                  case RA_CONFIG_PROPERTY : {
+                     raConfigProperties.add(parseConfigProperty(reader));
+                     break;
+                  }
+                  case BOOTSTRAP_CONTEXT : {
+                     bootStrapContext = reader.getElementText();
+                     break;
+                  }
+                  case BEAN_VALIDATION_GROUPS : {
+                     beanValidationGroups.add(parseBeanValidationGroups(reader));
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
    }
 
    private JbossRa10 parseJbossRa10(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -163,21 +210,23 @@ public class JbossRaParser implements MetadataParser<JbossRa>
       String value = null;
       String type = null;
       String name = null;
+      //do it now because we are on right START_ELEMENT
+      OverrideElementAttribute overrideElementAttribute = OverrideElementAttribute.forName(reader.getAttributeValue(0));
       while (reader.hasNext())
       {
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               //maeste: to be verified
                if (JbossRa10.Tag.forName(reader.getLocalName()) == JbossRa10.Tag.RA_CONFIG_PROPERTY
                      || JbossRa20.Tag.forName(reader.getLocalName()) == JbossRa20.Tag.RA_CONFIG_PROPERTY)
                {
-                  return RaConfigProperty.buildRaConfigProperty(name, value, type);
+                  return RaConfigProperty.buildRaConfigProperty(name, value, type, overrideElementAttribute);
                }
                else
                {
                   if (JbossRa10.Tag.forName(reader.getLocalName()) == JbossRa10.Tag.UNKNOWN
-                        && JbossRa20.Tag.forName(reader.getLocalName()) == JbossRa20.Tag.UNKNOWN)
+                        && JbossRa20.Tag.forName(reader.getLocalName()) == JbossRa20.Tag.UNKNOWN
+                        && RaConfigProperty.Tag.forName(reader.getLocalName()) == RaConfigProperty.Tag.UNKNOWN)
                   {
                      throw new ParserException("unexpected end tag" + reader.getLocalName());
                   }
@@ -197,6 +246,49 @@ public class JbossRaParser implements MetadataParser<JbossRa>
                   }
                   case RA_CONFIG_PROPERTY_TYPE : {
                      type = reader.getElementText();
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   private BeanValidationGroup parseBeanValidationGroups(XMLStreamReader reader) throws XMLStreamException,
+      ParserException
+   {
+      ArrayList<String> beanValidationGroup = new ArrayList<String>();
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (JbossRa10.Tag.forName(reader.getLocalName()) == JbossRa10.Tag.RA_CONFIG_PROPERTY
+                     || JbossRa20.Tag.forName(reader.getLocalName()) == JbossRa20.Tag.RA_CONFIG_PROPERTY)
+               {
+                  beanValidationGroup.trimToSize();
+                  return new BeanValidationGroup(beanValidationGroup);
+               }
+               else
+               {
+                  if (JbossRa10.Tag.forName(reader.getLocalName()) == JbossRa10.Tag.UNKNOWN
+                        && JbossRa20.Tag.forName(reader.getLocalName()) == JbossRa20.Tag.UNKNOWN
+                        && BeanValidationGroup.Tag.forName(reader.getLocalName()) == BeanValidationGroup.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (BeanValidationGroup.Tag.forName(reader.getLocalName()))
+               {
+                  case BEAN_VALIDATION_GROUP : {
+                     beanValidationGroup.add(reader.getElementText());
                      break;
                   }
                   default :

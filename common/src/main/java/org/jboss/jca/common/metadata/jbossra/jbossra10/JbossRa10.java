@@ -41,7 +41,7 @@ public class JbossRa10 extends JbossRa
    /**
     * NAMESPACE of xml file for which this metadata is generated
     */
-   public static final String NAMESPACE = "http://www.jboss.org/schema/ra/1.0";
+   public static final String NAMESPACE = "http://www.jboss.org/schema/ra";
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
