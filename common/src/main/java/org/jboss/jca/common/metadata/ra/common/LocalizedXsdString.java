@@ -19,56 +19,50 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class XsdString implements IdDecoratedMetadata
+public class LocalizedXsdString extends XsdString implements LocalizedMetadata
 {
    /**
     */
-   private static final long serialVersionUID = -3045754045828271173L;
+   private static final long serialVersionUID = -7778684576336929347L;
+
+   private final String lang;
 
    /**
-    * the actual String value
+    * @param value value of the String
+    * @param id XML ID
+    * @param lang language
     */
-   protected final String value;
+   public LocalizedXsdString(String value, String id, String lang)
+   {
+      super(value, id);
+      this.lang = lang;
+   }
 
    /**
-    * XML ID
-    */
-   protected final String id;
-
-   /**
-    * @param value the actual String value
+    * Constructor for default language "en"
+    *
+    * @param value value of the String
     * @param id XML ID
     */
-   public XsdString(String value, String id)
+   public LocalizedXsdString(String value, String id)
    {
-      super();
-      this.value = value;
-      this.id = id;
+      super(value, id);
+      this.lang = "en";
    }
 
    /**
-    * @return value
-    */
-   public String getValue()
-   {
-      return value;
-   }
-
-   /**
-    * {@inheritDoc}
-    *
-    * @see IdDecoratedMetadata#getId()
+    * @return lang
     */
    @Override
-   public String getId()
+   public String getLang()
    {
-      return id;
+      return lang;
    }
 
    /**
@@ -80,9 +74,8 @@ public class XsdString implements IdDecoratedMetadata
    public int hashCode()
    {
       final int prime = 31;
-      int result = 1;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((value == null) ? 0 : value.hashCode());
+      int result = super.hashCode();
+      result = prime * result + ((lang == null) ? 0 : lang.hashCode());
       return result;
    }
 
@@ -98,34 +91,23 @@ public class XsdString implements IdDecoratedMetadata
       {
          return true;
       }
-      if (obj == null)
+      if (!super.equals(obj))
       {
          return false;
       }
-      if (!(obj instanceof XsdString))
+      if (!(obj instanceof LocalizedXsdString))
       {
          return false;
       }
-      XsdString other = (XsdString) obj;
-      if (id == null)
+      LocalizedXsdString other = (LocalizedXsdString) obj;
+      if (lang == null)
       {
-         if (other.id != null)
+         if (other.lang != null)
          {
             return false;
          }
       }
-      else if (!id.equals(other.id))
-      {
-         return false;
-      }
-      if (value == null)
-      {
-         if (other.value != null)
-         {
-            return false;
-         }
-      }
-      else if (!value.equals(other.value))
+      else if (!lang.equals(other.lang))
       {
          return false;
       }
@@ -140,7 +122,7 @@ public class XsdString implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "XsdString [value=" + value + ", id=" + id + "]";
+      return "LocalizedXsdString [lang=" + lang + ", value=" + value + ", id=" + id + "]";
    }
 
 }

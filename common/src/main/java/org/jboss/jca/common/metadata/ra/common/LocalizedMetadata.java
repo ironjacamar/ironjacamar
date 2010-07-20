@@ -19,25 +19,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
+
+import org.jboss.jca.common.metadata.JCAMetadata;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public enum TransactionSupportEnum
+public interface LocalizedMetadata extends JCAMetadata
 {
+
    /**
-    * NoTransaction
+    *
+    * Language used for this string at xml level. Value are like "en", "it", "fr" and so on
+    *
+    * @return the lang used for this string
     */
-   NoTransaction,
-   /**
-    * LocalTransaction
-    */
-   LocalTransaction,
-   /**
-    * XATransaction
-    */
-   XATransaction;
+   public String getLang();
 
 }

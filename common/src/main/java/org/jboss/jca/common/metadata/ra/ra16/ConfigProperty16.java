@@ -21,34 +21,27 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
-import java.util.Collections;
+import org.jboss.jca.common.metadata.ra.common.ConfigProperty;
+import org.jboss.jca.common.metadata.ra.common.LocalizedXsdString;
+import org.jboss.jca.common.metadata.ra.common.XsdString;
+
 import java.util.List;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class ConfigProperty implements IdDecoratedMetadata
+public class ConfigProperty16 extends ConfigProperty
 {
    /**
     */
    private static final long serialVersionUID = -2025203811838727421L;
-
-   private final List<LocalizedXsdString> description;
-
-   private final XsdString configPropertyName;
-
-   private final XsdString configPropertyType;
-
-   private final XsdString configPropertyValue;
 
    private final Boolean configPropertyIgnore;
 
    private final Boolean configPropertySupportsDynamicUpdates;
 
    private final Boolean configPropertyConfidential;
-
-   private final String id;
 
    /**
     * @param description list of descriptions
@@ -76,51 +69,14 @@ public class ConfigProperty implements IdDecoratedMetadata
     *  property as confidential.
     * @param id XML ID
     */
-   public ConfigProperty(List<LocalizedXsdString> description, XsdString configPropertyName,
+   public ConfigProperty16(List<LocalizedXsdString> description, XsdString configPropertyName,
          XsdString configPropertyType, XsdString configPropertyValue, Boolean configPropertyIgnore,
          Boolean configPropertySupportsDynamicUpdates, Boolean configPropertyConfidential, String id)
    {
-      super();
-      this.description = description;
-      this.configPropertyName = configPropertyName;
-      this.configPropertyType = configPropertyType;
-      this.configPropertyValue = configPropertyValue;
+      super(description, configPropertyName, configPropertyType, configPropertyValue, id);
       this.configPropertyIgnore = configPropertyIgnore;
       this.configPropertySupportsDynamicUpdates = configPropertySupportsDynamicUpdates;
       this.configPropertyConfidential = configPropertyConfidential;
-      this.id = id;
-   }
-
-   /**
-    * @return description
-    */
-   public List<LocalizedXsdString> getDescription()
-   {
-      return Collections.unmodifiableList(description);
-   }
-
-   /**
-    * @return configPropertyName
-    */
-   public XsdString getConfigPropertyName()
-   {
-      return configPropertyName;
-   }
-
-   /**
-    * @return configPropertyType
-    */
-   public XsdString getConfigPropertyType()
-   {
-      return configPropertyType;
-   }
-
-   /**
-    * @return configPropertyValue
-    */
-   public XsdString getConfigPropertyValue()
-   {
-      return configPropertyValue;
    }
 
    /**
@@ -145,17 +101,6 @@ public class ConfigProperty implements IdDecoratedMetadata
    public Boolean getConfigPropertyConfidential()
    {
       return configPropertyConfidential;
-   }
-
-   /**
-    * {@inheritDoc}
-    *
-    * @see IdDecoratedMetadata#getId()
-    */
-   @Override
-   public String getId()
-   {
-      return id;
    }
 
    /**
@@ -196,11 +141,11 @@ public class ConfigProperty implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof ConfigProperty))
+      if (!(obj instanceof ConfigProperty16))
       {
          return false;
       }
-      ConfigProperty other = (ConfigProperty) obj;
+      ConfigProperty16 other = (ConfigProperty16) obj;
       if (configPropertyConfidential == null)
       {
          if (other.configPropertyConfidential != null)

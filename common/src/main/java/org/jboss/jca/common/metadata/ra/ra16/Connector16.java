@@ -21,7 +21,11 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
-import org.jboss.jca.common.metadata.ra.Connector;
+import org.jboss.jca.common.metadata.ra.common.LicenseType;
+import org.jboss.jca.common.metadata.ra.common.LocalizedXsdString;
+import org.jboss.jca.common.metadata.ra.common.ResourceAdapter;
+import org.jboss.jca.common.metadata.ra.common.XsdString;
+import org.jboss.jca.common.metadata.ra.ra15.Connector15;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +34,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public final class Connector16 implements IdDecoratedMetadata, Connector
+public final class Connector16 extends Connector15
 {
 
    /**
@@ -45,23 +49,11 @@ public final class Connector16 implements IdDecoratedMetadata, Connector
 
    private final List<Icon> icon;
 
-   private final XsdString vendorName;
-
-   private final XsdString eisType;
-
-   private final XsdString resourceadapterVersion;
-
-   private final LicenseType license;
-
-   private final ResourceAdapter resourceadapter;
-
    private final List<String> requiredWorkContext;
-
-   private final String version = "1.6";
 
    private final Boolean metadataComplete;
 
-   private final String id;
+   private final String version = "1.6";
 
    /**
     * @param moduleName name of the module
@@ -82,43 +74,13 @@ public final class Connector16 implements IdDecoratedMetadata, Connector
          LicenseType license, ResourceAdapter resourceadapter, List<String> requiredWorkContext,
          Boolean metadataComplete, String id)
    {
-      super();
+      super(vendorName, eisType, resourceadapterVersion, license, resourceadapter, id);
       this.moduleName = moduleName;
       this.description = description;
       this.displayName = displayName;
       this.icon = icon;
-      this.vendorName = vendorName;
-      this.eisType = eisType;
-      this.resourceadapterVersion = resourceadapterVersion;
-      this.license = license;
-      this.resourceadapter = resourceadapter;
       this.requiredWorkContext = requiredWorkContext;
       this.metadataComplete = metadataComplete;
-      this.id = id;
-   }
-
-   /**
-    * @return resourceadapterVersion
-    */
-   public XsdString getResourceadapterVersion()
-   {
-      return resourceadapterVersion;
-   }
-
-   /**
-    * @return license
-    */
-   public LicenseType getLicense()
-   {
-      return license;
-   }
-
-   /**
-    * @return resourceadapter
-    */
-   public ResourceAdapter getResourceadapter()
-   {
-      return resourceadapter;
    }
 
    /**
@@ -162,46 +124,11 @@ public final class Connector16 implements IdDecoratedMetadata, Connector
    }
 
    /**
-    * @return vendorName
-    */
-   public XsdString getVendorName()
-   {
-      return vendorName;
-   }
-
-   /**
-    * @return eisType
-    */
-   public XsdString getEisType()
-   {
-      return eisType;
-   }
-
-   /**
-    * @return version
-    */
-   public String getVersion()
-   {
-      return version;
-   }
-
-   /**
     * @return metadataComplete
     */
    public Boolean getMetadataComplete()
    {
       return metadataComplete;
-   }
-
-   /**
-    * {@inheritDoc}
-    *
-    * @see IdDecoratedMetadata#getId()
-    */
-   @Override
-   public String getId()
-   {
-      return id;
    }
 
    /**

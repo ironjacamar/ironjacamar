@@ -19,7 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ConnectionDefinition implements IdDecoratedMetadata
 
    private final String managedconnectionfactoryClass;
 
-   private final List<ConfigProperty> configProperty;
+   private final List<? extends ConfigProperty> configProperty;
 
    private final String connectionfactoryInterface;
 
@@ -57,7 +58,7 @@ public class ConnectionDefinition implements IdDecoratedMetadata
     * @param connectionImplClass full qualified name of the connection implementation class
     * @param id XML ID
     */
-   public ConnectionDefinition(String managedconnectionfactoryClass, List<ConfigProperty> configProperty,
+   public ConnectionDefinition(String managedconnectionfactoryClass, List<? extends ConfigProperty> configProperty,
          String connectionfactoryInterface, String connectionfactoryImplClass, String connectionInterface,
          String connectionImplClass, String id)
    {
@@ -82,7 +83,7 @@ public class ConnectionDefinition implements IdDecoratedMetadata
    /**
     * @return configProperty
     */
-   public List<ConfigProperty> getConfigProperty()
+   public List<? extends ConfigProperty> getConfigProperty()
    {
       return Collections.unmodifiableList(configProperty);
    }

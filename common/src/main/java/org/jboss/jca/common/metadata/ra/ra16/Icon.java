@@ -21,6 +21,9 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
+import org.jboss.jca.common.metadata.ra.common.IdDecoratedMetadata;
+import org.jboss.jca.common.metadata.ra.common.LocalizedMetadata;
+
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *

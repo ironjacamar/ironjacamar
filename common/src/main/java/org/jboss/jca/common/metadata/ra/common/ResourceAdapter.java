@@ -19,7 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +37,7 @@ public class ResourceAdapter implements IdDecoratedMetadata
 
    private final String resourceadapterClass;
 
-   private final List<ConfigProperty> configProperty;
+   private final List<? extends ConfigProperty> configProperty;
 
    private final OutboundResourceAdapter outboundResourceadapter;
 
@@ -57,7 +58,7 @@ public class ResourceAdapter implements IdDecoratedMetadata
     * @param securityPermission supported security permissions
     * @param id XML ID
     */
-   public ResourceAdapter(String resourceadapterClass, List<ConfigProperty> configProperty,
+   public ResourceAdapter(String resourceadapterClass, List<? extends ConfigProperty> configProperty,
          OutboundResourceAdapter outboundResourceadapter, InboundResourceAdapter inboundResourceadapter,
          List<Adminobject> adminobject, List<SecurityPermission> securityPermission, String id)
    {
@@ -82,7 +83,7 @@ public class ResourceAdapter implements IdDecoratedMetadata
    /**
     * @return configProperty
     */
-   public List<ConfigProperty> getConfigProperty()
+   public List<? extends ConfigProperty> getConfigProperty()
    {
       return Collections.unmodifiableList(configProperty);
    }

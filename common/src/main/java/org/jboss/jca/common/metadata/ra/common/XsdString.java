@@ -19,54 +19,46 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
 
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class SecurityPermission implements IdDecoratedMetadata
+public class XsdString implements IdDecoratedMetadata
 {
    /**
     */
-   private static final long serialVersionUID = -7931009018498254330L;
-
-   private final List<LocalizedXsdString> description;
-
-   private final XsdString securityPermissionSpec;
-
-   private final String id;
+   private static final long serialVersionUID = -3045754045828271173L;
 
    /**
-    * @param description descriptions
-    * @param securityPermissionSpec the security permission spec as defined in the xml
+    * the actual String value
+    */
+   protected final String value;
+
+   /**
+    * XML ID
+    */
+   protected final String id;
+
+   /**
+    * @param value the actual String value
     * @param id XML ID
     */
-   public SecurityPermission(List<LocalizedXsdString> description, XsdString securityPermissionSpec, String id)
+   public XsdString(String value, String id)
    {
       super();
-      this.description = description;
-      this.securityPermissionSpec = securityPermissionSpec;
+      this.value = value;
       this.id = id;
    }
 
    /**
-    * @return description
+    * @return value
     */
-   public List<LocalizedXsdString> getDescription()
+   public String getValue()
    {
-      return Collections.unmodifiableList(description);
-   }
-
-   /**
-    * @return securityPermissionSpec
-    */
-   public XsdString getSecurityPermissionSpec()
-   {
-      return securityPermissionSpec;
+      return value;
    }
 
    /**
@@ -90,9 +82,8 @@ public class SecurityPermission implements IdDecoratedMetadata
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((securityPermissionSpec == null) ? 0 : securityPermissionSpec.hashCode());
+      result = prime * result + ((value == null) ? 0 : value.hashCode());
       return result;
    }
 
@@ -112,22 +103,11 @@ public class SecurityPermission implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof SecurityPermission))
+      if (!(obj instanceof XsdString))
       {
          return false;
       }
-      SecurityPermission other = (SecurityPermission) obj;
-      if (description == null)
-      {
-         if (other.description != null)
-         {
-            return false;
-         }
-      }
-      else if (!description.equals(other.description))
-      {
-         return false;
-      }
+      XsdString other = (XsdString) obj;
       if (id == null)
       {
          if (other.id != null)
@@ -139,14 +119,14 @@ public class SecurityPermission implements IdDecoratedMetadata
       {
          return false;
       }
-      if (securityPermissionSpec == null)
+      if (value == null)
       {
-         if (other.securityPermissionSpec != null)
+         if (other.value != null)
          {
             return false;
          }
       }
-      else if (!securityPermissionSpec.equals(other.securityPermissionSpec))
+      else if (!value.equals(other.value))
       {
          return false;
       }
@@ -161,7 +141,7 @@ public class SecurityPermission implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "SecurityPermission [description=" + description + ", securityPermissionSpec=" + securityPermissionSpec
-            + ", id=" + id + "]";
+      return "XsdString [value=" + value + ", id=" + id + "]";
    }
+
 }

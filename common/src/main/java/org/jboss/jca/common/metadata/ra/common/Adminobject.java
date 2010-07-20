@@ -19,7 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -38,7 +39,7 @@ public class Adminobject implements IdDecoratedMetadata
 
    private final String adminobjectClass;
 
-   private final List<ConfigProperty> configProperty;
+   private final List<? extends ConfigProperty> configProperty;
 
    private final String id;
 
@@ -49,7 +50,7 @@ public class Adminobject implements IdDecoratedMetadata
     * @param id xmlid
     */
    public Adminobject(final String adminobjectInterface, final String adminobjectClass,
-         final List<ConfigProperty> configProperty, final String id)
+         final List<? extends ConfigProperty> configProperty, final String id)
    {
       super();
       this.adminobjectInterface = adminobjectInterface;
@@ -77,7 +78,7 @@ public class Adminobject implements IdDecoratedMetadata
    /**
     * @return configProperty
     */
-   public List<ConfigProperty> getConfigProperty()
+   public List<? extends ConfigProperty> getConfigProperty()
    {
       return Collections.unmodifiableList(configProperty);
    }

@@ -19,7 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -28,29 +29,43 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class LicenseType implements IdDecoratedMetadata
+public class AuthenticationMechanism implements IdDecoratedMetadata
 {
-
    /**
     */
-   private static final long serialVersionUID = 1590514246054447090L;
+   private static final long serialVersionUID = -1448136517857827148L;
 
    private final List<LocalizedXsdString> description;
 
-   private final boolean licenseRequired;
+   private final XsdString authenticationMechanismType;
+
+   private final CredentialInterfaceEnum credentialInterface;
 
    private final String id;
 
    /**
-    * @param description description of the license
-    * @param licenseRequired mandatory boolena value
-    * @param id XML ID
+    * @param description description attribute in xml
+    * @param authenticationMechanismType specifies type of an authentication mechanism.
+            The example values are:
+
+            <authentication-mechanism-type>BasicPassword
+            </authentication-mechanism-type>
+
+            <authentication-mechanism-type>Kerbv5
+            </authentication-mechanism-type>
+
+            Any additional security mechanisms are outside the
+            scope of the Connector architecture specification.
+    * @param credentialInterface enumeration representing credentialInterface.
+    * @param id xml ID
     */
-   public LicenseType(List<LocalizedXsdString> description, boolean licenseRequired, String id)
+   public AuthenticationMechanism(List<LocalizedXsdString> description, XsdString authenticationMechanismType,
+         CredentialInterfaceEnum credentialInterface, String id)
    {
       super();
       this.description = description;
-      this.licenseRequired = licenseRequired;
+      this.authenticationMechanismType = authenticationMechanismType;
+      this.credentialInterface = credentialInterface;
       this.id = id;
    }
 
@@ -63,11 +78,19 @@ public class LicenseType implements IdDecoratedMetadata
    }
 
    /**
-    * @return licenseRequired
+    * @return authenticationMechanismType
     */
-   public boolean isLicenseRequired()
+   public XsdString getAuthenticationMechanismType()
    {
-      return licenseRequired;
+      return authenticationMechanismType;
+   }
+
+   /**
+    * @return credentialInterface
+    */
+   public CredentialInterfaceEnum getCredentialInterface()
+   {
+      return credentialInterface;
    }
 
    /**
@@ -91,9 +114,10 @@ public class LicenseType implements IdDecoratedMetadata
    {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((authenticationMechanismType == null) ? 0 : authenticationMechanismType.hashCode());
+      result = prime * result + ((credentialInterface == null) ? 0 : credentialInterface.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + (licenseRequired ? 1231 : 1237);
       return result;
    }
 
@@ -113,11 +137,26 @@ public class LicenseType implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof LicenseType))
+      if (!(obj instanceof AuthenticationMechanism))
       {
          return false;
       }
-      LicenseType other = (LicenseType) obj;
+      AuthenticationMechanism other = (AuthenticationMechanism) obj;
+      if (authenticationMechanismType == null)
+      {
+         if (other.authenticationMechanismType != null)
+         {
+            return false;
+         }
+      }
+      else if (!authenticationMechanismType.equals(other.authenticationMechanismType))
+      {
+         return false;
+      }
+      if (credentialInterface != other.credentialInterface)
+      {
+         return false;
+      }
       if (description == null)
       {
          if (other.description != null)
@@ -140,10 +179,6 @@ public class LicenseType implements IdDecoratedMetadata
       {
          return false;
       }
-      if (licenseRequired != other.licenseRequired)
-      {
-         return false;
-      }
       return true;
    }
 
@@ -155,7 +190,7 @@ public class LicenseType implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "LicenseType [description=" + description + ", licenseRequired=" + licenseRequired + ", id=" + id + "]";
+      return "AuthenticationMechanism [description=" + description + ", authenticationMechanismType="
+            + authenticationMechanismType + ", credentialInterface=" + credentialInterface + ", id=" + id + "]";
    }
-
 }

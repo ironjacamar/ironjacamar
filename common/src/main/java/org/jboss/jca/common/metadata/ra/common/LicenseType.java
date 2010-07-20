@@ -19,43 +19,56 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
+
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class InboundResourceAdapter implements IdDecoratedMetadata
+public class LicenseType implements IdDecoratedMetadata
 {
+
    /**
     */
-   private static final long serialVersionUID = -2854927981408307535L;
+   private static final long serialVersionUID = 1590514246054447090L;
 
-   private final MessageAdapter messageadapter;
+   private final List<LocalizedXsdString> description;
+
+   private final boolean licenseRequired;
 
    private final String id;
 
    /**
-    * @param messageadapter The messageadapterType specifies information about the
-    * messaging capabilities of the resource adapter. This
-    * contains information specific to the implementation of the
-    * resource adapter library as specified through the
-    * messagelistener element.
+    * @param description description of the license
+    * @param licenseRequired mandatory boolena value
     * @param id XML ID
     */
-   public InboundResourceAdapter(MessageAdapter messageadapter, String id)
+   public LicenseType(List<LocalizedXsdString> description, boolean licenseRequired, String id)
    {
       super();
-      this.messageadapter = messageadapter;
+      this.description = description;
+      this.licenseRequired = licenseRequired;
       this.id = id;
    }
 
    /**
-    * @return messageadapter
+    * @return description
     */
-   public MessageAdapter getMessageadapter()
+   public List<LocalizedXsdString> getDescription()
    {
-      return messageadapter;
+      return Collections.unmodifiableList(description);
+   }
+
+   /**
+    * @return licenseRequired
+    */
+   public boolean isLicenseRequired()
+   {
+      return licenseRequired;
    }
 
    /**
@@ -79,8 +92,9 @@ public class InboundResourceAdapter implements IdDecoratedMetadata
    {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((messageadapter == null) ? 0 : messageadapter.hashCode());
+      result = prime * result + (licenseRequired ? 1231 : 1237);
       return result;
    }
 
@@ -100,11 +114,22 @@ public class InboundResourceAdapter implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof InboundResourceAdapter))
+      if (!(obj instanceof LicenseType))
       {
          return false;
       }
-      InboundResourceAdapter other = (InboundResourceAdapter) obj;
+      LicenseType other = (LicenseType) obj;
+      if (description == null)
+      {
+         if (other.description != null)
+         {
+            return false;
+         }
+      }
+      else if (!description.equals(other.description))
+      {
+         return false;
+      }
       if (id == null)
       {
          if (other.id != null)
@@ -116,14 +141,7 @@ public class InboundResourceAdapter implements IdDecoratedMetadata
       {
          return false;
       }
-      if (messageadapter == null)
-      {
-         if (other.messageadapter != null)
-         {
-            return false;
-         }
-      }
-      else if (!messageadapter.equals(other.messageadapter))
+      if (licenseRequired != other.licenseRequired)
       {
          return false;
       }
@@ -138,6 +156,7 @@ public class InboundResourceAdapter implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "InboundResourceAdapter [messageadapter=" + messageadapter + ", id=" + id + "]";
+      return "LicenseType [description=" + description + ", licenseRequired=" + licenseRequired + ", id=" + id + "]";
    }
+
 }

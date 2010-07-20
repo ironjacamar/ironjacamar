@@ -24,8 +24,8 @@ package org.jboss.jca.common.metadata;
 
 import org.jboss.jca.common.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.metadata.jbossra.JbossRaParser;
-import org.jboss.jca.common.metadata.ra.Connector;
 import org.jboss.jca.common.metadata.ra.RaParser;
+import org.jboss.jca.common.metadata.ra.common.Connector;
 
 import java.io.File;
 import java.io.FileInputStream;

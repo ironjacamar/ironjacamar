@@ -19,42 +19,56 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.ra15;
+
+import org.jboss.jca.common.metadata.ra.common.IdDecoratedMetadata;
+import org.jboss.jca.common.metadata.ra.ra16.Activationspec16;
+import org.jboss.jca.common.metadata.ra.ra16.RequiredConfigProperty;
 
 import java.util.Collections;
 import java.util.List;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ *
+ * A Activationspec15.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class Activationspec implements IdDecoratedMetadata
+public class Activationspec15 implements IdDecoratedMetadata
 {
-   /**
-    */
-   private static final long serialVersionUID = -6951903183562100136L;
 
-   private final String activationspecClass;
-
-   private final List<RequiredConfigProperty> requiredConfigProperty;
-
-   private final List<ConfigProperty> configProperty;
-
-   private final String id;
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -342663654303158977L;
 
    /**
-    * @param activationspecClass full qualified name of the class
-    * @param requiredConfigProperty a List of required config properties
-    * @param configProperty a list of (optional) config property
-    * @param id xmlID
+    * activationspec class name
     */
-   public Activationspec(String activationspecClass, List<RequiredConfigProperty> requiredConfigProperty,
-         List<ConfigProperty> configProperty, String id)
+   protected final String activationspecClass;
+
+   /**
+    * list of required properties
+    */
+   protected final List<RequiredConfigProperty> requiredConfigProperty;
+
+   /**
+    * id attribute in xml file
+    */
+   protected final String id;
+
+   /**
+    *
+    * Create a new Activationspec15.
+    *
+    * @param activationspecClass activation spec class name
+    * @param requiredConfigProperty list of required property
+    * @param id id attribute of xml file
+    */
+   public Activationspec15(String activationspecClass, List<RequiredConfigProperty> requiredConfigProperty, String id)
    {
       super();
       this.activationspecClass = activationspecClass;
       this.requiredConfigProperty = requiredConfigProperty;
-      this.configProperty = configProperty;
       this.id = id;
    }
 
@@ -72,14 +86,6 @@ public class Activationspec implements IdDecoratedMetadata
    public List<RequiredConfigProperty> getRequiredConfigProperty()
    {
       return Collections.unmodifiableList(requiredConfigProperty);
-   }
-
-   /**
-    * @return configProperty
-    */
-   public List<ConfigProperty> getConfigProperty()
-   {
-      return Collections.unmodifiableList(configProperty);
    }
 
    /**
@@ -104,7 +110,6 @@ public class Activationspec implements IdDecoratedMetadata
       final int prime = 31;
       int result = 1;
       result = prime * result + ((activationspecClass == null) ? 0 : activationspecClass.hashCode());
-      result = prime * result + ((configProperty == null) ? 0 : configProperty.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((requiredConfigProperty == null) ? 0 : requiredConfigProperty.hashCode());
       return result;
@@ -126,11 +131,11 @@ public class Activationspec implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof Activationspec))
+      if (!(obj instanceof Activationspec16))
       {
          return false;
       }
-      Activationspec other = (Activationspec) obj;
+      Activationspec16 other = (Activationspec16) obj;
       if (activationspecClass == null)
       {
          if (other.activationspecClass != null)
@@ -142,17 +147,7 @@ public class Activationspec implements IdDecoratedMetadata
       {
          return false;
       }
-      if (configProperty == null)
-      {
-         if (other.configProperty != null)
-         {
-            return false;
-         }
-      }
-      else if (!configProperty.equals(other.configProperty))
-      {
-         return false;
-      }
+
       if (id == null)
       {
          if (other.id != null)
@@ -187,7 +182,7 @@ public class Activationspec implements IdDecoratedMetadata
    public String toString()
    {
       return "Activationspec [activationspecClass=" + activationspecClass + ", requiredConfigProperty="
-            + requiredConfigProperty + ", configProperty=" + configProperty + ", id=" + id + "]";
+            + requiredConfigProperty + ", id=" + id + "]";
    }
 
 }

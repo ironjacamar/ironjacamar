@@ -19,54 +19,55 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
+
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class MessageListener implements IdDecoratedMetadata
+public class SecurityPermission implements IdDecoratedMetadata
 {
    /**
     */
-   private static final long serialVersionUID = 6417807206318228618L;
+   private static final long serialVersionUID = -7931009018498254330L;
 
-   private final String messagelistenerType;
+   private final List<LocalizedXsdString> description;
 
-   private final Activationspec activationspec;
+   private final XsdString securityPermissionSpec;
 
    private final String id;
 
    /**
-    * @param messagelistenerType full qualified name of the java type
-    * @param activationspec  The activationspecType specifies an activation
-    * specification.  The information includes fully qualified
-    * Java class name of an activation specification and a set of
-    * required configuration property names.
+    * @param description descriptions
+    * @param securityPermissionSpec the security permission spec as defined in the xml
     * @param id XML ID
     */
-   public MessageListener(String messagelistenerType, Activationspec activationspec, String id)
+   public SecurityPermission(List<LocalizedXsdString> description, XsdString securityPermissionSpec, String id)
    {
       super();
-      this.messagelistenerType = messagelistenerType;
-      this.activationspec = activationspec;
+      this.description = description;
+      this.securityPermissionSpec = securityPermissionSpec;
       this.id = id;
    }
 
    /**
-    * @return messagelistenerType
+    * @return description
     */
-   public String getMessagelistenerType()
+   public List<LocalizedXsdString> getDescription()
    {
-      return messagelistenerType;
+      return Collections.unmodifiableList(description);
    }
 
    /**
-    * @return activationspec
+    * @return securityPermissionSpec
     */
-   public Activationspec getActivationspec()
+   public XsdString getSecurityPermissionSpec()
    {
-      return activationspec;
+      return securityPermissionSpec;
    }
 
    /**
@@ -90,9 +91,9 @@ public class MessageListener implements IdDecoratedMetadata
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((activationspec == null) ? 0 : activationspec.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((messagelistenerType == null) ? 0 : messagelistenerType.hashCode());
+      result = prime * result + ((securityPermissionSpec == null) ? 0 : securityPermissionSpec.hashCode());
       return result;
    }
 
@@ -112,19 +113,19 @@ public class MessageListener implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof MessageListener))
+      if (!(obj instanceof SecurityPermission))
       {
          return false;
       }
-      MessageListener other = (MessageListener) obj;
-      if (activationspec == null)
+      SecurityPermission other = (SecurityPermission) obj;
+      if (description == null)
       {
-         if (other.activationspec != null)
+         if (other.description != null)
          {
             return false;
          }
       }
-      else if (!activationspec.equals(other.activationspec))
+      else if (!description.equals(other.description))
       {
          return false;
       }
@@ -139,14 +140,14 @@ public class MessageListener implements IdDecoratedMetadata
       {
          return false;
       }
-      if (messagelistenerType == null)
+      if (securityPermissionSpec == null)
       {
-         if (other.messagelistenerType != null)
+         if (other.securityPermissionSpec != null)
          {
             return false;
          }
       }
-      else if (!messagelistenerType.equals(other.messagelistenerType))
+      else if (!securityPermissionSpec.equals(other.securityPermissionSpec))
       {
          return false;
       }
@@ -161,7 +162,7 @@ public class MessageListener implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "MessageListener [messagelistenerType=" + messagelistenerType + ", activationspec=" + activationspec
+      return "SecurityPermission [description=" + description + ", securityPermissionSpec=" + securityPermissionSpec
             + ", id=" + id + "]";
    }
 }

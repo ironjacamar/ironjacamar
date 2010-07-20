@@ -19,57 +19,56 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
 
-import org.jboss.jca.common.metadata.ra.common.IdDecoratedMetadata;
-import org.jboss.jca.common.metadata.ra.common.LocalizedXsdString;
-
-import java.util.Collections;
-import java.util.List;
+import org.jboss.jca.common.metadata.ra.ra15.Activationspec15;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class RequiredConfigProperty implements IdDecoratedMetadata
+public class MessageListener implements IdDecoratedMetadata
 {
    /**
     */
-   private static final long serialVersionUID = 4299927051352998447L;
+   private static final long serialVersionUID = 6417807206318228618L;
 
-   private final List<LocalizedXsdString> description;
+   private final String messagelistenerType;
 
-   private final String configPropertyName;
+   private final Activationspec15 activationspec;
 
    private final String id;
 
    /**
-    * @param description descriptions of this property
-    * @param configPropertyName name of the property
+    * @param messagelistenerType full qualified name of the java type
+    * @param activationspec  The activationspecType specifies an activation
+    * specification.  The information includes fully qualified
+    * Java class name of an activation specification and a set of
+    * required configuration property names.
     * @param id XML ID
     */
-   public RequiredConfigProperty(List<LocalizedXsdString> description, String configPropertyName, String id)
+   public MessageListener(String messagelistenerType, Activationspec15 activationspec, String id)
    {
       super();
-      this.description = description;
-      this.configPropertyName = configPropertyName;
+      this.messagelistenerType = messagelistenerType;
+      this.activationspec = activationspec;
       this.id = id;
    }
 
    /**
-    * @return description
+    * @return messagelistenerType
     */
-   public List<LocalizedXsdString> getDescription()
+   public String getMessagelistenerType()
    {
-      return Collections.unmodifiableList(description);
+      return messagelistenerType;
    }
 
    /**
-    * @return configPropertyName
+    * @return activationspec
     */
-   public String getConfigPropertyName()
+   public Activationspec15 getActivationspec()
    {
-      return configPropertyName;
+      return activationspec;
    }
 
    /**
@@ -93,9 +92,9 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((configPropertyName == null) ? 0 : configPropertyName.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((activationspec == null) ? 0 : activationspec.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((messagelistenerType == null) ? 0 : messagelistenerType.hashCode());
       return result;
    }
 
@@ -115,30 +114,19 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof RequiredConfigProperty))
+      if (!(obj instanceof MessageListener))
       {
          return false;
       }
-      RequiredConfigProperty other = (RequiredConfigProperty) obj;
-      if (configPropertyName == null)
+      MessageListener other = (MessageListener) obj;
+      if (activationspec == null)
       {
-         if (other.configPropertyName != null)
+         if (other.activationspec != null)
          {
             return false;
          }
       }
-      else if (!configPropertyName.equals(other.configPropertyName))
-      {
-         return false;
-      }
-      if (description == null)
-      {
-         if (other.description != null)
-         {
-            return false;
-         }
-      }
-      else if (!description.equals(other.description))
+      else if (!activationspec.equals(other.activationspec))
       {
          return false;
       }
@@ -153,6 +141,17 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
       {
          return false;
       }
+      if (messagelistenerType == null)
+      {
+         if (other.messagelistenerType != null)
+         {
+            return false;
+         }
+      }
+      else if (!messagelistenerType.equals(other.messagelistenerType))
+      {
+         return false;
+      }
       return true;
    }
 
@@ -164,7 +163,7 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "RequiredConfigProperty [description=" + description + ", configPropertyName=" + configPropertyName
+      return "MessageListener [messagelistenerType=" + messagelistenerType + ", activationspec=" + activationspec
             + ", id=" + id + "]";
    }
 }

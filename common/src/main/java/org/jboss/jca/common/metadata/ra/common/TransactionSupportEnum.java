@@ -19,23 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
-
-import org.jboss.jca.common.metadata.JCAMetadata;
+package org.jboss.jca.common.metadata.ra.common;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public interface IdDecoratedMetadata extends JCAMetadata
+public enum TransactionSupportEnum
 {
-
    /**
-    *
-    * Return the String representing xml ID
-    *
-    * @return the XML ID
+    * NoTransaction
     */
-   public String getId();
+   NoTransaction,
+   /**
+    * LocalTransaction
+    */
+   LocalTransaction,
+   /**
+    * XATransaction
+    */
+   XATransaction;
 
 }

@@ -52,7 +52,7 @@ public class JbossRaParser implements MetadataParser<JbossRa>
 
    /**
     * Parse the xml file and return the {@link JbossRa} metadata
-    * @param xmlFile The xml file to parse
+    * @param xmlInputStream The stream on xml file to parse
     * @return The {@link JbossRa} metadata
     * @exception Exception Thrown if an error occurs
     */

@@ -19,10 +19,8 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
 
-import org.jboss.jca.common.metadata.ra.common.IdDecoratedMetadata;
-import org.jboss.jca.common.metadata.ra.common.LocalizedXsdString;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,45 +29,37 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class RequiredConfigProperty implements IdDecoratedMetadata
+public class MessageAdapter implements IdDecoratedMetadata
 {
    /**
     */
-   private static final long serialVersionUID = 4299927051352998447L;
+   private static final long serialVersionUID = 1731250340667920811L;
 
-   private final List<LocalizedXsdString> description;
-
-   private final String configPropertyName;
+   private final List<MessageListener> messagelistener;
 
    private final String id;
 
    /**
-    * @param description descriptions of this property
-    * @param configPropertyName name of the property
+    * @param messagelistener The messagelistener specifies information about a
+    *  specific message listener supported by the messaging
+    *  resource adapter. It contains information on the Java type
+    *  of the message listener interface and an activation
+    *  specification.
     * @param id XML ID
     */
-   public RequiredConfigProperty(List<LocalizedXsdString> description, String configPropertyName, String id)
+   public MessageAdapter(List<MessageListener> messagelistener, String id)
    {
       super();
-      this.description = description;
-      this.configPropertyName = configPropertyName;
+      this.messagelistener = messagelistener;
       this.id = id;
    }
 
    /**
-    * @return description
+    * @return messagelistener
     */
-   public List<LocalizedXsdString> getDescription()
+   public List<MessageListener> getMessagelistener()
    {
-      return Collections.unmodifiableList(description);
-   }
-
-   /**
-    * @return configPropertyName
-    */
-   public String getConfigPropertyName()
-   {
-      return configPropertyName;
+      return Collections.unmodifiableList(messagelistener);
    }
 
    /**
@@ -93,9 +83,8 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((configPropertyName == null) ? 0 : configPropertyName.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((messagelistener == null) ? 0 : messagelistener.hashCode());
       return result;
    }
 
@@ -115,33 +104,11 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof RequiredConfigProperty))
+      if (!(obj instanceof MessageAdapter))
       {
          return false;
       }
-      RequiredConfigProperty other = (RequiredConfigProperty) obj;
-      if (configPropertyName == null)
-      {
-         if (other.configPropertyName != null)
-         {
-            return false;
-         }
-      }
-      else if (!configPropertyName.equals(other.configPropertyName))
-      {
-         return false;
-      }
-      if (description == null)
-      {
-         if (other.description != null)
-         {
-            return false;
-         }
-      }
-      else if (!description.equals(other.description))
-      {
-         return false;
-      }
+      MessageAdapter other = (MessageAdapter) obj;
       if (id == null)
       {
          if (other.id != null)
@@ -150,6 +117,17 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
          }
       }
       else if (!id.equals(other.id))
+      {
+         return false;
+      }
+      if (messagelistener == null)
+      {
+         if (other.messagelistener != null)
+         {
+            return false;
+         }
+      }
+      else if (!messagelistener.equals(other.messagelistener))
       {
          return false;
       }
@@ -164,7 +142,6 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "RequiredConfigProperty [description=" + description + ", configPropertyName=" + configPropertyName
-            + ", id=" + id + "]";
+      return "MessageAdapter [messagelistener=" + messagelistener + ", id=" + id + "]";
    }
 }

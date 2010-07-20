@@ -19,46 +19,44 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ra.ra16;
+package org.jboss.jca.common.metadata.ra.common;
 
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class MessageAdapter implements IdDecoratedMetadata
+public class InboundResourceAdapter implements IdDecoratedMetadata
 {
    /**
     */
-   private static final long serialVersionUID = 1731250340667920811L;
+   private static final long serialVersionUID = -2854927981408307535L;
 
-   private final List<MessageListener> messagelistener;
+   private final MessageAdapter messageadapter;
 
    private final String id;
 
    /**
-    * @param messagelistener The messagelistener specifies information about a
-    *  specific message listener supported by the messaging
-    *  resource adapter. It contains information on the Java type
-    *  of the message listener interface and an activation
-    *  specification.
+    * @param messageadapter The messageadapterType specifies information about the
+    * messaging capabilities of the resource adapter. This
+    * contains information specific to the implementation of the
+    * resource adapter library as specified through the
+    * messagelistener element.
     * @param id XML ID
     */
-   public MessageAdapter(List<MessageListener> messagelistener, String id)
+   public InboundResourceAdapter(MessageAdapter messageadapter, String id)
    {
       super();
-      this.messagelistener = messagelistener;
+      this.messageadapter = messageadapter;
       this.id = id;
    }
 
    /**
-    * @return messagelistener
+    * @return messageadapter
     */
-   public List<MessageListener> getMessagelistener()
+   public MessageAdapter getMessageadapter()
    {
-      return Collections.unmodifiableList(messagelistener);
+      return messageadapter;
    }
 
    /**
@@ -83,7 +81,7 @@ public class MessageAdapter implements IdDecoratedMetadata
       final int prime = 31;
       int result = 1;
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((messagelistener == null) ? 0 : messagelistener.hashCode());
+      result = prime * result + ((messageadapter == null) ? 0 : messageadapter.hashCode());
       return result;
    }
 
@@ -103,11 +101,11 @@ public class MessageAdapter implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof MessageAdapter))
+      if (!(obj instanceof InboundResourceAdapter))
       {
          return false;
       }
-      MessageAdapter other = (MessageAdapter) obj;
+      InboundResourceAdapter other = (InboundResourceAdapter) obj;
       if (id == null)
       {
          if (other.id != null)
@@ -119,14 +117,14 @@ public class MessageAdapter implements IdDecoratedMetadata
       {
          return false;
       }
-      if (messagelistener == null)
+      if (messageadapter == null)
       {
-         if (other.messagelistener != null)
+         if (other.messageadapter != null)
          {
             return false;
          }
       }
-      else if (!messagelistener.equals(other.messagelistener))
+      else if (!messageadapter.equals(other.messageadapter))
       {
          return false;
       }
@@ -141,6 +139,6 @@ public class MessageAdapter implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "MessageAdapter [messagelistener=" + messagelistener + ", id=" + id + "]";
+      return "InboundResourceAdapter [messageadapter=" + messageadapter + ", id=" + id + "]";
    }
 }

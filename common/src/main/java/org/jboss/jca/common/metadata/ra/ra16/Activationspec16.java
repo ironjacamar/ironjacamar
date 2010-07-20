@@ -21,108 +21,78 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
+import org.jboss.jca.common.metadata.ra.ra15.Activationspec15;
+
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class LocalizedXsdString extends XsdString implements LocalizedMetadata
+public class Activationspec16 extends Activationspec15
 {
    /**
     */
-   private static final long serialVersionUID = -7778684576336929347L;
+   private static final long serialVersionUID = -6951903183562100136L;
 
-   private final String lang;
+   private final List<ConfigProperty16> configProperty;
 
    /**
-    * @param value value of the String
-    * @param id XML ID
-    * @param lang language
+    * @param activationspecClass full qualified name of the class
+    * @param requiredConfigProperty a List of required config properties
+    * @param configProperty a list of (optional) config property
+    * @param id xmlID
     */
-   public LocalizedXsdString(String value, String id, String lang)
+   public Activationspec16(String activationspecClass, List<RequiredConfigProperty> requiredConfigProperty,
+         List<ConfigProperty16> configProperty, String id)
    {
-      super(value, id);
-      this.lang = lang;
+      super(activationspecClass, requiredConfigProperty, id);
+      this.configProperty = configProperty;
    }
 
    /**
-    * Constructor for default language "en"
-    *
-    * @param value value of the String
-    * @param id XML ID
+    * @return configProperty
     */
-   public LocalizedXsdString(String value, String id)
+   public List<ConfigProperty16> getConfigProperty()
    {
-      super(value, id);
-      this.lang = "en";
+      return Collections.unmodifiableList(configProperty);
    }
 
-   /**
-    * @return lang
-    */
-   @Override
-   public String getLang()
-   {
-      return lang;
-   }
-
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#hashCode()
-    */
    @Override
    public int hashCode()
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((lang == null) ? 0 : lang.hashCode());
+      result = prime * result + ((configProperty == null) ? 0 : configProperty.hashCode());
       return result;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
    @Override
    public boolean equals(Object obj)
    {
       if (this == obj)
-      {
          return true;
-      }
       if (!super.equals(obj))
-      {
          return false;
-      }
-      if (!(obj instanceof LocalizedXsdString))
-      {
+      if (!(obj instanceof Activationspec16))
          return false;
-      }
-      LocalizedXsdString other = (LocalizedXsdString) obj;
-      if (lang == null)
+      Activationspec16 other = (Activationspec16) obj;
+      if (configProperty == null)
       {
-         if (other.lang != null)
-         {
+         if (other.configProperty != null)
             return false;
-         }
       }
-      else if (!lang.equals(other.lang))
-      {
+      else if (!configProperty.equals(other.configProperty))
          return false;
-      }
       return true;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#toString()
-    */
    @Override
    public String toString()
    {
-      return "LocalizedXsdString [lang=" + lang + ", value=" + value + ", id=" + id + "]";
+      return "Activationspec [configProperty=" + configProperty + ", activationspecClass=" + activationspecClass
+            + ", requiredConfigProperty=" + requiredConfigProperty + ", id=" + id + "]";
    }
 
 }

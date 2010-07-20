@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ra;
 
 import org.jboss.jca.common.metadata.MetadataParser;
+import org.jboss.jca.common.metadata.ra.common.Connector;
 
 import java.io.InputStream;
 
