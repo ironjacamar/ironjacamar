@@ -29,8 +29,6 @@ import org.jboss.jca.common.metadata.jbossra.jbossra20.JbossRa20;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.OverrideElementAttribute;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.RaConfigProperty;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,17 +57,15 @@ public class JbossRaParser implements MetadataParser<JbossRa>
     * @exception Exception Thrown if an error occurs
     */
    @Override
-   public JbossRa parse(File xmlFile) throws Exception
+   public JbossRa parse(InputStream xmlInputStream) throws Exception
    {
-      InputStream input = null;
       XMLStreamReader reader = null;
       JbossRa jbossRa = null;
 
       try
       {
          XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-         input = new FileInputStream(xmlFile);
-         reader = inputFactory.createXMLStreamReader(input);
+         reader = inputFactory.createXMLStreamReader(xmlInputStream);
 
          //iterate over tags
          switch (reader.nextTag())
@@ -124,8 +120,6 @@ public class JbossRaParser implements MetadataParser<JbossRa>
       {
          if (reader != null)
             reader.close();
-         if (input != null)
-            input.close();
       }
       return jbossRa;
 

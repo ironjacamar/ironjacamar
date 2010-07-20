@@ -28,6 +28,7 @@ import org.jboss.jca.common.metadata.jbossra.jbossra20.JbossRa20;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.RaConfigProperty;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import org.junit.Test;
 
@@ -56,7 +57,7 @@ public class JbossRaParserTestCase
             .getResource("jboss-ra-1.0-single-attribute.xml").toURI());
       JbossRaParser parser = new JbossRaParser();
       //when
-      JbossRa jbossRa = parser.parse(xmlFile);
+      JbossRa jbossRa = parser.parse(new FileInputStream(xmlFile));
       //then
       assertThat(jbossRa, instanceOf(JbossRa10.class));
       assertThat(jbossRa.getRaConfigProperties().size(), is(1));
@@ -84,7 +85,7 @@ public class JbossRaParserTestCase
             .getResource("jboss-ra-1.0-no-attributes.xml").toURI());
       JbossRaParser parser = new JbossRaParser();
       //when
-      JbossRa jbossRa = parser.parse(xmlFile);
+      JbossRa jbossRa = parser.parse(new FileInputStream(xmlFile));
       //then
       assertThat(jbossRa, instanceOf(JbossRa10.class));
       assertThat(jbossRa.getRaConfigProperties().size(), is(0));
@@ -105,7 +106,7 @@ public class JbossRaParserTestCase
             .getResource("jboss-ra-1.0-multiple-attributes.xml").toURI());
       JbossRaParser parser = new JbossRaParser();
       //when
-      JbossRa jbossRa = parser.parse(xmlFile);
+      JbossRa jbossRa = parser.parse(new FileInputStream(xmlFile));
       //then
       assertThat(jbossRa, instanceOf(JbossRa10.class));
       assertThat(jbossRa.getRaConfigProperties().size(), is(2));
@@ -137,7 +138,7 @@ public class JbossRaParserTestCase
             .getResource("jboss-ra-2.0-single-attribute.xml").toURI());
       JbossRaParser parser = new JbossRaParser();
       //when
-      JbossRa jbossRa = parser.parse(xmlFile);
+      JbossRa jbossRa = parser.parse(new FileInputStream(xmlFile));
       //then
       assertThat(jbossRa, instanceOf(JbossRa20.class));
       assertThat(jbossRa.getRaConfigProperties().size(), is(1));
@@ -167,7 +168,7 @@ public class JbossRaParserTestCase
             .getResource("jboss-ra-2.0-no-attributes.xml").toURI());
       JbossRaParser parser = new JbossRaParser();
       //when
-      JbossRa jbossRa = parser.parse(xmlFile);
+      JbossRa jbossRa = parser.parse(new FileInputStream(xmlFile));
       //then
       assertThat(jbossRa, instanceOf(JbossRa20.class));
       assertThat(jbossRa.getRaConfigProperties().size(), is(0));
@@ -189,7 +190,7 @@ public class JbossRaParserTestCase
             .getResource("jboss-ra-2.0-multiple-attributes.xml").toURI());
       JbossRaParser parser = new JbossRaParser();
       //when
-      JbossRa jbossRa = parser.parse(xmlFile);
+      JbossRa jbossRa = parser.parse(new FileInputStream(xmlFile));
       //then
       assertThat(jbossRa, instanceOf(JbossRa20.class));
       assertThat(jbossRa.getRaConfigProperties().size(), is(2));
@@ -220,7 +221,7 @@ public class JbossRaParserTestCase
    //            .getResource("jboss-ra-1.0-tons-attributes.xml").toURI());
    //      JbossRaParser parser = new JbossRaParser();
    //      //when
-   //      JbossRa jbossRa = parser.parse(xmlFile);
+   //      JbossRa jbossRa = parser.parse(new FileInputStream(xmlFile));
    //      //then
    //      assertThat(jbossRa, instanceOf(JbossRa10.class));
    //      assertThat(jbossRa.getRaConfigProperties().size(), is(200000));

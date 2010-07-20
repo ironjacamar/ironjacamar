@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.common.metadata;
 
-import java.io.File;
+import java.io.InputStream;
 
 /**
  *
@@ -35,11 +35,12 @@ public interface MetadataParser<T extends JCAMetadata>
 {
 
    /**
-    * Parse the xml file and return the JCAMetaData for which the concrete parser is designed
-    * @param xmlFile The xml file to parse
+    * Parse the xml file and return the JCAMetaData for which the concrete parser is designed.
+    * Note that is responsibility of the client to open and close the stream
+    * @param xmlInputStream an InputStrema opened on the xml file to parse
     * @return The metadata
     * @exception Exception Thrown if an error occurs
     */
-   public T parse(File xmlFile) throws Exception;
+   public T parse(InputStream xmlInputStream) throws Exception;
 
 }

@@ -28,6 +28,8 @@ import org.jboss.jca.common.metadata.ra.Connector;
 import org.jboss.jca.common.metadata.ra.RaParser;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.jboss.logging.Logger;
 
@@ -62,12 +64,14 @@ public class MetadataFactory
 
       if (metadataFile.exists())
       {
+         InputStream input = null;
          String url = metadataFile.getAbsolutePath();
          try
          {
             long start = System.currentTimeMillis();
+            input = new FileInputStream(metadataFile);
 
-            result = (new RaParser()).parse(metadataFile);
+            result = (new RaParser()).parse(input);
 
             log.debugf("Total parse for %s took %d ms", url, (System.currentTimeMillis() - start));
 
@@ -79,6 +83,12 @@ public class MetadataFactory
             log.errorf(e, "Error during parsing: %s", url);
             throw e;
          }
+         finally
+         {
+            if (input != null)
+               input.close();
+         }
+
       }
 
       return result;
@@ -98,12 +108,14 @@ public class MetadataFactory
 
       if (metadataFile.exists())
       {
+         InputStream input = null;
          String url = metadataFile.getAbsolutePath();
          try
          {
             long start = System.currentTimeMillis();
 
-            result = (new JbossRaParser()).parse(metadataFile);
+            input = new FileInputStream(metadataFile);
+            result = (new JbossRaParser()).parse(input);
 
             log.debugf("Total parse for $s took %d ms", url, (System.currentTimeMillis() - start));
 
@@ -113,6 +125,11 @@ public class MetadataFactory
          {
             log.error("Error during parsing: " + url, e);
             throw e;
+         }
+         finally
+         {
+            if (input != null)
+               input.close();
          }
       }
 
