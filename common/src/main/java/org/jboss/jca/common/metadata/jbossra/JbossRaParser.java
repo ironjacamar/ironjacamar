@@ -282,8 +282,7 @@ public class JbossRaParser implements MetadataParser<JbossRa>
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (JbossRa10.Tag.forName(reader.getLocalName()) == JbossRa10.Tag.RA_CONFIG_PROPERTY
-                     || JbossRa20.Tag.forName(reader.getLocalName()) == JbossRa20.Tag.RA_CONFIG_PROPERTY)
+               if (JbossRa20.Tag.forName(reader.getLocalName()) == JbossRa20.Tag.BEAN_VALIDATION_GROUPS)
                {
                   beanValidationGroup.trimToSize();
                   return new BeanValidationGroup(beanValidationGroup);

@@ -24,6 +24,7 @@ package org.jboss.jca.common.metadata.ra;
 import org.jboss.jca.common.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.metadata.jbossra.JbossRaParser;
 import org.jboss.jca.common.metadata.jbossra.jbossra10.JbossRa10;
+import org.jboss.jca.common.metadata.jbossra.jbossra20.JbossRa20;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.RaConfigProperty;
 
 import java.io.File;
@@ -122,6 +123,93 @@ public class JbossRaParserTestCase
                   .equals(
                         RaConfigProperty.buildRaConfigProperty("ra-config-property-name1", "ra-config-property-value1",
                               "ra-config-property-type1", null)), is(true));
+   }
+
+   /**
+    * shouldParseJbossRa20WithSingleProperty
+    * @throws Exception in case of error
+    */
+   @Test
+   public void shouldParseJbossRa20WithSingleProperty() throws Exception
+   {
+      //given
+      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("jboss-ra-2.0-single-attribute.xml").toURI());
+      JbossRaParser parser = new JbossRaParser();
+      //when
+      JbossRa jbossRa = parser.parse(xmlFile);
+      //then
+      assertThat(jbossRa, instanceOf(JbossRa20.class));
+      assertThat(jbossRa.getRaConfigProperties().size(), is(1));
+      assertThat(
+            jbossRa
+                  .getRaConfigProperties()
+                  .get(0)
+                  .equals(
+                        RaConfigProperty.buildRaConfigProperty("ra-config-property-name0", "ra-config-property-value0",
+                              "java.lang.Boolean", null)), is(true));
+      assertThat(((JbossRa20) jbossRa).getBeanValidationGroups().size(), is(1));
+      assertThat(((JbossRa20) jbossRa).getBootstrapContext(), is("bootstrap-context0"));
+
+   }
+
+   /**
+    *
+    * shouldParseJbossRa20WithOutProperties
+    *
+    * @throws Exception in case of error
+    */
+   @Test
+   public void shouldParseJbossRa20WithOutProperties() throws Exception
+   {
+      //given
+      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("jboss-ra-2.0-no-attributes.xml").toURI());
+      JbossRaParser parser = new JbossRaParser();
+      //when
+      JbossRa jbossRa = parser.parse(xmlFile);
+      //then
+      assertThat(jbossRa, instanceOf(JbossRa20.class));
+      assertThat(jbossRa.getRaConfigProperties().size(), is(0));
+      assertThat(((JbossRa20) jbossRa).getBeanValidationGroups().size(), is(0));
+
+   }
+
+   /**
+    *
+    * shouldParseJbossRa20WithMultipleProperties
+    *
+    * @throws Exception in case of error
+    */
+   @Test
+   public void shouldParseJbossRa20WithMultipleProperties() throws Exception
+   {
+      //given
+      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("jboss-ra-2.0-multiple-attributes.xml").toURI());
+      JbossRaParser parser = new JbossRaParser();
+      //when
+      JbossRa jbossRa = parser.parse(xmlFile);
+      //then
+      assertThat(jbossRa, instanceOf(JbossRa20.class));
+      assertThat(jbossRa.getRaConfigProperties().size(), is(2));
+      assertThat(
+            jbossRa
+                  .getRaConfigProperties()
+                  .get(0)
+                  .equals(
+                        RaConfigProperty.buildRaConfigProperty("ra-config-property-name0", "ra-config-property-value0",
+                              "java.lang.Boolean", null)), is(true));
+      assertThat(
+            jbossRa
+                  .getRaConfigProperties()
+                  .get(1)
+                  .equals(
+                        RaConfigProperty.buildRaConfigProperty("ra-config-property-name1", "ra-config-property-value1",
+                              "java.lang.Boolean", null)), is(true));
+      assertThat(((JbossRa20) jbossRa).getBeanValidationGroups().size(), is(2));
+      assertThat(((JbossRa20) jbossRa).getBootstrapContext(), is("bootstrap-context0"));
+
    }
 
    //   @Test
