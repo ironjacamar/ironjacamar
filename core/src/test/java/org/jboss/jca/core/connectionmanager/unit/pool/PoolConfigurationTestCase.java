@@ -22,112 +22,111 @@
 
 package org.jboss.jca.core.connectionmanager.unit.pool;
 
-import org.jboss.jca.core.connectionmanager.pool.PoolParams;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
- * <code>PoolParams</code> unit test.
+ * <code>PoolConfiguration</code> unit test.
  * 
- * @author gurkanerdogdu
- * @version $Rev$ $Date$
- *
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
-public class PoolParamsTestCase
+public class PoolConfigurationTestCase
 {
    /**
-    * Test {@link PoolParams#getMinSize()}
+    * Test {@link PoolConfiguration#getMinSize()}
     */
    @Test
    public void testMinSize()
    {
-      PoolParams params = new PoolParams();
+      PoolConfiguration params = new PoolConfiguration();
       assertEquals(0, params.getMinSize());
       params.setMinSize(10);
       assertEquals(10, params.getMinSize());
    }
 
    /**
-    * Test {@link PoolParams#getMaxSize()}
+    * Test {@link PoolConfiguration#getMaxSize()}
     */
    @Test
    public void testMaxSize()
    {
-      PoolParams params = new PoolParams();
+      PoolConfiguration params = new PoolConfiguration();
       assertEquals(10, params.getMaxSize());
       params.setMaxSize(20);
       assertEquals(20, params.getMaxSize());      
    }
 
    /**
-    * Test {@link PoolParams#getBlockingTimeout()}
+    * Test {@link PoolConfiguration#getBlockingTimeout()}
     */
    @Test
    public void testBlockingTimeout()
    {
-      PoolParams params = new PoolParams();
+      PoolConfiguration params = new PoolConfiguration();
       assertEquals(30000, params.getBlockingTimeout());
       params.setBlockingTimeout(60000);
       assertEquals(60000, params.getBlockingTimeout());
    }
 
    /**
-    * Test {@link PoolParams#getIdleTimeout()}
+    * Test {@link PoolConfiguration#getIdleTimeout()}
     */
    @Test
    public void testIdleTimeout()
    {
-      PoolParams params = new PoolParams();
+      PoolConfiguration params = new PoolConfiguration();
       assertEquals(1000 * 60 * 30, params.getIdleTimeout());
       params.setIdleTimeout(1000 * 60 * 20);
       assertEquals(1000 * 60 * 20, params.getIdleTimeout());
    }
 
    /**
-    * Test {@link PoolParams#getBackgroundValidationInterval()}
+    * Test {@link PoolConfiguration#getBackgroundValidationInterval()}
     */
    @Test
    public void testBackgroundValidationInterval()
    {
-      PoolParams params = new PoolParams();
+      PoolConfiguration params = new PoolConfiguration();
       assertEquals(0L, params.getBackgroundValidationInterval());
       params.setBackgroundValidationInterval(50000L);
       assertEquals(50000L, params.getBackgroundValidationInterval());
    }
 
    /**
-    * Test {@link PoolParams#isPrefill()}
+    * Test {@link PoolConfiguration#isPrefill()}
     */
    @Test
    public void testIsPrefill()
    {
-      PoolParams params = new PoolParams();
+      PoolConfiguration params = new PoolConfiguration();
       assertFalse("Prefill must be false", params.isPrefill());
       params.setPrefill(true);
       assertTrue("Prefill must be true", params.isPrefill());
    }
 
    /**
-    * Test {@link PoolParams#isStrictMin()}
+    * Test {@link PoolConfiguration#isStrictMin()}
     */
    @Test
    public void testIsStrictMin()
    {
-      PoolParams params = new PoolParams();
+      PoolConfiguration params = new PoolConfiguration();
       assertFalse("StrictMin must be false", params.isStrictMin());
       params.setStrictMin(true);
       assertTrue("StrictMin must be true", params.isStrictMin());      
    }
 
    /**
-    * Test {@link PoolParams#isUseFastFail()}
+    * Test {@link PoolConfiguration#isUseFastFail()}
     */
    @Test
    public void testIsUseFastFail()
    {
-      PoolParams params = new PoolParams();
+      PoolConfiguration params = new PoolConfiguration();
       assertFalse("UseFastFail must be false", params.isUseFastFail());
       params.setUseFastFail(true);
       assertTrue("UseFastFail must be true", params.isUseFastFail());      

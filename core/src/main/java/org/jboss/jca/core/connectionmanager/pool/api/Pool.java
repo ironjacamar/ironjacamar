@@ -32,14 +32,13 @@ import javax.security.auth.Subject;
 import javax.transaction.Transaction;
 
 /**
- * A managed connection pool.
+ * A pool.
  *
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision$
  */
-public interface ManagedConnectionPool
+public interface Pool
 {
    /**
     * Retrieve the managed connection factory for this pool.

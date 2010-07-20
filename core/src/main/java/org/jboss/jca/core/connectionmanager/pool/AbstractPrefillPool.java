@@ -22,6 +22,8 @@
 
 package org.jboss.jca.core.connectionmanager.pool;
 
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
@@ -40,14 +42,14 @@ public abstract class AbstractPrefillPool extends AbstractPool implements PreFil
     * Create a new prefill pool.
     * 
     * @param mcf the managed connection factory
-    * @param poolParams the pooling parameters
+    * @param pc the pool configuration
     * @param noTxSeparatePools noTxSeparatePool
     */
-   protected AbstractPrefillPool(final ManagedConnectionFactory mcf, final PoolParams poolParams,
+   protected AbstractPrefillPool(final ManagedConnectionFactory mcf, final PoolConfiguration pc,
                                  final boolean noTxSeparatePools)
    {
-      super(mcf, poolParams, noTxSeparatePools);
-      this.shouldPrefill = poolParams.isPrefill();
+      super(mcf, pc, noTxSeparatePools);
+      this.shouldPrefill = pc.isPrefill();
    }
 
    /**

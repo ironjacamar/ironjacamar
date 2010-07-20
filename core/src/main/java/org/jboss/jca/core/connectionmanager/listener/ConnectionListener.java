@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
-import org.jboss.jca.core.connectionmanager.pool.api.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEventListener;
@@ -46,11 +46,11 @@ public interface ConnectionListener extends ConnectionEventListener
    ManagedConnection getManagedConnection();
 
    /**
-    * Retrieve the managed connection pool for this listener.
+    * Retrieve the pool for this listener.
     * 
-    * @return the managed connection pool
+    * @return the pool
     */
-   ManagedConnectionPool getManagedConnectionPool();
+   Pool getPool();
 
    /**
     * Tidyup

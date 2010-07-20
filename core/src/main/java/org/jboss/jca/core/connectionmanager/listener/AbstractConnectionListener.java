@@ -23,7 +23,7 @@ package org.jboss.jca.core.connectionmanager.listener;
 
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
-import org.jboss.jca.core.connectionmanager.pool.api.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -48,19 +48,19 @@ public abstract class AbstractConnectionListener implements ConnectionListener
 {
    private Logger log = Logger.getLogger(getClass());
    
-   /**Wraps managed connection instance*/
+   /** Wraps managed connection instance*/
    private final ManagedConnection managedConnection;
    
-   /**Managed connection pool for this connection*/
-   private final ManagedConnectionPool managedConnectionPool;
+   /** Pool for this connection*/
+   private final Pool pool;
    
-   /**Pool internal context*/
+   /** Pool internal context*/
    private final Object internalManagedPoolContext;
    
-   /**Connection State*/
+   /** Connection State*/
    private ConnectionState state = ConnectionState.NORMAL;
    
-   /**Connection handles*/
+   /** Connection handles*/
    private final CopyOnWriteArrayList<Object> connectionHandles = new CopyOnWriteArrayList<Object>();
       
    /**Track by transaction or not*/
@@ -85,16 +85,16 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * Creates a new instance of the listener that is responsible for
     * tracking the owned connection instance.
     * @param managedConnection managed connection
-    * @param managedConnectionPool managed connection pool
+    * @param pool pool
     * @param context pool internal context
     * @param cm connection manager
     */
    protected AbstractConnectionListener(AbstractConnectionManager cm, ManagedConnection managedConnection, 
-         ManagedConnectionPool managedConnectionPool, Object context)
+                                        Pool pool, Object context)
    {
       this.cm = cm;
       this.managedConnection = managedConnection;
-      this.managedConnectionPool = managedConnectionPool;
+      this.pool = pool;
       this.internalManagedPoolContext = context;
       trace = this.log.isTraceEnabled();
       lastUse = System.currentTimeMillis();
@@ -168,9 +168,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */   
-   public ManagedConnectionPool getManagedConnectionPool()
+   public Pool getPool()
    {      
-      return this.managedConnectionPool;
+      return this.pool;
    }
 
    /**
@@ -410,7 +410,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       buffer.append(" lastUse=").append(lastUse);
       buffer.append(" permit=").append(permit);
       buffer.append(" trackByTx=").append(trackByTx.get());
-      buffer.append(" managed connection pool=").append(this.managedConnectionPool);
+      buffer.append(" pool=").append(this.pool);
       buffer.append(" pool internal context=").append(this.internalManagedPoolContext);
       toString(buffer);
       buffer.append(']');

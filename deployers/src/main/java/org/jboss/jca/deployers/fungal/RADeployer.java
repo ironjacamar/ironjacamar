@@ -25,10 +25,12 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.common.annotations.Annotations;
 import org.jboss.jca.common.metadata.Metadata;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
-import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
-import org.jboss.jca.core.connectionmanager.pool.PoolParams;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.validator.Failure;
@@ -481,7 +483,7 @@ public final class RADeployer implements CloneableDeployer
                         associateResourceAdapter(resourceAdapter, mcf);
                         
                         // Add a connection manager
-                        AbstractConnectionManager cm = null;
+                        ConnectionManager cm = null;
                         TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
                         TransactionSupportMetaData tsmd = TransactionSupportMetaData.NoTransaction;
                         
@@ -537,10 +539,12 @@ public final class RADeployer implements CloneableDeployer
                            cm = txCm;
                         }
 
-                        PoolParams poolParams = new PoolParams();
-                        OnePool onePool = new OnePool(mcf, poolParams, true);
-                        onePool.setConnectionListenerFactory(cm);
-                        cm.setPoolingStrategy(onePool);
+                        PoolConfiguration pc = new PoolConfiguration();
+                        PoolFactory pf = new PoolFactory();
+
+                        Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+                        pool.setConnectionListenerFactory(cm);
+                        cm.setPool(pool);
 
                         // ConnectionFactory
                         Object cf = mcf.createConnectionFactory(cm);

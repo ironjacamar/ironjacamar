@@ -123,7 +123,7 @@ import org.jboss.util.NestedRuntimeException;
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
  * @author <a href="weston.price@jboss.com">Weston Price</a>
- * @version $Revision: 77961 $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class TxConnectionManager extends AbstractConnectionManager
 {
@@ -507,7 +507,7 @@ public class TxConnectionManager extends AbstractConnectionManager
          }
       }
 
-      ConnectionListener cli = new TxConnectionListener(this, mc, getPoolingStrategy(), context, xaResource);
+      ConnectionListener cli = new TxConnectionListener(this, mc, getPool(), context, xaResource);
       mc.addConnectionEventListener(cli);
       return cli;
    }

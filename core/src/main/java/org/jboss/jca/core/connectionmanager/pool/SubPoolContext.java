@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -53,12 +54,12 @@ public class SubPoolContext
     * @param clf the connection listener factory
     * @param subject the subject
     * @param cri the connection request info
-    * @param poolParams the pool parameters
+    * @param pc the pool configuration
     */
    public SubPoolContext(TransactionManager tm, ManagedConnectionFactory mcf, ConnectionListenerFactory clf, 
-         Subject subject, ConnectionRequestInfo cri, PoolParams poolParams)
+                         Subject subject, ConnectionRequestInfo cri, PoolConfiguration pc)
    {
-      subPool = new InternalManagedConnectionPool(mcf, clf, subject, cri, poolParams);
+      subPool = new InternalManagedConnectionPool(mcf, clf, subject, cri, pc);
       if (tm != null)
       {
          trackByTx = new TransactionLocal(tm);  

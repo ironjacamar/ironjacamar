@@ -34,8 +34,7 @@ import javax.resource.spi.ManagedConnection;
  * Non transactional connection manager implementation.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$
- *
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class NoTxConnectionManager extends AbstractConnectionManager
 {
@@ -55,11 +54,9 @@ public class NoTxConnectionManager extends AbstractConnectionManager
    public ConnectionListener createConnectionListener(ManagedConnection managedConnection, Object context) 
       throws ResourceException
    {
-      ConnectionListener cli = new NoTxConnectionListener(this, managedConnection, getPoolingStrategy(), context);
+      ConnectionListener cli = new NoTxConnectionListener(this, managedConnection, getPool(), context);
       managedConnection.addConnectionEventListener(cli);
       
       return cli;
-
    }
-
 }

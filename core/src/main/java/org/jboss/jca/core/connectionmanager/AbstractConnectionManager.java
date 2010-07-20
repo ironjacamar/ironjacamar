@@ -26,7 +26,7 @@ import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
-import org.jboss.jca.core.connectionmanager.pool.api.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,8 +58,11 @@ import org.jboss.util.NotImplementedException;
  */
 public abstract class AbstractConnectionManager implements ConnectionManager 
 {
-   /**Log instance*/
+   /** Log instance */
    private Logger log = Logger.getLogger(getClass());
+   
+   /** Log trace */
+   private boolean trace;
    
    /**
     * Note that this copy has a trailing / unlike the original in
@@ -67,31 +70,28 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    private static final String SECURITY_MGR_PATH = "java:/jaas/";
    
-   /**Connection manager pooling strategy*/
-   private ManagedConnectionPool poolingStrategy;
+   /** The pool */
+   private Pool pool;
    
-   /**Security domain jndi name*/
+   /** Security domain jndi name */
    private String securityDomainJndiName;
    
-   /**SubjectFactory*/
+   /** SubjectFactory */
    private SubjectFactory subjectFactory;
    
-   /**Log trace*/
-   private boolean trace;
-   
-   /**Number of retry to allocate connection*/
+   /** Number of retry to allocate connection */
    private int allocationRetry;
 
-   /**Interval between retries*/
+   /** Interval between retries */
    private long allocationRetryWaitMillis;
 
-   /**Startup/ShutDown flag*/
+   /** Startup/ShutDown flag */
    private AtomicBoolean shutdown = new AtomicBoolean(false);
    
-   /**Cached connection manager*/
+   /** Cached connection manager */
    private CachedConnectionManager cachedConnectionManager;
    
-   /**Jndi name*/
+   /** Jndi name */
    private String jndiName;
    
    /**
@@ -112,21 +112,21 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
    
    /**
-    * Sets pooling strategy.
-    * @param poolingStrategy pooling strategy
+    * Set the pool.
+    * @param pool the pool
     */
-   public void setPoolingStrategy(ManagedConnectionPool poolingStrategy)
+   public void setPool(Pool pool)
    {
-      this.poolingStrategy = poolingStrategy;
+      this.pool = pool;
    }
    
    /**
-    * Gets pooling strategy.
-    * @return pooling strategy
+    * Get the pool.
+    * @return the pool
     */
-   public ManagedConnectionPool getPoolingStrategy()
+   public Pool getPool()
    {
-      return poolingStrategy;
+      return pool;
    }   
    
    /**
@@ -224,7 +224,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public javax.resource.spi.ManagedConnectionFactory getManagedConnectionFactory()
    {
-      if (poolingStrategy == null)
+      if (pool == null)
       {
          if (trace)
          {
@@ -234,7 +234,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       else
       {
-         return poolingStrategy.getManagedConnectionFactory();   
+         return pool.getManagedConnectionFactory();   
       }
       
       return null;
@@ -314,7 +314,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       // First attempt
       try
       {
-         return poolingStrategy.getConnection(transaction, subject, cri);
+         return pool.getConnection(transaction, subject, cri);
       }
       catch (ResourceException e)
       {
@@ -342,7 +342,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                      Thread.sleep(allocationRetryWaitMillis);  
                   }
 
-                  return poolingStrategy.getConnection(transaction, subject, cri);
+                  return pool.getConnection(transaction, subject, cri);
                }
                catch (ResourceException re)
                {
@@ -368,8 +368,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public void returnManagedConnection(ConnectionListener cl, boolean kill)
    {
-      ManagedConnectionPool localStrategy = cl.getManagedConnectionPool();
-      if (localStrategy != poolingStrategy)
+      Pool localStrategy = cl.getPool();
+      if (localStrategy != pool)
       {
          kill = true;  
       }
@@ -414,14 +414,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {
       //Check for pooling!
-      if (poolingStrategy == null)
+      if (pool == null)
       {
          throw new ResourceException("You are trying to use a connection factory that has been shut down: " +
                "ManagedConnectionFactory is null.");         
       }
 
       //it is an explicit spec requirement that equals be used for matching rather than ==.
-      if (!poolingStrategy.getManagedConnectionFactory().equals(mcf))
+      if (!pool.getManagedConnectionFactory().equals(mcf))
       {
          throw new ResourceException("Wrong ManagedConnectionFactory sent to allocateConnection!");  
       }

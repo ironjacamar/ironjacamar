@@ -23,6 +23,7 @@ package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
 
 import org.jboss.tm.TransactionTimeoutConfiguration;
@@ -49,4 +50,15 @@ public interface ConnectionManager extends
    TransactionTimeoutConfiguration, 
    JTATransactionChecker
 {
+   /**
+    * Set the pool.
+    * @param pool the pool
+    */
+   public void setPool(Pool pool);
+   
+   /**
+    * Get the pool.
+    * @return the pool
+    */
+   public Pool getPool();
 }

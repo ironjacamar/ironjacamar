@@ -20,14 +20,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.connectionmanager.pool;
+package org.jboss.jca.core.connectionmanager.pool.api;
 
 /**
- * Pooling parameters. 
+ * The pool configuration. 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev: $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class PoolParams
+public class PoolConfiguration
 {
    /** Minumum size of the pool */
    private int minSize;
@@ -58,7 +58,7 @@ public class PoolParams
    /**
     * Constructor
     */
-   public PoolParams()
+   public PoolConfiguration()
    {
       minSize = 0;
       maxSize = 10;
@@ -197,6 +197,4 @@ public class PoolParams
    {
       this.useFastFail = useFastFail;
    }
-
-   
 }

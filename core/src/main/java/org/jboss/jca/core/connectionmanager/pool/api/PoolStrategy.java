@@ -20,43 +20,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.connectionmanager.pool.strategy;
-
-import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
-import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
-
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.security.auth.Subject;
+package org.jboss.jca.core.connectionmanager.pool.api;
 
 /**
- * Pool implementation that uses subject.
- * 
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
+ * Defines a pool strategy. 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class PoolByCri extends AbstractPool
+public enum PoolStrategy
 {
-   
-   /**
-    * Creates a new instance.
-    * @param mcf managed connection factory
-    * @param pc pool configuration
-    * @param noTxSeparatePools notx seperate pool
-    */
-   public PoolByCri(final ManagedConnectionFactory mcf, final PoolConfiguration pc,
-                    final boolean noTxSeparatePools)
-   {
-      super(mcf, pc, noTxSeparatePools);
-   }
+   /** POOL_BY_CRI */
+   POOL_BY_CRI,
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   protected Object getKey(Subject subject, ConnectionRequestInfo cri, boolean separateNoTx) throws ResourceException
-   {
-      return new CriKey(cri, separateNoTx);
-   }
+   /** POOL_BY_SUBJECT */
+   POOL_BY_SUBJECT,
+
+   /** POOL_BY_SUBJECT_AND_CRI */
+   POOL_BY_SUBJECT_AND_CRI,
+
+   /** ONE_POOL */
+   ONE_POOL
 }

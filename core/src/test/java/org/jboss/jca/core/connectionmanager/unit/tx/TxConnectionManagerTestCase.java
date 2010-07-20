@@ -25,8 +25,10 @@ import org.jboss.jca.core.api.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
-import org.jboss.jca.core.connectionmanager.pool.PoolParams;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
 import org.jboss.jca.core.workmanager.unit.WorkManagerTestCase;
@@ -78,12 +80,13 @@ public class TxConnectionManagerTestCase
       transactionManager.begin();
       
       ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
-      PoolParams params = new PoolParams();      
+      PoolConfiguration pc = new PoolConfiguration();      
+      PoolFactory pf = new PoolFactory();      
       
-      OnePool onePool = new OnePool(mcf, params, true);
-      onePool.setConnectionListenerFactory(txConnectionManager);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      pool.setConnectionListenerFactory(txConnectionManager);
       
-      txConnectionManager.setPoolingStrategy(onePool);
+      txConnectionManager.setPool(pool);
       
       Object handle = connectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
       assertNotNull(handle);

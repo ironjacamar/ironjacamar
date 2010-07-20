@@ -24,7 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool.strategy;
 
 import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.InternalManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.pool.PoolParams;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -43,12 +43,12 @@ public class OnePool extends AbstractPrefillPool
     * Creates a new instance.
     * 
     * @param mcf managed connection factory
-    * @param poolParams pool parameter
+    * @param pc pool configuration
     * @param noTxSeparatePools notx seperate pool
     */
-   public OnePool(final ManagedConnectionFactory mcf, final PoolParams poolParams, final boolean noTxSeparatePools)
+   public OnePool(final ManagedConnectionFactory mcf, final PoolConfiguration pc, final boolean noTxSeparatePools)
    {
-      super(mcf, poolParams, noTxSeparatePools);
+      super(mcf, pc, noTxSeparatePools);
    }
 
    /**

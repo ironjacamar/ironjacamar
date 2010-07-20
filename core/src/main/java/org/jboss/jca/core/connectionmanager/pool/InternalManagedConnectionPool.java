@@ -26,6 +26,7 @@ import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSupport;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
@@ -81,6 +82,9 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
    /** The log */
    private static Logger log = Logger.getLogger(InternalManagedConnectionPool.class);   
    
+   /** Whether trace is enabled */
+   private final boolean trace = log.isTraceEnabled();
+
    /** The managed connection factory */
    private final ManagedConnectionFactory mcf;
 
@@ -93,8 +97,8 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
    /** The default connection request information */
    private final ConnectionRequestInfo defaultCri;
 
-   /** The pooling parameters */
-   private final PoolParams poolParams;
+   /** The pool configuration */
+   private final PoolConfiguration poolConfiguration;
 
    /** Copy of the maximum size from the pooling parameters.
     * Dynamic changes to this value are not compatible with
@@ -107,9 +111,6 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
 
    /** The permits used to control who can checkout a connection */
    private final Semaphore permits;
-
-   /** Whether trace is enabled */
-   private final boolean trace = log.isTraceEnabled();
 
    /** The checked out connections */
    private final CopyOnWriteArraySet<ConnectionListener> checkedOut = new CopyOnWriteArraySet<ConnectionListener>();
@@ -130,20 +131,29 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
     * @param clf the connection listener factory
     * @param subject the subject
     * @param cri the connection request info
-    * @param poolParams the pool parameters
+    * @param pc the pool configuration
     */
    public InternalManagedConnectionPool(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-         ConnectionRequestInfo cri, PoolParams poolParams)
+                                        ConnectionRequestInfo cri, PoolConfiguration pc)
    {
+      if (mcf == null)
+         throw new IllegalArgumentException("MCF is null");
+
+      if (clf == null)
+         throw new IllegalArgumentException("CLF is null");
+
+      if (pc == null)
+         throw new IllegalArgumentException("PoolConfiguration is null");
+
       this.mcf = mcf;
       this.clf = clf;
       this.defaultSubject = subject;
       this.defaultCri = cri;
-      this.poolParams = poolParams;
-      this.maxSize = poolParams.getMaxSize();
+      this.poolConfiguration = pc;
+      this.maxSize = pc.getMaxSize();
       this.permits = new Semaphore(this.maxSize, true);
   
-      if (poolParams.isPrefill())
+      if (pc.isPrefill())
       {
          PoolFiller.fillPool(this);
       }
@@ -176,7 +186,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       try
       {
          //Check connection is available, and if not waits for the blocking timeout
-         if (this.permits.tryAcquire(this.poolParams.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+         if (this.permits.tryAcquire(this.poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
          {
             do
             {
@@ -232,7 +242,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
                      
                      //We made it here, something went wrong and we should validate if 
                      //we should continue attempting to acquire a connection
-                     if (this.poolParams.isUseFastFail())
+                     if (this.poolConfiguration.isUseFastFail())
                      {
                         log.trace("Fast failing for connection attempt. No more attempts will " +
                               "be made to acquire connection from pool and a new connection " +
@@ -257,7 +267,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          {
             // we timed out
             throw new ResourceException("No ManagedConnections available within configured blocking timeout ( "
-                  + this.poolParams.getBlockingTimeout() + " [ms] )");            
+                  + this.poolConfiguration.getBlockingTimeout() + " [ms] )");            
          }
          
       } 
@@ -337,7 +347,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          if (!started.get())
          {
             started.set(true);
-            if (poolParams.getMinSize() > 0)
+            if (poolConfiguration.getMinSize() > 0)
             {
                PoolFiller.fillPool(this);  
             }
@@ -420,7 +430,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
    public void removeIdleConnections()
    {
       ArrayList<ConnectionListener> destroy = null;
-      long timeout = System.currentTimeMillis() - poolParams.getIdleTimeout();
+      long timeout = System.currentTimeMillis() - poolConfiguration.getIdleTimeout();
       
       while (true)
       {
@@ -463,7 +473,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          }
 
          // We destroyed something, check the minimum.
-         if (!shutdown.get() && poolParams.getMinSize() > 0)
+         if (!shutdown.get() && poolConfiguration.getMinSize() > 0)
          {
             PoolFiller.fillPool(this);  
          }
@@ -485,9 +495,9 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
    {      
       boolean remove = true;
       
-      if (this.poolParams.isStrictMin())
+      if (this.poolConfiguration.isStrictMin())
       {
-         remove = cls.size() > poolParams.getMinSize();
+         remove = cls.size() > poolConfiguration.getMinSize();
          
          log.trace("StrictMin is active. Current connection will be removed is " + remove);
          
@@ -503,19 +513,19 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
     */
    public void initialize()
    {
-      if (this.poolParams.getIdleTimeout() != 0L)
+      if (this.poolConfiguration.getIdleTimeout() != 0L)
       {
          //Register removal support
-         IdleRemover.registerPool(this, this.poolParams.getIdleTimeout());
+         IdleRemover.registerPool(this, this.poolConfiguration.getIdleTimeout());
       }
       
-      if (this.poolParams.getBackgroundValidationInterval() > 0)
+      if (this.poolConfiguration.getBackgroundValidationInterval() > 0)
       {
          log.debug("Registering for background validation at interval " + 
-               this.poolParams.getBackgroundValidationInterval());         
+               this.poolConfiguration.getBackgroundValidationInterval());         
          
          //Register validation
-         ConnectionValidator.registerPool(this, this.poolParams.getBackgroundValidationInterval());
+         ConnectionValidator.registerPool(this, this.poolConfiguration.getBackgroundValidationInterval());
       }
 
       shutdown.set(false);      
@@ -585,7 +595,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       }
 
       // This is really an error
-      if (!kill && cls.size() >= poolParams.getMaxSize())
+      if (!kill && cls.size() >= poolConfiguration.getMaxSize())
       {
          log.warn("Destroying returned connection, maximum pool size exceeded " + cl);
          kill = true;
@@ -689,7 +699,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
       }
       
       // We destroyed something, check the minimum.
-      if (!shutdown.get() && poolParams.getMinSize() > 0)
+      if (!shutdown.get() && poolConfiguration.getMinSize() > 0)
       {
          PoolFiller.fillPool(this);  
       }      
@@ -746,7 +756,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          // Also avoids unnessary fill checking when all connections are checked out
          try
          {
-            if (permits.tryAcquire(poolParams.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+            if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
             {
                try
                {
@@ -801,12 +811,12 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
     */
    private int getMinSize()
    {
-      if (this.poolParams.getMinSize() > this.maxSize)
+      if (this.poolConfiguration.getMinSize() > this.maxSize)
       {
          return maxSize;  
       }
       
-      return this.poolParams.getMinSize();
+      return this.poolConfiguration.getMinSize();
    }
    
    /**
@@ -821,7 +831,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          log.trace("Attempting to  validate connections for pool " + this);  
       }
 
-      if (this.permits.tryAcquire(this.poolParams.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+      if (this.permits.tryAcquire(this.poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
       {
          boolean destroyed = false;
          try
@@ -878,7 +888,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
             permits.release();
             
             //Check min size pool after validation
-            if (destroyed && !shutdown.get() && poolParams.getMinSize() > 0)
+            if (destroyed && !shutdown.get() && poolConfiguration.getMinSize() > 0)
             {
                PoolFiller.fillPool(this);
             }
@@ -899,7 +909,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
          cl = iter.next();
          long lastCheck = cl.getLastValidatedTime();
 
-         if ((System.currentTimeMillis() - lastCheck) >= poolParams.getBackgroundValidationInterval())
+         if ((System.currentTimeMillis() - lastCheck) >= poolConfiguration.getBackgroundValidationInterval())
          {
             cls.remove(cl);
             break;

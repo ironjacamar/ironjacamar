@@ -25,7 +25,8 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
-import org.jboss.jca.core.connectionmanager.pool.api.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +55,7 @@ import org.jboss.tm.TransactionLocal;
  * @version $Rev$
  *
  */
-public abstract class AbstractPool implements ManagedConnectionPool
+public abstract class AbstractPool implements Pool
 {
    /** The logger */
    protected final Logger log = Logger.getLogger(getClass());
@@ -72,7 +73,7 @@ public abstract class AbstractPool implements ManagedConnectionPool
    private ConnectionListenerFactory clf;
 
    /** The pool parameters */
-   private final PoolParams poolParams;
+   private final PoolConfiguration poolConfiguration;
 
    /** Whether to use separate pools for transactional and non-transaction use */
    private boolean noTxSeparatePools;
@@ -84,20 +85,20 @@ public abstract class AbstractPool implements ManagedConnectionPool
     * Create a new base pool.
     * 
     * @param mcf the managed connection factory
-    * @param poolParams the pooling parameters
+    * @param pc the pool configuration
     * @param noTxSeparatePools noTxSeparatePool
     */
-   protected AbstractPool(final ManagedConnectionFactory mcf, final PoolParams poolParams,
-                   final boolean noTxSeparatePools)
+   protected AbstractPool(final ManagedConnectionFactory mcf, final PoolConfiguration pc,
+                          final boolean noTxSeparatePools)
    {
       if (mcf == null)
          throw new IllegalArgumentException("MCF is null");
 
-      if (poolParams == null)
-         throw new IllegalArgumentException("PoolParams is null");
+      if (pc == null)
+         throw new IllegalArgumentException("PoolConfiguration is null");
 
       this.mcf = mcf;
-      this.poolParams = poolParams;
+      this.poolConfiguration = pc;
       this.noTxSeparatePools = noTxSeparatePools;
       this.trace = log.isTraceEnabled();
    }
@@ -148,7 +149,7 @@ public abstract class AbstractPool implements ManagedConnectionPool
       if (subPoolContext == null)
       {
          SubPoolContext newSubPoolContext = new SubPoolContext(getTransactionManager(), mcf, clf, subject, 
-                                                         cri, poolParams);
+                                                               cri, poolConfiguration);
          subPoolContext = subPools.putIfAbsent(key, newSubPoolContext);
          if (subPoolContext == null)
          {
@@ -510,7 +511,7 @@ public abstract class AbstractPool implements ManagedConnectionPool
            .append(" [InUse/Available/Max]: [");
            toLog.append(getInUseConnectionCount()).append("/");
            toLog.append(getAvailableConnectionCount()).append("/");
-           toLog.append(poolParams.getMaxSize());
+           toLog.append(poolConfiguration.getMaxSize());
            toLog.append("]");
          */
          log.trace(toLog);

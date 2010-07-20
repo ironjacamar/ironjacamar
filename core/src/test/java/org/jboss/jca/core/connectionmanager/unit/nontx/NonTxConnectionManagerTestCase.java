@@ -27,8 +27,10 @@ import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
-import org.jboss.jca.core.connectionmanager.pool.PoolParams;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -59,12 +61,13 @@ public class NonTxConnectionManagerTestCase
    {
       NoTxConnectionManager noTxCm = new NoTxConnectionManager();
       mcf = new MockManagedConnectionFactory();
-      PoolParams poolParams = new PoolParams();
+      PoolConfiguration pc = new PoolConfiguration();      
+      PoolFactory pf = new PoolFactory();      
       
-      OnePool onePool = new OnePool(mcf, poolParams, true);
-      onePool.setConnectionListenerFactory(noTxCm);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      pool.setConnectionListenerFactory(noTxCm);
       
-      noTxCm.setPoolingStrategy(onePool);
+      noTxCm.setPool(pool);
       
       connectionManager = noTxCm;
    }   

@@ -25,8 +25,10 @@ import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
-import org.jboss.jca.core.connectionmanager.pool.PoolParams;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 
 import javax.resource.ResourceException;
 import javax.security.auth.Subject;
@@ -36,8 +38,6 @@ import javax.transaction.SystemException;
 import org.jboss.security.SubjectFactory;
 import org.jboss.util.NotImplementedException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -51,16 +51,22 @@ import static org.junit.Assert.*;
 public class AbstractConnectionManagerTestCase
 {
    /**
-    * testPoolingStrategyNotNull. 
+    * testPoolNotNull. 
     */
    @Test
-   public void testPoolingStrategyNotNull()
+   public void testPoolNotNull()
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      assertNull(connectionManager.getPoolingStrategy());
-      connectionManager.setPoolingStrategy(new OnePool(new MockManagedConnectionFactory(), new PoolParams(), false));
-      assertNotNull(connectionManager.getPoolingStrategy());
-      assertTrue(connectionManager.getPoolingStrategy() instanceof OnePool);
+      assertNull(connectionManager.getPool());
+
+      PoolConfiguration pc = new PoolConfiguration();      
+      PoolFactory pf = new PoolFactory();      
+      
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false);
+      pool.setConnectionListenerFactory(connectionManager);
+      connectionManager.setPool(pool);
+
+      assertNotNull(connectionManager.getPool());
    }
    
    /**
@@ -137,7 +143,14 @@ public class AbstractConnectionManagerTestCase
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertNull(connectionManager.getManagedConnectionFactory());
       MockManagedConnectionFactory mcf = new MockManagedConnectionFactory();
-      connectionManager.setPoolingStrategy(new OnePool(mcf, new PoolParams(), false));
+
+      PoolConfiguration pc = new PoolConfiguration();      
+      PoolFactory pf = new PoolFactory();      
+      
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, false);
+      pool.setConnectionListenerFactory(connectionManager);
+      connectionManager.setPool(pool);
+
       assertNotNull(connectionManager.getManagedConnectionFactory());
       assertEquals(mcf, connectionManager.getManagedConnectionFactory());
    }
@@ -229,7 +242,7 @@ public class AbstractConnectionManagerTestCase
    public void testGetManagedConnectionFactoryIsNull()
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      connectionManager.setPoolingStrategy(null);
+      connectionManager.setPool(null);
       assertNull(connectionManager.getManagedConnectionFactory());
    }
    
@@ -246,14 +259,14 @@ public class AbstractConnectionManagerTestCase
    }
    
    /**
-    * testAllocateConnectionPoolingStrategyNull.
+    * testAllocateConnectionPoolNull.
     * @throws ResourceException for exception
     */
    @Test(expected = ResourceException.class)
-   public void testAllocateConnectionPoolingStrategyNull() throws ResourceException
+   public void testAllocateConnectionPoolNull() throws ResourceException
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      connectionManager.setPoolingStrategy(null);
+      connectionManager.setPool(null);
       connectionManager.allocateConnection(null, null);
    }
    
@@ -265,8 +278,14 @@ public class AbstractConnectionManagerTestCase
    public void testAllocateConnectionWrongMCF() throws ResourceException
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      OnePool pool = new OnePool(new MockManagedConnectionFactory(), new PoolParams(), false);
-      connectionManager.setPoolingStrategy(pool);
+
+      PoolConfiguration pc = new PoolConfiguration();      
+      PoolFactory pf = new PoolFactory();      
+      
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false);
+      pool.setConnectionListenerFactory(connectionManager);
+
+      connectionManager.setPool(pool);
       connectionManager.allocateConnection(new MockManagedConnectionFactory(), null);
    }
    
