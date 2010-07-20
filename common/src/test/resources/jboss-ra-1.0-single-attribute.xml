@@ -2,7 +2,7 @@
 <ns1:jboss-ra xmlns:ns1="http://www.jboss.org/schema/ra"
  xmlns:ns2="http://java.sun.com/xml/ns/j2ee"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.jboss.org/schema/ra file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/jboss-ra_1_0.xsd">
+ xsi:schemaLocation="http://www.jboss.org/schema/ra http://www.jboss.org/jee/schema/ironjacamar/1.0/jboss-ra_1_0.xsd">
     <ns1:ra-config-property>
         <ns1:ra-config-property-name>ra-config-property-name0</ns1:ra-config-property-name>
         <ns1:ra-config-property-type>ra-config-property-type0</ns1:ra-config-property-type>
