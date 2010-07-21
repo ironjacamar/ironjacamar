@@ -31,7 +31,7 @@ import javax.resource.spi.ConnectionRequestInfo;
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Revision: 71554 $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
 public class ConnectionRecord 
 {
@@ -55,7 +55,8 @@ public class ConnectionRecord
    }
 
    /**
-    * @return the cl
+    * Get the connection listener
+    * @return The listener
     */
    public ConnectionListener getConnectionListener()
    {
@@ -63,7 +64,8 @@ public class ConnectionRecord
    }
 
    /**
-    * @param cl the cl to set
+    * Set the connection listener
+    * @param cl The listener
     */
    void setConnectionListener(ConnectionListener cl)
    {
@@ -71,7 +73,8 @@ public class ConnectionRecord
    }
 
    /**
-    * @return the connection
+    * Get the connection
+    * @return The connection
     */
    public Object getConnection()
    {
@@ -79,11 +82,11 @@ public class ConnectionRecord
    }
 
    /**
-    * @return the cri
+    * Get the connection request info information
+    * @return The information
     */
    public ConnectionRequestInfo getCri()
    {
       return cri;
    }
-
 }

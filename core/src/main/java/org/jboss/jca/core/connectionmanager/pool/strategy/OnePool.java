@@ -23,7 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
 import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
-import org.jboss.jca.core.connectionmanager.pool.InternalManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 
 import javax.resource.ResourceException;
@@ -91,7 +91,7 @@ public class OnePool extends AbstractPrefillPool
    /**
     * {@inheritDoc}
     */
-   public void emptySubPool(InternalManagedConnectionPool pool)
+   public void emptySubPool(ManagedConnectionPool pool)
    {
       // No-operation
    }

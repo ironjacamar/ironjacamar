@@ -60,7 +60,7 @@ import org.jboss.util.UnreachableStatementException;
  * <p>
  * Contains and manages the {@link ConnectionListener} instances.
  * Each pool strategy can contains several {@link SubPoolContext} instance
- * that contains {@link InternalManagedConnectionPool} internally.
+ * that contains {@link ManagedConnectionPool} internally.
  * </p>
  * 
  * <p>
@@ -72,15 +72,12 @@ import org.jboss.util.UnreachableStatementException;
  * @author <a href="mailto:weston.price@jboss.com">Weston Price</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- *   
- * @version $Rev: $
- * 
  * @see AbstractPool
  */
-public class InternalManagedConnectionPool implements IdleConnectionRemovalSupport
+public class ManagedConnectionPool implements IdleConnectionRemovalSupport
 {
    /** The log */
-   private static Logger log = Logger.getLogger(InternalManagedConnectionPool.class);   
+   private static Logger log = Logger.getLogger(ManagedConnectionPool.class);   
    
    /** Whether trace is enabled */
    private final boolean trace = log.isTraceEnabled();
@@ -125,7 +122,7 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
    private volatile int maxUsedConnections = 0;
    
    /**
-    * Create a new InternalManagedConnectionPool.
+    * Create a new ManagedConnectionPool.
     * 
     * @param mcf the managed connection factory
     * @param clf the connection listener factory
@@ -133,8 +130,8 @@ public class InternalManagedConnectionPool implements IdleConnectionRemovalSuppo
     * @param cri the connection request info
     * @param pc the pool configuration
     */
-   public InternalManagedConnectionPool(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                                        ConnectionRequestInfo cri, PoolConfiguration pc)
+   public ManagedConnectionPool(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
+                                ConnectionRequestInfo cri, PoolConfiguration pc)
    {
       if (mcf == null)
          throw new IllegalArgumentException("MCF is null");

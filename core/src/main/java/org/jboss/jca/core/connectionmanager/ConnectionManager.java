@@ -21,7 +21,9 @@
  */
 package org.jboss.jca.core.connectionmanager;
 
+import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
@@ -61,4 +63,24 @@ public interface ConnectionManager extends
     * @return the pool
     */
    public Pool getPool();
+
+   /**
+    * Gets cached connection manager
+    * @return The cached connection manager
+    */
+   public CachedConnectionManager getCachedConnectionManager();
+
+   /**
+    * Kill given connection listener wrapped connection instance.
+    * @param cl connection listener that wraps connection
+    * @param kill kill connection or not
+    */
+   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+
+   /**
+    * Unregister association.
+    * @param cl connection listener
+    * @param c connection
+    */
+   public void unregisterAssociation(ConnectionListener cl, Object c);
 }

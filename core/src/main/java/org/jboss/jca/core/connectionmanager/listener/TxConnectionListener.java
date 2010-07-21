@@ -22,7 +22,7 @@
 package org.jboss.jca.core.connectionmanager.listener;
 
 import org.jboss.jca.common.JBossResourceException;
-import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
@@ -71,7 +71,7 @@ public class TxConnectionListener extends AbstractConnectionListener
     * @param xaResource xaresource instance
     * @throws ResourceException if aexception while creating
     */
-   public TxConnectionListener(final AbstractConnectionManager cm, final ManagedConnection mc, 
+   public TxConnectionListener(final ConnectionManager cm, final ManagedConnection mc, 
                                final Pool pool, final Object context, final XAResource xaResource)
       throws ResourceException
    {

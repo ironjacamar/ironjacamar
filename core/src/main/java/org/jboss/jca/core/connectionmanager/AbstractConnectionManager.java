@@ -517,11 +517,10 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       if (unsharableResources.contains(jndiName))
       {
          log.trace("disconnect for unshareable connection: nothing to do");
-         
          return;
       }
 
-      Set<ConnectionListener> cls = new HashSet<ConnectionListener>();
+      Set<ConnectionListener> cls = new HashSet<ConnectionListener>(conRecords.size());
       for (Iterator<ConnectionRecord> i = conRecords.iterator(); i.hasNext();)
       {
          ConnectionRecord cr = i.next();
@@ -553,7 +552,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
 
       Map<ConnectionRequestInfo, ConnectionListener> criToCLMap = 
-            new HashMap<ConnectionRequestInfo, ConnectionListener>();
+         new HashMap<ConnectionRequestInfo, ConnectionListener>(conns.size());
       
       for (Iterator<ConnectionRecord> i = conns.iterator(); i.hasNext();)
       {
@@ -577,9 +576,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          registerAssociation(cl, cr.getConnection());
          cr.setConnectionListener(cl);
       }
-      
-      criToCLMap.clear();
-      
    }
 
    /**

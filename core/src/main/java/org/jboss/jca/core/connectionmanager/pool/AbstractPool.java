@@ -182,7 +182,7 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public void emptySubPool(InternalManagedConnectionPool pool)
+   public void emptySubPool(ManagedConnectionPool pool)
    {
       if (pool != null)
       {
@@ -239,7 +239,7 @@ public abstract class AbstractPool implements Pool
       SubPoolContext subPoolContext = getSubPool(key, subject, cri);
       
       //Sub-pool internal managed connection pool
-      InternalManagedConnectionPool imcp = subPoolContext.getSubPool();
+      ManagedConnectionPool imcp = subPoolContext.getSubPool();
 
       // Are we doing track by transaction?
       TransactionLocal trackByTx = subPoolContext.getTrackByTx();
@@ -277,7 +277,7 @@ public abstract class AbstractPool implements Pool
       throws ResourceException
    {
       ConnectionListener cl = null;
-      InternalManagedConnectionPool imcp = null;
+      ManagedConnectionPool imcp = null;
       
       try
       {  
@@ -379,7 +379,7 @@ public abstract class AbstractPool implements Pool
     * @throws ResourceException
     */
    private ConnectionListener getTransactionNewConnection(TransactionLocal trackByTx, Transaction trackByTransaction, 
-         InternalManagedConnectionPool mcp, Subject subject, ConnectionRequestInfo cri)
+         ManagedConnectionPool mcp, Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
       ConnectionListener cl = null;
@@ -462,7 +462,7 @@ public abstract class AbstractPool implements Pool
    {
       cl.setTrackByTx(false);
       //Get connection listener pool
-      InternalManagedConnectionPool mcp = (InternalManagedConnectionPool) cl.getContext();
+      ManagedConnectionPool mcp = (ManagedConnectionPool) cl.getContext();
       
       //Return connection to the pool
       mcp.returnConnection(cl, kill);

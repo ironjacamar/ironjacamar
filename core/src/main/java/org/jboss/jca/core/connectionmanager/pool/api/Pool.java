@@ -23,7 +23,7 @@ package org.jboss.jca.core.connectionmanager.pool.api;
 
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
-import org.jboss.jca.core.connectionmanager.pool.InternalManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -90,5 +90,5 @@ public interface Pool
     * Remove the matching SubPoolContext if the pool is empty
     * @param pool the internal managed connection pool
     */
-   void emptySubPool(InternalManagedConnectionPool pool);
+   void emptySubPool(ManagedConnectionPool pool);
 }

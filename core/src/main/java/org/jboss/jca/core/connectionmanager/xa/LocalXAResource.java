@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.xa;
 
-import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 
 import javax.resource.ResourceException;
@@ -50,7 +50,7 @@ public class LocalXAResource implements XAResource, LastResource
    private boolean trace;
    
    /**Connection manager*/
-   private AbstractConnectionManager connectionManager = null;
+   private ConnectionManager connectionManager = null;
 
    /**
     * <code>warned</code> is set after one warning about a local participant in
@@ -65,7 +65,7 @@ public class LocalXAResource implements XAResource, LastResource
     * Creates a new instance.
     * @param connectionManager connection manager
     */
-   public LocalXAResource(AbstractConnectionManager connectionManager)
+   public LocalXAResource(ConnectionManager connectionManager)
    {
       this.trace = log.isTraceEnabled();
       this.connectionManager = connectionManager;

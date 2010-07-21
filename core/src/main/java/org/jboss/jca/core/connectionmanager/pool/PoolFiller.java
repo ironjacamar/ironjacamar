@@ -46,8 +46,8 @@ public class PoolFiller implements Runnable
    private static final PoolFiller FILLER = new PoolFiller();
 
    /** Pools list */
-   private final LinkedBlockingQueue<InternalManagedConnectionPool> pools = 
-      new LinkedBlockingQueue<InternalManagedConnectionPool>();
+   private final LinkedBlockingQueue<ManagedConnectionPool> pools = 
+      new LinkedBlockingQueue<ManagedConnectionPool>();
 
    /** Filler thread */
    private final Thread fillerThread;
@@ -69,7 +69,7 @@ public class PoolFiller implements Runnable
     * 
     * @param mcp internal managed connection pool
     */
-   public static void fillPool(InternalManagedConnectionPool mcp)
+   public static void fillPool(ManagedConnectionPool mcp)
    {
       FILLER.internalFillPool(mcp);
    }
@@ -94,7 +94,7 @@ public class PoolFiller implements Runnable
       // keep going unless interrupted
       while (true)
       {
-         InternalManagedConnectionPool mcp = null;
+         ManagedConnectionPool mcp = null;
          try
          {
             // keep iterating through pools till empty, exception escapes.
@@ -137,10 +137,10 @@ public class PoolFiller implements Runnable
    }
 
    /**
-    * Internal fill pool.
+    *  fill pool.
     * @param mcp connection pool
     */
-   private void internalFillPool(InternalManagedConnectionPool mcp)
+   private void internalFillPool(ManagedConnectionPool mcp)
    {
       if (this.threadStarted.compareAndSet(false, true))         
       {

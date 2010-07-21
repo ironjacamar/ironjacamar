@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
-import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
@@ -48,39 +48,39 @@ public abstract class AbstractConnectionListener implements ConnectionListener
 {
    private Logger log = Logger.getLogger(getClass());
    
-   /** Wraps managed connection instance*/
-   private final ManagedConnection managedConnection;
-   
-   /** Pool for this connection*/
-   private final Pool pool;
-   
-   /** Pool internal context*/
-   private final Object internalManagedPoolContext;
-   
-   /** Connection State*/
-   private ConnectionState state = ConnectionState.NORMAL;
-   
-   /** Connection handles*/
-   private final CopyOnWriteArrayList<Object> connectionHandles = new CopyOnWriteArrayList<Object>();
-      
-   /**Track by transaction or not*/
-   private AtomicBoolean trackByTx = new AtomicBoolean(false);
-   
-   /**Connection permit*/
-   private boolean permit;
-   
-   /**Connection last use*/
-   private long lastUse;
-   
-   /**Connection last validated time*/
-   private long lastValidated;
-   
-   /**Log trace*/
+   /** Log trace */
    protected boolean trace;
    
-   /**Connection Manager*/
-   private AbstractConnectionManager cm;
+   /** Connection Manager */
+   private ConnectionManager cm;
       
+   /** Managed connection */
+   private final ManagedConnection managedConnection;
+   
+   /** Pool for this connection */
+   private final Pool pool;
+   
+   /** Pool internal context */
+   private final Object internalManagedPoolContext;
+   
+   /** Connection State */
+   private ConnectionState state = ConnectionState.NORMAL;
+   
+   /** Connection handles */
+   private final CopyOnWriteArrayList<Object> connectionHandles = new CopyOnWriteArrayList<Object>();
+      
+   /** Track by transaction or not */
+   private AtomicBoolean trackByTx = new AtomicBoolean(false);
+   
+   /** Connection permit */
+   private boolean permit;
+   
+   /** Connection last use */
+   private long lastUse;
+   
+   /** Connection last validated time */
+   private long lastValidated;
+   
    /**
     * Creates a new instance of the listener that is responsible for
     * tracking the owned connection instance.
@@ -89,7 +89,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * @param context pool internal context
     * @param cm connection manager
     */
-   protected AbstractConnectionListener(AbstractConnectionManager cm, ManagedConnection managedConnection, 
+   protected AbstractConnectionListener(ConnectionManager cm, ManagedConnection managedConnection, 
                                         Pool pool, Object context)
    {
       this.cm = cm;
@@ -113,7 +113,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * Gets connection manager.
     * @return connection manager
     */
-   protected AbstractConnectionManager getConnectionManager()
+   protected ConnectionManager getConnectionManager()
    {
       return this.cm;
    }
@@ -289,8 +289,8 @@ public abstract class AbstractConnectionListener implements ConnectionListener
          while (itHandles.hasNext())
          {
             Object handle = itHandles.next();
-            this.log.info("Unregister connection handle : " + handle + " from Cached connection manager");
-            //getCcm().unregisterConnection(BaseConnectionManager2.this, i.next());
+            if (getCachedConnectionManager() != null)
+               getCachedConnectionManager().unregisterConnection(getConnectionManager(), handle);
          }
       }
       finally

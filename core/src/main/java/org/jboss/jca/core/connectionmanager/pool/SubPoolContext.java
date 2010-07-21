@@ -41,7 +41,7 @@ import org.jboss.tm.TransactionLocal;
 public class SubPoolContext
 {
    /** Underlying sub-pool */
-   private InternalManagedConnectionPool subPool;
+   private ManagedConnectionPool subPool;
 
    /** The track by transaction*/
    private TransactionLocal trackByTx;
@@ -59,7 +59,7 @@ public class SubPoolContext
    public SubPoolContext(TransactionManager tm, ManagedConnectionFactory mcf, ConnectionListenerFactory clf, 
                          Subject subject, ConnectionRequestInfo cri, PoolConfiguration pc)
    {
-      subPool = new InternalManagedConnectionPool(mcf, clf, subject, cri, pc);
+      subPool = new ManagedConnectionPool(mcf, clf, subject, cri, pc);
       if (tm != null)
       {
          trackByTx = new TransactionLocal(tm);  
@@ -71,7 +71,7 @@ public class SubPoolContext
     * 
     * @return the sub pool
     */
-   public InternalManagedConnectionPool getSubPool()
+   public ManagedConnectionPool getSubPool()
    {
       return subPool;
    }

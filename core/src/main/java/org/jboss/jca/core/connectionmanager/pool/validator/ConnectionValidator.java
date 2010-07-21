@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.validator;
 
-import org.jboss.jca.core.connectionmanager.pool.InternalManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.ManagedConnectionPool;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -52,8 +52,8 @@ public class ConnectionValidator
    private static final String VALIDATOR_THREAD_NAME = "JBossConnectionValidator";
    
    /**Registered internal pool instances*/
-   private CopyOnWriteArrayList<InternalManagedConnectionPool> registeredPools = 
-      new CopyOnWriteArrayList<InternalManagedConnectionPool>();
+   private CopyOnWriteArrayList<ManagedConnectionPool> registeredPools = 
+      new CopyOnWriteArrayList<ManagedConnectionPool>();
    
    /**Validator executor service*/
    private ExecutorService executorService = null;
@@ -89,7 +89,7 @@ public class ConnectionValidator
     * @param mcp managed connection pool
     * @param interval validation interval
     */
-   public static void registerPool(InternalManagedConnectionPool mcp, long interval)
+   public static void registerPool(ManagedConnectionPool mcp, long interval)
    {
       instance.internalRegisterPool(mcp, interval);
    }
@@ -98,12 +98,12 @@ public class ConnectionValidator
     * Unregister pool instance for connection validation.
     * @param mcp pool instance
     */
-   public static void unregisterPool(InternalManagedConnectionPool mcp)
+   public static void unregisterPool(ManagedConnectionPool mcp)
    {
       instance.internalUnregisterPool(mcp);
    }
    
-   private void internalRegisterPool(InternalManagedConnectionPool mcp, long interval)
+   private void internalRegisterPool(ManagedConnectionPool mcp, long interval)
    {
       try
       {
@@ -136,7 +136,7 @@ public class ConnectionValidator
       }
    }
    
-   private void internalUnregisterPool(InternalManagedConnectionPool mcp)
+   private void internalUnregisterPool(ManagedConnectionPool mcp)
    {
       this.registeredPools.remove(mcp);
       
@@ -263,7 +263,7 @@ public class ConnectionValidator
                   logger.debug("run: ConnectionValidator notifying pools, interval: " + interval);  
                }
      
-               for (InternalManagedConnectionPool mcp : registeredPools)
+               for (ManagedConnectionPool mcp : registeredPools)
                {
                   mcp.validateConnections();
                }

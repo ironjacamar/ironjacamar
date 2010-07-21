@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
-import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import javax.resource.spi.ConnectionEvent;
@@ -32,7 +32,7 @@ import javax.resource.spi.ManagedConnection;
  * NoTx Connection Listener.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev$
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  * @see AbstractConnectionListener
  */
 public class NoTxConnectionListener extends AbstractConnectionListener
@@ -44,7 +44,7 @@ public class NoTxConnectionListener extends AbstractConnectionListener
     * @param pool pool
     * @param context context
     */
-   public NoTxConnectionListener(final AbstractConnectionManager cm, final ManagedConnection mc, 
+   public NoTxConnectionListener(final ConnectionManager cm, final ManagedConnection mc, 
                                  final Pool pool, final Object context)
    {
       super(cm, mc, pool, context);
@@ -74,5 +74,4 @@ public class NoTxConnectionListener extends AbstractConnectionListener
          getConnectionManager().returnManagedConnection(this, false);
       }
    }
-
 }
