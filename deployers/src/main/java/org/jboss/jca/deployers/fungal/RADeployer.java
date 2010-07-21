@@ -26,12 +26,11 @@ import org.jboss.jca.common.annotations.Annotations;
 import org.jboss.jca.common.metadata.Metadata;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
-import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
-import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
@@ -482,6 +481,12 @@ public final class RADeployer implements CloneableDeployer
                         beanValidationObjects.add(mcf);
                         associateResourceAdapter(resourceAdapter, mcf);
                         
+                        // Create the pool
+                        PoolConfiguration pc = new PoolConfiguration();
+                        PoolFactory pf = new PoolFactory();
+
+                        Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+
                         // Add a connection manager
                         ConnectionManager cm = null;
                         TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
@@ -514,37 +519,8 @@ public final class RADeployer implements CloneableDeployer
                            tsl = ((TransactionSupport)mcf).getTransactionSupport();
 
                         // Select the correct connection manager
-                        if (tsl == TransactionSupportLevel.NoTransaction)
-                        {
-                           NoTxConnectionManager noTxCm = new NoTxConnectionManager();
-                           cm = noTxCm;
-                        }
-                        else if (tsl == TransactionSupportLevel.LocalTransaction)
-                        {
-                           if (transactionManager == null)
-                              throw new IllegalStateException("TransactionManager is null");
-
-                           TxConnectionManager txCm = new TxConnectionManager();
-                           txCm.setTransactionManager(transactionManager);
-                           txCm.setLocalTransactions(true);
-                           cm = txCm;
-                        }
-                        else if (tsl == TransactionSupportLevel.XATransaction)
-                        {
-                           if (transactionManager == null)
-                              throw new IllegalStateException("TransactionManager is null");
-
-                           TxConnectionManager txCm = new TxConnectionManager();
-                           txCm.setTransactionManager(transactionManager);
-                           cm = txCm;
-                        }
-
-                        PoolConfiguration pc = new PoolConfiguration();
-                        PoolFactory pf = new PoolFactory();
-
-                        Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-                        pool.setConnectionListenerFactory(cm);
-                        cm.setPool(pool);
+                        ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+                        cm = cmf.create(tsl, pool, transactionManager);
 
                         // ConnectionFactory
                         Object cf = mcf.createConnectionFactory(cm);

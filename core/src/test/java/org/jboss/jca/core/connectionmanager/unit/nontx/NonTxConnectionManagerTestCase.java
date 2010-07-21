@@ -22,7 +22,7 @@
 package org.jboss.jca.core.connectionmanager.unit.nontx;
 
 import org.jboss.jca.core.api.ConnectionManager;
-
+import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
@@ -34,6 +34,8 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.transaction.TransactionManager;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -44,8 +46,7 @@ import static org.junit.Assert.*;
 /**
  * NonTxConnectionManagerTestCase.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev:93321 $ $Date:2009-09-09 20:36:35 +0300 (Wed, 09 Sep 2009) $
- *
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
 public class NonTxConnectionManagerTestCase
 {
@@ -59,18 +60,21 @@ public class NonTxConnectionManagerTestCase
    @BeforeClass
    public static void init()
    {
-      NoTxConnectionManager noTxCm = new NoTxConnectionManager();
+      TransactionManager tm = null;
+      assertNull(tm);
+      
       mcf = new MockManagedConnectionFactory();
       PoolConfiguration pc = new PoolConfiguration();      
       PoolFactory pf = new PoolFactory();      
       
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-      pool.setConnectionListenerFactory(noTxCm);
       
-      noTxCm.setPool(pool);
-      
-      connectionManager = noTxCm;
-   }   
+      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+      connectionManager = cmf.create(TransactionSupportLevel.NoTransaction, pool, tm);
+      assertNotNull(connectionManager);
+
+      assertTrue(connectionManager instanceof NoTxConnectionManager);
+   }
    
    /**
     * Test allocate connection.

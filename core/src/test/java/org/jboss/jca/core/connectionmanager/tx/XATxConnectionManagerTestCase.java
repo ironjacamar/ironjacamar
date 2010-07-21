@@ -19,9 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.unit.tx;
+package org.jboss.jca.core.connectionmanager.tx;
 
 import org.jboss.jca.core.api.ConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
@@ -35,6 +36,7 @@ import org.jboss.jca.core.workmanager.unit.WorkManagerTestCase;
 import org.jboss.jca.embedded.EmbeddedJCA;
 
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
 
 import org.junit.AfterClass;
@@ -47,8 +49,7 @@ import static org.junit.Assert.*;
 /**
  * XATxConnectionManagerTestCase.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev$ $Date$
- *
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
 public class XATxConnectionManagerTestCase
 {
@@ -62,13 +63,22 @@ public class XATxConnectionManagerTestCase
    @Test
    public void testAllocateConnection() throws Throwable
    {
-      ConnectionManager connectionManager = embedded.lookup("ConnectionManagerTx", ConnectionManager.class);
+      TransactionManager tm = embedded.lookup("RealTransactionManager", TransactionManager.class);
+      assertNotNull(tm);
+      
+      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
+      PoolConfiguration pc = new PoolConfiguration();      
+      PoolFactory pf = new PoolFactory();      
+      
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      
+      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+      ConnectionManager connectionManager = cmf.create(TransactionSupportLevel.XATransaction, pool, tm);
       assertNotNull(connectionManager);
       
       assertTrue(connectionManager instanceof TxConnectionManager);
       
       TxConnectionManager txConnectionManager = (TxConnectionManager)connectionManager;
-      txConnectionManager.setLocalTransactions(false);
       
       TransactionManager transactionManager = txConnectionManager.getTransactionManager();      
       assertNotNull(transactionManager);
@@ -77,22 +87,12 @@ public class XATxConnectionManagerTestCase
       
       transactionManager.begin();
       
-      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
-      PoolConfiguration pc = new PoolConfiguration();      
-      PoolFactory pf = new PoolFactory();      
-      
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-      pool.setConnectionListenerFactory(txConnectionManager);
-      
-      txConnectionManager.setPool(pool);
-      
       Object handle = connectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
       assertNotNull(handle);
       
       assertTrue(handle instanceof MockHandle);
       
       transactionManager.commit();
-      
    }
    
    /**
@@ -179,10 +179,9 @@ public class XATxConnectionManagerTestCase
       // Startup
       embedded.startup();
 
-      // Deploy Naming, Transaction and WorkManager
+      // Deploy Naming and Transaction
       embedded.deploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
       embedded.deploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.deploy(WorkManagerTestCase.class.getClassLoader(), "connectionmanager-jboss-beans.xml");
    }
    
    /**
@@ -192,8 +191,7 @@ public class XATxConnectionManagerTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
-      // Undeploy WorkManager, Transaction and Naming
-      embedded.undeploy(WorkManagerTestCase.class.getClassLoader(), "connectionmanager-jboss-beans.xml");
+      // Undeploy Transaction and Naming
       embedded.undeploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
       embedded.undeploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
 

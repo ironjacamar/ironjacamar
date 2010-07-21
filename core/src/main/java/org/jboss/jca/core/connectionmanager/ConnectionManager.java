@@ -65,6 +65,12 @@ public interface ConnectionManager extends
    public Pool getPool();
 
    /**
+    * Sets cached connection manager.
+    * @param cachedConnectionManager cached connection manager
+    */
+   public void setCachedConnectionManager(CachedConnectionManager cachedConnectionManager);
+
+   /**
     * Gets cached connection manager
     * @return The cached connection manager
     */

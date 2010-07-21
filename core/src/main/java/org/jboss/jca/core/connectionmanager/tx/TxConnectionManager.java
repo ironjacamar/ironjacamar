@@ -155,10 +155,15 @@ public class TxConnectionManager extends AbstractConnectionManager
    private boolean trace = getLog().isTraceEnabled();
       
    /**
-    * Default managed TxConnectionManager constructor for mbean instances.
+    * Constructor
+    * @param tm The transaction manager
+    * @param localTransactions Is local transactions enabled
     */
-   public TxConnectionManager()
+   public TxConnectionManager(final TransactionManager tm, final boolean localTransactions)
    {
+      this.transactionManager = tm;
+
+      setLocalTransactions(localTransactions);
    }
 
    /**
@@ -168,15 +173,6 @@ public class TxConnectionManager extends AbstractConnectionManager
    public TransactionManager getTransactionManager()
    {
       return transactionManager;
-   }
-
-   /**
-    * Set the transaction manager.
-    * @param tm The transaction manager
-    */
-   public void setTransactionManager(TransactionManager tm)
-   {
-      transactionManager = tm;
    }
 
    /**
@@ -192,7 +188,7 @@ public class TxConnectionManager extends AbstractConnectionManager
     * Sets interleaving flag.
     * @param value interleaving
     */
-   public void setInterleaving(boolean value)
+   private void setInterleaving(boolean value)
    {
       this.interleaving = value;
    }
@@ -207,13 +203,14 @@ public class TxConnectionManager extends AbstractConnectionManager
    }
 
    /**
-    * Sets local transaction or not.
-    * @param localTransactions local transaction flag
+    * Set the local transaction
+    * @param v The value
     */
-   public void setLocalTransactions(boolean localTransactions)
+   void setLocalTransactions(boolean v)
    {
-      this.localTransactions = localTransactions;
-      if (localTransactions)
+      this.localTransactions = v;
+
+      if (v)
          setInterleaving(false);
    }
 

@@ -106,9 +106,11 @@ public class CachedConnectionManager implements
 
    /**
     * Creates a new instance.
+    * @param transactionManager The transaction manager
     */
-   public CachedConnectionManager()
+   public CachedConnectionManager(final TransactionManager transactionManager)
    {
+      this.transactionManager = transactionManager;
       this.trace = log.isTraceEnabled();
    }
    
@@ -120,16 +122,6 @@ public class CachedConnectionManager implements
    {
       return transactionManager;
    }
-
-   /**
-    * Sets transaction manager.
-    * @param transactionManager transaction manager
-    */
-   public void setTransactionManager(TransactionManager transactionManager)
-   {
-      this.transactionManager = transactionManager;
-   }
-   
    
    /**
     * {@inheritDoc}

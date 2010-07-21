@@ -138,6 +138,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       this.cachedConnectionManager = cachedConnectionManager;
    }
    
+   /**
+    * Gets cached connection manager.
+    * @return cached connection manager
+    */
+   public CachedConnectionManager getCachedConnectionManager()
+   {
+      return cachedConnectionManager;
+   }
    
    /**
     * Sets shut down flag.
@@ -146,15 +154,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public void setShutDown(boolean shutDown)
    {
       this.shutdown.set(shutDown);
-   }
-   
-   /**
-    * Gets cached connection manager.
-    * @return cached connection manager
-    */
-   public CachedConnectionManager getCachedConnectionManager()
-   {
-      return cachedConnectionManager;
    }
    
    /**
