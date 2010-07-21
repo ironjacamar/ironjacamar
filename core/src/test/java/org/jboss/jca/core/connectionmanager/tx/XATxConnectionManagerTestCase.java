@@ -31,7 +31,6 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
-import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
 import org.jboss.jca.core.workmanager.unit.WorkManagerTestCase;
 import org.jboss.jca.embedded.EmbeddedJCA;
 
