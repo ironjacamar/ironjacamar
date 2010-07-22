@@ -24,6 +24,9 @@ package org.jboss.jca.common.metadata.ra.ra16;
 import org.jboss.jca.common.metadata.ra.common.IdDecoratedMetadata;
 import org.jboss.jca.common.metadata.ra.common.LocalizedMetadata;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
@@ -195,5 +198,126 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata
    public String toString()
    {
       return "Icon [smallIcon=" + smallIcon + ", largeIcon=" + largeIcon + ", lang=" + lang + ", id=" + id + "]";
+   }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * small-icon tag
+       */
+      SMALL_ICON("small-icon"),
+
+      /**
+       * large-icon tag
+       */
+      LARGE_ICON("large-icon");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id"),
+
+      /**
+       * lang atttribute
+       */
+      LANG("lang");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
    }
 }

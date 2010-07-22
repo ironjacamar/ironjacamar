@@ -23,8 +23,11 @@ package org.jboss.jca.common.metadata.ra.ra15;
 
 import org.jboss.jca.common.metadata.ra.common.Connector;
 import org.jboss.jca.common.metadata.ra.common.LicenseType;
-import org.jboss.jca.common.metadata.ra.common.ResourceAdapter;
+import org.jboss.jca.common.metadata.ra.common.ResourceAdapter1516;
 import org.jboss.jca.common.metadata.ra.common.XsdString;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -39,7 +42,12 @@ public class Connector15 extends Connector
    /** The serialVersionUID */
    private static final long serialVersionUID = 531372312218060928L;
 
-   private final String version = "1.5";
+   /**
+    * VERSION constant
+    */
+   public static final String VERSION = "1.5";
+
+   private final String version = Connector15.VERSION;
 
    /**
     * the resource adapter version
@@ -55,7 +63,7 @@ public class Connector15 extends Connector
     * @param id XML ID
     */
    public Connector15(XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
-         LicenseType license, ResourceAdapter resourceadapter, String id)
+         LicenseType license, ResourceAdapter1516 resourceadapter, String id)
    {
       super(vendorName, eisType, license, resourceadapter, id);
       this.resourceadapterVersion = resourceadapterVersion;
@@ -123,5 +131,142 @@ public class Connector15 extends Connector
       return "Connector15 [version=" + version + ", resourceadapterVersion=" + resourceadapterVersion + ", vendorName="
             + vendorName + ", eisType=" + eisType + ", license=" + license + ", resourceadapter=" + resourceadapter
             + ", id=" + id + "]";
+   }
+
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * vendor-name tag
+       */
+      VENDORNAME("vendor-name"),
+
+      /**
+       * eis-type tag
+       */
+      EIS_TYPE("eis-type"),
+
+      /**
+       * resourceadapter-version tag
+       */
+      RESOURCEADPTER_VERSION("resourceadapter-version"),
+
+      /**
+       * license tag
+       */
+      LICENSE("license"),
+
+      /**
+       * resourceadapter tag
+       */
+      RESOURCEADAPTER("resourceadapter");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id"),
+
+      /**
+       * version attribute
+       */
+      VERSION("version");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
    }
 }

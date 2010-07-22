@@ -22,8 +22,11 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -35,11 +38,11 @@ public class OutboundResourceAdapter implements IdDecoratedMetadata
     */
    private static final long serialVersionUID = 421345307326415666L;
 
-   private final List<ConnectionDefinition> connectionDefinition;
+   private final ArrayList<ConnectionDefinition> connectionDefinition;
 
    private final TransactionSupportEnum transactionSupport;
 
-   private final List<AuthenticationMechanism> authenticationMechanism;
+   private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
    private final Boolean reauthenticationSupport;
 
@@ -52,8 +55,8 @@ public class OutboundResourceAdapter implements IdDecoratedMetadata
     * @param reauthenticationSupport not mandatary boolean value
     * @param id XML ID
     */
-   public OutboundResourceAdapter(List<ConnectionDefinition> connectionDefinition,
-         TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
+   public OutboundResourceAdapter(ArrayList<ConnectionDefinition> connectionDefinition,
+         TransactionSupportEnum transactionSupport, ArrayList<AuthenticationMechanism> authenticationMechanism,
          Boolean reauthenticationSupport, String id)
    {
       super();
@@ -209,4 +212,131 @@ public class OutboundResourceAdapter implements IdDecoratedMetadata
             + transactionSupport + ", authenticationMechanism=" + authenticationMechanism
             + ", reauthenticationSupport=" + reauthenticationSupport + ", id=" + id + "]";
    }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * connection-definition TAG
+       */
+      CONNECTION_DEFINITION("connection-definition"),
+
+      /**
+       * transaction-support TAG
+       */
+      TRANSACTION_SUPPORT("transaction-support"),
+
+      /**
+       * authentication-mechanism TAG
+       */
+      AUTHENTICATION_MECHANISM("authentication-mechanism"),
+
+      /**
+       * reauthentication-support TAG
+       */
+      REAUTHENTICATION_SUPPORT("reauthentication-support");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+   }
+
 }

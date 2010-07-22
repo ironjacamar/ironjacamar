@@ -21,10 +21,15 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
+import org.jboss.jca.common.metadata.ra.common.ConfigProperty;
+import org.jboss.jca.common.metadata.ra.common.XsdString;
 import org.jboss.jca.common.metadata.ra.ra15.Activationspec15;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -36,16 +41,16 @@ public class Activationspec16 extends Activationspec15
     */
    private static final long serialVersionUID = -6951903183562100136L;
 
-   private final List<ConfigProperty16> configProperty;
+   private final ArrayList<? extends ConfigProperty> configProperty;
 
    /**
     * @param activationspecClass full qualified name of the class
-    * @param requiredConfigProperty a List of required config properties
+    * @param requiredConfigProperty a ArrayList of required config properties
     * @param configProperty a list of (optional) config property
     * @param id xmlID
     */
-   public Activationspec16(String activationspecClass, List<RequiredConfigProperty> requiredConfigProperty,
-         List<ConfigProperty16> configProperty, String id)
+   public Activationspec16(XsdString activationspecClass, ArrayList<RequiredConfigProperty> requiredConfigProperty,
+         ArrayList<? extends ConfigProperty> configProperty, String id)
    {
       super(activationspecClass, requiredConfigProperty, id);
       this.configProperty = configProperty;
@@ -54,7 +59,7 @@ public class Activationspec16 extends Activationspec15
    /**
     * @return configProperty
     */
-   public List<ConfigProperty16> getConfigProperty()
+   public List<? extends ConfigProperty> getConfigProperty()
    {
       return Collections.unmodifiableList(configProperty);
    }
@@ -93,6 +98,127 @@ public class Activationspec16 extends Activationspec15
    {
       return "Activationspec [configProperty=" + configProperty + ", activationspecClass=" + activationspecClass
             + ", requiredConfigProperty=" + requiredConfigProperty + ", id=" + id + "]";
+   }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * activationspec-class TAG
+       */
+      ACTIVATIONSPEC_CLASS("activationspec-class"),
+
+      /**
+       * required-config-property TAG
+       */
+      REQUIRED_CONFIG_PROPERTY("required-config-property"),
+
+      /**
+       * config-property TAG
+       */
+      CONFIG_PROPERTY("config-property");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
    }
 
 }

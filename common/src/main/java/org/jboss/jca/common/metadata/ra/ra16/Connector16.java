@@ -23,12 +23,15 @@ package org.jboss.jca.common.metadata.ra.ra16;
 
 import org.jboss.jca.common.metadata.ra.common.LicenseType;
 import org.jboss.jca.common.metadata.ra.common.LocalizedXsdString;
-import org.jboss.jca.common.metadata.ra.common.ResourceAdapter;
+import org.jboss.jca.common.metadata.ra.common.ResourceAdapter1516;
 import org.jboss.jca.common.metadata.ra.common.XsdString;
 import org.jboss.jca.common.metadata.ra.ra15.Connector15;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -43,17 +46,22 @@ public final class Connector16 extends Connector15
 
    private final String moduleName;
 
-   private final List<LocalizedXsdString> description;
+   private final ArrayList<Icon> icon;
 
-   private final List<LocalizedXsdString> displayName;
+   private final ArrayList<String> requiredWorkContext;
 
-   private final List<Icon> icon;
+   private final ArrayList<LocalizedXsdString> description;
 
-   private final List<String> requiredWorkContext;
+   private final ArrayList<LocalizedXsdString> displayName;
 
    private final Boolean metadataComplete;
 
-   private final String version = "1.6";
+   /**
+    * VERSION constant
+    */
+   public static final String VERSION = "1.6";
+
+   private final String version = Connector16.VERSION;
 
    /**
     * @param moduleName name of the module
@@ -69,9 +77,9 @@ public final class Connector16 extends Connector15
     * @param metadataComplete not mandatory boolean value
     * @param id XML ID
     */
-   public Connector16(String moduleName, List<LocalizedXsdString> description, List<LocalizedXsdString> displayName,
-         List<Icon> icon, XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
-         LicenseType license, ResourceAdapter resourceadapter, List<String> requiredWorkContext,
+   public Connector16(String moduleName, ArrayList<LocalizedXsdString> description, ArrayList<LocalizedXsdString> displayName,
+         ArrayList<Icon> icon, XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
+         LicenseType license, ResourceAdapter1516 resourceadapter, ArrayList<String> requiredWorkContext,
          Boolean metadataComplete, String id)
    {
       super(vendorName, eisType, resourceadapterVersion, license, resourceadapter, id);
@@ -129,6 +137,17 @@ public final class Connector16 extends Connector15
    public Boolean getMetadataComplete()
    {
       return metadataComplete;
+   }
+
+   /**
+    * Get the version.
+    *
+    * @return the version.
+    */
+   @Override
+   public String getVersion()
+   {
+      return version;
    }
 
    /**
@@ -337,5 +356,170 @@ public final class Connector16 extends Connector15
             + resourceadapterVersion + ", license=" + license + ", resourceadapter=" + resourceadapter
             + ", requiredWorkContext=" + requiredWorkContext + ", version=" + version + ", metadataComplete="
             + metadataComplete + ", id=" + id + "]";
+   }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * module-name tag
+       */
+      MODULENAME("module-name"),
+
+      /**
+       * vendor-name tag
+       */
+      VENDORNAME("vendor-name"),
+
+      /**
+       * eis-type tag
+       */
+      EIS_TYPE("eis-type"),
+
+      /**
+       * resourceadapter-version tag
+       */
+      RESOURCEADPTER_VERSION("resourceadapter-version"),
+
+      /**
+       * license tag
+       */
+      LICENSE("license"),
+
+      /**
+       * resourceadapter tag
+       */
+      RESOURCEADAPTER("resourceadapter"),
+
+      /**
+       * required-work-context tag
+       */
+      REQUIRED_WORK_CONTEXT("required-work-context"),
+
+      /**
+       * description tag
+       */
+      DESCRIPTION("description"),
+
+      /**
+       * icon tag
+       */
+      ICON("icon"),
+
+      /**
+       * display-name tag
+       */
+      DISPLAY_NAME("display-name");
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id"),
+
+      /**
+       * metadata-complete attribute
+       */
+      METADATA_COMPLETE("metadata-complete"),
+
+      /**
+       * version attribute
+       */
+      VERSION("version");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
    }
 }

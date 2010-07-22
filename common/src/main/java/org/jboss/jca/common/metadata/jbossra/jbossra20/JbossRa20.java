@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.jbossra.jbossra20;
 
 import org.jboss.jca.common.metadata.jbossra.JbossRa;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,15 +44,15 @@ public class JbossRa20 extends JbossRa
 
    private final String bootstrapContext;
 
-   private final List<BeanValidationGroup> beanValidationGroups;
+   private final ArrayList<BeanValidationGroup> beanValidationGroups;
 
    /**
-    * @param raConfigProperties List of properties for configuration
+    * @param raConfigProperties ArrayList of properties for configuration
     * @param bootstrapContext String representing the bootstrap context name
     * @param beanValidationGroups for validations
     */
-   public JbossRa20(List<RaConfigProperty<?>> raConfigProperties, String bootstrapContext,
-         List<BeanValidationGroup> beanValidationGroups)
+   public JbossRa20(ArrayList<RaConfigProperty<?>> raConfigProperties, String bootstrapContext,
+         ArrayList<BeanValidationGroup> beanValidationGroups)
    {
       super(raConfigProperties);
       this.bootstrapContext = bootstrapContext;

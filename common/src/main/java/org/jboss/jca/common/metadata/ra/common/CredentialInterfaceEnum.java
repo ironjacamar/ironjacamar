@@ -70,7 +70,7 @@ public enum CredentialInterfaceEnum
     *        org.ietf.jgss.GSSCredential
     *        javax.resource.spi.security.GenericCredential
     */
-   public static CredentialInterfaceEnum build(String fullQualifiedName) throws IllegalArgumentException
+   public static CredentialInterfaceEnum forName(String fullQualifiedName) throws IllegalArgumentException
    {
       if ("javax.resource.spi.security.PasswordCredential".equals(fullQualifiedName))
       {

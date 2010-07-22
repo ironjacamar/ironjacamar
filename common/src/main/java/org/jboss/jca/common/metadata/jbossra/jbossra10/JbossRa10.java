@@ -24,8 +24,8 @@ package org.jboss.jca.common.metadata.jbossra.jbossra10;
 import org.jboss.jca.common.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.RaConfigProperty;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,10 +47,10 @@ public class JbossRa10 extends JbossRa
    private static final long serialVersionUID = 1L;
 
    /**
-    * @param raConfigProperties List of properties for configuration
+    * @param raConfigProperties ArrayList of properties for configuration
     *
     */
-   public JbossRa10(List<RaConfigProperty<?>> raConfigProperties)
+   public JbossRa10(ArrayList<RaConfigProperty<?>> raConfigProperties)
    {
       super(raConfigProperties);
    }

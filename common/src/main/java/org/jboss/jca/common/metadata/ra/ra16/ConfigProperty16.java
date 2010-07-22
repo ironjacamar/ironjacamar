@@ -25,7 +25,9 @@ import org.jboss.jca.common.metadata.ra.common.ConfigProperty;
 import org.jboss.jca.common.metadata.ra.common.LocalizedXsdString;
 import org.jboss.jca.common.metadata.ra.common.XsdString;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -69,7 +71,7 @@ public class ConfigProperty16 extends ConfigProperty
     *  property as confidential.
     * @param id XML ID
     */
-   public ConfigProperty16(List<LocalizedXsdString> description, XsdString configPropertyName,
+   public ConfigProperty16(ArrayList<LocalizedXsdString> description, XsdString configPropertyName,
          XsdString configPropertyType, XsdString configPropertyValue, Boolean configPropertyIgnore,
          Boolean configPropertySupportsDynamicUpdates, Boolean configPropertyConfidential, String id)
    {
@@ -250,5 +252,146 @@ public class ConfigProperty16 extends ConfigProperty
             + ", configPropertyIgnore=" + configPropertyIgnore + ", configPropertySupportsDynamicUpdates="
             + configPropertySupportsDynamicUpdates + ", configPropertyConfidential=" + configPropertyConfidential
             + ", id=" + id + "]";
+   }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * description-class tag
+       */
+      DESCRIPTION("description"),
+
+      /**
+       * config-property-name TAG
+       */
+      CONFIG_PROPERTY_NAME("config-property-name"),
+
+      /**
+       * config-property-type TAG
+       */
+      CONFIG_PROPERTY_TYPE("config-property-type"),
+
+      /**
+       * config-property-value TAG
+       */
+      CONFIG_PROPERTY_VALUE("config-property-value"),
+
+      /**
+       * config-property-ignore TAG
+       */
+      CONFIG_PROPERTY_IGNORE("config-property-ignore"),
+
+      /**
+       * config-property-supports-dynamic-updates TAG
+       */
+      CONFIG_PROPERTY_SUPPORT_DYNAMIC_UPDATE("config-property-supports-dynamic-updates"),
+
+      /**
+       * config-property-confidential TAG
+       */
+      CONFIG_PROPERTY_CONFIDENTIAL("config-property-confidential");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
    }
 }

@@ -22,8 +22,11 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -35,7 +38,7 @@ public class SecurityPermission implements IdDecoratedMetadata
     */
    private static final long serialVersionUID = -7931009018498254330L;
 
-   private final List<LocalizedXsdString> description;
+   private final ArrayList<LocalizedXsdString> description;
 
    private final XsdString securityPermissionSpec;
 
@@ -46,7 +49,7 @@ public class SecurityPermission implements IdDecoratedMetadata
     * @param securityPermissionSpec the security permission spec as defined in the xml
     * @param id XML ID
     */
-   public SecurityPermission(List<LocalizedXsdString> description, XsdString securityPermissionSpec, String id)
+   public SecurityPermission(ArrayList<LocalizedXsdString> description, XsdString securityPermissionSpec, String id)
    {
       super();
       this.description = description;
@@ -164,5 +167,121 @@ public class SecurityPermission implements IdDecoratedMetadata
    {
       return "SecurityPermission [description=" + description + ", securityPermissionSpec=" + securityPermissionSpec
             + ", id=" + id + "]";
+   }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * description-class tag
+       */
+      DESCRIPTION("description"),
+
+      /**
+       * security-permission-spec tag
+       */
+      SECURITY_PERMISSION_SPEC("security-permission-spec");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
    }
 }

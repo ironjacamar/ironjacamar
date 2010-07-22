@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.jbossra.jbossra20;
 
 import org.jboss.jca.common.metadata.JCAMetadata;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -39,12 +40,12 @@ public class BeanValidationGroup implements JCAMetadata
     */
    private static final long serialVersionUID = 6856138720550993874L;
 
-   private final List<String> beanValidationGroup;
+   private final ArrayList<String> beanValidationGroup;
 
    /**
-    * @param beanValidationGroup List of bean validation group
+    * @param beanValidationGroup ArrayList of bean validation group
     */
-   public BeanValidationGroup(List<String> beanValidationGroup)
+   public BeanValidationGroup(ArrayList<String> beanValidationGroup)
    {
       super();
       this.beanValidationGroup = beanValidationGroup;

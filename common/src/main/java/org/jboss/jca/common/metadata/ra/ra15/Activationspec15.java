@@ -22,9 +22,10 @@
 package org.jboss.jca.common.metadata.ra.ra15;
 
 import org.jboss.jca.common.metadata.ra.common.IdDecoratedMetadata;
-import org.jboss.jca.common.metadata.ra.ra16.Activationspec16;
+import org.jboss.jca.common.metadata.ra.common.XsdString;
 import org.jboss.jca.common.metadata.ra.ra16.RequiredConfigProperty;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,12 +45,12 @@ public class Activationspec15 implements IdDecoratedMetadata
    /**
     * activationspec class name
     */
-   protected final String activationspecClass;
+   protected final XsdString activationspecClass;
 
    /**
     * list of required properties
     */
-   protected final List<RequiredConfigProperty> requiredConfigProperty;
+   protected final ArrayList<RequiredConfigProperty> requiredConfigProperty;
 
    /**
     * id attribute in xml file
@@ -64,7 +65,8 @@ public class Activationspec15 implements IdDecoratedMetadata
     * @param requiredConfigProperty list of required property
     * @param id id attribute of xml file
     */
-   public Activationspec15(String activationspecClass, List<RequiredConfigProperty> requiredConfigProperty, String id)
+   public Activationspec15(XsdString activationspecClass, ArrayList<RequiredConfigProperty> requiredConfigProperty,
+         String id)
    {
       super();
       this.activationspecClass = activationspecClass;
@@ -75,7 +77,7 @@ public class Activationspec15 implements IdDecoratedMetadata
    /**
     * @return activationspecClass
     */
-   public String getActivationspecClass()
+   public XsdString getActivationspecClass()
    {
       return activationspecClass;
    }
@@ -99,11 +101,7 @@ public class Activationspec15 implements IdDecoratedMetadata
       return id;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#hashCode()
-    */
+
    @Override
    public int hashCode()
    {
@@ -115,61 +113,37 @@ public class Activationspec15 implements IdDecoratedMetadata
       return result;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
    @Override
    public boolean equals(Object obj)
    {
       if (this == obj)
-      {
          return true;
-      }
       if (obj == null)
-      {
          return false;
-      }
-      if (!(obj instanceof Activationspec16))
-      {
+      if (!(obj instanceof Activationspec15))
          return false;
-      }
-      Activationspec16 other = (Activationspec16) obj;
+      Activationspec15 other = (Activationspec15) obj;
       if (activationspecClass == null)
       {
          if (other.activationspecClass != null)
-         {
             return false;
-         }
       }
       else if (!activationspecClass.equals(other.activationspecClass))
-      {
          return false;
-      }
-
       if (id == null)
       {
          if (other.id != null)
-         {
             return false;
-         }
       }
       else if (!id.equals(other.id))
-      {
          return false;
-      }
       if (requiredConfigProperty == null)
       {
          if (other.requiredConfigProperty != null)
-         {
             return false;
-         }
       }
       else if (!requiredConfigProperty.equals(other.requiredConfigProperty))
-      {
          return false;
-      }
       return true;
    }
 

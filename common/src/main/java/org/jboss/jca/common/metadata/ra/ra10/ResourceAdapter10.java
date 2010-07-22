@@ -23,20 +23,23 @@ package org.jboss.jca.common.metadata.ra.ra10;
 
 import org.jboss.jca.common.metadata.ra.common.AuthenticationMechanism;
 import org.jboss.jca.common.metadata.ra.common.ConfigProperty;
-import org.jboss.jca.common.metadata.ra.common.IdDecoratedMetadata;
+import org.jboss.jca.common.metadata.ra.common.ResourceAdapter;
 import org.jboss.jca.common.metadata.ra.common.SecurityPermission;
 import org.jboss.jca.common.metadata.ra.common.TransactionSupportEnum;
 import org.jboss.jca.common.metadata.ra.common.XsdString;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class ResourceAdapter10 implements IdDecoratedMetadata
+public class ResourceAdapter10 implements ResourceAdapter
 {
-
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 6841574517370539456L;
@@ -53,13 +56,13 @@ public class ResourceAdapter10 implements IdDecoratedMetadata
 
    private final TransactionSupportEnum transactionSupport;
 
-   private final List<AuthenticationMechanism> authenticationMechanism;
+   private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
-   private final List<ConfigProperty> configProperties;
+   private final ArrayList<ConfigProperty> configProperties;
 
    private final Boolean reauthenticationSupport;
 
-   private final List<SecurityPermission> securityPermission;
+   private final ArrayList<SecurityPermission> securityPermission;
 
    private final String id;
 
@@ -81,9 +84,9 @@ public class ResourceAdapter10 implements IdDecoratedMetadata
     */
    public ResourceAdapter10(XsdString managedConnectionFactoryClass, XsdString connectionFactoryInterface,
          XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
-         TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-         List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
-         List<SecurityPermission> securityPermission, String id)
+         TransactionSupportEnum transactionSupport, ArrayList<AuthenticationMechanism> authenticationMechanism,
+         ArrayList<ConfigProperty> configProperties, Boolean reauthenticationSupport,
+         ArrayList<SecurityPermission> securityPermission, String id)
    {
       super();
       this.managedConnectionFactoryClass = managedConnectionFactoryClass;
@@ -166,7 +169,7 @@ public class ResourceAdapter10 implements IdDecoratedMetadata
     */
    public List<AuthenticationMechanism> getAuthenticationMechanism()
    {
-      return authenticationMechanism;
+      return Collections.unmodifiableList(authenticationMechanism);
    }
 
    /**
@@ -176,7 +179,7 @@ public class ResourceAdapter10 implements IdDecoratedMetadata
     */
    public List<ConfigProperty> getConfigProperties()
    {
-      return configProperties;
+      return Collections.unmodifiableList(configProperties);
    }
 
    /**
@@ -196,7 +199,7 @@ public class ResourceAdapter10 implements IdDecoratedMetadata
     */
    public List<SecurityPermission> getSecurityPermission()
    {
-      return securityPermission;
+      return Collections.unmodifiableList(securityPermission);
    }
 
    /**
@@ -326,5 +329,158 @@ public class ResourceAdapter10 implements IdDecoratedMetadata
             + reauthenticationSupport + ", securityPermission=" + securityPermission + ", id=" + id + "]";
    }
 
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
 
+      /**
+       * managedconnectionfactory-class TAG
+       */
+      MANAGED_CONNECTIONFACTORY_CLASS("managedconnectionfactory-class"),
+
+      /**
+       * config-property TAG
+       */
+      CONFIG_PROPERTY("config-property"),
+
+      /**
+       * connectionfactory-interface TAG
+       */
+      CONNECTIONFACTORY_INTERFACE("connectionfactory-interface"),
+
+      /**
+       * connectionfactory-impl-class TAG
+       */
+      CONNECTIONFACTORY_IMPL_CLASS("connectionfactory-impl-class"),
+
+      /**
+       * connection-interface TAG
+       */
+      CONNECTION_INTERFACE("connection-interface"),
+
+      /**
+       * connection-impl-class TAG
+       */
+      CONNECTION_IMPL_CLASS("connection-impl-class"),
+
+      /**
+       * transaction-support TAG
+       */
+      TRANSACTION_SUPPORT("transaction-support"),
+
+      /**
+       * authentication-mechanism TAG
+       */
+      AUTHENTICATION_MECHANISM("authentication-mechanism"),
+      /**
+       * security-permission TAG
+       */
+      SECURITY_PERMISSION("security-permission"),
+      /**
+       * reauthentication-support TAG
+       */
+      REAUTHENTICATION_SUPPORT("reauthentication-support");
+
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+   }
 }

@@ -32,55 +32,55 @@ import java.util.Map;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class ConnectionDefinition implements IdDecoratedMetadata
+public class ResourceAdapter1516 implements ResourceAdapter
 {
    /**
     */
-   private static final long serialVersionUID = 197264648585424765L;
+   private static final long serialVersionUID = 4841095296099713549L;
 
-   private final XsdString managedconnectionfactoryClass;
+   private final String resourceadapterClass;
 
    private final ArrayList<? extends ConfigProperty> configProperty;
 
-   private final XsdString connectionfactoryInterface;
+   private final OutboundResourceAdapter outboundResourceadapter;
 
-   private final XsdString connectionfactoryImplClass;
+   private final InboundResourceAdapter inboundResourceadapter;
 
-   private final XsdString connectionInterface;
+   private final ArrayList<Adminobject> adminobject;
 
-   private final XsdString connectionImplClass;
+   private final ArrayList<SecurityPermission> securityPermission;
 
    private final String id;
 
    /**
-    * @param managedconnectionfactoryClass full qualified name of the class
-    * @param configProperty ArrayList of configproperties
-    * @param connectionfactoryInterface full qualified name of the factory interface
-    * @param connectionfactoryImplClass full qualified name of the factory implementation class
-    * @param connectionInterface full qualified name of the connection interface
-    * @param connectionImplClass full qualified name of the connection implementation class
+    * @param resourceadapterClass full qualified name of the class
+    * @param configProperty confi properties for this RA
+    * @param outboundResourceadapter outbound RA
+    * @param inboundResourceadapter inbound RA
+    * @param adminobject list of admin objects of this RA
+    * @param securityPermission supported security permissions
     * @param id XML ID
     */
-   public ConnectionDefinition(XsdString managedconnectionfactoryClass, ArrayList<? extends ConfigProperty> configProperty,
-         XsdString connectionfactoryInterface, XsdString connectionfactoryImplClass, XsdString connectionInterface,
-         XsdString connectionImplClass, String id)
+   public ResourceAdapter1516(String resourceadapterClass, ArrayList<? extends ConfigProperty> configProperty,
+         OutboundResourceAdapter outboundResourceadapter, InboundResourceAdapter inboundResourceadapter,
+         ArrayList<Adminobject> adminobject, ArrayList<SecurityPermission> securityPermission, String id)
    {
       super();
-      this.managedconnectionfactoryClass = managedconnectionfactoryClass;
+      this.resourceadapterClass = resourceadapterClass;
       this.configProperty = configProperty;
-      this.connectionfactoryInterface = connectionfactoryInterface;
-      this.connectionfactoryImplClass = connectionfactoryImplClass;
-      this.connectionInterface = connectionInterface;
-      this.connectionImplClass = connectionImplClass;
+      this.outboundResourceadapter = outboundResourceadapter;
+      this.inboundResourceadapter = inboundResourceadapter;
+      this.adminobject = adminobject;
+      this.securityPermission = securityPermission;
       this.id = id;
    }
 
    /**
-    * @return managedconnectionfactoryClass
+    * @return resourceadapterClass
     */
-   public XsdString getManagedconnectionfactoryClass()
+   public String getResourceadapterClass()
    {
-      return managedconnectionfactoryClass;
+      return resourceadapterClass;
    }
 
    /**
@@ -92,35 +92,35 @@ public class ConnectionDefinition implements IdDecoratedMetadata
    }
 
    /**
-    * @return connectionfactoryInterface
+    * @return outboundResourceadapter
     */
-   public XsdString getConnectionfactoryInterface()
+   public OutboundResourceAdapter getOutboundResourceadapter()
    {
-      return connectionfactoryInterface;
+      return outboundResourceadapter;
    }
 
    /**
-    * @return connectionfactoryImplClass
+    * @return inboundResourceadapter
     */
-   public XsdString getConnectionfactoryImplClass()
+   public InboundResourceAdapter getInboundResourceadapter()
    {
-      return connectionfactoryImplClass;
+      return inboundResourceadapter;
    }
 
    /**
-    * @return connectionInterface
+    * @return adminobject
     */
-   public XsdString getConnectionInterface()
+   public List<Adminobject> getAdminobject()
    {
-      return connectionInterface;
+      return Collections.unmodifiableList(adminobject);
    }
 
    /**
-    * @return connectionImplClass
+    * @return securityPermission
     */
-   public XsdString getConnectionImplClass()
+   public List<SecurityPermission> getSecurityPermission()
    {
-      return connectionImplClass;
+      return Collections.unmodifiableList(securityPermission);
    }
 
    /**
@@ -144,14 +144,13 @@ public class ConnectionDefinition implements IdDecoratedMetadata
    {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((adminobject == null) ? 0 : adminobject.hashCode());
       result = prime * result + ((configProperty == null) ? 0 : configProperty.hashCode());
-      result = prime * result + ((connectionImplClass == null) ? 0 : connectionImplClass.hashCode());
-      result = prime * result + ((connectionInterface == null) ? 0 : connectionInterface.hashCode());
-      result = prime * result + ((connectionfactoryImplClass == null) ? 0 : connectionfactoryImplClass.hashCode());
-      result = prime * result + ((connectionfactoryInterface == null) ? 0 : connectionfactoryInterface.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result
-            + ((managedconnectionfactoryClass == null) ? 0 : managedconnectionfactoryClass.hashCode());
+      result = prime * result + ((inboundResourceadapter == null) ? 0 : inboundResourceadapter.hashCode());
+      result = prime * result + ((outboundResourceadapter == null) ? 0 : outboundResourceadapter.hashCode());
+      result = prime * result + ((resourceadapterClass == null) ? 0 : resourceadapterClass.hashCode());
+      result = prime * result + ((securityPermission == null) ? 0 : securityPermission.hashCode());
       return result;
    }
 
@@ -171,11 +170,22 @@ public class ConnectionDefinition implements IdDecoratedMetadata
       {
          return false;
       }
-      if (!(obj instanceof ConnectionDefinition))
+      if (!(obj instanceof ResourceAdapter1516))
       {
          return false;
       }
-      ConnectionDefinition other = (ConnectionDefinition) obj;
+      ResourceAdapter1516 other = (ResourceAdapter1516) obj;
+      if (adminobject == null)
+      {
+         if (other.adminobject != null)
+         {
+            return false;
+         }
+      }
+      else if (!adminobject.equals(other.adminobject))
+      {
+         return false;
+      }
       if (configProperty == null)
       {
          if (other.configProperty != null)
@@ -184,50 +194,6 @@ public class ConnectionDefinition implements IdDecoratedMetadata
          }
       }
       else if (!configProperty.equals(other.configProperty))
-      {
-         return false;
-      }
-      if (connectionImplClass == null)
-      {
-         if (other.connectionImplClass != null)
-         {
-            return false;
-         }
-      }
-      else if (!connectionImplClass.equals(other.connectionImplClass))
-      {
-         return false;
-      }
-      if (connectionInterface == null)
-      {
-         if (other.connectionInterface != null)
-         {
-            return false;
-         }
-      }
-      else if (!connectionInterface.equals(other.connectionInterface))
-      {
-         return false;
-      }
-      if (connectionfactoryImplClass == null)
-      {
-         if (other.connectionfactoryImplClass != null)
-         {
-            return false;
-         }
-      }
-      else if (!connectionfactoryImplClass.equals(other.connectionfactoryImplClass))
-      {
-         return false;
-      }
-      if (connectionfactoryInterface == null)
-      {
-         if (other.connectionfactoryInterface != null)
-         {
-            return false;
-         }
-      }
-      else if (!connectionfactoryInterface.equals(other.connectionfactoryInterface))
       {
          return false;
       }
@@ -242,14 +208,47 @@ public class ConnectionDefinition implements IdDecoratedMetadata
       {
          return false;
       }
-      if (managedconnectionfactoryClass == null)
+      if (inboundResourceadapter == null)
       {
-         if (other.managedconnectionfactoryClass != null)
+         if (other.inboundResourceadapter != null)
          {
             return false;
          }
       }
-      else if (!managedconnectionfactoryClass.equals(other.managedconnectionfactoryClass))
+      else if (!inboundResourceadapter.equals(other.inboundResourceadapter))
+      {
+         return false;
+      }
+      if (outboundResourceadapter == null)
+      {
+         if (other.outboundResourceadapter != null)
+         {
+            return false;
+         }
+      }
+      else if (!outboundResourceadapter.equals(other.outboundResourceadapter))
+      {
+         return false;
+      }
+      if (resourceadapterClass == null)
+      {
+         if (other.resourceadapterClass != null)
+         {
+            return false;
+         }
+      }
+      else if (!resourceadapterClass.equals(other.resourceadapterClass))
+      {
+         return false;
+      }
+      if (securityPermission == null)
+      {
+         if (other.securityPermission != null)
+         {
+            return false;
+         }
+      }
+      else if (!securityPermission.equals(other.securityPermission))
       {
          return false;
       }
@@ -264,10 +263,10 @@ public class ConnectionDefinition implements IdDecoratedMetadata
    @Override
    public String toString()
    {
-      return "ConnectionDefinition [managedconnectionfactoryClass=" + managedconnectionfactoryClass
-            + ", configProperty=" + configProperty + ", connectionfactoryInterface=" + connectionfactoryInterface
-            + ", connectionfactoryImplClass=" + connectionfactoryImplClass + ", connectionInterface="
-            + connectionInterface + ", connectionImplClass=" + connectionImplClass + ", id=" + id + "]";
+      return "ResourceAdapter [resourceadapterClass=" + resourceadapterClass + ", configProperty=" + configProperty
+            + ", outboundResourceadapter=" + outboundResourceadapter + ", inboundResourceadapter="
+            + inboundResourceadapter + ", adminobject=" + adminobject + ", securityPermission=" + securityPermission
+            + ", id=" + id + "]";
    }
 
    /**
@@ -285,34 +284,34 @@ public class ConnectionDefinition implements IdDecoratedMetadata
       UNKNOWN(null),
 
       /**
-       * managedconnectionfactory-class TAG
+       * resourceadapter-class tag
        */
-      MANAGED_CONNECTIONFACTORY_CLASS("managedconnectionfactory-class"),
+      RESOURCEADAPTER_CLASS("resourceadapter-class"),
 
       /**
-       * config-property TAG
+       * config-property tag
        */
       CONFIG_PROPERTY("config-property"),
 
       /**
-       * connectionfactory-interface TAG
+       * outbound-resourceadapte TAG
        */
-      CONNECTIONFACTORY_INTERFACE("connectionfactory-interface"),
+      OUTBOUND_RESOURCEADAPTER("outbound-resourceadapter"),
 
       /**
-       * connectionfactory-impl-class TAG
+       * inbound-resourceadapter TAG
        */
-      CONNECTIONFACTORY_IMPL_CLASS("connectionfactory-impl-class"),
+      INBOUND_RESOURCEADAPTER("inbound-resourceadapter"),
 
       /**
-       * connection-interface TAG
+       * adminobject TAG
        */
-      CONNECTION_INTERFACE("connection-interface"),
+      ADMINOBJECT("adminobject"),
 
       /**
-       * connection-impl-class TAG
+       * security-permission TAG
        */
-      CONNECTION_IMPL_CLASS("connection-impl-class");
+      SECURITY_PERMISSION("security-permission");
 
       private final String name;
 
@@ -353,9 +352,9 @@ public class ConnectionDefinition implements IdDecoratedMetadata
 
       /**
       *
-      * Static method to get enum instance given localName XsdString
+      * Static method to get enum instance given localName string
       *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+      * @param localName a string used as localname (typically tag name as defined in xsd)
       * @return the enum instance
       */
       public static Tag forName(String localName)
@@ -405,5 +404,4 @@ public class ConnectionDefinition implements IdDecoratedMetadata
       }
 
    }
-
 }

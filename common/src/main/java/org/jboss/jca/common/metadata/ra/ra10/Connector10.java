@@ -28,8 +28,11 @@ import org.jboss.jca.common.metadata.ra.common.ResourceAdapter;
 import org.jboss.jca.common.metadata.ra.common.XsdString;
 import org.jboss.jca.common.metadata.ra.ra16.Icon;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -44,15 +47,17 @@ public final class Connector10 extends Connector
 
    private final String moduleName;
 
-   private final List<LocalizedXsdString> description;
+   private final ArrayList<LocalizedXsdString> description;
 
    private final XsdString displayName;
 
-   private final String version = "1.0";
+   private static final String VERSION = "1.0";
 
-   private final String specVersion = "1.0";
+   private final String version = Connector10.VERSION;
 
-   private final List<Icon> icon;
+   private final String specVersion = VERSION;
+
+   private final ArrayList<Icon> icon;
 
    /**
     * @param moduleName name of the module
@@ -66,7 +71,7 @@ public final class Connector10 extends Connector
     * @param resourceadapter full qualified name of the resource adapter
     * @param id XML ID
     */
-   public Connector10(String moduleName, List<LocalizedXsdString> description, XsdString displayName, List<Icon> icon,
+   public Connector10(String moduleName, ArrayList<LocalizedXsdString> description, XsdString displayName, ArrayList<Icon> icon,
          XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion, LicenseType license,
          ResourceAdapter resourceadapter, String id)
    {
@@ -206,5 +211,170 @@ public final class Connector10 extends Connector
             + ", version=" + version + ", specVersion=" + specVersion + ", icon=" + icon + ", vendorName=" + vendorName
             + ", eisType=" + eisType + ", license=" + license + ", resourceadapter=" + resourceadapter + ", id=" + id
             + "]";
+   }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * module-name tag
+       */
+      MODULENAME("module-name"),
+
+      /**
+       * vendor-name tag
+       */
+      VENDORNAME("vendor-name"),
+
+      /**
+       * eis-type tag
+       */
+      EIS_TYPE("eis-type"),
+
+      /**
+       * resourceadapter-version tag
+       */
+      RESOURCEADPTER_VERSION("resourceadapter-version"),
+
+      /**
+       * license tag
+       */
+      LICENSE("license"),
+
+      /**
+       * resourceadapter tag
+       */
+      RESOURCEADAPTER("resourceadapter"),
+
+      /**
+       * description tag
+       */
+      DESCRIPTION("description"),
+
+      /**
+       * icon tag
+       */
+      ICON("icon"),
+
+      /**
+       * spec-version TAG
+       */
+      SPEC_VERSION("spec-version"),
+
+      /**
+       * version TAG
+       */
+      VERSION("version"),
+
+      /**
+       * display-name tag
+       */
+      DISPLAY_NAME("display-name");
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id"),
+
+      /**
+       * version attribute
+       */
+      VERSION("version");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
    }
 }

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<connector xmlns="http://java.sun.com/xml/ns/j2ee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee file:/home/oracle/connector_1_5.xsd" version="1.5" id="ID001">
+    <vendor-name>
+    </vendor-name>
+    <eis-type>
+    </eis-type>
+    <resourceadapter-version>
+    </resourceadapter-version>
+    <license id="ID003">
+        <description>
+        </description>
+        <description>
+        </description>
+        <license-required>
+        </license-required>
+    </license>
+    <resourceadapter id="ID005">
+        <resourceadapter-class>
+        </resourceadapter-class>
+        <config-property id="ID007">
+            <description>
+            </description>
+            <description>
+            </description>
+            <config-property-name>
+            </config-property-name>
+            <config-property-type>
+            </config-property-type>
+            <config-property-value>
+            </config-property-value>
+        </config-property>
+        <config-property id="ID009">
+            <description>
+            </description>
+            <description>
+            </description>
+            <config-property-name>
+            </config-property-name>
+            <config-property-type>
+            </config-property-type>
+            <config-property-value>
+            </config-property-value>
+        </config-property>
+        <outbound-resourceadapter id="ID011">
+            <connection-definition id="ID013">
+                <managedconnectionfactory-class>
+                </managedconnectionfactory-class>
+                <config-property id="ID015">
+                    <description>
+                    </description>
+                    <description>
+                    </description>
+                    <config-property-name>
+                    </config-property-name>
+                    <config-property-type>
+                    </config-property-type>
+                    <config-property-value>
+                    </config-property-value>
+                </config-property>
+                <config-property id="ID017">
+                    <description>
+                    </description>
+                    <description>
+                    </description>
+                    <config-property-name>
+                    </config-property-name>
+                    <config-property-type>
+                    </config-property-type>
+                    <config-property-value>
+                    </config-property-value>
+                </config-property>
+                <connectionfactory-interface>
+                </connectionfactory-interface>
+                <connectionfactory-impl-class>
+                </connectionfactory-impl-class>
+                <connection-interface>
+                </connection-interface>
+                <connection-impl-class>
+                </connection-impl-class>
+            </connection-definition>
+            <connection-definition id="ID019">
+                <managedconnectionfactory-class>
+                </managedconnectionfactory-class>
+                <config-property id="ID021">
+                    <description>
+                    </description>
+                    <description>
+                    </description>
+                    <config-property-name>
+                    </config-property-name>
+                    <config-property-type>
+                    </config-property-type>
+                    <config-property-value>
+                    </config-property-value>
+                </config-property>
+                <config-property id="ID023">
+                    <description>
+                    </description>
+                    <description>
+                    </description>
+                    <config-property-name>
+                    </config-property-name>
+                    <config-property-type>
+                    </config-property-type>
+                    <config-property-value>
+                    </config-property-value>
+                </config-property>
+                <connectionfactory-interface>
+                </connectionfactory-interface>
+                <connectionfactory-impl-class>
+                </connectionfactory-impl-class>
+                <connection-interface>
+                </connection-interface>
+                <connection-impl-class>
+                </connection-impl-class>
+            </connection-definition>
+            <transaction-support>NoTransaction</transaction-support>
+            <authentication-mechanism id="ID025">
+                <description>
+                </description>
+                <description>
+                </description>
+                <authentication-mechanism-type>
+                </authentication-mechanism-type>
+                <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+            </authentication-mechanism>
+            <authentication-mechanism id="ID027">
+                <description>
+                </description>
+                <description>
+                </description>
+                <authentication-mechanism-type>
+                </authentication-mechanism-type>
+                <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+            </authentication-mechanism>
+            <reauthentication-support>
+            </reauthentication-support>
+        </outbound-resourceadapter>
+        <inbound-resourceadapter id="ID029">
+            <messageadapter id="ID031">
+                <messagelistener id="ID033">
+                    <messagelistener-type>
+                    </messagelistener-type>
+                    <activationspec id="ID035">
+                        <activationspec-class>
+                        </activationspec-class>
+                    </activationspec>
+                </messagelistener>
+                <messagelistener id="ID037">
+                    <messagelistener-type>
+                    </messagelistener-type>
+                    <activationspec id="ID039">
+                        <activationspec-class>
+                        </activationspec-class>
+                    </activationspec>
+                </messagelistener>
+            </messageadapter>
+        </inbound-resourceadapter>
+        <adminobject id="ID041">
+            <adminobject-interface>
+            </adminobject-interface>
+            <adminobject-class>
+            </adminobject-class>
+            <config-property id="ID043">
+                <description>
+                </description>
+                <description>
+                </description>
+                <config-property-name>
+                </config-property-name>
+                <config-property-type>
+                </config-property-type>
+                <config-property-value>
+                </config-property-value>
+            </config-property>
+            <config-property id="ID045">
+                <description>
+                </description>
+                <description>
+                </description>
+                <config-property-name>
+                </config-property-name>
+                <config-property-type>
+                </config-property-type>
+                <config-property-value>
+                </config-property-value>
+            </config-property>
+        </adminobject>
+        <adminobject id="ID047">
+            <adminobject-interface>
+            </adminobject-interface>
+            <adminobject-class>
+            </adminobject-class>
+            <config-property id="ID049">
+                <description>
+                </description>
+                <description>
+                </description>
+                <config-property-name>
+                </config-property-name>
+                <config-property-type>
+                </config-property-type>
+                <config-property-value>
+                </config-property-value>
+            </config-property>
+            <config-property id="ID051">
+                <description>
+                </description>
+                <description>
+                </description>
+                <config-property-name>
+                </config-property-name>
+                <config-property-type>
+                </config-property-type>
+                <config-property-value>
+                </config-property-value>
+            </config-property>
+        </adminobject>
+        <security-permission id="ID053">
+            <description>
+            </description>
+            <description>
+            </description>
+            <security-permission-spec>
+            </security-permission-spec>
+        </security-permission>
+        <security-permission id="ID055">
+            <description>
+            </description>
+            <description>
+            </description>
+            <security-permission-spec>
+            </security-permission-spec>
+        </security-permission>
+    </resourceadapter>
+</connector>

@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class ConfigProperty implements IdDecoratedMetadata
    /**
     * description
     */
-   protected final List<LocalizedXsdString> description;
+   protected final ArrayList<LocalizedXsdString> description;
 
    /**
     * configPropertyName
@@ -72,7 +73,7 @@ public class ConfigProperty implements IdDecoratedMetadata
     * @param configPropertyValue value of config-property
     * @param id id attribute in xml file
     */
-   public ConfigProperty(List<LocalizedXsdString> description, XsdString configPropertyName,
+   public ConfigProperty(ArrayList<LocalizedXsdString> description, XsdString configPropertyName,
          XsdString configPropertyType, XsdString configPropertyValue, String id)
    {
       super();

@@ -70,7 +70,7 @@ public class Path implements JCAMetadata
 
    private static boolean isValid(String path)
    {
-      return false;
+      return true;
    }
 
    /**

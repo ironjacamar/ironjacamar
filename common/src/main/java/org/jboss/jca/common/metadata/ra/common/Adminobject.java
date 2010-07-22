@@ -22,8 +22,11 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -35,22 +38,22 @@ public class Adminobject implements IdDecoratedMetadata
      */
    private static final long serialVersionUID = -7653991400977178783L;
 
-   private final String adminobjectInterface;
+   private final XsdString adminobjectInterface;
 
-   private final String adminobjectClass;
+   private final XsdString adminobjectClass;
 
-   private final List<? extends ConfigProperty> configProperty;
+   private final ArrayList<? extends ConfigProperty> configProperty;
 
    private final String id;
 
    /**
     * @param adminobjectInterface full qualified name of the interface
     * @param adminobjectClass full qualified name of the implementation class
-    * @param configProperty List of config propeties
+    * @param configProperty ArrayList of config propeties
     * @param id xmlid
     */
-   public Adminobject(final String adminobjectInterface, final String adminobjectClass,
-         final List<? extends ConfigProperty> configProperty, final String id)
+   public Adminobject(final XsdString adminobjectInterface, final XsdString adminobjectClass,
+         final ArrayList<? extends ConfigProperty> configProperty, final String id)
    {
       super();
       this.adminobjectInterface = adminobjectInterface;
@@ -62,7 +65,7 @@ public class Adminobject implements IdDecoratedMetadata
    /**
     * @return adminobjectInterface
     */
-   public String getAdminobjectInterface()
+   public XsdString getAdminobjectInterface()
    {
       return adminobjectInterface;
    }
@@ -70,7 +73,7 @@ public class Adminobject implements IdDecoratedMetadata
    /**
     * @return adminobjectClass
     */
-   public String getAdminobjectClass()
+   public XsdString getAdminobjectClass()
    {
       return adminobjectClass;
    }
@@ -189,6 +192,127 @@ public class Adminobject implements IdDecoratedMetadata
    {
       return "Adminobject [adminobjectInterface=" + adminobjectInterface + ", adminobjectClass=" + adminobjectClass
             + ", configProperty=" + configProperty + ", id=" + id + "]";
+   }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * adminobject-interface TAG
+       */
+      ADMINOBJECT_INTERFACE("adminobject-interface"),
+
+      /**
+       * adminobject-class TAG
+       */
+      ADMINOBJECT_CLASS("adminobject-class"),
+
+      /**
+       * config-property TAG
+       */
+      CONFIG_PROPERTY("config-property");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
    }
 
 }

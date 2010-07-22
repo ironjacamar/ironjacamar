@@ -25,6 +25,7 @@ package org.jboss.jca.common.metadata.jbossra;
 import org.jboss.jca.common.metadata.JCAMetadata;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.RaConfigProperty;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public abstract class JbossRa implements JCAMetadata
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
-   private final List<RaConfigProperty<?>> raConfigProperties;
+   private final ArrayList<RaConfigProperty<?>> raConfigProperties;
 
    /**
     *
@@ -49,7 +50,7 @@ public abstract class JbossRa implements JCAMetadata
     *
     * @param raConfigProperties properties list
     */
-   protected JbossRa(List<RaConfigProperty<?>> raConfigProperties)
+   protected JbossRa(ArrayList<RaConfigProperty<?>> raConfigProperties)
    {
       this.raConfigProperties = raConfigProperties;
    }

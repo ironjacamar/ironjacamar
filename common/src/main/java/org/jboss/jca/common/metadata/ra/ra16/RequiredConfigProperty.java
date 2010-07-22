@@ -23,9 +23,13 @@ package org.jboss.jca.common.metadata.ra.ra16;
 
 import org.jboss.jca.common.metadata.ra.common.IdDecoratedMetadata;
 import org.jboss.jca.common.metadata.ra.common.LocalizedXsdString;
+import org.jboss.jca.common.metadata.ra.common.XsdString;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -37,9 +41,9 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
     */
    private static final long serialVersionUID = 4299927051352998447L;
 
-   private final List<LocalizedXsdString> description;
+   private final ArrayList<LocalizedXsdString> description;
 
-   private final String configPropertyName;
+   private final XsdString configPropertyName;
 
    private final String id;
 
@@ -48,7 +52,7 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
     * @param configPropertyName name of the property
     * @param id XML ID
     */
-   public RequiredConfigProperty(List<LocalizedXsdString> description, String configPropertyName, String id)
+   public RequiredConfigProperty(ArrayList<LocalizedXsdString> description, XsdString configPropertyName, String id)
    {
       super();
       this.description = description;
@@ -67,7 +71,7 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
    /**
     * @return configPropertyName
     */
-   public String getConfigPropertyName()
+   public XsdString getConfigPropertyName()
    {
       return configPropertyName;
    }
@@ -167,4 +171,121 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
       return "RequiredConfigProperty [description=" + description + ", configPropertyName=" + configPropertyName
             + ", id=" + id + "]";
    }
+
+   /**
+   *
+   * A Tag.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public enum Tag
+   {
+      /** always first
+       *
+       */
+      UNKNOWN(null),
+
+      /**
+       * description TAG
+       */
+      DESCRIPTION("description"),
+
+      /**
+       * config-property-name TAG
+       */
+      CONFIG_PROPERTY_NAME("config-property-name");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Tag(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      private static final Map<String, Tag> MAP;
+
+      static
+      {
+         final Map<String, Tag> map = new HashMap<String, Tag>();
+         for (Tag element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName string
+      *
+      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Tag forName(String localName)
+      {
+         final Tag element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** id attribute
+       *
+       */
+      ID("id");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+   }
+
 }

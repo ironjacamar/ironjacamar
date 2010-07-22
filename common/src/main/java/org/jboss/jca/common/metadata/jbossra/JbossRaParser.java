@@ -93,7 +93,7 @@ public class JbossRaParser implements MetadataParser<JbossRa>
                   switch (Tag.forName(reader.getLocalName()))
                   {
                      case JBOSSRA : {
-                        jbossRa = parseJbossRa20(reader, jbossRa);
+                        jbossRa = parseJbossRa20(reader);
                         break;
                      }
                      default :
@@ -125,7 +125,7 @@ public class JbossRaParser implements MetadataParser<JbossRa>
 
    }
 
-   private JbossRa20 parseJbossRa20(XMLStreamReader reader, JbossRa jbossRa) throws XMLStreamException, ParserException
+   private JbossRa20 parseJbossRa20(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       ArrayList<RaConfigProperty<?>> raConfigProperties = new ArrayList<RaConfigProperty<?>>();
       ArrayList<BeanValidationGroup> beanValidationGroups = new ArrayList<BeanValidationGroup>();
