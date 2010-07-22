@@ -54,7 +54,7 @@ import org.jboss.util.NotImplementedException;
  * AbstractConnectionManager.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public abstract class AbstractConnectionManager implements ConnectionManager 
 {

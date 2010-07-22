@@ -83,7 +83,6 @@ public class TxConnectionListener extends AbstractConnectionListener
       {
          ((LocalXAResource) xaResource).setConnectionListener(this);  
       }
-
    }   
    
    /**
@@ -236,7 +235,8 @@ public class TxConnectionListener extends AbstractConnectionListener
       {
          try
          {
-            for (int i = 0; i < unenlisted.size(); ++i)
+            int size = unenlisted.size();
+            for (int i = 0; i < size; ++i)
             {
                TransactionSynchronization sync = (TransactionSynchronization) unenlisted.get(i);
                if (sync.enlist())
@@ -469,13 +469,13 @@ public class TxConnectionListener extends AbstractConnectionListener
          new Throwable("Unabled to enlist resource, see the previous warnings.");
       
       /** Transaction */
-      private Transaction currentTx;
+      private final Transaction currentTx;
       
       /** This is the status when we were registered */
-      private boolean wasTrackByTx;
+      private final boolean wasTrackByTx;
 
       /** Whether we are enlisted */
-      private boolean enlisted = false;
+      private boolean enlisted;
       
       /** Any error during enlistment */
       private Throwable enlistError;
@@ -485,10 +485,12 @@ public class TxConnectionListener extends AbstractConnectionListener
        * 
        * @param trackByTx whether this is track by connection
        */
-      public TransactionSynchronization(Transaction tx, boolean trackByTx)
+      public TransactionSynchronization(final Transaction tx, final boolean trackByTx)
       {
          this.currentTx = tx;
          this.wasTrackByTx = trackByTx;
+         this.enlisted = false;
+         this.enlistError = null;
       }
       
       /**

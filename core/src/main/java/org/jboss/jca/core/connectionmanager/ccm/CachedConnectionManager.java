@@ -29,15 +29,16 @@ import org.jboss.jca.spi.ComponentStack;
 
 import java.lang.reflect.Method;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -58,28 +59,28 @@ import org.jboss.util.Strings;
 
 /**
  * CacheConnectionManager.
- * @version $Rev$
- *
+ * 
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
 public class CachedConnectionManager implements
    UserTransactionStartedListener,
    UserTransactionListener,
    ComponentStack
 {
-   /**Log instance*/
+   /** Log instance */
    private static Logger log = Logger.getLogger(CachedConnectionManager.class);
    
-   /**Log trace*/
-   private boolean trace;
+   /** Log trace */
+   private static boolean trace = log.isTraceEnabled();
    
-   /**Debug flag*/
-   private boolean debug;
+   /** Debugging flag */
+   private static boolean debug = false;
    
-   /**Error flag*/
-   private boolean error;
+   /** Enabled error handling for debugging */
+   private static boolean error = false;
    
-   /**Transaction Manager instance*/
-   private TransactionManager transactionManager;
+   /** Transaction Manager instance */
+   private final TransactionManager transactionManager;
    
    /**
     * ThreadLocal that holds current calling meta-programming aware
@@ -95,9 +96,10 @@ public class CachedConnectionManager implements
     * map of meta-aware object to set of connections it holds, used by
     * the idiot spec compliant behavior.
     */
-   private final Map<KeyConnectionAssociation, Map<ConnectionCacheListener, Collection<ConnectionRecord>>> 
-   objectToConnectionManagerMap = new HashMap<KeyConnectionAssociation, 
-      Map<ConnectionCacheListener, Collection<ConnectionRecord>>>();
+   private final ConcurrentMap<KeyConnectionAssociation, 
+      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> 
+   objectToConnectionManagerMap = new ConcurrentHashMap<KeyConnectionAssociation, 
+      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>>();
 
    /**
     * Connection stacktraces
@@ -111,7 +113,6 @@ public class CachedConnectionManager implements
    public CachedConnectionManager(final TransactionManager transactionManager)
    {
       this.transactionManager = transactionManager;
-      this.trace = log.isTraceEnabled();
    }
    
    /**
@@ -138,15 +139,19 @@ public class CachedConnectionManager implements
          return; //not participating properly in this management scheme.  
       }
 
-      Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap = key.getCMToConnectionsMap();
-      Iterator<Entry<ConnectionCacheListener, Collection<ConnectionRecord>>> cmToConnectionsMapIterator = 
+      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap = 
+         key.getCMToConnectionsMap();
+
+      Iterator<Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> cmToConnectionsMapIterator = 
          cmToConnectionsMap.entrySet().iterator();
       
       while (cmToConnectionsMapIterator.hasNext())
       {
-         Entry<ConnectionCacheListener, Collection<ConnectionRecord>> entry = cmToConnectionsMapIterator.next();
+         Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> entry = 
+            cmToConnectionsMapIterator.next();
+
          ConnectionCacheListener cm = entry.getKey();
-         Collection<ConnectionRecord> conns = entry.getValue();
+         CopyOnWriteArrayList<ConnectionRecord> conns = entry.getValue();
          
          cm.transactionStarted(conns);
       }
@@ -202,7 +207,6 @@ public class CachedConnectionManager implements
                   "see the log for the allocation stacktraces");  
          }
       }
-      
    }
 
    /**
@@ -237,11 +241,13 @@ public class CachedConnectionManager implements
       }
 
       ConnectionRecord cr = new ConnectionRecord(cl, connection, cri);
-      Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap = key.getCMToConnectionsMap();
-      Collection<ConnectionRecord> conns = cmToConnectionsMap.get(cm);
+      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap = 
+         key.getCMToConnectionsMap();
+
+      CopyOnWriteArrayList<ConnectionRecord> conns = cmToConnectionsMap.get(cm);
       if (conns == null)
       {
-         conns = new ArrayList<ConnectionRecord>();
+         conns = new CopyOnWriteArrayList<ConnectionRecord>();
          cmToConnectionsMap.put(cm, conns);
       }
       
@@ -282,8 +288,10 @@ public class CachedConnectionManager implements
          return; //not participating properly in this management scheme.  
       }
 
-      Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap = key.getCMToConnectionsMap();
-      Collection<ConnectionRecord> conns = cmToConnectionsMap.get(cm);
+      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap = 
+         key.getCMToConnectionsMap();
+
+      CopyOnWriteArrayList<ConnectionRecord> conns = cmToConnectionsMap.get(cm);
       if (conns == null)
       {
          return; // Can happen if connections are "passed" between contexts  
@@ -347,24 +355,23 @@ public class CachedConnectionManager implements
    @SuppressWarnings("unchecked")
    private void reconnect(KeyConnectionAssociation key, Set unsharableResources) throws ResourceException
    {
-      Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap = null;
-      synchronized (objectToConnectionManagerMap)
-      {
-         cmToConnectionsMap = objectToConnectionManagerMap.get(key);
-         if (cmToConnectionsMap == null)
-         {
-            return;  
-         }
-      }
+      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap = 
+         objectToConnectionManagerMap.get(key);
+         
+      if (cmToConnectionsMap == null)
+         return;  
+
       key.setCMToConnectionsMap(cmToConnectionsMap);
-      Iterator<Entry<ConnectionCacheListener, Collection<ConnectionRecord>>> cmToConnectionsMapIterator = 
+      Iterator<Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> cmToConnectionsMapIterator = 
          cmToConnectionsMap.entrySet().iterator();
       
       while (cmToConnectionsMapIterator.hasNext())
       {
-         Entry<ConnectionCacheListener, Collection<ConnectionRecord>> entry = cmToConnectionsMapIterator.next();
+         Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> entry = 
+            cmToConnectionsMapIterator.next();
+
          ConnectionCacheListener cm = entry.getKey();
-         Collection<ConnectionRecord> conns =  entry.getValue();
+         CopyOnWriteArrayList<ConnectionRecord> conns =  entry.getValue();
          
          cm.reconnect(conns, unsharableResources);
       }
@@ -379,22 +386,23 @@ public class CachedConnectionManager implements
    @SuppressWarnings("unchecked")
    private void disconnect(KeyConnectionAssociation key, Set unsharableResources) throws ResourceException
    {
-      Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap = null;
-      cmToConnectionsMap = key.getCMToConnectionsMap();
+      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
+         key.getCMToConnectionsMap();
+
       if (!cmToConnectionsMap.isEmpty())
       {
-         synchronized (objectToConnectionManagerMap)
-         {
-            objectToConnectionManagerMap.put(key, cmToConnectionsMap);
-         }
-         Iterator<Entry<ConnectionCacheListener, Collection<ConnectionRecord>>> cmToConnectionsMapIterator = 
+         objectToConnectionManagerMap.put(key, cmToConnectionsMap);
+
+         Iterator<Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> cmToConnectionsMapIterator = 
             cmToConnectionsMap.entrySet().iterator();
          
          while (cmToConnectionsMapIterator.hasNext())
          {
-            Entry<ConnectionCacheListener, Collection<ConnectionRecord>> entry = cmToConnectionsMapIterator.next();
+            Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> entry = 
+               cmToConnectionsMapIterator.next();
+
             ConnectionCacheListener cm = entry.getKey();
-            Collection<ConnectionRecord> conns =  entry.getValue();
+            CopyOnWriteArrayList<ConnectionRecord> conns =  entry.getValue();
             
             cm.disconnect(conns, unsharableResources);
          }
@@ -417,19 +425,15 @@ public class CachedConnectionManager implements
          log.trace("unregisterConnectionCacheListener: " + cm);  
       }
       
-      synchronized (objectToConnectionManagerMap)
-      {
-         Iterator<Map<ConnectionCacheListener, Collection<ConnectionRecord>>> it = 
-               objectToConnectionManagerMap.values().iterator();
+      Iterator<ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> it = 
+         objectToConnectionManagerMap.values().iterator();
          
-         while (it.hasNext())
-         {
-            Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap = it.next();
-            if (cmToConnectionsMap != null)
-            {
-               cmToConnectionsMap.remove(cm);  
-            }
-         }
+      while (it.hasNext())
+      {
+         ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap = it.next();
+
+         if (cmToConnectionsMap != null)
+            cmToConnectionsMap.remove(cm);  
       }
    }
    
@@ -439,7 +443,8 @@ public class CachedConnectionManager implements
     * @param cmToConnectionsMap connection manager to connections
     * @return true if close
     */
-   private boolean closeAll(Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap)
+   private boolean closeAll(ConcurrentMap<ConnectionCacheListener, 
+                            CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap)
    {
       if (!debug)
       {
@@ -448,12 +453,12 @@ public class CachedConnectionManager implements
 
       boolean unclosed = false;
 
-      Collection<Collection<ConnectionRecord>> connections = cmToConnectionsMap.values();
+      Collection<CopyOnWriteArrayList<ConnectionRecord>> connections = cmToConnectionsMap.values();
       if (connections.size() != 0)
       {
-         for (Iterator<Collection<ConnectionRecord>> i = connections.iterator(); i.hasNext();)
+         for (Iterator<CopyOnWriteArrayList<ConnectionRecord>> i = connections.iterator(); i.hasNext();)
          {
-            Collection<ConnectionRecord> conns = i.next();
+            CopyOnWriteArrayList<ConnectionRecord> conns = i.next();
             for (Iterator<ConnectionRecord> j = conns.iterator(); j.hasNext();)
             {
                Object c = (j.next()).getConnection();

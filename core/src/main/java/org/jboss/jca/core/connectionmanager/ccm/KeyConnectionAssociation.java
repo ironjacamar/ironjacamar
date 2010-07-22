@@ -24,9 +24,9 @@ package org.jboss.jca.core.connectionmanager.ccm;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.jboss.util.Strings;
 
@@ -44,7 +44,7 @@ final class KeyConnectionAssociation
    private final Object metaAwareObject;
 
    //map of cm to list of connections for that cm.
-   private Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap;
+   private ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap;
 
    /**
     * Creates a new instance.
@@ -84,7 +84,8 @@ final class KeyConnectionAssociation
     * Set map instance.
     * @param cmToConnectionsMap connection manager to connections
     */
-   public void setCMToConnectionsMap(Map<ConnectionCacheListener, Collection<ConnectionRecord>> cmToConnectionsMap)
+   public void setCMToConnectionsMap(ConcurrentMap<ConnectionCacheListener, 
+                                     CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap)
    {
       this.cmToConnectionsMap = cmToConnectionsMap;
    }
@@ -93,12 +94,10 @@ final class KeyConnectionAssociation
     * 
     * @return map instance
     */
-   public Map<ConnectionCacheListener, Collection<ConnectionRecord>> getCMToConnectionsMap()
+   public ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> getCMToConnectionsMap()
    {
       if (cmToConnectionsMap == null)
-      {
-         cmToConnectionsMap = new HashMap<ConnectionCacheListener, Collection<ConnectionRecord>>();
-      }
+         cmToConnectionsMap = new ConcurrentHashMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>();
       
       return cmToConnectionsMap;
    }
