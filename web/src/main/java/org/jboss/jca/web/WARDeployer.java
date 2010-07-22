@@ -155,9 +155,9 @@ public class WARDeployer implements Deployer
 
          return new WARDeployment(url, webapp, tmpDeployment, parent);
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
-         throw new DeployException(e.getMessage(), e);
+         throw new DeployException(t.getMessage(), t);
       }
    }
 }

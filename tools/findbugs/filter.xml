@@ -37,11 +37,23 @@
     <Class name="org.jboss.jca.core.api.WorkManager"/>
     <Bug code="Nm"/>
   </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.connectionmanager.ConnectionManager"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.security.UsersRoles"/>
+    <Bug code="Se,PZLA"/>
+  </Match>
 
   <!--  org.jboss.jca.deployers filter -->
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.RADeployer"/>
     <Bug code="DLS,ST"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.RADeployment"/>
+    <Bug code="EI2"/>
   </Match>
 
   <!--  org.jboss.jca.sjc filter -->
