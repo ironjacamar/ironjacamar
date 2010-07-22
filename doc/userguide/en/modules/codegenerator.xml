@@ -33,6 +33,9 @@
         <listitem>
           Apache Ant build environment
         </listitem>
+        <listitem>
+          Test suite environment
+        </listitem>
       </itemizedlist>
 
    </section>
@@ -74,6 +77,248 @@
 
       <para>The developer must then answer various questions regarding the
         properties of the resource adapter.</para>
+
+      <section id="codegenerator_input">
+        <title>Developer Input</title>
+
+        <para>This section describes the questions that are ask of the developer
+          in order to generate the code.</para>
+        
+        <table frame="all">
+          <title>Developer input</title>
+          <tgroup cols="4" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1" colwidth="2*"/>
+            <colspec colname="c2" colwidth="1*"/>
+            <colspec colname="c3" colwidth="3*"/>
+            <colspec colname="c4" colwidth="1*"/>
+            <thead>
+              <row>
+                <entry align="left">Question</entry>
+                <entry align="left">Spec</entry>
+                <entry align="left">Desciption</entry>
+                <entry align="left">Type</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry>
+                  Profile version (1.6/1.5/1.0)
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  Defines which Java EE Connector Architecture specification that
+                  the resource adapter should target
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Type (O/Outbound/I/Inbound/B/Bidirectional)
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  Defines if the resource adapter should contain outbound communication., inbound communication
+                  or both
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Use annotations (Y/Yes/N/No)
+                </entry>
+                <entry>JCA 1.6+</entry>
+                <entry>
+                  Should annotations be used for specifying the structure. If 'No' is selected a <code>META-INF/ra.xml</code>
+                  is generated
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Include a ResourceAdapter (Y/Yes/N/No)
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  Should an instance of a resource adapter class be included in the archive
+                </entry>
+                <entry>Outbound</entry>
+              </row>
+              <row>
+                <entry>
+                  Package name
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The package name of the resource adapter
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Resource adapter class name 
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  The class name of the resource adapter
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Managed connection factory class name
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The class name of the managed connection factory
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Managed connection class name
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The class name of the managed connection
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Connection interface class name
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The class name of the connection interface
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Connection implementation class name
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The class name of the connection implementation
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Connection factory interface class name
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The class name of the connection factory interface
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Connection factory implementation class name
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The class name of the connection factory implementation
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Resource adapter config properties
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  Include a configuration properties in the resource adapter instance
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Managed connection factory config properties
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  Include a configuration properties in the managed connection factory instance
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Use ResourceAdapterAssociation (Y/Yes/N/No)
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  Associate the managed connection factory instance with the resource adapter instance
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Use CCI (Y/Yes/N/No)
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  Use the Common Client Interface for the connection / connection factory in the 'Outbound' part
+                  of the resource adapter
+                </entry>
+                <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  MessageListener interface name
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  The name of the message listener interface for the activation
+                </entry>
+                <entry>Inbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  ActivationSpec class name
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  The class name of the activation specification instance
+                </entry>
+                <entry>Inbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  ActivationSpec config properties
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  Include configuration properties in the activation specification instance
+                </entry>
+                <entry>Inbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Activation class name
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  The class name of the activation instance
+                </entry>
+                <entry>Inbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Transaction support (N/NoTransaction/L/LocalTransaction/X/XATransaction)
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The transaction support level
+                </entry>
+                <entry></entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+        
+      </section>
 
    </section>
 
