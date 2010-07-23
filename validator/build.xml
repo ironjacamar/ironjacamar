@@ -66,6 +66,10 @@
 
     <jar destfile="${target.dir}/${name}-validator.jar"
          basedir="${build.validator.dir}/jars/validator"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          excludes="**/cli/**, **/ant/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator"/>
@@ -77,6 +81,10 @@
 
     <jar destfile="${target.dir}/${name}-validator-cli.jar"
          basedir="${build.validator.dir}/jars/validator"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          includes="**/cli/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Command Line Interface"/>
@@ -88,6 +96,10 @@
   	
     <jar destfile="${target.dir}/${name}-validator-ant.jar"
          basedir="${build.validator.dir}/jars/validator"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
    	 includes="**/ant/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Ant support"/>

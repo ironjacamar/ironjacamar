@@ -51,6 +51,10 @@
   <target name="jars" depends="compile">
     <jar destfile="${target.dir}/${name}-core-api.jar"
          basedir="${build.core.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          includes="**/core/api/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core API"/>
@@ -62,6 +66,10 @@
 
     <jar destfile="${target.dir}/${name}-core-spi.jar"
          basedir="${build.core.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          includes="**/core/spi/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core SPI"/>
@@ -73,6 +81,10 @@
 
     <jar destfile="${target.dir}/${name}-core-impl.jar"
          basedir="${build.core.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          excludes="**/*.java, **/core/api/**, **/core/spi/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core Implementation"/>

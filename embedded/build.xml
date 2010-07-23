@@ -60,6 +60,10 @@
     </copy>
     <jar destfile="${target.dir}/${name}-embedded.jar"
          basedir="${build.embedded.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          excludes="META-INF/services/**,**/arquillian/**,**/*.java">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Embedded"/>
@@ -77,6 +81,10 @@
 
     <jar destfile="${target.dir}/${name}-embedded-arquillian.jar"
          basedir="${build.embedded.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          includes="META-INF/**,**/arquillian/**"
          excludes="**/*.xml,**/*.java">
       <manifest>

@@ -60,6 +60,10 @@
     </copy>
     <jar destfile="${target.dir}/${name}-web.jar"
          basedir="${build.web.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          excludes="**/console/**,**/*.java">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Web"/>
@@ -71,6 +75,10 @@
 
     <jar destfile="${target.dir}/${name}-web-console.jar"
          basedir="${build.web.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          includes="**/console/**"
          excludes="**/*.java">
       <manifest>

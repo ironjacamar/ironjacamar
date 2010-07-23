@@ -49,6 +49,10 @@
   <target name="jars" depends="compile">
     <jar destfile="${target.dir}/${name}-spec-api.jar"
          basedir="${build.api.dir}"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
          excludes="**/*.java">
       <manifest>
         <attribute name="Implementation-Title" value="The Java EE Connector Architecture 1.6 API"/>

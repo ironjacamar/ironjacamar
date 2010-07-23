@@ -48,7 +48,11 @@
        ================================= -->
   <target name="jars" depends="compile">
     <jar destfile="${target.dir}/${name}-common.jar"
-         basedir="${build.common.dir}">
+         basedir="${build.common.dir}"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common"/>
 	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>

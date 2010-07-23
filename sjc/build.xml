@@ -55,7 +55,11 @@
        ================================= -->
   <target name="jars" depends="compile">
     <jar destfile="${target.dir}/${name}-sjc.jar"
-         basedir="${build.sjc.dir}/impl">
+         basedir="${build.sjc.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar SJC"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
@@ -123,7 +127,11 @@
     <unjar src="${target.dir}/${name}-sjc.jar" dest="${build.sjc.dir}/tmp"/>
     <jar destfile="${target.dir}/sjc/bin/${name}-sjc.jar"
          manifest="${build.sjc.dir}/tmp/META-INF/MANIFEST.MF"
-         basedir="${build.sjc.dir}/tmp"/>
+         basedir="${build.sjc.dir}/tmp"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"/>
     <delete dir="${build.sjc.dir}/tmp"/>
 
     <copy todir="${target.dir}/sjc/config">

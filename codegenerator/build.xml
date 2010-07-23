@@ -65,7 +65,11 @@
     </copy>
 
     <jar destfile="${target.dir}/${name}-codegenerator.jar"
-         basedir="${build.codegenerator.dir}/jars/codegenerator">
+         basedir="${build.codegenerator.dir}/jars/codegenerator"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
