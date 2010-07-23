@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
         "../../../tools/docbook/support/docbook-dtd/docbookx.dtd" [
-        <!ENTITY about SYSTEM "modules/about.xml">
+        <!ENTITY dedication SYSTEM "modules/dedication.xml">
+        <!ENTITY preface SYSTEM "modules/preface.xml">
         <!ENTITY introduction SYSTEM "modules/introduction.xml">
         <!ENTITY download SYSTEM "modules/download.xml">
         <!ENTITY nc_installation SYSTEM "modules/installation.xml">
@@ -13,6 +14,7 @@
         <!ENTITY embedded SYSTEM "modules/embedded.xml">
         <!ENTITY community SYSTEM "modules/community.xml">
         <!ENTITY troubleshooting SYSTEM "modules/troubleshooting.xml">
+        <!ENTITY schemas SYSTEM "modules/schemas.xml">
         ]>
 <book lang="en">
    <bookinfo>
@@ -22,9 +24,11 @@
 
    </bookinfo>
 
+   &dedication;
+
    <toc></toc>
 
-   &about;
+   &preface;
 
    &introduction;
 
@@ -47,5 +51,7 @@
    &community;
 
    &troubleshooting;
+
+   &schemas;
 
 </book>

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter id="about">
-  <title>About IronJacamar</title>
+<preface id="preface">
+  <title>Preface</title>
 
-  <para>The goal of the IronJacamar project is to provide an implementation of the Java Connector
-    Architecture 1.6 specification.</para>
+  <section id="about">
+    <title>About IronJacamar</title>
 
-  <para>The specification can be found here: <ulink url="http://www.jcp.org/en/jsr/detail?id=322">http://www.jcp.org/en/jsr/detail?id=322</ulink>.</para>
+    <para>The goal of the IronJacamar project is to provide an implementation of the Java Connector
+      Architecture 1.6 specification.</para>
+    
+    <para>The specification can be found here: <ulink url="http://www.jcp.org/en/jsr/detail?id=322">http://www.jcp.org/en/jsr/detail?id=322</ulink>.</para>
+  </section>
 
   <section id="whythename">
     <title>Why IronJacamar ?</title>
@@ -45,4 +49,20 @@
 
   </section>
 
-</chapter>
+  <section id="license">
+    <title>License</title>
+
+    <para>Copyright © 2010 Red Hat, Inc. and others.</para>
+    <para>The text of and illustrations in this document are licensed by Red Hat under
+      a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA").</para>
+    <para>An explanation of CC-BY-SA is available at 
+      <ulink url="http://creativecommons.org/licenses/by-sa/3.0/">http://creativecommons.org/licenses/by-sa/3.0/</ulink>. 
+      In accordance with CC-BY-SA, if you distribute this document or an adaptation
+      of it, you must provide the URL for the original version.</para>
+    <para>Red Hat, as the licensor of this document, waives the right to enforce, 
+      and agrees not to assert, Section 4d of CC-BY-SA to the fullest extent 
+      permitted by applicable law.</para>
+    
+  </section>
+
+</preface>
