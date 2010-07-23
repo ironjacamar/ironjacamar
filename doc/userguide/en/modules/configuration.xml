@@ -54,12 +54,22 @@ config/bootstrap/jca.xml
         <para>file, as the</para>
 
         <programlisting>
-&lt;bean name="RADeployer" 
+<![CDATA[
+<bean name="RADeployer" 
       interface="com.github.fungal.spi.deployers.Deployer" 
-      class="org.jboss.jca.deployers.fungal.RADeployer"&gt;
-  &lt;depends&gt;BeanValidation&lt;/depends&gt;
-  &lt;depends&gt;WorkManager&lt;/depends&gt;
-&lt;/bean&gt;
+      class="org.jboss.jca.deployers.fungal.RADeployer">
+  <property name="ArchiveValidation">true</property>
+  <property name="ArchiveValidationFailOnWarn">false</property>
+  <property name="ArchiveValidationFailOnError">true</property>
+  <property name="BeanValidation">true</property>
+  <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
+  <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
+  <property name="JndiStrategy"><inject bean="JNDIStrategy"/></property>
+  <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
+  <depends>BeanValidation</depends>
+  <depends>JBossStdioContextSelector</depends>
+</bean>
+ ]]>
         </programlisting>
 
         <para>bean.</para>

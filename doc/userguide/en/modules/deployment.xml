@@ -5,10 +5,36 @@
    <para>The IronJacamar distribution contains a deploy/ directory where all deployments
      should be deployed to.</para>
 
+   <section id="packagingrequirements">
+      <title>Packaging requirements</title>
+
+      <para>A resource adapter archive is a structured Java Archive (JAR) file, which 
+        bundles all Java classes in JAR files, and optionally contains metadata, resources and native
+        libraries.</para>
+
+      <para>An example of a resource adapter archive could look like</para>
+
+      <programlisting>
+<![CDATA[
+[jpederse@localhost]$ jar tf ra.rar
+META-INF/ra.xml
+readme.html
+ra.jar
+images/icon.jpg
+win.dll
+linux.so
+ ]]>
+      </programlisting>
+
+      <para>See the Java EE Connector Architecture 1.6 specification chapter 20 for further
+        requirements.</para>
+
+   </section>
+
    <section id="deployingrar">
       <title>Deploying resource adapters</title>
 
-      <para>Resource adapters (.rar) are deployed by copying the resource adapters into the 
+      <para>Resource adapters (.rar) are deployed by copying the resource adapter into the 
         deploy/ directory</para>
 
      <programlisting>

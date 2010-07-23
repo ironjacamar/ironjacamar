@@ -22,24 +22,41 @@
       <para>Especially the ability to unit test your resource adapter archives before deploying them
         into a testing or a production environment will benefit developers.</para>
 
+      <para>In order to enhance the experience with working with the embedded configuration the container 
+        integrates with the <ulink url="http://www.jboss.org/community/wiki/ShrinkWrap">ShrinkWrap</ulink>
+        and <ulink url="http://community.jboss.org/en/arquillian">Arquillian</ulink> frameworks.</para>
+
    </section>
 
    <section id="embedded_deployment">
       <title>Deployment</title>
 
-      <para>Currently you will need all the JAR files located in the</para>
+      <para>You will need all the JAR files located in the</para>
 
       <programlisting>
-$JBOSS_JCA_HOME/lib
+$IRON_JACAMAR_HOME/lib
+$IRON_JACAMAR_HOME/lib/embedded
       </programlisting>
 
-      <para>directory as well as sub-directories on your application class loader - f.ex.</para>
+      <para>directories on your application class loader - f.ex.</para>
 
       <programlisting>
 java -classpath allthejarfiles.jar yourapp
       </programlisting>
 
       <para>in order to use the embedded configuration.</para>
+
+      <para>If you want integration with the Arquillian framework you need to add the JAR files located
+        in the</para>
+
+      <programlisting>
+$IRON_JACAMAR_HOME/lib/embedded/arquillian
+      </programlisting>
+
+      <para>directory as well.</para>
+
+      <para>The code generator will generate a test suite based on the Arquillian functionality, so
+        that environment can be used as a starting point for your own integration.</para>
 
    </section>
 

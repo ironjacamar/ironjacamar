@@ -31,7 +31,7 @@ ironjacamar-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
            Identifier: The identifier. Identifies the level of the quality of the release.
            <itemizedlist spacing="compact">
              <listitem>
-               None / GA: Stable release
+               None / Final: Stable release
              </listitem>
              <listitem>
                CR: Candidate for Release quality. The implementation is functional complete.
