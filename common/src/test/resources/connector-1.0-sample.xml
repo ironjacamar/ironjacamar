@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<connector xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/connector_1_0.xsd" id="ID000">
+ 
+<connector id="ID000">
     <display-name id="ID001">
     </display-name>
     <description id="ID002">
