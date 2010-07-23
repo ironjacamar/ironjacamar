@@ -24,12 +24,20 @@
         <para>contains the user deployments.</para>
       </listitem>
       <listitem>
+        <code>$IRON_JACAMAR_HOME/doc/</code>
+        <para>contains the documentation.</para>
+      </listitem>
+      <listitem>
         <code>$IRON_JACAMAR_HOME/lib/</code>
         <para>contains all the libraries used by the container.</para>
       </listitem>
       <listitem>
         <code>$IRON_JACAMAR_HOME/log/</code>
         <para>contains the log files.</para>
+      </listitem>
+      <listitem>
+        <code>$IRON_JACAMAR_HOME/system/</code>
+        <para>contains system deployments files.</para>
       </listitem>
       <listitem>
         <code>$IRON_JACAMAR_HOME/tmp/</code>

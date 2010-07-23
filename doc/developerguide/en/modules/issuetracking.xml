@@ -47,7 +47,7 @@
           </row>
           <row>
             <entry>Fungal</entry>
-            <entry>The JCA/Fungal kernel.</entry>
+            <entry>The Fungal kernel (Deprecated).</entry>
           </row>
           <row>
             <entry>JDBC</entry>
@@ -56,6 +56,10 @@
           <row>
             <entry>JMS</entry>
             <entry>A generic JMS resource adapter.</entry>
+          </row>
+          <row>
+            <entry>Performance</entry>
+            <entry>Performance related work.</entry>
           </row>
           <row>
             <entry>Timer</entry>
@@ -99,7 +103,7 @@
             <entry>Issue which holds informations about a release.</entry>
           </row>
           <row>
-            <entry>Thirdparty Change</entry>
+            <entry>Component Update</entry>
             <entry>Identifies a thirdparty library dependency.</entry>
           </row>
         </tbody>
@@ -149,7 +153,7 @@
       </tgroup>
     </table>
 
-    <para>Note: Thirdparty issues can't be resolved nor closed during a development cycle. These are resolved
+    <para>Note: 'Component Update' issues can't be resolved nor closed during a development cycle. These are resolved
       and closed as part of the release procedure of the project. The reason for this is that the library in
       question can receive further updates during the active development cycle.</para>
   </section>
