@@ -49,6 +49,23 @@ http://localhost:8080
 
    </section>
 
+   <section id="stoppingthecontainer">
+      <title>Stopping the container</title>
+
+      <para>The IronJacamar container is stopped by pressing the <code>Ctrl-C</code> keys.</para>
+
+      <para>Once the container has stopped you should see a log entry like</para>
+      
+      <programlisting>
+13:35:06,752 INFO  [Main] Server stopped in 29ms
+      </programlisting>
+      
+      <para>in the console where the container was running.</para>
+
+      <para>Alternative the container can be stopped through the command line interface.</para>
+
+   </section>
+
 
    <section id="cli">
       <title>Command line interface</title>

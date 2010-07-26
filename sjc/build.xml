@@ -231,6 +231,14 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/doc/" flatten="true">
+      <fileset dir="../common/src/main/resources/">
+        <include name="dtd/connector_1_0.dtd"/>
+        <include name="schema/connector_1_5.xsd"/>
+        <include name="schema/connector_1_6.xsd"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/doc/codegenerator">
       <fileset dir="../codegenerator/src/main/resources/">
         <include name="**/*.sh"/>
