@@ -164,6 +164,9 @@ public class SimpleJndiStrategy implements JndiStrategy
          Util.unbind(context, jndiName);
 
          connectionFactories.remove(qualifiedName(jndiName, className));
+
+         if (log.isDebugEnabled())
+            log.debug("Unbound " + className + " under " + jndiName);
       }
       catch (Throwable t)
       {

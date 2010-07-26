@@ -158,6 +158,19 @@ config/bootstrap/jca.xml
                 <entry>
                   Specifies the JNDI strategy policy for binding the connection factories into
                   the naming environment
+
+                  <para>The JNDI strategies are located in the <code>org.jboss.jca.core.naming</code>
+                    package</para>
+                  <itemizedlist spacing="compact">
+                    <listitem>
+                      <code>NoopJndiStrategy</code>: A no operation JNDI strategy 
+                      which doesn't bind/unbind any objects
+                    </listitem>
+                    <listitem>
+                      <code>SimpleJndiStrategy</code>: A simple JNDI strategy 
+                      which can bind/unbind a single connection factory
+                    </listitem>
+                  </itemizedlist>
                 </entry>
               </row>
             </tbody>

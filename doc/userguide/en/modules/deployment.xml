@@ -49,6 +49,17 @@ copy example.rar ironjacamar-1.0.0\deploy
 
      <para>on Windows.</para>
 
+     <para>The Java Naming and Directory Interface (JNDI) name of each connection factory or
+       admin ojbect is controlled through the <code>JndiStrategy</code> property on the
+       <code>RADeployer</code>. If the <code>SimpleJndiStrategy</code> class is used the
+       connection factory is bound under</para>
+
+     <programlisting>
+java:/eis/&lt;deploymentName&gt;
+     </programlisting>
+
+     <para>- f.ex. <code>java:/eis/example</code>.</para>
+
    </section>
 
 </chapter>

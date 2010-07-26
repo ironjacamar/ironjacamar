@@ -31,6 +31,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.naming.NoopJndiStrategy;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
@@ -1012,6 +1013,9 @@ public final class RADeployer implements CloneableDeployer
     */
    private String[] bindConnectionFactory(String deployment, Object cf) throws Throwable
    {
+      if (jndiStrategy == null)
+         jndiStrategy = new NoopJndiStrategy();
+
       JndiStrategy js = jndiStrategy.clone();
 
       return js.bindConnectionFactories(deployment, new Object[] {cf});
