@@ -15,7 +15,7 @@
     <title>Why IronJacamar ?</title>
 
     <para>The Java EE Connector Architecture container can be viewed as a foundation inside an application server
-      as it provides connectivity to the other containers such that they can communicate with EISes. Iron is offen
+      as it provides connectivity to the other containers such that they can communicate with EISes. Iron is often
       used as foundation in building houses too.</para>
 
     <para>The Jacamar bird family which lives in Central and South America are glossy elegant birds with long bills 
