@@ -2,12 +2,12 @@
 <chapter id="gettingstarted">
    <title>Download</title>
    <para>The official IronJacamar project page is <ulink
-   url="http://www.jboss.org/jca/">http://www.jboss.org/jca/</ulink> where you can download the software.</para>
+   url="http://www.jboss.org/ironjacamar/">http://www.jboss.org/ironjacamar/</ulink> where you can download the software.</para>
 
    <section id="download">
       <title>Download</title>
 
-      <para>The download location is zone: <ulink url="http://www.jboss.org/jca/downloads/">http://www.jboss.org/jca/downloads/</ulink></para>
+      <para>The download location is zone: <ulink url="http://www.jboss.org/ironjacamar/downloads/">http://www.jboss.org/ironjacamar/downloads/</ulink></para>
 
       <para>Each release is labelled with a version number and an identifier.</para>
 

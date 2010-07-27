@@ -47,16 +47,32 @@
        Target: jars
        ================================= -->
   <target name="jars" depends="compile">
-    <jar destfile="${target.dir}/${name}-common.jar"
+    <jar destfile="${target.dir}/${name}-common-api.jar"
          basedir="${build.common.dir}"
          index="true"
          indexMetaInf="true"
          update="true"
-         level="9">
+         level="9"
+         includes="**/common/api/**">
       <manifest>
-	<attribute name="Implementation-Title" value="IronJacamar Common"/>
+	<attribute name="Implementation-Title" value="IronJacamar Common API"/>
 	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <jar destfile="${target.dir}/${name}-common-impl.jar"
+         basedir="${build.common.dir}"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         excludes="**/*.java, **/common/api/**">
+      <manifest>
+	<attribute name="Implementation-Title" value="IronJacamar Common Implementation"/>
+	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>

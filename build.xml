@@ -425,7 +425,8 @@
         </fileset>
       </auxClasspath>
       <class location="${target.dir}/${name}-codegenerator.jar" />
-      <class location="${target.dir}/${name}-common.jar" />
+      <class location="${target.dir}/${name}-common-api.jar" />
+      <class location="${target.dir}/${name}-common-impl.jar" />
       <class location="${target.dir}/${name}-core-api.jar" />
       <class location="${target.dir}/${name}-core-impl.jar" />
       <class location="${target.dir}/${name}-core-spi.jar" />
@@ -464,7 +465,8 @@
         </fileset>
       </auxClasspath>
       <class location="${target.dir}/${name}-codegenerator.jar" />
-      <class location="${target.dir}/${name}-common.jar" />
+      <class location="${target.dir}/${name}-common-api.jar" />
+      <class location="${target.dir}/${name}-common-impl.jar" />
       <class location="${target.dir}/${name}-core-api.jar" />
       <class location="${target.dir}/${name}-core-impl.jar" />
       <class location="${target.dir}/${name}-core-spi.jar" />

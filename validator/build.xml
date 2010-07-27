@@ -74,8 +74,9 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+        <attribute name="Class-Path" value="jbossxb.jar jboss-logging-spi.jar jboss-common-core.jar jboss-metadata-rar.jar jboss-metadata-common.jar jboss-reflect.jar jboss-mdr.jar ${name}-spec-api.jar papaki-core.jar javassist.jar ${name}-common-impl.jar"/>
       </manifest>
     </jar>
 
@@ -87,10 +88,12 @@
          level="9"
          includes="**/cli/**">
       <manifest>
+        <attribute name="Main-Class" value="org.jboss.jca.validator.cli.Main"/>
         <attribute name="Implementation-Title" value="IronJacamar Validator Command Line Interface"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+        <attribute name="Class-Path" value="${name}-validator.jar"/>
       </manifest>
     </jar>
   	
@@ -104,8 +107,9 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Ant support"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+        <attribute name="Class-Path" value="${name}-validator.jar"/>
       </manifest>
     </jar>
   </target>

@@ -73,7 +73,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
         <attribute name="Main-Class" value="org.jboss.jca.codegenerator.Main"/>
       </manifest>

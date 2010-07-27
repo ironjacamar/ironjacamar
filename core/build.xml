@@ -59,7 +59,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core API"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -74,7 +74,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core SPI"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -89,7 +89,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core Implementation"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/jca)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
