@@ -140,6 +140,9 @@
     <fileset dir="${lib.dir}/embedded">
       <include name="**/*.jar"/>
     </fileset>
+    <fileset dir="${lib.dir}/arquillian">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${lib.dir}/jetty">
       <include name="**/*.jar"/>
     </fileset>
@@ -161,6 +164,9 @@
     <fileset dir="${lib.dir}/embedded">
       <include name="**/*.jar"/>
     </fileset>
+    <fileset dir="${lib.dir}/arquillian">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${lib.dir}/test">
       <include name="**/*.jar"/>
     </fileset>
@@ -175,6 +181,9 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/embedded">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/arquillian">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/jetty">
@@ -414,6 +423,9 @@
         <fileset dir="${lib.dir}/embedded">
           <include name="*.jar"/>
         </fileset>
+        <fileset dir="${lib.dir}/arquillian">
+          <include name="*.jar"/>
+        </fileset>
         <fileset dir="${lib.dir}/jetty">
           <include name="*.jar"/>
         </fileset>
@@ -452,6 +464,9 @@
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${lib.dir}/embedded">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/arquillian">
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${lib.dir}/jetty">
@@ -538,6 +553,7 @@
         <pathelement location="${build.dir}/common/test"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -574,6 +590,7 @@
         <pathelement location="${build.dir}/core/test"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -610,6 +627,7 @@
         <pathelement location="${build.dir}/deployers/test"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -646,6 +664,7 @@
         <pathelement location="${build.dir}/embedded/test"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -682,6 +701,7 @@
         <pathelement location="${build.dir}/validator/test"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -718,6 +738,7 @@
         <pathelement location="${build.dir}/codegenerator/test"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />

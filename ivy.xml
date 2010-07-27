@@ -29,10 +29,11 @@
     <repository name="jboss" url="http://repository.jboss.org"/>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;jetty->default;test->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default">
     <conf name="common" transitive="false"/>
     <conf name="sjc" transitive="false"/>
     <conf name="embedded" transitive="false"/>
+    <conf name="arquillian" transitive="false"/>
     <conf name="jetty" transitive="false"/>
     <conf name="test" transitive="false"/>
   </configurations>
@@ -69,12 +70,12 @@
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="common"/>
     <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="common"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="common"/>
-    <dependency org="org.jboss.arquillian" name="arquillian-api" rev="${version.arquillian}" conf="embedded"/>
-    <dependency org="org.jboss.arquillian" name="arquillian-impl-base" rev="${version.arquillian}" conf="embedded"/>
-    <dependency org="org.jboss.arquillian" name="arquillian-junit" rev="${version.arquillian}" conf="embedded"/>
-    <dependency org="org.jboss.arquillian" name="arquillian-spi" rev="${version.arquillian}" conf="embedded"/>
-    <dependency org="org.jboss.arquillian.testenricher" name="arquillian-testenricher-resource" rev="${version.arquillian}" conf="embedded"/>
-    <dependency org="org.jboss.arquillian.protocol" name="arquillian-protocol-local" rev="${version.arquillian}" conf="embedded"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-api" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-impl-base" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-junit" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-spi" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian.testenricher" name="arquillian-testenricher-resource" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian.protocol" name="arquillian-protocol-local" rev="${version.arquillian}" conf="arquillian"/>
     <dependency org="org.jboss.integration" name="jboss-integration" rev="${version.jboss.integration}" conf="common"/>
     <dependency org="org.jboss.javaee" name="jboss-jaspi-api" rev="${version.jboss.jaspi.api}" conf="common"/>
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="common"/>
