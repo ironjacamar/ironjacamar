@@ -91,10 +91,22 @@ public class Main
          {
             int systemExitCode = Validation.validate(new File(args[arg]).toURI().toURL(), outputDir, classpath);
             
-            if (!quite && systemExitCode == FAIL)
+            if (!quite)
             {
-               System.out.println("Validation errors");
+               if (systemExitCode == SUCCESS)
+               {
+                  System.out.println("Validation sucessful");
+               }
+               else if (systemExitCode == FAIL)
+               {
+                  System.out.println("Validation errors");
+               }
+               else if (systemExitCode == OTHER)
+               {
+                  System.out.println("Validation unknown");
+               }
             }
+
             System.exit(systemExitCode);
          }
          catch (ArrayIndexOutOfBoundsException oe)
