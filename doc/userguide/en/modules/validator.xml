@@ -99,7 +99,8 @@ Code: com.mycompany.myproject.ResourceAdapterImpl
       <para>The validator can be run on the command line by</para>
 
       <programlisting>
-java -jar ironjacamar-validator.jar &lt;file&gt;
+cd doc/validator
+./validator.sh &lt;file&gt;
       </programlisting>
 
       <para>The reports will be generated into the current directory under the name of 
