@@ -208,6 +208,7 @@ public class Validation
       } 
       catch (Exception e)
       {
+         e.printStackTrace();
          exitCode = OTHER;
       }
       
