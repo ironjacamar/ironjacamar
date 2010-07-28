@@ -18,12 +18,6 @@
 	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-integration.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/common/validation-api.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/common/papaki-core.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-vfs.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-deployers-client-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-deployers-core-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-deployers-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-deployers-structure-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/standalone/jboss-deployers-vfs-spi.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/test/junit.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/test/mockito-all.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-embedded"/>

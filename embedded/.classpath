@@ -9,11 +9,11 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
 	<classpathentry kind="var" path="JBJCA_LIB/sjc/fungal.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/embedded/shrinkwrap-api.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-api.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-junit.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-protocol-local.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/embedded/arquillian-testenricher-resource.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-api.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-junit.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-spi.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-protocol-local.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-testenricher-resource.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-logging-spi.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/test/junit.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
