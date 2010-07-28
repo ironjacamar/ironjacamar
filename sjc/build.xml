@@ -106,6 +106,7 @@
     <mkdir dir="${target.dir}/sjc/config/bootstrap"/>
     <mkdir dir="${target.dir}/sjc/doc"/>
     <mkdir dir="${target.dir}/sjc/doc/codegenerator"/>
+    <mkdir dir="${target.dir}/sjc/doc/validator"/>
     <mkdir dir="${target.dir}/sjc/lib"/>
     <mkdir dir="${target.dir}/sjc/lib/embedded"/>
     <mkdir dir="${target.dir}/sjc/lib/embedded/arquillian"/>
@@ -258,6 +259,13 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/doc/validator">
+      <fileset dir="../validator/src/main/resources/">
+        <include name="**/*.sh"/>
+        <include name="**/*.bat"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/doc/codegenerator">
       <fileset dir="${target.dir}">
         <include name="${name}-codegenerator.jar"/>
@@ -266,6 +274,7 @@
 
     <chmod dir="${target.dir}/sjc/bin" perm="ugo+rx" includes="**/*.sh"/>
     <chmod dir="${target.dir}/sjc/doc/codegenerator" perm="ugo+rx" includes="**/*.sh"/>
+    <chmod dir="${target.dir}/sjc/doc/validator" perm="ugo+rx" includes="**/*.sh"/>
 
   </target>
 
