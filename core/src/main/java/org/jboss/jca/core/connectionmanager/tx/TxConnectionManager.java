@@ -26,6 +26,8 @@ import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
+import org.jboss.jca.core.connectionmanager.pool.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.xa.LocalXAResource;
 import org.jboss.jca.core.connectionmanager.xa.XAResourceWrapperImpl;
 
@@ -49,6 +51,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
+import org.jboss.tm.TransactionLocal;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 import org.jboss.tm.TxUtils;
 import org.jboss.util.NestedRuntimeException;
@@ -373,7 +376,7 @@ public class TxConnectionManager extends AbstractConnectionManager
     */
    public void transactionStarted(Collection<ConnectionRecord> crs) throws SystemException
    {
-      Set<ConnectionListener> cls = new HashSet<ConnectionListener>();
+      Set<ConnectionListener> cls = new HashSet<ConnectionListener>(crs.size());
       for (Iterator<ConnectionRecord> i = crs.iterator(); i.hasNext(); )
       {
          ConnectionRecord cr = i.next();
@@ -382,6 +385,31 @@ public class TxConnectionManager extends AbstractConnectionManager
          {
             cls.add(cl);
             cl.enlist();
+
+            if (!isInterleaving())
+            {
+               cl.setTrackByTx(true);
+               ManagedConnectionPool mcp = (ManagedConnectionPool)cl.getContext();
+               SubPoolContext subPool = mcp.getSubPool();
+               TransactionLocal trackByTx = subPool.getTrackByTx();
+               try
+               {
+                  trackByTx.lock();
+               }
+               catch (Throwable t)
+               {
+                  rethrowAsSystemException("Unable to begin transaction with JCA lazy enlistment scenario", 
+                                           trackByTx.getTransaction(), t);
+               }             
+               try
+               {
+                  trackByTx.set(cl);
+               }
+               finally
+               {
+                  trackByTx.unlock();
+               }
+            }
          }
       }
    }

@@ -26,6 +26,7 @@ import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
+import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSupport;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
@@ -88,6 +89,9 @@ public class ManagedConnectionPool implements IdleConnectionRemovalSupport
    /** The connection listener factory */
    private final ConnectionListenerFactory clf;
 
+   /** The subpool */
+   private final SubPoolContext subPool;
+
    /** The default subject */
    private final Subject defaultSubject;
 
@@ -129,9 +133,10 @@ public class ManagedConnectionPool implements IdleConnectionRemovalSupport
     * @param subject the subject
     * @param cri the connection request info
     * @param pc the pool configuration
+    * @param spc The subpool context
     */
    public ManagedConnectionPool(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                                ConnectionRequestInfo cri, PoolConfiguration pc)
+                                ConnectionRequestInfo cri, PoolConfiguration pc, SubPoolContext spc)
    {
       if (mcf == null)
          throw new IllegalArgumentException("MCF is null");
@@ -142,8 +147,12 @@ public class ManagedConnectionPool implements IdleConnectionRemovalSupport
       if (pc == null)
          throw new IllegalArgumentException("PoolConfiguration is null");
 
+      if (pc == null)
+         throw new IllegalArgumentException("SubPoolContext is null");
+
       this.mcf = mcf;
       this.clf = clf;
+      this.subPool = spc;
       this.defaultSubject = subject;
       this.defaultCri = cri;
       this.poolConfiguration = pc;
@@ -154,6 +163,15 @@ public class ManagedConnectionPool implements IdleConnectionRemovalSupport
       {
          PoolFiller.fillPool(this);
       }
+   }
+
+   /**
+    * Get the subpool context
+    * @return The pool
+    */
+   public SubPoolContext getSubPool()
+   {
+      return subPool;
    }
    
    /**
