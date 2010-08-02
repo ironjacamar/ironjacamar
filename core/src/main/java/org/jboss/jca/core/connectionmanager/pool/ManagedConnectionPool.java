@@ -26,7 +26,6 @@ import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
-import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSupport;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
