@@ -25,7 +25,7 @@
 
   <info organisation="org.jboss.ironjacamar" 
         module="ironjacamar"
-        revision="${major}.${minor}.${patch}.${type}">
+        revision="${version}">
     <license name="lgpl" url="http://repository.jboss.org/licenses/lgpl.txt"/>
     <repository name="jboss" url="http://repository.jboss.org"/>
   </info>

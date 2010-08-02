@@ -36,6 +36,11 @@
   <property name="patch" value="0"/>
   <property name="type" value="Beta2"/>
 
+  <condition property="version" value="${major}.${minor}.${patch}-SNAPSHOT">
+    <isset property="snapshot"/>
+  </condition>
+  <property name="version" value="${major}.${minor}.${patch}.${type}"/>
+
   <!-- ================================= 
        Ivy              
        ================================= -->
@@ -881,6 +886,18 @@
   <!-- ================================= 
        Target: nexus
        ================================= -->
+  <macrodef name="deploy-file">
+    <attribute name="file"/>
+    <attribute name="artifact"/>
+    <sequential>
+      <concat destfile="${target.dir}/@{file}" append="true" force="true" eol="unix">
+mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}.jar -DpomFile=${name}-@{artifact}.xml $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
+</concat>
+    </sequential>
+  </macrodef>
+
   <target name="nexus" depends="clean,artifacts">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
                   conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli"
@@ -889,11 +906,18 @@
     <fail message="Required Apache Ivy update missing"/>
 
     <delete file="${target.dir}/release.sh"/>
+    <delete file="${target.dir}/snapshot.sh"/>
 
     <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">#!/bin/sh
 PWD=`pwd`
 VERSION=${major}.${minor}.${patch}.${type}
 REPOSITORY='-Durl=https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/ -DrepositoryId=jboss-releases'
+</concat>
+
+    <concat destfile="${target.dir}/snapshot.sh" append="true" force="true" eol="unix">#!/bin/sh
+PWD=`pwd`
+VERSION=${major}.${minor}.${patch}-SNAPSHOT
+REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapshots/ -DrepositoryId=jboss-snapshots'
 </concat>
 
     <!-- ironjacamar-codegenerator -->
@@ -906,11 +930,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/service/local/staging/deplo
       <mapping conf="${name}-codegenerator" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-codegenerator.jar -DpomFile=${name}-codegenerator.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-codegenerator-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-codegenerator -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-codegenerator-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-codegenerator -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
+    <deploy-file file="release.sh" artifact="codegenerator"/>
+    <deploy-file file="snapshot.sh" artifact="codegenerator"/>
 
     <!-- ironjacamar-common-api -->
     <delete file="${target.dir}/${name}-common-api.xml"/>
@@ -922,13 +943,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-codegenerator-javadoc.jar -DgenerateP
       <mapping conf="${name}-common-api" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-common-api.jar -DpomFile=${name}-common-api.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-common-api-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-common-api -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-<!--
-mvn deploy:deploy-file -Dfile=$PWD/${name}-common-api-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-common-api -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
--->
-</concat>
+    <deploy-file file="release.sh" artifact="common-api"/>
+    <deploy-file file="snapshot.sh" artifact="common-api"/>
 
     <!-- ironjacamar-common-impl -->
     <delete file="${target.dir}/${name}-common-impl.xml"/>
@@ -941,11 +957,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-common-api-javadoc.jar -DgeneratePom=
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-common-impl.jar -DpomFile=${name}-common-impl.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-common-impl-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-common-impl -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-common-impl-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-common-impl -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
+    <deploy-file file="release.sh" artifact="common-impl"/>
+    <deploy-file file="snapshot.sh" artifact="common-impl"/>
 
     <!-- ironjacamar-core-api -->
     <delete file="${target.dir}/${name}-core-api.xml"/>
@@ -959,11 +972,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-common-impl-javadoc.jar -DgeneratePom
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-api.jar -DpomFile=${name}-core-api.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-api-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-core-api -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-api-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-core-api -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
+    <deploy-file file="release.sh" artifact="core-api"/>
+    <deploy-file file="snapshot.sh" artifact="core-api"/>
 
     <!-- ironjacamar-core-impl -->
     <delete file="${target.dir}/${name}-core-impl.xml"/>
@@ -979,11 +989,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-core-api-javadoc.jar -DgeneratePom=fa
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-impl.jar -DpomFile=${name}-core-impl.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-impl-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-core-impl -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-impl-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-core-impl -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
+    <deploy-file file="release.sh" artifact="core-impl"/>
+    <deploy-file file="snapshot.sh" artifact="core-impl"/>
 
     <!-- ironjacamar-core-spi -->
     <delete file="${target.dir}/${name}-core-spi.xml"/>
@@ -995,11 +1002,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-core-impl-javadoc.jar -DgeneratePom=f
       <mapping conf="${name}-core-spi" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-spi.jar -DpomFile=${name}-core-spi.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-spi-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-core-spi -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-core-spi-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-core-spi -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
+    <deploy-file file="release.sh" artifact="core-spi"/>
+    <deploy-file file="snapshot.sh" artifact="core-spi"/>
 
     <!-- ironjacamar-deployers-fungal -->
     <delete file="${target.dir}/${name}-deployers-fungal.xml"/>
@@ -1017,11 +1021,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-core-spi-javadoc.jar -DgeneratePom=fa
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-deployers-fungal.jar -DpomFile=${name}-deployers-fungal.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-deployers-fungal-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-deployers-fungal -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-deployers-fungal-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-deployers-fungal -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
+    <deploy-file file="release.sh" artifact="deployers-fungal"/>
+    <deploy-file file="snapshot.sh" artifact="deployers-fungal"/>
 
     <!-- ironjacamar-embedded -->
     <delete file="${target.dir}/${name}-embedded.xml"/>
@@ -1033,11 +1034,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-deployers-fungal-javadoc.jar -Dgenera
       <mapping conf="${name}-embedded" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-embedded.jar -DpomFile=${name}-embedded.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-embedded-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-embedded -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-embedded-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-embedded -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
+    <deploy-file file="release.sh" artifact="embedded"/>
+    <deploy-file file="snapshot.sh" artifact="embedded"/>
 
     <!-- ironjacamar-embedded-arquillian -->
     <delete file="${target.dir}/${name}-embedded-arquillian.xml"/>
@@ -1050,12 +1048,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-embedded-javadoc.jar -DgeneratePom=fa
       <dependency artifact="${name}-embedded" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-embedded-arquillian.jar -DpomFile=${name}-embedded-arquillian.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-embedded-arquillian-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-embedded-arquillian -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-embedded-arquillian-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-embedded-arquillian -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
-
+    <deploy-file file="release.sh" artifact="embedded-arquillian"/>
+    <deploy-file file="snapshot.sh" artifact="embedded-arquillian"/>
 
     <!-- ironjacamar-spec-api -->
     <delete file="${target.dir}/${name}-spec-api.xml"/>
@@ -1067,12 +1061,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-embedded-arquillian-javadoc.jar -Dgen
       <mapping conf="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-spec-api.jar -DpomFile=${name}-spec-api.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-spec-api-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-spec-api -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-spec-api-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-spec-api -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
-
+    <deploy-file file="release.sh" artifact="spec-api"/>
+    <deploy-file file="snapshot.sh" artifact="spec-api"/>
 
     <!-- ironjacamar-validator -->
     <delete file="${target.dir}/${name}-validator.xml"/>
@@ -1086,12 +1076,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-spec-api-javadoc.jar -DgeneratePom=fa
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator.jar -DpomFile=${name}-validator.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-validator -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-validator -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
-
+    <deploy-file file="release.sh" artifact="validator"/>
+    <deploy-file file="snapshot.sh" artifact="validator"/>
 
     <!-- ironjacamar-validator-ant -->
     <delete file="${target.dir}/${name}-validator-ant.xml"/>
@@ -1104,12 +1090,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-javadoc.jar -DgeneratePom=f
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-ant.jar -DpomFile=${name}-validator-ant.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-ant-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-validator-ant -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-ant-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-validator-ant -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
-
+    <deploy-file file="release.sh" artifact="validator-ant"/>
+    <deploy-file file="snapshot.sh" artifact="validator-ant"/>
 
     <!-- ironjacamar-validator-cli -->
     <delete file="${target.dir}/${name}-validator-cli.xml"/>
@@ -1122,13 +1104,11 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-ant-javadoc.jar -DgenerateP
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
-    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-cli.jar -DpomFile=${name}-validator-cli.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-cli-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-validator-cli -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-validator-cli-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-validator-cli -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
-</concat>
+    <deploy-file file="release.sh" artifact="validator-cli"/>
+    <deploy-file file="snapshot.sh" artifact="validator-cli"/>
 
     <chmod file="${target.dir}/release.sh" perm="755"/>
+    <chmod file="${target.dir}/snapshot.sh" perm="755"/>
 
   </target>
 
