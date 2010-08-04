@@ -80,20 +80,8 @@ public class JbossRaParser implements MetadataParser<JbossRa>
                break;
             }
             case START_ELEMENT : {
-               if (JbossRa10.NAMESPACE.equals(reader.getNamespaceURI()))
-               {
-                  switch (Tag.forName(reader.getLocalName()))
-                  {
-                     case JBOSSRA : {
-                        jbossRa = parseJbossRa10(reader);
-                        break;
-                     }
-                     default :
-                        throw new ParserException("Unexpected element:" + reader.getLocalName());
-                  }
-
-               }
-               else if (JbossRa20.NAMESPACE.equals(reader.getNamespaceURI()))
+               System.out.println(reader.getNamespaceURI());
+               if (JbossRa20.NAMESPACE.equals(reader.getNamespaceURI()))
                {
                   switch (Tag.forName(reader.getLocalName()))
                   {
@@ -105,10 +93,19 @@ public class JbossRaParser implements MetadataParser<JbossRa>
                         throw new ParserException("Unexpected element:" + reader.getLocalName());
                   }
                }
+
                else
                {
-                  throw new ParserException(String.format("Namespace %s is not supported by %s parser",
-                        reader.getNamespaceURI(), this.getClass().getName()));
+                  switch (Tag.forName(reader.getLocalName()))
+                  {
+                     case JBOSSRA : {
+                        jbossRa = parseJbossRa10(reader);
+                        break;
+                     }
+                     default :
+                        throw new ParserException("Unexpected element:" + reader.getLocalName());
+                  }
+
                }
 
                break;

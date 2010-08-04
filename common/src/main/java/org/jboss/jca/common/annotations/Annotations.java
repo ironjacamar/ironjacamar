@@ -284,8 +284,6 @@ public class Annotations
       // Vendor name
       XsdString vendorName = new XsdString(conAnnotation.vendorName(), null);
 
-      // Version
-      String version = conAnnotation.version();
 
       // Description
       ArrayList<LocalizedXsdString> descriptions = null;
@@ -370,12 +368,6 @@ public class Annotations
 
       // Reauthentication support
       boolean reauthenticationSupport = conAnnotation.reauthenticationSupport();
-
-      if (version != null && !version.equals("") && !"1.6".equals(version))
-      {
-         log.fatal("Annotations are supported only for verion 1.6");
-         throw new ValidateException("Annotations are supported only for verion 1.6");
-      }
 
       // AuthenticationMechanism
       ArrayList<AuthenticationMechanism> authenticationMechanisms = processAuthenticationMechanism(conAnnotation

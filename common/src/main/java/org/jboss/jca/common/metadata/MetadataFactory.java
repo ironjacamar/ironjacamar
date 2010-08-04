@@ -121,9 +121,9 @@ public class MetadataFactory
             input = new FileInputStream(metadataFile);
             result = (new JbossRaParser()).parse(input);
 
-            log.debugf("Total parse for $s took %d ms", url, (System.currentTimeMillis() - start));
+            log.debugf("Total parse for %s took %d ms", url, (System.currentTimeMillis() - start));
 
-            log.tracef("successufully deployed $s", result.toString());
+            log.tracef("successufully deployed %s", result.toString());
          }
          catch (Exception e)
          {
