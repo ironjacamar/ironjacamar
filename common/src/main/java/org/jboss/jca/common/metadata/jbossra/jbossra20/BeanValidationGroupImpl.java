@@ -47,7 +47,9 @@ public class BeanValidationGroupImpl implements JCAMetadata, BeanValidationGroup
    public BeanValidationGroupImpl(List<String> beanValidationGroup)
    {
       super();
-      if (beanValidationGroup != null) { this.beanValidationGroup = new ArrayList<String>(beanValidationGroup.size());
+      if (beanValidationGroup != null)
+      {
+         this.beanValidationGroup = new ArrayList<String>(beanValidationGroup.size());
          this.beanValidationGroup.addAll(beanValidationGroup);
       }
       else
