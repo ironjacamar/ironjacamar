@@ -97,7 +97,6 @@
     <dependency org="org.eclipse.jetty" name="jetty-xml" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.hibernate" name="hibernate-validator" rev="${version.hibernate-validator}" conf="common"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl"/>
-    <dependency org="org.jboss" name="jboss-mdr" rev="${version.jboss.mdr}" conf="common,ironjacamar-core-impl"/>
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="common"/>
     <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="common,ironjacamar-common-impl"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="common"/>
@@ -119,8 +118,6 @@
     <dependency org="org.jboss.logging" name="logging-service-metadata" rev="${version.jboss.logging.metadata}" conf="common"/>
     <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common"/>
     <dependency org="org.jboss.logmanager" name="jboss-logmanager-log4j" rev="${version.jboss.logmanager.log4j}" conf="common"/>
-    <dependency org="org.jboss.metadata" name="jboss-metadata-common" rev="${version.jboss.metadata.common}" conf="common,ironjacamar-common-impl"/>
-    <dependency org="org.jboss.metadata" name="jboss-metadata-rar" rev="${version.jboss.metadata.rar}" conf="common,ironjacamar-common-impl,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-deployers-fungal,ironjacamar-validator"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common"/>
     <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common,ironjacamar-common-impl"/>
     <dependency org="org.jboss.security" name="jboss-security-spi-bare" rev="${version.jboss.security}" conf="common,ironjacamar-core-impl"/>

@@ -22,9 +22,10 @@
 
 package org.jboss.jca.validator;
 
+import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+
 import java.util.List;
 
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 
 /**
  * Object wrapper for objects that should be validated
@@ -53,7 +54,7 @@ public class ValidateObject extends ValidateClass
     */
    public ValidateObject(Key key,
                          Object object,
-                         List<ConfigPropertyMetaData> configProperties)
+                         List<? extends ConfigProperty> configProperties)
    {
       super(key, object != null ? object.getClass() : null, configProperties);
       this.object = object;

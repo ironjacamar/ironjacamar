@@ -29,5 +29,6 @@ standalone/**
 /lib/common
 /lib/embedded
 /lib/jetty
+/lib/**
 
 common/src/main/resources/schema/connector_1_0.xsd

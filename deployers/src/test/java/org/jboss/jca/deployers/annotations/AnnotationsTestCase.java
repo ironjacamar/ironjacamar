@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
-import org.jboss.metadata.rar.spec.ConnectorMetaData;
 import org.jboss.papaki.AnnotationRepository;
 import org.jboss.papaki.AnnotationScanner;
 import org.jboss.papaki.AnnotationScannerFactory;
@@ -40,13 +39,13 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-//import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.fail;
 
 /**
  * Test cases for the annotations handling
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
@@ -64,7 +63,7 @@ public class AnnotationsTestCase
     * Embedded
     */
    private static EmbeddedJCA embedded;
-   
+
    /*
     * Annotations
     */
@@ -76,7 +75,7 @@ public class AnnotationsTestCase
 
    /**
     * Process: Null arguemnts
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test(expected = ValidateException.class)
    public void testProcessNullArguments() throws Throwable
@@ -86,39 +85,19 @@ public class AnnotationsTestCase
 
    /**
     * Process: Null arguemnt for annotation repository
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test(expected = ValidateException.class)
    public void testProcessNullAnnotationRepository() throws Throwable
    {
-      ConnectorMetaData cmd = new ConnectorMetaData();
-      annotations.process(cmd, null);
+      annotations.process(null, null);
    }
 
-   /**
-    * Process: Null arguemnt for connector metadata
-    * @throws Throwable throwable exception 
-    */
-   @Test
-   public void testProcessNullConnectorMetaData() throws Throwable
-   {
-      try
-      {
-         URL url = getURL("ra16inout.rar");
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
-      }
-      catch (Throwable t)
-      {
-         fail(t.getMessage());
-      }
-   }
 
    /**
     * Process: Connector -- verification of the processConnector method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test
    public void testProcessConnector() throws Throwable
@@ -130,7 +109,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
+         annotations.process(ar, null);
       }
       catch (Throwable t)
       {
@@ -140,7 +119,7 @@ public class AnnotationsTestCase
 
    /**
     * Process: Connector -- verification of the processConnector method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test
    public void testProcessConnectorFail() throws Throwable
@@ -151,7 +130,7 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
+         annotations.process(ar, null);
 
          fail("Success");
       }
@@ -160,10 +139,10 @@ public class AnnotationsTestCase
          // Ok
       }
    }
-   
+
    /**
     * Process: ConnectionDefinitions -- verification of the processConnectionDefinitions method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test
    public void testProcessConnectionDefinitions() throws Throwable
@@ -174,18 +153,18 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
+         annotations.process(ar, null);
       }
       catch (Throwable t)
       {
          fail(t.getMessage());
       }
    }
-   
-   
+
+
    /**
     * Process: ConnectionDefinition -- verification of the processConnectionDefinition method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test
    public void testProcessConnectionDefinition() throws Throwable
@@ -196,17 +175,17 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
+         annotations.process(ar, null);
       }
       catch (Throwable t)
       {
          fail(t.getMessage());
       }
    }
-   
+
    /**
     * Process: Activation -- verification of the processActivation method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test
    public void testProcessActivation() throws Throwable
@@ -217,17 +196,17 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
+         annotations.process(ar, null);
       }
       catch (Throwable t)
       {
          fail(t.getMessage());
       }
    }
-   
+
    /**
     * Process: AuthenticationMechanism -- verification of the processAuthenticationMechanism method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test
    public void testProcessAuthenticationMechanism() throws Throwable
@@ -238,17 +217,17 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
+         annotations.process(ar, null);
       }
       catch (Throwable t)
       {
          fail(t.getMessage());
       }
    }
-   
+
    /**
     * Process: AdministeredObject -- verification of the processAdministeredObject method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test
    public void testProcessAdministeredObject() throws Throwable
@@ -259,17 +238,17 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
+         annotations.process(ar, null);
       }
       catch (Throwable t)
       {
          fail(t.getMessage());
       }
-   } 
-   
+   }
+
    /**
     * Process: ConfigProperty -- verification of the processConfigProperty method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test
    public void testProcessConfigProperty() throws Throwable
@@ -280,21 +259,21 @@ public class AnnotationsTestCase
          AnnotationScanner asf = AnnotationScannerFactory.getDefault();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
-         annotations.process(null, ar);
+         annotations.process(ar, null);
       }
       catch (Throwable t)
       {
          fail(t.getMessage());
       }
    }
-   
+
    // --------------------------------------------------------------------------------||
    // Lifecycle Methods --------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
-   
+
    /**
     * be run before the Test method.
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Before
    public void setup() throws Throwable
@@ -304,17 +283,17 @@ public class AnnotationsTestCase
 
    /**
     * causes that method to be run after the Test method.
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @After
    public void tearDown() throws Throwable
    {
       annotations = null;
    }
-   
+
    /**
     * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -323,7 +302,7 @@ public class AnnotationsTestCase
 
    /**
     * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @AfterClass
    public static void afterClass() throws Throwable

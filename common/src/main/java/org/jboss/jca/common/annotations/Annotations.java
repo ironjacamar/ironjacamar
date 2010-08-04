@@ -22,6 +22,39 @@
 
 package org.jboss.jca.common.annotations;
 
+import org.jboss.jca.common.api.metadata.ra.AdminObject;
+import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
+import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.ra.Connector.Version;
+import org.jboss.jca.common.api.metadata.ra.CredentialInterfaceEnum;
+import org.jboss.jca.common.api.metadata.ra.Icon;
+import org.jboss.jca.common.api.metadata.ra.InboundResourceAdapter;
+import org.jboss.jca.common.api.metadata.ra.LicenseType;
+import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
+import org.jboss.jca.common.api.metadata.ra.MessageListener;
+import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
+import org.jboss.jca.common.api.metadata.ra.Path;
+import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
+import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
+import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.ra.XsdString;
+import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
+import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
+import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
+import org.jboss.jca.common.metadataimpl.ra.common.AdminObjectImpl;
+import org.jboss.jca.common.metadataimpl.ra.common.AuthenticationMechanismImpl;
+import org.jboss.jca.common.metadataimpl.ra.common.ConnectionDefinitionImpl;
+import org.jboss.jca.common.metadataimpl.ra.common.InboundResourceAdapterImpl;
+import org.jboss.jca.common.metadataimpl.ra.common.MessageAdapterImpl;
+import org.jboss.jca.common.metadataimpl.ra.common.MessageListenerImpl;
+import org.jboss.jca.common.metadataimpl.ra.common.OutboundResourceAdapterImpl;
+import org.jboss.jca.common.metadataimpl.ra.common.ResourceAdapter1516Impl;
+import org.jboss.jca.common.metadataimpl.ra.common.SecurityPermissionImpl;
+import org.jboss.jca.common.metadataimpl.ra.ra16.Activationspec16Impl;
+import org.jboss.jca.common.metadataimpl.ra.ra16.ConfigProperty16Impl;
+import org.jboss.jca.common.metadataimpl.ra.ra16.Connector16Impl;
 import org.jboss.jca.common.validator.ValidateException;
 
 import java.lang.reflect.Array;
@@ -30,47 +63,16 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.resource.spi.Activation;
 import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.AuthenticationMechanism;
-import javax.resource.spi.AuthenticationMechanism.CredentialInterface;
-import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.ConnectionDefinition;
 import javax.resource.spi.ConnectionDefinitions;
-import javax.resource.spi.Connector;
-import javax.resource.spi.SecurityPermission;
 import javax.resource.spi.TransactionSupport;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.resource.spi.work.WorkContext;
 
 import org.jboss.logging.Logger;
-
-import org.jboss.metadata.javaee.spec.DescriptionGroupMetaData;
-import org.jboss.metadata.javaee.spec.DescriptionImpl;
-import org.jboss.metadata.javaee.spec.DescriptionsImpl;
-import org.jboss.metadata.javaee.spec.DisplayNameImpl;
-import org.jboss.metadata.javaee.spec.DisplayNamesImpl;
-import org.jboss.metadata.javaee.spec.IconImpl;
-import org.jboss.metadata.javaee.spec.IconsImpl;
-
-import org.jboss.metadata.rar.spec.ActivationspecMetaData;
-import org.jboss.metadata.rar.spec.AdminObjectMetaData;
-import org.jboss.metadata.rar.spec.AuthenticationMechanismMetaData;
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
-import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
-import org.jboss.metadata.rar.spec.ConnectorMetaData;
-import org.jboss.metadata.rar.spec.InboundRaMetaData;
-import org.jboss.metadata.rar.spec.JCA16Base;
-import org.jboss.metadata.rar.spec.JCA16MetaData;
-import org.jboss.metadata.rar.spec.LicenseMetaData;
-import org.jboss.metadata.rar.spec.MessageAdapterMetaData;
-import org.jboss.metadata.rar.spec.MessageListenerMetaData;
-import org.jboss.metadata.rar.spec.OutboundRaMetaData;
-import org.jboss.metadata.rar.spec.ResourceAdapterMetaData;
-import org.jboss.metadata.rar.spec.SecurityPermissionMetaData;
-import org.jboss.metadata.rar.spec.TransactionSupportMetaData;
-
 import org.jboss.papaki.Annotation;
 import org.jboss.papaki.AnnotationRepository;
 import org.jboss.papaki.AnnotationScanner;
@@ -84,7 +86,13 @@ import org.jboss.papaki.AnnotationType;
 public class Annotations
 {
    private static Logger log = Logger.getLogger(Annotations.class);
+
    private static boolean trace = log.isTraceEnabled();
+
+   private enum metadatas
+   {
+      RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY;
+   };
 
    /**
     * Constructor
@@ -95,121 +103,148 @@ public class Annotations
 
    /**
     * Scan for annotations in the URLs specified
-    * @param cmd The resource adapter metadata
+    * @param connector The connector adapter metadata
     * @param urls The URLs to be scanned
     * @param cl The referenced classloader
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   public ConnectorMetaData scan(ConnectorMetaData cmd, URL[] urls, ClassLoader cl) throws Exception
+   public Connector scan(Connector connector, URL[] urls, ClassLoader cl) throws Exception
    {
       // Process annotations
-      if (cmd == null || cmd.is16())
+      if (connector == null || connector.getVersion() == Version.V_16)
       {
-         AnnotationScanner annotationScanner = 
-            AnnotationScannerFactory.getStrategy(AnnotationScannerFactory.JAVASSIST_INPUT_STREAM);
+         AnnotationScanner annotationScanner =
+               AnnotationScannerFactory.getStrategy(AnnotationScannerFactory.JAVASSIST_INPUT_STREAM);
          annotationScanner.configure().constructorLevel(false).parameterLevel(false);
          AnnotationRepository annotationRepository = annotationScanner.scan(urls, cl);
 
          boolean isMetadataComplete = false;
-         if (cmd != null && cmd instanceof JCA16Base)
+         if (connector != null && connector instanceof Connector16)
          {
-            JCA16Base jmd = (JCA16Base)cmd;
-            isMetadataComplete = jmd.isMetadataComplete();
+            isMetadataComplete = ((Connector16) connector).isMetadataComplete();
          }
-         
-         if (cmd == null || !isMetadataComplete)
+
+         if (connector == null || !isMetadataComplete)
          {
-            cmd = process(cmd, annotationRepository);
+
+            if (connector == null)
+            {
+               Connector annotationsConnector = process(annotationRepository, null);
+               connector = annotationsConnector;
+            }
+            else
+            {
+               Connector annotationsConnector = process(annotationRepository,
+                     ((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass());
+               connector = connector.merge(annotationsConnector);
+            }
          }
+
       }
-      return cmd;
+      return connector;
    }
+
    /**
     * Process annotations
-    * @param md The metadata
     * @param annotationRepository The annotation repository
+    * @param xmlResourceAdapterClass resource adpater class name as define in xml
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   public ConnectorMetaData process(ConnectorMetaData md, AnnotationRepository annotationRepository)
+   public Connector process(AnnotationRepository annotationRepository, String xmlResourceAdapterClass)
       throws Exception
    {
       if (annotationRepository == null)
          throw new ValidateException("AnnotationRepository reference is null");
       /* Process
          -------
-         javax.resource.spi.Activation 
-         javax.resource.spi.AdministeredObject 
-         javax.resource.spi.AuthenticationMechanism 
-         javax.resource.spi.ConfigProperty 
-         javax.resource.spi.ConnectionDefinition 
-         javax.resource.spi.ConnectionDefinitions 
-         javax.resource.spi.Connector 
+         javax.resource.spi.Activation
+         javax.resource.spi.AdministeredObject
+         javax.resource.spi.AuthenticationMechanism
+         javax.resource.spi.ConfigProperty
+         javax.resource.spi.ConnectionDefinition
+         javax.resource.spi.ConnectionDefinitions
+         javax.resource.spi.Connector
          javax.resource.spi.SecurityPermission
       */
-      
-      if (md == null)
-      {
-         JCA16MetaData jmd = new JCA16MetaData();
-         jmd.setMetadataComplete(false);
-         md = jmd;
-      }
 
-      // @Connector
-      md = processConnector(md, annotationRepository);
+      // @ConfigProperty handle at last
+      Map<metadatas, ArrayList<ConfigProperty16>> configPropertiesMap = processConfigProperty(annotationRepository);
 
       // @ConnectionDefinitions
-      md = processConnectionDefinitions(md, annotationRepository);
+      ArrayList<ConnectionDefinition> connectionDefinitions = processConnectionDefinitions(annotationRepository,
+            configPropertiesMap == null ? null : configPropertiesMap.get(metadatas.MANAGED_CONN_FACTORY));
 
       // @ConnectionDefinition (outside of @ConnectionDefinitions)
-      md = processConnectionDefinition(md, annotationRepository);
+      if (connectionDefinitions == null)
+      {
+         connectionDefinitions = new ArrayList<ConnectionDefinition>(1);
+      }
+      ArrayList<ConnectionDefinition> definitions = processConnectionDefinition(annotationRepository,
+            configPropertiesMap == null ? null : configPropertiesMap.get(metadatas.MANAGED_CONN_FACTORY));
+      if (definitions != null)
+         connectionDefinitions.addAll(definitions);
+
+      connectionDefinitions.trimToSize();
 
       // @Activation
-      md = processActivation(md, annotationRepository);
+      InboundResourceAdapter inboundRA = processActivation(annotationRepository,
+            configPropertiesMap == null ? null : configPropertiesMap.get(metadatas.ACTIVATION_SPEC));
 
       // @AuthenticationMechanism
       //md = processAuthenticationMechanism(md, annotationRepository);
 
       // @AdministeredObject
-      md = processAdministeredObject(md, annotationRepository);
-
-      // @ConfigProperty handle at last
-      md = processConfigProperty(md, annotationRepository);
+      ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository);
 
       //log.debug("ConnectorMetadata " + md);
 
-      return md;
+      // @Connector
+      Connector conn = processConnector(annotationRepository, xmlResourceAdapterClass,
+            connectionDefinitions, configPropertiesMap == null ? null : configPropertiesMap.get(metadatas.RA),
+            inboundRA, adminObjs);
+
+      return conn;
    }
 
    /**
     * Process: @Connector
-    * @param md The metadata
     * @param annotationRepository The annotation repository
+    * @param xmlResourceAdapterClass resource adpater class name as define in xml
+    * @param connectionDefinitions
+    * @param configProperties
+    * @param inboundResourceadapter
+    * @param adminObjs
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData processConnector(ConnectorMetaData md, AnnotationRepository annotationRepository)
+   private Connector processConnector(AnnotationRepository annotationRepository, String xmlResourceAdapterClass,
+         ArrayList<ConnectionDefinition> connectionDefinitions, ArrayList<ConfigProperty16> configProperties,
+         InboundResourceAdapter inboundResourceadapter, ArrayList<AdminObject> adminObjs)
       throws Exception
    {
-      Collection<Annotation> values = annotationRepository.getAnnotation(Connector.class);
+      Connector connector = null;
+      Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.Connector.class);
       if (values != null)
       {
          if (values.size() == 1)
          {
             Annotation annotation = values.iterator().next();
             String raClass = annotation.getClassName();
-            Connector c = (Connector)annotation.getAnnotation();
+            javax.resource.spi.Connector connectorAnnotation = (javax.resource.spi.Connector) annotation
+                  .getAnnotation();
 
             if (trace)
-               log.trace("Processing: " + c + " for " + raClass);
+               log.trace("Processing: " + connectorAnnotation + " for " + raClass);
 
-            md = attachConnector(md, raClass, c);
+            connector = attachConnector(raClass, connectorAnnotation, connectionDefinitions, configProperties,
+                  inboundResourceadapter, adminObjs);
          }
          else if (values.size() == 0)
          {
             // JBJCA-240
-            if (md.getRa().getRaClass() == null || md.getRa().getRaClass().equals(""))
+            if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
             {
                log.fatal("No @Connector was found and no definition in the ra.xml metadata either");
                throw new ValidateException("No @Connector defined");
@@ -218,255 +253,210 @@ public class Annotations
          else
          {
             // JBJCA-240
-            if (md.getRa().getRaClass() == null || md.getRa().getRaClass().equals(""))
+            if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
             {
-               log.fatal("More than one @Connector was found but the correct one " + 
+               log.fatal("More than one @Connector was found but the correct one " +
                          "wasn't defined in the ra.xml metadata");
                throw new ValidateException("More than one @Connector defined");
             }
          }
       }
 
-      return md;
+      return connector;
    }
 
    /**
     * Attach @Connector
-    * @param md The metadata
     * @param raClass The class name for the resource adapter
-    * @param c The connector
+    * @param conAnnotation The connector
+    * @param connectionDefinitions connectionDefinitions
+    * @param configProperties  configProperties
+    * @param inboundResourceadapter inboundResourceadapter
+    * @param adminObjs
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData attachConnector(ConnectorMetaData md, String raClass, Connector c)
+   private Connector attachConnector(String raClass, javax.resource.spi.Connector conAnnotation,
+         ArrayList<ConnectionDefinition> connectionDefinitions, ArrayList<ConfigProperty16> configProperties,
+         InboundResourceAdapter inboundResourceadapter, ArrayList<AdminObject> adminObjs)
       throws Exception
    {
-      // Class definition
-      if (md.getRa() == null)
-         md.setRa(new ResourceAdapterMetaData());
+      // Vendor name
+      XsdString vendorName = new XsdString(conAnnotation.vendorName(), null);
 
-      md.getRa().setRaClass(raClass);
+      // Version
+      String version = conAnnotation.version();
 
-      // AuthenticationMechanism
-      AuthenticationMechanism[] authMechanisms = c.authMechanisms();
-      if (authMechanisms != null)
-      {
-         for (AuthenticationMechanism authMechanism : authMechanisms)
-         {
-            attachAuthenticationMechanism(md, authMechanism);
-         }
-      }
-
-      DescriptionGroupMetaData descGroup = new DescriptionGroupMetaData();
-      md.setDescriptionGroup(descGroup);
-      
       // Description
-      String[] description = c.description();
-      if (description != null)
+      ArrayList<LocalizedXsdString> descriptions = null;
+      if (conAnnotation.description() != null && conAnnotation.description().length != 0)
       {
-         if (descGroup.getDescriptions() == null)
+         descriptions = new ArrayList<LocalizedXsdString>(conAnnotation.description().length);
+         for (String descriptionAnnoptation : conAnnotation.description())
          {
-            DescriptionsImpl descsImpl = new DescriptionsImpl();
-            descGroup.setDescriptions(descsImpl);
-         }
-         for (String desc : description)
-         {
-            DescriptionImpl descImpl = new DescriptionImpl();
-            descImpl.setDescription(desc);
-            ((DescriptionsImpl)descGroup.getDescriptions()).add(descImpl);
+            descriptions.add(new LocalizedXsdString(descriptionAnnoptation, null));
          }
       }
 
       // Display name
-      String[] displayName = c.displayName();
-      if (displayName != null)
+      ArrayList<LocalizedXsdString> displayNames = null;
+      if (conAnnotation.description() != null && conAnnotation.displayName().length != 0)
       {
-         if (descGroup.getDisplayNames() == null)
+         displayNames = new ArrayList<LocalizedXsdString>(conAnnotation.displayName().length);
+         for (String displayNameAnnotation : conAnnotation.displayName())
          {
-            DisplayNamesImpl dnsImpl = new DisplayNamesImpl();
-            descGroup.setDisplayNames(dnsImpl);
-         }
-         for (String dn : displayName)
-         {
-            DisplayNameImpl dnImpl = new DisplayNameImpl();
-            dnImpl.setDisplayName(dn);
-            ((DisplayNamesImpl)descGroup.getDisplayNames()).add(dnImpl);
+            displayNames.add(new LocalizedXsdString(displayNameAnnotation, null));
          }
       }
 
       // EIS type
-      String eisType = c.eisType();
-      if (eisType != null)
+      XsdString eisType = new XsdString(conAnnotation.eisType(), null);
+
+      // License description
+      // License required
+      ArrayList<LocalizedXsdString> licenseDescriptions = null;
+
+      if (conAnnotation.licenseDescription() != null && conAnnotation.licenseDescription().length != 0)
       {
-         if (md.getEISType() == null)
-            md.setEISType(eisType);
+         licenseDescriptions = new ArrayList<LocalizedXsdString>(conAnnotation.licenseDescription().length);
+         for (String licenseDescriptionAnnotation : conAnnotation.licenseDescription())
+         {
+            licenseDescriptions.add(new LocalizedXsdString(licenseDescriptionAnnotation, null));
+         }
+      }
+      LicenseType license = new LicenseType(licenseDescriptions, conAnnotation.licenseRequired(), null);
+
+      // RequiredWorkContext
+      ArrayList<String> requiredWorkContexts = null;
+      Class<? extends WorkContext>[] requiredWorkContextAnnotations = conAnnotation.requiredWorkContexts();
+      if (requiredWorkContextAnnotations != null)
+      {
+         requiredWorkContexts = new ArrayList<String>(requiredWorkContextAnnotations.length);
+         for (Class<? extends WorkContext> requiredWorkContext : requiredWorkContextAnnotations)
+         {
+
+            if (!requiredWorkContexts.contains(requiredWorkContext.getName()))
+            {
+               if (trace)
+                  log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
+
+               requiredWorkContexts.add(requiredWorkContext.getName());
+            }
+         }
       }
 
       // Large icon
-      String[] largeIcon = c.largeIcon();
-      if (largeIcon != null)
-      {
-         if (descGroup.getIcons() == null)
-         {
-            IconsImpl icsImpl = new IconsImpl();
-            descGroup.setIcons(icsImpl);
-         }
-         for (String large : largeIcon)
-         {
-            IconImpl icImpl = new IconImpl();
-            icImpl.setLargeIcon(large);
-            ((IconsImpl)descGroup.getIcons()).add(icImpl);
-         }
-      }
-
-      // License description
-      String[] licenseDescription = c.licenseDescription();
-      if (licenseDescription != null)
-      {
-         if (md.getLicense() == null)
-            md.setLicense(new LicenseMetaData());
-
-         if (md.getLicense().getDescriptions() == null)
-         {
-            DescriptionsImpl descsImpl = new DescriptionsImpl();
-            md.getLicense().setDescriptions(descsImpl);
-         }
-         for (String desc : licenseDescription)
-         {
-            DescriptionImpl descImpl = new DescriptionImpl();
-            descImpl.setDescription(desc);
-            ((DescriptionsImpl)md.getLicense().getDescriptions()).add(descImpl);
-         }
-      }
-
-      // License required
-      boolean licenseRequired = c.licenseRequired();
-      if (md.getLicense() == null)
-         md.setLicense(new LicenseMetaData());
-      md.getLicense().setRequired(licenseRequired);
-
-      // Reauthentication support
-      boolean reauthenticationSupport = c.reauthenticationSupport();
-      if (md.getRa() != null && md.getRa().getOutboundRa() != null)
-      {
-         md.getRa().getOutboundRa().setReAuthSupport(reauthenticationSupport);
-      }
-
-      // RequiredWorkContext
-      Class<? extends WorkContext>[] requiredWorkContexts = c.requiredWorkContexts();
-      if (requiredWorkContexts != null)
-      {
-         for (Class<? extends WorkContext> requiredWorkContext : requiredWorkContexts)
-         {
-            if (md instanceof JCA16Base)
-            {
-               JCA16Base jmd = (JCA16Base)md;
-               if (jmd.getRequiredWorkContexts() == null)
-                  jmd.setRequiredWorkContexts(new ArrayList<String>());
-
-               if (!jmd.getRequiredWorkContexts().contains(requiredWorkContext.getName()))
-               {
-                  if (trace)
-                     log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
-
-                  jmd.getRequiredWorkContexts().add(requiredWorkContext.getName());
-               }
-            }
-         }
-      }
-
-      // Security permission
-      SecurityPermission[] securityPermissions = c.securityPermissions();
-      if (securityPermissions != null)
-      {
-         if (md.getRa() == null)
-            md.setRa(new ResourceAdapterMetaData());
-
-         if (md.getRa().getSecurityPermissions() == null)
-            md.getRa().setSecurityPermissions(new ArrayList<SecurityPermissionMetaData>());
-
-         for (SecurityPermission securityPermission : securityPermissions)
-         {
-            SecurityPermissionMetaData spmd = new SecurityPermissionMetaData();
-            spmd.setSecurityPermissionSpec(securityPermission.permissionSpec());
-            md.getRa().getSecurityPermissions().add(spmd);
-         }
-      }
-
       // Small icon
-      String[] smallIcon = c.smallIcon();
-      if (smallIcon != null)
+      ArrayList<Icon> icons = null;
+      if ((conAnnotation.smallIcon() != null && conAnnotation.smallIcon().length != 0) ||
+            (conAnnotation.largeIcon() != null && conAnnotation.largeIcon().length != 0))
       {
-         IconsImpl icsImpl;
-         if (descGroup.getIcons() == null)
+         icons = new ArrayList<Icon>(
+               (conAnnotation.smallIcon() == null ? 0 : conAnnotation.smallIcon().length) +
+                     (conAnnotation.largeIcon() == null ? 0 : conAnnotation.largeIcon().length));
+         for (String smallIconAnnotation : conAnnotation.smallIcon())
          {
-            icsImpl = new IconsImpl();
-            descGroup.setIcons(icsImpl);
+            icons.add(new Icon(Path.valueOf(smallIconAnnotation), null, null));
          }
-         else
+         for (String largeIconAnnotation : conAnnotation.largeIcon())
          {
-            icsImpl = (IconsImpl)descGroup.getIcons();
-         }
-         IconImpl[] icArray = icsImpl.toArray(new IconImpl[icsImpl.size()]);
-         for (int i = 0; i < smallIcon.length; i++)
-         {
-            if (i < icArray.length)
-               icArray[i].setSmallIcon(smallIcon[i]);
-            else
-            {
-               IconImpl icImpl = new IconImpl();
-               icImpl.setLargeIcon(smallIcon[i]);
-               icsImpl.add(icImpl);
-            }
+            icons.add(new Icon(Path.valueOf(largeIconAnnotation), null, null));
          }
       }
 
       // Transaction support
-      TransactionSupport.TransactionSupportLevel transactionSupport = c.transactionSupport();
-      if (md.getRa() != null && md.getRa().getOutboundRa() != null)
+      TransactionSupport.TransactionSupportLevel transactionSupportAnnotation = conAnnotation.transactionSupport();
+      TransactionSupportEnum transactionSupport = TransactionSupportEnum.valueOf(transactionSupportAnnotation.name());
+
+      // Reauthentication support
+      boolean reauthenticationSupport = conAnnotation.reauthenticationSupport();
+
+      if (version != null && !version.equals("") && !"1.6".equals(version))
       {
-         if (transactionSupport.equals(TransactionSupportLevel.NoTransaction))
-         {
-            md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.NoTransaction);
-         }
-         else if (transactionSupport.equals(TransactionSupportLevel.XATransaction))
-         {
-            md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.XATransaction);
-         }
-         else if (transactionSupport.equals(TransactionSupportLevel.LocalTransaction))
-         {
-            md.getRa().getOutboundRa().setTransSupport(TransactionSupportMetaData.LocalTransaction);
-         }
+         log.fatal("Annotations are supported only for verion 1.6");
+         throw new ValidateException("Annotations are supported only for verion 1.6");
       }
 
-      // Vendor name
-      String vendorName = c.vendorName();
-      if (vendorName != null)
-      {
-         if (md.getVendorName() == null)
-            md.setVendorName(vendorName);
-      }
+      // AuthenticationMechanism
+      ArrayList<AuthenticationMechanism> authenticationMechanisms = processAuthenticationMechanism(conAnnotation
+            .authMechanisms());
 
-      // Version
-      String version = c.version();
-      if (version != null)
-      {
-         if (md.getRAVersion() == null)
-            md.setRAVersion(version);
-      }
+      OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(connectionDefinitions,
+            transactionSupport, authenticationMechanisms, reauthenticationSupport, null);
 
-      return md;
+      // Security permission
+      ArrayList<SecurityPermission> securityPermissions = processSecurityPermissions(conAnnotation
+            .securityPermissions());
+
+      ResourceAdapter1516Impl resourceAdapter = new ResourceAdapter1516Impl(raClass, configProperties,
+            outboundResourceadapter, inboundResourceadapter, adminObjs, securityPermissions, null);
+
+      XsdString resourceadapterVersion = new XsdString("1.6", null);
+      return new Connector16Impl("", descriptions, displayNames, icons, vendorName, eisType,
+            resourceadapterVersion, license, resourceAdapter, requiredWorkContexts, false, null);
+
+   }
+
+
+   private ArrayList<SecurityPermission> processSecurityPermissions(
+         javax.resource.spi.SecurityPermission[] securityPermissionAnotations)
+   {
+      ArrayList<SecurityPermission> securityPermissions = null;
+      if (securityPermissionAnotations != null)
+      {
+         if (securityPermissionAnotations.length != 0)
+         {
+            securityPermissions = new ArrayList<SecurityPermission>(securityPermissionAnotations.length);
+            for (javax.resource.spi.SecurityPermission securityPermission : securityPermissionAnotations)
+            {
+               SecurityPermission spmd = new SecurityPermissionImpl(null, new XsdString(
+                     securityPermission.permissionSpec(), null), null);
+               securityPermissions.add(spmd);
+            }
+            securityPermissions.trimToSize();
+         }
+      }
+      return securityPermissions;
+   }
+
+   private ArrayList<AuthenticationMechanism> processAuthenticationMechanism(
+         javax.resource.spi.AuthenticationMechanism[] authMechanismAnnotations)
+   {
+      ArrayList<AuthenticationMechanism> authenticationMechanisms = null;
+      if (authMechanismAnnotations != null)
+      {
+         authenticationMechanisms = new ArrayList<AuthenticationMechanism>(authMechanismAnnotations.length);
+         for (javax.resource.spi.AuthenticationMechanism authMechanismAnnotation : authMechanismAnnotations)
+         {
+            ArrayList<LocalizedXsdString> descriptions = null;
+            if (authMechanismAnnotation.description() != null && authMechanismAnnotation.description().length != 0)
+            {
+               descriptions = new ArrayList<LocalizedXsdString>(authMechanismAnnotation.description().length);
+               for (String descriptionAnnoptation : authMechanismAnnotation.description())
+               {
+                  descriptions.add(new LocalizedXsdString(descriptionAnnoptation, null));
+               }
+            }
+            XsdString authenticationMechanismType = new XsdString(authMechanismAnnotation
+                  .authMechanism(), null);
+
+            authenticationMechanisms.add(new AuthenticationMechanismImpl(descriptions, authenticationMechanismType,
+                  CredentialInterfaceEnum.valueOf(authMechanismAnnotation.credentialInterface()
+                        .name()), null));
+         }
+      }
+      return authenticationMechanisms;
    }
 
    /**
     * Process: @ConnectionDefinitions
-    * @param md The metadata
     * @param annotationRepository The annotation repository
+    * @param configProperties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData processConnectionDefinitions(ConnectorMetaData md, 
-                                                          AnnotationRepository annotationRepository)
+   private ArrayList<ConnectionDefinition> processConnectionDefinitions(AnnotationRepository annotationRepository,
+         ArrayList<? extends ConfigProperty> configProperties)
       throws Exception
    {
       Collection<Annotation> values = annotationRepository.getAnnotation(ConnectionDefinitions.class);
@@ -475,124 +465,132 @@ public class Annotations
          if (values.size() == 1)
          {
             Annotation annotation = values.iterator().next();
-            ConnectionDefinitions c = (ConnectionDefinitions)annotation.getAnnotation();
+            ConnectionDefinitions connectionDefinitionsAnnotation = (ConnectionDefinitions) annotation.getAnnotation();
 
             if (trace)
-               log.trace("Processing: " + c);
+               log.trace("Processing: " + connectionDefinitionsAnnotation);
 
-            md = attachConnectionDefinitions(md , c, annotation.getClassName());
+            return attachConnectionDefinitions(connectionDefinitionsAnnotation, annotation.getClassName(),
+                  configProperties);
          }
          else
             throw new ValidateException("More than one @ConnectionDefinitions defined");
       }
+      return null;
 
-      return md;
    }
 
    /**
     * Attach @ConnectionDefinitions
-    * @param md The metadata
     * @param cds The connection definitions
     * @param mcf The managed connection factory
+    * @param configProperty
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData attachConnectionDefinitions(ConnectorMetaData md, 
-                                                         ConnectionDefinitions cds,
-                                                         String mcf)
+   private ArrayList<ConnectionDefinition> attachConnectionDefinitions(ConnectionDefinitions cds, String mcf,
+         ArrayList<? extends ConfigProperty> configProperty)
       throws Exception
    {
-      createConDefs(md);
+      ArrayList<ConnectionDefinition> connectionDefinitions = null;
 
       if (cds.value() != null)
       {
-         for (ConnectionDefinition cd : cds.value())
+         connectionDefinitions =
+               new ArrayList<ConnectionDefinition>(cds.value().length);
+         for (javax.resource.spi.ConnectionDefinition cd : cds.value())
          {
-            md = attachConnectionDefinition(md, mcf, cd);
+            connectionDefinitions.add(attachConnectionDefinition(mcf, cd, configProperty));
          }
+
       }
 
-      return md;
+      return connectionDefinitions;
    }
 
    /**
     * Process: @ConnectionDefinition
-    * @param md The metadata
     * @param annotationRepository The annotation repository
+    * @param configProperty
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData processConnectionDefinition(ConnectorMetaData md, 
-                                                         AnnotationRepository annotationRepository)
+   private ArrayList<ConnectionDefinition> processConnectionDefinition(AnnotationRepository annotationRepository,
+         ArrayList<? extends ConfigProperty> configProperty)
       throws Exception
    {
-      Collection<Annotation> values = annotationRepository.getAnnotation(ConnectionDefinition.class);
+      ArrayList<ConnectionDefinition> connectionDefinitions = null;
+
+      Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.ConnectionDefinition.class);
       if (values != null)
       {
+         connectionDefinitions =
+               new ArrayList<ConnectionDefinition>(values.size());
+
          for (Annotation annotation : values)
          {
-            md = attachConnectionDefinition(md, annotation);
+            connectionDefinitions.add(attachConnectionDefinition(annotation, configProperty));
          }
       }
 
-      return md;
+      return connectionDefinitions;
    }
 
    /**
     * Attach @ConnectionDefinition
-    * @param md The metadata
-    * @param cd The connection definition
+    * @param annotation
+    * @param configProperty
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData attachConnectionDefinition(ConnectorMetaData md, Annotation annotation)
+   private ConnectionDefinition attachConnectionDefinition(Annotation annotation,
+         ArrayList<? extends ConfigProperty> configProperty)
       throws Exception
    {
-      ConnectionDefinition cd = (ConnectionDefinition)annotation.getAnnotation();
+      javax.resource.spi.ConnectionDefinition cd = (javax.resource.spi.ConnectionDefinition) annotation.getAnnotation();
 
       if (trace)
          log.trace("Processing: " + annotation);
 
-      createConDefs(md);
-
-      for (ConnectionDefinitionMetaData cdMeta : md.getRa().getOutboundRa().getConDefs())
-      {
-         if (cdMeta.getManagedConnectionFactoryClass().equals(annotation.getClassName()))
-         {
-            //ra.xml define
-            return md;
-         }
-      }
-
-      return attachConnectionDefinition(md, annotation.getClassName(), cd);
+      return attachConnectionDefinition(annotation.getClassName(), cd, configProperty);
    }
 
    /**
     * Attach @ConnectionDefinition
-    * @param md The metadata
     * @param mcf The managed connection factory
     * @param cd The connection definition
+    * @param configProperties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData attachConnectionDefinition(ConnectorMetaData md, 
-                                                        String mcf, 
-                                                        ConnectionDefinition cd)
+   private ConnectionDefinition attachConnectionDefinition(String mcf, javax.resource.spi.ConnectionDefinition cd,
+         ArrayList<? extends ConfigProperty> configProperties)
       throws Exception
    {
+      ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
+      if (configProperties != null)
+      {
+         for (ConfigProperty configProperty16 : configProperties)
+
+         {
+            if (mcf.equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            {
+               validProperties.add(configProperty16);
+            }
+         }
+      }
+      validProperties.trimToSize();
       if (trace)
          log.trace("Processing: " + cd);
 
-      createConDefs(md);
-
-      ConnectionDefinitionMetaData cdMeta = new ConnectionDefinitionMetaData();
-      cdMeta.setManagedConnectionFactoryClass(mcf);
-      cdMeta.setConnectionFactoryInterfaceClass(cd.connectionFactory().getName());
-      cdMeta.setConnectionFactoryImplementationClass(cd.connectionFactoryImpl().getName());
-      cdMeta.setConnectionInterfaceClass(cd.connection().getName());
-      cdMeta.setConnectionImplementationClass(cd.connectionImpl().getName());
-      md.getRa().getOutboundRa().getConDefs().add(cdMeta);
-      return md;
+      XsdString connectionfactoryInterface = new XsdString(cd.connectionFactory().getName(), null);
+      XsdString managedconnectionfactoryClass = new XsdString(mcf, null);
+      XsdString connectionImplClass = new XsdString(cd.connectionImpl().getName(), null);
+      XsdString connectionfactoryImplClass = new XsdString(cd.connectionFactoryImpl().getName(), null);
+      String id = null;
+      XsdString connectionInterface = new XsdString(cd.connection().getName(), null);
+      return new ConnectionDefinitionImpl(managedconnectionfactoryClass, configProperties, connectionfactoryInterface,
+            connectionfactoryImplClass, connectionInterface, connectionImplClass, id);
    }
 
    /**
@@ -602,147 +600,107 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData processConfigProperty(ConnectorMetaData md, 
-                                                          AnnotationRepository annotationRepository)
+   private Map<metadatas, ArrayList<ConfigProperty16>> processConfigProperty(AnnotationRepository annotationRepository)
       throws Exception
    {
-      Collection<Annotation> values = annotationRepository.getAnnotation(ConfigProperty.class);
+      Map<metadatas, ArrayList<ConfigProperty16>> valueMap = null;
+      Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.ConfigProperty.class);
       if (values != null)
       {
+         valueMap = new HashMap<Annotations.metadatas, ArrayList<ConfigProperty16>>();
          for (Annotation annotation : values)
          {
-            md = attachConfigProperty(md, annotation);
-         }
-      }
+            javax.resource.spi.ConfigProperty configPropertyAnnotation = (javax.resource.spi.ConfigProperty) annotation
+                  .getAnnotation();
 
-      return md;
-   }
+            if (trace)
+               log.trace("Processing: " + configPropertyAnnotation);
 
-   /**
-    * Attach @ConfigProperty
-    * @param md The metadata
-    * @param configProperty The config property
-    * @return The updated metadata
-    * @exception Exception Thrown if an error occurs
-    */
-   private ConnectorMetaData attachConfigProperty(ConnectorMetaData md, Annotation annotation)
-      throws Exception
-   {
-      ConfigProperty configProperty = (ConfigProperty)annotation.getAnnotation();
-
-      if (trace)
-         log.trace("Processing: " + configProperty);
-
-      // Ignore config-property which has ignore=true
-      if (configProperty.ignore())
-         return md;
-
-      ConfigPropertyMetaData cfgMeta = new ConfigPropertyMetaData();
-      cfgMeta.setName(getConfigPropertyName(annotation));
-
-      if (configProperty.defaultValue() != null && !configProperty.defaultValue().equals(""))
-         cfgMeta.setValue(configProperty.defaultValue());
-
-      if (!Object.class.equals(configProperty.type()))
-      {
-         cfgMeta.setType(configProperty.type().getName());
-      }
-      else
-      {
-         cfgMeta.setType(getConfigPropertyType(annotation));
-      }
-      cfgMeta.setIgnore(configProperty.ignore());
-
-      String[] description = configProperty.description();
-      if (description != null)
-      {
-         if (cfgMeta.getDescriptions() == null)
-         {
-            DescriptionsImpl descsImpl = new DescriptionsImpl();
-            cfgMeta.setDescriptions(descsImpl);
-         }
-         for (String desc : description)
-         {
-            DescriptionImpl descImpl = new DescriptionImpl();
-            descImpl.setDescription(desc);
-            ((DescriptionsImpl)cfgMeta.getDescriptions()).add(descImpl);
-         }
-      }
-      
-      String attachedClassName = annotation.getClassName();
-      ClassLoader cl = SecurityActions.getThreadContextClassLoader();
-      Class attachedClass = Class.forName(attachedClassName, true, cl);
-
-      if (hasInterface(attachedClass, "javax.resource.spi.ResourceAdapter"))
-      {
-         if (md.getRa() == null)
-         {
-            md.setRa(new ResourceAdapterMetaData());
-         }
-         if (md.getRa().getConfigProperty() == null)
-         {
-            md.getRa().setConfigProperty(new ArrayList<ConfigPropertyMetaData>());
-         }
-         for (ConfigPropertyMetaData cpMeta : md.getRa().getConfigProperty())
-         {
-            if (cpMeta.getName().equals(cfgMeta.getName()))
+            XsdString configPropertyValue = XsdString.NULL_XSDSTRING;
+            XsdString configPropertyName = new XsdString(getConfigPropertyName(annotation), null);
+            if (configPropertyAnnotation.defaultValue() != null && !configPropertyAnnotation.defaultValue().equals(""))
+               configPropertyValue = new XsdString(configPropertyAnnotation.defaultValue(), null);
+            XsdString configPropertyType = XsdString.NULL_XSDSTRING;
+            if (!Object.class.equals(configPropertyAnnotation.type()))
             {
-               return md;
+               configPropertyType = new XsdString(configPropertyAnnotation.type().getName(), null);
             }
-         }
-         md.getRa().getConfigProperty().add(cfgMeta);
-      }
-      else if (hasInterface(attachedClass, "javax.resource.spi.ManagedConnectionFactory"))
-      {
-         createConDefs(md);
-         for (ConnectionDefinitionMetaData cdMeta : md.getRa().getOutboundRa().getConDefs())
-         {
-            if (attachedClassName.equals(cdMeta.getManagedConnectionFactoryClass()))
+            else
             {
-               if (cdMeta.getConfigProps() == null)
+               configPropertyType = new XsdString(getConfigPropertyType(annotation), null);
+            }
+
+            Boolean configPropertySupportsDynamicUpdates = false;
+            Boolean configPropertyConfidential = false;
+            String id = null;
+            // Description
+            ArrayList<LocalizedXsdString> descriptions = null;
+            if (configPropertyAnnotation.description() != null && configPropertyAnnotation.description().length != 0)
+            {
+               descriptions = new ArrayList<LocalizedXsdString>(configPropertyAnnotation.description().length);
+               for (String descriptionAnnoptation : configPropertyAnnotation.description())
                {
-                  cdMeta.setConfigProps(new ArrayList<ConfigPropertyMetaData>());
+                  descriptions.add(new LocalizedXsdString(descriptionAnnoptation, null));
                }
-               for (ConfigPropertyMetaData cpMeta : cdMeta.getConfigProps())
+            }
+
+            Boolean configPropertyIgnore = configPropertyAnnotation.ignore();
+
+            String attachedClassName = annotation.getClassName();
+            ClassLoader cl = SecurityActions.getThreadContextClassLoader();
+            Class attachedClass = Class.forName(attachedClassName, true, cl);
+
+            if (hasInterface(attachedClass, "javax.resource.spi.ResourceAdapter"))
+            {
+               ConfigProperty16 cfgMeta = new ConfigProperty16Impl(descriptions, configPropertyName,
+                     configPropertyType,
+                     configPropertyValue, configPropertyIgnore, configPropertySupportsDynamicUpdates,
+                     configPropertyConfidential, id);
+               if (valueMap.get(metadatas.RA) == null)
                {
-                  if (cpMeta.getName().equals(cfgMeta.getName()))
+                  valueMap.put(metadatas.RA, new ArrayList<ConfigProperty16>());
+               }
+               valueMap.get(metadatas.RA).add(cfgMeta);
+            }
+            else
+            {
+               ConfigProperty16 cfgMeta = new ConfigProperty16Impl(descriptions, configPropertyName,
+                     configPropertyType,
+                     configPropertyValue, configPropertyIgnore, configPropertySupportsDynamicUpdates,
+                     configPropertyConfidential, id, attachedClassName);
+               if (hasInterface(attachedClass, "javax.resource.spi.ManagedConnectionFactory"))
+               {
+                  if (valueMap.get(metadatas.MANAGED_CONN_FACTORY) == null)
                   {
-                     return md;
+                     valueMap.put(metadatas.MANAGED_CONN_FACTORY, new ArrayList<ConfigProperty16>());
                   }
+                  valueMap.get(metadatas.MANAGED_CONN_FACTORY).add(cfgMeta);
                }
-               cdMeta.getConfigProps().add(cfgMeta);
-            }
-         }
-      }
-      else if (hasInterface(attachedClass, "javax.resource.spi.ActivationSpec"))
-      {
-         createMessageListeners(md);
-         for (MessageListenerMetaData mlMeta : md.getRa().getInboundRa().getMessageAdapter().getMessageListeners())
-         {
-            if (attachedClassName.equals(mlMeta.getActivationSpecType().getAsClass()))
-            {
-               if (mlMeta.getActivationSpecType().getConfigProps() == null)
+               else if (hasInterface(attachedClass, "javax.resource.spi.ActivationSpec"))
                {
-                  mlMeta.getActivationSpecType().setConfigProps(new ArrayList<ConfigPropertyMetaData>());
-               }
-               for (ConfigPropertyMetaData cpMeta : mlMeta.getActivationSpecType().getConfigProps())
-               {
-                  if (cpMeta.getName().equals(cfgMeta.getName()))
+                  if (valueMap.get(metadatas.ACTIVATION_SPEC) == null)
                   {
-                     return md;
+                     valueMap.put(metadatas.ACTIVATION_SPEC, new ArrayList<ConfigProperty16>());
                   }
+                  valueMap.get(metadatas.ACTIVATION_SPEC).add(cfgMeta);
                }
-               mlMeta.getActivationSpecType().getConfigProps().add(cfgMeta);
             }
          }
+         if (valueMap.get(metadatas.RA) != null)
+            valueMap.get(metadatas.RA).trimToSize();
+         if (valueMap.get(metadatas.MANAGED_CONN_FACTORY) != null)
+            valueMap.get(metadatas.MANAGED_CONN_FACTORY).trimToSize();
+         if (valueMap.get(metadatas.ACTIVATION_SPEC) != null)
+            valueMap.get(metadatas.ACTIVATION_SPEC).trimToSize();
+         return valueMap;
       }
 
-      return md;
+      return valueMap;
    }
 
    /**
     * hasInterface
-    * 
+    *
     * @param c
     * @param targetClassName
     * @return
@@ -754,7 +712,7 @@ public class Annotations
          if (face.getName().equals(targetClassName))
          {
             return true;
-         } 
+         }
          else
          {
             for (Class face2 : face.getInterfaces())
@@ -762,7 +720,7 @@ public class Annotations
                if (face2.getName().equals(targetClassName))
                {
                   return true;
-               } 
+               }
                else if (hasInterface(face2, targetClassName))
                {
                   return true;
@@ -778,230 +736,107 @@ public class Annotations
    }
 
    /**
-    * Attach @AuthenticationMechanism
-    * @param md The metadata
-    * @param authenticationmechanism The authentication mechanism
-    * @return The updated metadata
-    * @exception Exception Thrown if an error occurs
-    */
-   private ConnectorMetaData attachAuthenticationMechanism(ConnectorMetaData md, 
-                                                                  AuthenticationMechanism authenticationmechanism)
-      throws Exception
-   {
-      if (md.getRa() == null)
-      {
-         md.setRa(new ResourceAdapterMetaData());
-      }
-      if (md.getRa().getOutboundRa() == null)
-      {
-         md.getRa().setOutboundRa(new OutboundRaMetaData());
-      }
-      if (md.getRa().getOutboundRa().getAuthMechanisms() == null)
-      {
-         md.getRa().getOutboundRa().setAuthMechanisms(new ArrayList<AuthenticationMechanismMetaData>());
-      }
-      AuthenticationMechanismMetaData ammd = new AuthenticationMechanismMetaData();
-      ammd.setAuthenticationMechanismType(authenticationmechanism.authMechanism());
-      
-      String credentialInterfaceClass = null;
-      if (authenticationmechanism.credentialInterface().equals(CredentialInterface.GenericCredential))
-      {
-         credentialInterfaceClass = "javax.resource.spi.security.GenericCredential";
-      }
-      else if (authenticationmechanism.credentialInterface().equals(CredentialInterface.GSSCredential))
-      {
-         credentialInterfaceClass = "org.ietf.jgss.GSSCredential";
-      }
-      else if (authenticationmechanism.credentialInterface().equals(CredentialInterface.PasswordCredential))
-      {
-         credentialInterfaceClass = "javax.resource.spi.security.PasswordCredential";
-      }
-      ammd.setCredentialInterfaceClass(credentialInterfaceClass);
-      
-      String[] description = authenticationmechanism.description();
-      if (description != null)
-      {
-         if (ammd.getDescriptions() == null)
-         {
-            DescriptionsImpl descsImpl = new DescriptionsImpl();
-            ammd.setDescriptions(descsImpl);
-         }
-         for (String desc : description)
-         {
-            DescriptionImpl descImpl = new DescriptionImpl();
-            descImpl.setDescription(desc);
-            ((DescriptionsImpl)ammd.getDescriptions()).add(descImpl);
-         }
-      }
-      
-      md.getRa().getOutboundRa().getAuthMechanisms().add(ammd);
-
-      return md;
-   }
-
-   /**
     * Process: @AdministeredObject
     * @param md The metadata
     * @param annotationRepository The annotation repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData processAdministeredObject(ConnectorMetaData md, 
-                                                              AnnotationRepository annotationRepository)
+   private ArrayList<AdminObject> processAdministeredObject(AnnotationRepository annotationRepository)
       throws Exception
    {
+      ArrayList<AdminObject> adminObjs = null;
       Collection<Annotation> values = annotationRepository.getAnnotation(AdministeredObject.class);
       if (values != null)
       {
+         adminObjs = new ArrayList<AdminObject>(values.size());
          for (Annotation annotation : values)
          {
-            AdministeredObject a = (AdministeredObject)annotation.getAnnotation();
+            AdministeredObject a = (AdministeredObject) annotation.getAnnotation();
 
             if (trace)
                log.trace("Processing: " + a);
-
-            md = attachAdministeredObject(md, a);
+            String aoName = null;
+            if (a.adminObjectInterfaces().length > 0)
+            {
+               aoName = ((Class) Array.get(a.adminObjectInterfaces(), 0)).getName();
+            }
+            XsdString adminobjectInterface = new XsdString(aoName, null);
+            adminObjs.add(new AdminObjectImpl(adminobjectInterface, null, null, null));
          }
       }
 
-      return md;
-   }
-
-   /**
-    * Attach @AdministeredObject
-    * @param md The metadata
-    * @param a The administered object
-    * @return The updated metadata
-    * @exception Exception Thrown if an error occurs
-    */
-   private ConnectorMetaData attachAdministeredObject(ConnectorMetaData md, AdministeredObject a)
-      throws Exception
-   {
-      createAdminObject(md);
-      String aoName = null;
-      if (a.adminObjectInterfaces().length > 0)
-      {
-         aoName = ((Class)Array.get(a.adminObjectInterfaces(), 0)).getName();
-      }
-      AdminObjectMetaData aomd = new AdminObjectMetaData();
-      aomd.setAdminObjectInterfaceClass(aoName);
-      md.getRa().getAdminObjects().add(aomd);
-      return md;
+      return adminObjs;
    }
 
    /**
     * Process: @Activation
-    * @param md The metadata
     * @param annotationRepository The annotation repository
+    * @param configProperties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData processActivation(ConnectorMetaData md, 
-                                                      AnnotationRepository annotationRepository)
+   private InboundResourceAdapter processActivation(AnnotationRepository annotationRepository,
+         ArrayList<ConfigProperty16> configProperties)
       throws Exception
    {
+      ArrayList<MessageListener> listeners = new ArrayList<MessageListener>();
       Collection<Annotation> values = annotationRepository.getAnnotation(Activation.class);
       if (values != null)
       {
          for (Annotation annotation : values)
          {
-            md = attachActivation(md, annotation);
+            listeners.addAll(attachActivation(annotation, configProperties));
          }
+         listeners.trimToSize();
       }
 
-      return md;
+      return new InboundResourceAdapterImpl(new MessageAdapterImpl(listeners, null), null);
    }
 
    /**
     * Attach @Activation
-    * @param md The metadata
-    * @param activation The activation
+    * @param annotation The activation annotation
+    * @param configProperties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectorMetaData attachActivation(ConnectorMetaData md, Annotation annotation)
+   private ArrayList<MessageListener> attachActivation(Annotation annotation,
+         ArrayList<ConfigProperty16> configProperties)
       throws Exception
    {
-      Activation activation = (Activation)annotation.getAnnotation();
+      ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
+      if (configProperties != null)
+      {
+         for (ConfigProperty configProperty16 : configProperties)
+         {
+            if (annotation.getClassName().equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            {
+               validProperties.add(configProperty16);
+            }
+         }
+      }
 
+      validProperties.trimToSize();
+
+      Activation activation = (Activation) annotation.getAnnotation();
+      ArrayList<MessageListener> messageListeners = null;
       if (trace)
          log.trace("Processing: " + activation);
-      
-      createMessageListeners(md);
-      for (Class asClass : activation.messageListeners())
+      if (activation.messageListeners() != null)
       {
-         ActivationspecMetaData asMeta = new ActivationspecMetaData();
-         asMeta.setAsClass(annotation.getClassName());
-         MessageListenerMetaData mlMeta = new MessageListenerMetaData();
-         mlMeta.setActivationSpecType(asMeta);
-         mlMeta.setType(asClass.getName());
-         md.getRa().getInboundRa().getMessageAdapter().getMessageListeners().add(mlMeta);
-      }
-      return md;
-   }
-   
+         messageListeners = new ArrayList<MessageListener>(activation.messageListeners().length);
+         for (Class asClass : activation.messageListeners())
+         {
+            Activationspec16 asMeta = new Activationspec16Impl(new XsdString(annotation.getClassName(), null), null,
+                  validProperties,
+                  null);
+            MessageListener mlMeta = new MessageListenerImpl(new XsdString(asClass.getName(), null), asMeta, null);
+            messageListeners.add(mlMeta);
 
-   /**
-    * createMessageListeners
-    * @param md
-    * @throws Exception
-    */
-   private void createMessageListeners(ConnectorMetaData md) throws Exception
-   {
-      if (md.getRa() == null)
-      {
-         md.setRa(new ResourceAdapterMetaData());
+         }
       }
-      if (md.getRa().getInboundRa() == null)
-      {
-         md.getRa().setInboundRa(new InboundRaMetaData());
-      }
-      if (md.getRa().getInboundRa().getMessageAdapter() == null)
-      {
-         md.getRa().getInboundRa().setMessageAdapter(new MessageAdapterMetaData());
-      }
-      if (md.getRa().getInboundRa().getMessageAdapter().getMessageListeners() == null)
-      {
-         md.getRa().getInboundRa().getMessageAdapter().setMessageListeners(new ArrayList<MessageListenerMetaData>());
-      }
-   }
-
-   /**
-    * createAdminObject
-    * @param md
-    * @throws Exception
-    */
-   private void createAdminObject(ConnectorMetaData md) throws Exception
-   {
-      if (md.getRa() == null)
-      {
-         md.setRa(new ResourceAdapterMetaData());
-      }
-      if (md.getRa().getAdminObjects() == null)
-      {
-         md.getRa().setAdminObjects(new ArrayList<AdminObjectMetaData>());
-      }
-   }
-
-   /**
-    * createConDefs
-    * @param md
-    * @throws Exception
-    */
-   private void createConDefs(ConnectorMetaData md) throws Exception
-   {
-      if (md.getRa() == null)
-      {
-         md.setRa(new ResourceAdapterMetaData());
-      }
-      if (md.getRa().getOutboundRa() == null)
-      {
-         md.getRa().setOutboundRa(new OutboundRaMetaData());
-      }
-      if (md.getRa().getOutboundRa().getConDefs() == null)
-      {
-         md.getRa().getOutboundRa().setConDefs(new ArrayList<ConnectionDefinitionMetaData>());
-      }
+      return messageListeners;
    }
 
    /**
@@ -1055,7 +890,7 @@ public class Annotations
     * @return The fully qualified classname
     * @exception ClassNotFoundException Thrown if a class cannot be found
     */
-   @SuppressWarnings("unchecked") 
+   @SuppressWarnings("unchecked")
    private String getConfigPropertyType(Annotation annotation)
       throws ClassNotFoundException
    {
@@ -1101,7 +936,7 @@ public class Annotations
             try
             {
                Method method = clz.getDeclaredMethod(annotation.getMemberName(), parameters);
-         
+
                if (void.class.equals(method.getReturnType()))
                {
                   if (parameters != null && parameters.length > 0)

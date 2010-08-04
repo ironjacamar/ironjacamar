@@ -52,7 +52,7 @@ public class MCF implements Rule
    /**
     * Validate
     * @param vo The validate object
-    * @param rb The resource bundle 
+    * @param rb The resource bundle
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")

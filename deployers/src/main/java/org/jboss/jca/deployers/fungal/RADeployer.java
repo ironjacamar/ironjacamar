@@ -23,7 +23,19 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.metadata.Metadata;
+import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
+import org.jboss.jca.common.api.metadata.jbossra.jbossra20.BeanValidationGroup;
+import org.jboss.jca.common.api.metadata.jbossra.jbossra20.JbossRa20;
+import org.jboss.jca.common.api.metadata.ra.AdminObject;
+import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.ra.Connector.Version;
+import org.jboss.jca.common.api.metadata.ra.MessageListener;
+import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
+import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
+import org.jboss.jca.common.metadataimpl.MetadataFactory;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -74,16 +86,6 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
-import org.jboss.metadata.rar.jboss.BvGroupMetaData;
-import org.jboss.metadata.rar.jboss.JBossRA20Base;
-import org.jboss.metadata.rar.jboss.JBossRAMetaData;
-import org.jboss.metadata.rar.spec.AdminObjectMetaData;
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
-import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
-import org.jboss.metadata.rar.spec.ConnectorMetaData;
-import org.jboss.metadata.rar.spec.JCA10DTDMetaData;
-import org.jboss.metadata.rar.spec.MessageListenerMetaData;
-import org.jboss.metadata.rar.spec.TransactionSupportMetaData;
 
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
@@ -331,6 +333,7 @@ public final class RADeployer implements CloneableDeployer
     * @return The deployment
     * @exception DeployException Thrown if an error occurs during deployment
     */
+   @Override
    public Deployment deploy(URL url, ClassLoader parent) throws DeployException
    {
       if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
@@ -376,22 +379,22 @@ public final class RADeployer implements CloneableDeployer
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Parse metadata
-         Metadata metadataHandler = new Metadata();
-         ConnectorMetaData cmd = metadataHandler.getStandardMetaData(root);
-         JBossRAMetaData jrmd = metadataHandler.getJBossMetaData(root);
+         MetadataFactory metadataFactory = new MetadataFactory();
+         Connector cmd = metadataFactory.getStandardMetaData(root);
+         JbossRa jrmd = metadataFactory.getJBossMetaData(root);
 
          // Annotation scanning
          Annotations annotator = new Annotations();
          cmd = annotator.scan(cmd, cl.getURLs(), cl);
 
          // Validate metadata
-         metadataHandler.validate(cmd);
+         cmd.validate();
 
          // Merge metadata
-         cmd = metadataHandler.merge(cmd, jrmd);
+         cmd.merge(jrmd);
 
          // Notify regarding license terms
-         if (cmd != null && cmd.getLicense() != null && cmd.getLicense().getRequired())
+         if (cmd != null && cmd.getLicense() != null && cmd.getLicense().isLicenseRequired())
             log.info("Required license terms for " + url.toExternalForm());
 
          ResourceAdapter resourceAdapter = null;
@@ -406,15 +409,16 @@ public final class RADeployer implements CloneableDeployer
          if (cmd != null)
          {
             // ResourceAdapter
-            if (!cmd.is10())
+            if (cmd.getVersion() != Version.V_10)
             {
-               if (cmd.getRa() != null && cmd.getRa().getRaClass() != null)
+               if (cmd.getResourceadapter() != null && cmd.getResourceadapter().getClass() != null)
                {
                   partialFailures =
-                     validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER,
-                                                                                     cmd.getRa().getRaClass(),
+                        validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER,
+                              ((ResourceAdapter1516) cmd.getResourceadapter()).getResourceadapterClass(),
                                                                                      cl,
-                                                                                     cmd.getRa().getConfigProperty())));
+                                                                                     cmd.getResourceadapter()
+                                                                                           .getConfigProperties())));
                   if (partialFailures != null)
                   {
                      failures = new HashSet<Failure>();
@@ -424,7 +428,10 @@ public final class RADeployer implements CloneableDeployer
                   if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
                   {
                      resourceAdapter =
-                        (ResourceAdapter)initAndInject(cmd.getRa().getRaClass(), cmd.getRa().getConfigProperty(), cl);
+                           (ResourceAdapter) initAndInject(
+                                 ((ResourceAdapter1516) cmd.getResourceadapter()).getResourceadapterClass(), cmd
+                                       .getResourceadapter().getConfigProperties(),
+                                 cl);
 
                      if (trace)
                      {
@@ -435,123 +442,211 @@ public final class RADeployer implements CloneableDeployer
 
                      archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER,
                                                                      resourceAdapter,
-                                                                     cmd.getRa().getConfigProperty()));
+                                                                     cmd.getResourceadapter().getConfigProperties()));
                      beanValidationObjects.add(resourceAdapter);
                   }
                }
             }
 
             // ManagedConnectionFactory
-            if (cmd.getRa() != null &&
-                cmd.getRa().getOutboundRa() != null &&
-                cmd.getRa().getOutboundRa().getConDefs() != null)
+            if (cmd.getVersion() == Version.V_10)
             {
-               List<ConnectionDefinitionMetaData> cdMetas = cmd.getRa().getOutboundRa().getConDefs();
-               if (cdMetas.size() > 0)
+
+               ManagedConnectionFactory mcf =
+                     (ManagedConnectionFactory) initAndInject(((ResourceAdapter10) cmd.getResourceadapter())
+                           .getManagedConnectionFactoryClass()
+                           .getValue(), ((ResourceAdapter10) cmd.getResourceadapter())
+                           .getConfigProperties(), cl);
+
+               if (trace)
                {
-                  for (ConnectionDefinitionMetaData cdMeta : cdMetas)
+                  log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
+                  log.trace("ManagedConnectionFactory defined in classloader: " +
+                         mcf.getClass().getClassLoader());
+               }
+
+               mcf.setLogWriter(new PrintWriter(printStream));
+
+               archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
+                                                            mcf,
+                                                            ((ResourceAdapter10) cmd.getResourceadapter())
+                                                                  .getConfigProperties()));
+               beanValidationObjects.add(mcf);
+               associateResourceAdapter(resourceAdapter, mcf);
+
+               // Create the pool
+               PoolConfiguration pc = new PoolConfiguration();
+               PoolFactory pf = new PoolFactory();
+
+               Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+
+               // Add a connection manager
+               ConnectionManager cm = null;
+
+               TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
+               TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
+
+               tsmd = ((ResourceAdapter10) cmd.getResourceadapter()).getTransactionSupport();
+
+               if (tsmd == TransactionSupportEnum.NoTransaction)
+               {
+                  tsl = TransactionSupportLevel.NoTransaction;
+               }
+               else if (tsmd == TransactionSupportEnum.LocalTransaction)
+               {
+                  tsl = TransactionSupportLevel.LocalTransaction;
+               }
+               else if (tsmd == TransactionSupportEnum.XATransaction)
+               {
+                  tsl = TransactionSupportLevel.XATransaction;
+               }
+               // Section 7.13 -- Read from metadata -> overwrite with specified value if present
+               if (mcf instanceof TransactionSupport)
+                  tsl = ((TransactionSupport) mcf).getTransactionSupport();
+
+               // Select the correct connection manager
+               ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+               cm = cmf.create(tsl, pool, transactionManager);
+
+               // ConnectionFactory
+               Object cf = mcf.createConnectionFactory(cm);
+
+               if (cf == null)
+               {
+                  log.error("ConnectionFactory is null");
+               }
+               else
+               {
+                  if (trace)
                   {
-                     partialFailures =
-                           validateArchive(url, Arrays
-                                 .asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, cdMeta
-                                       .getManagedConnectionFactoryClass(), cl, cdMeta.getConfigProps())));
-                     if (partialFailures != null)
+                     log.trace("ConnectionFactory: " + cf.getClass().getName());
+                     log.trace("ConnectionFactory defined in classloader: "
+                           + cf.getClass().getClassLoader());
+                  }
+               }
+
+               archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
+
+               if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
+               {
+                  deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
+                  bindConnectionFactory(deploymentName, cf);
+                  cfs = new Object[]
+                  {cf};
+               }
+
+            }
+            else
+            {
+               ResourceAdapter1516 ra = (ResourceAdapter1516) cmd.getResourceadapter();
+               if (ra != null &&
+                     ra.getOutboundResourceadapter() != null &&
+                     ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
+               {
+                  List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
+                  if (cdMetas.size() > 0)
+                  {
+                     for (ConnectionDefinition cdMeta : cdMetas)
                      {
-                        failures = new HashSet<Failure>();
-                        failures.addAll(partialFailures);
-                     }
-
-                     if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
-                     {
-                        ManagedConnectionFactory mcf =
-                           (ManagedConnectionFactory)initAndInject(cdMeta.getManagedConnectionFactoryClass(),
-                                                                   cdMeta.getConfigProps(), cl);
-
-                        if (trace)
+                        partialFailures =
+                              validateArchive(url, Arrays
+                                    .asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, cdMeta
+                                          .getManagedconnectionfactoryClass().getValue(), cl, cdMeta
+                                          .getConfigProperties())));
+                        if (partialFailures != null)
                         {
-                           log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                           log.trace("ManagedConnectionFactory defined in classloader: " +
-                                     mcf.getClass().getClassLoader());
+                           failures = new HashSet<Failure>();
+                           failures.addAll(partialFailures);
                         }
 
-                        mcf.setLogWriter(new PrintWriter(printStream));
-
-                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
-                                                                        mcf,
-                                                                        cdMeta.getConfigProps()));
-                        beanValidationObjects.add(mcf);
-                        associateResourceAdapter(resourceAdapter, mcf);
-                        
-                        // Create the pool
-                        PoolConfiguration pc = new PoolConfiguration();
-                        PoolFactory pf = new PoolFactory();
-
-                        Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-
-                        // Add a connection manager
-                        ConnectionManager cm = null;
-                        TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
-                        TransactionSupportMetaData tsmd = TransactionSupportMetaData.NoTransaction;
-                        
-                        if (cmd instanceof JCA10DTDMetaData)
+                        if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
                         {
-                           tsmd = ((JCA10DTDMetaData)cmd).getRa10().getTransSupport();
-                        }
-                        else
-                        {
-                           tsmd = cmd.getRa().getOutboundRa().getTransSupport();
-                        }
+                           ManagedConnectionFactory mcf =
+                                 (ManagedConnectionFactory) initAndInject(cdMeta.getManagedconnectionfactoryClass()
+                                       .getValue(), cdMeta
+                                       .getConfigProperties(), cl);
 
-                        if (tsmd == TransactionSupportMetaData.NoTransaction)
-                        {
-                           tsl = TransactionSupportLevel.NoTransaction;
-                        }
-                        else if (tsmd == TransactionSupportMetaData.LocalTransaction)
-                        {
-                           tsl = TransactionSupportLevel.LocalTransaction;
-                        }
-                        else if (tsmd == TransactionSupportMetaData.XATransaction)
-                        {
-                           tsl = TransactionSupportLevel.XATransaction;
-                        }
-
-                        // Section 7.13 -- Read from metadata -> overwrite with specified value if present
-                        if (mcf instanceof TransactionSupport)
-                           tsl = ((TransactionSupport)mcf).getTransactionSupport();
-
-                        // Select the correct connection manager
-                        ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-                        cm = cmf.create(tsl, pool, transactionManager);
-
-                        // ConnectionFactory
-                        Object cf = mcf.createConnectionFactory(cm);
-
-                        if (cf == null)
-                        {
-                           log.error("ConnectionFactory is null");
-                        }
-                        else
-                        {
                            if (trace)
                            {
-                              log.trace("ConnectionFactory: " + cf.getClass().getName());
-                              log.trace("ConnectionFactory defined in classloader: " + cf.getClass().getClassLoader());
+                              log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
+                              log.trace("ManagedConnectionFactory defined in classloader: " +
+                                        mcf.getClass().getClassLoader());
                            }
-                        }
 
-                        archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
+                           mcf.setLogWriter(new PrintWriter(printStream));
 
-                        if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
-                        {
-                           if (cdMetas.size() == 1)
+                           archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
+                                                                           mcf,
+                                                                           cdMeta.getConfigProperties()));
+                           beanValidationObjects.add(mcf);
+                           associateResourceAdapter(resourceAdapter, mcf);
+
+                           // Create the pool
+                           PoolConfiguration pc = new PoolConfiguration();
+                           PoolFactory pf = new PoolFactory();
+
+                           Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+
+                           // Add a connection manager
+                           ConnectionManager cm = null;
+                           TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
+                           TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
+
+                           tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
+
+                           if (tsmd == TransactionSupportEnum.NoTransaction)
                            {
-                              deploymentName =  f.getName().substring(0,  f.getName().indexOf(".rar"));
-                              bindConnectionFactory(deploymentName, cf);
-                              cfs = new Object[] {cf};
+                              tsl = TransactionSupportLevel.NoTransaction;
+                           }
+                           else if (tsmd == TransactionSupportEnum.LocalTransaction)
+                           {
+                              tsl = TransactionSupportLevel.LocalTransaction;
+                           }
+                           else if (tsmd == TransactionSupportEnum.XATransaction)
+                           {
+                              tsl = TransactionSupportLevel.XATransaction;
+                           }
+
+                           // Section 7.13 -- Read from metadata -> overwrite with specified value if present
+                           if (mcf instanceof TransactionSupport)
+                              tsl = ((TransactionSupport) mcf).getTransactionSupport();
+
+                           // Select the correct connection manager
+                           ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+                           cm = cmf.create(tsl, pool, transactionManager);
+
+                           // ConnectionFactory
+                           Object cf = mcf.createConnectionFactory(cm);
+
+                           if (cf == null)
+                           {
+                              log.error("ConnectionFactory is null");
                            }
                            else
                            {
-                              log.warn("NYI: There are multiple connection factories for: " + f.getName());
+                              if (trace)
+                              {
+                                 log.trace("ConnectionFactory: " + cf.getClass().getName());
+                                 log.trace("ConnectionFactory defined in classloader: "
+                                       + cf.getClass().getClassLoader());
+                              }
+                           }
+
+                           archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
+
+                           if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
+                           {
+                              if (cdMetas.size() == 1)
+                              {
+                                 deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
+                                 bindConnectionFactory(deploymentName, cf);
+                                 cfs = new Object[]
+                                 {cf};
+                              }
+                              else
+                              {
+                                 log.warn("NYI: There are multiple connection factories for: " + f.getName());
+                              }
                            }
                         }
                      }
@@ -560,24 +655,28 @@ public final class RADeployer implements CloneableDeployer
             }
 
             // ActivationSpec
-            if (cmd.getRa() != null &&
-                cmd.getRa().getInboundRa() != null &&
-                cmd.getRa().getInboundRa().getMessageAdapter() != null &&
-                cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners() != null)
+            if (cmd.getVersion() != Version.V_10
+                  && cmd.getResourceadapter() != null
+                  && ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter() != null
+                  && ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter()
+                        .getMessageadapter() != null
+                  && ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter().getMessageadapter()
+                        .getMessagelisteners() != null)
             {
-               List<MessageListenerMetaData> mlMetas = cmd.getRa().getInboundRa().
-                  getMessageAdapter().getMessageListeners();
+               List<MessageListener> mlMetas = ((ResourceAdapter1516) cmd.getResourceadapter())
+                     .getInboundResourceadapter().getMessageadapter().getMessagelisteners();
                if (mlMetas.size() > 0)
                {
-                  for (MessageListenerMetaData mlMeta : mlMetas)
+                  for (MessageListener mlMeta : mlMetas)
                   {
-                     if (mlMeta.getActivationSpecType() != null && mlMeta.getActivationSpecType().getAsClass() != null)
+                     if (mlMeta.getActivationspec() != null
+                           && mlMeta.getActivationspec().getActivationspecClass().getValue() != null)
                      {
                         partialFailures =
                               validateArchive(url, Arrays
                                     .asList((Validate) new ValidateClass(Key.ACTIVATION_SPEC, mlMeta
-                                          .getActivationSpecType()
-                                          .getAsClass(), cl, mlMeta.getActivationSpecType().getConfigProps())));
+                                          .getActivationspec().getActivationspecClass().getValue(), cl, mlMeta
+                                          .getActivationspec().getConfigProperties())));
 
                         if (partialFailures != null)
                         {
@@ -587,9 +686,11 @@ public final class RADeployer implements CloneableDeployer
 
                         if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
                         {
-                           List<ConfigPropertyMetaData> cpm = mlMeta.getActivationSpecType().getConfigProps();
+                           List<? extends ConfigProperty> cpm = mlMeta
+                                 .getActivationspec().getConfigProperties();
 
-                           Object o = initAndInject(mlMeta.getActivationSpecType().getAsClass(), cpm, cl);
+                           Object o = initAndInject(mlMeta
+                                 .getActivationspec().getActivationspecClass().getValue(), cpm, cl);
 
                            if (trace)
                            {
@@ -607,20 +708,21 @@ public final class RADeployer implements CloneableDeployer
             }
 
             // AdminObject
-            if (cmd.getRa() != null &&
-                cmd.getRa().getAdminObjects() != null)
+            if (cmd.getVersion() != Version.V_10 && cmd.getResourceadapter() != null &&
+                  ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminobjects() != null)
             {
-               List<AdminObjectMetaData> aoMetas = cmd.getRa().getAdminObjects();
+               List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminobjects();
                if (aoMetas.size() > 0)
                {
-                  for (AdminObjectMetaData aoMeta : aoMetas)
+                  for (AdminObject aoMeta : aoMetas)
                   {
-                     if (aoMeta.getAdminObjectImplementationClass() != null)
+                     if (aoMeta.getAdminobjectClass() != null
+                           && aoMeta.getAdminobjectClass().getValue() != null)
                      {
                         partialFailures =
-                           validateArchive(url, Arrays
-                                 .asList((Validate) new ValidateClass(Key.ADMIN_OBJECT,
-                                       aoMeta.getAdminObjectImplementationClass(), cl, aoMeta.getConfigProps())));
+                              validateArchive(url, Arrays
+                                    .asList((Validate) new ValidateClass(Key.ADMIN_OBJECT,
+                                          aoMeta.getAdminobjectClass().getValue(), cl, aoMeta.getConfigProperties())));
 
                         if (partialFailures != null)
                         {
@@ -631,7 +733,8 @@ public final class RADeployer implements CloneableDeployer
                         if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
                         {
                            Object o =
-                                 initAndInject(aoMeta.getAdminObjectImplementationClass(), aoMeta.getConfigProps(), cl);
+                                 initAndInject(aoMeta.getAdminobjectClass().getValue(), aoMeta.getConfigProperties(),
+                                       cl);
 
                            if (trace)
                            {
@@ -640,7 +743,7 @@ public final class RADeployer implements CloneableDeployer
                            }
 
                            archiveValidationObjects
-                              .add(new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProps()));
+                                 .add(new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProperties()));
                            beanValidationObjects.add(o);
                         }
                      }
@@ -662,7 +765,7 @@ public final class RADeployer implements CloneableDeployer
          }
 
          if ((getArchiveValidationFailOnWarn() && hasFailuresLevel(failures, Severity.WARNING)) ||
-             (getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
+               (getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
          {
             throw new ValidatorException(printFailuresLog(url.getPath(), new Validator(), failures, null), failures);
          }
@@ -674,17 +777,18 @@ public final class RADeployer implements CloneableDeployer
          // Bean validation
          if (getBeanValidation())
          {
-            JBossRA20Base jrmd20 = null;
+            JbossRa20 jrmd20 = null;
             List<Class> groupsClasses = null;
-            if (jrmd instanceof JBossRA20Base)
+            if (jrmd instanceof JbossRa20)
             {
-               jrmd20 = (JBossRA20Base)jrmd;
+               jrmd20 = (JbossRa20) jrmd;
             }
-            if (jrmd20 != null && jrmd20.getBvGroupsList() != null && jrmd20.getBvGroupsList().size() > 0)
+            if (jrmd20 != null && jrmd20.getBeanValidationGroups() != null
+                  && jrmd20.getBeanValidationGroups().size() > 0)
             {
-               BvGroupMetaData bvGroups = jrmd20.getBvGroupsList().get(0);
+               BeanValidationGroup bvGroups = jrmd20.getBeanValidationGroups().get(0);
                groupsClasses = new ArrayList<Class>();
-               for (String group : bvGroups.getBvGroups())
+               for (String group : bvGroups.getBeanValidationGroup())
                {
                   groupsClasses.add(Class.forName(group, true, cl));
                }
@@ -705,9 +809,9 @@ public final class RADeployer implements CloneableDeployer
          {
             String bootstrapIdentifier = null;
 
-            if (jrmd != null && jrmd instanceof JBossRA20Base)
+            if (jrmd != null && jrmd instanceof JbossRa20)
             {
-               JBossRA20Base jrmd20 = (JBossRA20Base)jrmd;
+               JbossRa20 jrmd20 = (JbossRa20) jrmd;
                bootstrapIdentifier = jrmd20.getBootstrapContext();
             }
 
@@ -715,8 +819,9 @@ public final class RADeployer implements CloneableDeployer
          }
 
          log.info("Deployed: " + url.toExternalForm());
-
-         return new RADeployment(url, deploymentName, resourceAdapter, jndiStrategy, cfs, destination, cl);
+         RADeployment depoyment = new RADeployment(url, deploymentName, resourceAdapter, jndiStrategy, cfs,
+               destination, cl);
+         return depoyment;
       }
       catch (DeployException de)
       {
@@ -879,7 +984,8 @@ public final class RADeployer implements CloneableDeployer
       try
       {
          Class clz = resourceAdapter.getClass();
-         Method start = clz.getMethod("start", new Class[] {BootstrapContext.class});
+         Method start = clz.getMethod("start", new Class[]
+         {BootstrapContext.class});
 
          CloneableBootstrapContext cbc = null;
 
@@ -894,7 +1000,8 @@ public final class RADeployer implements CloneableDeployer
          if (cbc == null)
             cbc = defaultBootstrapContext.clone();
 
-         start.invoke(resourceAdapter, new Object[] {cbc});
+         start.invoke(resourceAdapter, new Object[]
+         {cbc});
       }
       catch (InvocationTargetException ite)
       {
@@ -926,9 +1033,11 @@ public final class RADeployer implements CloneableDeployer
                Class clz = object.getClass();
 
                Method setResourceAdapter = clz.getMethod("setResourceAdapter",
-                                                         new Class[] {ResourceAdapter.class});
+                                                         new Class[]
+                                                         {ResourceAdapter.class});
 
-               setResourceAdapter.invoke(object, new Object[] {resourceAdapter});
+               setResourceAdapter.invoke(object, new Object[]
+               {resourceAdapter});
             }
             catch (Throwable t)
             {
@@ -947,7 +1056,7 @@ public final class RADeployer implements CloneableDeployer
     * @throws DeployException Thrown if the object cant be initialized
     */
    private Object initAndInject(String className,
-                                List<ConfigPropertyMetaData> configs,
+                                List<? extends ConfigProperty> configs,
                                 ClassLoader cl)
       throws DeployException
    {
@@ -959,10 +1068,11 @@ public final class RADeployer implements CloneableDeployer
          if (configs != null)
          {
             Injection injector = new Injection();
-            for (ConfigPropertyMetaData cpmd : configs)
+            for (ConfigProperty cpmd : configs)
             {
                if (cpmd.isValueSet())
-                  injector.inject(cpmd.getType(), cpmd.getName(), cpmd.getValue(), o);
+                  injector.inject(cpmd.getConfigPropertyType().getValue(), cpmd.getConfigPropertyName().getValue(),
+                        cpmd.getConfigPropertyValue().getValue(), o);
             }
          }
 
@@ -1018,7 +1128,8 @@ public final class RADeployer implements CloneableDeployer
 
       JndiStrategy js = jndiStrategy.clone();
 
-      return js.bindConnectionFactories(deployment, new Object[] {cf});
+      return js.bindConnectionFactories(deployment, new Object[]
+      {cf});
    }
 
    /**

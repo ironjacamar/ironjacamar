@@ -22,7 +22,16 @@
 package org.jboss.jca.validator;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.metadata.Metadata;
+import org.jboss.jca.common.api.metadata.ra.AdminObject;
+import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.ra.Connector.Version;
+import org.jboss.jca.common.api.metadata.ra.MessageListener;
+import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
+import org.jboss.jca.common.api.metadata.ra.XsdString;
+import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
+import org.jboss.jca.common.metadataimpl.MetadataFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -45,22 +54,18 @@ import java.util.ResourceBundle;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import org.jboss.metadata.rar.spec.AdminObjectMetaData;
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
-import org.jboss.metadata.rar.spec.ConnectionDefinitionMetaData;
-import org.jboss.metadata.rar.spec.ConnectorMetaData;
-import org.jboss.metadata.rar.spec.MessageListenerMetaData;
-
 /**
  * A Validation.
- * 
+ *
  * @author Jeff Zhang</a>
  * @version $Revision: $
  */
 public class Validation
 {
    private static final int SUCCESS = 0;
+
    private static final int FAIL = 1;
+
    private static final int OTHER = 2;
 
    /**
@@ -88,16 +93,16 @@ public class Validation
 
       int exitCode = SUCCESS;
       File destination = null;
-     
+
       try
       {
          File f = new File(url.toURI());
-      
+
          if (!f.exists())
             throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
 
          File root = null;
- 
+
          if (f.isFile())
          {
             destination = new File(SecurityActions.getSystemProperty("java.io.tmpdir"), "/tmp/");
@@ -107,7 +112,7 @@ public class Validation
          {
             root = f;
          }
-      
+
          // Create classloader
          URL[] allurls;
          URL[] urls = getUrls(root);
@@ -125,31 +130,29 @@ public class Validation
          }
          else
             allurls = urls;
-                  
-         URLClassLoader cl = SecurityActions.createURLCLassLoader(allurls, 
-            SecurityActions.getThreadContextClassLoader());
+
+         URLClassLoader cl = SecurityActions.createURLCLassLoader(allurls,
+               SecurityActions.getThreadContextClassLoader());
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Parse metadata
-         Metadata metadataHandler = new Metadata();
-         ConnectorMetaData cmd = metadataHandler.getStandardMetaData(root);
-
+         MetadataFactory metadataFactory = new MetadataFactory();
+         Connector cmd = metadataFactory.getStandardMetaData(root);
 
          // Annotation scanning
          Annotations annotator = new Annotations();
          cmd = annotator.scan(cmd, cl.getURLs(), cl);
 
-
          List<Validate> validateClasses = new ArrayList<Validate>();
          List<Failure> failures = new ArrayList<Failure>();
-         
+
          Validator validator = new Validator();
          validateClasses.addAll(createResourceAdapter(cmd, failures, validator.getResourceBundle(), cl));
          validateClasses.addAll(createManagedConnectionFactory(cmd, failures, validator.getResourceBundle(), cl));
          validateClasses.addAll(createActivationSpec(cmd, failures, validator.getResourceBundle(), cl));
          validateClasses.addAll(createAdminObject(cmd, failures, validator.getResourceBundle(), cl));
 
-         List<Failure> classFailures = validator.validate(validateClasses); 
+         List<Failure> classFailures = validator.validate(validateClasses);
          if (classFailures != null && classFailures.size() > 0)
             failures.addAll(classFailures);
 
@@ -205,13 +208,13 @@ public class Validation
             exitCode = FAIL;
          }
          exitCode = SUCCESS;
-      } 
+      }
       catch (Exception e)
       {
          e.printStackTrace();
          exitCode = OTHER;
       }
-      
+
       if (destination != null)
       {
          try
@@ -223,10 +226,10 @@ public class Validation
             // Ignore
          }
       }
-      
+
       return exitCode;
    }
-   
+
    /**
     * createResourceAdapter
     * @param cmd connector metadata
@@ -235,18 +238,20 @@ public class Validation
     * @param cl classloador
     * @return list of validate objects
     */
-   private static List<Validate> createResourceAdapter(ConnectorMetaData cmd, 
-      List<Failure> failures, ResourceBundle rb, ClassLoader cl)
+   private static List<Validate> createResourceAdapter(Connector cmd,
+         List<Failure> failures, ResourceBundle rb, ClassLoader cl)
    {
       List<Validate> result = new ArrayList<Validate>();
 
-      if (cmd.getRa() != null && cmd.getRa().getRaClass() != null)
+      if (!(cmd instanceof Connector10) && cmd.getResourceadapter() != null
+            && ((ResourceAdapter1516) cmd.getResourceadapter()).getResourceadapterClass() != null)
       {
          try
          {
-            Class<?> clazz = Class.forName(cmd.getRa().getRaClass(), true, cl);
-            List<ConfigPropertyMetaData> configProperties = cmd.getRa().getConfigProperty();
-            
+            Class<?> clazz = Class.forName(((ResourceAdapter1516) cmd.getResourceadapter()).getResourceadapterClass(),
+                  true, cl);
+            List<? extends ConfigProperty> configProperties = cmd.getResourceadapter().getConfigProperties();
+
             ValidateClass vc = new ValidateClass(Key.RESOURCE_ADAPTER, clazz, configProperties);
             result.add(vc);
          }
@@ -270,32 +275,36 @@ public class Validation
     * @param cl classloador
     * @return list of validate objects
     */
-   private static List<Validate> createManagedConnectionFactory(ConnectorMetaData cmd, 
-      List<Failure> failures, ResourceBundle rb, ClassLoader cl)
+   private static List<Validate> createManagedConnectionFactory(Connector cmd,
+         List<Failure> failures, ResourceBundle rb, ClassLoader cl)
    {
       List<Validate> result = new ArrayList<Validate>();
 
-      if (cmd.getRa() != null && cmd.getRa().getOutboundRa() != null
-            && cmd.getRa().getOutboundRa().getConDefs() != null)
+      if (cmd.getResourceadapter() != null
+            && cmd.getVersion() != Version.V_10
+            && ((ResourceAdapter1516) cmd.getResourceadapter()).getOutboundResourceadapter() != null
+            && ((ResourceAdapter1516) cmd.getResourceadapter()).getOutboundResourceadapter().
+                  getConnectionDefinitions() != null)
       {
-         List<ConnectionDefinitionMetaData> cdMetas = cmd.getRa().getOutboundRa().getConDefs();
+         List<ConnectionDefinition> cdMetas = ((ResourceAdapter1516) cmd.getResourceadapter())
+               .getOutboundResourceadapter().getConnectionDefinitions();
          if (cdMetas.size() > 0)
          {
-            for (ConnectionDefinitionMetaData cdMeta : cdMetas)
+            for (ConnectionDefinition cdMeta : cdMetas)
             {
-               if (cdMeta.getManagedConnectionFactoryClass() != null)
+               if (cdMeta.getManagedconnectionfactoryClass() != null)
                {
                   try
                   {
-                     Class<?> clazz = Class.forName(cdMeta.getManagedConnectionFactoryClass(), true, cl);
-                     List<ConfigPropertyMetaData> configProperties = cdMeta.getConfigProps();
+                     Class<?> clazz = Class.forName(cdMeta.getManagedconnectionfactoryClass().getValue(), true, cl);
+                     List<? extends ConfigProperty> configProperties = cdMeta.getConfigProperties();
 
                      ValidateClass vc = new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, clazz, configProperties);
                      result.add(vc);
                   }
                   catch (ClassNotFoundException e)
                   {
-                     Failure failure = new Failure(Severity.ERROR, 
+                     Failure failure = new Failure(Severity.ERROR,
                                                    rb.getString("uncategorized"),
                                                    rb.getString("mcf.cnfe"),
                                                    e.getMessage());
@@ -309,7 +318,7 @@ public class Validation
 
       return result;
    }
-   
+
    /**
     * createActivationSpec
     * @param cmd connector metadata
@@ -318,30 +327,35 @@ public class Validation
     * @param cl classloador
     * @return list of validate objects
     */
-   private static List<Validate> createActivationSpec(ConnectorMetaData cmd, 
-      List<Failure> failures, ResourceBundle rb, ClassLoader cl)
+   private static List<Validate> createActivationSpec(Connector cmd,
+         List<Failure> failures, ResourceBundle rb, ClassLoader cl)
    {
       List<Validate> result = new ArrayList<Validate>();
 
-      if (cmd.getRa() != null &&
-            cmd.getRa().getInboundRa() != null &&
-            cmd.getRa().getInboundRa().getMessageAdapter() != null &&
-            cmd.getRa().getInboundRa().getMessageAdapter().getMessageListeners() != null)
+      if (cmd.getResourceadapter() != null
+            && cmd.getVersion() != Version.V_10
+            && ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter() != null &&
+            ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter().getMessageadapter() != null &&
+            ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter().getMessageadapter()
+                  .getMessagelisteners() != null)
       {
-         List<MessageListenerMetaData> mlMetas = cmd.getRa().getInboundRa().
-            getMessageAdapter().getMessageListeners();
+         List<MessageListener> mlMetas = ((ResourceAdapter1516) cmd.getResourceadapter())
+               .getInboundResourceadapter().getMessageadapter()
+               .getMessagelisteners();
          if (mlMetas.size() > 0)
          {
-            for (MessageListenerMetaData mlMeta : mlMetas)
+            for (MessageListener mlMeta : mlMetas)
             {
-               if (mlMeta.getActivationSpecType() != null && mlMeta.getActivationSpecType().getAsClass() != null)
+               if (mlMeta.getActivationspec() != null && mlMeta.getActivationspec().getClass() != null
+                     && !mlMeta.getActivationspec().getActivationspecClass().equals(XsdString.NULL_XSDSTRING))
                {
-      
+
                   try
                   {
-                     Class<?> clazz = Class.forName(mlMeta.getActivationSpecType().getAsClass(), true, cl);
-                     List<ConfigPropertyMetaData> configProperties = mlMeta.getActivationSpecType().getConfigProps();
-                     
+                     Class<?> clazz = Class.forName(mlMeta.getActivationspec().getActivationspecClass().getValue(),
+                           true, cl);
+                     List<? extends ConfigProperty> configProperties = mlMeta.getActivationspec().getConfigProperties();
+
                      ValidateClass vc = new ValidateClass(Key.ACTIVATION_SPEC, clazz, configProperties);
                      result.add(vc);
                   }
@@ -359,7 +373,7 @@ public class Validation
       }
       return result;
    }
-   
+
    /**
     * createAdminObject
     * @param cmd connector metadata
@@ -368,27 +382,29 @@ public class Validation
     * @param cl classloador
     * @return list of validate objects
     */
-   private static List<Validate> createAdminObject(ConnectorMetaData cmd, 
-      List<Failure> failures, ResourceBundle rb, ClassLoader cl)
+   private static List<Validate> createAdminObject(Connector cmd,
+         List<Failure> failures, ResourceBundle rb, ClassLoader cl)
    {
       List<Validate> result = new ArrayList<Validate>();
 
-      if (cmd.getRa() != null &&
-          cmd.getRa().getAdminObjects() != null)
+      if (cmd.getResourceadapter() != null
+            && cmd.getVersion() != Version.V_10
+            && ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminobjects() != null)
       {
-         List<AdminObjectMetaData> aoMetas = cmd.getRa().getAdminObjects();
+         List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminobjects();
          if (aoMetas.size() > 0)
          {
-            for (AdminObjectMetaData aoMeta : aoMetas)
+            for (AdminObject aoMeta : aoMetas)
             {
-               if (aoMeta.getAdminObjectImplementationClass() != null)
+               if (aoMeta.getAdminobjectClass() != null
+                     && !aoMeta.getAdminobjectClass().equals(XsdString.NULL_XSDSTRING))
                {
-   
+
                   try
                   {
-                     Class<?> clazz = Class.forName(aoMeta.getAdminObjectImplementationClass(), true, cl);
-                     List<ConfigPropertyMetaData> configProperties = aoMeta.getConfigProps();
-                     
+                     Class<?> clazz = Class.forName(aoMeta.getAdminobjectClass().getValue(), true, cl);
+                     List<? extends ConfigProperty> configProperties = aoMeta.getConfigProperties();
+
                      ValidateClass vc = new ValidateClass(Key.ADMIN_OBJECT, clazz, configProperties);
                      result.add(vc);
                   }
@@ -442,7 +458,7 @@ public class Validation
          {
             InputStream in = null;
             OutputStream out = null;
-            
+
             // Make sure that the directory is _really_ there
             if (copy.getParentFile() != null && !copy.getParentFile().exists())
             {
@@ -507,7 +523,6 @@ public class Validation
       return target;
    }
 
-
    /**
     * Recursive delete
     * @param f The file handler
@@ -525,7 +540,7 @@ public class Validation
                if (files[i].isDirectory())
                {
                   recursiveDelete(files[i]);
-               } 
+               }
                else
                {
                   if (!files[i].delete())
@@ -537,7 +552,7 @@ public class Validation
             throw new IOException("Could not delete " + f);
       }
    }
-   
+
    /**
     * Get the URLs for the directory and all libraries located in the directory
     * @param directory The directory
@@ -577,6 +592,6 @@ public class Validation
             }
          }
       }
-      return list.toArray(new URL[list.size()]);      
+      return list.toArray(new URL[list.size()]);
    }
 }

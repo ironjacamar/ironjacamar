@@ -22,6 +22,7 @@
 
 package org.jboss.jca.validator.rules.ao;
 
+import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.Key;
 import org.jboss.jca.validator.Rule;
@@ -36,8 +37,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
-
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
 
 /**
  * An AdminObject must use the valid set of config-property-type
@@ -75,13 +74,13 @@ public class AOConfigProperties implements Rule
    /**
     * Validate
     * @param v The validate object
-    * @param rb The resource bundle 
+    * @param rb The resource bundle
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")
    public List<Failure> validate(Validate v, ResourceBundle rb)
    {
-      if (v != null && 
+      if (v != null &&
           Key.ADMIN_OBJECT == v.getKey() &&
           v.getClazz() != null)
       {
@@ -91,14 +90,15 @@ public class AOConfigProperties implements Rule
             Class clz = vo.getClazz();
             List<Failure> failures = new ArrayList<Failure>(1);
 
-            for (ConfigPropertyMetaData cpmd : vo.getConfigProperties())
+            for (ConfigProperty cpmd : vo.getConfigProperties())
             {
                try
                {
-                  String methodName = "get" + cpmd.getName().substring(0, 1).toUpperCase(Locale.US);
-                  if (cpmd.getName().length() > 1)
+                  String methodName = "get"
+                        + cpmd.getConfigPropertyName().getValue().substring(0, 1).toUpperCase(Locale.US);
+                  if (cpmd.getConfigPropertyName().getValue().length() > 1)
                   {
-                     methodName += cpmd.getName().substring(1);
+                     methodName += cpmd.getConfigPropertyName().getValue().substring(1);
                   }
 
                   Method method = clz.getMethod(methodName, (Class[])null);
@@ -106,7 +106,7 @@ public class AOConfigProperties implements Rule
                   if (!VALID_TYPES.contains(method.getReturnType()))
                   {
                      StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
-                     sb = sb.append(" Property: " + cpmd.getName());
+                     sb = sb.append(" Property: " + cpmd.getConfigPropertyName().getValue());
                      sb = sb.append(" Type: " + method.getReturnType().getName());
 
                      Failure failure = new Failure(Severity.WARNING,
@@ -120,18 +120,19 @@ public class AOConfigProperties implements Rule
                {
                   try
                   {
-                     String methodName = "is" + cpmd.getName().substring(0, 1).toUpperCase(Locale.US);
-                     if (cpmd.getName().length() > 1)
+                     String methodName = "is"
+                           + cpmd.getConfigPropertyName().getValue().substring(0, 1).toUpperCase(Locale.US);
+                     if (cpmd.getConfigPropertyName().getValue().length() > 1)
                      {
-                        methodName += cpmd.getName().substring(1);
+                        methodName += cpmd.getConfigPropertyName().getValue().substring(1);
                      }
-                     
+
                      Method method = clz.getMethod(methodName, (Class[])null);
 
                      if (!VALID_TYPES.contains(method.getReturnType()))
                      {
                         StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
-                        sb = sb.append(" Property: " + cpmd.getName());
+                        sb = sb.append(" Property: " + cpmd.getConfigPropertyName().getValue());
                         sb = sb.append(" Type: " + method.getReturnType().getName());
 
                         Failure failure = new Failure(Severity.WARNING,

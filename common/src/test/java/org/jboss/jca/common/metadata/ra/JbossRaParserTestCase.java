@@ -21,11 +21,12 @@
  */
 package org.jboss.jca.common.metadata.ra;
 
-import org.jboss.jca.common.metadata.jbossra.JbossRa;
-import org.jboss.jca.common.metadata.jbossra.JbossRaParser;
-import org.jboss.jca.common.metadata.jbossra.jbossra10.JbossRa10;
-import org.jboss.jca.common.metadata.jbossra.jbossra20.JbossRa20;
-import org.jboss.jca.common.metadata.jbossra.jbossra20.RaConfigProperty;
+import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
+import org.jboss.jca.common.api.metadata.jbossra.jbossra20.JbossRa20;
+import org.jboss.jca.common.metadataimpl.jbossra.JbossRaParser;
+import org.jboss.jca.common.metadataimpl.jbossra.jbossra10.JbossRa10Impl;
+import org.jboss.jca.common.metadataimpl.jbossra.jbossra20.JbossRa20Impl;
+import org.jboss.jca.common.metadataimpl.ra.common.RaConfigPropertyImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,14 +64,14 @@ public class JbossRaParserTestCase
          //when
          JbossRa jbossRa = parser.parse(is);
          //then
-         assertThat(jbossRa, instanceOf(JbossRa10.class));
+         assertThat(jbossRa, instanceOf(JbossRa10Impl.class));
          assertThat(jbossRa.getRaConfigProperties().size(), is(1));
          assertThat(
                jbossRa
                      .getRaConfigProperties()
                      .get(0)
                      .equals(
-                           RaConfigProperty.buildRaConfigProperty("ra-config-property-name0",
+                           RaConfigPropertyImpl.buildRaConfigProperty("ra-config-property-name0",
                                  "ra-config-property-value0",
                                  "ra-config-property-type0", null)), is(true));
 
@@ -103,7 +104,7 @@ public class JbossRaParserTestCase
          //when
          JbossRa jbossRa = parser.parse(is);
          //then
-         assertThat(jbossRa, instanceOf(JbossRa10.class));
+         assertThat(jbossRa, instanceOf(JbossRa10Impl.class));
          assertThat(jbossRa.getRaConfigProperties().size(), is(0));
 
       }
@@ -134,14 +135,14 @@ public class JbossRaParserTestCase
          //when
          JbossRa jbossRa = parser.parse(is);
          //then
-         assertThat(jbossRa, instanceOf(JbossRa10.class));
+         assertThat(jbossRa, instanceOf(JbossRa10Impl.class));
          assertThat(jbossRa.getRaConfigProperties().size(), is(2));
          assertThat(
                jbossRa
                      .getRaConfigProperties()
                      .get(0)
                      .equals(
-                           RaConfigProperty.buildRaConfigProperty("ra-config-property-name0",
+                           RaConfigPropertyImpl.buildRaConfigProperty("ra-config-property-name0",
                                  "ra-config-property-value0",
                                  "ra-config-property-type0", null)), is(true));
          assertThat(
@@ -149,7 +150,7 @@ public class JbossRaParserTestCase
                      .getRaConfigProperties()
                      .get(1)
                      .equals(
-                           RaConfigProperty.buildRaConfigProperty("ra-config-property-name1",
+                           RaConfigPropertyImpl.buildRaConfigProperty("ra-config-property-name1",
                                  "ra-config-property-value1",
                                  "ra-config-property-type1", null)), is(true));
       }
@@ -178,14 +179,14 @@ public class JbossRaParserTestCase
          //when
          JbossRa jbossRa = parser.parse(is);
          //then
-         assertThat(jbossRa, instanceOf(JbossRa20.class));
+         assertThat(jbossRa, instanceOf(JbossRa20Impl.class));
          assertThat(jbossRa.getRaConfigProperties().size(), is(1));
          assertThat(
                jbossRa
                      .getRaConfigProperties()
                      .get(0)
                      .equals(
-                           RaConfigProperty.buildRaConfigProperty("ra-config-property-name0",
+                           RaConfigPropertyImpl.buildRaConfigProperty("ra-config-property-name0",
                                  "ra-config-property-value0",
                                  "java.lang.Boolean", null)), is(true));
          assertThat(((JbossRa20) jbossRa).getBeanValidationGroups().size(), is(1));
@@ -219,7 +220,7 @@ public class JbossRaParserTestCase
          //when
          JbossRa jbossRa = parser.parse(is);
          //then
-         assertThat(jbossRa, instanceOf(JbossRa20.class));
+         assertThat(jbossRa, instanceOf(JbossRa20Impl.class));
          assertThat(jbossRa.getRaConfigProperties().size(), is(0));
          assertThat(((JbossRa20) jbossRa).getBeanValidationGroups().size(), is(0));
 
@@ -243,7 +244,8 @@ public class JbossRaParserTestCase
 
       FileInputStream is = null;
       try
-      {//given
+      {
+         //given
          File xmlFile = new File(Thread.currentThread().getContextClassLoader()
                .getResource("jboss-ra-2.0-multiple-attributes.xml").toURI());
          is = new FileInputStream(xmlFile);
@@ -251,14 +253,14 @@ public class JbossRaParserTestCase
          //when
          JbossRa jbossRa = parser.parse(is);
          //then
-         assertThat(jbossRa, instanceOf(JbossRa20.class));
+         assertThat(jbossRa, instanceOf(JbossRa20Impl.class));
          assertThat(jbossRa.getRaConfigProperties().size(), is(2));
          assertThat(
                jbossRa
                      .getRaConfigProperties()
                      .get(0)
                      .equals(
-                           RaConfigProperty.buildRaConfigProperty("ra-config-property-name0",
+                           RaConfigPropertyImpl.buildRaConfigProperty("ra-config-property-name0",
                                  "ra-config-property-value0",
                                  "java.lang.Boolean", null)), is(true));
          assertThat(
@@ -266,7 +268,7 @@ public class JbossRaParserTestCase
                      .getRaConfigProperties()
                      .get(1)
                      .equals(
-                           RaConfigProperty.buildRaConfigProperty("ra-config-property-name1",
+                           RaConfigPropertyImpl.buildRaConfigProperty("ra-config-property-name1",
                                  "ra-config-property-value1",
                                  "java.lang.Boolean", null)), is(true));
          assertThat(((JbossRa20) jbossRa).getBeanValidationGroups().size(), is(2));

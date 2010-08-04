@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.validator;
 
-import java.util.List;
+import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 
-import org.jboss.metadata.rar.spec.ConfigPropertyMetaData;
+import java.util.List;
 
 /**
  * ValidateClass for objects that should be validated
@@ -34,7 +34,7 @@ public class ValidateClass implements Validate
    private final Key key;
 
    /** config-property */
-   private final List<ConfigPropertyMetaData> configProperties;
+   private final List<? extends ConfigProperty> configProperties;
 
    /** Clazz */
    private Class<?> clazz;
@@ -58,7 +58,7 @@ public class ValidateClass implements Validate
     */
    public ValidateClass(Key key,
                          Class<?> clazz,
-                         List<ConfigPropertyMetaData> configProperties)
+                         List<? extends ConfigProperty> configProperties)
    {
       this.key = key;
       this.clazz = clazz;
@@ -72,7 +72,7 @@ public class ValidateClass implements Validate
     * @param cl the class loader used to load class
     * @param configProperties The list of config property metadata
     */
-   public ValidateClass(Key key, String className, ClassLoader cl, List<ConfigPropertyMetaData> configProperties)
+   public ValidateClass(Key key, String className, ClassLoader cl, List<? extends ConfigProperty> configProperties)
    {
       this.key = key;
       try
@@ -108,7 +108,7 @@ public class ValidateClass implements Validate
     * Get the list of config properties
     * @return The list
     */
-   public List<ConfigPropertyMetaData> getConfigProperties()
+   public List<? extends ConfigProperty> getConfigProperties()
    {
       return configProperties;
    }
