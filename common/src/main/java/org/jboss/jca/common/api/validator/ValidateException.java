@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.common.validator;
+package org.jboss.jca.common.api.validator;
 
 /**
  * The validate exception

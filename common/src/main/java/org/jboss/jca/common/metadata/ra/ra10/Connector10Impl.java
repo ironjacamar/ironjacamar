@@ -29,7 +29,7 @@ import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
 import org.jboss.jca.common.metadata.ra.common.ConnectorAbstractmpl;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,11 +46,11 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
 
    private final String moduleName;
 
-   private final List<LocalizedXsdString> description;
+   private final ArrayList<LocalizedXsdString> description;
 
    private final XsdString displayName;
 
-   private final List<Icon> icon;
+   private final ArrayList<Icon> icon;
 
    /**
     * @param moduleName name of the module
@@ -70,9 +70,26 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
    {
       super(vendorName, eisType, license, resourceadapter, id);
       this.moduleName = moduleName;
-      this.description = description;
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
       this.displayName = displayName;
-      this.icon = icon;
+      if (icon != null)
+      {
+         this.icon = new ArrayList<Icon>(icon.size());
+         this.icon.addAll(icon);
+      }
+      else
+      {
+         this.icon = new ArrayList<Icon>(0);
+      }
+
    }
 
    /**

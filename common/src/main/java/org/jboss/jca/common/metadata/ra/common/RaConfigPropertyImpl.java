@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ra.OverrideElementAttribute;
 import org.jboss.jca.common.api.metadata.ra.RaConfigProperty;
-import org.jboss.jca.common.metadata.JCAMetadata;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.InboundResourceAdapter;
@@ -28,9 +29,9 @@ import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
-import org.jboss.jca.common.metadata.MergeUtil;
-import org.jboss.jca.common.validator.ValidateException;
+import org.jboss.jca.common.api.validator.ValidateException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,15 +47,15 @@ public class ResourceAdapter1516Impl implements ResourceAdapter1516
 
    private final String resourceadapterClass;
 
-   private final List<? extends ConfigProperty> configProperties;
+   private final ArrayList<ConfigProperty> configProperties;
 
    private final OutboundResourceAdapter outboundResourceadapter;
 
    private final InboundResourceAdapter inboundResourceadapter;
 
-   private final List<AdminObject> adminobjects;
+   private final ArrayList<AdminObject> adminobjects;
 
-   private final List<SecurityPermission> securityPermissions;
+   private final ArrayList<SecurityPermission> securityPermissions;
 
    private final String id;
 
@@ -73,11 +74,35 @@ public class ResourceAdapter1516Impl implements ResourceAdapter1516
    {
       super();
       this.resourceadapterClass = resourceadapterClass;
-      this.configProperties = configProperties;
+      if (configProperties != null)
+      {
+         this.configProperties = new ArrayList<ConfigProperty>(configProperties.size());
+         this.configProperties.addAll(configProperties);
+      }
+      else
+      {
+         this.configProperties = new ArrayList<ConfigProperty>(0);
+      }
       this.outboundResourceadapter = outboundResourceadapter;
       this.inboundResourceadapter = inboundResourceadapter;
-      this.adminobjects = adminobjects;
-      this.securityPermissions = securityPermissions;
+      if (adminobjects != null)
+      {
+         this.adminobjects = new ArrayList<AdminObject>(adminobjects.size());
+         this.adminobjects.addAll(adminobjects);
+      }
+      else
+      {
+         this.adminobjects = new ArrayList<AdminObject>(0);
+      }
+      if (securityPermissions != null)
+      {
+         this.securityPermissions = new ArrayList<SecurityPermission>(securityPermissions.size());
+         this.securityPermissions.addAll(securityPermissions);
+      }
+      else
+      {
+         this.securityPermissions = new ArrayList<SecurityPermission>(0);
+      }
       this.id = id;
    }
 

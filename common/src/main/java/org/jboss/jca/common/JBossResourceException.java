@@ -128,6 +128,7 @@ public class JBossResourceException extends ResourceException implements NestedT
     *
     * @return  Nested <tt>Throwable</tt>.
     */
+   @Override
    @SuppressWarnings("deprecation")
    public Throwable getNested()
    {
@@ -141,6 +142,7 @@ public class JBossResourceException extends ResourceException implements NestedT
     *
     * @return  Nested <tt>Throwable</tt>.
     */
+   @Override
    @SuppressWarnings("deprecation")
    public Throwable getCause()
    {
@@ -152,6 +154,7 @@ public class JBossResourceException extends ResourceException implements NestedT
     *
     * @return  The composite throwable message.
     */
+   @Override
    @SuppressWarnings("deprecation")
    public String getMessage()
    {
@@ -164,6 +167,7 @@ public class JBossResourceException extends ResourceException implements NestedT
     *
     * @param stream  Stream to print to.
     */
+   @Override
    @SuppressWarnings("deprecation")
    public void printStackTrace(final PrintStream stream)
    {
@@ -181,6 +185,7 @@ public class JBossResourceException extends ResourceException implements NestedT
     *
     * @param writer  Writer to print to.
     */
+   @Override
    @SuppressWarnings("deprecation")
    public void printStackTrace(final PrintWriter writer)
    {
@@ -196,6 +201,7 @@ public class JBossResourceException extends ResourceException implements NestedT
     * Prints the composite message and the embedded stack trace to
     * <tt>System.err</tt>.
     */
+   @Override
    public void printStackTrace()
    {
       printStackTrace(System.err);

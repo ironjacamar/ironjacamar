@@ -26,7 +26,7 @@ import org.jboss.jca.common.api.metadata.ra.CredentialInterfaceEnum;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +40,7 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
     */
    private static final long serialVersionUID = -1448136517857827148L;
 
-   private final List<LocalizedXsdString> description;
+   private final ArrayList<LocalizedXsdString> description;
 
    private final XsdString authenticationMechanismType;
 
@@ -68,7 +68,15 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
          CredentialInterfaceEnum credentialInterface, String id)
    {
       super();
-      this.description = description;
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
       this.authenticationMechanismType = authenticationMechanismType;
       this.credentialInterface = credentialInterface;
       this.id = id;

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
+import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Icon;
@@ -30,9 +31,9 @@ import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
-import org.jboss.jca.common.metadata.MergeUtil;
 import org.jboss.jca.common.metadata.ra.ra15.Connector15Impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,21 +50,19 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
 
    private final String moduleName;
 
-   private final List<Icon> icons;
+   private final ArrayList<Icon> icons;
 
-   private final List<String> requiredWorkContexts;
+   private final ArrayList<String> requiredWorkContexts;
 
-   private final List<LocalizedXsdString> descriptions;
+   private final ArrayList<LocalizedXsdString> description;
 
-   private final List<LocalizedXsdString> displayNames;
+   private final ArrayList<LocalizedXsdString> displayNames;
 
    private final boolean metadataComplete;
 
-
-
    /**
     * @param moduleName name of the module
-    * @param descriptions descriptions of this connector
+    * @param description descriptions of this connector
     * @param displayNames name to display for this connecotro
     * @param icons icon representing this connectore
     * @param vendorName vendor name
@@ -75,7 +74,7 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
     * @param metadataComplete not mandatory boolean value
     * @param id XML ID
     */
-   public Connector16Impl(String moduleName, List<LocalizedXsdString> descriptions,
+   public Connector16Impl(String moduleName, List<LocalizedXsdString> description,
          List<LocalizedXsdString> displayNames,
          List<Icon> icons, XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
          LicenseType license, ResourceAdapter1516 resourceadapter, List<String> requiredWorkContexts,
@@ -83,10 +82,42 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
    {
       super(vendorName, eisType, resourceadapterVersion, license, resourceadapter, id);
       this.moduleName = moduleName;
-      this.descriptions = descriptions;
-      this.displayNames = displayNames;
-      this.icons = icons;
-      this.requiredWorkContexts = requiredWorkContexts;
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
+      if (displayNames != null)
+      {
+         this.displayNames = new ArrayList<LocalizedXsdString>(displayNames.size());
+         this.displayNames.addAll(displayNames);
+      }
+      else
+      {
+         this.displayNames = new ArrayList<LocalizedXsdString>(0);
+      }
+      if (icons != null)
+      {
+         this.icons = new ArrayList<Icon>(icons.size());
+         this.icons.addAll(icons);
+      }
+      else
+      {
+         this.icons = new ArrayList<Icon>(0);
+      }
+      if (requiredWorkContexts != null)
+      {
+         this.requiredWorkContexts = new ArrayList<String>(requiredWorkContexts.size());
+         this.requiredWorkContexts.addAll(requiredWorkContexts);
+      }
+      else
+      {
+         this.requiredWorkContexts = new ArrayList<String>(0);
+      }
       this.metadataComplete = metadataComplete;
    }
 
@@ -114,7 +145,7 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
    @Override
    public List<LocalizedXsdString> getDescriptions()
    {
-      return descriptions == null ? null : Collections.unmodifiableList(descriptions);
+      return description == null ? null : Collections.unmodifiableList(description);
    }
 
    /**
@@ -160,7 +191,7 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((descriptions == null) ? 0 : descriptions.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((displayNames == null) ? 0 : displayNames.hashCode());
       result = prime * result + ((eisType == null) ? 0 : eisType.hashCode());
       result = prime * result + ((icons == null) ? 0 : icons.hashCode());
@@ -195,14 +226,14 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
          return false;
       }
       Connector16Impl other = (Connector16Impl) obj;
-      if (descriptions == null)
+      if (description == null)
       {
-         if (other.descriptions != null)
+         if (other.description != null)
          {
             return false;
          }
       }
-      else if (!descriptions.equals(other.descriptions))
+      else if (!description.equals(other.description))
       {
          return false;
       }
@@ -333,7 +364,7 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
    @Override
    public String toString()
    {
-      return "Connector16 [moduleName=" + moduleName + ", descriptions=" + descriptions + ", displayNames="
+      return "Connector16 [moduleName=" + moduleName + ", description=" + description + ", displayNames="
             + displayNames
             + ", icons=" + icons + ", vendorName=" + vendorName + ", eisType=" + eisType + ", resourceadapterVersion="
             + resourceadapterVersion + ", license=" + license + ", resourceadapter=" + resourceadapter
@@ -362,8 +393,8 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
          List<Icon> newIcons = MergeUtil.mergeList(this.icons, input16.icons);
          boolean newMetadataComplete = this.metadataComplete || input16.metadataComplete;
          LicenseType newLicense = this.license == null ? input16.license : this.license.merge(input16.license);
-         List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.descriptions,
-               input16.descriptions);
+         List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.description,
+               input16.description);
          List<LocalizedXsdString> newDisplayNames = MergeUtil.mergeList(this.displayNames,
                input16.displayNames);
          XsdString newVendorName = XsdString.isNull(this.vendorName)

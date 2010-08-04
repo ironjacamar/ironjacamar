@@ -22,12 +22,13 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.metadata.MergeUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
 
    private final XsdString managedconnectionfactoryClass;
 
-   private final List<? extends ConfigProperty> configProperty;
+   private final ArrayList<ConfigProperty> configProperty;
 
    private final XsdString connectionfactoryInterface;
 
@@ -71,7 +72,16 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    {
       super();
       this.managedconnectionfactoryClass = managedconnectionfactoryClass;
-      this.configProperty = configProperty;
+
+      if (configProperty != null)
+      {
+         this.configProperty = new ArrayList<ConfigProperty>(configProperty.size());
+         this.configProperty.addAll(configProperty);
+      }
+      else
+      {
+         this.configProperty = new ArrayList<ConfigProperty>(0);
+      }
       this.connectionfactoryInterface = connectionfactoryInterface;
       this.connectionfactoryImplClass = connectionfactoryImplClass;
       this.connectionInterface = connectionInterface;

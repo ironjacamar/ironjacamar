@@ -27,7 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.validator.ValidateException;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.HashMap;
 import java.util.List;

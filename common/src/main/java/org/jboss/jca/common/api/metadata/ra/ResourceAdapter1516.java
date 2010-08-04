@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
-import org.jboss.jca.common.validator.ValidateException;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.HashMap;
 import java.util.List;

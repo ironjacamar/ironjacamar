@@ -23,8 +23,9 @@ package org.jboss.jca.common.api.metadata.ra;
 
 
 
-import org.jboss.jca.common.metadata.MergeUtil;
+import org.jboss.jca.common.api.metadata.MergeUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +42,7 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
     */
    private static final long serialVersionUID = 1590514246054447090L;
 
-   private final List<LocalizedXsdString> description;
+   private final ArrayList<LocalizedXsdString> description;
 
    private final boolean licenseRequired;
 
@@ -55,7 +56,15 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
    public LicenseType(List<LocalizedXsdString> description, boolean licenseRequired, String id)
    {
       super();
-      this.description = description;
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
       this.licenseRequired = licenseRequired;
       this.id = id;
    }

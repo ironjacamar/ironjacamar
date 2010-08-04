@@ -21,10 +21,10 @@
  */
 package org.jboss.jca.common.metadata.jbossra.jbossra20;
 
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.jbossra.jbossra20.BeanValidationGroup;
-import org.jboss.jca.common.metadata.JCAMetadata;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class BeanValidationGroupImpl implements JCAMetadata, BeanValidationGroup
     */
    private static final long serialVersionUID = 6856138720550993874L;
 
-   private final List<String> beanValidationGroup;
+   private final ArrayList<String> beanValidationGroup;
 
    /**
     * @param beanValidationGroup List of bean validation group
@@ -47,7 +47,13 @@ public class BeanValidationGroupImpl implements JCAMetadata, BeanValidationGroup
    public BeanValidationGroupImpl(List<String> beanValidationGroup)
    {
       super();
-      this.beanValidationGroup = beanValidationGroup;
+      if (beanValidationGroup != null) { this.beanValidationGroup = new ArrayList<String>(beanValidationGroup.size());
+         this.beanValidationGroup.addAll(beanValidationGroup);
+      }
+      else
+      {
+         this.beanValidationGroup = new ArrayList<String>(0);
+      }
    }
 
    /**

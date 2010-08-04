@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
-import org.jboss.jca.common.metadata.JCAMetadata;
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.security.InvalidParameterException;
 

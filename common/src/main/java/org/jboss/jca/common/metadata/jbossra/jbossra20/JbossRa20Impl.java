@@ -28,7 +28,7 @@ import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.RaConfigProperty;
 import org.jboss.jca.common.metadata.jbossra.JbossRaAbstractImpl;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class JbossRa20Impl extends JbossRaAbstractImpl implements JbossRa20
 
    private final String bootstrapContext;
 
-   private final List<BeanValidationGroup> beanValidationGroups;
+   private final ArrayList<BeanValidationGroup> beanValidationGroups;
 
    /**
     * @param raConfigProperties List of properties for configuration
@@ -54,7 +54,15 @@ public class JbossRa20Impl extends JbossRaAbstractImpl implements JbossRa20
    {
       super(raConfigProperties);
       this.bootstrapContext = bootstrapContext;
-      this.beanValidationGroups = beanValidationGroups;
+      if (beanValidationGroups != null)
+      {
+         this.beanValidationGroups = new ArrayList<BeanValidationGroup>(beanValidationGroups.size());
+         this.beanValidationGroups.addAll(beanValidationGroups);
+      }
+      else
+      {
+         this.beanValidationGroups = new ArrayList<BeanValidationGroup>(0);
+      }
    }
 
    /**

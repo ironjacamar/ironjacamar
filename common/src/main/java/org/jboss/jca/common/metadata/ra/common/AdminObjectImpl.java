@@ -26,7 +26,7 @@ import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class AdminObjectImpl implements AdminObject
 
    private final XsdString adminobjectClass;
 
-   private final List<? extends ConfigProperty> configProperty;
+   private final ArrayList<ConfigProperty> configProperty;
 
    private final String id;
 
@@ -60,7 +60,15 @@ public class AdminObjectImpl implements AdminObject
       super();
       this.adminobjectInterface = adminobjectInterface;
       this.adminobjectClass = adminobjectClass;
-      this.configProperty = configProperty;
+      if (configProperty != null)
+      {
+         this.configProperty = new ArrayList<ConfigProperty>(configProperty.size());
+         this.configProperty.addAll(configProperty);
+      }
+      else
+      {
+         this.configProperty = new ArrayList<ConfigProperty>(0);
+      }
       this.id = id;
    }
 

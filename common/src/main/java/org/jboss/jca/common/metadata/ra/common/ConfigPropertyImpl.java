@@ -27,7 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.IdDecoratedMetadata;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class ConfigPropertyImpl implements IdDecoratedMetadata, ConfigProperty
    /**
     * description
     */
-   protected final List<LocalizedXsdString> description;
+   protected final ArrayList<LocalizedXsdString> description;
 
    /**
     * configPropertyName
@@ -82,7 +82,15 @@ public class ConfigPropertyImpl implements IdDecoratedMetadata, ConfigProperty
          XsdString configPropertyType, XsdString configPropertyValue, String id)
    {
       super();
-      this.description = description;
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
       this.configPropertyName = configPropertyName;
       this.configPropertyType = configPropertyType;
       this.configPropertyValue = configPropertyValue;

@@ -34,7 +34,7 @@ import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
 import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
 import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
-import org.jboss.jca.common.validator.ValidateException;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.ArrayList;
 import java.util.Iterator;

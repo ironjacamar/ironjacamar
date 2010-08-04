@@ -25,7 +25,7 @@ import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class SecurityPermissionImpl implements SecurityPermission
     */
    private static final long serialVersionUID = -7931009018498254330L;
 
-   private final List<LocalizedXsdString> description;
+   private final ArrayList<LocalizedXsdString> description;
 
    private final XsdString securityPermissionSpec;
 
@@ -53,7 +53,15 @@ public class SecurityPermissionImpl implements SecurityPermission
    public SecurityPermissionImpl(List<LocalizedXsdString> description, XsdString securityPermissionSpec, String id)
    {
       super();
-      this.description = description;
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
       this.securityPermissionSpec = securityPermissionSpec;
       this.id = id;
    }

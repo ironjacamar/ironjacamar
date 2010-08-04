@@ -25,7 +25,7 @@ package org.jboss.jca.common.metadata.jbossra;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.ra.RaConfigProperty;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,7 +42,7 @@ public abstract class JbossRaAbstractImpl implements JbossRa
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
-   private final List<RaConfigProperty<?>> raConfigProperties;
+   private final ArrayList<RaConfigProperty<?>> raConfigProperties;
 
    /**
     *
@@ -52,7 +52,15 @@ public abstract class JbossRaAbstractImpl implements JbossRa
     */
    protected JbossRaAbstractImpl(List<RaConfigProperty<?>> raConfigProperties)
    {
-      this.raConfigProperties = raConfigProperties;
+      if (raConfigProperties != null)
+      {
+         this.raConfigProperties = new ArrayList<RaConfigProperty<?>>(raConfigProperties.size());
+         this.raConfigProperties.addAll(raConfigProperties);
+      }
+      else
+      {
+         this.raConfigProperties = new ArrayList<RaConfigProperty<?>>(0);
+      }
    }
 
    /**

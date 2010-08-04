@@ -43,6 +43,7 @@ import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
 import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
 import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
+import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.ra.common.AdminObjectImpl;
 import org.jboss.jca.common.metadata.ra.common.AuthenticationMechanismImpl;
 import org.jboss.jca.common.metadata.ra.common.ConnectionDefinitionImpl;
@@ -55,7 +56,6 @@ import org.jboss.jca.common.metadata.ra.common.SecurityPermissionImpl;
 import org.jboss.jca.common.metadata.ra.ra16.Activationspec16Impl;
 import org.jboss.jca.common.metadata.ra.ra16.ConfigProperty16Impl;
 import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
-import org.jboss.jca.common.validator.ValidateException;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -89,7 +89,7 @@ public class Annotations
 
    private static boolean trace = log.isTraceEnabled();
 
-   private enum metadatas
+   private enum Metadatas
    {
       RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY;
    };
@@ -170,11 +170,11 @@ public class Annotations
       */
 
       // @ConfigProperty handle at last
-      Map<metadatas, ArrayList<ConfigProperty16>> configPropertiesMap = processConfigProperty(annotationRepository);
+      Map<Metadatas, ArrayList<ConfigProperty16>> configPropertiesMap = processConfigProperty(annotationRepository);
 
       // @ConnectionDefinitions
       ArrayList<ConnectionDefinition> connectionDefinitions = processConnectionDefinitions(annotationRepository,
-            configPropertiesMap == null ? null : configPropertiesMap.get(metadatas.MANAGED_CONN_FACTORY));
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.MANAGED_CONN_FACTORY));
 
       // @ConnectionDefinition (outside of @ConnectionDefinitions)
       if (connectionDefinitions == null)
@@ -182,7 +182,7 @@ public class Annotations
          connectionDefinitions = new ArrayList<ConnectionDefinition>(1);
       }
       ArrayList<ConnectionDefinition> definitions = processConnectionDefinition(annotationRepository,
-            configPropertiesMap == null ? null : configPropertiesMap.get(metadatas.MANAGED_CONN_FACTORY));
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.MANAGED_CONN_FACTORY));
       if (definitions != null)
          connectionDefinitions.addAll(definitions);
 
@@ -190,7 +190,7 @@ public class Annotations
 
       // @Activation
       InboundResourceAdapter inboundRA = processActivation(annotationRepository,
-            configPropertiesMap == null ? null : configPropertiesMap.get(metadatas.ACTIVATION_SPEC));
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ACTIVATION_SPEC));
 
       // @AuthenticationMechanism
       //md = processAuthenticationMechanism(md, annotationRepository);
@@ -202,7 +202,7 @@ public class Annotations
 
       // @Connector
       Connector conn = processConnector(annotationRepository, xmlResourceAdapterClass,
-            connectionDefinitions, configPropertiesMap == null ? null : configPropertiesMap.get(metadatas.RA),
+            connectionDefinitions, configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.RA),
             inboundRA, adminObjs);
 
       return conn;
@@ -587,10 +587,9 @@ public class Annotations
       XsdString managedconnectionfactoryClass = new XsdString(mcf, null);
       XsdString connectionImplClass = new XsdString(cd.connectionImpl().getName(), null);
       XsdString connectionfactoryImplClass = new XsdString(cd.connectionFactoryImpl().getName(), null);
-      String id = null;
       XsdString connectionInterface = new XsdString(cd.connection().getName(), null);
       return new ConnectionDefinitionImpl(managedconnectionfactoryClass, configProperties, connectionfactoryInterface,
-            connectionfactoryImplClass, connectionInterface, connectionImplClass, id);
+            connectionfactoryImplClass, connectionInterface, connectionImplClass, null);
    }
 
    /**
@@ -600,14 +599,14 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private Map<metadatas, ArrayList<ConfigProperty16>> processConfigProperty(AnnotationRepository annotationRepository)
+   private Map<Metadatas, ArrayList<ConfigProperty16>> processConfigProperty(AnnotationRepository annotationRepository)
       throws Exception
    {
-      Map<metadatas, ArrayList<ConfigProperty16>> valueMap = null;
+      Map<Metadatas, ArrayList<ConfigProperty16>> valueMap = null;
       Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.ConfigProperty.class);
       if (values != null)
       {
-         valueMap = new HashMap<Annotations.metadatas, ArrayList<ConfigProperty16>>();
+         valueMap = new HashMap<Annotations.Metadatas, ArrayList<ConfigProperty16>>();
          for (Annotation annotation : values)
          {
             javax.resource.spi.ConfigProperty configPropertyAnnotation = (javax.resource.spi.ConfigProperty) annotation
@@ -620,7 +619,7 @@ public class Annotations
             XsdString configPropertyName = new XsdString(getConfigPropertyName(annotation), null);
             if (configPropertyAnnotation.defaultValue() != null && !configPropertyAnnotation.defaultValue().equals(""))
                configPropertyValue = new XsdString(configPropertyAnnotation.defaultValue(), null);
-            XsdString configPropertyType = XsdString.NULL_XSDSTRING;
+            XsdString configPropertyType;
             if (!Object.class.equals(configPropertyAnnotation.type()))
             {
                configPropertyType = new XsdString(configPropertyAnnotation.type().getName(), null);
@@ -632,7 +631,6 @@ public class Annotations
 
             Boolean configPropertySupportsDynamicUpdates = false;
             Boolean configPropertyConfidential = false;
-            String id = null;
             // Description
             ArrayList<LocalizedXsdString> descriptions = null;
             if (configPropertyAnnotation.description() != null && configPropertyAnnotation.description().length != 0)
@@ -655,43 +653,43 @@ public class Annotations
                ConfigProperty16 cfgMeta = new ConfigProperty16Impl(descriptions, configPropertyName,
                      configPropertyType,
                      configPropertyValue, configPropertyIgnore, configPropertySupportsDynamicUpdates,
-                     configPropertyConfidential, id);
-               if (valueMap.get(metadatas.RA) == null)
+                     configPropertyConfidential, null);
+               if (valueMap.get(Metadatas.RA) == null)
                {
-                  valueMap.put(metadatas.RA, new ArrayList<ConfigProperty16>());
+                  valueMap.put(Metadatas.RA, new ArrayList<ConfigProperty16>());
                }
-               valueMap.get(metadatas.RA).add(cfgMeta);
+               valueMap.get(Metadatas.RA).add(cfgMeta);
             }
             else
             {
                ConfigProperty16 cfgMeta = new ConfigProperty16Impl(descriptions, configPropertyName,
                      configPropertyType,
                      configPropertyValue, configPropertyIgnore, configPropertySupportsDynamicUpdates,
-                     configPropertyConfidential, id, attachedClassName);
+                     configPropertyConfidential, null, attachedClassName);
                if (hasInterface(attachedClass, "javax.resource.spi.ManagedConnectionFactory"))
                {
-                  if (valueMap.get(metadatas.MANAGED_CONN_FACTORY) == null)
+                  if (valueMap.get(Metadatas.MANAGED_CONN_FACTORY) == null)
                   {
-                     valueMap.put(metadatas.MANAGED_CONN_FACTORY, new ArrayList<ConfigProperty16>());
+                     valueMap.put(Metadatas.MANAGED_CONN_FACTORY, new ArrayList<ConfigProperty16>());
                   }
-                  valueMap.get(metadatas.MANAGED_CONN_FACTORY).add(cfgMeta);
+                  valueMap.get(Metadatas.MANAGED_CONN_FACTORY).add(cfgMeta);
                }
                else if (hasInterface(attachedClass, "javax.resource.spi.ActivationSpec"))
                {
-                  if (valueMap.get(metadatas.ACTIVATION_SPEC) == null)
+                  if (valueMap.get(Metadatas.ACTIVATION_SPEC) == null)
                   {
-                     valueMap.put(metadatas.ACTIVATION_SPEC, new ArrayList<ConfigProperty16>());
+                     valueMap.put(Metadatas.ACTIVATION_SPEC, new ArrayList<ConfigProperty16>());
                   }
-                  valueMap.get(metadatas.ACTIVATION_SPEC).add(cfgMeta);
+                  valueMap.get(Metadatas.ACTIVATION_SPEC).add(cfgMeta);
                }
             }
          }
-         if (valueMap.get(metadatas.RA) != null)
-            valueMap.get(metadatas.RA).trimToSize();
-         if (valueMap.get(metadatas.MANAGED_CONN_FACTORY) != null)
-            valueMap.get(metadatas.MANAGED_CONN_FACTORY).trimToSize();
-         if (valueMap.get(metadatas.ACTIVATION_SPEC) != null)
-            valueMap.get(metadatas.ACTIVATION_SPEC).trimToSize();
+         if (valueMap.get(Metadatas.RA) != null)
+            valueMap.get(Metadatas.RA).trimToSize();
+         if (valueMap.get(Metadatas.MANAGED_CONN_FACTORY) != null)
+            valueMap.get(Metadatas.MANAGED_CONN_FACTORY).trimToSize();
+         if (valueMap.get(Metadatas.ACTIVATION_SPEC) != null)
+            valueMap.get(Metadatas.ACTIVATION_SPEC).trimToSize();
          return valueMap;
       }
 

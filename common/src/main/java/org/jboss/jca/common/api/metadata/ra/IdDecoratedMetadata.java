@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
-import org.jboss.jca.common.metadata.JCAMetadata;
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>

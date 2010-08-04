@@ -26,7 +26,7 @@ import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class Activationspec15Impl implements Activationspec15
    /**
     * list of required properties
     */
-   protected final List<RequiredConfigProperty> requiredConfigProperty;
+   protected final ArrayList<RequiredConfigProperty> requiredConfigProperty;
 
    /**
     * id attribute in xml file
@@ -71,7 +71,15 @@ public class Activationspec15Impl implements Activationspec15
    {
       super();
       this.activationspecClass = activationspecClass;
-      this.requiredConfigProperty = requiredConfigProperty;
+      if (requiredConfigProperty != null)
+      {
+         this.requiredConfigProperty = new ArrayList<RequiredConfigProperty>(requiredConfigProperty.size());
+         this.requiredConfigProperty.addAll(requiredConfigProperty);
+      }
+      else
+      {
+         this.requiredConfigProperty = new ArrayList<RequiredConfigProperty>(0);
+      }
       this.id = id;
    }
 

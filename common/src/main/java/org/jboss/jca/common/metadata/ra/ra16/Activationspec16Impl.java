@@ -27,7 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
 import org.jboss.jca.common.metadata.ra.ra15.Activationspec15Impl;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,19 +41,27 @@ public class Activationspec16Impl extends Activationspec15Impl implements Activa
     */
    private static final long serialVersionUID = -6951903183562100136L;
 
-   private final List<? extends ConfigProperty> configProperty;
+   private final ArrayList<ConfigProperty> configProperties;
 
    /**
     * @param activationspecClass full qualified name of the class
     * @param requiredConfigProperty a List of required config properties
-    * @param configProperty a list of (optional) config property
+    * @param configProperties a list of (optional) config property
     * @param id xmlID
     */
    public Activationspec16Impl(XsdString activationspecClass, List<RequiredConfigProperty> requiredConfigProperty,
-         List<? extends ConfigProperty> configProperty, String id)
+         List<? extends ConfigProperty> configProperties, String id)
    {
       super(activationspecClass, requiredConfigProperty, id);
-      this.configProperty = configProperty;
+      if (configProperties != null)
+      {
+         this.configProperties = new ArrayList<ConfigProperty>(configProperties.size());
+         this.configProperties.addAll(configProperties);
+      }
+      else
+      {
+         this.configProperties = new ArrayList<ConfigProperty>(0);
+      }
    }
 
    /**
@@ -62,7 +70,7 @@ public class Activationspec16Impl extends Activationspec15Impl implements Activa
    @Override
    public List<? extends ConfigProperty> getConfigProperties()
    {
-      return configProperty == null ? null : Collections.unmodifiableList(configProperty);
+      return configProperties == null ? null : Collections.unmodifiableList(configProperties);
    }
 
    @Override
@@ -70,7 +78,7 @@ public class Activationspec16Impl extends Activationspec15Impl implements Activa
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((configProperty == null) ? 0 : configProperty.hashCode());
+      result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
       return result;
    }
 
@@ -84,12 +92,12 @@ public class Activationspec16Impl extends Activationspec15Impl implements Activa
       if (!(obj instanceof Activationspec16Impl))
          return false;
       Activationspec16Impl other = (Activationspec16Impl) obj;
-      if (configProperty == null)
+      if (configProperties == null)
       {
-         if (other.configProperty != null)
+         if (other.configProperties != null)
             return false;
       }
-      else if (!configProperty.equals(other.configProperty))
+      else if (!configProperties.equals(other.configProperties))
          return false;
       return true;
    }
@@ -97,7 +105,7 @@ public class Activationspec16Impl extends Activationspec15Impl implements Activa
    @Override
    public String toString()
    {
-      return "Activationspec [configProperty=" + configProperty + ", activationspecClass=" + activationspecClass
+      return "Activationspec [configProperty=" + configProperties + ", activationspecClass=" + activationspecClass
             + ", requiredConfigProperty=" + requiredConfigProperty + ", id=" + id + "]";
    }
 

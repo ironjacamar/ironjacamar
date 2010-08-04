@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata;
 
+import org.jboss.jca.common.api.metadata.JCAMetadata;
+
 import java.io.InputStream;
 
 /**

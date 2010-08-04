@@ -23,7 +23,7 @@
 package org.jboss.jca.deployers.annotations;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.validator.ValidateException;
+import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.embedded.EmbeddedJCA;
 
 import java.io.File;

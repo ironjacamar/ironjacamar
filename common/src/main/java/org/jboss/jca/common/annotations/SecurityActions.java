@@ -48,6 +48,7 @@ class SecurityActions
    {
       return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() 
       {
+         @Override
          public ClassLoader run()
          {
             return Thread.currentThread().getContextClassLoader();
@@ -63,6 +64,7 @@ class SecurityActions
    {
       AccessController.doPrivileged(new PrivilegedAction<Object>() 
       {
+         @Override
          public Object run()
          {
             Thread.currentThread().setContextClassLoader(cl);
@@ -80,6 +82,7 @@ class SecurityActions
    {
       return AccessController.doPrivileged(new PrivilegedAction<String>() 
       {
+         @Override
          public String run()
          {
             return System.getProperty(name);
@@ -97,6 +100,7 @@ class SecurityActions
    {
       return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() 
       {
+         @Override
          public URLClassLoader run()
          {
             return new URLClassLoader(urls, parent);

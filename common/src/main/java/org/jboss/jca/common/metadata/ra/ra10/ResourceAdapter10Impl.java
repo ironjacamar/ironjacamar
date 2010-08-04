@@ -27,9 +27,9 @@ import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
-import org.jboss.jca.common.validator.ValidateException;
+import org.jboss.jca.common.api.validator.ValidateException;
 
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,13 +55,13 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
 
    private final TransactionSupportEnum transactionSupport;
 
-   private final List<AuthenticationMechanism> authenticationMechanism;
+   private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
-   private final List<ConfigProperty> configProperty;
+   private final ArrayList<ConfigProperty> configProperties;
 
    private final Boolean reauthenticationSupport;
 
-   private final List<SecurityPermission> securityPermission;
+   private final ArrayList<SecurityPermission> securityPermissions;
 
    private final String id;
 
@@ -76,16 +76,16 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
     * @param connectionImplClass class name
     * @param transactionSupport how transactions are supported
     * @param authenticationMechanism how authentication is performed
-    * @param configProperty list of configs
+    * @param configProperties list of configs
     * @param reauthenticationSupport true if reautentication is supported
-    * @param securityPermission what security permissions are supported
+    * @param securityPermissions what security permissions are supported
     * @param id the id attribute in xml file
     */
    public ResourceAdapter10Impl(XsdString managedConnectionFactoryClass, XsdString connectionFactoryInterface,
          XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
          TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-         List<ConfigProperty> configProperty, Boolean reauthenticationSupport,
-         List<SecurityPermission> securityPermission, String id)
+         List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
+         List<SecurityPermission> securityPermissions, String id)
    {
       super();
       this.managedConnectionFactoryClass = managedConnectionFactoryClass;
@@ -94,10 +94,34 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
       this.connectionInterface = connectionInterface;
       this.connectionImplClass = connectionImplClass;
       this.transactionSupport = transactionSupport;
-      this.authenticationMechanism = authenticationMechanism;
-      this.configProperty = configProperty;
+      if (authenticationMechanism != null)
+      {
+         this.authenticationMechanism = new ArrayList<AuthenticationMechanism>(authenticationMechanism.size());
+         this.authenticationMechanism.addAll(authenticationMechanism);
+      }
+      else
+      {
+         this.authenticationMechanism = new ArrayList<AuthenticationMechanism>(0);
+      }
+      if (configProperties != null)
+      {
+         this.configProperties = new ArrayList<ConfigProperty>(configProperties.size());
+         this.configProperties.addAll(configProperties);
+      }
+      else
+      {
+         this.configProperties = new ArrayList<ConfigProperty>(0);
+      }
       this.reauthenticationSupport = reauthenticationSupport;
-      this.securityPermission = securityPermission;
+      if (securityPermissions != null)
+      {
+         this.securityPermissions = new ArrayList<SecurityPermission>(securityPermissions.size());
+         this.securityPermissions.addAll(securityPermissions);
+      }
+      else
+      {
+         this.securityPermissions = new ArrayList<SecurityPermission>(0);
+      }
       this.id = id;
    }
 
@@ -186,7 +210,7 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
    @Override
    public List<ConfigProperty> getConfigProperties()
    {
-      return configProperty;
+      return configProperties;
    }
 
    /**
@@ -208,7 +232,7 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
    @Override
    public List<SecurityPermission> getSecurityPermissions()
    {
-      return securityPermission == null ? null : Collections.unmodifiableList(securityPermission);
+      return securityPermissions == null ? null : Collections.unmodifiableList(securityPermissions);
    }
 
    /**
@@ -228,7 +252,7 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
       final int prime = 31;
       int result = 1;
       result = prime * result + ((authenticationMechanism == null) ? 0 : authenticationMechanism.hashCode());
-      result = prime * result + ((configProperty == null) ? 0 : configProperty.hashCode());
+      result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
       result = prime * result + ((connectionFactoryImplClass == null) ? 0 : connectionFactoryImplClass.hashCode());
       result = prime * result + ((connectionFactoryInterface == null) ? 0 : connectionFactoryInterface.hashCode());
       result = prime * result + ((connectionImplClass == null) ? 0 : connectionImplClass.hashCode());
@@ -237,7 +261,7 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
       result = prime * result
             + ((managedConnectionFactoryClass == null) ? 0 : managedConnectionFactoryClass.hashCode());
       result = prime * result + ((reauthenticationSupport == null) ? 0 : reauthenticationSupport.hashCode());
-      result = prime * result + ((securityPermission == null) ? 0 : securityPermission.hashCode());
+      result = prime * result + ((securityPermissions == null) ? 0 : securityPermissions.hashCode());
       result = prime * result + ((transactionSupport == null) ? 0 : transactionSupport.hashCode());
       return result;
    }
@@ -259,12 +283,12 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
       }
       else if (!authenticationMechanism.equals(other.authenticationMechanism))
          return false;
-      if (configProperty == null)
+      if (configProperties == null)
       {
-         if (other.configProperty != null)
+         if (other.configProperties != null)
             return false;
       }
-      else if (!configProperty.equals(other.configProperty))
+      else if (!configProperties.equals(other.configProperties))
          return false;
       if (connectionFactoryImplClass == null)
       {
@@ -315,12 +339,12 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
       }
       else if (!reauthenticationSupport.equals(other.reauthenticationSupport))
          return false;
-      if (securityPermission == null)
+      if (securityPermissions == null)
       {
-         if (other.securityPermission != null)
+         if (other.securityPermissions != null)
             return false;
       }
-      else if (!securityPermission.equals(other.securityPermission))
+      else if (!securityPermissions.equals(other.securityPermissions))
          return false;
       if (transactionSupport != other.transactionSupport)
          return false;
@@ -334,8 +358,8 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
             + ", connectionFactoryInterface=" + connectionFactoryInterface + ", connectionFactoryImplClass="
             + connectionFactoryImplClass + ", connectionInterface=" + connectionInterface + ", connectionImplClass="
             + connectionImplClass + ", transactionSupport=" + transactionSupport + ", authenticationMechanism="
-            + authenticationMechanism + ", configProperties=" + configProperty + ", reauthenticationSupport="
-            + reauthenticationSupport + ", securityPermission=" + securityPermission + ", id=" + id + "]";
+            + authenticationMechanism + ", configProperties=" + configProperties + ", reauthenticationSupport="
+            + reauthenticationSupport + ", securityPermissions=" + securityPermissions + ", id=" + id + "]";
    }
 
    @Override

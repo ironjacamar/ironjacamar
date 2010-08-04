@@ -22,11 +22,12 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.Messageadapter;
-import org.jboss.jca.common.metadata.MergeUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class MessageAdapterImpl implements Messageadapter
     */
    private static final long serialVersionUID = 1731250340667920811L;
 
-   private final List<MessageListener> messagelisteners;
+   private final ArrayList<MessageListener> messagelisteners;
 
    private final String id;
 
@@ -55,7 +56,15 @@ public class MessageAdapterImpl implements Messageadapter
    public MessageAdapterImpl(List<MessageListener> messagelisteners, String id)
    {
       super();
-      this.messagelisteners = messagelisteners;
+      if (messagelisteners != null)
+      {
+         this.messagelisteners = new ArrayList<MessageListener>(messagelisteners.size());
+         this.messagelisteners.addAll(messagelisteners);
+      }
+      else
+      {
+         this.messagelisteners = new ArrayList<MessageListener>(0);
+      }
       this.id = id;
    }
 

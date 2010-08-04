@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.common.api.metadata.jbossra;
 
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.RaConfigProperty;
-import org.jboss.jca.common.metadata.JCAMetadata;
 
 import java.util.List;
 

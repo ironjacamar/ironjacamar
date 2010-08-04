@@ -21,12 +21,12 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
-import org.jboss.jca.common.metadata.MergeUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,11 +42,11 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
     */
    private static final long serialVersionUID = 421345307326415666L;
 
-   private final List<ConnectionDefinition> connectionDefinition;
+   private final ArrayList<ConnectionDefinition> connectionDefinition;
 
    private final TransactionSupportEnum transactionSupport;
 
-   private final List<AuthenticationMechanism> authenticationMechanism;
+   private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
    private final boolean reauthenticationSupport;
 
@@ -64,9 +64,25 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
          boolean reauthenticationSupport, String id)
    {
       super();
-      this.connectionDefinition = connectionDefinition;
+      if (connectionDefinition != null)
+      {
+         this.connectionDefinition = new ArrayList<ConnectionDefinition>(connectionDefinition.size());
+         this.connectionDefinition.addAll(connectionDefinition);
+      }
+      else
+      {
+         this.connectionDefinition = new ArrayList<ConnectionDefinition>(0);
+      }
       this.transactionSupport = transactionSupport;
-      this.authenticationMechanism = authenticationMechanism;
+      if (authenticationMechanism != null)
+      {
+         this.authenticationMechanism = new ArrayList<AuthenticationMechanism>(authenticationMechanism.size());
+         this.authenticationMechanism.addAll(authenticationMechanism);
+      }
+      else
+      {
+         this.authenticationMechanism = new ArrayList<AuthenticationMechanism>(0);
+      }
       this.reauthenticationSupport = reauthenticationSupport;
       this.id = id;
    }
