@@ -31,7 +31,7 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
-import org.jboss.jca.common.metadataimpl.MetadataFactory;
+import org.jboss.jca.common.metadata.MetadataFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

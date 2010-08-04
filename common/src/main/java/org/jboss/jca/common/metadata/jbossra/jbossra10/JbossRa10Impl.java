@@ -19,39 +19,48 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.jbossra;
+package org.jboss.jca.common.metadata.jbossra.jbossra10;
 
+import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
+import org.jboss.jca.common.api.metadata.jbossra.jbossra10.JbossRa10;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.RaConfigProperty;
-import org.jboss.jca.common.metadata.JCAMetadata;
+import org.jboss.jca.common.metadata.jbossra.JbossRaAbstractImpl;
 
 import java.util.List;
 
 /**
  *
- * A JbossRa.
+ * A JbossRa10.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface JbossRa extends JCAMetadata, MergeableMetadata<JbossRa>
+public class JbossRa10Impl extends JbossRaAbstractImpl implements JbossRa10
 {
 
-   @Override
-   public abstract String toString();
-
-   @Override
-   public abstract boolean equals(Object obj);
-
-   @Override
-   public abstract int hashCode();
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
 
    /**
+    * @param raConfigProperties List of properties for configuration
     *
-    * It return an Unmodifiable List of config properties
-    *
-    * @return an Unmodifiable List of config properties
     */
-   public abstract List<RaConfigProperty<?>> getRaConfigProperties();
+   public JbossRa10Impl(List<RaConfigProperty<?>> raConfigProperties)
+   {
+      super(raConfigProperties);
+   }
+
+   @Override
+   public String toString()
+   {
+      return "JbossRa10 [getRaConfigProperties()=" + getRaConfigProperties() + "]";
+   }
+
+   @Override
+   public JbossRa merge(MergeableMetadata<?> jmd) throws Exception
+   {
+      return this;
+   }
 
 }

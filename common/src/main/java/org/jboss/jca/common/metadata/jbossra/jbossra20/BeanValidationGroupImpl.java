@@ -19,58 +19,44 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ra;
+package org.jboss.jca.common.metadata.jbossra.jbossra20;
 
+import org.jboss.jca.common.api.metadata.jbossra.jbossra20.BeanValidationGroup;
 import org.jboss.jca.common.metadata.JCAMetadata;
 
-import java.security.InvalidParameterException;
+import java.util.List;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class Path implements JCAMetadata
+public class BeanValidationGroupImpl implements JCAMetadata, BeanValidationGroup
 {
-   /**
-    */
-   private static final long serialVersionUID = 3452844893341380928L;
-
-   private final String value;
 
    /**
-    * @param value Path String
     */
-   private Path(String value)
+   private static final long serialVersionUID = 6856138720550993874L;
+
+   private final List<String> beanValidationGroup;
+
+   /**
+    * @param beanValidationGroup List of bean validation group
+    */
+   public BeanValidationGroupImpl(List<String> beanValidationGroup)
    {
       super();
-      this.value = value;
+      this.beanValidationGroup = beanValidationGroup;
    }
 
    /**
-    *
-    * convenient method to cfreate a path object validating it according JCA specs
-    *
-    * @param path the Path String
-    * @return the Path object
-    * @throws InvalidParameterException in case path could not be validated according JCA specs
+    * @return beanValidationGroup the list of bena validation group
     */
-   public static Path valueOf(String path) throws InvalidParameterException
+   @Override
+   public List<String> getBeanValidationGroup()
    {
-      if (isValid(path))
-      {
-         return new Path(path);
-      }
-      else
-      {
-         throw new InvalidParameterException();
-      }
-   }
-
-   // implement me
-
-   private static boolean isValid(String path)
-   {
-      return true;
+      return beanValidationGroup == null ? null : Collections.unmodifiableList(beanValidationGroup);
    }
 
    /**
@@ -83,7 +69,7 @@ public class Path implements JCAMetadata
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((value == null) ? 0 : value.hashCode());
+      result = prime * result + ((beanValidationGroup == null) ? 0 : beanValidationGroup.hashCode());
       return result;
    }
 
@@ -96,29 +82,19 @@ public class Path implements JCAMetadata
    public boolean equals(Object obj)
    {
       if (this == obj)
-      {
          return true;
-      }
       if (obj == null)
-      {
          return false;
-      }
-      if (!(obj instanceof Path))
-      {
+      if (!(obj instanceof BeanValidationGroupImpl))
          return false;
-      }
-      Path other = (Path) obj;
-      if (value == null)
+      BeanValidationGroupImpl other = (BeanValidationGroupImpl) obj;
+      if (beanValidationGroup == null)
       {
-         if (other.value != null)
-         {
+         if (other.beanValidationGroup != null)
             return false;
-         }
       }
-      else if (!value.equals(other.value))
-      {
+      else if (!beanValidationGroup.equals(other.beanValidationGroup))
          return false;
-      }
       return true;
    }
 
@@ -130,6 +106,8 @@ public class Path implements JCAMetadata
    @Override
    public String toString()
    {
-      return "Path [value=" + value + "]";
+      return "BeanValidationGroups [beanValidationGroup=" + beanValidationGroup + ", getBeanValidationGroup()="
+            + getBeanValidationGroup() + ", hashCode()=" + hashCode() + "]";
    }
+
 }

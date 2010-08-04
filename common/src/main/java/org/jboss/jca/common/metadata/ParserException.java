@@ -19,23 +19,59 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ra;
-
-import org.jboss.jca.common.metadata.JCAMetadata;
+package org.jboss.jca.common.metadata;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ *
+ * A ParserException.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface IdDecoratedMetadata extends JCAMetadata
+public class ParserException extends Exception
 {
 
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 1L;
+
    /**
+    * Create a new ParserException.
     *
-    * Return the String representing xml ID
-    *
-    * @return the XML ID
     */
-   public String getId();
+   public ParserException()
+   {
+      super();
+   }
+
+   /**
+    * Create a new ParserException.
+    *
+    * @param message a message
+    * @param cause a cause
+    */
+   public ParserException(String message, Throwable cause)
+   {
+      super(message, cause);
+   }
+
+   /**
+    * Create a new ParserException.
+    *
+    * @param message a message
+    */
+   public ParserException(String message)
+   {
+      super(message);
+   }
+
+   /**
+    * Create a new ParserException.
+    *
+    * @param cause a cause
+    */
+   public ParserException(Throwable cause)
+   {
+      super(cause);
+   }
 
 }

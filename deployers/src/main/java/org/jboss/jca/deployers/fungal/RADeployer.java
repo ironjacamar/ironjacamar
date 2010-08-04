@@ -35,7 +35,7 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
-import org.jboss.jca.common.metadataimpl.MetadataFactory;
+import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.core.api.CloneableBootstrapContext;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;

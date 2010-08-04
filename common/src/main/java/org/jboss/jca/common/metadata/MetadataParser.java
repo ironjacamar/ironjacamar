@@ -19,23 +19,28 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ra;
+package org.jboss.jca.common.metadata;
 
-import org.jboss.jca.common.metadata.JCAMetadata;
+import java.io.InputStream;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ *
+ * A MetadataParser.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @param <T>
  *
  */
-public interface IdDecoratedMetadata extends JCAMetadata
+public interface MetadataParser<T extends JCAMetadata>
 {
 
    /**
-    *
-    * Return the String representing xml ID
-    *
-    * @return the XML ID
+    * Parse the xml file and return the JCAMetaData for which the concrete parser is designed.
+    * Note that is responsibility of the client to open and close the stream
+    * @param xmlInputStream an InputStrema opened on the xml file to parse
+    * @return The metadata
+    * @exception Exception Thrown if an error occurs
     */
-   public String getId();
+   public T parse(InputStream xmlInputStream) throws Exception;
 
 }

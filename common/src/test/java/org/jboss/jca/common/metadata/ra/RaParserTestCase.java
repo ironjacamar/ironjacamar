@@ -23,11 +23,9 @@ package org.jboss.jca.common.metadata.ra;
 
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
-import org.jboss.jca.common.metadataimpl.ra.RaParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,9 +95,8 @@ public class RaParserTestCase
          //then
          assertThat(connector, instanceOf(Connector15.class));
          assertThat(connector.getVersion(), is(Version.V_16));
-         ResourceAdapter1516 ra = (ResourceAdapter1516) connector.getResourceadapter();
-         assertThat(ra.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-               .getManagedconnectionfactoryClass().getValue(), is("aa"));
+
+
       }
       finally
       {

@@ -19,23 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ra;
+package org.jboss.jca.common.metadata;
 
-import org.jboss.jca.common.metadata.JCAMetadata;
+import java.io.Serializable;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ *
+ * A generic JCAMetadata.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface IdDecoratedMetadata extends JCAMetadata
+public interface JCAMetadata extends Serializable
 {
-
-   /**
-    *
-    * Return the String representing xml ID
-    *
-    * @return the XML ID
-    */
-   public String getId();
 
 }
