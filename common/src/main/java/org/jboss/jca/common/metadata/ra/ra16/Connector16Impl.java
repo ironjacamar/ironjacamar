@@ -50,21 +50,12 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
 
    private final String moduleName;
 
-   private final ArrayList<Icon> icons;
-
    private final ArrayList<String> requiredWorkContexts;
-
-   private final ArrayList<LocalizedXsdString> description;
-
-   private final ArrayList<LocalizedXsdString> displayNames;
 
    private final boolean metadataComplete;
 
    /**
     * @param moduleName name of the module
-    * @param description descriptions of this connector
-    * @param displayNames name to display for this connecotro
-    * @param icons icon representing this connectore
     * @param vendorName vendor name
     * @param eisType eis type
     * @param resourceadapterVersion version number for the RA
@@ -72,43 +63,20 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
     * @param resourceadapter full qualified name of the resource adapter
     * @param requiredWorkContexts list od work context required
     * @param metadataComplete not mandatory boolean value
+    * @param description descriptions of this connector
+    * @param displayNames name to display for this connecotro
+    * @param icons icon representing this connectore
     * @param id XML ID
     */
-   public Connector16Impl(String moduleName, List<LocalizedXsdString> description,
-         List<LocalizedXsdString> displayNames,
-         List<Icon> icons, XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
+   public Connector16Impl(String moduleName, XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
          LicenseType license, ResourceAdapter1516 resourceadapter, List<String> requiredWorkContexts,
-         boolean metadataComplete, String id)
+         boolean metadataComplete, List<LocalizedXsdString> description, List<LocalizedXsdString> displayNames,
+         List<Icon> icons, String id)
    {
-      super(vendorName, eisType, resourceadapterVersion, license, resourceadapter, id);
+      super(vendorName, eisType, resourceadapterVersion, license, resourceadapter,
+            description, displayNames, icons, id);
       this.moduleName = moduleName;
-      if (description != null)
-      {
-         this.description = new ArrayList<LocalizedXsdString>(description.size());
-         this.description.addAll(description);
-      }
-      else
-      {
-         this.description = new ArrayList<LocalizedXsdString>(0);
-      }
-      if (displayNames != null)
-      {
-         this.displayNames = new ArrayList<LocalizedXsdString>(displayNames.size());
-         this.displayNames.addAll(displayNames);
-      }
-      else
-      {
-         this.displayNames = new ArrayList<LocalizedXsdString>(0);
-      }
-      if (icons != null)
-      {
-         this.icons = new ArrayList<Icon>(icons.size());
-         this.icons.addAll(icons);
-      }
-      else
-      {
-         this.icons = new ArrayList<Icon>(0);
-      }
+
       if (requiredWorkContexts != null)
       {
          this.requiredWorkContexts = new ArrayList<String>(requiredWorkContexts.size());
@@ -148,23 +116,6 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
       return description == null ? null : Collections.unmodifiableList(description);
    }
 
-   /**
-    * @return displayName
-    */
-   @Override
-   public List<LocalizedXsdString> getDisplayNames()
-   {
-      return displayNames == null ? null : Collections.unmodifiableList(displayNames);
-   }
-
-   /**
-    * @return icon
-    */
-   @Override
-   public List<Icon> getIcons()
-   {
-      return icons == null ? null : Collections.unmodifiableList(icons);
-   }
 
    /**
     * @return metadataComplete
@@ -186,190 +137,55 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
       return Version.V_16;
    }
 
+
    @Override
    public int hashCode()
    {
       final int prime = 31;
-      int result = 1;
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((displayNames == null) ? 0 : displayNames.hashCode());
-      result = prime * result + ((eisType == null) ? 0 : eisType.hashCode());
-      result = prime * result + ((icons == null) ? 0 : icons.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((license == null) ? 0 : license.hashCode());
+      int result = super.hashCode();
+      result = prime * result + (metadataComplete ? 1231 : 1237);
       result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
       result = prime * result + ((requiredWorkContexts == null) ? 0 : requiredWorkContexts.hashCode());
-      result = prime * result + ((resourceadapter == null) ? 0 : resourceadapter.hashCode());
-      result = prime * result + ((resourceadapterVersion == null) ? 0 : resourceadapterVersion.hashCode());
-      result = prime * result + ((vendorName == null) ? 0 : vendorName.hashCode());
       return result;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
    @Override
    public boolean equals(Object obj)
    {
       if (this == obj)
-      {
          return true;
-      }
-      if (obj == null)
-      {
+      if (!super.equals(obj))
          return false;
-      }
       if (!(obj instanceof Connector16Impl))
-      {
          return false;
-      }
       Connector16Impl other = (Connector16Impl) obj;
-      if (description == null)
-      {
-         if (other.description != null)
-         {
-            return false;
-         }
-      }
-      else if (!description.equals(other.description))
-      {
-         return false;
-      }
-      if (displayNames == null)
-      {
-         if (other.displayNames != null)
-         {
-            return false;
-         }
-      }
-      else if (!displayNames.equals(other.displayNames))
-      {
-         return false;
-      }
-      if (eisType == null)
-      {
-         if (other.eisType != null)
-         {
-            return false;
-         }
-      }
-      else if (!eisType.equals(other.eisType))
-      {
-         return false;
-      }
-      if (icons == null)
-      {
-         if (other.icons != null)
-         {
-            return false;
-         }
-      }
-      else if (!icons.equals(other.icons))
-      {
-         return false;
-      }
-      if (id == null)
-      {
-         if (other.id != null)
-         {
-            return false;
-         }
-      }
-      else if (!id.equals(other.id))
-      {
-         return false;
-      }
-      if (license == null)
-      {
-         if (other.license != null)
-         {
-            return false;
-         }
-      }
-      else if (!license.equals(other.license))
-      {
-         return false;
-      }
       if (metadataComplete != other.metadataComplete)
-      {
          return false;
-      }
       if (moduleName == null)
       {
          if (other.moduleName != null)
-         {
             return false;
-         }
       }
       else if (!moduleName.equals(other.moduleName))
-      {
          return false;
-      }
       if (requiredWorkContexts == null)
       {
          if (other.requiredWorkContexts != null)
-         {
             return false;
-         }
       }
       else if (!requiredWorkContexts.equals(other.requiredWorkContexts))
-      {
          return false;
-      }
-      if (resourceadapter == null)
-      {
-         if (other.resourceadapter != null)
-         {
-            return false;
-         }
-      }
-      else if (!resourceadapter.equals(other.resourceadapter))
-      {
-         return false;
-      }
-      if (resourceadapterVersion == null)
-      {
-         if (other.resourceadapterVersion != null)
-         {
-            return false;
-         }
-      }
-      else if (!resourceadapterVersion.equals(other.resourceadapterVersion))
-      {
-         return false;
-      }
-      if (vendorName == null)
-      {
-         if (other.vendorName != null)
-         {
-            return false;
-         }
-      }
-      else if (!vendorName.equals(other.vendorName))
-      {
-         return false;
-      }
-
       return true;
    }
 
-
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#toString()
-    */
    @Override
    public String toString()
    {
-      return "Connector16 [moduleName=" + moduleName + ", description=" + description + ", displayNames="
-            + displayNames
-            + ", icons=" + icons + ", vendorName=" + vendorName + ", eisType=" + eisType + ", resourceadapterVersion="
-            + resourceadapterVersion + ", license=" + license + ", resourceadapter=" + resourceadapter
-            + ", requiredWorkContexts=" + requiredWorkContexts + ", version=" + Version.V_15 + ", metadataComplete="
-            + metadataComplete + ", id=" + id + "]";
+      return "Connector16Impl [moduleName=" + moduleName + ", requiredWorkContexts=" + requiredWorkContexts
+            + ", metadataComplete=" + metadataComplete + ", resourceadapterVersion=" + resourceadapterVersion
+            + ", vendorName=" + vendorName + ", eisType=" + eisType + ", license=" + license + ", resourceadapter="
+            + resourceadapter + ", id=" + id + ", description=" + description + ", displayName=" + displayName
+            + ", icon=" + icon + "]";
    }
 
    @Override
@@ -390,22 +206,22 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
          List<String> newRequiredWorkContexts = MergeUtil.mergeList(this.requiredWorkContexts,
                input16.requiredWorkContexts);
          String newModuleName = this.moduleName == null ? input16.moduleName : this.moduleName;
-         List<Icon> newIcons = MergeUtil.mergeList(this.icons, input16.icons);
+         List<Icon> newIcons = MergeUtil.mergeList(this.icon, input16.icon);
          boolean newMetadataComplete = this.metadataComplete || input16.metadataComplete;
          LicenseType newLicense = this.license == null ? input16.license : this.license.merge(input16.license);
          List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.description,
                input16.description);
-         List<LocalizedXsdString> newDisplayNames = MergeUtil.mergeList(this.displayNames,
-               input16.displayNames);
+         List<LocalizedXsdString> newDisplayNames = MergeUtil.mergeList(this.displayName,
+               input16.displayName);
          XsdString newVendorName = XsdString.isNull(this.vendorName)
                ? input16.vendorName : this.vendorName;;
          ResourceAdapter1516 newResourceadapter = this.resourceadapter == null
                ? (ResourceAdapter1516) input16.resourceadapter
                : ((ResourceAdapter1516) this.resourceadapter)
                .merge((ResourceAdapter1516) input16.resourceadapter);
-         return new Connector16Impl(newModuleName, newDescriptions, newDisplayNames, newIcons,
-               newVendorName, newEisType, newResourceadapterVersion, newLicense, newResourceadapter,
-               newRequiredWorkContexts, newMetadataComplete, newModuleName);
+         return new Connector16Impl(newModuleName, newVendorName, newEisType, newResourceadapterVersion, newLicense,
+               newResourceadapter, newRequiredWorkContexts, newMetadataComplete, newDescriptions, newDisplayNames,
+               newIcons, null);
       }
       return this;
 

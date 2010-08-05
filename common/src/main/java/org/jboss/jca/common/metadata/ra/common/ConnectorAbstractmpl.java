@@ -24,7 +24,9 @@ package org.jboss.jca.common.metadata.ra.common;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.ra.Icon;
 import org.jboss.jca.common.api.metadata.ra.LicenseType;
+import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.OverrideElementAttribute;
 import org.jboss.jca.common.api.metadata.ra.RaConfigProperty;
@@ -37,6 +39,7 @@ import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -79,16 +82,35 @@ public abstract class ConnectorAbstractmpl implements Connector
    protected final String id;
 
    /**
+    * description
+    */
+   protected final ArrayList<LocalizedXsdString> description;
+
+   /**
+    * displayName
+    */
+   protected final ArrayList<LocalizedXsdString> displayName;
+
+   /**
+    * icon
+    */
+   protected final ArrayList<Icon> icon;
+
+   /**
     * Create a new Connector.
     *
     * @param vendorName vandor name
     * @param eisType tyeo of EIS
     * @param license license information
     * @param resourceadapter resource adapter instance
+    * @param description descriptions of this connector
+    * @param displayName name to display for this connecotro
+    * @param icon icon representing this connectore
     * @param id id attribute in xml file
     */
    protected ConnectorAbstractmpl(XsdString vendorName, XsdString eisType, LicenseType license,
-         ResourceAdapter resourceadapter, String id)
+         ResourceAdapter resourceadapter, List<LocalizedXsdString> description, List<LocalizedXsdString> displayName,
+         List<Icon> icon, String id)
    {
       super();
       this.vendorName = vendorName;
@@ -96,6 +118,33 @@ public abstract class ConnectorAbstractmpl implements Connector
       this.license = license;
       this.resourceadapter = resourceadapter;
       this.id = id;
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
+      if (displayName != null)
+      {
+         this.displayName = new ArrayList<LocalizedXsdString>(displayName.size());
+         this.displayName.addAll(description);
+      }
+      else
+      {
+         this.displayName = new ArrayList<LocalizedXsdString>(0);
+      }
+      if (icon != null)
+      {
+         this.icon = new ArrayList<Icon>(icon.size());
+         this.icon.addAll(icon);
+      }
+      else
+      {
+         this.icon = new ArrayList<Icon>(0);
+      }
    }
 
    /**
@@ -140,6 +189,33 @@ public abstract class ConnectorAbstractmpl implements Connector
    public ResourceAdapter getResourceadapter()
    {
       return resourceadapter;
+   }
+
+   /**
+    * @return description
+    */
+   @Override
+   public List<LocalizedXsdString> getDescriptions()
+   {
+      return description == null ? null : Collections.unmodifiableList(description);
+   }
+
+   /**
+    * @return displayName
+    */
+   @Override
+   public List<LocalizedXsdString> getDisplayNames()
+   {
+      return displayName == null ? null : Collections.unmodifiableList(displayName);
+   }
+
+   /**
+    * @return icon
+    */
+   @Override
+   public List<Icon> getIcons()
+   {
+      return icon == null ? null : Collections.unmodifiableList(icon);
    }
 
    /**

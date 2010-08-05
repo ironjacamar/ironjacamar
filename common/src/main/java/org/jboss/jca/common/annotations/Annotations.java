@@ -384,8 +384,8 @@ public class Annotations
             outboundResourceadapter, inboundResourceadapter, adminObjs, securityPermissions, null);
 
       XsdString resourceadapterVersion = new XsdString("1.6", null);
-      return new Connector16Impl("", descriptions, displayNames, icons, vendorName, eisType,
-            resourceadapterVersion, license, resourceAdapter, requiredWorkContexts, false, null);
+      return new Connector16Impl("", vendorName, eisType, resourceadapterVersion, license, resourceAdapter,
+            requiredWorkContexts, false, descriptions, displayNames, icons, null);
 
    }
 

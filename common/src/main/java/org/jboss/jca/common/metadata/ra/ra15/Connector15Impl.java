@@ -21,11 +21,15 @@
  */
 package org.jboss.jca.common.metadata.ra.ra15;
 
+import org.jboss.jca.common.api.metadata.ra.Icon;
 import org.jboss.jca.common.api.metadata.ra.LicenseType;
+import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 import org.jboss.jca.common.metadata.ra.common.ConnectorAbstractmpl;
+
+import java.util.List;
 
 /**
  *
@@ -45,19 +49,22 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
     */
    protected final XsdString resourceadapterVersion;
 
-
    /**
     * @param vendorName vendor name
     * @param eisType eis type
     * @param resourceadapterVersion version number for the RA
     * @param license license information
     * @param resourceadapter full qualified name of the resource adapter
+    * @param description descriptions of this connector
+    * @param displayName name to display for this connecotro
+    * @param icon icon representing this connectore
     * @param id XML ID
     */
    public Connector15Impl(XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
-         LicenseType license, ResourceAdapter1516 resourceadapter, String id)
+         LicenseType license, ResourceAdapter1516 resourceadapter, List<LocalizedXsdString> description,
+         List<LocalizedXsdString> displayName, List<Icon> icon, String id)
    {
-      super(vendorName, eisType, license, resourceadapter, id);
+      super(vendorName, eisType, license, resourceadapter, description, displayName, icon, id);
       this.resourceadapterVersion = resourceadapterVersion;
    }
 
@@ -107,19 +114,16 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
       }
       else if (!resourceadapterVersion.equals(other.resourceadapterVersion))
          return false;
-
       return true;
    }
 
    @Override
    public String toString()
    {
-      return "Connector15 [version=" + Version.V_15 + ", resourceadapterVersion=" + resourceadapterVersion
-            + ", vendorName="
-            + vendorName + ", eisType=" + eisType + ", license=" + license + ", resourceadapter=" + resourceadapter
-            + ", id=" + id + "]";
+      return "Connector15Impl [resourceadapterVersion=" + resourceadapterVersion + ", vendorName=" + vendorName
+            + ", eisType=" + eisType + ", license=" + license + ", resourceadapter=" + resourceadapter + ", id=" + id
+            + ", description=" + description + ", displayName=" + displayName + ", icon=" + icon + "]";
    }
-
 
 
 }

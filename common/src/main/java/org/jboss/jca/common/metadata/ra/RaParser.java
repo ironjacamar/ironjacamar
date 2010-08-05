@@ -187,7 +187,7 @@ public class RaParser implements MetadataParser<Connector>
       ResourceAdapter10 resourceadapter = null;
       XsdString vendorName = NULL_XSDSTRING;
       String moduleName = null;
-      XsdString displayName = NULL_XSDSTRING;
+      ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
       XsdString resourceadapterVersion = NULL_XSDSTRING;
       while (reader.hasNext())
       {
@@ -202,8 +202,8 @@ public class RaParser implements MetadataParser<Connector>
                   description.trimToSize();
 
                   //building and returning object
-                  return new Connector10Impl(moduleName, description, displayName, icon, vendorName, eisType,
-                        resourceadapterVersion, license, resourceadapter, id);
+                  return new Connector10Impl(moduleName, vendorName, eisType,
+                        resourceadapterVersion, license, resourceadapter, description, displayName, icon, id);
 
                }
                else
@@ -247,7 +247,7 @@ public class RaParser implements MetadataParser<Connector>
                      break;
                   }
                   case DISPLAY_NAME : {
-                     displayName = elementAsLocalizedXsdString(reader);
+                     displayName.add(elementAsLocalizedXsdString(reader));
                      break;
                   }
                   case ICON : {
@@ -278,6 +278,10 @@ public class RaParser implements MetadataParser<Connector>
       ResourceAdapter1516 resourceadapter = null;
       XsdString vendorName = NULL_XSDSTRING;
       XsdString resourceadapterVersion = NULL_XSDSTRING;
+      ArrayList<Icon> icon = new ArrayList<Icon>();
+      ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
+      ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -287,7 +291,8 @@ public class RaParser implements MetadataParser<Connector>
                {
 
                   //building and returning object
-                  return new Connector15Impl(vendorName, eisType, resourceadapterVersion, license, resourceadapter, id);
+                  return new Connector15Impl(vendorName, eisType, resourceadapterVersion, license, resourceadapter,
+                        description, displayName, icon, id);
 
                }
                else
@@ -322,8 +327,16 @@ public class RaParser implements MetadataParser<Connector>
                      resourceadapter = parseResourceAdapter(reader);
                      break;
                   }
+                  case DESCRIPTION : {
+                     description.add(elementAsLocalizedXsdString(reader));
+                     break;
+                  }
                   case DISPLAY_NAME : {
-                     elementAsLocalizedXsdString(reader);
+                     displayName.add(elementAsLocalizedXsdString(reader));
+                     break;
+                  }
+                  case ICON : {
+                     icon.add(parseIcon(reader));
                      break;
                   }
                   default :
@@ -344,11 +357,11 @@ public class RaParser implements MetadataParser<Connector>
       String id = reader.getAttributeValue(null, Connector16.Attribute.ID.getLocalName());;
       ArrayList<Icon> icon = new ArrayList<Icon>();
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
+      ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
       XsdString eisType = NULL_XSDSTRING;
       ResourceAdapter1516 resourceadapter = null;
       XsdString vendorName = NULL_XSDSTRING;
       String moduleName = null;
-      ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
       ArrayList<String> requiredWorkContext = new ArrayList<String>();
       XsdString resourceadapterVersion = NULL_XSDSTRING;
       while (reader.hasNext())
@@ -365,8 +378,8 @@ public class RaParser implements MetadataParser<Connector>
                   displayName.trimToSize();
                   requiredWorkContext.trimToSize();
                   //building and returning object
-                  return new Connector16Impl(moduleName, description, displayName, icon, vendorName, eisType,
-                        resourceadapterVersion, license, resourceadapter, requiredWorkContext, metadataComplete, id);
+                  return new Connector16Impl(moduleName, vendorName, eisType, resourceadapterVersion, license,
+                        resourceadapter, requiredWorkContext, metadataComplete, description, displayName, icon, id);
 
                }
                else

@@ -137,6 +137,7 @@ public interface Connector16 extends Connector15
        * display-name tag
        */
       DISPLAY_NAME("display-name");
+
       private final String name;
 
       /**

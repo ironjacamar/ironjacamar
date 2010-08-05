@@ -86,7 +86,17 @@ public interface Connector15 extends Connector
        */
       RESOURCEADAPTER("resourceadapter"),
       /**
-       * resourceadapter tag
+       * description tag
+       */
+      DESCRIPTION("description"),
+
+      /**
+       * icon tag
+       */
+      ICON("icon"),
+
+      /**
+       * display-name tag
        */
       DISPLAY_NAME("display-name");
 

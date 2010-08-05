@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
+import java.util.List;
+
 /**
  *
  * A Connector.
@@ -58,6 +60,21 @@ public interface Connector extends IdDecoratedMetadata, ValidatableMetadata, Mer
     * @return the resourceadapter.
     */
    public abstract ResourceAdapter getResourceadapter();
+
+   /**
+    * @return description
+    */
+   public abstract List<LocalizedXsdString> getDescriptions();
+
+   /**
+    * @return displayName
+    */
+   public abstract List<LocalizedXsdString> getDisplayNames();
+
+   /**
+    * @return icon
+    */
+   public abstract List<Icon> getIcons();
 
    /**
     * Get the version.

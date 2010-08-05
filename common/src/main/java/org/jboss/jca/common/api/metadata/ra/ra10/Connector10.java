@@ -22,12 +22,8 @@
 package org.jboss.jca.common.api.metadata.ra.ra10;
 
 import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Icon;
-import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,21 +40,6 @@ public interface Connector10 extends Connector
     * @return moduleName
     */
    public abstract String getModuleName();
-
-   /**
-    * @return description
-    */
-   public abstract List<LocalizedXsdString> getDescriptions();
-
-   /**
-    * @return displayName
-    */
-   public abstract XsdString getDisplayName();
-
-   /**
-    * @return icon
-    */
-   public abstract List<Icon> getIcons();
 
 
    /**
@@ -105,15 +86,6 @@ public interface Connector10 extends Connector
        */
       RESOURCEADAPTER("resourceadapter"),
 
-      /**
-       * description tag
-       */
-      DESCRIPTION("description"),
-
-      /**
-       * icon tag
-       */
-      ICON("icon"),
 
       /**
        * spec-version TAG
@@ -126,9 +98,20 @@ public interface Connector10 extends Connector
       VERSION("version"),
 
       /**
+       * description tag
+       */
+      DESCRIPTION("description"),
+
+      /**
+       * icon tag
+       */
+      ICON("icon"),
+
+      /**
        * display-name tag
        */
       DISPLAY_NAME("display-name");
+
       private final String name;
 
       /**
