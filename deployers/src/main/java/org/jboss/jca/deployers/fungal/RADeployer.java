@@ -411,14 +411,13 @@ public final class RADeployer implements CloneableDeployer
             // ResourceAdapter
             if (cmd.getVersion() != Version.V_10)
             {
-               if (cmd.getResourceadapter() != null && cmd.getResourceadapter().getClass() != null)
+               ResourceAdapter1516 ra1516 = (ResourceAdapter1516)cmd.getResourceadapter();
+               if (ra1516 != null && ra1516.getResourceadapterClass() != null)
                {
                   partialFailures =
                         validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER,
-                              ((ResourceAdapter1516) cmd.getResourceadapter()).getResourceadapterClass(),
-                                                                                     cl,
-                                                                                     cmd.getResourceadapter()
-                                                                                           .getConfigProperties())));
+                           ra1516.getResourceadapterClass(), cl, cmd.getResourceadapter().getConfigProperties())));
+
                   if (partialFailures != null)
                   {
                      failures = new HashSet<Failure>();
@@ -429,9 +428,7 @@ public final class RADeployer implements CloneableDeployer
                   {
                      resourceAdapter =
                            (ResourceAdapter) initAndInject(
-                                 ((ResourceAdapter1516) cmd.getResourceadapter()).getResourceadapterClass(), cmd
-                                       .getResourceadapter().getConfigProperties(),
-                                 cl);
+                                 ra1516.getResourceadapterClass(), ra1516.getConfigProperties(), cl);
 
                      if (trace)
                      {
@@ -442,7 +439,7 @@ public final class RADeployer implements CloneableDeployer
 
                      archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER,
                                                                      resourceAdapter,
-                                                                     cmd.getResourceadapter().getConfigProperties()));
+                                                                     ra1516.getConfigProperties()));
                      beanValidationObjects.add(resourceAdapter);
                   }
                }
