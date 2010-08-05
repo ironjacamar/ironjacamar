@@ -1,0 +1,31 @@
+<build>
+	<plugins>
+		<plugin>
+			<groupId>org.jboss.ironjacamar</groupId>
+			<artifactId>ironjacamar-validator-maven</artifactId>
+			<!-- The version of the plugin you want to use -->
+			<version>1.0.0.Beta2</version>
+			<executions>
+				<execution>
+					<goals>
+						<goal>validate</goal>
+					</goals>
+				</execution>
+			</executions>
+			<configuration>
+				<!-- output directory-->
+				<outputDir>.</outputDir>
+				
+				<!-- rar filename -->
+				<rarFile>ra16.rar</rarFile>
+				
+				<!--  optional classpath 
+				<classpath>
+                    <param>classpath1</param>
+                    <param>classpath2</param>
+                </classpath>
+                -->
+			</configuration>
+		</plugin>
+	</plugins>
+</build>

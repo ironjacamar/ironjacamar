@@ -8,8 +8,8 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
 	<classpathentry kind="var" path="JBJCA_LIB/sjc/fungal.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-metadata-rar.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/common/ant.jar"/>
+	<classpathentry kind="var" path="JBJCA_LIB/common/maven-plugin-api.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-logging-spi.jar"/>
 	<classpathentry kind="var" path="JBJCA_LIB/test/junit.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-embedded"/>

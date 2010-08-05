@@ -30,7 +30,7 @@
     <repository name="jboss" url="http://repository.jboss.org"/>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default">
     <conf name="common" transitive="false"/>
     <conf name="sjc" transitive="false"/>
     <conf name="embedded" transitive="false"/>
@@ -51,6 +51,7 @@
     <conf name="ironjacamar-validator" transitive="false"/>
     <conf name="ironjacamar-validator-ant" transitive="false"/>
     <conf name="ironjacamar-validator-cli" transitive="false"/>
+    <conf name="ironjacamar-validator-maven" transitive="false"/>
   </configurations>
 
   <publications>
@@ -67,6 +68,7 @@
     <artifact name="ironjacamar-validator" type="jar" url="http://repository.jboss.org"/>
     <artifact name="ironjacamar-validator-cli" type="jar" url="http://repository.jboss.org"/>
     <artifact name="ironjacamar-validator-ant" type="jar" url="http://repository.jboss.org"/>
+    <artifact name="ironjacamar-validator-maven" type="jar" url="http://repository.jboss.org"/>
   </publications>
 
   <dependencies>
@@ -84,6 +86,7 @@
     <dependency org="log4j" name="log4j" rev="${version.apache-log4j}" conf="common"/>
     <dependency org="org.apache" name="jasper" rev="${version.jasper}" conf="jetty"/>
     <dependency org="org.apache.ant" name="ant" rev="${version.ant}" conf="common,ironjacamar-validator-ant"/>
+    <dependency org="org.apache.maven" name="maven-plugin-api" rev="${version.maven}" conf="common,ironjacamar-validator-maven"/>
     <dependency org="org.eclipse.jdt.core.compiler" name="ecj" rev="${version.eclipse.ecj}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-continuation" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-http" rev="${version.jetty}" conf="jetty"/>

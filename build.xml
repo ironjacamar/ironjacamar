@@ -127,6 +127,7 @@
   <property name="version.jetty.glassfish" value="2.1.v20100127"/>
   <property name="version.jasper" value="glassfish_2.1.0.v201004190952"/>
   <property name="version.junit" value="4.8.1"/>
+  <property name="version.maven" value="2.2.1"/>
   <property name="version.slf4j" value="1.5.6"/>
   <property name="version.stax" value="1.0.1"/>
   <property name="version.transaction.api" value="1.0.1.GA"/>
