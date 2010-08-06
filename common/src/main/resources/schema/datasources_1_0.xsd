@@ -1,0 +1,1047 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XSD for the JCA 1.6 datasources and connection factory configurations 
+  (*-ds.xml) in JBoss-7.0.x, author: stefano.amestris@jboss.org -->
+<!-- The datasources element is the root of the jdbc datasource configuration -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified">
+
+  <xs:element name="datasources" type="datasourcesComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The datasources element is the root of the jdbc datasource configuration 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+  <xs:element name="connection-factories" type="connection-factoriesComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The connection-factories element is the root of the generic jca adaptor section
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+
+  <xs:complexType name="any" mixed="true">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded"
+        processContents="skip" />
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="datasourcesComplexType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="loader-repository"
+        type="any">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The loader repository
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="local-tx-datasource" type="local-tx-datasourceComplexType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               Specify a jca-jdbc non-XADatasource (local) wrapper, using local 
+               transactions
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="xa-datasource" type="xa-datasourceComplexType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               Specify a jca-jdbc XADatasource wrapper
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <!-- -->
+        <xs:element name="no-tx-datasource" type="no-tx-datasourceComplexType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               Specify a jca-jdbc non-XADatasource (local) wrapper, using no 
+               transactions
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ha-local-tx-datasource" type="ha-local-tx-datasourceComplexType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               Specify a jca-jdbc non-XADatasource (ha) wrapper, using local 
+               transactions
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ha-xa-datasource" type="ha-xa-datasourceComplexType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               Specify a jca-jdbc XADatasource (ha) wrapper, using local 
+               transactions
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="no-tx-datasourceComplexType">
+    <xs:complexContent>
+      <xs:extension base="datasourceComplexType">
+        <xs:group ref="connection-definitionGroup"></xs:group>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="local-tx-datasourceComplexType">
+    <xs:complexContent>
+      <xs:extension base="no-tx-datasourceComplexType">
+        <xs:group ref="local-tx-commonGroup"></xs:group>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ha-local-tx-datasourceComplexType">
+    <xs:complexContent>
+      <xs:extension base="base-datasourceComplexType">
+        <xs:sequence>
+          <xs:group ref="connection-definitionGroup"></xs:group>
+          <xs:group ref="local-tx-commonGroup"></xs:group>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="xa-datasourceComplexType">
+    <xs:complexContent>
+      <xs:extension base="datasourceComplexType">
+        <xs:sequence>
+          <xs:group ref="xa-commonGroup"></xs:group>
+          <xs:element minOccurs="0" name="interleaving"
+            type="boolean-presence-ComplexType">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+               An element to enable interleaving for XA connection factories Ex: 
+               <interleaving/>
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="recover-user-name"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+                <![CDATA[[
+                Specify the username used when creating a connection during recovery. 
+                Ex: <recover-user-name>sa</recover-user-name>
+                ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="recover-password"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+                <![CDATA[[
+                Specify the password used when creating a connection during recovery. 
+                    Ex: <recover-password>sa-pass</recover-password>
+                    ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="no-recover" type="xs:boolean">
+            <xs:annotation>
+              <xs:documentation>
+                <![CDATA[[
+                Specify if the xa-datasource should be excluded from recovery. Default: 
+                false Ex: <no-recover>true</no-recover>
+                ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="recover-security-domain"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+              Indicates the Subject (from security domain) that are used to distinguish 
+              connection used for recovery. The content of the recover-security-domain 
+              is the name of the JAAS security manager that will handle authentication. 
+              This name correlates to the JAAS login-config.xml descriptor application-policy/name 
+              attribute. Ex: <recover-security-domain>OracleDbRealm</recover-security-domain> 
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="url-selector-strategy-class-name"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+               A class that implements org.jboss.resource.adapter.jdbc.URLSelectorStrategy
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+
+
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ha-xa-datasourceComplexType">
+    <xs:complexContent>
+      <xs:extension base="base-datasourceComplexType">
+        <xs:group ref="xa-commonGroup"></xs:group>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="connection-factoriesComplexType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="loader-repository"
+        type="any">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The loader repository
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="tx-connection-factory" type="tx-connection-factoryComplexType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               The tx-connection-factory element is used to configure generic resource 
+               adapters supporting transactions
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="no-tx-connection-factory"
+          type="no-tx-connection-factoryComplexType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               The no-tx-connection-factory element is used to configure generic 
+               resource adapters that do not support transactions
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="tx-connection-factoryComplexType">
+    <xs:complexContent>
+      <xs:extension base="no-tx-connection-factoryComplexType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element name="local-transaction" type="boolean-presence-ComplexType">
+              <xs:annotation>
+                <xs:documentation>
+              <![CDATA[[
+               The local-transaction element is used to mark that the tx-connection-factory 
+               supports local transactions.
+              ]]>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+
+            <xs:element name="xa-transaction" type="boolean-presence-ComplexType">
+              <xs:annotation>
+                <xs:documentation>
+              <![CDATA[[
+               The xa-transaction element is used to mark that the tx-connection-factory 
+               supports XA transactions.
+              ]]>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+
+          </xs:choice>
+          <xs:element name="no-tx-separate-pools" type="boolean-presence-ComplexType">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+              Whether to use separete pools for connection retrieved in a transaction 
+               and those retieved outside a transaction e.g. <no-tx-separate-pools/>  
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="xa-resource-timeout"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+               Passed to XAResource.setTransactionTimeout() Default is zero which 
+               does not invoke the setter e.g. 5 minutes <xa-resource-timeout>300</xa-resource-timeout>
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="no-tx-connection-factoryComplexType">
+    <xs:sequence>
+
+      <xs:group ref="connection-commonGroup"></xs:group>
+      <xs:element minOccurs="0" name="rar-name" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The rar deployment to associate with the connection manager mbean. 
+               e.g. jms-ra.rar or myapplication.ear#my.rar for nested rars
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="connection-definition"
+        type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The connection definition inside the rar deployment uniquely identified 
+               by the connection factory interface, e.g. javax.sql.DataSource
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="config-property"
+        type="config-propertyComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The config-property specifies a mannaged connection factory property.
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+
+      <xs:element minOccurs="0" name="background-validation"
+        type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              An element to specify that connections should be validated on a background 
+              thread versus being validated prior to use 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="background-validation-minutes"
+        type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The background-validation-minutes element specifies the amount of 
+               time, in minutes, that background validation will run. 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="prefill" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                Whether to attempt to prefill the connection pool. Empty element denotes 
+                a false value. e.g. <prefill>true</prefill>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="use-fast-fail" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                Whether fail a connection allocation on the first connection if it 
+                is invalid (true) or keep trying until the pool is exhausted of all potential 
+                connections (false) default false. e.g. <use-fast-fail>true</use-fast-fail>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="boolean-presence-ComplexType"></xs:complexType>
+  <xs:complexType name="config-propertyComplexType"
+    mixed="true">
+    <xs:attribute use="required" name="name" type="xs:token">
+    </xs:attribute>
+    <xs:attribute use="required" name="type" type="xs:token">
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="metadataComplexType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="type-mapping" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The type mapping from conf/standardjboss.xml
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:sequence>
+  </xs:complexType>
+
+
+
+
+
+
+  <xs:complexType name="base-datasourceComplexType">
+    <xs:sequence>
+      <xs:group ref="connection-commonGroup"></xs:group>
+      <xs:element minOccurs="0" name="url-delimiter" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               Specifies the delimeter for URLs in connection-url for ha datasources
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="new-connection-sql"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               Specify an SQL statement to execute whenever a connection is added 
+               to the connection pool.
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="check-valid-connection-sql"
+        type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               Specify an SQL statement to check validity of a pool connection. This 
+               may be called when managed connection is taken from pool for use. 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"
+        name="valid-connection-checker-class-name" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                An org.jboss.resource.adapter.jdbc.ValidConnectionChecker that provides 
+                a SQLException isValidConnection(Connection e) method to validate is a connection 
+                is valid. An exception means the connection is destroyed. This overrides 
+                the check-valid-connection-sql when present. Ex: <exception-sorter-class-name> 
+                org.jboss.resource.adapter.jdbc.vendor.OracleValidConnectionChecker </exception-sorter-class-name>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="exception-sorter-class-name"
+        type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                An org.jboss.resource.adapter.jdbc.ExceptionSorter that provides a 
+                boolean isExceptionFatal(SQLException e) method to validate is an exception 
+                should be broadcast to all javax.resource.spi.ConnectionEventListener as 
+                a connectionErrorOccurred message. Ex: <exception-sorter-class-name> org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter 
+                </exception-sorter-class-name> <exception-sorter-class-name> org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter 
+                </exception-sorter-class-name>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="track-statements" type="track-statements-type">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                  Whether to check for unclosed statements when a connection is returned 
+                to the pool and result sets are closed when a statement is closed/return 
+                to the prepared statement cache. valid values are: false - do not track statements 
+                and results true - track statements and result sets and warn when they are 
+                not closed nowarn - track statements but do no warn about them being unclosed 
+                (the default) e.g. <track-statements>nowarn</track-statements>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="prepared-statement-cache-size"
+        type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The number of prepared statements per connection in an LRU cache
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="share-prepared-statements"
+        type="boolean-presence-ComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                whether to share prepare statements, i.e. whether asking for same 
+                statement twice without closing uses the same underlying prepared statement. 
+                The default is false. e.g. <share-prepared-statements/>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="set-tx-query-timeout"
+        type="boolean-presence-ComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                whether to set the query timeout based on the time remaining until 
+                transaction timeout, any configured query timeout will be used if there is 
+                no transaction. The default is false. e.g. <set-tx-query-timeout/>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="query-timeout" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               Any configured query timeout in seconds The default is no timeout 
+               e.g. 5 minutes <query-timeout>300</query-timeout>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="use-try-lock" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               Any configured timeout for internal locks on the resource adapter 
+               objects in seconds The default is a 60 second timeout e.g. 5 minutes <use-try-lock>300</use-try-lock>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="datasourceComplexType">
+    <xs:complexContent>
+      <xs:extension base="base-datasourceComplexType">
+        <xs:sequence>
+          <xs:element name="url-selector-strategy-class-name"
+            type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+               A class that implements org.jboss.resource.adapter.jdbc.URLSelectorStrategy
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="background-validation"
+            type="xs:boolean">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+              An element to specify that connections should be validated on a background 
+              thread versus being validated prior to use 
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0"
+            name="background-validation-minutes" type="xs:nonNegativeInteger">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+               The background-validation-minutes element specifies the amount of 
+               time, in minutes, that background validation will run. 
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="validate-on-match"
+            type="xs:boolean">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+              The validate-on-match element indicates whether or not connection 
+              level validation should be done when a connection factory attempts to match 
+              a managed connection for a given set. This is typically exclusive to the 
+              use of background validation 
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+
+          <xs:element minOccurs="0"
+            name="stale-connection-checker-class-name" type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+                An org.jboss.resource.adapter.jdbc.StaleConnectionChecker that provides 
+                a boolean isStaleConnection(SQLException e) method which if it it returns 
+                true will wrap the exception in an org.jboss.resource.adapter.jdbc.StaleConnectionException 
+                which is a subclass of SQLException. Ex: <stale-connection-checker-class-name> 
+                org.jboss.resource.adapter.jdbc.vendor.OracleStaleConnectionChecker </stale-connection-checker-class-name> 
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="prefill" type="xs:token">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+                Whether to attempt to prefill the connection pool. Empty element denotes 
+                a false value. e.g. <prefill>true</prefill>
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element minOccurs="0" name="use-fast-fail"
+            type="xs:boolean">
+            <xs:annotation>
+              <xs:documentation>
+              <![CDATA[[
+                Whether fail a connection allocation on the first connection if it 
+                is invalid (true) or keep trying until the pool is exhausted of all potential 
+                connections (false) default false. e.g. <use-fast-fail>true</use-fast-fail>
+              ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:simpleType name="transaction-isolation-values">
+    <xs:annotation>
+      <xs:documentation>
+        Define constants used as the possible
+        transaction isolation levels
+        in transaction-isolation type.
+        Include: TRANSACTION_READ_UNCOMMITTED
+        TRANSACTION_READ_COMMITTED
+        TRANSACTION_REPEATABLE_READ TRANSACTION_SERIALIZABLE
+        TRANSACTION_NONE
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="TRANSACTION_READ_UNCOMMITTED" />
+      <xs:enumeration value="TRANSACTION_READ_COMMITTED" />
+      <xs:enumeration value="TRANSACTION_REPEATABLE_READ" />
+      <xs:enumeration value="TRANSACTION_SERIALIZABLE" />
+      <xs:enumeration value="TRANSACTION_NONE" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="securityComplexType">
+    <xs:choice minOccurs="0">
+      <xs:element name="application-managed-security" type="boolean-presence-ComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              Indicates that app supplied parameters (such as from getConnection(user, 
+              pw)) are used to distinguish connections in the pool. Ex: <application-managed-security/>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="security-domain" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              Indicates Subject (from security domain) are used to distinguish connections 
+              in the pool. The content of the security-domain is the name of the JAAS security 
+              manager that will handle authentication. This name correlates to the JAAS 
+              login-config.xml descriptor application-policy/name attribute. Ex: <security-domain>HsqlDbRealm</security-domain> 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="security-domain-and-application"
+        type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              Indicates that either app supplied parameters (such as from getConnection(user, 
+              pw)) or Subject (from security domain) are used to distinguish connections 
+              in the pool. The content of the security-domain is the name of the JAAS security 
+              manager that will handle authentication. This name correlates to the JAAS 
+              login-config.xml descriptor application-policy/name attribute. Ex: <security-domain-and-application>HsqlDbRealm</security-domain-and-application> 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:group name="connection-commonGroup">
+    <xs:sequence>
+      <xs:element name="jndi-name" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+            The JNDI name under which the DataSource wrapper will be bound. 
+            Note that this name is relative to the "java:/" prefix unless use-java-context 
+            is false. Ex: <jndi-name>DefaultDS</jndi-name>
+            ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="use-java-context" minOccurs="0"
+        type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Setting this to false will bind the DataSource into global jndi
+              Ex:
+              <use-java-context>false</use-java-context>
+           ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="1" name="security" type="securityComplexType"></xs:element>
+      <xs:element name="min-pool-size" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              The min-pool-size element indicates the minimum number of connections 
+              a pool should hold. These are not created until a Subject is known from a 
+              request for a connection. This default to 0. Ex: <min-pool-size>1</min-pool-size>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="max-pool-size" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              The max-pool-size element indicates the maximum number of connections 
+              for a pool. No more than MaxSize connections will be created in each sub-pool. 
+              This defaults to 20. 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="blocking-timeout-millis" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                The blocking-timeout-millis element indicates the maximum time in 
+                milliseconds to block while waiting for a connection before throwing an exception. 
+                Note that this blocks only while waiting for a permit for a connection, and 
+                will never throw an exception if creating a new connection takes an inordinately 
+                long time. The default is 30000 (30 seconds).  
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="metadata" type="metadataComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               For backwards compatibility use type-mapping
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="type-mapping" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The type mapping from conf/standardjboss.xml
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="depends" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The depends element specifies the JMX ObjectName string of a service 
+               that the connection manager services depend on. Ex: <depends>jboss:service=Hypersonic</depends>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="user-name" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+               Specify the default username used when creating a new connection. 
+              Ex: <user-name>sa</user-name>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="password" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+            Specify the default password used when creating a new connection. 
+            Ex: <password>sa-pass</password>]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="idle-timeout-minutes" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              The idle-timeout-minutes elements indicates the maximum time in minutes 
+              a connection may be idle before being closed. The actual maximum time depends 
+              also on the IdleRemover scan time, which is 1/2 the smallest idle-timeout-minutes 
+              of any pool. 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="allocation-retry" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              The allocation retry element indicates the number of times that allocating 
+              a connection should be tried before throwing an exception. The default is 
+              0.  
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              The allocation retry wait millis element indicates the time in milliseconds 
+              to wait between retrying to allocate a connection. The default is 5000 (5 
+              seconds). 
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="xa-datasource-propertyComplexType"
+    mixed="true">
+    <xs:attribute use="required" name="name" type="xs:token"></xs:attribute>
+  </xs:complexType>
+
+  <xs:group name="xa-commonGroup">
+    <xs:sequence>
+      <xs:element name="url-property" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               For HA XA datasource specifies the name of an xa-datasource-property 
+    that contains a list of URLs
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="url-delimiter" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               Specifies the delimeter for URLs in connection-url for ha datasources
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="transaction-isolation" type="transaction-isolation-values">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+            Set java.sql.Connection transaction isolation level to use. The constants 
+            defined by transaction-isolation-values are the possible transaction isolation 
+            levels and include: TRANSACTION_READ_UNCOMMITTED TRANSACTION_READ_COMMITTED 
+            TRANSACTION_REPEATABLE_READ TRANSACTION_SERIALIZABLE TRANSACTION_NONE
+            ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="no-tx-separate-pools" type="boolean-presence-ComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              Whether to use separete pools for connection retrieved in a transaction 
+               and those retieved outside a transaction e.g. <no-tx-separate-pools/>  
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="xa-datasource-class" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               The fully qualifed name of the javax.sql.XADataSource implementation 
+               class. Ex: <xa-datasource-class>com.informix.jdbcx.IfxXADataSource</xa-datasource-class>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" maxOccurs="unbounded"
+        name="xa-datasource-property" type="xa-datasource-propertyComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              InSpecify a property to assign to the XADataSource implementation class. 
+              Each property is identified by the name attribute and the property value 
+              is given by the xa-datasource-property element content. The property is mapped 
+              onto the XADataSource implementation by looking for a JavaBeans style getter 
+              method for the property name. If found, the value of the property is set 
+              using the JavaBeans setter with the element text translated to the true property 
+              type using the java.beans.PropertyEditor for the type. Ex: <xa-datasource-property 
+              name="IfxWAITTIME">10</xa-datasource-property> <xa-datasource-property name="IfxIFXHOST">myhost.mydomain.com</xa-datasource-property> 
+              <xa-datasource-property name="PortNumber">1557</xa-datasource-property> <xa-datasource-property 
+              name="DatabaseName">mydb</xa-datasource-property> <xa-datasource-property 
+              name="ServerName">myserver</xa-datasource-property>  
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="isSameRM-override-value"
+        type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                The isSameRM-override-value element allows one to unconditionally 
+                set whether the javax.transaction.xa.XAResource.isSameRM(XAResource) returns 
+                true or false. Ex: <isSameRM-override-value>true</isSameRM-override-value>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="xa-resource-timeout"
+        type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               Passed to XAResource.setTransactionTimeout() Default is zero which 
+               does not invoke the setter e.g. 5 minutes <xa-resource-timeout>300</xa-resource-timeout>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:complexType name="connection-propertyComplexType"
+    mixed="true">
+    <xs:attribute use="required" name="name" type="xs:token"></xs:attribute>
+  </xs:complexType>
+
+  <xs:group name="connection-definitionGroup">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="connection-property"
+        type="connection-propertyComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                The connection-property element allows you to pass in arbitrary connection 
+                properties to the Driver.connect(url, props) method. Each connection-property 
+                specifies a string name/value pair with the property name coming from the 
+                name attribute and the value coming from the element content. Ex: <connection-property 
+                name="char.encoding">UTF-8</connection-property>
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="connection-url" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+                <![CDATA[[
+                The JDBC driver connection URL string Ex: <connection-url>jdbc:hsqldb:hsql://localhost:1701</connection-url>
+                ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="driver-class" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+                <![CDATA[[
+                 The fully qualifed name of the JDBC driver class Ex: <driver-class>org.hsqldb.jdbcDriver</driver-class>
+                 ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="local-tx-commonGroup">
+    <xs:sequence>
+      <xs:element name="transaction-isolation" type="transaction-isolation-values">
+        <xs:annotation>
+          <xs:documentation>
+                <![CDATA[[
+                Set java.sql.Connection transaction isolation level to use. The constants 
+                defined by transaction-isolation-values are the possible transaction isolation 
+                levels and include: TRANSACTION_READ_UNCOMMITTED TRANSACTION_READ_COMMITTED 
+                TRANSACTION_REPEATABLE_READ TRANSACTION_SERIALIZABLE TRANSACTION_NONE
+                ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="no-tx-separate-pools" type="boolean-presence-ComplexType">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+              Whether to use separete pools for connection retrieved in a transaction 
+               and those retieved outside a transaction e.g. <no-tx-separate-pools/>  
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  <xs:simpleType name="track-statements-type">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="false" />
+      <xs:enumeration value="true" />
+      <xs:enumeration value="nowarn" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
+
+
