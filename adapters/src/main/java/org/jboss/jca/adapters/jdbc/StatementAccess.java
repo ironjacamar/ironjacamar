@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,14 +20,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.api;
+package org.jboss.jca.adapters.jdbc;
+
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
- * The JBoss specific connection manager interface.
- * 
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$
+ A simple interface that allow us to get the underlying driver specific
+ statement implementation back from the wrapper.
+
+ @author Scott.Stark@jboss.org
+ @author Adrian.Brock@jboss.com
+ @version $Revision: 71554 $
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager, java.io.Serializable
+public interface StatementAccess
 {
+   /**
+    * Get the underlying statement
+    * 
+    * @return the underlying statement
+    * @throws SQLException when already closed
+    */
+   Statement getUnderlyingStatement() throws SQLException;
 }

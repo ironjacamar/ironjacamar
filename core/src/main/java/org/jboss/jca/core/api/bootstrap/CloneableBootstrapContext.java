@@ -20,7 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.api;
+package org.jboss.jca.core.api.bootstrap;
+
+import org.jboss.jca.core.api.workmanager.WorkManager;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.XATerminator;

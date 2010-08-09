@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.bootstrapcontext;
 
-import org.jboss.jca.core.api.CloneableBootstrapContext;
-import org.jboss.jca.core.api.WorkManager;
+import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
+import org.jboss.jca.core.api.workmanager.WorkManager;
 
 import java.util.HashSet;
 import java.util.Set;

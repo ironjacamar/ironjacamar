@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,24 +19,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.transaction;
 
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+package org.jboss.jca.adapters.jdbc;
+
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 /**
- * JTATransactionChecker.
+ * WrappedConnectionFactory.
  * 
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 85945 $
  */
-public interface JTATransactionChecker
+public interface WrappedConnectionFactory
 {
    /**
-    * Check whether a tranasction is active
-    * 
-    * @throws RollbackException if the transaction is not active, preparing, prepared or committing
-    * @throws SystemException for any error in the transaction manager
+    * Create a wrapped connection
+    * @param mc The managed connection
+    * @return The wrapped connection
     */
-   void checkTransactionActive() throws RollbackException, SystemException;
+   WrappedConnection createWrappedConnection(BaseWrapperManagedConnection mc);
+
+   /**
+    * Create a cached prepared statement
+    * @param ps The prepared statement
+    * @return The cached prepared statement
+    * @exception SQLException Thrown if an error occurs
+    */
+   CachedPreparedStatement createCachedPreparedStatement(PreparedStatement ps) throws SQLException;
+
+   /**
+    * Create a cached callable statement
+    * @param cs The callable statement
+    * @return The cached callable statement
+    * @exception SQLException Thrown if an error occurs
+    */
+   CachedCallableStatement createCachedCallableStatement(CallableStatement cs) throws SQLException;
 }

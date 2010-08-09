@@ -265,6 +265,7 @@
     <ant dir="web" inheritRefs="true" target="jars"/>
     <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="codegenerator" inheritRefs="true" target="jars"/>
+    <ant dir="adapters" inheritRefs="true" target="jars"/>
   </target>
   
   <!-- ================================= 
@@ -280,6 +281,7 @@
     <ant dir="web" inheritRefs="true" target="docs"/>
     <ant dir="sjc" inheritRefs="true" target="docs"/>
     <ant dir="codegenerator" inheritRefs="true" target="docs"/>
+    <ant dir="adapters" inheritRefs="true" target="docs"/>
   </target>
   
   <!-- ================================= 
@@ -292,6 +294,7 @@
     <ant dir="deployers" inheritRefs="true" target="prepare-test"/>
     <ant dir="validator" inheritRefs="true" target="prepare-test"/>
     <ant dir="codegenerator" inheritRefs="true" target="prepare-test"/>
+    <ant dir="adapters" inheritRefs="true" target="prepare-test"/>
   </target>
   
   <!-- ================================= 
@@ -303,7 +306,7 @@
     <ant dir="embedded" inheritRefs="true" target="test"/>
     <ant dir="deployers" inheritRefs="true" target="test"/>
     <ant dir="validator" inheritRefs="true" target="test"/>
-    <ant dir="codegenerator" inheritRefs="true" target="test"/>
+    <ant dir="adapters" inheritRefs="true" target="test"/>
   </target>
   
   <!-- ================================= 
@@ -339,6 +342,7 @@
     <ant dir="deployers" inheritRefs="true" target="artifacts"/>
     <ant dir="embedded" inheritRefs="true" target="artifacts"/>
     <ant dir="codegenerator" inheritRefs="true" target="artifacts"/>
+    <ant dir="adapters" inheritRefs="true" target="artifacts"/>
   </target>
   
   <!-- ================================= 
@@ -413,7 +417,7 @@
                 classpathref="checkstyle.lib.path.id">
       <fileset dir="${basedir}"
                includes="**/*.java"
-			   excludes="target/**/*.java"/>
+	       excludes="target/**/*.java"/>
       <formatter type="plain"/>
       <formatter type="xml" toFile="${reports.dir}/checkstyle/checkstyle-result.xml"/>
     </checkstyle>

@@ -21,12 +21,12 @@
  */
 package org.jboss.jca.core.connectionmanager;
 
+import org.jboss.jca.core.api.connectionmanager.transaction.JTATransactionChecker;
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
-import org.jboss.jca.core.connectionmanager.transaction.JTATransactionChecker;
 
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
@@ -46,7 +46,7 @@ import org.jboss.tm.TransactionTimeoutConfiguration;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
 public interface ConnectionManager extends
-   org.jboss.jca.core.api.ConnectionManager,
+   org.jboss.jca.core.api.connectionmanager.ConnectionManager,
    ConnectionCacheListener, 
    ConnectionListenerFactory, 
    TransactionTimeoutConfiguration, 

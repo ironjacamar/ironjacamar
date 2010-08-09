@@ -122,14 +122,14 @@ config/bootstrap/jca.xml
               </row>
               <row>
                 <entry><code>DefaultBootstrapContext</code></entry>
-                <entry><code>org.jboss.jca.core.api.CloneableBootstrapContext</code></entry>
+                <entry><code>org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext</code></entry>
                 <entry>
                   Specifies the default bootstrap context for resource adapters
                 </entry>
               </row>
               <row>
                 <entry><code>BootstrapContexts</code></entry>
-                <entry><code>Map&lt;String, org.jboss.jca.core.api.CloneableBootstrapContext&gt;</code></entry>
+                <entry><code>Map&lt;String, org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext&gt;</code></entry>
                 <entry>
                   Bootstrap context map (unique name to a cloneable bootstrap context) which allows
                   developers to bind (through <code>jboss-ra.xml</code>) their resource adapter to

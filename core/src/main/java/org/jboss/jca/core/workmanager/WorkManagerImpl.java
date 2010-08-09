@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.workmanager;
 
-import org.jboss.jca.core.api.WorkManager;
+import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.security.Callback;
 
 import java.lang.reflect.Method;

@@ -95,7 +95,10 @@
   </bean>
 
   <!-- Work Manager -->
-  <bean name="WorkManager" interface="org.jboss.jca.core.api.WorkManager" class="org.jboss.jca.core.workmanager.WorkManagerImpl">
+  <bean name="WorkManager"
+        interface="org.jboss.jca.core.api.workmanager.WorkManager" 
+        class="org.jboss.jca.core.workmanager.WorkManagerImpl">
+
     <!-- The short running thread pool -->
     <property name="ShortRunningThreadPool"><inject bean="ShortRunningThreadPool"/></property>
 
@@ -111,7 +114,7 @@
   
   <!-- Default Bootstrap context -->
   <bean name="DefaultBootstrapContext" 
-        interface="org.jboss.jca.core.api.CloneableBootstrapContext"
+        interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
         class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
 
     <!-- The Transaction Synchronization Registry -->
