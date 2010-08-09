@@ -176,8 +176,8 @@
               </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="time-outs" type="time-outs_type" minOccurs="0"/>
-      <xs:element minOccurs="0" name="security" type="securityComplexType"> </xs:element>
+      <xs:element name="time-out-settings" type="time-outs_type" minOccurs="0"/>
+      <xs:element minOccurs="0" name="security-settings" type="securityComplexType"> </xs:element>
       <xs:element minOccurs="0" name="metadata" type="metadataComplexType">
         <xs:annotation>
           <xs:documentation>
@@ -188,7 +188,7 @@
         </xs:annotation>
       </xs:element>
 
-      <xs:element name="statements" minOccurs="0">
+      <xs:element name="statement-settings" minOccurs="0">
         <xs:complexType>
           <xs:sequence>
             <xs:element minOccurs="0" name="track-statements" type="track-statements-type">
@@ -231,7 +231,7 @@
         </xs:complexType>
       </xs:element>
 
-      <xs:element name="validation" type="validation_type" minOccurs="0"/>
+      <xs:element name="validation-settings" type="validation_type" minOccurs="0"/>
       <xs:element minOccurs="0" name="url-delimiter" type="xs:token">
         <xs:annotation>
           <xs:documentation>
@@ -421,8 +421,8 @@
               </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="recovery" type="recovery_type"/>
-      <xs:element name="time-outs" type="time-outs_type" minOccurs="0"/>
+      <xs:element minOccurs="0" name="recovery-settings" type="recovery-settings_type"/>
+      <xs:element name="time-out-settings" type="time-outs_type" minOccurs="0"/>
       <xs:element minOccurs="0" name="xa-resource-timeout" type="xs:token">
         <xs:annotation>
           <xs:documentation>
@@ -433,7 +433,7 @@
               </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="security" type="securityComplexType"> </xs:element>
+      <xs:element minOccurs="0" name="security-settings" type="securityComplexType"> </xs:element>
       <xs:element minOccurs="0" name="metadata" type="metadataComplexType">
         <xs:annotation>
           <xs:documentation>
@@ -444,7 +444,7 @@
         </xs:annotation>
       </xs:element>
 
-      <xs:element name="statements" minOccurs="0">
+      <xs:element name="statement-settings" minOccurs="0">
         <xs:complexType>
           <xs:sequence>
             <xs:element minOccurs="0" name="track-statements" type="track-statements-type">
@@ -487,7 +487,7 @@
         </xs:complexType>
       </xs:element>
 
-      <xs:element name="validation" type="validation_type" minOccurs="0"/>
+      <xs:element name="validation-settings" type="validation_type" minOccurs="0"/>
       <xs:element minOccurs="0" name="url-delimiter" type="xs:token">
         <xs:annotation>
           <xs:documentation>
@@ -593,7 +593,7 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="securityComplexType">
+  <xs:complexType name="security-settings_type">
     <xs:choice minOccurs="0">
       <xs:element name="application-managed-security" type="boolean-presence-ComplexType"
         minOccurs="0">
@@ -646,15 +646,7 @@
   </xs:complexType>
 
 
-
-  <xs:simpleType name="track-statements-type">
-    <xs:restriction base="xs:token">
-      <xs:enumeration value="false"/>
-      <xs:enumeration value="true"/>
-      <xs:enumeration value="nowarn"/>
-    </xs:restriction>
-  </xs:simpleType>
-  <xs:complexType name="validation_type">
+  <xs:complexType name="validation-settings_type">
     <xs:sequence>
       <xs:element minOccurs="0" name="valid-connection-checker-class-name" type="xs:token">
         <xs:annotation>
@@ -751,7 +743,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="time-outs_type">
+  <xs:complexType name="time-out-settings_type">
     <xs:sequence>
       <xs:element name="blocking-timeout-millis" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
@@ -833,7 +825,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="recovery_type">
+  <xs:complexType name="recovery-settings_type">
     <xs:choice>
       <xs:element minOccurs="0" name="no-recover" type="xs:boolean">
         <xs:annotation>
