@@ -22,18 +22,7 @@
 
 
   <xs:complexType name="datasourcesComplexType">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="loader-repository" type="any">
-        <xs:annotation>
-          <xs:documentation>
-              <![CDATA[[
-               The loader repository
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-
-      <xs:choice minOccurs="0" maxOccurs="unbounded">
+       <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="datasource" type="datasourceComplexType">
           <xs:annotation>
             <xs:documentation>
@@ -54,7 +43,6 @@
           </xs:annotation>
         </xs:element>
       </xs:choice>
-    </xs:sequence>
   </xs:complexType>
 
 
@@ -84,12 +72,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="prefill" type="xs:token">
+      <xs:element minOccurs="0" name="prefill" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
                 Whether to attempt to prefill the connection pool. Empty element denotes 
-                a false value. e.g. <prefill>true</prefill>
+                a true value. e.g. <prefill>true</prefill>.
+                Default is true
               ]]>
           </xs:documentation>
         </xs:annotation>
@@ -131,15 +120,6 @@
               </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="type-mapping" type="xs:token">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-               The type mapping from conf/standardjboss.xml
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="transaction-isolation" type="transaction-isolation-values" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
@@ -149,16 +129,6 @@
                 levels and include: TRANSACTION_READ_UNCOMMITTED TRANSACTION_READ_COMMITTED 
                 TRANSACTION_REPEATABLE_READ TRANSACTION_SERIALIZABLE TRANSACTION_NONE
                 ]]>
-              </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="no-tx-separate-pools" type="boolean-presence-ComplexType" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>
-                <![CDATA[[
-              Whether to use separete pools for connection retrieved in a transaction 
-               and those retieved outside a transaction e.g. <no-tx-separate-pools/>  
-              ]]>
               </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -176,17 +146,8 @@
               </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="time-out-settings" type="time-outs_type" minOccurs="0"/>
-      <xs:element minOccurs="0" name="security-settings" type="securityComplexType"> </xs:element>
-      <xs:element minOccurs="0" name="metadata" type="metadataComplexType">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-               For backwards compatibility use type-mapping
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element name="time-out-settings" type="time-out-settings_type" minOccurs="0"/>
+      <xs:element minOccurs="0" name="security-settings" type="security-settings_type"> </xs:element>
 
       <xs:element name="statement-settings" minOccurs="0">
         <xs:complexType>
@@ -231,7 +192,7 @@
         </xs:complexType>
       </xs:element>
 
-      <xs:element name="validation-settings" type="validation_type" minOccurs="0"/>
+      <xs:element name="validation-settings" type="validation-settings_type" minOccurs="0"/>
       <xs:element minOccurs="0" name="url-delimiter" type="xs:token">
         <xs:annotation>
           <xs:documentation>
@@ -246,16 +207,6 @@
           <xs:documentation>
             <![CDATA[[
                A class that implements org.jboss.resource.adapter.jdbc.URLSelectorStrategy
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element minOccurs="0" name="depends" type="xs:token">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-               The depends element specifies the JMX ObjectName string of a service 
-               that the connection manager services depend on. Ex: <depends>jboss:service=Hypersonic</depends>
               ]]>
           </xs:documentation>
         </xs:annotation>
@@ -310,7 +261,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="prefill" type="xs:token">
+      <xs:element minOccurs="0" name="prefill" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -369,15 +320,6 @@
               </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="type-mapping" type="xs:token">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-               The type mapping from conf/standardjboss.xml
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="transaction-isolation" type="transaction-isolation-values" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
@@ -390,17 +332,7 @@
               </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="no-tx-separate-pools" type="boolean-presence-ComplexType" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>
-              <![CDATA[[
-              Whether to use separete pools for connection retrieved in a transaction 
-               and those retieved outside a transaction e.g. <no-tx-separate-pools/>  
-              ]]>
-              </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element minOccurs="0" name="isSameRM-override-value" type="xs:boolean">
+      <xs:element minOccurs="0" name="is-same-rm-override-value" type="xs:boolean">
         <xs:annotation>
           <xs:documentation>
               <![CDATA[[
@@ -422,7 +354,7 @@
         </xs:annotation>
       </xs:element>
       <xs:element minOccurs="0" name="recovery-settings" type="recovery-settings_type"/>
-      <xs:element name="time-out-settings" type="time-outs_type" minOccurs="0"/>
+      <xs:element name="time-out-settings" type="time-out-settings_type" minOccurs="0"/>
       <xs:element minOccurs="0" name="xa-resource-timeout" type="xs:token">
         <xs:annotation>
           <xs:documentation>
@@ -433,16 +365,7 @@
               </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="security-settings" type="securityComplexType"> </xs:element>
-      <xs:element minOccurs="0" name="metadata" type="metadataComplexType">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-               For backwards compatibility use type-mapping
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element minOccurs="0" name="security-settings" type="security-settings_type"> </xs:element>
 
       <xs:element name="statement-settings" minOccurs="0">
         <xs:complexType>
@@ -487,7 +410,7 @@
         </xs:complexType>
       </xs:element>
 
-      <xs:element name="validation-settings" type="validation_type" minOccurs="0"/>
+      <xs:element name="validation-settings" type="validation-settings_type" minOccurs="0"/>
       <xs:element minOccurs="0" name="url-delimiter" type="xs:token">
         <xs:annotation>
           <xs:documentation>
@@ -502,16 +425,6 @@
           <xs:documentation>
             <![CDATA[[
                A class that implements org.jboss.resource.adapter.jdbc.URLSelectorStrategy
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element minOccurs="0" name="depends" type="xs:token">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-               The depends element specifies the JMX ObjectName string of a service 
-               that the connection manager services depend on. Ex: <depends>jboss:service=Hypersonic</depends>
               ]]>
           </xs:documentation>
         </xs:annotation>
@@ -545,21 +458,6 @@
 
   <xs:complexType name="boolean-presence-ComplexType"/>
 
-  <xs:complexType name="metadataComplexType">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="type-mapping" type="xs:token">
-        <xs:annotation>
-          <xs:documentation>
-              <![CDATA[[
-               The type mapping from conf/standardjboss.xml
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-
-    </xs:sequence>
-  </xs:complexType>
-
 
 
 
@@ -568,8 +466,19 @@
   <xs:attributeGroup name="common-datasourceAttributes">
     <xs:attribute name="jndi-name" type="xs:token" use="required"/>
     <xs:attribute name="pool-name" type="xs:token" use="required"/>
-    <xs:attribute name="enabled" type="xs:boolean" default="true" form="unqualified" use="optional"
-    />
+    <xs:attribute name="enabled" type="xs:boolean" default="true" form="unqualified" use="optional"/>
+    <xs:attribute default="false" name="use-java-context" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>
+      <![CDATA[[
+              Setting this to false will bind the DataSource into global jndi
+              Ex:
+              <use-java-context>false</use-java-context>
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+
+    </xs:attribute>
   </xs:attributeGroup>
 
   <xs:simpleType name="transaction-isolation-values">
@@ -874,4 +783,11 @@
       </xs:sequence>
     </xs:choice>
   </xs:complexType>
+  <xs:simpleType name="track-statements-type">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="true"/>
+      <xs:enumeration value="false"/>
+      <xs:enumeration value="nowarn"/>
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>
