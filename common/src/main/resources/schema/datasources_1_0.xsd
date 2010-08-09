@@ -14,13 +14,6 @@
 
 
 
-  <xs:complexType name="any" mixed="true">
-    <xs:sequence>
-      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="skip"/>
-    </xs:sequence>
-  </xs:complexType>
-
-
   <xs:complexType name="datasourcesComplexType">
        <xs:choice minOccurs="0" maxOccurs="unbounded">
         <xs:element name="datasource" type="datasourceComplexType">
@@ -208,17 +201,6 @@
             <![CDATA[[
                A class that implements org.jboss.resource.adapter.jdbc.URLSelectorStrategy
               ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="use-java-context" minOccurs="0" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Setting this to false will bind the DataSource into global jndi
-              Ex:
-              <use-java-context>false</use-java-context>
-           ]]>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -426,17 +408,6 @@
             <![CDATA[[
                A class that implements org.jboss.resource.adapter.jdbc.URLSelectorStrategy
               ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="use-java-context" minOccurs="0" type="xs:boolean">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Setting this to false will bind the DataSource into global jndi
-              Ex:
-              <use-java-context>false</use-java-context>
-           ]]>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
