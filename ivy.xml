@@ -30,13 +30,14 @@
     <repository name="jboss" url="http://repository.jboss.org"/>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default">
     <conf name="common" transitive="false"/>
     <conf name="sjc" transitive="false"/>
     <conf name="embedded" transitive="false"/>
     <conf name="arquillian" transitive="false"/>
     <conf name="jetty" transitive="false"/>
     <conf name="test" transitive="false"/>
+    <conf name="tools" transitive="false"/>
 
     <conf name="ironjacamar-codegenerator" transitive="false"/>
     <conf name="ironjacamar-common-api" transitive="false"/>
@@ -76,17 +77,17 @@
     <dependency org="com.github.fungal" name="fungal" rev="${version.fungal}" conf="sjc,ironjacamar-deployers-fungal,ironjacamar-embedded"/>
     <dependency org="com.github.fungal" name="fungal-cli" rev="${version.fungal}" conf="sjc"/>
     <dependency org="com.sun.xml.bind" name="jaxb-impl" rev="${version.jaxb.impl}" conf="common"/>
-    <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="common"/>
+    <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="tools"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="common"/>
     <dependency org="javax.activation" name="activation" rev="${version.activation}" conf="common"/>
     <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="common,ironjacamar-core-impl,ironjacamar-deployers-fungal"/>
     <dependency org="javax.xml.bind" name="jaxb-api" rev="${version.jaxb.api}" conf="common,ironjacamar-codegenerator"/>
-    <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="common"/>
+    <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="tools"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
     <dependency org="log4j" name="log4j" rev="${version.apache-log4j}" conf="common"/>
     <dependency org="org.apache" name="jasper" rev="${version.jasper}" conf="jetty"/>
-    <dependency org="org.apache.ant" name="ant" rev="${version.ant}" conf="common,ironjacamar-validator-ant"/>
-    <dependency org="org.apache.maven" name="maven-plugin-api" rev="${version.maven}" conf="common,ironjacamar-validator-maven"/>
+    <dependency org="org.apache.ant" name="ant" rev="${version.ant}" conf="tools,ironjacamar-validator-ant"/>
+    <dependency org="org.apache.maven" name="maven-plugin-api" rev="${version.maven}" conf="tools,ironjacamar-validator-maven"/>
     <dependency org="org.eclipse.jdt.core.compiler" name="ecj" rev="${version.eclipse.ecj}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-continuation" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-http" rev="${version.jetty}" conf="jetty"/>
@@ -102,7 +103,7 @@
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl"/>
     <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="common"/>
     <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="common,ironjacamar-common-impl"/>
-    <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="common"/>
+    <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="tools"/>
     <dependency org="org.jboss.arquillian" name="arquillian-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.arquillian" name="arquillian-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.arquillian" name="arquillian-junit" rev="${version.arquillian}" conf="arquillian,ironjacamar-embedded-arquillian"/>

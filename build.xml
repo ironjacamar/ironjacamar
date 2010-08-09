@@ -152,6 +152,9 @@
     <fileset dir="${lib.dir}/sjc">
       <include name="**/*.jar"/>
     </fileset>
+    <fileset dir="${lib.dir}/tools">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${target.dir}">
       <include name="**/*.jar"/>
     </fileset>
@@ -171,6 +174,9 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/test">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/tools">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${target.dir}">
@@ -196,6 +202,9 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/test">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/tools">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${target.dir}">
@@ -241,7 +250,7 @@
        ================================= -->
   <target name="resolve" depends="init">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="common,sjc,embedded,arquillian,jetty,test"
+                  conf="common,sjc,embedded,arquillian,jetty,test,tools"
                   sync="true"/>
   </target>
   
@@ -457,6 +466,9 @@
         <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
+        <fileset dir="${lib.dir}/tools">
+          <include name="*.jar"/>
+        </fileset>
       </auxClasspath>
       <class location="${target.dir}/${name}-codegenerator.jar" />
       <class location="${target.dir}/${name}-common-api.jar" />
@@ -472,6 +484,7 @@
       <class location="${target.dir}/${name}-validator.jar" />
       <class location="${target.dir}/${name}-validator-ant.jar" />
       <class location="${target.dir}/${name}-validator-cli.jar" />
+      <class location="${target.dir}/${name}-validator-maven.jar" />
       <class location="${target.dir}/${name}-web.jar" />
       <class location="${target.dir}/${name}-web-console.jar" />
     </findbugs>
@@ -500,6 +513,9 @@
         <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
+        <fileset dir="${lib.dir}/tools">
+          <include name="*.jar"/>
+        </fileset>
       </auxClasspath>
       <class location="${target.dir}/${name}-codegenerator.jar" />
       <class location="${target.dir}/${name}-common-api.jar" />
@@ -515,6 +531,7 @@
       <class location="${target.dir}/${name}-validator.jar" />
       <class location="${target.dir}/${name}-validator-ant.jar" />
       <class location="${target.dir}/${name}-validator-cli.jar" />
+      <class location="${target.dir}/${name}-validator-maven.jar" />
       <class location="${target.dir}/${name}-web.jar" />
       <class location="${target.dir}/${name}-web-console.jar" />
     </findbugs>
@@ -579,6 +596,7 @@
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${lib.dir}/tools" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -616,6 +634,7 @@
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${lib.dir}/tools" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -653,6 +672,7 @@
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${lib.dir}/tools" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -690,6 +710,7 @@
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${lib.dir}/tools" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -727,6 +748,7 @@
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${lib.dir}/tools" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -764,6 +786,7 @@
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${lib.dir}/tools" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
