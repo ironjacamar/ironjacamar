@@ -1105,6 +1105,20 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
     <deploy-file file="release.sh" artifact="validator-cli"/>
     <deploy-file file="snapshot.sh" artifact="validator-cli"/>
 
+    <!-- ironjacamar-validator-maven -->
+    <delete file="${target.dir}/${name}-validator-maven.xml"/>
+    <ivy:makepom artifactName="${name}-validator-maven" 
+                 conf="${name}-validator-maven"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-validator-maven.xml"
+                 headerFile="${tools.dir}/mvn/HEADER">
+      <mapping conf="${name}-validator-maven" scope="runtime"/>
+      <dependency artifact="${name}-validator" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="release.sh" artifact="validator-maven"/>
+    <deploy-file file="snapshot.sh" artifact="validator-maven"/>
+
     <chmod file="${target.dir}/release.sh" perm="755"/>
     <chmod file="${target.dir}/snapshot.sh" perm="755"/>
 
