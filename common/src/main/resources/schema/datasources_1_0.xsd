@@ -142,47 +142,7 @@
       <xs:element name="time-out-settings" type="time-out-settings_type" minOccurs="0"/>
       <xs:element minOccurs="0" name="security-settings" type="security-settings_type"> </xs:element>
 
-      <xs:element name="statement-settings" minOccurs="0">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element minOccurs="0" name="track-statements" type="track-statements-type">
-              <xs:annotation>
-                <xs:documentation>
-                  <![CDATA[[
-                  Whether to check for unclosed statements when a connection is returned 
-                to the pool and result sets are closed when a statement is closed/return 
-                to the prepared statement cache. valid values are: false - do not track statements 
-                and results true - track statements and result sets and warn when they are 
-                not closed nowarn - track statements but do no warn about them being unclosed 
-                (the default) e.g. <track-statements>nowarn</track-statements>
-              ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-            <xs:element minOccurs="0" name="prepared-statement-cache-size"
-              type="xs:nonNegativeInteger">
-              <xs:annotation>
-                <xs:documentation>
-                  <![CDATA[[
-               The number of prepared statements per connection in an LRU cache
-              ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-            <xs:element minOccurs="0" name="share-prepared-statements"
-              type="boolean-presence-ComplexType">
-              <xs:annotation>
-                <xs:documentation>
-                  <![CDATA[[
-                whether to share prepare statements, i.e. whether asking for same 
-                statement twice without closing uses the same underlying prepared statement. 
-                The default is false. e.g. <share-prepared-statements/>
-              ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
+      <xs:element name="statement-settings" minOccurs="0" type="statement-settings_type">
       </xs:element>
 
       <xs:element name="validation-settings" type="validation-settings_type" minOccurs="0"/>
@@ -472,46 +432,67 @@
       <xs:enumeration value="TRANSACTION_NONE"/>
     </xs:restriction>
   </xs:simpleType>
+  
+   <xs:simpleType name="security-manager-values">
+    <xs:annotation>
+      <xs:documentation>
+        Define constants used as the possible
+        security manager 
+        in security-settings_type. See there for complete documentation
+        Include: APPLICATION
+        DOMAIN
+        APPLICATION-AND-DOMAIN
+        NONE
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="APPLICATION"/>
+      <xs:enumeration value="DOMAIN"/>
+      <xs:enumeration value="APPLICATION-AND-DOMAIN"/>
+      <xs:enumeration value="NONE"/>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:complexType name="security-settings_type">
-    <xs:choice minOccurs="0">
-      <xs:element name="application-managed-security" type="boolean-presence-ComplexType"
+    <xs:sequence>
+      <xs:element name="security-manager" type="security-manager-values"
         minOccurs="0">
         <xs:annotation>
           <xs:documentation>
-              <![CDATA[[
-              Indicates that app supplied parameters (such as from getConnection(user, 
-              pw)) are used to distinguish connections in the pool. Ex: <application-managed-security/>
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="security-domain" type="xs:token" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>
-              <![CDATA[[
-              Indicates Subject (from security domain) are used to distinguish connections 
-              in the pool. The content of the security-domain is the name of the JAAS security 
-              manager that will handle authentication. This name correlates to the JAAS 
-              login-config.xml descriptor application-policy/name attribute. Ex: <security-domain>HsqlDbRealm</security-domain> 
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="security-domain-and-application" type="xs:token" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>
-              <![CDATA[[
-              Indicates that either app supplied parameters (such as from getConnection(user, 
+            <![CDATA[[
+              Possible value are:
+              * APPLICATION: Indicates that app supplied parameters (such as from getConnection(user, 
+                  pw)) are used to distinguish connections in the pool.
+              * DOMAIN: Indicates Subject (from security domain) are used to distinguish connections 
+                  in the pool. The content is the security-domain is the name of the JAAS security
+                  manager that will handle authentication.
+              * APPLICATION-AND-DOMAIN: Indicates that either app supplied parameters (such as from getConnection(user, 
               pw)) or Subject (from security domain) are used to distinguish connections 
-              in the pool. The content of the security-domain is the name of the JAAS security 
-              manager that will handle authentication. This name correlates to the JAAS 
-              login-config.xml descriptor application-policy/name attribute. Ex: <security-domain-and-application>HsqlDbRealm</security-domain-and-application> 
+              in the pool. The content is the security-domain is the name of the JAAS security
+                  manager that will handle authentication.
+              * NONE: user/password provided in datasource definition are used.
               ]]>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-    </xs:choice>
+      
+      <xs:element name="security-domain" type="xs:token"
+        minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              The content of the security-domain is the name of the JAAS security 
+              manager that will handle authentication. This name correlates to the JAAS 
+              login-config.xml descriptor application-policy/name attribute. 
+              Ex: <security-domain>HsqlDbRealm</security-domain> 
+              used for DOMAIN and APPLICATION-AND-DOMAIN security manager
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+   
+    </xs:sequence>
+    
   </xs:complexType>
 
 
@@ -761,4 +742,20 @@
       <xs:enumeration value="nowarn"/>
     </xs:restriction>
   </xs:simpleType>
+  <xs:complexType name="statement-settings_type">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="track-statements"
+        type="track-statements-type">
+        <xs:annotation></xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="prepared-statement-cache-size"
+        type="xs:nonNegativeInteger">
+        <xs:annotation></xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="share-prepared-statements"
+        type="boolean-presence-ComplexType">
+        <xs:annotation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>
