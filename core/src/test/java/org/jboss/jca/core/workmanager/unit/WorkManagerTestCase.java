@@ -65,8 +65,8 @@ public class WorkManagerTestCase
    @Test
    public void testInstanceOf() throws Throwable
    {
-      org.jboss.jca.core.api.WorkManager workManager = 
-         embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
+      org.jboss.jca.core.api.workmanager.WorkManager workManager = 
+         embedded.lookup("WorkManager", org.jboss.jca.core.api.workmanager.WorkManager.class);
 
       assertNotNull(workManager);
       assertTrue(workManager instanceof javax.resource.spi.work.WorkManager);
@@ -79,8 +79,8 @@ public class WorkManagerTestCase
    @Test
    public void testThreadPool() throws Throwable
    {
-      org.jboss.jca.core.api.WorkManager workManager = 
-         embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
+      org.jboss.jca.core.api.workmanager.WorkManager workManager = 
+         embedded.lookup("WorkManager", org.jboss.jca.core.api.workmanager.WorkManager.class);
 
       assertNotNull(workManager);
       assertNotNull(workManager.getShortRunningThreadPool());
@@ -94,8 +94,8 @@ public class WorkManagerTestCase
    @Test
    public void testXATerminator() throws Throwable
    {
-      org.jboss.jca.core.api.WorkManager workManager = 
-         embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
+      org.jboss.jca.core.api.workmanager.WorkManager workManager = 
+         embedded.lookup("WorkManager", org.jboss.jca.core.api.workmanager.WorkManager.class);
 
       assertNotNull(workManager);
       assertNotNull(workManager.getXATerminator());

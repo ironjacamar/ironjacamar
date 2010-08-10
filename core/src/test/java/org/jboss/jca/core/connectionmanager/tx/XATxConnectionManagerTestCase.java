@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.tx;
 
-import org.jboss.jca.core.api.ConnectionManager;
+import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;

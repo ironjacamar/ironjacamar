@@ -53,8 +53,8 @@ public class ManageThreadTestCase
    @Test
    public void testWorkManagerHasThreadPool() throws Throwable
    {
-      org.jboss.jca.core.api.WorkManager workManager = 
-         embedded.lookup("WorkManager", org.jboss.jca.core.api.WorkManager.class);
+      org.jboss.jca.core.api.workmanager.WorkManager workManager = 
+         embedded.lookup("WorkManager", org.jboss.jca.core.api.workmanager.WorkManager.class);
 
       BlockingExecutor shortRunning = workManager.getShortRunningThreadPool();
       assertNotNull(shortRunning);
