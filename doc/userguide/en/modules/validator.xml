@@ -169,4 +169,100 @@ cd doc/validator
 
    </section>
 
+   <section id="validator_maven">
+      <title>Apache Maven integration</title>
+
+      <para>The validator integrates with Apache Maven such that you can generate the reports directly from 
+        your build environment before deploying the resoruce adapter into the IronJacamar container.</para>
+
+      <para>To be able to use the validator plugin in your Maven project, you will have to add the following plugin declaration
+        in the pom.xml of your project:
+        <programlisting>
+          <![CDATA[
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-validator-maven</artifactId>
+      <!-- The version of the plugin you want to use -->
+      <version>1.0.0.Beta2</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>validate</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <!-- output directory-->
+        <outputDir>.</outputDir>
+        
+        <!-- rar filename -->
+        <rarFile>/path/to/myresourceadapter.rar</rarFile>
+        
+        <!--  optional classpath 
+        <classpath>
+          <param>classpath1</param>
+          <param>classpath2</param>
+        </classpath>
+        -->
+      </configuration>
+    </plugin>
+  </plugins>
+</build>        
+        ]]>
+        </programlisting>
+        <note>By default, the validator-maven plugin is attached to the "package" phase of Maven.</note>
+      </para>
+
+      <para>See the Apache Maven documentation for additional instructions on installation.</para>
+
+      <section id="validator_maven_usage">
+        <title>Usage</title>
+
+        <para>Once you have configured your project's pom.xml to include the validator-maven plugin, 
+          as explained earlier, you can generate the report by running the package goal on your project.</para>
+
+        <programlisting>
+mvn clean package
+        </programlisting>
+        
+        <table frame="all">
+          <title>Apache Maven: validator</title>
+          <tgroup cols="2" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1"/>
+            <colspec colname="c2" colwidth="5*"/>
+            <thead>
+              <row>
+                <entry align="left">Key</entry>
+                <entry align="left">Value</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry><code>rarFile</code></entry>
+                <entry>
+                  The resource adapter file
+                </entry>
+              </row>
+              <row>
+                <entry><code>outputDir</code></entry>
+                <entry>
+                  The directory where the reports should be generated
+                </entry>
+              </row>
+              <row>
+                <entry><code>classpath</code></entry>
+                <entry>
+                  A classpath to resolve additional dependencies against
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+      </section>
+      
+   </section>
+
 </chapter>
