@@ -1,0 +1,228 @@
+<project name="jca-test" basedir="." default="rar" xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
+  
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.dir" value="${basedir}/build" />
+  <property name="target.dir" value="${basedir}/target" />
+  <property name="lib.dir" value="${basedir}/lib" />
+
+  <property name="javac.debug" value="on" />
+  <property name="javac.deprecation" value="on" />
+  <property name="javac.optimize" value="off" />
+
+  <property name="junit.printsummary" value="yes" />
+  <property name="junit.haltonerror" value="no" />
+  <property name="junit.haltonfailure" value="no" />
+  <property name="junit.fork" value="yes" />
+  <property name="junit.timeout" value="60000" />
+  <property name="junit.jvm" value="" />
+  <property name="junit.jvm.options" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m" />
+  <property name="junit.batchtest.haltonerror" value="no" />
+  <property name="junit.batchtest.haltonfailure" value="no" />
+  <property name="junit.batchtest.fork" value="yes" />
+  
+  <path id="lib.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+    
+  <path id="test.lib.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${build.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <!-- ================================= 
+       Ivy              
+       ================================= -->
+  <property name="ivy.version" value="2.2.0-rc1"/>
+  <property name="ivy.dir" value="${user.home}/.ivy2/cache/org.apache.ivy/jars"/>
+  <property name="ivy.jar.name" value="ivy-${ivy.version}.jar"/>
+  
+  <!-- ================================= 
+       Repositories              
+       ================================= -->
+  <property name="central.repo" value="http://repo1.maven.org/maven2"/>
+  <property name="jboss.repo" value="http://repository.jboss.org/nexus/content/groups/public/"/>
+  <property name="snapshots.repo" value="http://repository.jboss.org/nexus/content/repositories/snapshots/"/>
+  <property name="fungal.repo" value="http://jesperpedersen.github.com/fungal/maven2"/>
+
+  <!-- ================================= 
+       Versions              
+       ================================= -->
+  <property name="version.ant" value="1.8.1"/>
+
+  <property name="version.arquillian" value="1.0.0.Alpha3"/>
+
+  <property name="version.jboss.logging" value="2.2.0.CR1"/>
+  <property name="version.jboss.logging.metadata" value="1.0.0.CR4"/>
+  <property name="version.jboss.logmanager" value="1.1.1.GA"/>
+  <property name="version.jboss.logmanager.log4j" value="1.0.0.CR2"/>
+
+  <property name="version.jboss.shrinkwrap" value="1.0.0-alpha-11"/>
+
+  <property name="version.junit" value="4.8.1"/>
+  <property name="version.maven" value="2.2.1"/>
+
+  <property name="version.ironjacamar" value="1.0.0.Beta1"/>
+
+  <!-- ================================= 
+       Bootstrap Ivy
+       ================================= -->
+  <mkdir dir="${ivy.dir}"/>
+  <get usetimestamp="true" src="https://repository.apache.org/content/repositories/releases/org/apache/ivy/ivy/${ivy.version}/${ivy.jar.name}" 
+       skipexisting="true"
+       dest="${ivy.dir}/${ivy.jar.name}"/>
+  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.dir}/${ivy.jar.name}"/>
+
+  <!-- ================================= 
+       Target: init              
+       ================================= -->
+  <target name="init">
+    <fail message="IronJacamar requires JDK6+" unless="HAVE_JDK_1.6"/>
+  
+    <ivy:settings file="${basedir}/ivy.settings.xml"/>
+
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${lib.dir}" />
+    <mkdir dir="${target.dir}" />
+  </target>
+
+  <!-- ================================= 
+       Target: resolve              
+       ================================= -->
+  <target name="resolve" depends="init">
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
+                  conf="common,embedded,arquillian,test,tools,ironjacamar"
+                  sync="true"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: report              
+       ================================= -->
+  <target name="report" depends="resolve">
+    <ivy:report todir="${target.dir}"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile" depends="resolve">
+    <mkdir dir="${build.dir}" />
+
+    <javac srcdir="${basedir}/src/main/java"
+           destdir="${build.dir}"
+           classpathref="lib.path.id">
+    </javac> 
+  </target>
+  
+  <!-- ================================= 
+       Target: rar
+       ================================= -->
+  <target name="rar" depends="compile">
+    <mkdir dir="${target.dir}" />
+    <mkdir dir="${basedir}/src/main/resources" />
+    <jar destfile="${build.dir}/jca-ra.jar"
+         basedir="${build.dir}"
+         includes="**/*.class"/>
+    <jar destfile="${target.dir}/jca-test.rar">
+      <fileset dir="${basedir}/src/main/resources" includes="META-INF/*"/>
+      <fileset dir="${build.dir}" includes="**/*.jar"/>
+    </jar>
+  </target>
+  
+      
+  <!-- ================================= 
+       Target: prepare-test
+       ================================= -->
+  <target name="prepare-test">
+    <mkdir dir="${build.dir}/test" />
+
+    <javac srcdir="src/test"
+           destdir="${build.dir}/test"
+           classpathref="test.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
+    <copy todir="${build.dir}/test">
+      <fileset dir="src/main/resources"/>
+      <fileset dir="src/test/resources"/>
+    </copy>
+  </target>
+
+  <!-- ================================= 
+       Target: test
+       ================================= -->
+  <target name="test" depends="rar, prepare-test">
+    <mkdir dir="${basedir}/reports"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${target.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${build.dir}/test"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      
+      <classpath>
+        <fileset dir="${lib.dir}" includes="**/*.jar" />
+        <fileset dir="${build.dir}" includes="*.jar" />
+        <pathelement location="${build.dir}/test"/>
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${basedir}/reports"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.dir}/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+    
+  </target>
+  
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs" depends="compile">
+    <mkdir dir="${target.dir}/docs"/>
+    <javadoc packagenames="*"
+             sourcepath="src/main/java"
+             destdir="${target.dir}/docs"
+             classpathref="lib.path.id">
+    </javadoc>
+  </target>
+  
+  <!-- ================================= 
+       Target: clean              
+       ================================= -->
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${target.dir}"/>
+  </target>
+
+</project>

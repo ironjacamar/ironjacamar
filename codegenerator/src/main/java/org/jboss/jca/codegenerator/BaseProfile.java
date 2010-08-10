@@ -22,7 +22,10 @@
 package org.jboss.jca.codegenerator;
 
 import org.jboss.jca.codegenerator.code.AbstractCodeGen;
+import org.jboss.jca.codegenerator.xml.BuildIvyXmlGen;
 import org.jboss.jca.codegenerator.xml.BuildXmlGen;
+import org.jboss.jca.codegenerator.xml.IvySettingsXmlGen;
+import org.jboss.jca.codegenerator.xml.IvyXmlGen;
 import org.jboss.jca.codegenerator.xml.RaXmlGen;
 
 import java.io.File;
@@ -60,7 +63,11 @@ public class BaseProfile implements Profile
 
       generateTestCode(def);
 
-      generateAntXml(def.getOutputDir());
+      if (def.getBuild().equals("ivy"))
+         generateAntIvyXml(def.getOutputDir());
+      else
+         generateAntXml(def.getOutputDir());
+
       generateRaXml(def, def.getOutputDir());
    }
 
@@ -194,6 +201,34 @@ public class BaseProfile implements Profile
       }
    }
 
+   /**
+    * generate ant + ivy build.xml and ivy files
+    * @param outputDir output directory
+    */
+   void generateAntIvyXml(String outputDir)
+   {
+      try
+      {
+         FileWriter antfw = Utils.createFile("build.xml", outputDir);
+         BuildIvyXmlGen bxGen = new BuildIvyXmlGen();
+         bxGen.generate(null, antfw);
+         antfw.close();
+         
+         FileWriter ivyfw = Utils.createFile("ivy.xml", outputDir);
+         IvyXmlGen ixGen = new IvyXmlGen();
+         ixGen.generate(null, ivyfw);
+         ivyfw.close();
+         
+         FileWriter ivySettingsfw = Utils.createFile("ivy.settings.xml", outputDir);
+         IvySettingsXmlGen isxGen = new IvySettingsXmlGen();
+         isxGen.generate(null, ivySettingsfw);
+         ivySettingsfw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+   }
    /**
     * generate ra.xml
     * @param def Definition

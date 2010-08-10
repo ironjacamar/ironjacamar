@@ -128,7 +128,8 @@ public class Main
          }
          profile.generate(def);
          
-         copyAllJars(outputDir);
+         if (def.getBuild().equals("ant"))
+            copyAllJars(outputDir);
          
          System.out.println(rb.getString("code.wrote"));
          System.exit(SUCCESS);
@@ -417,6 +418,20 @@ public class Main
          if (actiClassName != null && !actiClassName.equals(""))
             def.setActivationClass(actiClassName);
       }
+      
+      //build environment
+      System.out.print(rb.getString("build.env"));
+      System.out.print("[" + def.getBuild() + "]: ");
+      String buildEnv = in.readLine();
+      if (buildEnv != null && !buildEnv.equals(""))
+      {
+         if (buildEnv.equalsIgnoreCase("i") || 
+            buildEnv.equalsIgnoreCase("ant+ivy") ||
+            buildEnv.equalsIgnoreCase("ivy"))
+         {
+            def.setBuild("ivy");
+         }
+      }
 
       return def;
    }
@@ -426,7 +441,7 @@ public class Main
     * 
     * @param def definition 
     * @param className
-    * @param stringvalue TODO
+    * @param stringvalue post-fix string 
     */
    private static void setDefaultValue(Definition def, String className, String stringvalue)
    {

@@ -148,7 +148,10 @@ public class Definition
    /** define methods */
    @XmlElement(name = "Method") 
    private List<MethodForConnection> methods;
-   
+
+   /** build  */
+   @XmlElement(name = "build")
+   private String build = "ant";
 
    /**
     * Set the version.
@@ -922,6 +925,26 @@ public class Definition
    public List<AuthenMechanismType> getAuthenMechanisms()
    {
       return authenMechanisms;
+   }
+
+   /**
+    * Set the build.
+    * 
+    * @param build The build to set.
+    */
+   public void setBuild(String build)
+   {
+      this.build = build;
+   }
+
+   /**
+    * Get the build.
+    * 
+    * @return the build.
+    */
+   public String getBuild()
+   {
+      return build;
    }
 
 }

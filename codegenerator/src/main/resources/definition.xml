@@ -71,4 +71,5 @@
    </AsConfigProp>
    <Activation>AcmeActivation</Activation>
 
+   <build>ant</build>
 </definition>

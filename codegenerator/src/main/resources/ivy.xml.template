@@ -1,0 +1,51 @@
+<ivy-module version="2.2" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+  <info organisation="org.jboss.ironjacamar" 
+        module="ironjacamar"
+        revision="${version}">
+    <license name="lgpl" url="http://repository.jboss.org/licenses/lgpl.txt"/>
+    <repository name="jboss" url="http://repository.jboss.org"/>
+  </info>
+
+  <configurations defaultconfmapping="common->default;embedded->default;arquillian->default;test->default;tools->default;ironjacamar->default">
+    <conf name="common" transitive="false"/>
+
+    <conf name="embedded" transitive="false"/>
+    <conf name="arquillian" transitive="false"/>
+
+    <conf name="test" transitive="false"/>
+    <conf name="tools" transitive="false"/>
+
+    <conf name="ironjacamar" transitive="false"/>
+
+  </configurations>
+
+  <dependencies>
+    <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
+
+    <dependency org="org.apache.ant" name="ant" rev="${version.ant}" conf="tools"/>
+    <dependency org="org.apache.maven" name="maven-plugin-api" rev="${version.maven}" conf="tools"/>
+
+    <dependency org="org.jboss.arquillian" name="arquillian-api" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-impl-base" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-junit" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian" name="arquillian-spi" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian.testenricher" name="arquillian-testenricher-resource" rev="${version.arquillian}" conf="arquillian"/>
+    <dependency org="org.jboss.arquillian.protocol" name="arquillian-protocol-local" rev="${version.arquillian}" conf="arquillian"/>
+
+    <dependency org="org.jboss.logging" name="jboss-logging-jdk" rev="${version.jboss.logging}" conf="common"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging}" conf="common"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-logmanager" rev="${version.jboss.logging}" conf="common"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-spi" rev="${version.jboss.logging}" conf="common"/>
+    <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common"/>
+    <dependency org="org.jboss.logmanager" name="jboss-logmanager-log4j" rev="${version.jboss.logmanager.log4j}" conf="common"/>
+    <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded"/>
+    <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-impl-base" rev="${version.jboss.shrinkwrap}" conf="embedded"/>
+    <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-spi" rev="${version.jboss.shrinkwrap}" conf="embedded"/>
+    
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-spec-api" rev="${version.ironjacamar}" conf="ironjacamar"/>
+  </dependencies>
+
+</ivy-module>
