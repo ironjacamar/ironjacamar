@@ -149,7 +149,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
       if (xaDataSourceProperties != null)
       {
-         // Map any \ to \                                              \
+         // Map any \ to \\
          xaDataSourceProperties = xaDataSourceProperties.replaceAll("\\\\", "\\\\\\\\");
          
          InputStream is = new ByteArrayInputStream(xaDataSourceProperties.getBytes());

@@ -99,7 +99,7 @@ public abstract class BaseWrapperManagedConnectionFactory
    protected int transactionIsolation = -1;
 
    /** The prepared statement cache size */
-   protected int preparedStatementCacheSize = 0;
+   protected Integer preparedStatementCacheSize = Integer.valueOf(0);
 
    /** Query timeout enabled */
    protected boolean doQueryTimeout = false;
@@ -144,13 +144,13 @@ public abstract class BaseWrapperManagedConnectionFactory
    protected int trackStatements = TRACK_STATEMENTS_NOWARN_INT;
 
    /** Whether to share cached prepared statements */
-   protected boolean sharePS = false;
+   protected Boolean sharePS = Boolean.FALSE;
    
    /** Transaction query timeout */
-   protected boolean isTransactionQueryTimeout = false;
+   protected Boolean isTransactionQueryTimeout = Boolean.FALSE;
    
    /** Query timeout */
-   protected int queryTimeout = 0;
+   protected Integer queryTimeout = Integer.valueOf(0);
    
    /** 
     * The variable <code>urlDelimiter</code> holds the url delimiter 
@@ -163,7 +163,7 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    private URLSelectorStrategy urlSelectorStrategy;
 
-   private boolean validateOnMatch = true;
+   private Boolean validateOnMatch = Boolean.TRUE;
 
    /** Whether to use a try lock */
    private Integer useTryLock = Integer.valueOf(60);
@@ -246,7 +246,7 @@ public abstract class BaseWrapperManagedConnectionFactory
     * Get the prepared statement cache size
     * @return The value
     */
-   public int getPreparedStatementCacheSize()
+   public Integer getPreparedStatementCacheSize()
    {
       return preparedStatementCacheSize;
    }
@@ -255,16 +255,17 @@ public abstract class BaseWrapperManagedConnectionFactory
     * Set the prepared statement cache size
     * @param size The value
     */
-   public void setPreparedStatementCacheSize(int size)
+   public void setPreparedStatementCacheSize(Integer size)
    {
-      preparedStatementCacheSize = size;
+      if (size != null)
+         preparedStatementCacheSize = size;
    }
 
    /**
     * Get the prepared statement share status
     * @return The value
     */
-   public boolean getSharePreparedStatements()
+   public Boolean getSharePreparedStatements()
    {
       return sharePS;
    }
@@ -273,9 +274,10 @@ public abstract class BaseWrapperManagedConnectionFactory
     * Set the prepared statement share status
     * @param sharePS The value
     */
-   public void setSharePreparedStatements(boolean sharePS)
+   public void setSharePreparedStatements(Boolean sharePS)
    {
-      this.sharePS = sharePS;
+      if (sharePS != null)
+         this.sharePS = sharePS;
    }
 
    /**
@@ -443,7 +445,7 @@ public abstract class BaseWrapperManagedConnectionFactory
     * Get the validate on match value
     * @return The value
     */
-   public boolean getValidateOnMatch()
+   public Boolean getValidateOnMatch()
    {
       return this.validateOnMatch;
    }
@@ -452,9 +454,10 @@ public abstract class BaseWrapperManagedConnectionFactory
     * Set the validate on match value
     * @param validateOnMatch The value
     */
-   public void setValidateOnMatch(boolean validateOnMatch)
+   public void setValidateOnMatch(Boolean validateOnMatch)
    {
-      this.validateOnMatch = validateOnMatch;
+      if (validateOnMatch != null)
+         this.validateOnMatch = validateOnMatch;
    }
    
    /**
@@ -497,7 +500,7 @@ public abstract class BaseWrapperManagedConnectionFactory
     * Is transaction query timeout set
     * @return The value
     */
-   public boolean isTransactionQueryTimeout()
+   public Boolean isTransactionQueryTimeout()
    {
       return isTransactionQueryTimeout;
    }
@@ -506,16 +509,17 @@ public abstract class BaseWrapperManagedConnectionFactory
     * Set transaction query timeout
     * @param value The value
     */
-   public void setTransactionQueryTimeout(boolean value)
+   public void setTransactionQueryTimeout(Boolean value)
    {
-      isTransactionQueryTimeout = value;
+      if (value != null)
+         isTransactionQueryTimeout = value;
    }
 
    /**
     * Get the query timeout
     * @return The value
     */
-   public int getQueryTimeout()
+   public Integer getQueryTimeout()
    {
       return queryTimeout;
    }
@@ -524,9 +528,10 @@ public abstract class BaseWrapperManagedConnectionFactory
     * Set the query timeout
     * @param timeout The value
     */
-   public void setQueryTimeout(int timeout)
+   public void setQueryTimeout(Integer timeout)
    {
-      queryTimeout = timeout;
+      if (timeout != null)
+         queryTimeout = timeout;
    }
    
    /**
