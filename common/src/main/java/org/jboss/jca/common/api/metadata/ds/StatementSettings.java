@@ -99,15 +99,15 @@ public interface StatementSettings extends JCAMetadata
       /**
       * trackStatements tag
       */
-      TRACKSTATEMENTS("trackStatements"),
+      TRACKSTATEMENTS("track-statements"),
       /**
       * preparedStatementCacheSize tag
       */
-      PREPAREDSTATEMENTCACHESIZE("preparedStatementCacheSize"),
+      PREPAREDSTATEMENTCACHESIZE("prepared-statement-cache-size"),
       /**
       * sharePreparedStatements tag
       */
-      SHAREPREPAREDSTATEMENTS("sharePreparedStatements");
+      SHAREPREPAREDSTATEMENTS("share-prepared-statements");
 
       private final String name;
 

@@ -49,6 +49,8 @@ public class TimeOutSettingsImpl implements TimeOutSettings
 
    private final Long allocationRetryWaitMillis;
 
+   private final Long xaResourceTimeout;
+
    /**
     * Create a new TimeOutSettingsImpl.
     *
@@ -59,9 +61,11 @@ public class TimeOutSettingsImpl implements TimeOutSettings
     * @param useTryLock useTryLock
     * @param allocationRetry allocationRetry
     * @param allocationRetryWaitMillis allocationRetryWaitMillis
+    * @param xaResourceTimeout xaResourceTimeout
     */
    public TimeOutSettingsImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, boolean setTxQuertTimeout,
-         Long queryTimeout, Long useTryLock, Long allocationRetry, Long allocationRetryWaitMillis)
+         Long queryTimeout, Long useTryLock, Long allocationRetry, Long allocationRetryWaitMillis,
+         Long xaResourceTimeout)
    {
       super();
       this.blockingTimeoutMillis = blockingTimeoutMillis;
@@ -71,6 +75,7 @@ public class TimeOutSettingsImpl implements TimeOutSettings
       this.useTryLock = useTryLock;
       this.allocationRetry = allocationRetry;
       this.allocationRetryWaitMillis = allocationRetryWaitMillis;
+      this.xaResourceTimeout = xaResourceTimeout;
    }
 
    /**
@@ -162,6 +167,7 @@ public class TimeOutSettingsImpl implements TimeOutSettings
       result = prime * result + ((queryTimeout == null) ? 0 : queryTimeout.hashCode());
       result = prime * result + (setTxQuertTimeout ? 1231 : 1237);
       result = prime * result + ((useTryLock == null) ? 0 : useTryLock.hashCode());
+      result = prime * result + ((xaResourceTimeout == null) ? 0 : xaResourceTimeout.hashCode());
       return result;
    }
 
@@ -219,6 +225,13 @@ public class TimeOutSettingsImpl implements TimeOutSettings
       }
       else if (!useTryLock.equals(other.useTryLock))
          return false;
+      if (xaResourceTimeout == null)
+      {
+         if (other.xaResourceTimeout != null)
+            return false;
+      }
+      else if (!xaResourceTimeout.equals(other.xaResourceTimeout))
+         return false;
       return true;
    }
 
@@ -228,7 +241,18 @@ public class TimeOutSettingsImpl implements TimeOutSettings
       return "TimeOutSettingsImpl [blockingTimeoutMillis=" + blockingTimeoutMillis + ", idleTimeoutMinutes="
             + idleTimeoutMinutes + ", setTxQuertTimeout=" + setTxQuertTimeout + ", queryTimeout=" + queryTimeout
             + ", useTryLock=" + useTryLock + ", allocationRetry=" + allocationRetry + ", allocationRetryWaitMillis="
-            + allocationRetryWaitMillis + "]";
+            + allocationRetryWaitMillis + ", xaResourceTimeout=" + xaResourceTimeout + "]";
+   }
+
+   /**
+    * Get the xaResourceTimeout.
+    *
+    * @return the xaResourceTimeout.
+    */
+   @Override
+   public Long getXaResourceTimeout()
+   {
+      return xaResourceTimeout;
    }
 
 }

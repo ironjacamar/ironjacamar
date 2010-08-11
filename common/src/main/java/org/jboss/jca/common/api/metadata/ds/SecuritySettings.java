@@ -93,11 +93,11 @@ public interface SecuritySettings extends JCAMetadata
       /**
       * securityManager tag
       */
-      SECURITYMANAGER("securityManager"),
+      SECURITYMANAGER("security-manager"),
       /**
       * securityDomain tag
       */
-      SECURITYDOMAIN("securityDomain");
+      SECURITYDOMAIN("security-domain");
 
       private final String name;
 

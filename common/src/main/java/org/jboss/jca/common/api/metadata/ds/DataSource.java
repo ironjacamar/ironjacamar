@@ -198,7 +198,7 @@ public interface DataSource extends JCAMetadata
       /**
       * maxPoolSize tag
       */
-      MAXPOOLSIZE("maxPoolSize"),
+      MAXPOOLSIZE("max-pool-size"),
       /**
       * prefill tag
       */
@@ -206,7 +206,7 @@ public interface DataSource extends JCAMetadata
       /**
       * userName tag
       */
-      USERNAME("userName"),
+      USERNAME("user-name"),
       /**
       * password tag
       */
@@ -214,47 +214,47 @@ public interface DataSource extends JCAMetadata
       /**
       * connectionUrl tag
       */
-      CONNECTIONURL("connectionUrl"),
+      CONNECTIONURL("connection-url"),
       /**
       * driverClass tag
       */
-      DRIVERCLASS("driverClass"),
+      DRIVERCLASS("driver-class"),
       /**
       * transactionIsolation tag
       */
-      TRANSACTIONISOLATION("transactionIsolation"),
+      TRANSACTIONISOLATION("transaction-isolation"),
       /**
       * connectionProperty tag
       */
-      CONNECTIONPROPERTY("connectionProperty"),
+      CONNECTIONPROPERTY("connection-property"),
       /**
       * timeOutSettings tag
       */
-      TIMEOUTSETTINGS("timeOutSettings"),
+      TIMEOUTSETTINGS("time-out-settings"),
       /**
       * securitySettings tag
       */
-      SECURITYSETTINGS("securitySettings"),
+      SECURITYSETTINGS("security-settings"),
       /**
       * statementSettings tag
       */
-      STATEMENTSETTINGS("statementSettings"),
+      STATEMENTSETTINGS("statement-settings"),
       /**
       * validationSettings tag
       */
-      VALIDATIONSETTINGS("validationSettings"),
+      VALIDATIONSETTINGS("validation-settings"),
       /**
       * urlDelimiter tag
       */
-      URLDELIMITER("urlDelimiter"),
+      URLDELIMITER("url-delimiter"),
       /**
       * urlSelectorStrategyClassName tag
       */
-      URLSELECTORSTRATEGYCLASSNAME("urlSelectorStrategyClassName"),
+      URLSELECTORSTRATEGYCLASSNAME("url-selector-strategy-className"),
       /**
       * newConnectionSql tag
       */
-      NEWCONNECTIONSQL("newConnectionSql");
+      NEWCONNECTIONSQL("new-sonnection-sql");
 
       private final String name;
 
@@ -335,7 +335,7 @@ public interface DataSource extends JCAMetadata
       /** jndiName attribute
       *
       */
-      USEJAVACONTEXT("useJavaContext");
+      USEJAVACONTEXT("use-java-context");
 
       private final String name;
 

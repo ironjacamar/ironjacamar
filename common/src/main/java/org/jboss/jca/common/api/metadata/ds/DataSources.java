@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.XADataSource;
+
 
 /**
  *
@@ -52,7 +52,7 @@ public interface DataSources extends JCAMetadata
     *
     * @return the xaDataSource.
     */
-   public List<XADataSource> getXaDataSource();
+   public List<XaDataSource> getXaDataSource();
 
    /**
    *

@@ -297,16 +297,6 @@
       </xs:element>
       <xs:element minOccurs="0" name="recovery-settings" type="recovery-settings_type"/>
       <xs:element name="time-out-settings" type="time-out-settings_type" minOccurs="0"/>
-      <xs:element minOccurs="0" name="xa-resource-timeout" type="xs:token">
-        <xs:annotation>
-          <xs:documentation>
-              <![CDATA[[
-               Passed to XAResource.setTransactionTimeout() Default is zero which 
-               does not invoke the setter e.g. 5 minutes <xa-resource-timeout>300</xa-resource-timeout>
-              ]]>
-              </xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element minOccurs="0" name="security-settings" type="security-settings_type"> </xs:element>
 
       <xs:element name="statement-settings" minOccurs="0">
@@ -682,6 +672,16 @@
               seconds). 
               ]]>
           </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+       <xs:element minOccurs="0" name="xa-resource-timeout" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+               Passed to XAResource.setTransactionTimeout() Default is zero which 
+               does not invoke the setter e.g. 5 minutes <xa-resource-timeout>300</xa-resource-timeout>
+              ]]>
+              </xs:documentation>
         </xs:annotation>
       </xs:element>
     </xs:sequence>

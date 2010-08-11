@@ -47,6 +47,7 @@ import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
 import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
 import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
+import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.ra.common.AdminObjectImpl;
@@ -91,7 +92,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class RaParser implements MetadataParser<Connector>
+public class RaParser extends AbstractParser implements MetadataParser<Connector>
 {
 
    @Override
@@ -114,7 +115,7 @@ public class RaParser implements MetadataParser<Connector>
          }
          catch (XMLStreamException e)
          {
-            //fpunding a non tag..go on
+            //founding a non tag..go on Normally non-tag found at beginning are comments or DTD declaration
             iterate = reader.nextTag();
          }
          switch (iterate)
@@ -1395,11 +1396,6 @@ public class RaParser implements MetadataParser<Connector>
       String id = reader.getAttributeValue(null, "id");
       String lang = reader.getAttributeValue(null, "lang");
       return new LocalizedXsdString(reader.getElementText().trim(), id, lang);
-   }
-
-   private boolean elementAsBoolean(XMLStreamReader reader) throws XMLStreamException
-   {
-      return Boolean.valueOf(reader.getElementText().trim());
    }
 
    /**

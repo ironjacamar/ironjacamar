@@ -208,11 +208,11 @@ public interface XaDataSource extends JCAMetadata
       /**
       * minPoolSize tag
       */
-      MINPOOLSIZE("minPoolSize"),
+      MINPOOLSIZE("min-pool-size"),
       /**
       * maxPoolSize tag
       */
-      MAXPOOLSIZE("maxPoolSize"),
+      MAXPOOLSIZE("max-pool-size"),
       /**
       * prefill tag
       */
@@ -220,7 +220,7 @@ public interface XaDataSource extends JCAMetadata
       /**
       * userName tag
       */
-      USERNAME("userName"),
+      USERNAME("user-name"),
       /**
       * password tag
       */
@@ -228,19 +228,19 @@ public interface XaDataSource extends JCAMetadata
       /**
       * xaDatasourceProperty tag
       */
-      XADATASOURCEPROPERTY("xaDatasourceProperty"),
+      XADATASOURCEPROPERTY("xa-datasource-property"),
       /**
       * xaDatasourceClass tag
       */
-      XADATASOURCECLASS("xaDatasourceClass"),
+      XADATASOURCECLASS("xa-datasource-class"),
       /**
       * transactionIsolation tag
       */
-      TRANSACTIONISOLATION("transactionIsolation"),
+      TRANSACTIONISOLATION("transaction-isolation"),
       /**
       * isSameRmOverrideValue tag
       */
-      ISSAMERMOVERRIDEVALUE("isSameRmOverrideValue"),
+      ISSAMERMOVERRIDEVALUE("is-same-rm-override-value"),
       /**
       * interleaving tag
       */
@@ -248,39 +248,35 @@ public interface XaDataSource extends JCAMetadata
       /**
       * recoverySettings tag
       */
-      RECOVERYSETTINGS("recoverySettings"),
+      RECOVERYSETTINGS("recovery-settings"),
       /**
       * timeOutSettings tag
       */
-      TIMEOUTSETTINGS("timeOutSettings"),
-      /**
-      * xaResourceTimeout tag
-      */
-      XARESOURCETIMEOUT("xaResourceTimeout"),
+      TIMEOUTSETTINGS("time-out-settings"),
       /**
       * securitySettings tag
       */
-      SECURITYSETTINGS("securitySettings"),
+      SECURITYSETTINGS("security-settings"),
       /**
       * statementSettings tag
       */
-      STATEMENTSETTINGS("statementSettings"),
+      STATEMENTSETTINGS("statement-settings"),
       /**
       * validationSettings tag
       */
-      VALIDATIONSETTINGS("validationSettings"),
+      VALIDATIONSETTINGS("validation-settings"),
       /**
       * urlDelimiter tag
       */
-      URLDELIMITER("urlDelimiter"),
+      URLDELIMITER("url-delimiter"),
       /**
       * urlSelectorStrategyClassName tag
       */
-      URLSELECTORSTRATEGYCLASSNAME("urlSelectorStrategyClassName"),
+      URLSELECTORSTRATEGYCLASSNAME("url-selector-strategy-class-name"),
       /**
       * newConnectionSql tag
       */
-      NEWCONNECTIONSQL("newConnectionSql");
+      NEWCONNECTIONSQL("new-connection-sql");
 
       private final String name;
 

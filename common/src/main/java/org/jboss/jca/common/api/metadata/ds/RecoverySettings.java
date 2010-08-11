@@ -81,19 +81,19 @@ public interface RecoverySettings extends JCAMetadata
       /**
       * noRecover tag
       */
-      NORECOVER("noRecover"),
+      NORECOVER("no-recover"),
       /**
       * recoverUserName tag
       */
-      RECOVERUSERNAME("recoverUserName"),
+      RECOVERUSERNAME("recover-user-name"),
       /**
       * recoverPassword tag
       */
-      RECOVERPASSWORD("recoverPassword"),
+      RECOVERPASSWORD("recover-password"),
       /**
       * recoverSecurityDomain tag
       */
-      RECOVERSECURITYDOMAIN("recoverSecurityDomain");
+      RECOVERSECURITYDOMAIN("recover-security-domain");
 
       private final String name;
 

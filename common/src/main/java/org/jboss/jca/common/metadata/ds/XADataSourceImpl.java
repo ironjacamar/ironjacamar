@@ -49,7 +49,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final String password;
 
-   private final HashMap<String, String> xaDataSoourceProperty;
+   private final HashMap<String, String> xaDataSourceProperty;
 
    private final String xaDataSourceClass;
 
@@ -69,7 +69,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param prefill prefill
     * @param userName userName
     * @param password password
-    * @param xaDataSoourceProperty xaDataSoourceProperty
+    * @param xaDataSourceProperty xaDataSoourceProperty
     * @param xaDataSourceClass xaDataSourceClass
     * @param transactionIsolation transactionIsolation
     * @param isSameRmOverrideValue isSameRmOverrideValue
@@ -88,7 +88,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param jndiName jndiName
     */
    public XADataSourceImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String userName, String password,
-         Map<String, String> xaDataSoourceProperty, String xaDataSourceClass,
+         Map<String, String> xaDataSourceProperty, String xaDataSourceClass,
          TransactionIsolation transactionIsolation, boolean isSameRmOverrideValue, boolean interleaving,
          RecoverySettings recoverySettings, TimeOutSettings timeOutSettings, SecuritySettings securitySettings,
          StatementSettings statementSettings, ValidationSettings validationSettings, String urlDelimiter,
@@ -100,14 +100,14 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
             poolName, enabled, jndiName);
       this.userName = userName;
       this.password = password;
-      if (xaDataSoourceProperty != null)
+      if (xaDataSourceProperty != null)
       {
-         this.xaDataSoourceProperty = new HashMap<String, String>(xaDataSoourceProperty.size());
-         this.xaDataSoourceProperty.putAll(xaDataSoourceProperty);
+         this.xaDataSourceProperty = new HashMap<String, String>(xaDataSourceProperty.size());
+         this.xaDataSourceProperty.putAll(xaDataSourceProperty);
       }
       else
       {
-         this.xaDataSoourceProperty = new HashMap<String, String>(0);
+         this.xaDataSourceProperty = new HashMap<String, String>(0);
       }
       this.xaDataSourceClass = xaDataSourceClass;
       this.isSameRmOverrideValue = isSameRmOverrideValue;
@@ -146,7 +146,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    @Override
    public final Map<String, String> getXaDataSoourceProperty()
    {
-      return Collections.unmodifiableMap(xaDataSoourceProperty);
+      return Collections.unmodifiableMap(xaDataSourceProperty);
    }
 
    /**
@@ -262,7 +262,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       result = prime * result + (useJavaContext ? 1231 : 1237);
       result = prime * result + ((userName == null) ? 0 : userName.hashCode());
       result = prime * result + ((validationSettings == null) ? 0 : validationSettings.hashCode());
-      result = prime * result + ((xaDataSoourceProperty == null) ? 0 : xaDataSoourceProperty.hashCode());
+      result = prime * result + ((xaDataSourceProperty == null) ? 0 : xaDataSourceProperty.hashCode());
       result = prime * result + ((xaDataSourceClass == null) ? 0 : xaDataSourceClass.hashCode());
       return result;
    }
@@ -387,12 +387,12 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       }
       else if (!validationSettings.equals(other.validationSettings))
          return false;
-      if (xaDataSoourceProperty == null)
+      if (xaDataSourceProperty == null)
       {
-         if (other.xaDataSoourceProperty != null)
+         if (other.xaDataSourceProperty != null)
             return false;
       }
-      else if (!xaDataSoourceProperty.equals(other.xaDataSoourceProperty))
+      else if (!xaDataSourceProperty.equals(other.xaDataSourceProperty))
          return false;
       if (xaDataSourceClass == null)
       {
@@ -408,7 +408,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public String toString()
    {
       return "XADataSourceImpl [minPoolSize=" + minPoolSize + ", maxPoolSize=" + maxPoolSize + ", prefill=" + prefill
-            + ", userName=" + userName + ", password=" + password + ", xaDataSoourceProperty=" + xaDataSoourceProperty
+            + ", userName=" + userName + ", password=" + password + ", xaDataSoourceProperty=" + xaDataSourceProperty
             + ", xaDataSourceClass=" + xaDataSourceClass + ", transactionIsolation=" + transactionIsolation
             + ", isSameRmOverrideValue=" + isSameRmOverrideValue + ", interleaving=" + interleaving
             + ", recoverySettings=" + recoverySettings + ", timeOutSettings=" + timeOutSettings + ", securitySettings="

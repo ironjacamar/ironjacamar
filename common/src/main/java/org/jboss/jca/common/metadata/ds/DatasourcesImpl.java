@@ -23,12 +23,12 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.sql.XADataSource;
 
 /**
  *
@@ -44,7 +44,7 @@ public class DatasourcesImpl implements DataSources
 
    private final ArrayList<DataSource> datasource;
 
-   private final ArrayList<XADataSource> xaDataSource;
+   private final ArrayList<XaDataSource> xaDataSource;
 
    /**
     * Create a new DatasourcesImpl.
@@ -52,7 +52,7 @@ public class DatasourcesImpl implements DataSources
     * @param datasource datasource
     * @param xaDataSource xaDataSource
     */
-   public DatasourcesImpl(List<DataSource> datasource, List<XADataSource> xaDataSource)
+   public DatasourcesImpl(List<DataSource> datasource, List<XaDataSource> xaDataSource)
    {
       super();
       if (datasource != null)
@@ -66,12 +66,12 @@ public class DatasourcesImpl implements DataSources
       }
       if (xaDataSource != null)
       {
-         this.xaDataSource = new ArrayList<XADataSource>(xaDataSource.size());
+         this.xaDataSource = new ArrayList<XaDataSource>(xaDataSource.size());
          this.xaDataSource.addAll(xaDataSource);
       }
       else
       {
-         this.xaDataSource = new ArrayList<XADataSource>(0);
+         this.xaDataSource = new ArrayList<XaDataSource>(0);
       }
    }
 
@@ -92,7 +92,7 @@ public class DatasourcesImpl implements DataSources
     * @return the xaDataSource.
     */
    @Override
-   public final List<XADataSource> getXaDataSource()
+   public final List<XaDataSource> getXaDataSource()
    {
       return Collections.unmodifiableList(xaDataSource);
    }

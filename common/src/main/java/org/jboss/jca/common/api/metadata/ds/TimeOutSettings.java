@@ -86,6 +86,13 @@ public interface TimeOutSettings extends JCAMetadata
    public Long getAllocationRetryWaitMillis();
 
    /**
+    * Get the xaResourceTimeout.
+    *
+    * @return the xaResourceTimeout.
+    */
+   public Long getXaResourceTimeout();
+
+   /**
    *
    * A Tag.
    *
@@ -102,31 +109,35 @@ public interface TimeOutSettings extends JCAMetadata
       /**
       * blockingTimeoutMillis tag
       */
-      BLOCKINGTIMEOUTMILLIS("blockingTimeoutMillis"),
+      BLOCKINGTIMEOUTMILLIS("blocking-timeout-millis"),
       /**
       * idleTimeoutMinutes tag
       */
-      IDLETIMEOUTMINUTES("idleTimeoutMinutes"),
+      IDLETIMEOUTMINUTES("idle-timeout-minutes"),
       /**
       * setTxQueryTimeout tag
       */
-      SETTXQUERYTIMEOUT("setTxQueryTimeout"),
+      SETTXQUERYTIMEOUT("set-tx-query-timeout"),
       /**
       * queryTimeout tag
       */
-      QUERYTIMEOUT("queryTimeout"),
+      QUERYTIMEOUT("query-timeout"),
       /**
       * useTryLock tag
       */
-      USETRYLOCK("useTryLock"),
+      USETRYLOCK("use-try-lock"),
       /**
       * allocationRetry tag
       */
-      ALLOCATIONRETRY("allocationRetry"),
+      ALLOCATIONRETRY("allocation-retry"),
+      /**
+       * xaResourceTimeout tag
+       */
+      XARESOURCETIMEOUT("xa-resource-timeout"),
       /**
       * allocationRetryWaitMillis tag
       */
-      ALLOCATIONRETRYWAITMILLIS("allocationRetryWaitMillis");
+      ALLOCATIONRETRYWAITMILLIS("allocation-retry-wait-millis");
 
       private final String name;
 

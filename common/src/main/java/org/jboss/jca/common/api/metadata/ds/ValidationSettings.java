@@ -109,23 +109,23 @@ public interface ValidationSettings extends JCAMetadata
       /**
       * validConnectionCheckerClassName tag
       */
-      VALIDCONNECTIONCHECKERCLASSNAME("validConnectionCheckerClassName"),
+      VALIDCONNECTIONCHECKERCLASSNAME("valid-connection-checker-className"),
       /**
       * checkValidConnectionSql tag
       */
-      CHECKVALIDCONNECTIONSQL("checkValidConnectionSql"),
+      CHECKVALIDCONNECTIONSQL("check-valid-connection-sql"),
       /**
       * validateOnMatch tag
       */
-      VALIDATEONMATCH("validateOnMatch"),
+      VALIDATEONMATCH("validate-on-match"),
       /**
       * backgroundValidation tag
       */
-      BACKGROUNDVALIDATION("backgroundValidation"),
+      BACKGROUNDVALIDATION("background-validation"),
       /**
       * backgroundValidationMinutes tag
       */
-      BACKGROUNDVALIDATIONMINUTES("backgroundValidationMinutes"),
+      BACKGROUNDVALIDATIONMINUTES("background-validation-minutes"),
       /**
       * useFastFail tag
       */
@@ -133,11 +133,11 @@ public interface ValidationSettings extends JCAMetadata
       /**
       * staleConnectionCheckerClassName tag
       */
-      STALECONNECTIONCHECKERCLASSNAME("staleConnectionCheckerClassName"),
+      STALECONNECTIONCHECKERCLASSNAME("stale-connection-checker-class-name"),
       /**
       * exceptionSorterClassName tag
       */
-      EXCEPTIONSORTERCLASSNAME("exceptionSorterClassName");
+      EXCEPTIONSORTERCLASSNAME("exception-sorter-class-name");
 
       private final String name;
 

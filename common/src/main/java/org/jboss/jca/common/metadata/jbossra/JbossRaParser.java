@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.jbossra.jbossra20.BeanValidationGroup;
 import org.jboss.jca.common.api.metadata.jbossra.jbossra20.JbossRa20;
 import org.jboss.jca.common.api.metadata.ra.OverrideElementAttribute;
 import org.jboss.jca.common.api.metadata.ra.RaConfigProperty;
+import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.jbossra.jbossra10.JbossRa10Impl;
@@ -52,7 +53,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class JbossRaParser implements MetadataParser<JbossRa>
+public class JbossRaParser extends AbstractParser implements MetadataParser<JbossRa>
 {
 
    /**
@@ -72,15 +73,23 @@ public class JbossRaParser implements MetadataParser<JbossRa>
          XMLInputFactory inputFactory = XMLInputFactory.newInstance();
          reader = inputFactory.createXMLStreamReader(xmlInputStream);
 
-         //iterate over tags
-         switch (reader.nextTag())
+         int iterate;
+         try
+         {
+            iterate = reader.nextTag();
+         }
+         catch (XMLStreamException e)
+         {
+            //founding a non tag..go on Normally non-tag found at beginning are comments or DTD declaration
+            iterate = reader.nextTag();
+         }
+         switch (iterate)
          {
             case END_ELEMENT : {
                // should mean we're done, so ignore it.
                break;
             }
             case START_ELEMENT : {
-               System.out.println(reader.getNamespaceURI());
                if (JbossRa20.NAMESPACE.equals(reader.getNamespaceURI()))
                {
                   switch (Tag.forName(reader.getLocalName()))
