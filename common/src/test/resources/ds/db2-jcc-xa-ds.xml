@@ -14,7 +14,7 @@
         <xa-datasource-property name="PortNumber">your_port_number</xa-datasource-property>
         <xa-datasource-class>com.ibm.db2.jcc.DB2XADataSource</xa-datasource-class>
         <!-- Must be set if using multiple DB2 XA resources in same transaction -->
-        <is-same-rm-override-value>false</is-same-rm-override-value>
+        <is-same-rm-override>false</is-same-rm-override>
         <interleaving/>
         
     </xa-datasource>

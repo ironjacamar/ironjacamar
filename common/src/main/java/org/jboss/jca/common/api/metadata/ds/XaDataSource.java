@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
-
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.util.HashMap;
@@ -94,11 +93,11 @@ public interface XaDataSource extends JCAMetadata
    public TransactionIsolation getTransactionIsolation();
 
    /**
-    * Get the isSameRmOverrideValue.
+    * Get the isSameRmOverride.
     *
-    * @return the isSameRmOverrideValue.
+    * @return the isSameRmOverride.
     */
-   public boolean isSameRmOverrideValue();
+   public boolean isSameRmOverride();
 
    /**
     * Get the interleaving.
@@ -192,6 +191,34 @@ public interface XaDataSource extends JCAMetadata
    public String getJndiName();
 
    /**
+    * Get the xaDataSourceProperty.
+    *
+    * @return the xaDataSourceProperty.
+    */
+   public Map<String, String> getXaDataSourceProperty();
+
+   /**
+    * Get the padXid.
+    *
+    * @return the padXid.
+    */
+   public boolean isPadXid();
+
+   /**
+    * Get the wrapXaDataSource.
+    *
+    * @return the wrapXaDataSource.
+    */
+   public boolean isWrapXaDataSource();
+
+   /**
+    * Get the noTxSeparatePool.
+    *
+    * @return the noTxSeparatePool.
+    */
+   public boolean isNoTxSeparatePool();
+
+   /**
    *
    * A Tag.
    *
@@ -240,7 +267,7 @@ public interface XaDataSource extends JCAMetadata
       /**
       * isSameRmOverrideValue tag
       */
-      ISSAMERMOVERRIDEVALUE("is-same-rm-override-value"),
+      ISSAMERMOVERRIDEVALUE("is-same-rm-override"),
       /**
       * interleaving tag
       */
@@ -276,7 +303,22 @@ public interface XaDataSource extends JCAMetadata
       /**
       * newConnectionSql tag
       */
-      NEWCONNECTIONSQL("new-connection-sql");
+      NEWCONNECTIONSQL("new-connection-sql"),
+
+      /**
+       * pad-xid tag
+       */
+      PAD_XID("pad-xid"),
+
+      /**
+       * wrap-xa-resource tag
+       */
+      WRAP_XA_RESOURCE("wrap-xa-resource"),
+
+      /**
+       * no-tx-separate-pools tag
+       */
+      NO_TX_SEPARATE_POOLS("no-tx-separate-pools");
 
       private final String name;
 

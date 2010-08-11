@@ -180,6 +180,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       boolean isSameRmOverrideValue = false;
       String xaDataSourceClass = null;
       RecoverySettings recoverySettings = null;
+      boolean padXid = false;
+      boolean noTxSeparatePool = false;
+      boolean wrapXaDataSource = false;
 
       //attributes reading
 
@@ -222,11 +225,12 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.XA_DATASOURCE)
                {
 
+
                   return new XADataSourceImpl(minPoolSize, maxPoolSize, prefill, userName, password,
                         xaDataSourceProperty, xaDataSourceClass, transactionIsolation, isSameRmOverrideValue,
                         interleaving, recoverySettings, timeOutSettings, securitySettings, statementSettings,
                         validationSettings, urlDelimiter, urlSelectorStrategyClassName, newConnectionSql,
-                        useJavaContext, poolName, enabled, jndiName);
+                        useJavaContext, poolName, enabled, jndiName, padXid, wrapXaDataSource, noTxSeparatePool);
                }
                else
                {
@@ -310,6 +314,18 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case RECOVERYSETTINGS : {
                      recoverySettings = parseRecoverySettings(reader);
+                     break;
+                  }
+                  case NO_TX_SEPARATE_POOLS : {
+                     noTxSeparatePool = elementAsBoolean(reader);
+                     break;
+                  }
+                  case PAD_XID : {
+                     padXid = elementAsBoolean(reader);
+                     break;
+                  }
+                  case WRAP_XA_RESOURCE : {
+                     wrapXaDataSource = elementAsBoolean(reader);
                      break;
                   }
                   default :
