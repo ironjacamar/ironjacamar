@@ -6,7 +6,7 @@
 <!-- ===================================================================== -->
 <!-- $Id: sybase-xa-ds.xml 93459 2009-09-14 08:49:20Z istudens@redhat.com $ -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <!-- TODO: add driver name, version and download url here -->
   <!-- The example posted in the forums uses a security domain. What is the user/password xa-datasource-property? try javap 
     com.sybase.jdbc3.jdbc.SybXADataSource For the security domain. Add something like the following to conf/login-config.xml 

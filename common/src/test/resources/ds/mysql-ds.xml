@@ -3,7 +3,7 @@
 <!-- $Id: mysql-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
 <!-- Datasource config for MySQL using 3.0.9 available from: http://www.mysql.com/downloads/api-jdbc-stable.html -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="MySqlDS" pool-name="MySqlDS">
     <user-name>x</user-name>
     <password>y</password>

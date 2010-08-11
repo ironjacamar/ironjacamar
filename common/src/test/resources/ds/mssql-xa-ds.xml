@@ -17,7 +17,7 @@
 <!-- http://msdn2.microsoft.com/en-us/library/aa496082.aspx -->
 <!-- ==================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <xa-datasource jndi-name="MSSQLXADS" pool-name="MSSQLXADS">
     <xa-datasource-property name="ServerName">myserver</xa-datasource-property>
     <xa-datasource-property name="DatabaseName">mydatabase</xa-datasource-property>

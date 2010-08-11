@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+    xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
     <datasource jndi-name="DB2DS" pool-name="DB2DS">
         <min-pool-size>0</min-pool-size>
         <max-pool-size>50</max-pool-size>
