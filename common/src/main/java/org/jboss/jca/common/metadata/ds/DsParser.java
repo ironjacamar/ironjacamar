@@ -241,8 +241,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (XaDataSource.Tag.forName(reader.getLocalName()))
                {
                   case XADATASOURCEPROPERTY : {
-                     xaDataSourceProperty.put(reader.getAttributeValue("", "name"),
-                           reader.getAttributeValue("", "value"));
+                     xaDataSourceProperty.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
                   }
                   case XADATASOURCECLASS : {
@@ -456,8 +455,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (DataSource.Tag.forName(reader.getLocalName()))
                {
                   case CONNECTIONPROPERTY : {
-                     connectionProperties.put(reader.getAttributeValue("", "name"),
-                           reader.getAttributeValue("", "value"));
+                     connectionProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
                   }
                   case CONNECTIONURL : {

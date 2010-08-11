@@ -43,8 +43,8 @@ public abstract class AbstractParser
     */
    protected boolean elementAsBoolean(XMLStreamReader reader) throws XMLStreamException
    {
-      return reader.getElementText() == null || reader.getElementText().length() == 0 ? true : Boolean.valueOf(reader
-            .getElementText().trim());
+      String elementtext = reader.getElementText();
+      return elementtext == null || elementtext.length() == 0 ? true : Boolean.valueOf(elementtext.trim());
    }
 
    /**
@@ -72,7 +72,8 @@ public abstract class AbstractParser
     */
    protected String elementAsString(XMLStreamReader reader) throws XMLStreamException
    {
-      return reader.getElementText() == null ? null : reader.getElementText().trim();
+      String elementtext = reader.getElementText();
+      return elementtext == null ? null : elementtext.trim();
    }
 
    /**
@@ -103,7 +104,8 @@ public abstract class AbstractParser
       integerValue = null;
       try
       {
-         integerValue = Integer.valueOf(reader.getElementText().trim());
+
+         integerValue = Integer.valueOf(elementAsString(reader));
       }
       catch (NumberFormatException nfe)
       {
@@ -126,7 +128,7 @@ public abstract class AbstractParser
       longValue = null;
       try
       {
-         longValue = Long.valueOf(reader.getElementText().trim());
+         longValue = Long.valueOf(elementAsString(reader));
       }
       catch (NumberFormatException nfe)
       {

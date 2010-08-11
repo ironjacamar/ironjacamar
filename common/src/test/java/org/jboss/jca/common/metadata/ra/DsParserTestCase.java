@@ -27,6 +27,8 @@ import org.jboss.jca.common.metadata.ds.DsParser;
 import java.io.File;
 import java.io.FileInputStream;
 
+import org.jboss.util.file.FileSuffixFilter;
+
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -42,33 +44,35 @@ import static org.junit.Assert.assertThat;
 public class DsParserTestCase
 {
    /**
-    * shouldParseJbossRa10WithSingleProperty
+    * shouldParseAnyExample
     * @throws Exception in case of error
     */
    @Test
-   public void shouldParseJbossRa10WithSingleProperty() throws Exception
+   public void shouldParseAnyExample() throws Exception
    {
       FileInputStream is = null;
-      try
-      {
-         //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-               .getResource("ds/db2-ds.xml").toURI());
-         is = new FileInputStream(xmlFile);
-         DsParser parser = new DsParser();
-         //when
-         DataSources ds = parser.parse(is);
-         //then
-         assertThat(ds.getDatasource().size(), is(1));
 
-
-      }
-      finally
+      //given
+      File directory = new File(Thread.currentThread().getContextClassLoader().getResource("ds").toURI());
+      for (File xmlFile : directory.listFiles(new FileSuffixFilter("-ds.xml")))
       {
-         if (is != null)
-            is.close();
+         System.out.println(xmlFile.getName());
+         try
+         {
+            is = new FileInputStream(xmlFile);
+            DsParser parser = new DsParser();
+            //when
+            DataSources ds = parser.parse(is);
+            //then
+            assertThat(ds.getDatasource().size() + ds.getXaDataSource().size(), is(1));
+
+         }
+         finally
+         {
+            if (is != null)
+               is.close();
+         }
       }
    }
-
 
 }
