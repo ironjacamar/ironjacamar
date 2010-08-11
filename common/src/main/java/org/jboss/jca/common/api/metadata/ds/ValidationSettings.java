@@ -109,7 +109,7 @@ public interface ValidationSettings extends JCAMetadata
       /**
       * validConnectionCheckerClassName tag
       */
-      VALIDCONNECTIONCHECKERCLASSNAME("valid-connection-checker-className"),
+      VALIDCONNECTIONCHECKERCLASSNAME("valid-connection-checker-class-name"),
       /**
       * checkValidConnectionSql tag
       */

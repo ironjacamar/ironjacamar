@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ===================================================================== -->
+<!-- -->
+<!-- JBoss Server Configuration -->
+<!-- -->
+<!-- ===================================================================== -->
+<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
+<!-- $Id: jdatastore-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
+<!-- ==================================================================== -->
+<!-- Copy these jar's from your JBuilder6/lib to your jboss's lib -->
+<!-- dx.jar,jdsserver.jar,jds.jar -->
+<!-- Originally from Brent Thompson www.protegra.com/javagroup.html -->
+<!-- ==================================================================== -->
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+  <datasource jndi-name="JDataStoreDS" pool-name="JDataStoreDS">
+    <user-name>x</user-name>
+    <password>y</password>
+    <connection-url>jdbc:borland:dslocal:/home/brent/JBuilder6/samples/JDataStore/datastores/employee.jds</connection-url>
+    <driver-class>com.borland.datastore.jdbc.DataStoreDriver</driver-class>
+  </datasource>
+</datasources>

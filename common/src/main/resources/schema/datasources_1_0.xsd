@@ -223,7 +223,7 @@
         maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
-              <![CDATA[[
+            <![CDATA[[
               InSpecify a property to assign to the XADataSource implementation class. 
               Each property is identified by the name attribute and the property value 
               is given by the xa-datasource-property element content. The property is mapped 
@@ -242,7 +242,7 @@
       <xs:element name="xa-datasource-class" type="xs:token">
         <xs:annotation>
           <xs:documentation>
-              <![CDATA[[
+            <![CDATA[[
                The fully qualifed name of the javax.sql.XADataSource implementation 
                class. Ex: <xa-datasource-class>com.informix.jdbcx.IfxXADataSource</xa-datasource-class>
               ]]>
@@ -264,7 +264,7 @@
       <xs:element name="is-same-rm-override" type="xs:boolean" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
-              <![CDATA[[
+            <![CDATA[[
                 The isSameRM-override-value element allows one to unconditionally 
                 set whether the javax.transaction.xa.XAResource.isSameRM(XAResource) returns 
                 true or false. Ex: <isSameRM-override-value>true</isSameRM-override-value>
@@ -275,7 +275,7 @@
       <xs:element name="interleaving" type="boolean-presence-ComplexType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
-              <![CDATA[[
+            <![CDATA[[
                An element to enable interleaving for XA connection factories Ex: 
                <interleaving/>
               ]]>
@@ -284,8 +284,7 @@
       </xs:element>
       <xs:element name="recovery-settings" type="recovery-settings_type" minOccurs="0" />
       <xs:element name="time-out-settings" type="time-out-settings_type" minOccurs="0" />
-      <xs:element name="security-settings" type="security-settings_type" minOccurs="0">
-      </xs:element>
+      <xs:element name="security-settings" type="security-settings_type" minOccurs="0"></xs:element>
       <xs:element name="statement-settings" minOccurs="0">
         <xs:complexType>
           <xs:sequence>
@@ -357,7 +356,8 @@
       </xs:element>
       <xs:element name="pad-xid" type="xs:boolean" default="false" minOccurs="0" />
       <xs:element name="wrap-xa-resource" type="xs:boolean" default="false" minOccurs="0" />
-      <xs:element name="no-tx-separate-pools" type="boolean-presence-ComplexType" minOccurs="0"/>
+      <xs:element name="no-tx-separate-pools" type="boolean-presence-ComplexType" minOccurs="0" />
+      <xs:element name="track-connection-by-tx" type="xs:boolean" minOccurs="0"></xs:element>
     </xs:sequence>
     <xs:attributeGroup ref="common-datasourceAttributes" />
   </xs:complexType>
@@ -395,12 +395,12 @@
   <xs:simpleType name="security-manager-values">
     <xs:annotation>
       <xs:documentation> Define constants used as the possible security manager in security-settings_type. See there for
-        complete documentation Include: APPLICATION DOMAIN APPLICATION-AND-DOMAIN NONE</xs:documentation>
+        complete documentation Include: APPLICATION DOMAIN APPLICATION_AND_DOMAIN NONE</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:token">
       <xs:enumeration value="APPLICATION" />
       <xs:enumeration value="DOMAIN" />
-      <xs:enumeration value="APPLICATION-AND-DOMAIN" />
+      <xs:enumeration value="APPLICATION_AND_DOMAIN" />
       <xs:enumeration value="NONE" />
     </xs:restriction>
   </xs:simpleType>

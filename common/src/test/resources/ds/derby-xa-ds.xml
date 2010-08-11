@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  JBoss DataSource Configuration                                       -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<!-- $Id: derby-xa-ds.xml 77479 2008-08-26 10:33:09Z alex.loubyansky@jboss.com $ -->
+
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+   <xa-datasource jndi-name="XADerbyDS" pool-name="XADerbyDS">
+      <!-- path to the database. (${jboss.server.data.dir}${/}derby${/}default didn't work on win) -->
+      <xa-datasource-property name="DatabaseName">derby/default</xa-datasource-property>
+      <xa-datasource-property name="User">sa</xa-datasource-property>
+      <xa-datasource-property name="Password"></xa-datasource-property>
+      <xa-datasource-property name="CreateDatabase">create</xa-datasource-property>
+     <xa-datasource-class>org.apache.derby.jdbc.EmbeddedXADataSource</xa-datasource-class>
+     
+      <!-- uncomment to enable interleaving <interleaving/> -->
+      <is-same-rm-override>false</is-same-rm-override>
+      
+     
+   </xa-datasource>
+
+
+</datasources>

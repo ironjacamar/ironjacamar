@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ===================================================================== -->
+<!-- -->
+<!-- JBoss Server Configuration -->
+<!-- -->
+<!-- ===================================================================== -->
+<!-- $Id: oracle-xa-ds.xml 77479 2008-08-26 10:33:09Z alex.loubyansky@jboss.com $ -->
+<!-- ===================================================================== -->
+<!-- ATTENTION: DO NOT FORGET TO SET Pad=true IN transaction-service.xml -->
+<!-- ===================================================================== -->
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+  <xa-datasource jndi-name="XAOracleDS" pool-name="XAOracleDS">
+    <xa-datasource-property name="URL">jdbc:oracle:oci8:@tc</xa-datasource-property>
+    <xa-datasource-property name="User">scott</xa-datasource-property>
+    <xa-datasource-property name="Password">tiger</xa-datasource-property>
+    <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+    <!-- uncomment to enable interleaving <interleaving/> -->
+    <is-same-rm-override>false</is-same-rm-override>
+    <validation-settings>
+      <!-- Uses the pingDatabase method to check a connection is still valid before handing it out from the pool -->
+      <!--valid-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.OracleValidConnectionChecker</valid-connection-checker-class-name -->
+      <!-- sql to call on an existing pooled connection when it is obtained from pool - the OracleValidConnectionChecker 
+        is prefered <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql> -->
+      <!-- Checks the Oracle error codes and messages for fatal errors -->
+      <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter</exception-sorter-class-name>
+    </validation-settings>
+    <no-tx-separate-pools />
+  </xa-datasource>
+</datasources>

@@ -219,6 +219,13 @@ public interface XaDataSource extends JCAMetadata
    public boolean isNoTxSeparatePool();
 
    /**
+    * Get the trackConnectionByTx.
+    *
+    * @return the trackConnectionByTx.
+    */
+   public boolean isTrackConnectionByTx();
+
+   /**
    *
    * A Tag.
    *
@@ -318,7 +325,12 @@ public interface XaDataSource extends JCAMetadata
       /**
        * no-tx-separate-pools tag
        */
-      NO_TX_SEPARATE_POOLS("no-tx-separate-pools");
+      NO_TX_SEPARATE_POOLS("no-tx-separate-pools"),
+
+      /**
+       * track-connection-by-tx tag
+       */
+      TRACK_CONNECTION_BY_TX("track-connection-by-tx");
 
       private final String name;
 

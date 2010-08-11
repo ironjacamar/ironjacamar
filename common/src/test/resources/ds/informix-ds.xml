@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ===================================================================== -->
+<!-- -->
+<!-- JBoss Server Configuration -->
+<!-- -->
+<!-- ===================================================================== -->
+<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
+<!-- $Id: informix-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+  <datasource jndi-name="InformixDS" pool-name="InformixDS">
+    <user-name>x</user-name>
+    <password>y</password>
+    <connection-url>jdbc:informix-sqli://myhost.mydomain.com:1557/mydb:INFORMIXSERVER=myserver</connection-url>
+    <driver-class>com.informix.jdbc.IfxDriver</driver-class>
+    <validation-settings>
+      <!-- sql to call on an existing pooled connection when it is obtained from pool -->
+      <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql>
+      <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.InformixExceptionSorter</exception-sorter-class-name>
+    </validation-settings>
+    <!-- sql to call when connection is created -->
+    <new-connection-sql>some arbitrary sql</new-connection-sql>
+  </datasource>
+</datasources>

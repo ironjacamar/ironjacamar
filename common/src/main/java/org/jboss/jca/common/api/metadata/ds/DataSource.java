@@ -254,7 +254,7 @@ public interface DataSource extends JCAMetadata
       /**
       * newConnectionSql tag
       */
-      NEWCONNECTIONSQL("new-sonnection-sql");
+      NEWCONNECTIONSQL("new-connection-sql");
 
       private final String name;
 

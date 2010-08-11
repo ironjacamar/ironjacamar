@@ -32,3 +32,4 @@ standalone/**
 /lib/**
 
 common/src/main/resources/schema/connector_1_0.xsd
+common/src/test/resources/todo/
