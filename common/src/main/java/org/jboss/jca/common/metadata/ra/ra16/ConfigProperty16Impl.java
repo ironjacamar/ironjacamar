@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
@@ -159,137 +161,57 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
       return configPropertyConfidential;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#hashCode()
-    */
    @Override
    public int hashCode()
    {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
+      result = prime * result + ((attachedClassName == null) ? 0 : attachedClassName.hashCode());
       result = prime * result + ((configPropertyConfidential == null) ? 0 : configPropertyConfidential.hashCode());
       result = prime * result + ((configPropertyIgnore == null) ? 0 : configPropertyIgnore.hashCode());
-      result = prime * result + ((configPropertyName == null) ? 0 : configPropertyName.hashCode());
       result = prime * result
             + ((configPropertySupportsDynamicUpdates == null) ? 0 : configPropertySupportsDynamicUpdates.hashCode());
-      result = prime * result + ((configPropertyType == null) ? 0 : configPropertyType.hashCode());
-      result = prime * result + ((configPropertyValue == null) ? 0 : configPropertyValue.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
       return result;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
    @Override
    public boolean equals(Object obj)
    {
       if (this == obj)
-      {
          return true;
-      }
-      if (obj == null)
-      {
+      if (!super.equals(obj))
          return false;
-      }
       if (!(obj instanceof ConfigProperty16Impl))
-      {
          return false;
-      }
       ConfigProperty16Impl other = (ConfigProperty16Impl) obj;
+      if (attachedClassName == null)
+      {
+         if (other.attachedClassName != null)
+            return false;
+      }
+      else if (!attachedClassName.equals(other.attachedClassName))
+         return false;
       if (configPropertyConfidential == null)
       {
          if (other.configPropertyConfidential != null)
-         {
             return false;
-         }
       }
       else if (!configPropertyConfidential.equals(other.configPropertyConfidential))
-      {
          return false;
-      }
       if (configPropertyIgnore == null)
       {
          if (other.configPropertyIgnore != null)
-         {
             return false;
-         }
       }
       else if (!configPropertyIgnore.equals(other.configPropertyIgnore))
-      {
          return false;
-      }
-      if (configPropertyName == null)
-      {
-         if (other.configPropertyName != null)
-         {
-            return false;
-         }
-      }
-      else if (!configPropertyName.equals(other.configPropertyName))
-      {
-         return false;
-      }
       if (configPropertySupportsDynamicUpdates == null)
       {
          if (other.configPropertySupportsDynamicUpdates != null)
-         {
             return false;
-         }
       }
       else if (!configPropertySupportsDynamicUpdates.equals(other.configPropertySupportsDynamicUpdates))
-      {
          return false;
-      }
-      if (configPropertyType == null)
-      {
-         if (other.configPropertyType != null)
-         {
-            return false;
-         }
-      }
-      else if (!configPropertyType.equals(other.configPropertyType))
-      {
-         return false;
-      }
-      if (configPropertyValue == null)
-      {
-         if (other.configPropertyValue != null)
-         {
-            return false;
-         }
-      }
-      else if (!configPropertyValue.equals(other.configPropertyValue))
-      {
-         return false;
-      }
-      if (description == null)
-      {
-         if (other.description != null)
-         {
-            return false;
-         }
-      }
-      else if (!description.equals(other.description))
-      {
-         return false;
-      }
-      if (id == null)
-      {
-         if (other.id != null)
-         {
-            return false;
-         }
-      }
-      else if (!id.equals(other.id))
-      {
-         return false;
-      }
       return true;
    }
 
@@ -306,6 +228,16 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
             + ", configPropertyIgnore=" + configPropertyIgnore + ", configPropertySupportsDynamicUpdates="
             + configPropertySupportsDynamicUpdates + ", configPropertyConfidential=" + configPropertyConfidential
             + ", id=" + id + "]";
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new ConfigProperty16Impl(CopyUtil.cloneList(description), CopyUtil.clone(configPropertyName),
+            CopyUtil.clone(configPropertyType),
+            CopyUtil.clone(configPropertyValue), configPropertyIgnore,
+            configPropertySupportsDynamicUpdates,
+            configPropertyConfidential, CopyUtil.cloneString(id), CopyUtil.cloneString(attachedClassName));
    }
 
 

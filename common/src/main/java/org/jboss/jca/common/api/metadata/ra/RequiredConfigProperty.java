@@ -22,6 +22,9 @@
 package org.jboss.jca.common.api.metadata.ra;
 
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +35,7 @@ import java.util.Map;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class RequiredConfigProperty implements IdDecoratedMetadata
+public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMetaData
 {
    /**
     */
@@ -49,10 +52,18 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
     * @param configPropertyName name of the property
     * @param id XML ID
     */
-   public RequiredConfigProperty(ArrayList<LocalizedXsdString> description, XsdString configPropertyName, String id)
+   public RequiredConfigProperty(List<LocalizedXsdString> description, XsdString configPropertyName, String id)
    {
       super();
-      this.description = description;
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
       this.configPropertyName = configPropertyName;
       this.id = id;
    }
@@ -283,6 +294,13 @@ public class RequiredConfigProperty implements IdDecoratedMetadata
          return name;
       }
 
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new RequiredConfigProperty(CopyUtil.cloneList(description), CopyUtil.clone(configPropertyName),
+            CopyUtil.cloneString(id));
    }
 
 }

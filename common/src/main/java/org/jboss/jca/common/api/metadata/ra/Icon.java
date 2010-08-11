@@ -22,6 +22,9 @@
 package org.jboss.jca.common.api.metadata.ra;
 
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +32,7 @@ import java.util.Map;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class Icon implements IdDecoratedMetadata, LocalizedMetadata
+public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMetaData
 {
    /**
     */
@@ -324,5 +327,11 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata
          return name;
       }
 
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new Icon(CopyUtil.clone(smallIcon), CopyUtil.clone(largeIcon), CopyUtil.cloneString(id));
    }
 }

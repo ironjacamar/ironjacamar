@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.InboundResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
@@ -178,6 +180,12 @@ public class InboundResourceAdapterImpl implements InboundResourceAdapter
       {
          return this;
       }
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new InboundResourceAdapterImpl(CopyUtil.clone(messageadapter), CopyUtil.cloneString(id));
    }
 
 }

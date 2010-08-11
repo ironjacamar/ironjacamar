@@ -22,6 +22,8 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
@@ -321,4 +323,12 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       }
    }
 
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new ConnectionDefinitionImpl(CopyUtil.clone(managedconnectionfactoryClass),
+            CopyUtil.cloneList(configProperty), CopyUtil.clone(connectionfactoryInterface),
+            CopyUtil.clone(connectionfactoryImplClass), CopyUtil.clone(connectionInterface),
+            CopyUtil.clone(connectionImplClass), CopyUtil.cloneString(id));
+   }
 }

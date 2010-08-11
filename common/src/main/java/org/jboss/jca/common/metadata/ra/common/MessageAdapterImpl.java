@@ -22,6 +22,8 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
@@ -176,4 +178,9 @@ public class MessageAdapterImpl implements Messageadapter
       }
    }
 
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new MessageAdapterImpl(CopyUtil.cloneList(messagelisteners), CopyUtil.cloneString(id));
+   }
 }

@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
@@ -165,6 +167,13 @@ public class MessageListenerImpl implements MessageListener
    {
       return "MessageListener [messagelistenerType=" + messagelistenerType + ", activationspec=" + activationspec
             + ", id=" + id + "]";
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new MessageListenerImpl(CopyUtil.clone(messagelistenerType), CopyUtil.clone(activationspec),
+            CopyUtil.cloneString(id));
    }
 
 

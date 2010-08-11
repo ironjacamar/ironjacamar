@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata.ra.ra15;
 
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.IdDecoratedMetadata;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
@@ -35,7 +36,7 @@ import java.util.List;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Activationspec15 extends IdDecoratedMetadata
+public interface Activationspec15 extends IdDecoratedMetadata, CopyableMetaData
 {
    /**
     * @return configProperty

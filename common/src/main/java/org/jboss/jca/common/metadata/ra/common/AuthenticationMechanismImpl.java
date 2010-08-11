@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.CredentialInterfaceEnum;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
@@ -203,6 +205,14 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
    {
       return "AuthenticationMechanism [description=" + description + ", authenticationMechanismType="
             + authenticationMechanismType + ", credentialInterface=" + credentialInterface + ", id=" + id + "]";
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new AuthenticationMechanismImpl(CopyUtil.cloneList(description),
+            CopyUtil.clone(authenticationMechanismType), credentialInterface,
+            CopyUtil.cloneString(id));
    }
 
 }

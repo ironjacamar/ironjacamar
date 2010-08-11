@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.ra10;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.Icon;
 import org.jboss.jca.common.api.metadata.ra.LicenseType;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
@@ -44,6 +46,8 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
 
    private final String moduleName;
 
+   private final XsdString resourceadapterVersion;
+
    /**
     * @param moduleName name of the module
     * @param description descriptions of this connector
@@ -63,6 +67,7 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
    {
       super(vendorName, eisType, license, resourceadapter, description, displayName, icon, id);
       this.moduleName = moduleName;
+      this.resourceadapterVersion = resourceadapterVersion;
 
 
    }
@@ -134,7 +139,15 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
             + description + ", displayName=" + displayName + ", icon=" + icon + "]";
    }
 
-
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new Connector10Impl(CopyUtil.cloneString(moduleName), CopyUtil.clone(vendorName),
+            CopyUtil.clone(eisType), CopyUtil.clone(resourceadapterVersion), CopyUtil.clone(license),
+            CopyUtil.clone(resourceadapter),
+            CopyUtil.cloneList(description), CopyUtil.cloneList(displayName), CopyUtil.cloneList(icon),
+            CopyUtil.cloneString(id));
+   }
 
 
 }

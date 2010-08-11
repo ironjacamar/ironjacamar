@@ -22,10 +22,6 @@
 package org.jboss.jca.common.metadata.ra;
 
 import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
-import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
-import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +29,6 @@ import java.io.FileInputStream;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -43,14 +38,14 @@ import static org.junit.Assert.assertThat;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class RaParserTestCase
+public class CopyableMetaDataTestCase
 {
    /**
-    * shouldParseConnector16
+    * shouldCopyConnector16
     * @throws Exception in case of error
     */
    @Test
-   public void shouldParseConnector16() throws Exception
+   public void shouldCopyConnector16() throws Exception
    {
 
       FileInputStream is = null;
@@ -63,9 +58,14 @@ public class RaParserTestCase
          RaParser parser = new RaParser();
          //when
          Connector connector = parser.parse(is);
+         Connector newConnector = (Connector) connector.copy();
          //then
-         assertThat(connector, instanceOf(Connector16.class));
-         assertThat(connector.getVersion(), is(Version.V_16));
+         assertThat(connector == newConnector, is(false));
+         assertThat(connector.equals(newConnector), is(true));
+         assertThat(connector.hashCode(), is(newConnector.hashCode()));
+
+
+
       }
       finally
       {
@@ -76,11 +76,11 @@ public class RaParserTestCase
    }
 
    /**
-    * shouldParseConnector15
+    * shouldCopyConnector16
     * @throws Exception in case of error
     */
    @Test
-   public void shouldParseConnector15() throws Exception
+   public void shouldCopyConnector15() throws Exception
    {
 
       FileInputStream is = null;
@@ -93,9 +93,12 @@ public class RaParserTestCase
          RaParser parser = new RaParser();
          //when
          Connector connector = parser.parse(is);
+         Connector newConnector = (Connector) connector.copy();
          //then
-         assertThat(connector, instanceOf(Connector15.class));
-         assertThat(connector.getVersion(), is(Version.V_15));
+         assertThat(connector == newConnector, is(false));
+         assertThat(connector.equals(newConnector), is(true));
+         assertThat(connector.hashCode(), is(newConnector.hashCode()));
+
       }
       finally
       {
@@ -106,11 +109,11 @@ public class RaParserTestCase
    }
 
    /**
-    * shouldParseConnector15MoreComplex
+    * shouldCopyConnector16 more complex
     * @throws Exception in case of error
     */
    @Test
-   public void shouldParseConnector16MoreComplex() throws Exception
+   public void shouldCopyConnector16MoreComplex() throws Exception
    {
       FileInputStream is = null;
       try
@@ -122,9 +125,11 @@ public class RaParserTestCase
          RaParser parser = new RaParser();
          //when
          Connector connector = parser.parse(is);
+         Connector newConnector = (Connector) connector.copy();
          //then
-         assertThat(connector, instanceOf(Connector15.class));
-         assertThat(connector.getVersion(), is(Version.V_16));
+         assertThat(connector == newConnector, is(false));
+         assertThat(connector.equals(newConnector), is(true));
+         assertThat(connector.hashCode(), is(newConnector.hashCode()));
 
 
       }
@@ -137,11 +142,11 @@ public class RaParserTestCase
    }
 
    /**
-    * shouldParseConnector10
+    * shouldCopyConnector10
     * @throws Exception in case of error
     */
    @Test
-   public void shouldParseConnector10() throws Exception
+   public void shouldCopyConnector10() throws Exception
    {
       FileInputStream is = null;
       try
@@ -153,9 +158,11 @@ public class RaParserTestCase
          RaParser parser = new RaParser();
          //when
          Connector connector = parser.parse(is);
+         Connector newConnector = (Connector) connector.copy();
          //then
-         assertThat(connector, instanceOf(Connector10.class));
-         assertThat(connector.getVersion(), is(Version.V_10));
+         assertThat(connector == newConnector, is(false));
+         assertThat(connector.equals(newConnector), is(true));
+         assertThat(connector.hashCode(), is(newConnector.hashCode()));
       }
       finally
       {

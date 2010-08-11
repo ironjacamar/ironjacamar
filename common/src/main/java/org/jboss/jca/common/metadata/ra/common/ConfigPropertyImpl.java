@@ -22,6 +22,8 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.IdDecoratedMetadata;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
@@ -151,4 +153,71 @@ public class ConfigPropertyImpl implements IdDecoratedMetadata, ConfigProperty
             .getConfigPropertyValue().getValue().trim().equals(""));
    }
 
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new ConfigPropertyImpl(CopyUtil.cloneList(description), CopyUtil.clone(configPropertyName),
+            CopyUtil.clone(configPropertyType), CopyUtil.clone(configPropertyValue), CopyUtil.cloneString(id));
+   }
+
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((configPropertyName == null) ? 0 : configPropertyName.hashCode());
+      result = prime * result + ((configPropertyType == null) ? 0 : configPropertyType.hashCode());
+      result = prime * result + ((configPropertyValue == null) ? 0 : configPropertyValue.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (!(obj instanceof ConfigPropertyImpl))
+         return false;
+      ConfigPropertyImpl other = (ConfigPropertyImpl) obj;
+      if (configPropertyName == null)
+      {
+         if (other.configPropertyName != null)
+            return false;
+      }
+      else if (!configPropertyName.equals(other.configPropertyName))
+         return false;
+      if (configPropertyType == null)
+      {
+         if (other.configPropertyType != null)
+            return false;
+      }
+      else if (!configPropertyType.equals(other.configPropertyType))
+         return false;
+      if (configPropertyValue == null)
+      {
+         if (other.configPropertyValue != null)
+            return false;
+      }
+      else if (!configPropertyValue.equals(other.configPropertyValue))
+         return false;
+      if (description == null)
+      {
+         if (other.description != null)
+            return false;
+      }
+      else if (!description.equals(other.description))
+         return false;
+      if (id == null)
+      {
+         if (other.id != null)
+            return false;
+      }
+      else if (!id.equals(other.id))
+         return false;
+      return true;
+   }
 }

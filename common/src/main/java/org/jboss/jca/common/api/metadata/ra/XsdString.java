@@ -21,13 +21,16 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
+
 
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class XsdString implements IdDecoratedMetadata
+public class XsdString implements IdDecoratedMetadata, CopyableMetaData
 {
 
    /**
@@ -162,4 +165,9 @@ public class XsdString implements IdDecoratedMetadata
       return (xsdString == null || xsdString.equals(NULL_XSDSTRING));
    }
 
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new XsdString(CopyUtil.cloneString(value), CopyUtil.cloneString(id));
+   }
 }

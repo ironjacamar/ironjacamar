@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
@@ -166,11 +168,6 @@ public class ResourceAdapter1516Impl implements ResourceAdapter1516
       return id;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#hashCode()
-    */
    @Override
    public int hashCode()
    {
@@ -186,104 +183,65 @@ public class ResourceAdapter1516Impl implements ResourceAdapter1516
       return result;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
    @Override
    public boolean equals(Object obj)
    {
       if (this == obj)
-      {
          return true;
-      }
       if (obj == null)
-      {
          return false;
-      }
       if (!(obj instanceof ResourceAdapter1516Impl))
-      {
          return false;
-      }
       ResourceAdapter1516Impl other = (ResourceAdapter1516Impl) obj;
       if (adminobjects == null)
       {
          if (other.adminobjects != null)
-         {
             return false;
-         }
       }
       else if (!adminobjects.equals(other.adminobjects))
-      {
          return false;
-      }
       if (configProperties == null)
       {
          if (other.configProperties != null)
-         {
             return false;
-         }
       }
       else if (!configProperties.equals(other.configProperties))
-      {
          return false;
-      }
       if (id == null)
       {
          if (other.id != null)
-         {
             return false;
-         }
       }
       else if (!id.equals(other.id))
-      {
          return false;
-      }
       if (inboundResourceadapter == null)
       {
          if (other.inboundResourceadapter != null)
-         {
             return false;
-         }
       }
       else if (!inboundResourceadapter.equals(other.inboundResourceadapter))
-      {
          return false;
-      }
       if (outboundResourceadapter == null)
       {
          if (other.outboundResourceadapter != null)
-         {
             return false;
-         }
       }
       else if (!outboundResourceadapter.equals(other.outboundResourceadapter))
-      {
          return false;
-      }
       if (resourceadapterClass == null)
       {
          if (other.resourceadapterClass != null)
-         {
             return false;
-         }
       }
       else if (!resourceadapterClass.equals(other.resourceadapterClass))
-      {
          return false;
-      }
       if (securityPermissions == null)
       {
          if (other.securityPermissions != null)
-         {
             return false;
-         }
       }
       else if (!securityPermissions.equals(other.securityPermissions))
-      {
          return false;
-      }
       return true;
    }
 
@@ -348,5 +306,15 @@ public class ResourceAdapter1516Impl implements ResourceAdapter1516
       {
          return this;
       }
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new ResourceAdapter1516Impl(CopyUtil.cloneString(resourceadapterClass),
+            CopyUtil.cloneList(configProperties), CopyUtil.clone(outboundResourceadapter),
+            CopyUtil.clone(inboundResourceadapter), CopyUtil.cloneList(adminobjects),
+            CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id));
+
    }
 }

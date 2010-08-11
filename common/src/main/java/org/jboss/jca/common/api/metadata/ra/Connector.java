@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
+
 import java.util.List;
 
 /**
@@ -30,7 +32,12 @@ import java.util.List;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Connector extends IdDecoratedMetadata, ValidatableMetadata, MergeableMetadata<Connector>
+public interface Connector
+      extends
+         IdDecoratedMetadata,
+         ValidatableMetadata,
+         MergeableMetadata<Connector>,
+         CopyableMetaData
 {
 
    /**

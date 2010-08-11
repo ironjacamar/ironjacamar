@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
@@ -287,4 +289,10 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       }
    }
 
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new OutboundResourceAdapterImpl(CopyUtil.cloneList(connectionDefinition), transactionSupport,
+            CopyUtil.cloneList(authenticationMechanism), reauthenticationSupport, CopyUtil.cloneString(id));
+   }
 }

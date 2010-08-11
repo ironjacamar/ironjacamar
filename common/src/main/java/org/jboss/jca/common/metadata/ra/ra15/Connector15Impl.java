@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.ra15;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.Icon;
 import org.jboss.jca.common.api.metadata.ra.LicenseType;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
@@ -123,6 +125,16 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
       return "Connector15Impl [resourceadapterVersion=" + resourceadapterVersion + ", vendorName=" + vendorName
             + ", eisType=" + eisType + ", license=" + license + ", resourceadapter=" + resourceadapter + ", id=" + id
             + ", description=" + description + ", displayName=" + displayName + ", icon=" + icon + "]";
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new Connector15Impl(CopyUtil.clone(resourceadapterVersion), CopyUtil.clone(resourceadapterVersion),
+            CopyUtil.clone(resourceadapterVersion), CopyUtil.clone(license),
+            CopyUtil.clone((ResourceAdapter1516) resourceadapter), CopyUtil.cloneList(description),
+            CopyUtil.cloneList(displayName),
+            CopyUtil.cloneList(icon), CopyUtil.cloneString(id));
    }
 
 

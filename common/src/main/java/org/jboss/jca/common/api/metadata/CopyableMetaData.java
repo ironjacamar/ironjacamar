@@ -19,57 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ra;
-
-
-import org.jboss.jca.common.api.metadata.CopyableMetaData;
-
-import java.util.List;
+package org.jboss.jca.common.api.metadata;
 
 /**
  *
- * A ConfigProperty.
+ * A CopyableMetaData.
+ * This interface force implementors to override {@link #copy()} method.
+ * On the presence of this method are based some assumption to use generics during clone deep into the metadatas
+ * members.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface ConfigProperty extends IdDecoratedMetadata, CopyableMetaData
+public interface CopyableMetaData extends Cloneable
 {
 
    /**
-    * @return description
-    */
-   public abstract List<LocalizedXsdString> getDescriptions();
-
-   /**
-    * @return configPropertyName
-    */
-   public abstract XsdString getConfigPropertyName();
-
-   /**
-    * @return configPropertyType
-    */
-   public abstract XsdString getConfigPropertyType();
-
-   /**
-    * @return configPropertyValue
-    */
-   public abstract XsdString getConfigPropertyValue();
-
-   /**
-    * {@inheritDoc}
+    * Creates and returns a copy of this object.  Ther copy is done in deep of all elements.
+    * It isn't formally a clone of the instance since it does not respect the assumption for which returned
+    * clone of cloneMethod are instance of Object
     *
-    * @see IdDecoratedMetadata#getId()
+    * @return     a copy of this instance.
     */
-   @Override
-   public abstract String getId();
 
-   /**
-    *
-    * convenient method t verify if the value has already been set
-    *
-    * @return true if vaue has been set
-    */
-   public abstract boolean isValueSet();
+   public CopyableMetaData copy();
 
 }

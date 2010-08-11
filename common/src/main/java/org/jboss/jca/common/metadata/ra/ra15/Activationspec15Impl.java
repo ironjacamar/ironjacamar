@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.ra15;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
@@ -171,4 +173,10 @@ public class Activationspec15Impl implements Activationspec15
       return null;
    }
 
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new Activationspec15Impl(CopyUtil.clone(activationspecClass),
+            CopyUtil.cloneList(requiredConfigProperty), CopyUtil.cloneString(id));
+   }
 }

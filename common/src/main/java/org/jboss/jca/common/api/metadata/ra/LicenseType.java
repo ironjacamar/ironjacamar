@@ -23,6 +23,8 @@ package org.jboss.jca.common.api.metadata.ra;
 
 
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ import java.util.Map;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<LicenseType>
+public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<LicenseType>, CopyableMetaData
 {
 
    /**
@@ -307,6 +309,10 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
       }
    }
 
-
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new LicenseType(CopyUtil.cloneList(description), licenseRequired, CopyUtil.cloneString(id));
+   }
 
 }

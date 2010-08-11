@@ -22,6 +22,8 @@
 package org.jboss.jca.common.metadata.ra.common;
 
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
@@ -106,11 +108,6 @@ public class AdminObjectImpl implements AdminObject
       return id;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#hashCode()
-    */
    @Override
    public int hashCode()
    {
@@ -123,71 +120,44 @@ public class AdminObjectImpl implements AdminObject
       return result;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
    @Override
-   public boolean equals(final Object obj)
+   public boolean equals(Object obj)
    {
       if (this == obj)
-      {
          return true;
-      }
       if (obj == null)
-      {
          return false;
-      }
       if (!(obj instanceof AdminObjectImpl))
-      {
          return false;
-      }
-      final AdminObjectImpl other = (AdminObjectImpl) obj;
+      AdminObjectImpl other = (AdminObjectImpl) obj;
       if (adminobjectClass == null)
       {
          if (other.adminobjectClass != null)
-         {
             return false;
-         }
       }
       else if (!adminobjectClass.equals(other.adminobjectClass))
-      {
          return false;
-      }
       if (adminobjectInterface == null)
       {
          if (other.adminobjectInterface != null)
-         {
             return false;
-         }
       }
       else if (!adminobjectInterface.equals(other.adminobjectInterface))
-      {
          return false;
-      }
       if (configProperty == null)
       {
          if (other.configProperty != null)
-         {
             return false;
-         }
       }
       else if (!configProperty.equals(other.configProperty))
-      {
          return false;
-      }
       if (id == null)
       {
          if (other.id != null)
-         {
             return false;
-         }
       }
       else if (!id.equals(other.id))
-      {
          return false;
-      }
       return true;
    }
 
@@ -203,5 +173,11 @@ public class AdminObjectImpl implements AdminObject
             + ", configProperty=" + configProperty + ", id=" + id + "]";
    }
 
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new AdminObjectImpl(CopyUtil.clone(adminobjectInterface), CopyUtil.clone(adminobjectClass),
+            CopyUtil.cloneList(configProperty), CopyUtil.cloneString(id));
+   }
 
 }

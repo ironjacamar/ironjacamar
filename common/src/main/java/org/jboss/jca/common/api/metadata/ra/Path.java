@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.security.InvalidParameterException;
@@ -29,7 +31,7 @@ import java.security.InvalidParameterException;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class Path implements JCAMetadata
+public class Path implements JCAMetadata, CopyableMetaData
 {
    /**
     */
@@ -132,4 +134,11 @@ public class Path implements JCAMetadata
    {
       return "Path [value=" + value + "]";
    }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new Path(CopyUtil.cloneString(value));
+   }
+
 }

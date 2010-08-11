@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.ra10;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
@@ -372,6 +374,17 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
          throw new ValidateException("ManagedConnectionFactoryClass should be defined");
       }
 
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new ResourceAdapter10Impl(CopyUtil.clone(managedConnectionFactoryClass),
+            CopyUtil.clone(connectionFactoryInterface),
+            CopyUtil.clone(connectionFactoryImplClass), CopyUtil.clone(connectionInterface),
+            CopyUtil.clone(connectionImplClass), transactionSupport,
+            CopyUtil.cloneList(authenticationMechanism), CopyUtil.cloneList(configProperties),
+            reauthenticationSupport, CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id));
    }
 
 }

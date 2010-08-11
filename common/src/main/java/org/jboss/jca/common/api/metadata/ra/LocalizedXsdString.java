@@ -21,6 +21,9 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
+
 
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
@@ -124,6 +127,13 @@ public class LocalizedXsdString extends XsdString implements LocalizedMetadata
    public String toString()
    {
       return "LocalizedXsdString [lang=" + lang + ", value=" + value + ", id=" + id + "]";
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new LocalizedXsdString(CopyUtil.cloneString(value), CopyUtil.cloneString(id),
+            CopyUtil.cloneString(lang));
    }
 
 }

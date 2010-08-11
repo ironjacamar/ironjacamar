@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.ra16;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.ra.Connector;
@@ -226,6 +228,25 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
       return this;
 
 
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      XsdString newResourceadapterVersion = CopyUtil.clone(this.resourceadapterVersion);
+      XsdString newEisType = XsdString.isNull(this.eisType) ? null : (XsdString) this.eisType.copy();
+      List<String> newRequiredWorkContexts = CopyUtil.cloneListOfStrings(this.requiredWorkContexts);
+      String newModuleName = CopyUtil.cloneString(this.moduleName);
+      List<Icon> newIcons = CopyUtil.cloneList(this.icon);
+      boolean newMetadataComplete = this.metadataComplete;
+      LicenseType newLicense = CopyUtil.clone(this.license);
+      List<LocalizedXsdString> newDescriptions = CopyUtil.cloneList(this.description);
+      List<LocalizedXsdString> newDisplayNames = CopyUtil.cloneList(this.displayName);
+      XsdString newVendorName = CopyUtil.clone(this.vendorName);
+      ResourceAdapter1516 newResourceadapter = CopyUtil.clone((ResourceAdapter1516) this.resourceadapter);
+      return new Connector16Impl(newModuleName, newVendorName, newEisType, newResourceadapterVersion, newLicense,
+            newResourceadapter, newRequiredWorkContexts, newMetadataComplete, newDescriptions, newDisplayNames,
+            newIcons, CopyUtil.cloneString(id));
    }
 
 }

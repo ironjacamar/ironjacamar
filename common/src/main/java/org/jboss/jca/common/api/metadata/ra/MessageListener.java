@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
 
 import java.util.HashMap;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface MessageListener extends IdDecoratedMetadata
+public interface MessageListener extends IdDecoratedMetadata, CopyableMetaData
 {
 
    /**

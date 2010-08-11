@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
@@ -461,5 +462,8 @@ public abstract class ConnectorAbstractmpl implements Connector
          }
       }
    }
+
+   @Override
+   public abstract CopyableMetaData copy();
 
 }

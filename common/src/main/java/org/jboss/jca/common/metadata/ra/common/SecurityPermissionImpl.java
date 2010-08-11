@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.api.metadata.CopyUtil;
+import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
@@ -173,6 +175,13 @@ public class SecurityPermissionImpl implements SecurityPermission
    {
       return "SecurityPermission [description=" + description + ", securityPermissionSpec=" + securityPermissionSpec
             + ", id=" + id + "]";
+   }
+
+   @Override
+   public CopyableMetaData copy()
+   {
+      return new SecurityPermissionImpl(CopyUtil.cloneList(description), CopyUtil.clone(securityPermissionSpec),
+            CopyUtil.cloneString(id));
    }
 
 }
