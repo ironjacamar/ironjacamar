@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ===================================================================== -->
+<!-- -->
+<!-- JBoss Server Configuration -->
+<!-- -->
+<!-- New ConnectionManager setup for Sybase ASE/ASA jConnect driver -->
+<!-- Thanks to Marc Zampetti <zampetti@aol.net> -->
+<!-- This is a minimal example. See the generic example for other stuff -->
+<!-- ===================================================================== -->
+<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
+<!-- $Id: sybase-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+  <datasource jndi-name="jdbc/SybaseDB" pool-name="jdbc/SybaseDB">
+    <user-name>x</user-name>
+    <password>y</password>
+    <!-- Sybase jConnect URL for the database. NOTE: The hostname and port are made up values. The optional database name 
+      is provided, as well as some additinal Driver parameters. -->
+    <connection-url>jdbc:sybase:Tds:host.at.some.domain:5000/db_name?JCONNECT_VERSION=6</connection-url>
+    <driver-class>com.sybase.jdbc2.jdbc.SybDataSource</driver-class>
+    <validation-settings> 
+    <!-- sql to call on an existing pooled connection when it is obtained from pool <check-valid-connection-sql>some arbitrary 
+        sql</check-valid-connection-sql> -->
+      <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+    </validation-settings>
+    <!-- sql to call when connection is created <new-connection-sql>some arbitrary sql</new-connection-sql> -->
+  </datasource>
+</datasources>

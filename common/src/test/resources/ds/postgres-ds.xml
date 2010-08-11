@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  JBoss Server Configuration                                           -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
+<!-- $Id: postgres-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
+<!-- ==================================================================== -->
+<!--  Datasource config for Postgres                                      -->
+<!-- ==================================================================== -->
+
+
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="file:/dati/project/RH/jboss-jca/common/src/main/resources/schema/datasources_1_0.xsd">
+  <datasource jndi-name="PostgresDS" pool-name="PostgresDS">
+     <user-name>x</user-name>
+    <password>y</password>
+    <connection-url>jdbc:postgresql://[servername]:[port]/[database name]</connection-url>
+    <driver-class>org.postgresql.Driver</driver-class>
+  </datasource>
+
+</datasources>
