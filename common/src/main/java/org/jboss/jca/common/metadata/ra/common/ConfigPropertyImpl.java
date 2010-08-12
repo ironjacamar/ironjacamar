@@ -40,7 +40,7 @@ import java.util.List;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class ConfigPropertyImpl implements IdDecoratedMetadata, ConfigProperty
+public class ConfigPropertyImpl implements ConfigProperty
 {
 
    /** The serialVersionUID */

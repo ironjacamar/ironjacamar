@@ -341,6 +341,7 @@ public abstract class ConnectorAbstractmpl implements Connector
     *
     * @param jmd the vendor metadata
     */
+   @SuppressWarnings("unchecked")
    protected void mergeJbossMetaData(JbossRa jmd)
    {
       if (jmd != null)

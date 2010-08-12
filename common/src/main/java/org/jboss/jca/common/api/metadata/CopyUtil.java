@@ -89,6 +89,7 @@ public class CopyUtil
     * @return cloned input
     *
     */
+   @SuppressWarnings("unchecked")
    public static <T extends CopyableMetaData> T clone(T input)
    {
       if (input instanceof XsdString)
