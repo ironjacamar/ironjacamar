@@ -17,6 +17,12 @@
 
       <subtitle>Connecting your Enterprise Information Systems</subtitle>
 
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/logo.png" align="center" valign="middle"/>
+        </imageobject>
+      </mediaobject>
+
    </bookinfo>
 
    &dedication;
