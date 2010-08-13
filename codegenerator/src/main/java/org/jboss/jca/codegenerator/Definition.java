@@ -151,7 +151,7 @@ public class Definition
 
    /** build  */
    @XmlElement(name = "build")
-   private String build = "ant";
+   private String build = "A";
 
    /**
     * Set the version.

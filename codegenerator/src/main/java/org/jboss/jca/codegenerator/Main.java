@@ -431,7 +431,11 @@ public class Main
          {
             def.setBuild("ivy");
          }
+         else
+            def.setBuild("ant");
       }
+      else
+         def.setBuild("ant");
 
       return def;
    }
