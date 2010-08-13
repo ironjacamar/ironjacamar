@@ -92,7 +92,7 @@ public class MetadataFactory
       }
       else
       {
-         log.errorf("metadafile %s does not exist", metadataFile.toString());
+         log.tracef("metadata file %s does not exist", metadataFile.toString());
       }
 
       return result;
