@@ -1,32 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-  <xs:complexType name="connection-factoriesType">
-    <xs:sequence>
-      <xs:choice minOccurs="1" maxOccurs="unbounded">
-        <xs:element name="no-tx-connection-factory" type="no-tx-connection-factoryType">
-          <xs:annotation>
-            <xs:documentation>
-              <![CDATA[[
-               The no-tx-connection-factory element is used to configure generic 
-               resource adapters that do not support transactions
-              ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:element>
-                <xs:element name="local-tx-connection-factory" type="local-tx-connection-factoryType">
-          <xs:annotation>
-            <xs:documentation>
-              <![CDATA[[
-               The tx-connection-factory element is used to configure generic resource 
-               adapters supporting transactions
-              ]]>
-            </xs:documentation>
-          </xs:annotation>
-        </xs:element>
-                <xs:element name="xa-tx-connection-factory" type="xa-tx-connection-factoryType"></xs:element>
-      </xs:choice>
-    </xs:sequence>
-  </xs:complexType>
   <xs:complexType name="local-tx-connection-factoryType">
     <xs:complexContent>
       <xs:extension base="no-tx-connection-factoryType">
@@ -132,7 +105,7 @@
     <xs:attribute use="required" name="value" type="xs:token">
     </xs:attribute>
   </xs:complexType>
-   <xs:complexType name="securityType">
+  <xs:complexType name="securityType">
     <xs:sequence>
       <xs:element name="security-manager" type="security-managerType" minOccurs="0">
         <xs:annotation>
@@ -168,7 +141,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-   <xs:simpleType name="security-managerType">
+  <xs:simpleType name="security-managerType">
     <xs:annotation>
       <xs:documentation> Define constants used as the possible security manager in security-settings_type. See there for
         complete documentation Include: APPLICATION DOMAIN APPLICATION_AND_DOMAIN NONE</xs:documentation>
@@ -180,7 +153,6 @@
       <xs:enumeration value="NONE" />
     </xs:restriction>
   </xs:simpleType>
- 
   <xs:complexType name="connection-propertyType" mixed="true">
     <xs:attribute use="required" name="name" type="xs:token"></xs:attribute>
   </xs:complexType>
@@ -189,11 +161,32 @@
     <xs:sequence>
       <xs:element name="archive" type="xs:token" minOccurs="1" maxOccurs="1"></xs:element>
       <xs:element name="transaction-support" type="transaction-supportType" minOccurs="0"></xs:element>
-      <xs:element name="connection-factories" type="connection-factoriesType" minOccurs="0" maxOccurs="1"></xs:element>
-      <xs:element name="admin-objects" type="admin-objectsType" minOccurs="0" maxOccurs="1"></xs:element>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="no-tx-connection-factory" type="no-tx-connection-factoryType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               The no-tx-connection-factory element is used to configure generic 
+               resource adapters that do not support transactions
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="local-tx-connection-factory" type="local-tx-connection-factoryType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+               The tx-connection-factory element is used to configure generic resource 
+               adapters supporting transactions
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="xa-tx-connection-factory" type="xa-tx-connection-factoryType"></xs:element>
+      </xs:choice>
+      <xs:element name="admin-object" type="admin-objectType" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
   </xs:complexType>
-
   <xs:complexType name="xa-tx-connection-factoryType">
     <xs:complexContent>
       <xs:extension base="local-tx-connection-factoryType">
@@ -203,14 +196,11 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
   <xs:simpleType name="transaction-supportType">
-  <xs:annotation>
-         <xs:documentation>
-         Define the typoe of transaction supported by this respurce adapter. It overrides/selects connection manager one
-         valid value are: NONE, LOCAL, XA
-         </xs:documentation>
-      </xs:annotation>
+    <xs:annotation>
+      <xs:documentation> Define the typoe of transaction supported by this respurce adapter. It overrides/selects
+        connection manager one valid value are: NONE, LOCAL, XA</xs:documentation>
+    </xs:annotation>
     <xs:restriction base="xs:token">
       <xs:enumeration value="NONE" />
       <xs:enumeration value="LOCAL" />
@@ -218,11 +208,6 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="admin-objectsType">
-   
-      <xs:sequence><xs:element name="admin-object" type="admin-objectType" minOccurs="1" maxOccurs="unbounded"></xs:element></xs:sequence>
-  
-  </xs:complexType>
   <xs:attributeGroup name="common-attribute">
     <xs:attribute name="class-name" type="xs:token" use="required"></xs:attribute>
     <xs:attribute name="jndi-name" type="xs:token" use="required" />
