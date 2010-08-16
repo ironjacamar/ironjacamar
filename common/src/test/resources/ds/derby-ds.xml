@@ -17,15 +17,15 @@
     <connection-url>jdbc:derby:${jboss.server.data.dir}${/}derby${/}localDB;create=true</connection-url>
     <!-- The driver class -->
     <driver-class>org.apache.derby.jdbc.EmbeddedDriver</driver-class>
-    <time-out-settings>
+    <time-out>
       <!-- The time before an unused connection is destroyed -->
       <idle-timeout-minutes>5</idle-timeout-minutes>
-    </time-out-settings>
+    </time-out>
     <!-- Whether to check all statements are closed when the connection is returned to the pool, this is a debugging feature 
       that should be turned off in production -->
-    <statement-settings>
+    <statement>
       <track-statements>true</track-statements>
       <!-- This mbean can be used when using in process persistent derby -->
-    </statement-settings>
+    </statement>
   </datasource>
 </datasources>

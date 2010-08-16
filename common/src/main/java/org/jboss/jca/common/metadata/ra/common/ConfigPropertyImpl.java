@@ -25,7 +25,6 @@ package org.jboss.jca.common.metadata.ra.common;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.IdDecoratedMetadata;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
@@ -135,11 +134,7 @@ public class ConfigPropertyImpl implements ConfigProperty
       return configPropertyValue;
    }
 
-   /**
-    * {@inheritDoc}
-    *
-    * @see IdDecoratedMetadata#getId()
-    */
+
    @Override
    public String getId()
    {

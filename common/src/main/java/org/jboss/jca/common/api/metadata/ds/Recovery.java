@@ -28,69 +28,41 @@ import java.util.Map;
 
 /**
  *
- * A TimeOutSettings.
+ * A Recovery.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface TimeOutSettings extends JCAMetadata
+public interface Recovery extends JCAMetadata
 {
 
    /**
-    * Get the blockingTimeoutMillis.
+    * Get the noRecover.
     *
-    * @return the blockingTimeoutMillis.
+    * @return the noRecover.
     */
-   public Long getBlockingTimeoutMillis();
+   public boolean isNoRecover();
 
    /**
-    * Get the idleTimeoutMinutes.
+    * Get the recoverUserName.
     *
-    * @return the idleTimeoutMinutes.
+    * @return the recoverUserName.
     */
-   public Long getIdleTimeoutMinutes();
+   public String getRecoverUserName();
 
    /**
-    * Get the setTxQuertTimeout.
+    * Get the recoverPassword.
     *
-    * @return the setTxQuertTimeout.
+    * @return the recoverPassword.
     */
-   public boolean isSetTxQuertTimeout();
+   public String getRecoverPassword();
 
    /**
-    * Get the queryTimeout.
+    * Get the recoverSecurityDomain.
     *
-    * @return the queryTimeout.
+    * @return the recoverSecurityDomain.
     */
-   public Long getQueryTimeout();
-
-   /**
-    * Get the useTryLock.
-    *
-    * @return the useTryLock.
-    */
-   public Long getUseTryLock();
-
-   /**
-    * Get the allocationRetry.
-    *
-    * @return the allocationRetry.
-    */
-   public Long getAllocationRetry();
-
-   /**
-    * Get the allocationRetryWaitMillis.
-    *
-    * @return the allocationRetryWaitMillis.
-    */
-   public Long getAllocationRetryWaitMillis();
-
-   /**
-    * Get the xaResourceTimeout.
-    *
-    * @return the xaResourceTimeout.
-    */
-   public Long getXaResourceTimeout();
+   public String getRecoverSecurityDomain();
 
    /**
    *
@@ -107,37 +79,21 @@ public interface TimeOutSettings extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * blockingTimeoutMillis tag
+      * noRecover tag
       */
-      BLOCKINGTIMEOUTMILLIS("blocking-timeout-millis"),
+      NORECOVER("no-recover"),
       /**
-      * idleTimeoutMinutes tag
+      * recoverUserName tag
       */
-      IDLETIMEOUTMINUTES("idle-timeout-minutes"),
+      RECOVERUSERNAME("recover-user-name"),
       /**
-      * setTxQueryTimeout tag
+      * recoverPassword tag
       */
-      SETTXQUERYTIMEOUT("set-tx-query-timeout"),
+      RECOVERPASSWORD("recover-password"),
       /**
-      * queryTimeout tag
+      * recoverSecurityDomain tag
       */
-      QUERYTIMEOUT("query-timeout"),
-      /**
-      * useTryLock tag
-      */
-      USETRYLOCK("use-try-lock"),
-      /**
-      * allocationRetry tag
-      */
-      ALLOCATIONRETRY("allocation-retry"),
-      /**
-       * xaResourceTimeout tag
-       */
-      XARESOURCETIMEOUT("xa-resource-timeout"),
-      /**
-      * allocationRetryWaitMillis tag
-      */
-      ALLOCATIONRETRYWAITMILLIS("allocation-retry-wait-millis");
+      RECOVERSECURITYDOMAIN("recover-security-domain");
 
       private final String name;
 

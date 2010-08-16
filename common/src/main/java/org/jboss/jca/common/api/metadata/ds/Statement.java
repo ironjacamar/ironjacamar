@@ -28,41 +28,59 @@ import java.util.Map;
 
 /**
  *
- * A RecoverySettings.
+ * A Statement.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface RecoverySettings extends JCAMetadata
+public interface Statement extends JCAMetadata
 {
 
    /**
-    * Get the noRecover.
     *
-    * @return the noRecover.
+    * A TrackStatementsEnum.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
     */
-   public boolean isNoRecover();
+   public enum TrackStatementsEnum
+   {
+
+      /**
+      * true
+      */
+      TRUE,
+      /**
+       * false
+       */
+      FALSE,
+      /**
+       * NOWARN
+       */
+      NOWARN;
+
+   }
 
    /**
-    * Get the recoverUserName.
+    * Get the sharePreparedStatements.
     *
-    * @return the recoverUserName.
+    * @return the sharePreparedStatements.
     */
-   public String getRecoverUserName();
+   public boolean isSharePreparedStatements();
 
    /**
-    * Get the recoverPassword.
+    * Get the preparedStatementsCacheSize.
     *
-    * @return the recoverPassword.
+    * @return the preparedStatementsCacheSize.
     */
-   public String getRecoverPassword();
+   public Long getPreparedStatementsCacheSize();
 
    /**
-    * Get the recoverSecurityDomain.
+    * Get the trackStatements.
     *
-    * @return the recoverSecurityDomain.
+    * @return the trackStatements.
     */
-   public String getRecoverSecurityDomain();
+   public TrackStatementsEnum getTrackStatements();
 
    /**
    *
@@ -79,21 +97,17 @@ public interface RecoverySettings extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * noRecover tag
+      * trackStatements tag
       */
-      NORECOVER("no-recover"),
+      TRACKSTATEMENTS("track-statements"),
       /**
-      * recoverUserName tag
+      * preparedStatementCacheSize tag
       */
-      RECOVERUSERNAME("recover-user-name"),
+      PREPAREDSTATEMENTCACHESIZE("prepared-statement-cache-size"),
       /**
-      * recoverPassword tag
+      * sharePreparedStatements tag
       */
-      RECOVERPASSWORD("recover-password"),
-      /**
-      * recoverSecurityDomain tag
-      */
-      RECOVERSECURITYDOMAIN("recover-security-domain");
+      SHAREPREPAREDSTATEMENTS("share-prepared-statements");
 
       private final String name;
 

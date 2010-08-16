@@ -21,16 +21,16 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.StatementSettings;
+import org.jboss.jca.common.api.metadata.ds.Statement;
 
 /**
  *
- * A StatementSettingsImpl.
+ * A StatementImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class StatementSettingsImpl implements StatementSettings
+public class StatementImpl implements Statement
 {
 
    /** The serialVersionUID */
@@ -43,13 +43,13 @@ public class StatementSettingsImpl implements StatementSettings
    private final TrackStatementsEnum trackStatements;
 
    /**
-    * Create a new StatementSettingsImpl.
+    * Create a new StatementImpl.
     *
     * @param sharePreparedStatements sharePreparedStatements
     * @param preparedStatementsCacheSize preparedStatementsCacheSize
     * @param trackStatements trackStatements
     */
-   public StatementSettingsImpl(boolean sharePreparedStatements, Long preparedStatementsCacheSize,
+   public StatementImpl(boolean sharePreparedStatements, Long preparedStatementsCacheSize,
          TrackStatementsEnum trackStatements)
    {
       super();
@@ -109,9 +109,9 @@ public class StatementSettingsImpl implements StatementSettings
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof StatementSettingsImpl))
+      if (!(obj instanceof StatementImpl))
          return false;
-      StatementSettingsImpl other = (StatementSettingsImpl) obj;
+      StatementImpl other = (StatementImpl) obj;
       if (preparedStatementsCacheSize == null)
       {
          if (other.preparedStatementsCacheSize != null)
@@ -129,7 +129,7 @@ public class StatementSettingsImpl implements StatementSettings
    @Override
    public String toString()
    {
-      return "StatementSettingsImpl [sharePreparedStatements=" + sharePreparedStatements +
+      return "StatementImpl [sharePreparedStatements=" + sharePreparedStatements +
             ", preparedStatementsCacheSize=" + preparedStatementsCacheSize +
             ", trackStatements=" + trackStatements + "]";
    }

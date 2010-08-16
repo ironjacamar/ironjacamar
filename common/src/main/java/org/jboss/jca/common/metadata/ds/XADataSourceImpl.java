@@ -21,12 +21,12 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.RecoverySettings;
-import org.jboss.jca.common.api.metadata.ds.SecuritySettings;
-import org.jboss.jca.common.api.metadata.ds.StatementSettings;
-import org.jboss.jca.common.api.metadata.ds.TimeOutSettings;
+import org.jboss.jca.common.api.metadata.ds.Recovery;
+import org.jboss.jca.common.api.metadata.ds.Security;
+import org.jboss.jca.common.api.metadata.ds.Statement;
+import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
-import org.jboss.jca.common.api.metadata.ds.ValidationSettings;
+import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 
 import java.util.Collections;
@@ -57,7 +57,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final boolean interleaving;
 
-   private final RecoverySettings recoverySettings;
+   private final Recovery recovery;
 
    private final String newConnectionSql;
 
@@ -82,11 +82,11 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param transactionIsolation transactionIsolation
     * @param isSameRmOverride isSameRmOverride
     * @param interleaving interleaving
-    * @param recoverySettings recoverySettings
-    * @param timeOutSettings timeOutSettings
-    * @param securitySettings securitySettings
-    * @param statementSettings statementSettings
-    * @param validationSettings validationSettings
+    * @param recovery recovery
+    * @param timeOut timeOut
+    * @param security security
+    * @param statement statement
+    * @param validation validation
     * @param urlDelimiter urlDelimiter
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
     * @param newConnectionSql newConnectionSql
@@ -94,22 +94,22 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
-    * @param padXid
-    * @param wrapXaDataSource
-    * @param noTxSeparatePool
-    * @param trackConnectionByTx
+    * @param padXid padXid
+    * @param wrapXaDataSource wrapXaDataSource
+    * @param noTxSeparatePool noTxSeparatePool
+    * @param trackConnectionByTx trackConnectionByTx
     */
    public XADataSourceImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String userName, String password,
          Map<String, String> xaDataSourceProperty, String xaDataSourceClass,
          TransactionIsolation transactionIsolation, boolean isSameRmOverride, boolean interleaving,
-         RecoverySettings recoverySettings, TimeOutSettings timeOutSettings, SecuritySettings securitySettings,
-         StatementSettings statementSettings, ValidationSettings validationSettings, String urlDelimiter,
+         Recovery recovery, TimeOut timeOut, Security security,
+         Statement statement, Validation validation, String urlDelimiter,
          String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
          boolean enabled, String jndiName, boolean padXid, boolean wrapXaDataSource, boolean noTxSeparatePool,
          boolean trackConnectionByTx)
    {
-      super(minPoolSize, maxPoolSize, prefill, transactionIsolation, timeOutSettings, securitySettings,
-            statementSettings, validationSettings, urlDelimiter, urlSelectorStrategyClassName, useJavaContext,
+      super(minPoolSize, maxPoolSize, prefill, transactionIsolation, timeOut, security,
+            statement, validation, urlDelimiter, urlSelectorStrategyClassName, useJavaContext,
             poolName, enabled, jndiName);
       this.userName = userName;
       this.password = password;
@@ -125,7 +125,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       this.xaDataSourceClass = xaDataSourceClass;
       this.isSameRmOverride = isSameRmOverride;
       this.interleaving = interleaving;
-      this.recoverySettings = recoverySettings;
+      this.recovery = recovery;
       this.newConnectionSql = newConnectionSql;
       this.padXid = padXid;
       this.wrapXaDataSource = wrapXaDataSource;
@@ -200,25 +200,25 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    }
 
    /**
-    * Get the recoverySettings.
+    * Get the recovery.
     *
-    * @return the recoverySettings.
+    * @return the recovery.
     */
    @Override
-   public final RecoverySettings getRecoverySettings()
+   public final Recovery getRecovery()
    {
-      return recoverySettings;
+      return recovery;
    }
 
    /**
-    * Get the statementSettings.
+    * Get the statement.
     *
-    * @return the statementSettings.
+    * @return the statement.
     */
    @Override
-   public final StatementSettings getStatementSettings()
+   public final Statement getStatement()
    {
-      return statementSettings;
+      return statement;
    }
 
    /**
@@ -265,7 +265,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       result = prime * result + (noTxSeparatePool ? 1231 : 1237);
       result = prime * result + (padXid ? 1231 : 1237);
       result = prime * result + ((password == null) ? 0 : password.hashCode());
-      result = prime * result + ((recoverySettings == null) ? 0 : recoverySettings.hashCode());
+      result = prime * result + ((recovery == null) ? 0 : recovery.hashCode());
       result = prime * result + (trackConnectionByTx ? 1231 : 1237);
       result = prime * result + ((userName == null) ? 0 : userName.hashCode());
       result = prime * result + (wrapXaDataSource ? 1231 : 1237);
@@ -306,12 +306,12 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       }
       else if (!password.equals(other.password))
          return false;
-      if (recoverySettings == null)
+      if (recovery == null)
       {
-         if (other.recoverySettings != null)
+         if (other.recovery != null)
             return false;
       }
-      else if (!recoverySettings.equals(other.recoverySettings))
+      else if (!recovery.equals(other.recovery))
          return false;
       if (trackConnectionByTx != other.trackConnectionByTx)
          return false;
@@ -346,7 +346,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    {
       return "XADataSourceImpl [userName=" + userName + ", password=" + password + ", xaDataSourceProperty="
             + xaDataSourceProperty + ", xaDataSourceClass=" + xaDataSourceClass + ", isSameRmOverride="
-            + isSameRmOverride + ", interleaving=" + interleaving + ", recoverySettings=" + recoverySettings
+            + isSameRmOverride + ", interleaving=" + interleaving + ", recovery=" + recovery
             + ", newConnectionSql=" + newConnectionSql + ", padXid=" + padXid + ", wrapXaDataSource="
             + wrapXaDataSource + ", noTxSeparatePool=" + noTxSeparatePool + ", trackConnectionByTx="
             + trackConnectionByTx + "]";

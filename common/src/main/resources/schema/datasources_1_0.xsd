@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-  <xs:element name="datasources" type="datasourcesComplexType">
+  <xs:element name="datasources" type="datasourcesType">
     <xs:annotation>
       <xs:documentation>
               <![CDATA[[
@@ -9,9 +9,9 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="datasourcesComplexType">
+  <xs:complexType name="datasourcesType">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="datasource" type="datasourceComplexType">
+      <xs:element name="datasource" type="datasourceType">
         <xs:annotation>
           <xs:documentation>
               <![CDATA[[
@@ -21,7 +21,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="xa-datasource" type="xa-datasourceComplexType">
+      <xs:element name="xa-datasource" type="xa-datasourceType">
         <xs:annotation>
           <xs:documentation>
               <![CDATA[[
@@ -32,7 +32,7 @@
       </xs:element>
     </xs:choice>
   </xs:complexType>
-  <xs:complexType name="datasourceComplexType" mixed="false">
+  <xs:complexType name="datasourceType" mixed="false">
     <xs:sequence>
       <xs:element name="min-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
@@ -104,7 +104,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="transaction-isolation" type="transaction-isolation-values" minOccurs="0">
+      <xs:element name="transaction-isolation" type="transaction-isolationType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
                 <![CDATA[[
@@ -116,7 +116,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="connection-property" type="connection-propertyComplexType" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="connection-property" type="connection-propertyType" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
                 <![CDATA[[
@@ -129,12 +129,12 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="time-out-settings" type="time-out-settings_type" minOccurs="0" />
-      <xs:element name="security-settings" type="security-settings_type" minOccurs="0">
+      <xs:element name="time-out" type="time-outType" minOccurs="0" />
+      <xs:element name="security" type="securityType" minOccurs="0">
       </xs:element>
-      <xs:element name="statement-settings" type="statement-settings_type" minOccurs="0">
+      <xs:element name="statement" type="statementType" minOccurs="0">
       </xs:element>
-      <xs:element name="validation-settings" type="validation-settings_type" minOccurs="0" />
+      <xs:element name="validation" type="validationType" minOccurs="0" />
       <xs:element name="url-delimiter" type="xs:token" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
@@ -166,7 +166,7 @@
     </xs:sequence>
     <xs:attributeGroup ref="common-datasourceAttributes" />
   </xs:complexType>
-  <xs:complexType name="xa-datasourceComplexType">
+  <xs:complexType name="xa-datasourceType">
     <xs:sequence>
       <xs:element name="min-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
@@ -219,7 +219,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="xa-datasource-property" type="xa-datasource-propertyComplexType" minOccurs="1"
+      <xs:element name="xa-datasource-property" type="xa-datasource-propertyType" minOccurs="1"
         maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
@@ -249,7 +249,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="transaction-isolation" type="transaction-isolation-values" minOccurs="0">
+      <xs:element name="transaction-isolation" type="transaction-isolationType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -272,7 +272,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="interleaving" type="boolean-presence-ComplexType" minOccurs="0">
+      <xs:element name="interleaving" type="boolean-presenceType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -282,13 +282,13 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="recovery-settings" type="recovery-settings_type" minOccurs="0" />
-      <xs:element name="time-out-settings" type="time-out-settings_type" minOccurs="0" />
-      <xs:element name="security-settings" type="security-settings_type" minOccurs="0"></xs:element>
-      <xs:element name="statement-settings" minOccurs="0">
+      <xs:element name="recovery" type="recoveryType" minOccurs="0" />
+      <xs:element name="time-out" type="time-outType" minOccurs="0" />
+      <xs:element name="security" type="securityType" minOccurs="0"></xs:element>
+      <xs:element name="statement" minOccurs="0">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="track-statements" type="track-statements-type" minOccurs="0">
+            <xs:element name="track-statements" type="track-statementsType" minOccurs="0">
               <xs:annotation>
                 <xs:documentation>
                   <![CDATA[[
@@ -311,7 +311,7 @@
                 </xs:documentation>
               </xs:annotation>
             </xs:element>
-            <xs:element name="share-prepared-statements" type="boolean-presence-ComplexType" minOccurs="0">
+            <xs:element name="share-prepared-statements" type="boolean-presenceType" minOccurs="0">
               <xs:annotation>
                 <xs:documentation>
                   <![CDATA[[
@@ -325,7 +325,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="validation-settings" type="validation-settings_type" minOccurs="0" />
+      <xs:element name="validation" type="validationType" minOccurs="0" />
       <xs:element name="url-delimiter" type="xs:token" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
@@ -356,12 +356,12 @@
       </xs:element>
       <xs:element name="pad-xid" type="xs:boolean" default="false" minOccurs="0" />
       <xs:element name="wrap-xa-resource" type="xs:boolean" default="false" minOccurs="0" />
-      <xs:element name="no-tx-separate-pools" type="boolean-presence-ComplexType" minOccurs="0" />
+      <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0" />
       <xs:element name="track-connection-by-tx" type="xs:boolean" minOccurs="0"></xs:element>
     </xs:sequence>
     <xs:attributeGroup ref="common-datasourceAttributes" />
   </xs:complexType>
-  <xs:complexType name="boolean-presence-ComplexType" />
+  <xs:complexType name="boolean-presenceType" />
   <xs:attributeGroup name="common-datasourceAttributes">
     <xs:attribute name="jndi-name" type="xs:token" use="required" />
     <xs:attribute name="pool-name" type="xs:token" use="required" />
@@ -378,7 +378,7 @@
       </xs:annotation>
     </xs:attribute>
   </xs:attributeGroup>
-  <xs:simpleType name="transaction-isolation-values">
+  <xs:simpleType name="transaction-isolationType">
     <xs:annotation>
       <xs:documentation> Define constants used as the possible transaction isolation levels in transaction-isolation
         type. Include: TRANSACTION_READ_UNCOMMITTED TRANSACTION_READ_COMMITTED TRANSACTION_REPEATABLE_READ
@@ -392,7 +392,7 @@
       <xs:enumeration value="TRANSACTION_NONE" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="security-manager-values">
+  <xs:simpleType name="security-managerType">
     <xs:annotation>
       <xs:documentation> Define constants used as the possible security manager in security-settings_type. See there for
         complete documentation Include: APPLICATION DOMAIN APPLICATION_AND_DOMAIN NONE</xs:documentation>
@@ -404,9 +404,9 @@
       <xs:enumeration value="NONE" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:complexType name="security-settings_type">
+  <xs:complexType name="securityType">
     <xs:sequence>
-      <xs:element name="security-manager" type="security-manager-values" minOccurs="0">
+      <xs:element name="security-manager" type="security-managerType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -440,13 +440,13 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="xa-datasource-propertyComplexType" mixed="true">
+  <xs:complexType name="xa-datasource-propertyType" mixed="true">
     <xs:attribute use="required" name="name" type="xs:token" />
   </xs:complexType>
-  <xs:complexType name="connection-propertyComplexType" mixed="true">
+  <xs:complexType name="connection-propertyType" mixed="true">
     <xs:attribute use="required" name="name" type="xs:token" />
   </xs:complexType>
-  <xs:complexType name="validation-settings_type">
+  <xs:complexType name="validationType">
     <xs:sequence>
       <xs:element name="valid-connection-checker-class-name" type="xs:token" minOccurs="0">
         <xs:annotation>
@@ -543,7 +543,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="time-out-settings_type">
+  <xs:complexType name="time-outType">
     <xs:sequence>
       <xs:element name="blocking-timeout-millis" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
@@ -570,7 +570,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="set-tx-query-timeout" type="boolean-presence-ComplexType" minOccurs="0">
+      <xs:element name="set-tx-query-timeout" type="boolean-presenceType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -635,7 +635,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="recovery-settings_type">
+  <xs:complexType name="recoveryType">
     <xs:choice>
       <xs:element name="no-recover" type="xs:boolean" minOccurs="0">
         <xs:annotation>
@@ -684,22 +684,22 @@
       </xs:sequence>
     </xs:choice>
   </xs:complexType>
-  <xs:simpleType name="track-statements-type">
+  <xs:simpleType name="track-statementsType">
     <xs:restriction base="xs:token">
       <xs:enumeration value="true" />
       <xs:enumeration value="false" />
       <xs:enumeration value="nowarn" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:complexType name="statement-settings_type">
+  <xs:complexType name="statementType">
     <xs:sequence>
-      <xs:element name="track-statements" type="track-statements-type" minOccurs="0">
+      <xs:element name="track-statements" type="track-statementsType" minOccurs="0">
         <xs:annotation></xs:annotation>
       </xs:element>
       <xs:element name="prepared-statement-cache-size" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation></xs:annotation>
       </xs:element>
-      <xs:element name="share-prepared-statements" type="boolean-presence-ComplexType" minOccurs="0">
+      <xs:element name="share-prepared-statements" type="boolean-presenceType" minOccurs="0">
         <xs:annotation></xs:annotation>
       </xs:element>
     </xs:sequence>

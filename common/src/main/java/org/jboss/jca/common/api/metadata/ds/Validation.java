@@ -28,12 +28,12 @@ import java.util.Map;
 
 /**
  *
- * A ValidationSettings.
+ * A Validation.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface ValidationSettings extends JCAMetadata
+public interface Validation extends JCAMetadata
 {
 
    /**

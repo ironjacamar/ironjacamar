@@ -18,9 +18,9 @@
     <xa-datasource-property name="ServerName">localhost</xa-datasource-property>
     <xa-datasource-property name="PortNumber">1360</xa-datasource-property>
     <xa-datasource-class>com.mimer.jdbc.MimerXADataSource</xa-datasource-class>
-    <time-out-settings>
+    <time-out>
       <blocking-timeout-millis>5000</blocking-timeout-millis>
       <idle-timeout-minutes>15</idle-timeout-minutes>
-    </time-out-settings>
+    </time-out>
   </xa-datasource>
 </datasources>

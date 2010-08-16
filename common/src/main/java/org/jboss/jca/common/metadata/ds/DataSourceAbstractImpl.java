@@ -21,11 +21,11 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.SecuritySettings;
-import org.jboss.jca.common.api.metadata.ds.StatementSettings;
-import org.jboss.jca.common.api.metadata.ds.TimeOutSettings;
+import org.jboss.jca.common.api.metadata.ds.Security;
+import org.jboss.jca.common.api.metadata.ds.Statement;
+import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
-import org.jboss.jca.common.api.metadata.ds.ValidationSettings;
+import org.jboss.jca.common.api.metadata.ds.Validation;
 
 import java.io.Serializable;
 
@@ -63,24 +63,24 @@ public abstract class DataSourceAbstractImpl implements Serializable
    protected final TransactionIsolation transactionIsolation;
 
    /**
-   * timeOutSettings
+   * timeOut
    */
-   protected final TimeOutSettings timeOutSettings;
+   protected final TimeOut timeOut;
 
    /**
-   * securitySettings
+   * security
    */
-   protected final SecuritySettings securitySettings;
+   protected final Security security;
 
    /**
-   * statementSettings
+   * statement
    */
-   protected final StatementSettings statementSettings;
+   protected final Statement statement;
 
    /**
-   * validationSettings
+   * validation
    */
-   protected final ValidationSettings validationSettings;
+   protected final Validation validation;
 
    /**
    * urlDelimiter
@@ -119,10 +119,10 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
     * @param transactionIsolation transactionIsolation
-    * @param timeOutSettings timeOutSettings
-    * @param securitySettings securitySettings
-    * @param statementSettings statementSettings
-    * @param validationSettings validationSettings
+    * @param timeOut timeOut
+    * @param security security
+    * @param statement statement
+    * @param validation validation
     * @param urlDelimiter urlDelimiter
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
     * @param useJavaContext useJavaContext
@@ -132,8 +132,8 @@ public abstract class DataSourceAbstractImpl implements Serializable
     */
    protected DataSourceAbstractImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill,
           TransactionIsolation transactionIsolation,
-         TimeOutSettings timeOutSettings,
-         SecuritySettings securitySettings, StatementSettings statementSettings, ValidationSettings validationSettings,
+         TimeOut timeOut,
+         Security security, Statement statement, Validation validation,
          String urlDelimiter, String urlSelectorStrategyClassName, boolean useJavaContext,
          String poolName, boolean enabled, String jndiName)
    {
@@ -142,10 +142,10 @@ public abstract class DataSourceAbstractImpl implements Serializable
       this.maxPoolSize = maxPoolSize;
       this.prefill = prefill;
       this.transactionIsolation = transactionIsolation;
-      this.timeOutSettings = timeOutSettings;
-      this.securitySettings = securitySettings;
-      this.statementSettings = statementSettings;
-      this.validationSettings = validationSettings;
+      this.timeOut = timeOut;
+      this.security = security;
+      this.statement = statement;
+      this.validation = validation;
       this.urlDelimiter = urlDelimiter;
       this.urlSelectorStrategyClassName = urlSelectorStrategyClassName;
       this.useJavaContext = useJavaContext;
@@ -199,36 +199,36 @@ public abstract class DataSourceAbstractImpl implements Serializable
    }
 
    /**
-    * Get the timeOutSettings.
+    * Get the timeOut
     *
-    * @return the timeOutSettings.
+    * @return the timeOut.
     */
 
-   public final TimeOutSettings getTimeOutSettings()
+   public final TimeOut getTimeOut()
    {
-      return timeOutSettings;
+      return timeOut;
    }
 
    /**
-    * Get the securitySettings.
+    * Get the security.
     *
-    * @return the securitySettings.
+    * @return the security.
     */
 
-   public final SecuritySettings getSecuritySettings()
+   public final Security getSecurity()
    {
-      return securitySettings;
+      return security;
    }
 
    /**
-    * Get the validationSettings.
+    * Get the validation.
     *
-    * @return the validationSettings.
+    * @return the validation.
     */
 
-   public final ValidationSettings getValidationSettings()
+   public final Validation getValidation()
    {
-      return validationSettings;
+      return validation;
    }
 
    /**

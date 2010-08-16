@@ -15,9 +15,9 @@
     <password>changeme</password>
     <connection-url>jdbc:mimer:multi1</connection-url>
     <driver-class>com.mimer.jdbc.Driver</driver-class>
-    <time-out-settings>
+    <time-out>
       <blocking-timeout-millis>5000</blocking-timeout-millis>
       <idle-timeout-minutes>15</idle-timeout-minutes>
-    </time-out-settings>
+    </time-out>
   </datasource>
 </datasources>

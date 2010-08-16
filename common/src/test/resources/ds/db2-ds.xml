@@ -24,10 +24,10 @@
             or the DB2 JDBC application developers manual.
         -->  
         <!-- New org.jboss.resource.adapter.jdbc.vendor.DB2ExceptionSorter
-            <validation-settings>
+            <validation>
                  <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.DB2ExceptionSorter</exception-sorter-class-name>
                  <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql>
-            </validation-settings>
+            </validation>
         --> 
         
         <!-- sql to call when connection is created

@@ -25,17 +25,17 @@
     <xa-datasource-property name="User">user</xa-datasource-property>
     <xa-datasource-property name="Password">password</xa-datasource-property>
     <xa-datasource-class>com.sybase.jdbc3.jdbc.SybXADataSource</xa-datasource-class>
-    <time-out-settings>
+    <time-out>
       <idle-timeout-minutes>15</idle-timeout-minutes>
-    </time-out-settings>
-    <security-settings>
+    </time-out>
+    <security>
       <!-- Use the security domain defined in conf/login-config.xml -->
       <security-manager>APPLICATION</security-manager>
       <security-domain>SybaseXADSRealm</security-domain>
-    </security-settings>
-    <validation-settings>
+    </security>
+    <validation>
       <check-valid-connection-sql>select 1 from mytable</check-valid-connection-sql>
       <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
-    </validation-settings>
+    </validation>
   </xa-datasource>
 </datasources>

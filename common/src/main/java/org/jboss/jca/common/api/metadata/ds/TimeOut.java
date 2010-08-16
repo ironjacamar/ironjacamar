@@ -28,53 +28,69 @@ import java.util.Map;
 
 /**
  *
- * A SecuritySettings.
+ * A TimeOut.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface SecuritySettings extends JCAMetadata
+public interface TimeOut extends JCAMetadata
 {
-   /**
-    *
-    * A SecurityManager.
-    *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-    *
-    */
-   public enum SecurityManager
-   {
-      /**
-       * APPLICATION
-       */
-      APPLICATION,
-      /**
-       * DOMAIN
-       */
-      DOMAIN,
-      /**
-       * APPLICATION_AND_DOMAIN
-       */
-      APPLICATION_AND_DOMAIN,
-      /**
-       * NONE
-       */
-      NONE;
-   }
 
    /**
-    * Get the securityManager.
+    * Get the blockingTimeoutMillis.
     *
-    * @return the securityManager.
+    * @return the blockingTimeoutMillis.
     */
-   public SecurityManager getSecurityManager();
+   public Long getBlockingTimeoutMillis();
 
    /**
-    * Get the securityDomain.
+    * Get the idleTimeoutMinutes.
     *
-    * @return the securityDomain.
+    * @return the idleTimeoutMinutes.
     */
-   public String getSecurityDomain();
+   public Long getIdleTimeoutMinutes();
+
+   /**
+    * Get the setTxQuertTimeout.
+    *
+    * @return the setTxQuertTimeout.
+    */
+   public boolean isSetTxQuertTimeout();
+
+   /**
+    * Get the queryTimeout.
+    *
+    * @return the queryTimeout.
+    */
+   public Long getQueryTimeout();
+
+   /**
+    * Get the useTryLock.
+    *
+    * @return the useTryLock.
+    */
+   public Long getUseTryLock();
+
+   /**
+    * Get the allocationRetry.
+    *
+    * @return the allocationRetry.
+    */
+   public Long getAllocationRetry();
+
+   /**
+    * Get the allocationRetryWaitMillis.
+    *
+    * @return the allocationRetryWaitMillis.
+    */
+   public Long getAllocationRetryWaitMillis();
+
+   /**
+    * Get the xaResourceTimeout.
+    *
+    * @return the xaResourceTimeout.
+    */
+   public Long getXaResourceTimeout();
 
    /**
    *
@@ -91,13 +107,37 @@ public interface SecuritySettings extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * securityManager tag
+      * blockingTimeoutMillis tag
       */
-      SECURITYMANAGER("security-manager"),
+      BLOCKINGTIMEOUTMILLIS("blocking-timeout-millis"),
       /**
-      * securityDomain tag
+      * idleTimeoutMinutes tag
       */
-      SECURITYDOMAIN("security-domain");
+      IDLETIMEOUTMINUTES("idle-timeout-minutes"),
+      /**
+      * setTxQueryTimeout tag
+      */
+      SETTXQUERYTIMEOUT("set-tx-query-timeout"),
+      /**
+      * queryTimeout tag
+      */
+      QUERYTIMEOUT("query-timeout"),
+      /**
+      * useTryLock tag
+      */
+      USETRYLOCK("use-try-lock"),
+      /**
+      * allocationRetry tag
+      */
+      ALLOCATIONRETRY("allocation-retry"),
+      /**
+       * xaResourceTimeout tag
+       */
+      XARESOURCETIMEOUT("xa-resource-timeout"),
+      /**
+      * allocationRetryWaitMillis tag
+      */
+      ALLOCATIONRETRYWAITMILLIS("allocation-retry-wait-millis");
 
       private final String name;
 

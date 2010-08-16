@@ -28,59 +28,53 @@ import java.util.Map;
 
 /**
  *
- * A StatementSettings.
+ * A Security.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface StatementSettings extends JCAMetadata
+public interface Security extends JCAMetadata
 {
-
    /**
     *
-    * A TrackStatementsEnum.
+    * A SecurityManager.
     *
     * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
     *
     */
-   public enum TrackStatementsEnum
+   public enum SecurityManager
    {
-
       /**
-      * true
-      */
-      TRUE,
-      /**
-       * false
+       * APPLICATION
        */
-      FALSE,
+      APPLICATION,
       /**
-       * NOWARN
+       * DOMAIN
        */
-      NOWARN;
-
+      DOMAIN,
+      /**
+       * APPLICATION_AND_DOMAIN
+       */
+      APPLICATION_AND_DOMAIN,
+      /**
+       * NONE
+       */
+      NONE;
    }
 
    /**
-    * Get the sharePreparedStatements.
+    * Get the securityManager.
     *
-    * @return the sharePreparedStatements.
+    * @return the securityManager.
     */
-   public boolean isSharePreparedStatements();
+   public SecurityManager getSecurityManager();
 
    /**
-    * Get the preparedStatementsCacheSize.
+    * Get the securityDomain.
     *
-    * @return the preparedStatementsCacheSize.
+    * @return the securityDomain.
     */
-   public Long getPreparedStatementsCacheSize();
-
-   /**
-    * Get the trackStatements.
-    *
-    * @return the trackStatements.
-    */
-   public TrackStatementsEnum getTrackStatements();
+   public String getSecurityDomain();
 
    /**
    *
@@ -97,17 +91,13 @@ public interface StatementSettings extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * trackStatements tag
+      * securityManager tag
       */
-      TRACKSTATEMENTS("track-statements"),
+      SECURITYMANAGER("security-manager"),
       /**
-      * preparedStatementCacheSize tag
+      * securityDomain tag
       */
-      PREPAREDSTATEMENTCACHESIZE("prepared-statement-cache-size"),
-      /**
-      * sharePreparedStatements tag
-      */
-      SHAREPREPAREDSTATEMENTS("share-prepared-statements");
+      SECURITYDOMAIN("security-domain");
 
       private final String name;
 

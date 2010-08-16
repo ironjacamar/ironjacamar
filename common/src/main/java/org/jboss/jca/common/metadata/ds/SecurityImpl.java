@@ -21,17 +21,17 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.SecuritySettings;
+import org.jboss.jca.common.api.metadata.ds.Security;
 
 
 /**
  *
- * A SecuritySettingsImpl.
+ * A SecurityImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class SecuritySettingsImpl implements SecuritySettings
+public class SecurityImpl implements Security
 {
 
    /** The serialVersionUID */
@@ -42,12 +42,12 @@ public class SecuritySettingsImpl implements SecuritySettings
    private final String securityDomain;
 
    /**
-    * Create a new SecuritySettingsImpl.
+    * Create a new SecurityImpl.
     *
     * @param securityManager securityManager
     * @param securityDomain securityDomain
     */
-   public SecuritySettingsImpl(SecurityManager securityManager, String securityDomain)
+   public SecurityImpl(SecurityManager securityManager, String securityDomain)
    {
       super();
       this.securityManager = securityManager;
@@ -93,9 +93,9 @@ public class SecuritySettingsImpl implements SecuritySettings
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof SecuritySettingsImpl))
+      if (!(obj instanceof SecurityImpl))
          return false;
-      SecuritySettingsImpl other = (SecuritySettingsImpl) obj;
+      SecurityImpl other = (SecurityImpl) obj;
       if (securityDomain == null)
       {
          if (other.securityDomain != null)
@@ -111,7 +111,7 @@ public class SecuritySettingsImpl implements SecuritySettings
    @Override
    public String toString()
    {
-      return "SecuritySettingsImpl [securityManager=" + securityManager + ", securityDomain=" + securityDomain + "]";
+      return "SecurityImpl [securityManager=" + securityManager + ", securityDomain=" + securityDomain + "]";
    }
 
 }

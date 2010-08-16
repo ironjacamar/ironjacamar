@@ -21,16 +21,16 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.TimeOutSettings;
+import org.jboss.jca.common.api.metadata.ds.TimeOut;
 
 /**
  *
- * A TimeOutSettingsImpl.
+ * A TimeOutImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class TimeOutSettingsImpl implements TimeOutSettings
+public class TimeOutImpl implements TimeOut
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -8797718258493768716L;
@@ -52,7 +52,7 @@ public class TimeOutSettingsImpl implements TimeOutSettings
    private final Long xaResourceTimeout;
 
    /**
-    * Create a new TimeOutSettingsImpl.
+    * Create a new TimeOutImpl.
     *
     * @param blockingTimeoutMillis blockingTimeoutMillis
     * @param idleTimeoutMinutes idleTimeoutMinutes
@@ -63,7 +63,7 @@ public class TimeOutSettingsImpl implements TimeOutSettings
     * @param allocationRetryWaitMillis allocationRetryWaitMillis
     * @param xaResourceTimeout xaResourceTimeout
     */
-   public TimeOutSettingsImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, boolean setTxQuertTimeout,
+   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, boolean setTxQuertTimeout,
          Long queryTimeout, Long useTryLock, Long allocationRetry, Long allocationRetryWaitMillis,
          Long xaResourceTimeout)
    {
@@ -178,9 +178,9 @@ public class TimeOutSettingsImpl implements TimeOutSettings
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof TimeOutSettingsImpl))
+      if (!(obj instanceof TimeOutImpl))
          return false;
-      TimeOutSettingsImpl other = (TimeOutSettingsImpl) obj;
+      TimeOutImpl other = (TimeOutImpl) obj;
       if (allocationRetry == null)
       {
          if (other.allocationRetry != null)
@@ -238,7 +238,7 @@ public class TimeOutSettingsImpl implements TimeOutSettings
    @Override
    public String toString()
    {
-      return "TimeOutSettingsImpl [blockingTimeoutMillis=" + blockingTimeoutMillis + ", idleTimeoutMinutes="
+      return "TimeOutImpl [blockingTimeoutMillis=" + blockingTimeoutMillis + ", idleTimeoutMinutes="
             + idleTimeoutMinutes + ", setTxQuertTimeout=" + setTxQuertTimeout + ", queryTimeout=" + queryTimeout
             + ", useTryLock=" + useTryLock + ", allocationRetry=" + allocationRetry + ", allocationRetryWaitMillis="
             + allocationRetryWaitMillis + ", xaResourceTimeout=" + xaResourceTimeout + "]";

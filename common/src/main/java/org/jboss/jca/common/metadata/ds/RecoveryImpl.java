@@ -21,16 +21,16 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.RecoverySettings;
+import org.jboss.jca.common.api.metadata.ds.Recovery;
 
 /**
  *
- * A RecoverySettingsImpl.
+ * A RecoveryImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class RecoverySettingsImpl implements RecoverySettings
+public class RecoveryImpl implements Recovery
 {
 
    /** The serialVersionUID */
@@ -45,14 +45,14 @@ public class RecoverySettingsImpl implements RecoverySettings
    private final String recoverSecurityDomain;
 
    /**
-    * Create a new RecoverySettingsImpl.
+    * Create a new RecoveryImpl.
     *
     * @param noRecover boolean value from xml tab
     * @param recoverUserName user name for recover
     * @param recoverPassword password
     * @param recoverSecurityDomain security domain used during recover
     */
-   public RecoverySettingsImpl(boolean noRecover, String recoverUserName, String recoverPassword,
+   public RecoveryImpl(boolean noRecover, String recoverUserName, String recoverPassword,
          String recoverSecurityDomain)
    {
       super();
@@ -125,9 +125,9 @@ public class RecoverySettingsImpl implements RecoverySettings
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof RecoverySettingsImpl))
+      if (!(obj instanceof RecoveryImpl))
          return false;
-      RecoverySettingsImpl other = (RecoverySettingsImpl) obj;
+      RecoveryImpl other = (RecoveryImpl) obj;
       if (noRecover != other.noRecover)
          return false;
       if (recoverPassword == null)
@@ -157,7 +157,7 @@ public class RecoverySettingsImpl implements RecoverySettings
    @Override
    public String toString()
    {
-      return "RecoverySettingsImpl [noRecover=" + noRecover + ", recoverUserName=" + recoverUserName
+      return "RecoveryImpl [noRecover=" + noRecover + ", recoverUserName=" + recoverUserName
             + ", recoverPassword=" + recoverPassword + ", recoverSecurityDomain=" + recoverSecurityDomain + "]";
    }
 

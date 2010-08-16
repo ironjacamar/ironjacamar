@@ -100,32 +100,32 @@ public interface DataSource extends JCAMetadata
    public Map<String, String> getConnectionProperties();
 
    /**
-    * Get the timeOutSettings.
+    * Get the timeOut.
     *
-    * @return the timeOutSettings.
+    * @return the timeOut.
     */
-   public TimeOutSettings getTimeOutSettings();
+   public TimeOut getTimeOut();
 
    /**
-    * Get the securitySettings.
+    * Get the security.
     *
-    * @return the securitySettings.
+    * @return the security.
     */
-   public SecuritySettings getSecuritySettings();
+   public Security getSecurity();
 
    /**
-    * Get the statementSettings.
+    * Get the statement.
     *
-    * @return the statementSettings.
+    * @return the statement.
     */
-   public StatementSettings getStatementSettings();
+   public Statement getStatement();
 
    /**
-    * Get the validationSettings.
+    * Get the validation.
     *
-    * @return the validationSettings.
+    * @return the validation.
     */
-   public ValidationSettings getValidationSettings();
+   public Validation getValidation();
 
    /**
     * Get the urlDelimiter.
@@ -228,21 +228,21 @@ public interface DataSource extends JCAMetadata
       */
       CONNECTIONPROPERTY("connection-property"),
       /**
-      * timeOutSettings tag
+      * timeOut tag
       */
-      TIMEOUTSETTINGS("time-out-settings"),
+      TIMEOUT("time-out"),
       /**
-      * securitySettings tag
+      * security tag
       */
-      SECURITYSETTINGS("security-settings"),
+      SECURITY("security"),
       /**
-      * statementSettings tag
+      * statement tag
       */
-      STATEMENTSETTINGS("statement-settings"),
+      STATEMENT("statement"),
       /**
-      * validationSettings tag
+      * validation tag
       */
-      VALIDATIONSETTINGS("validation-settings"),
+      VALIDATION("validation"),
       /**
       * urlDelimiter tag
       */

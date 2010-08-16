@@ -21,16 +21,16 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.ValidationSettings;
+import org.jboss.jca.common.api.metadata.ds.Validation;
 
 /**
  *
- * A ValidationSettingsImpl.
+ * A ValidationImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class ValidationSettingsImpl implements ValidationSettings
+public class ValidationImpl implements Validation
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 7816717816552118419L;
@@ -52,7 +52,7 @@ public class ValidationSettingsImpl implements ValidationSettings
    private final String exceptionSorterClassName;
 
    /**
-    * Create a new ValidationSettingsImpl.
+    * Create a new ValidationImpl.
     *
     * @param validConnectionCheckerClassName validConnectionCheckerClassName
     * @param checkValidConnectionSql checkValidConnectionSql
@@ -63,7 +63,7 @@ public class ValidationSettingsImpl implements ValidationSettings
     * @param staleConnectionCheckerClassName staleConnectionCheckerClassName
     * @param exceptionSorterClassName exceptionSorterClassName
     */
-   public ValidationSettingsImpl(String validConnectionCheckerClassName, String checkValidConnectionSql,
+   public ValidationImpl(String validConnectionCheckerClassName, String checkValidConnectionSql,
          boolean validateOnMatch, boolean backgroundValidation, Long backgroundValidationMinutes, boolean useFastFail,
          String staleConnectionCheckerClassName, String exceptionSorterClassName)
    {
@@ -191,9 +191,9 @@ public class ValidationSettingsImpl implements ValidationSettings
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof ValidationSettingsImpl))
+      if (!(obj instanceof ValidationImpl))
          return false;
-      ValidationSettingsImpl other = (ValidationSettingsImpl) obj;
+      ValidationImpl other = (ValidationImpl) obj;
       if (backgroundValidation != other.backgroundValidation)
          return false;
       if (backgroundValidationMinutes == null)
@@ -241,7 +241,7 @@ public class ValidationSettingsImpl implements ValidationSettings
    @Override
    public String toString()
    {
-      return "ValidationSettingsImpl [validConnectionCheckerClassName=" + validConnectionCheckerClassName
+      return "ValidationImpl [validConnectionCheckerClassName=" + validConnectionCheckerClassName
             + ", checkValidConnectionSql=" + checkValidConnectionSql + ", validateOnMatch=" + validateOnMatch
             + ", backgroundValidation=" + backgroundValidation + ", backgroundValidationMinutes="
             + backgroundValidationMinutes + ", useFastFail=" + useFastFail + ", staleConnectionCheckerClassName="
