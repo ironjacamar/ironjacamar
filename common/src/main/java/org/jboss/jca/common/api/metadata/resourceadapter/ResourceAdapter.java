@@ -19,36 +19,52 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
+package org.jboss.jca.common.api.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  *
- * A Security.
+ * A ResourceAdapter.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Security extends JCAMetadata
+public interface ResourceAdapter extends JCAMetadata
 {
-   /**
-    * Get the securityManager.
-    *
-    * @return the securityManager.
-    */
-   public SecurityManager getSecurityManager();
 
    /**
-    * Get the securityDomain.
+    * Get the archive.
     *
-    * @return the securityDomain.
+    * @return the archive.
     */
-   public String getSecurityDomain();
+   public String getArchive();
+
+   /**
+    * Get the transactionSupport.
+    *
+    * @return the transactionSupport.
+    */
+   public TransactionSupportEnum getTransactionSupport();
+
+   /**
+    * Get the connectionFactories.
+    *
+    * @return the connectionFactories.
+    */
+   public List<? extends NoTxConnectionFactory> getConnectionFactories();
+
+   /**
+    * Get the adminObjects.
+    *
+    * @return the adminObjects.
+    */
+   public List<AdminObject> getAdminobjects();
 
    /**
    *
@@ -65,13 +81,25 @@ public interface Security extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * securityManager tag
+      transactionsupport tag
       */
-      SECURITYMANAGER("security-manager"),
+      TRANSACTIONSUPPORT("transaction-support"),
       /**
-      * securityDomain tag
+      localtxconnectionfactory tag
       */
-      SECURITYDOMAIN("security-domain");
+      LOCALTXCONNECTIONFACTORY("local-tx-connection-factory"),
+      /**
+      xatxconnectionfactory tag
+      */
+      XATXCONNECTIONFACTORY("xa-tx-connection-factory"),
+      /**
+      notxconnectionfactory tag
+      */
+      NOTXCONNECTIONFACTORY("no-txconnection-factory"),
+      /**
+      adminobject tag
+      */
+      ADMINOBJECT("admin-object");
 
       private final String name;
 

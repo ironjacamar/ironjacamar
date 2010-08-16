@@ -22,6 +22,7 @@
 
 package org.jboss.jca.common.annotations;
 
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
@@ -38,7 +39,6 @@ import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.Path;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
-import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
 import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;

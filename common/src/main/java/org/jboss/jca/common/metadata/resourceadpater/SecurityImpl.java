@@ -19,11 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds;
+package org.jboss.jca.common.metadata.resourceadpater;
 
 import org.jboss.jca.common.api.metadata.common.SecurityManager;
-import org.jboss.jca.common.api.metadata.ds.Security;
-
+import org.jboss.jca.common.api.metadata.resourceadapter.Security;
 
 /**
  *
@@ -36,7 +35,7 @@ public class SecurityImpl implements Security
 {
 
    /** The serialVersionUID */
-   private static final long serialVersionUID = -5842402120520191086L;
+   private static final long serialVersionUID = 1792878989502127046L;
 
    private final SecurityManager securityManager;
 
@@ -114,5 +113,5 @@ public class SecurityImpl implements Security
    {
       return "SecurityImpl [securityManager=" + securityManager + ", securityDomain=" + securityDomain + "]";
    }
-
 }
+

@@ -23,10 +23,10 @@ package org.jboss.jca.common.metadata.ra.ra10;
 
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
-import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.api.validator.ValidateException;

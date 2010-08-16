@@ -21,11 +21,11 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.common.SecurityManager;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ds.Security;
-import org.jboss.jca.common.api.metadata.ds.Security.SecurityManager;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;

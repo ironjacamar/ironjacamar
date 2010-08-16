@@ -19,36 +19,43 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
+package org.jboss.jca.common.api.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A Security.
+ * A Validation.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Security extends JCAMetadata
+public interface Validation extends JCAMetadata
 {
-   /**
-    * Get the securityManager.
-    *
-    * @return the securityManager.
-    */
-   public SecurityManager getSecurityManager();
 
    /**
-    * Get the securityDomain.
+    * Get the allocationRetry.
     *
-    * @return the securityDomain.
+    * @return the allocationRetry.
     */
-   public String getSecurityDomain();
+   public Integer getAllocationRetry();
+
+   /**
+    * Get the backgroundValidation.
+    *
+    * @return the backgroundValidation.
+    */
+   public boolean isBackgroundValidation();
+
+   /**
+    * Get the useFastFail.
+    *
+    * @return the useFastFail.
+    */
+   public boolean isUseFastFail();
 
    /**
    *
@@ -65,13 +72,17 @@ public interface Security extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * securityManager tag
+      allocationRetry tag
       */
-      SECURITYMANAGER("security-manager"),
+      ALLOCATIONRETRY("allocation-retry"),
       /**
-      * securityDomain tag
+      backgroundValidation tag
       */
-      SECURITYDOMAIN("security-domain");
+      BACKGROUNDVALIDATION("background-validation"),
+      /**
+      useFastFail tag
+      */
+      USEFASTFAIL("use-fast-fail");
 
       private final String name;
 
@@ -124,5 +135,4 @@ public interface Security extends JCAMetadata
       }
 
    }
-
 }

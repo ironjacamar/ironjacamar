@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.annotations.Annotations;
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.jbossra.jbossra20.BeanValidationGroup;
 import org.jboss.jca.common.api.metadata.jbossra.jbossra20.JbossRa20;
@@ -33,7 +34,6 @@ import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Connector.Version;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;

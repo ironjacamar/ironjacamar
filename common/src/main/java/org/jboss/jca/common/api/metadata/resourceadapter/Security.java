@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
+package org.jboss.jca.common.api.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.common.SecurityManager;
@@ -36,6 +36,7 @@ import java.util.Map;
  */
 public interface Security extends JCAMetadata
 {
+
    /**
     * Get the securityManager.
     *
@@ -65,11 +66,11 @@ public interface Security extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * securityManager tag
+      securityManager tag
       */
       SECURITYMANAGER("security-manager"),
       /**
-      * securityDomain tag
+      securityDomain tag
       */
       SECURITYDOMAIN("security-domain");
 
@@ -124,5 +125,4 @@ public interface Security extends JCAMetadata
       }
 
    }
-
 }

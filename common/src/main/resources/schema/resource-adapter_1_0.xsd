@@ -43,7 +43,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="prefill" type="xs:token" minOccurs="0">
+      <xs:element name="prefill" type="xs:boolean" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -153,9 +153,6 @@
       <xs:enumeration value="NONE" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:complexType name="connection-propertyType" mixed="true">
-    <xs:attribute use="required" name="name" type="xs:token"></xs:attribute>
-  </xs:complexType>
   <xs:element name="resource-adapter" type="resource-adapterType"></xs:element>
   <xs:complexType name="resource-adapterType">
     <xs:sequence>
@@ -199,12 +196,12 @@
   <xs:simpleType name="transaction-supportType">
     <xs:annotation>
       <xs:documentation> Define the typoe of transaction supported by this respurce adapter. It overrides/selects
-        connection manager one valid value are: NONE, LOCAL, XA</xs:documentation>
+        connection manager one valid value are: NoTransaction, LocalTransaction, XA</xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:token">
-      <xs:enumeration value="NONE" />
-      <xs:enumeration value="LOCAL" />
-      <xs:enumeration value="XA" />
+      <xs:enumeration value="NoTransaction" />
+      <xs:enumeration value="LocalTransaction" />
+      <xs:enumeration value="XATransaction" />
     </xs:restriction>
   </xs:simpleType>
 

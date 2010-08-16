@@ -19,26 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ra;
-
+package org.jboss.jca.common.api.metadata.common;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ *
+ * A SecurityManager.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public enum TransactionSupportEnum
+public enum SecurityManager
 {
    /**
-    * NoTransaction
+    * APPLICATION
     */
-   NoTransaction,
+   APPLICATION,
    /**
-    * LocalTransaction
+    * DOMAIN
     */
-   LocalTransaction,
+   DOMAIN,
    /**
-    * XATransaction
+    * APPLICATION_AND_DOMAIN
     */
-   XATransaction;
-
+   APPLICATION_AND_DOMAIN,
+   /**
+    * NONE
+    */
+   NONE;
 }

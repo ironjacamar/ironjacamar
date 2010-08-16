@@ -21,11 +21,11 @@
  */
 package org.jboss.jca.common.api.metadata.ra.ra10;
 
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
-import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.validator.ValidateException;
 

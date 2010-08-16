@@ -24,11 +24,11 @@ package org.jboss.jca.common.metadata.ra.common;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.TransactionSupportEnum;
 
 import java.util.ArrayList;
 import java.util.Collections;

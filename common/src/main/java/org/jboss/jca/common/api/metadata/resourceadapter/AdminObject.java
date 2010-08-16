@@ -19,36 +19,57 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
+package org.jboss.jca.common.api.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A Security.
+ * A AdminObject.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Security extends JCAMetadata
+public interface AdminObject extends JCAMetadata
 {
-   /**
-    * Get the securityManager.
-    *
-    * @return the securityManager.
-    */
-   public SecurityManager getSecurityManager();
 
    /**
-    * Get the securityDomain.
+    * Get the configProperties.
     *
-    * @return the securityDomain.
+    * @return the configProperties.
     */
-   public String getSecurityDomain();
+   public Map<String, String> getConfigProperties();
+
+   /**
+    * Get the className.
+    *
+    * @return the className.
+    */
+   public String getClassName();
+
+   /**
+    * Get the jndiName.
+    *
+    * @return the jndiName.
+    */
+   public String getJndiName();
+
+   /**
+    * Get the enabled.
+    *
+    * @return the enabled.
+    */
+   public boolean isEnabled();
+
+   /**
+    * Get the useJavaContext.
+    *
+    * @return the useJavaContext.
+    */
+   public boolean isUseJavaContext();
 
    /**
    *
@@ -65,13 +86,9 @@ public interface Security extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * securityManager tag
-      */
-      SECURITYMANAGER("security-manager"),
-      /**
-      * securityDomain tag
-      */
-      SECURITYDOMAIN("security-domain");
+       * config-property tag
+       */
+      CONFIG_PROPERTY("config-property");
 
       private final String name;
 
@@ -125,4 +142,57 @@ public interface Security extends JCAMetadata
 
    }
 
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** jndiName attribute
+       *
+       */
+      JNDINAME("jndiName"),
+
+      /** class-name attribute
+      *
+      */
+      CLASS_NAME("class-name"),
+
+      /** enabled attribute
+      *
+      */
+      ENABLED("enabled"),
+      /** use-java-context attribute
+      *
+      */
+      USEJAVACONTEXT("use-java-context");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+   }
 }

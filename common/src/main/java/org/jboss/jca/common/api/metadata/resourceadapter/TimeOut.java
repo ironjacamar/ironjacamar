@@ -19,36 +19,50 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
+package org.jboss.jca.common.api.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A Security.
+ * A TimeOut.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Security extends JCAMetadata
+public interface TimeOut extends JCAMetadata
 {
-   /**
-    * Get the securityManager.
-    *
-    * @return the securityManager.
-    */
-   public SecurityManager getSecurityManager();
 
    /**
-    * Get the securityDomain.
+    * Get the blockingTimeoutMillis.
     *
-    * @return the securityDomain.
+    * @return the blockingTimeoutMillis.
     */
-   public String getSecurityDomain();
+   public Long getBlockingTimeoutMillis();
+
+   /**
+    * Get the idleTimeoutMinutes.
+    *
+    * @return the idleTimeoutMinutes.
+    */
+   public Long getIdleTimeoutMinutes();
+
+   /**
+    * Get the allocationRetryWaitMillis.
+    *
+    * @return the allocationRetryWaitMillis.
+    */
+   public Long getAllocationRetryWaitMillis();
+
+   /**
+    * Get the backgroundValidationMinutes.
+    *
+    * @return the backgroundValidationMinutes.
+    */
+   public Long getBackgroundValidationMinutes();
 
    /**
    *
@@ -65,13 +79,21 @@ public interface Security extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * securityManager tag
+      blockingTimeoutMillis tag
       */
-      SECURITYMANAGER("security-manager"),
+      BLOCKINGTIMEOUTMILLIS("blocking-imeout-millis"),
       /**
-      * securityDomain tag
+      idleTimeoutMinutes tag
       */
-      SECURITYDOMAIN("security-domain");
+      IDLETIMEOUTMINUTES("idle-timeout-minutes"),
+      /**
+      allocationRetryWaitMillis tag
+      */
+      ALLOCATIONRETRYWAITMILLIS("allocation-retry-wait-millis"),
+      /**
+      backgroundValidationMinutes tag
+      */
+      BACKGROUNDVALIDATIONMINUTES("background-validation-minutes");
 
       private final String name;
 
@@ -124,5 +146,4 @@ public interface Security extends JCAMetadata
       }
 
    }
-
 }

@@ -23,7 +23,6 @@ package org.jboss.jca.common.metadata.jbossra;
 
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.jbossra.jbossra20.JbossRa20;
-import org.jboss.jca.common.metadata.jbossra.JbossRaParser;
 import org.jboss.jca.common.metadata.jbossra.jbossra10.JbossRa10Impl;
 import org.jboss.jca.common.metadata.jbossra.jbossra20.JbossRa20Impl;
 import org.jboss.jca.common.metadata.ra.common.RaConfigPropertyImpl;

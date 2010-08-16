@@ -19,89 +19,128 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ra;
+package org.jboss.jca.common.api.metadata.resourceadapter;
 
 
-import org.jboss.jca.common.api.metadata.CopyableMetaData;
-import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  *
- * A OutboundResourceAdapter.
+ * A NoTxConnectionFactory.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface OutboundResourceAdapter
-      extends
-         IdDecoratedMetadata,
-         MergeableMetadata<OutboundResourceAdapter>,
-         CopyableMetaData
+public interface NoTxConnectionFactory extends JCAMetadata
 {
 
    /**
-    * @return connectionDefinition
-    */
-   public abstract List<ConnectionDefinition> getConnectionDefinitions();
-
-   /**
-    * @return transactionSupport
-    */
-   public abstract TransactionSupportEnum getTransactionSupport();
-
-   /**
-    * @return authenticationMechanism
-    */
-   public abstract List<AuthenticationMechanism> getAuthenticationMechanisms();
-
-   /**
-    * @return reauthenticationSupport
-    */
-   public abstract boolean getReauthenticationSupport();
-
-   /**
-    * {@inheritDoc}
+    * Get the minPoolSize.
     *
-    * @see IdDecoratedMetadata#getId()
+    * @return the minPoolSize.
     */
-   @Override
-   public abstract String getId();
+   public Integer getMinPoolSize();
 
    /**
-    * {@inheritDoc}
+    * Get the maxPoolSize.
     *
-    * @see java.lang.Object#hashCode()
+    * @return the maxPoolSize.
     */
-   @Override
-   public abstract int hashCode();
+   public Integer getMaxPoolSize();
 
    /**
-    * {@inheritDoc}
+    * Get the prefill.
     *
-    * @see java.lang.Object#equals(java.lang.Object)
+    * @return the prefill.
     */
-   @Override
-   public abstract boolean equals(Object obj);
+   public boolean isPrefill();
 
    /**
-    * {@inheritDoc}
+    * Get the userName.
     *
-    * @see java.lang.Object#toString()
+    * @return the userName.
     */
-   @Override
-   public abstract String toString();
+   public String getUserName();
 
    /**
-      *
-      * A validate method. Don't extending for the moment {@link ValidatableMetadata}
-      *
-      * @return true if Ra is valid, flase in the other cases
-      */
-   public abstract boolean validationAsBoolean();
+    * Get the password.
+    *
+    * @return the password.
+    */
+   public String getPassword();
+
+   /**
+    * Get the connectionDefinition.
+    *
+    * @return the connectionDefinition.
+    */
+   public String getConnectionDefinition();
+
+   /**
+    * Get the configProperty.
+    *
+    * @return the configProperty.
+    */
+   public HashMap<String, String> getConfigProperty();
+
+   /**
+    * Get the security.
+    *
+    * @return the security.
+    */
+   public Security getSecurity();
+
+   /**
+    * Get the timeOut.
+    *
+    * @return the timeOut.
+    */
+   public TimeOut getTimeOut();
+
+   /**
+    * Get the validation.
+    *
+    * @return the validation.
+    */
+   public Validation getValidation();
+
+   /**
+    * Get the poolName.
+    *
+    * @return the poolName.
+    */
+   public String getPoolName();
+
+   /**
+    * Get the className.
+    *
+    * @return the className.
+    */
+   public String getClassName();
+
+   /**
+    * Get the jndiName.
+    *
+    * @return the jndiName.
+    */
+   public String getJndiName();
+
+   /**
+    * Get the enabled.
+    *
+    * @return the enabled.
+    */
+   public boolean isEnabled();
+
+   /**
+    * Get the useJavaContext.
+    *
+    * @return the useJavaContext.
+    */
+   public boolean isUseJavaContext();
 
    /**
    *
@@ -118,24 +157,45 @@ public interface OutboundResourceAdapter
       UNKNOWN(null),
 
       /**
-       * connection-definition TAG
-       */
-      CONNECTION_DEFINITION("connection-definition"),
-
+      minPoolSize tag
+      */
+      MINPOOLSIZE("min-pool-size"),
       /**
-       * transaction-support TAG
-       */
-      TRANSACTION_SUPPORT("transaction-support"),
-
+      maxPoolSize tag
+      */
+      MAXPOOLSIZE("max-pool-size"),
       /**
-       * authentication-mechanism TAG
-       */
-      AUTHENTICATION_MECHANISM("authentication-mechanism"),
-
+      prefill tag
+      */
+      PREFILL("prefill"),
       /**
-       * reauthentication-support TAG
-       */
-      REAUTHENTICATION_SUPPORT("reauthentication-support");
+      userName tag
+      */
+      USERNAME("user-name"),
+      /**
+      password tag
+      */
+      PASSWORD("password"),
+      /**
+      connectionDefinition tag
+      */
+      CONNECTIONDEFINITION("connection-definition"),
+      /**
+      configProperty tag
+      */
+      CONFIGPROPERTY("config-property"),
+      /**
+      security tag
+      */
+      SECURITY("security"),
+      /**
+      timeOut tag
+      */
+      TIMEOUT("time-out"),
+      /**
+      validation tag
+      */
+      VALIDATION("validation");
 
       private final String name;
 
@@ -176,9 +236,9 @@ public interface OutboundResourceAdapter
 
       /**
       *
-      * Static method to get enum instance given localName string
+      * Static method to get enum instance given localName XsdString
       *
-      * @param localName a string used as localname (typically tag name as defined in xsd)
+      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
       * @return the enum instance
       */
       public static Tag forName(String localName)
@@ -199,10 +259,24 @@ public interface OutboundResourceAdapter
    public enum Attribute
    {
 
-      /** id attribute
+      /** jndiName attribute
        *
        */
-      ID("id");
+      JNDINAME("jndiName"),
+
+      /** class-name attribute
+      *
+      */
+      CLASS_NAME("class-name"),
+
+      /** enabled attribute
+      *
+      */
+      ENABLED("enabled"),
+      /** use-java-context attribute
+      *
+      */
+      USEJAVACONTEXT("use-java-context");
 
       private final String name;
 

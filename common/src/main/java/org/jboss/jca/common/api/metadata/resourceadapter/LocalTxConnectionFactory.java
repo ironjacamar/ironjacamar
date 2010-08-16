@@ -19,36 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
-
-import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
+package org.jboss.jca.common.api.metadata.resourceadapter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A Security.
+ * A LocalTxConnectionFactory.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Security extends JCAMetadata
+public interface LocalTxConnectionFactory extends NoTxConnectionFactory
 {
-   /**
-    * Get the securityManager.
-    *
-    * @return the securityManager.
-    */
-   public SecurityManager getSecurityManager();
 
    /**
-    * Get the securityDomain.
+    * Get the noTxSeparatePools.
     *
-    * @return the securityDomain.
+    * @return the noTxSeparatePools.
     */
-   public String getSecurityDomain();
+   public boolean isNoTxSeparatePools();
+
+   /**
+    * Get the trackConnectionByTx.
+    *
+    * @return the trackConnectionByTx.
+    */
+   public boolean isTrackConnectionByTx();
 
    /**
    *
@@ -65,13 +63,54 @@ public interface Security extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * securityManager tag
+      minPoolSize tag
       */
-      SECURITYMANAGER("security-manager"),
+      MINPOOLSIZE("min-pool-size"),
       /**
-      * securityDomain tag
+      maxPoolSize tag
       */
-      SECURITYDOMAIN("security-domain");
+      MAXPOOLSIZE("max-pool-size"),
+      /**
+      prefill tag
+      */
+      PREFILL("prefill"),
+      /**
+      userName tag
+      */
+      USERNAME("user-name"),
+      /**
+      password tag
+      */
+      PASSWORD("password"),
+      /**
+      connectionDefinition tag
+      */
+      CONNECTIONDEFINITION("connection-definition"),
+      /**
+      configProperty tag
+      */
+      CONFIGPROPERTY("config-property"),
+      /**
+      security tag
+      */
+      SECURITY("security"),
+      /**
+      timeOut tag
+      */
+      TIMEOUT("time-out"),
+      /**
+      validation tag
+      */
+      VALIDATION("validation"),
+
+      /**
+       * no-tx-separate-pools tag
+       */
+      NOTXSEPARATEPOOLS("no-tx-separate-pools"),
+      /**
+       * track-connection-by-tx
+       */
+      TRACKCONNECTIONBYTX("track-connection-by-tx");
 
       private final String name;
 
@@ -125,4 +164,57 @@ public interface Security extends JCAMetadata
 
    }
 
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** jndiName attribute
+       *
+       */
+      JNDINAME("jndiName"),
+
+      /** class-name attribute
+      *
+      */
+      CLASS_NAME("class-name"),
+
+      /** enabled attribute
+      *
+      */
+      ENABLED("enabled"),
+      /** use-java-context attribute
+      *
+      */
+      USEJAVACONTEXT("use-java-context");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+   }
 }
