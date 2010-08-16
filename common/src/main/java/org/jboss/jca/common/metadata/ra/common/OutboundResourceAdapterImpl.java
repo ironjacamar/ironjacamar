@@ -238,8 +238,8 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       if (this.getConnectionDefinitions() == null || this.getConnectionDefinitions().size() == 0)
          return false;
       ConnectionDefinition cdm = this.getConnectionDefinitions().get(0);
-      if (cdm.getManagedconnectionfactoryClass() == null || cdm.getConnectionfactoryInterface() == null
-            || cdm.getConnectionfactoryImplClass() == null || cdm.getConnectionInterface() == null
+      if (cdm.getManagedConnectionFactoryClass() == null || cdm.getConnectionFactoryInterface() == null
+            || cdm.getConnectionFactoryImplClass() == null || cdm.getConnectionInterface() == null
             || cdm.getConnectionImplClass() == null)
          return false;
 
@@ -264,7 +264,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
             boolean isNew = true;
             for (ConnectionDefinition lcd : this.connectionDefinition)
             {
-               if (rcd.getManagedconnectionfactoryClass().equals(lcd.getManagedconnectionfactoryClass()))
+               if (rcd.getManagedConnectionFactoryClass().equals(lcd.getManagedConnectionFactoryClass()))
                {
                   newConnectionDefinition.remove(lcd);
                   newConnectionDefinition.add(lcd.merge(rcd));

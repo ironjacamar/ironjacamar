@@ -95,7 +95,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
     * @return managedconnectionfactoryClass
     */
    @Override
-   public XsdString getManagedconnectionfactoryClass()
+   public XsdString getManagedConnectionFactoryClass()
    {
       return managedconnectionfactoryClass;
    }
@@ -113,7 +113,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
     * @return connectionfactoryInterface
     */
    @Override
-   public XsdString getConnectionfactoryInterface()
+   public XsdString getConnectionFactoryInterface()
    {
       return connectionfactoryInterface;
    }
@@ -122,7 +122,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
     * @return connectionfactoryImplClass
     */
    @Override
-   public XsdString getConnectionfactoryImplClass()
+   public XsdString getConnectionFactoryImplClass()
    {
       return connectionfactoryImplClass;
    }

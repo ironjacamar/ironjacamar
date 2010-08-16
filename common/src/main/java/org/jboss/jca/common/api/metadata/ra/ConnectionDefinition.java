@@ -45,7 +45,7 @@ public interface ConnectionDefinition
    /**
     * @return managedconnectionfactoryClass
     */
-   public abstract XsdString getManagedconnectionfactoryClass();
+   public abstract XsdString getManagedConnectionFactoryClass();
 
    /**
     * @return configProperty
@@ -55,12 +55,12 @@ public interface ConnectionDefinition
    /**
     * @return connectionfactoryInterface
     */
-   public abstract XsdString getConnectionfactoryInterface();
+   public abstract XsdString getConnectionFactoryInterface();
 
    /**
     * @return connectionfactoryImplClass
     */
-   public abstract XsdString getConnectionfactoryImplClass();
+   public abstract XsdString getConnectionFactoryImplClass();
 
    /**
     * @return connectionInterface

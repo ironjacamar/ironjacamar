@@ -292,11 +292,11 @@ public class Validation
          {
             for (ConnectionDefinition cdMeta : cdMetas)
             {
-               if (cdMeta.getManagedconnectionfactoryClass() != null)
+               if (cdMeta.getManagedConnectionFactoryClass() != null)
                {
                   try
                   {
-                     Class<?> clazz = Class.forName(cdMeta.getManagedconnectionfactoryClass().getValue(), true, cl);
+                     Class<?> clazz = Class.forName(cdMeta.getManagedConnectionFactoryClass().getValue(), true, cl);
                      List<? extends ConfigProperty> configProperties = cdMeta.getConfigProperties();
 
                      ValidateClass vc = new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, clazz, configProperties);

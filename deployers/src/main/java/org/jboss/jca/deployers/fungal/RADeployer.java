@@ -548,7 +548,7 @@ public final class RADeployer implements CloneableDeployer
                         partialFailures =
                               validateArchive(url, Arrays
                                     .asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, cdMeta
-                                          .getManagedconnectionfactoryClass().getValue(), cl, cdMeta
+                                          .getManagedConnectionFactoryClass().getValue(), cl, cdMeta
                                           .getConfigProperties())));
                         if (partialFailures != null)
                         {
@@ -559,7 +559,7 @@ public final class RADeployer implements CloneableDeployer
                         if (!(getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
                         {
                            ManagedConnectionFactory mcf =
-                                 (ManagedConnectionFactory) initAndInject(cdMeta.getManagedconnectionfactoryClass()
+                                 (ManagedConnectionFactory) initAndInject(cdMeta.getManagedConnectionFactoryClass()
                                        .getValue(), cdMeta
                                        .getConfigProperties(), cl);
 
