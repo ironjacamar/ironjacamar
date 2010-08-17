@@ -191,7 +191,10 @@ public interface LocalTxConnectionFactory extends NoTxConnectionFactory
       /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context");
+      USEJAVACONTEXT("use-java-context"),
+
+      /** pool-name attribute **/
+      POOL_NAME("pool-name");
 
       private final String name;
 

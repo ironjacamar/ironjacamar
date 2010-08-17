@@ -4,7 +4,7 @@
     <xs:complexContent>
       <xs:extension base="no-tx-connection-factoryType">
         <xs:sequence>
-          <xs:element name="no-tx-separate-pools" type="boolean-presenceType">
+          <xs:element name="no-tx-separate-pools" type="boolean-presenceType" maxOccurs="1" minOccurs="0">
             <xs:annotation>
               <xs:documentation>
                 <![CDATA[[
@@ -14,7 +14,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="track-connection-by-tx" type="boolean-presenceType"></xs:element>
+          <xs:element name="track-connection-by-tx" type="boolean-presenceType" maxOccurs="1" minOccurs="0"></xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -102,8 +102,6 @@
   <xs:complexType name="config-propertyType" mixed="true">
     <xs:attribute use="required" name="name" type="xs:token">
     </xs:attribute>
-    <xs:attribute use="required" name="value" type="xs:token">
-    </xs:attribute>
   </xs:complexType>
   <xs:complexType name="securityType">
     <xs:sequence>
@@ -188,7 +186,17 @@
     <xs:complexContent>
       <xs:extension base="local-tx-connection-factoryType">
         <xs:sequence>
-          <xs:element name="xa-resource-timeout" type="xs:token" minOccurs="0" maxOccurs="1"></xs:element>
+          <xs:element name="xa-resource-timeout" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation><![CDATA[[
+               EXPRESSED IN SECONDS
+               Passed to XAResource.setTransactionTimeout()
+               Default is zero which does not invoke the setter
+               e.g. 5 minutes
+               <xa-resource-timeout>300</xa-resource-timeout>]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -204,7 +212,6 @@
       <xs:enumeration value="XATransaction" />
     </xs:restriction>
   </xs:simpleType>
-
   <xs:attributeGroup name="common-attribute">
     <xs:attribute name="class-name" type="xs:token" use="required"></xs:attribute>
     <xs:attribute name="jndi-name" type="xs:token" use="required" />
@@ -221,16 +228,15 @@
       </xs:annotation>
     </xs:attribute>
   </xs:attributeGroup>
-
   <xs:complexType name="admin-objectType">
     <xs:sequence>
       <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
     <xs:attributeGroup ref="common-attribute"></xs:attributeGroup>
   </xs:complexType>
-
   <xs:complexType name="time-outType">
-    <xs:sequence><xs:element name="blocking-timeout-millis" type="xs:nonNegativeInteger" minOccurs="0">
+    <xs:sequence>
+      <xs:element name="blocking-timeout-millis" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -243,7 +249,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-            <xs:element name="idle-timeout-minutes" type="xs:nonNegativeInteger" minOccurs="0">
+      <xs:element name="idle-timeout-minutes" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -254,7 +260,8 @@
               ]]>
           </xs:documentation>
         </xs:annotation>
-      </xs:element><xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1" >
+      </xs:element>
+      <xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -264,7 +271,8 @@
               ]]>
           </xs:documentation>
         </xs:annotation>
-      </xs:element><xs:element name="background-validation-minutes" type="xs:nonNegativeInteger" minOccurs="0">
+      </xs:element>
+      <xs:element name="background-validation-minutes" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -273,11 +281,12 @@
               ]]>
           </xs:documentation>
         </xs:annotation>
-      </xs:element></xs:sequence>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
-
   <xs:complexType name="validationType">
-    <xs:sequence><xs:element name="allocation-retry" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1" >
+    <xs:sequence>
+      <xs:element name="allocation-retry" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -287,7 +296,8 @@
               ]]>
           </xs:documentation>
         </xs:annotation>
-      </xs:element><xs:element name="background-validation" type="xs:boolean" minOccurs="0">
+      </xs:element>
+      <xs:element name="background-validation" type="xs:boolean" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -296,7 +306,8 @@
               ]]>
           </xs:documentation>
         </xs:annotation>
-      </xs:element><xs:element name="use-fast-fail" type="xs:boolean" minOccurs="0">
+      </xs:element>
+      <xs:element name="use-fast-fail" type="xs:boolean" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -306,6 +317,7 @@
               ]]>
           </xs:documentation>
         </xs:annotation>
-      </xs:element></xs:sequence>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 </xs:schema>

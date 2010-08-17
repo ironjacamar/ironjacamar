@@ -84,7 +84,7 @@ public interface NoTxConnectionFactory extends JCAMetadata
     *
     * @return the configProperty.
     */
-   public HashMap<String, String> getConfigProperty();
+   public Map<String, String> getConfigProperties();
 
    /**
     * Get the security.
@@ -276,7 +276,10 @@ public interface NoTxConnectionFactory extends JCAMetadata
       /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context");
+      USEJAVACONTEXT("use-java-context"),
+
+      /** pool-name attribute **/
+      POOL_NAME("pool-name");
 
       private final String name;
 

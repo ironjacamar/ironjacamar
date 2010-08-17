@@ -99,7 +99,12 @@ public interface ResourceAdapter extends JCAMetadata
       /**
       adminobject tag
       */
-      ADMINOBJECT("admin-object");
+      ADMINOBJECT("admin-object"),
+
+      /** archive tag
+       *
+       */
+      ARCHIVE("archive");
 
       private final String name;
 

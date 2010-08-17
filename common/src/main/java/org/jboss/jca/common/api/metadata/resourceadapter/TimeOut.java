@@ -81,7 +81,7 @@ public interface TimeOut extends JCAMetadata
       /**
       blockingTimeoutMillis tag
       */
-      BLOCKINGTIMEOUTMILLIS("blocking-imeout-millis"),
+      BLOCKINGTIMEOUTMILLIS("blocking-timeout-millis"),
       /**
       idleTimeoutMinutes tag
       */

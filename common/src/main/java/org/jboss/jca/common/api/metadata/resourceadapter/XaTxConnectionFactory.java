@@ -39,7 +39,7 @@ public interface XaTxConnectionFactory extends LocalTxConnectionFactory
     *
     * @return the xaResourceTimeout.
     */
-   public String getXaResourceTimeout();
+   public Long getXaResourceTimeout();
 
    /**
    *
@@ -189,7 +189,10 @@ public interface XaTxConnectionFactory extends LocalTxConnectionFactory
       /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context");
+      USEJAVACONTEXT("use-java-context"),
+
+      /** pool-name attribute **/
+      POOL_NAME("pool-name");
 
       private final String name;
 

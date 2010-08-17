@@ -19,14 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadpater;
+package org.jboss.jca.common.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.resourceadapter.Security;
 import org.jboss.jca.common.api.metadata.resourceadapter.TimeOut;
 import org.jboss.jca.common.api.metadata.resourceadapter.Validation;
 import org.jboss.jca.common.api.metadata.resourceadapter.XaTxConnectionFactory;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -39,7 +39,8 @@ public class XaTxConnectionFactoryImpl extends LocalTxConnectionFactoryImpl impl
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8211429129210108351L;
-   private final String xaResourceTimeout;
+
+   private final Long xaResourceTimeout;
 
    /**
     * Create a new XaTxConnectionFactoryImpl.
@@ -50,7 +51,7 @@ public class XaTxConnectionFactoryImpl extends LocalTxConnectionFactoryImpl impl
     * @param userName userName
     * @param password password
     * @param connectionDefinition connectionDefinition
-    * @param configProperty configProperty
+    * @param configProperties configProperty
     * @param security security
     * @param timeOut timeOut
     * @param validation validation
@@ -64,11 +65,11 @@ public class XaTxConnectionFactoryImpl extends LocalTxConnectionFactoryImpl impl
     * @param xaResourceTimeout xaResourceTimeout
     */
    public XaTxConnectionFactoryImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String userName,
-         String password, String connectionDefinition, HashMap<String, String> configProperty, Security security,
+         String password, String connectionDefinition, Map<String, String> configProperties, Security security,
          TimeOut timeOut, Validation validation, String poolName, String className, String jndiName, boolean enabled,
-         boolean useJavaContext, boolean noTxSeparatePools, boolean trackConnectionByTx, String xaResourceTimeout)
+         boolean useJavaContext, boolean noTxSeparatePools, boolean trackConnectionByTx, Long xaResourceTimeout)
    {
-      super(minPoolSize, maxPoolSize, prefill, userName, password, connectionDefinition, configProperty, security,
+      super(minPoolSize, maxPoolSize, prefill, userName, password, connectionDefinition, configProperties, security,
             timeOut, validation, poolName, className, jndiName, enabled, useJavaContext, noTxSeparatePools,
             trackConnectionByTx);
       this.xaResourceTimeout = xaResourceTimeout;
@@ -80,7 +81,7 @@ public class XaTxConnectionFactoryImpl extends LocalTxConnectionFactoryImpl impl
     * @return the xaResourceTimeout.
     */
    @Override
-   public final String getXaResourceTimeout()
+   public final Long getXaResourceTimeout()
    {
       return xaResourceTimeout;
    }
@@ -119,7 +120,7 @@ public class XaTxConnectionFactoryImpl extends LocalTxConnectionFactoryImpl impl
    {
       return "XaTxConnectionFactoryImpl [xaResourceTimeout=" + xaResourceTimeout + ", minPoolSize=" + minPoolSize
             + ", maxPoolSize=" + maxPoolSize + ", prefill=" + prefill + ", userName=" + userName + ", password="
-            + password + ", connectionDefinition=" + connectionDefinition + ", configProperty=" + configProperty
+            + password + ", connectionDefinition=" + connectionDefinition + ", configProperties=" + configProperties
             + ", security=" + security + ", timeOut=" + timeOut + ", validation=" + validation + ", poolName="
             + poolName + ", className=" + className + ", jndiName=" + jndiName + ", enabled=" + enabled
             + ", useJavaContext=" + useJavaContext + "]";

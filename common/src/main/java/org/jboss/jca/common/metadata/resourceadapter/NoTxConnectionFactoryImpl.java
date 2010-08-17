@@ -19,14 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadpater;
+package org.jboss.jca.common.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.resourceadapter.NoTxConnectionFactory;
 import org.jboss.jca.common.api.metadata.resourceadapter.Security;
 import org.jboss.jca.common.api.metadata.resourceadapter.TimeOut;
 import org.jboss.jca.common.api.metadata.resourceadapter.Validation;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -59,7 +61,7 @@ public class NoTxConnectionFactoryImpl implements NoTxConnectionFactory
    protected final String connectionDefinition;
 
    /** configProperty field **/
-   protected final HashMap<String, String> configProperty;
+   protected final HashMap<String, String> configProperties;
 
    /** security field **/
    protected final Security security;
@@ -94,7 +96,7 @@ public class NoTxConnectionFactoryImpl implements NoTxConnectionFactory
     * @param userName userName
     * @param password password
     * @param connectionDefinition connectionDefinition
-    * @param configProperty configProperty
+    * @param configProperties configProperties
     * @param security security
     * @param timeOut timeOut
     * @param validation validation
@@ -105,7 +107,7 @@ public class NoTxConnectionFactoryImpl implements NoTxConnectionFactory
     * @param useJavaContext useJavaContext
     */
    public NoTxConnectionFactoryImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String userName,
-         String password, String connectionDefinition, HashMap<String, String> configProperty, Security security,
+         String password, String connectionDefinition, Map<String, String> configProperties, Security security,
          TimeOut timeOut, Validation validation, String poolName, String className, String jndiName, boolean enabled,
          boolean useJavaContext)
    {
@@ -116,7 +118,15 @@ public class NoTxConnectionFactoryImpl implements NoTxConnectionFactory
       this.userName = userName;
       this.password = password;
       this.connectionDefinition = connectionDefinition;
-      this.configProperty = configProperty;
+      if (configProperties != null)
+      {
+         this.configProperties = new HashMap<String, String>(configProperties.size());
+         this.configProperties.putAll(configProperties);
+      }
+      else
+      {
+         this.configProperties = new HashMap<String, String>(0);
+      }
       this.security = security;
       this.timeOut = timeOut;
       this.validation = validation;
@@ -199,9 +209,9 @@ public class NoTxConnectionFactoryImpl implements NoTxConnectionFactory
     * @return the configProperty.
     */
    @Override
-   public final HashMap<String, String> getConfigProperty()
+   public final Map<String, String> getConfigProperties()
    {
-      return configProperty;
+      return Collections.unmodifiableMap(configProperties);
    }
 
    /**
@@ -298,7 +308,7 @@ public class NoTxConnectionFactoryImpl implements NoTxConnectionFactory
       final int prime = 31;
       int result = 1;
       result = prime * result + ((className == null) ? 0 : className.hashCode());
-      result = prime * result + ((configProperty == null) ? 0 : configProperty.hashCode());
+      result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
       result = prime * result + ((connectionDefinition == null) ? 0 : connectionDefinition.hashCode());
       result = prime * result + (enabled ? 1231 : 1237);
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
@@ -332,12 +342,12 @@ public class NoTxConnectionFactoryImpl implements NoTxConnectionFactory
       }
       else if (!className.equals(other.className))
          return false;
-      if (configProperty == null)
+      if (configProperties == null)
       {
-         if (other.configProperty != null)
+         if (other.configProperties != null)
             return false;
       }
-      else if (!configProperty.equals(other.configProperty))
+      else if (!configProperties.equals(other.configProperties))
          return false;
       if (connectionDefinition == null)
       {
@@ -423,7 +433,7 @@ public class NoTxConnectionFactoryImpl implements NoTxConnectionFactory
    {
       return "NoTxConnectionFactoryImpl [minPoolSize=" + minPoolSize + ", maxPoolSize=" + maxPoolSize + ", prefill="
             + prefill + ", userName=" + userName + ", password=" + password + ", connectionDefinition="
-            + connectionDefinition + ", configProperty=" + configProperty + ", security=" + security + ", timeOut="
+            + connectionDefinition + ", configProperties=" + configProperties + ", security=" + security + ", timeOut="
             + timeOut + ", validation=" + validation + ", poolName=" + poolName + ", className=" + className
             + ", jndiName=" + jndiName + ", enabled=" + enabled + ", useJavaContext=" + useJavaContext + "]";
    }

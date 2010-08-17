@@ -19,14 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadpater;
+package org.jboss.jca.common.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.resourceadapter.LocalTxConnectionFactory;
 import org.jboss.jca.common.api.metadata.resourceadapter.Security;
 import org.jboss.jca.common.api.metadata.resourceadapter.TimeOut;
 import org.jboss.jca.common.api.metadata.resourceadapter.Validation;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -53,7 +53,7 @@ public class LocalTxConnectionFactoryImpl extends NoTxConnectionFactoryImpl impl
     * @param userName userName
     * @param password password
     * @param connectionDefinition connectionDefinition
-    * @param configProperty configProperty
+    * @param configProperties configProperties
     * @param security security
     * @param timeOut timeOut
     * @param validation validation
@@ -66,11 +66,11 @@ public class LocalTxConnectionFactoryImpl extends NoTxConnectionFactoryImpl impl
     * @param trackConnectionByTx trackConnectionByTx
     */
    public LocalTxConnectionFactoryImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String userName,
-         String password, String connectionDefinition, HashMap<String, String> configProperty, Security security,
+         String password, String connectionDefinition, Map<String, String> configProperties, Security security,
          TimeOut timeOut, Validation validation, String poolName, String className, String jndiName, boolean enabled,
          boolean useJavaContext, boolean noTxSeparatePools, boolean trackConnectionByTx)
    {
-      super(minPoolSize, maxPoolSize, prefill, userName, password, connectionDefinition, configProperty, security,
+      super(minPoolSize, maxPoolSize, prefill, userName, password, connectionDefinition, configProperties, security,
             timeOut, validation, poolName, className, jndiName, enabled, useJavaContext);
       this.noTxSeparatePools = noTxSeparatePools;
       this.trackConnectionByTx = trackConnectionByTx;
@@ -131,7 +131,7 @@ public class LocalTxConnectionFactoryImpl extends NoTxConnectionFactoryImpl impl
       return "LocalTxConnectionFactoryImpl [noTxSeparatePools=" + noTxSeparatePools + ", trackConnectionByTx="
             + trackConnectionByTx + ", minPoolSize=" + minPoolSize + ", maxPoolSize=" + maxPoolSize + ", prefill="
             + prefill + ", userName=" + userName + ", password=" + password + ", connectionDefinition="
-            + connectionDefinition + ", configProperty=" + configProperty + ", security=" + security + ", timeOut="
+            + connectionDefinition + ", configProperties=" + configProperties + ", security=" + security + ", timeOut="
             + timeOut + ", validation=" + validation + ", poolName=" + poolName + ", className=" + className
             + ", jndiName=" + jndiName + ", enabled=" + enabled + ", useJavaContext=" + useJavaContext + "]";
    }
