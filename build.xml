@@ -1048,6 +1048,24 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
     <deploy-file file="release.sh" artifact="core-spi"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="core-spi"/>
 
+    <!-- ironjacamar-depchain -->
+    <delete file="${target.dir}/${name}-depchain.xml"/>
+    <ivy:makepom artifactName="${name}-depchain" 
+                 conf="${name}-depchain"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-depchain.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
+      <mapping conf="${name}-depchain" scope="runtime"/>
+    </ivy:makepom>
+
+    <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">
+mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depchain.xml $REPOSITORY
+</concat>
+    <concat destfile="${target.dir}/snapshot.sh" append="true" force="true" eol="unix">
+mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depchain.xml -DuniqueVersion=false $REPOSITORY
+</concat>
+
     <!-- ironjacamar-deployers-fungal -->
     <delete file="${target.dir}/${name}-deployers-fungal.xml"/>
     <ivy:makepom artifactName="${name}-deployers-fungal" 
