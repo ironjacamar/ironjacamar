@@ -923,6 +923,18 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-javadoc.jar -DgeneratePom
     </sequential>
   </macrodef>
 
+  <macrodef name="snapshot-deploy-file">
+    <attribute name="file"/>
+    <attribute name="artifact"/>
+    <sequential>
+      <concat destfile="${target.dir}/@{file}" append="true" force="true" eol="unix">
+mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}.jar -DpomFile=${name}-@{artifact}.xml -DuniqueVersion=false $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
+</concat>
+    </sequential>
+  </macrodef>
+
   <target name="nexus" depends="clean,artifacts">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
                   conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli"
@@ -951,12 +963,13 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-codegenerator"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-codegenerator.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-codegenerator" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="codegenerator"/>
-    <deploy-file file="snapshot.sh" artifact="codegenerator"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="codegenerator"/>
 
     <!-- ironjacamar-common-api -->
     <delete file="${target.dir}/${name}-common-api.xml"/>
@@ -964,12 +977,13 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-common-api"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-common-api.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-common-api" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="common-api"/>
-    <deploy-file file="snapshot.sh" artifact="common-api"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="common-api"/>
 
     <!-- ironjacamar-common-impl -->
     <delete file="${target.dir}/${name}-common-impl.xml"/>
@@ -977,13 +991,14 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-common-impl"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-common-impl.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="common-impl"/>
-    <deploy-file file="snapshot.sh" artifact="common-impl"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="common-impl"/>
 
     <!-- ironjacamar-core-api -->
     <delete file="${target.dir}/${name}-core-api.xml"/>
@@ -991,14 +1006,15 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-core-api"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-core-api.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-core-api" scope="runtime"/>
       <dependency artifact="${name}-core-spi" scope="runtime"/>
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="core-api"/>
-    <deploy-file file="snapshot.sh" artifact="core-api"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="core-api"/>
 
     <!-- ironjacamar-core-impl -->
     <delete file="${target.dir}/${name}-core-impl.xml"/>
@@ -1006,7 +1022,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-core-impl"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-core-impl.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-core-impl" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-core-api" scope="runtime"/>
@@ -1015,7 +1032,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="core-impl"/>
-    <deploy-file file="snapshot.sh" artifact="core-impl"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="core-impl"/>
 
     <!-- ironjacamar-core-spi -->
     <delete file="${target.dir}/${name}-core-spi.xml"/>
@@ -1023,12 +1040,13 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-core-spi"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-core-spi.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-core-spi" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="core-spi"/>
-    <deploy-file file="snapshot.sh" artifact="core-spi"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="core-spi"/>
 
     <!-- ironjacamar-deployers-fungal -->
     <delete file="${target.dir}/${name}-deployers-fungal.xml"/>
@@ -1036,7 +1054,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-deployers-fungal"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-deployers-fungal.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-deployers-fungal" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-core-api" scope="runtime"/>
@@ -1047,7 +1066,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="deployers-fungal"/>
-    <deploy-file file="snapshot.sh" artifact="deployers-fungal"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="deployers-fungal"/>
 
     <!-- ironjacamar-embedded -->
     <delete file="${target.dir}/${name}-embedded.xml"/>
@@ -1055,12 +1074,13 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-embedded"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-embedded.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-embedded" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="embedded"/>
-    <deploy-file file="snapshot.sh" artifact="embedded"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="embedded"/>
 
     <!-- ironjacamar-embedded-arquillian -->
     <delete file="${target.dir}/${name}-embedded-arquillian.xml"/>
@@ -1068,13 +1088,14 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-embedded-arquillian"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-embedded-arquillian.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-embedded-arquillian" scope="runtime"/>
       <dependency artifact="${name}-embedded" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="embedded-arquillian"/>
-    <deploy-file file="snapshot.sh" artifact="embedded-arquillian"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="embedded-arquillian"/>
 
     <!-- ironjacamar-spec-api -->
     <delete file="${target.dir}/${name}-spec-api.xml"/>
@@ -1082,12 +1103,13 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-spec-api"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-spec-api.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="spec-api"/>
-    <deploy-file file="snapshot.sh" artifact="spec-api"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="spec-api"/>
 
     <!-- ironjacamar-validator -->
     <delete file="${target.dir}/${name}-validator.xml"/>
@@ -1095,14 +1117,15 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-validator"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-validator.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-validator" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="validator"/>
-    <deploy-file file="snapshot.sh" artifact="validator"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="validator"/>
 
     <!-- ironjacamar-validator-ant -->
     <delete file="${target.dir}/${name}-validator-ant.xml"/>
@@ -1110,13 +1133,14 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-validator-ant"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-validator-ant.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-validator-ant" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="validator-ant"/>
-    <deploy-file file="snapshot.sh" artifact="validator-ant"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="validator-ant"/>
 
     <!-- ironjacamar-validator-cli -->
     <delete file="${target.dir}/${name}-validator-cli.xml"/>
@@ -1124,13 +1148,14 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-validator-cli"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-validator-cli.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-validator-cli" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="validator-cli"/>
-    <deploy-file file="snapshot.sh" artifact="validator-cli"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="validator-cli"/>
 
     <!-- ironjacamar-validator-maven -->
     <delete file="${target.dir}/${name}-validator-maven.xml"/>
@@ -1138,13 +1163,14 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  conf="${name}-validator-maven"
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-validator-maven.xml"
-                 headerFile="${tools.dir}/mvn/HEADER">
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
       <mapping conf="${name}-validator-maven" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="validator-maven"/>
-    <deploy-file file="snapshot.sh" artifact="validator-maven"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="validator-maven"/>
 
     <chmod file="${target.dir}/release.sh" perm="755"/>
     <chmod file="${target.dir}/snapshot.sh" perm="755"/>

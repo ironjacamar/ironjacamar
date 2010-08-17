@@ -28,6 +28,9 @@
         revision="${version}">
     <license name="lgpl" url="http://repository.jboss.org/licenses/lgpl.txt"/>
     <repository name="jboss" url="http://repository.jboss.org"/>
+    <description homepage="http://www.jboss.org/ironjacamar">
+      The IronJacamar project implements the Java EE Connector Architecture 1.6 specification
+    </description>
   </info>
 
   <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default">
@@ -56,20 +59,20 @@
   </configurations>
 
   <publications>
-    <artifact name="ironjacamar-codegenerator" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-common-api" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-common-impl" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-core-api" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-core-impl" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-core-spi" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-deployers-fungal" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-embedded-arquillian" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-embedded" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-spec-api" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-validator" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-validator-cli" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-validator-ant" type="jar" url="http://repository.jboss.org"/>
-    <artifact name="ironjacamar-validator-maven" type="jar" url="http://repository.jboss.org"/>
+    <artifact name="ironjacamar-codegenerator" type="jar"/>
+    <artifact name="ironjacamar-common-api" type="jar"/>
+    <artifact name="ironjacamar-common-impl" type="jar"/>
+    <artifact name="ironjacamar-core-api" type="jar"/>
+    <artifact name="ironjacamar-core-impl" type="jar"/>
+    <artifact name="ironjacamar-core-spi" type="jar"/>
+    <artifact name="ironjacamar-deployers-fungal" type="jar"/>
+    <artifact name="ironjacamar-embedded-arquillian" type="jar"/>
+    <artifact name="ironjacamar-embedded" type="jar"/>
+    <artifact name="ironjacamar-spec-api" type="jar"/>
+    <artifact name="ironjacamar-validator" type="jar"/>
+    <artifact name="ironjacamar-validator-cli" type="jar"/>
+    <artifact name="ironjacamar-validator-ant" type="jar"/>
+    <artifact name="ironjacamar-validator-maven" type="jar"/>
   </publications>
 
   <dependencies>

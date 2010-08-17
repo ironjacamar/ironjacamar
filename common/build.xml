@@ -256,7 +256,7 @@
     </jar>
 
     <mkdir dir="${build.common.dir}/docs"/>
-<!--
+
     <mkdir dir="${build.common.dir}/docs/api"/>
     <javadoc destdir="${build.common.dir}/docs/api"
              doclet="org.jboss.apiviz.APIviz"
@@ -294,7 +294,6 @@
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
--->
 
     <mkdir dir="${build.common.dir}/docs/impl"/>
     <javadoc destdir="${build.common.dir}/docs/impl"
