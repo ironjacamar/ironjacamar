@@ -180,7 +180,7 @@ public class MetadataFactory
     * @throws IllegalArgumentException if version is't 1.0, 1.5 or 1.6
     * @throws Exception in case of error
     */
-   public static Connector mergeConnectorAndDs(DataSource ds, Connector connector)
+   public Connector mergeConnectorAndDs(DataSource ds, Connector connector)
       throws IllegalArgumentException, Exception
    {
       if (ds == null)

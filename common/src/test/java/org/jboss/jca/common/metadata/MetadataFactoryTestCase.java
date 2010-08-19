@@ -100,7 +100,8 @@ public class MetadataFactoryTestCase
                      "org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory", null)));
 
          //when
-         Connector merged = MetadataFactory.mergeConnectorAndDs(ds.getDatasource().get(0), connector);
+         MetadataFactory mf = new MetadataFactory();
+         Connector merged = mf.mergeConnectorAndDs(ds.getDatasource().get(0), connector);
          //then
          assertThat(merged, instanceOf(Connector15.class));
          assertThat(merged.getVersion(), is(Version.V_15));
