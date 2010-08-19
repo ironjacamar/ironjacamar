@@ -22,6 +22,7 @@
 package org.jboss.jca.common.api.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
+import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface DataSource extends JCAMetadata
+public interface DataSource extends JCAMetadata, MergeableMetadata<DataSource>
 {
 
    /**

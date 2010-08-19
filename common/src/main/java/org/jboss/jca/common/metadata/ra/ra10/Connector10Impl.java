@@ -23,12 +23,17 @@ package org.jboss.jca.common.metadata.ra.ra10;
 
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
+import org.jboss.jca.common.api.metadata.MergeUtil;
+import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
+import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Icon;
 import org.jboss.jca.common.api.metadata.ra.LicenseType;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
+import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
+import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.ra.common.ConnectorAbstractmpl;
 
 import java.util.List;
@@ -147,6 +152,41 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
             CopyUtil.clone(resourceadapter),
             CopyUtil.cloneList(description), CopyUtil.cloneList(displayName), CopyUtil.cloneList(icon),
             CopyUtil.cloneString(id));
+   }
+
+   @Override
+   public Connector merge(MergeableMetadata<?> inputMd) throws Exception
+   {
+      if (inputMd instanceof JbossRa)
+      {
+         mergeJbossMetaData((JbossRa) inputMd);
+         return this;
+      }
+
+      if (inputMd instanceof Connector10Impl)
+      {
+         Connector10Impl input10 = (Connector10Impl) inputMd;
+         XsdString newResourceadapterVersion = XsdString.isNull(this.resourceadapterVersion)
+               ? input10.resourceadapterVersion : this.resourceadapterVersion;
+         XsdString newEisType = XsdString.isNull(this.eisType) ? input10.eisType : this.eisType;
+         String newModuleName = this.moduleName == null ? input10.moduleName : this.moduleName;
+         List<Icon> newIcons = MergeUtil.mergeList(this.icon, input10.icon);
+         LicenseType newLicense = this.license == null ? input10.license : this.license.merge(input10.license);
+         List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.description,
+               input10.description);
+         List<LocalizedXsdString> newDisplayNames = MergeUtil.mergeList(this.displayName,
+               input10.displayName);
+         XsdString newVendorName = XsdString.isNull(this.vendorName)
+               ? input10.vendorName : this.vendorName;;
+         ResourceAdapter10 newResourceadapter = this.resourceadapter == null
+               ? (ResourceAdapter10) input10.resourceadapter
+               : ((ResourceAdapter10) this.resourceadapter)
+                     .merge((ResourceAdapter10) input10.resourceadapter);
+         return new Connector10Impl(newModuleName, newVendorName, newEisType, newResourceadapterVersion, newLicense,
+               newResourceadapter, newDescriptions, newDisplayNames, newIcons, null);
+      }
+      return this;
+
    }
 
 

@@ -106,7 +106,7 @@ public class TimeOutImpl implements TimeOut
     * @return the setTxQuertTimeout.
     */
    @Override
-   public final boolean isSetTxQuertTimeout()
+   public final boolean isSetTxQueryTimeout()
    {
       return setTxQuertTimeout;
    }

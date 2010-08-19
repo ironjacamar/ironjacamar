@@ -264,7 +264,8 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
             boolean isNew = true;
             for (ConnectionDefinition lcd : this.connectionDefinition)
             {
-               if (rcd.getManagedConnectionFactoryClass().equals(lcd.getManagedConnectionFactoryClass()))
+               if (lcd.getManagedConnectionFactoryClass() == null
+                     || rcd.getManagedConnectionFactoryClass().equals(lcd.getManagedConnectionFactoryClass()))
                {
                   newConnectionDefinition.remove(lcd);
                   newConnectionDefinition.add(lcd.merge(rcd));
@@ -274,7 +275,9 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
             if (isNew) newConnectionDefinition.add(rcd);
          }
 
-         TransactionSupportEnum newTransactionSupport = this.transactionSupport;
+         TransactionSupportEnum newTransactionSupport = this.transactionSupport == null
+               ? input.transactionSupport
+               : this.transactionSupport;
 
          boolean newReauthenticationSupport = this.reauthenticationSupport || input.reauthenticationSupport;
          List<AuthenticationMechanism> newAuthenticationMechanism = MergeUtil.mergeList(

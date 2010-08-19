@@ -215,4 +215,12 @@ public class ConfigPropertyImpl implements ConfigProperty
          return false;
       return true;
    }
+
+   @Override
+   public String toString()
+   {
+      return "ConfigPropertyImpl [description=" + description + ", configPropertyName=" + configPropertyName
+            + ", configPropertyType=" + configPropertyType + ", configPropertyValue=" + configPropertyValue + ", id="
+            + id + "]";
+   }
 }

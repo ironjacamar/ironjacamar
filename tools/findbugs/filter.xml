@@ -27,6 +27,11 @@
     <Class name="org.jboss.jca.common.api.ThreadPool"/>
     <Bug code="Nm"/>
   </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.MetadataFactory"/>
+    <Method name="mergeConnectorAndDs" />
+    <Bug code="NP"/>
+  </Match>
 
   <!--  org.jboss.jca.core filter -->
   <Match>
@@ -111,5 +116,6 @@
     <Class name="org.jboss.jca.web.console.Server"/>
     <Bug code="RCN"/>
   </Match>
+  
 
 </FindBugsFilter>

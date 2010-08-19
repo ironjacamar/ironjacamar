@@ -23,9 +23,11 @@ package org.jboss.jca.common.metadata.ra.ra10;
 
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
+import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
@@ -387,4 +389,47 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
             reauthenticationSupport, CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id));
    }
 
+   @Override
+   public ResourceAdapter10 merge(MergeableMetadata<?> jmd) throws Exception
+   {
+      if (jmd instanceof ResourceAdapter10Impl)
+      {
+         ResourceAdapter10Impl inputMD = (ResourceAdapter10Impl) jmd;
+         List<ConfigProperty> newconfigProperties = MergeUtil
+               .mergeList(this.configProperties, inputMD.configProperties);
+         XsdString newManagedConnectionFactoryClass = XsdString.isNull(this.managedConnectionFactoryClass)
+               ? inputMD.managedConnectionFactoryClass
+               : this.managedConnectionFactoryClass;
+         XsdString newconnectionInterface = XsdString.isNull(this.connectionInterface)
+               ? inputMD.connectionInterface
+               : this.connectionInterface;
+         List<AuthenticationMechanism> newauthenticationMechanism = MergeUtil.mergeList(this.authenticationMechanism,
+               inputMD.authenticationMechanism);
+         Boolean newreauthenticationSupport = this.reauthenticationSupport == null
+               ? inputMD.reauthenticationSupport
+               : this.reauthenticationSupport;
+         TransactionSupportEnum newtransactionSupport = this.transactionSupport == null
+               ? inputMD.transactionSupport
+               : this.transactionSupport;
+         XsdString newconnectionImplClass = XsdString.isNull(this.connectionImplClass)
+               ? inputMD.connectionImplClass
+               : this.connectionImplClass;
+         XsdString newConnectionFactoryInterface = XsdString.isNull(this.connectionFactoryInterface)
+               ? inputMD.connectionFactoryInterface
+               : this.connectionFactoryInterface;
+         List<SecurityPermission> newsecurityPermissions = MergeUtil.mergeList(this.securityPermissions,
+               inputMD.securityPermissions);
+         XsdString newconnectionFactoryImplClass = XsdString.isNull(this.connectionFactoryImplClass)
+               ? inputMD.connectionFactoryImplClass
+               : this.connectionFactoryImplClass;
+         return new ResourceAdapter10Impl(newManagedConnectionFactoryClass, newConnectionFactoryInterface,
+               newconnectionFactoryImplClass, newconnectionInterface, newconnectionImplClass, newtransactionSupport,
+               newauthenticationMechanism, newconfigProperties, newreauthenticationSupport, newsecurityPermissions,
+               null);
+      }
+      else
+      {
+         return this;
+      }
+   }
 }

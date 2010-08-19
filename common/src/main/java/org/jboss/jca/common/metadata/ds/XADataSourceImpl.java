@@ -155,16 +155,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       return password;
    }
 
-   /**
-    * Get the xaDataSoourceProperty.
-    *
-    * @return the xaDataSoourceProperty.
-    */
-   @Override
-   public final Map<String, String> getXaDataSoourceProperty()
-   {
-      return Collections.unmodifiableMap(xaDataSourceProperty);
-   }
+
 
    /**
     * Get the xaDataSourceClass.

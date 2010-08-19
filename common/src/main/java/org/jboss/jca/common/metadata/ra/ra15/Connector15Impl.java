@@ -23,9 +23,13 @@ package org.jboss.jca.common.metadata.ra.ra15;
 
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
+import org.jboss.jca.common.api.metadata.MergeUtil;
+import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
+import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Icon;
 import org.jboss.jca.common.api.metadata.ra.LicenseType;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
+import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
@@ -137,5 +141,39 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
             CopyUtil.cloneList(icon), CopyUtil.cloneString(id));
    }
 
+   @Override
+   public Connector merge(MergeableMetadata<?> inputMd) throws Exception
+   {
+      if (inputMd instanceof JbossRa)
+      {
+         mergeJbossMetaData((JbossRa) inputMd);
+         return this;
+      }
+
+      if (inputMd instanceof Connector15Impl)
+      {
+         Connector15Impl input15 = (Connector15Impl) inputMd;
+         XsdString newResourceadapterVersion = XsdString.isNull(this.resourceadapterVersion)
+               ? input15.resourceadapterVersion : this.resourceadapterVersion;
+         XsdString newEisType = XsdString.isNull(this.eisType) ? input15.eisType : this.eisType;
+         List<Icon> newIcons = MergeUtil.mergeList(this.icon, input15.icon);
+         LicenseType newLicense = this.license == null ? input15.license : this.license.merge(input15.license);
+         List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.description,
+               input15.description);
+         List<LocalizedXsdString> newDisplayNames = MergeUtil.mergeList(this.displayName,
+               input15.displayName);
+         XsdString newVendorName = XsdString.isNull(this.vendorName)
+               ? input15.vendorName : this.vendorName;;
+         ResourceAdapter1516 newResourceadapter = this.resourceadapter == null
+               ? (ResourceAdapter1516) input15.resourceadapter
+               : ((ResourceAdapter1516) this.resourceadapter)
+                     .merge((ResourceAdapter1516) input15.resourceadapter);
+         return new Connector15Impl(newVendorName, newEisType, newResourceadapterVersion, newLicense,
+               newResourceadapter, newDescriptions, newDisplayNames,
+               newIcons, null);
+      }
+      return this;
+
+   }
 
 }

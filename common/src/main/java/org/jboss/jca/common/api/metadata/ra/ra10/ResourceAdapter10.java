@@ -24,6 +24,7 @@ package org.jboss.jca.common.api.metadata.ra.ra10;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
@@ -40,7 +41,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface ResourceAdapter10 extends ResourceAdapter
+public interface ResourceAdapter10 extends ResourceAdapter, MergeableMetadata<ResourceAdapter10>
 {
 
    /**

@@ -55,7 +55,7 @@ public interface TimeOut extends JCAMetadata
     *
     * @return the setTxQuertTimeout.
     */
-   public boolean isSetTxQuertTimeout();
+   public boolean isSetTxQueryTimeout();
 
    /**
     * Get the queryTimeout.

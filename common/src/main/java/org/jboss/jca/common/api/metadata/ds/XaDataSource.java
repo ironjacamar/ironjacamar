@@ -71,12 +71,6 @@ public interface XaDataSource extends JCAMetadata
     */
    public String getPassword();
 
-   /**
-    * Get the xaDataSoourceProperty.
-    *
-    * @return the xaDataSoourceProperty.
-    */
-   public Map<String, String> getXaDataSoourceProperty();
 
    /**
     * Get the xaDataSourceClass.
