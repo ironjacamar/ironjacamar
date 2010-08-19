@@ -81,23 +81,21 @@ public class MetadataFactoryTestCase
          DataSources ds = dsparser.parse(is);
 
          List<? extends ConfigProperty> properties = null;
-         if (connector.getResourceadapter() != null
-               && connector.getResourceadapter() instanceof ResourceAdapter1516
-               &&
-               ((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter() != null
-               &&
-               ((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
+         ResourceAdapter1516 resourceAdapter1516 = (ResourceAdapter1516) connector.getResourceadapter();
+         if (connector.getResourceadapter() != null &&
+               connector.getResourceadapter() instanceof ResourceAdapter1516 &&
+               resourceAdapter1516.getOutboundResourceadapter() != null &&
+               resourceAdapter1516.getOutboundResourceadapter()
                      .getConnectionDefinitions() != null)
          {
-            properties = ((ResourceAdapter1516) connector
-                  .getResourceadapter()).getOutboundResourceadapter()
+            properties = resourceAdapter1516.getOutboundResourceadapter()
                   .getConnectionDefinitions().get(0).getConfigProperties();
          }
 
          //verify pre-condition
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(resourceAdapter1516.getOutboundResourceadapter()
                .getTransactionSupport(), is(TransactionSupportEnum.LocalTransaction));
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(resourceAdapter1516.getOutboundResourceadapter()
                .getConnectionDefinitions().get(0).getManagedConnectionFactoryClass(), equalTo(new XsdString(
                      "org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory", null)));
 
@@ -109,16 +107,13 @@ public class MetadataFactoryTestCase
 
          List<? extends ConfigProperty> mergedProperties = null;
 
-         if (connector.getResourceadapter() != null
-               && connector.getResourceadapter() instanceof ResourceAdapter1516
-               &&
-               ((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter() != null
-               &&
-               ((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
+         ResourceAdapter1516 mergedResourceAdapter1516 = (ResourceAdapter1516) merged.getResourceadapter();
+         if (connector.getResourceadapter() != null && connector.getResourceadapter() instanceof ResourceAdapter1516 &&
+               resourceAdapter1516.getOutboundResourceadapter() != null &&
+               resourceAdapter1516.getOutboundResourceadapter()
                      .getConnectionDefinitions() != null)
          {
-            mergedProperties = ((ResourceAdapter1516) merged
-                  .getResourceadapter()).getOutboundResourceadapter()
+            mergedProperties = mergedResourceAdapter1516.getOutboundResourceadapter()
                   .getConnectionDefinitions().get(0).getConfigProperties();
          }
          //then merged properties are presents
@@ -137,9 +132,9 @@ public class MetadataFactoryTestCase
                      MetadataFactory.ConfigPropertyFactory.Prototype.DRIVERCLASS, "org.postgresql.Driver")));
 
          //then metadata read from ra.xml still present (not deleted by merge)
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter()
                .getTransactionSupport(), is(TransactionSupportEnum.LocalTransaction));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter()
                .getConnectionDefinitions().get(0).getManagedConnectionFactoryClass(), equalTo(new XsdString(
                      "org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory", null)));
 
