@@ -55,26 +55,26 @@ import static org.junit.matchers.JUnitMatchers.hasItem;
 public class MetadataFactoryTestCase
 {
    /**
-    * shouldParseConnector16
+    * shouldMergeDsAndConnector
     * @throws Exception in case of error
     */
    @SuppressWarnings("unchecked")
    @Test
-   public void shouldMergeDsAndCOnnector() throws Exception
+   public void shouldMergeDsAndConnector() throws Exception
    {
 
       FileInputStream is = null;
       try
       {
          //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-               .getResource("adapters/ra.xml").toURI());
+         File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("adapters/ra.xml")
+               .toURI());
          is = new FileInputStream(xmlFile);
          RaParser parser = new RaParser();
          Connector connector = parser.parse(is);
          is.close();
-         xmlFile = new File(Thread.currentThread().getContextClassLoader()
-               .getResource("ds/postgres-ds.xml").toURI());
+         xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/postgres-ds.xml")
+               .toURI());
          is = new FileInputStream(xmlFile);
          DsParser dsparser = new DsParser();
          //when
@@ -83,21 +83,21 @@ public class MetadataFactoryTestCase
          List<? extends ConfigProperty> properties = null;
          ResourceAdapter1516 resourceAdapter1516 = (ResourceAdapter1516) connector.getResourceadapter();
          if (connector.getResourceadapter() != null &&
-               connector.getResourceadapter() instanceof ResourceAdapter1516 &&
-               resourceAdapter1516.getOutboundResourceadapter() != null &&
-               resourceAdapter1516.getOutboundResourceadapter()
-                     .getConnectionDefinitions() != null)
+             connector.getResourceadapter() instanceof ResourceAdapter1516 &&
+             resourceAdapter1516.getOutboundResourceadapter() != null &&
+             resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
-            properties = resourceAdapter1516.getOutboundResourceadapter()
-                  .getConnectionDefinitions().get(0).getConfigProperties();
+            properties = resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+                  .getConfigProperties();
          }
 
          //verify pre-condition
-         assertThat(resourceAdapter1516.getOutboundResourceadapter()
-               .getTransactionSupport(), is(TransactionSupportEnum.LocalTransaction));
-         assertThat(resourceAdapter1516.getOutboundResourceadapter()
-               .getConnectionDefinitions().get(0).getManagedConnectionFactoryClass(), equalTo(new XsdString(
-                     "org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory", null)));
+         assertThat(resourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
+               is(TransactionSupportEnum.LocalTransaction));
+         assertThat(
+               resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+                     .getManagedConnectionFactoryClass(),
+               equalTo(new XsdString("org.jboss.jca.adapters.jdbc.local." + "LocalManagedConnectionFactory", null)));
 
          //when
          MetadataFactory mf = new MetadataFactory();
@@ -109,13 +109,13 @@ public class MetadataFactoryTestCase
          List<? extends ConfigProperty> mergedProperties = null;
 
          ResourceAdapter1516 mergedResourceAdapter1516 = (ResourceAdapter1516) merged.getResourceadapter();
-         if (connector.getResourceadapter() != null && connector.getResourceadapter() instanceof ResourceAdapter1516 &&
-               resourceAdapter1516.getOutboundResourceadapter() != null &&
-               resourceAdapter1516.getOutboundResourceadapter()
-                     .getConnectionDefinitions() != null)
+         if (connector.getResourceadapter() != null &&
+             connector.getResourceadapter() instanceof ResourceAdapter1516 &&
+             resourceAdapter1516.getOutboundResourceadapter() != null &&
+             resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
-            mergedProperties = mergedResourceAdapter1516.getOutboundResourceadapter()
-                  .getConnectionDefinitions().get(0).getConfigProperties();
+            mergedProperties = mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions()
+                  .get(0).getConfigProperties();
          }
          //then merged properties are presents
          assertThat((List<ConfigProperty>) mergedProperties,
@@ -133,11 +133,11 @@ public class MetadataFactoryTestCase
                      MetadataFactory.ConfigPropertyFactory.Prototype.DRIVERCLASS, "org.postgresql.Driver")));
 
          //then metadata read from ra.xml still present (not deleted by merge)
-         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter()
-               .getTransactionSupport(), is(TransactionSupportEnum.LocalTransaction));
-         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter()
-               .getConnectionDefinitions().get(0).getManagedConnectionFactoryClass(), equalTo(new XsdString(
-                     "org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory", null)));
+         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
+               is(TransactionSupportEnum.LocalTransaction));
+         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+               .getManagedConnectionFactoryClass(),
+               equalTo(new XsdString("org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory", null)));
 
          //then it have empty property for not set ones
          assertThat((List<ConfigProperty>) mergedProperties,
@@ -158,4 +158,105 @@ public class MetadataFactoryTestCase
 
    }
 
+   /**
+    * shouldMergeXaDsAndConnector
+    * @throws Exception in case of error
+    */
+   @SuppressWarnings("unchecked")
+   @Test
+   public void shouldMergeXaDsAndConnector() throws Exception
+   {
+
+      FileInputStream is = null;
+      try
+      {
+         //given
+         File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("adapters/ra-xa.xml")
+               .toURI());
+         is = new FileInputStream(xmlFile);
+         RaParser parser = new RaParser();
+         Connector connector = parser.parse(is);
+         is.close();
+         xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/postgres-xa-ds.xml")
+               .toURI());
+         is = new FileInputStream(xmlFile);
+         DsParser dsparser = new DsParser();
+         //when
+         DataSources ds = dsparser.parse(is);
+
+         List<? extends ConfigProperty> properties = null;
+         ResourceAdapter1516 resourceAdapter1516 = (ResourceAdapter1516) connector.getResourceadapter();
+         if (connector.getResourceadapter() != null &&
+             connector.getResourceadapter() instanceof ResourceAdapter1516 &&
+             resourceAdapter1516.getOutboundResourceadapter() != null &&
+             resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+         {
+            properties = resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+                  .getConfigProperties();
+         }
+
+         //verify pre-condition
+         assertThat(resourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
+               is(TransactionSupportEnum.XATransaction));
+         assertThat(resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+               .getManagedConnectionFactoryClass(),
+               equalTo(new XsdString("org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory", null)));
+
+         //when
+         MetadataFactory mf = new MetadataFactory();
+         Connector merged = mf.mergeConnectorAndDs(ds.getXaDataSource().get(0), connector);
+         //then
+         assertThat(merged, instanceOf(Connector15.class));
+         assertThat(merged.getVersion(), is(Version.V_15));
+
+         List<? extends ConfigProperty> mergedProperties = null;
+
+         ResourceAdapter1516 mergedResourceAdapter1516 = (ResourceAdapter1516) merged.getResourceadapter();
+         if (connector.getResourceadapter() != null &&
+             connector.getResourceadapter() instanceof ResourceAdapter1516 &&
+             resourceAdapter1516.getOutboundResourceadapter() != null &&
+             resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+         {
+            mergedProperties = mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions()
+                  .get(0).getConfigProperties();
+         }
+
+         //then merged properties are presents
+
+         assertThat((List<ConfigProperty>) mergedProperties,
+               hasItem(MetadataFactory.ConfigPropertyFactory.createConfigProperty(
+                     MetadataFactory.ConfigPropertyFactory.Prototype.XADATASOURCEPROPERTIES,
+                     "DatabaseName=database_name;User=user;ServerName=server_name;PortNumber=5432;"
+                           + "Password=password;")));
+
+         assertThat((List<ConfigProperty>) mergedProperties,
+               hasItem(MetadataFactory.ConfigPropertyFactory.createConfigProperty(
+                     MetadataFactory.ConfigPropertyFactory.Prototype.XADATASOURCECLASS,
+                     "org.postgresql.xa.PGXADataSource")));
+
+         //then metadata read from ra.xml still present (not deleted by merge)
+         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
+               is(TransactionSupportEnum.XATransaction));
+         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+               .getManagedConnectionFactoryClass(),
+               equalTo(new XsdString("org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory", null)));
+
+         //then it have empty property for not set ones
+         assertThat((List<ConfigProperty>) mergedProperties,
+               not(hasItem(MetadataFactory.ConfigPropertyFactory.createConfigProperty(
+                     MetadataFactory.ConfigPropertyFactory.Prototype.PREPAREDSTATEMENTCACHESIZE, ""))));
+
+         //then it does not contain property not in ra.xml
+         assertThat((List<ConfigProperty>) mergedProperties,
+               not(hasItem(MetadataFactory.ConfigPropertyFactory.createConfigProperty(
+                     MetadataFactory.ConfigPropertyFactory.Prototype.CONNECTIONURL, ""))));
+
+      }
+      finally
+      {
+         if (is != null)
+            is.close();
+      }
+
+   }
 }

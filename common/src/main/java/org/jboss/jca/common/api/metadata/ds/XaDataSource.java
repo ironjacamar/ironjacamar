@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.JCAMetadata;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,29 +31,8 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface XaDataSource extends JCAMetadata
+public interface XaDataSource extends CommonDataSource
 {
-
-   /**
-    * Get the minPoolSize.
-    *
-    * @return the minPoolSize.
-    */
-   public Integer getMinPoolSize();
-
-   /**
-    * Get the maxPoolSize.
-    *
-    * @return the maxPoolSize.
-    */
-   public Integer getMaxPoolSize();
-
-   /**
-    * Get the prefill.
-    *
-    * @return the prefill.
-    */
-   public boolean isPrefill();
 
    /**
     * Get the userName.
@@ -79,12 +56,6 @@ public interface XaDataSource extends JCAMetadata
     */
    public String getXaDataSourceClass();
 
-   /**
-    * Get the transactionIsolation.
-    *
-    * @return the transactionIsolation.
-    */
-   public TransactionIsolation getTransactionIsolation();
 
    /**
     * Get the isSameRmOverride.
@@ -107,19 +78,6 @@ public interface XaDataSource extends JCAMetadata
     */
    public Recovery getRecovery();
 
-   /**
-    * Get the timeOut.
-    *
-    * @return the timeOut.
-    */
-   public TimeOut getTimeOut();
-
-   /**
-    * Get the security.
-    *
-    * @return the security.
-    */
-   public Security getSecurity();
 
    /**
     * Get the statement.
@@ -128,12 +86,6 @@ public interface XaDataSource extends JCAMetadata
     */
    public Statement getStatement();
 
-   /**
-    * Get the validation.
-    *
-    * @return the validation.
-    */
-   public Validation getValidation();
 
    /**
     * Get the urlDelimiter.
@@ -155,34 +107,6 @@ public interface XaDataSource extends JCAMetadata
     * @return the newConnectionSql.
     */
    public String getNewConnectionSql();
-
-   /**
-    * Get the useJavaContext.
-    *
-    * @return the useJavaContext.
-    */
-   public boolean isUseJavaContext();
-
-   /**
-    * Get the poolName.
-    *
-    * @return the poolName.
-    */
-   public String getPoolName();
-
-   /**
-    * Get the enabled.
-    *
-    * @return the enabled.
-    */
-   public boolean isEnabled();
-
-   /**
-    * Get the jndiName.
-    *
-    * @return the jndiName.
-    */
-   public String getJndiName();
 
    /**
     * Get the xaDataSourceProperty.

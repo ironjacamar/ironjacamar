@@ -27,7 +27,6 @@ import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -382,9 +381,5 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
             + enabled + ", jndiName=" + jndiName + "]";
    }
 
-   @Override
-   public DataSource merge(MergeableMetadata<?> jmd) throws Exception
-   {
-      return this;
-   }
+
 }

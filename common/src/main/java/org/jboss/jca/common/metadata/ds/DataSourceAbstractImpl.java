@@ -21,13 +21,12 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-
-import java.io.Serializable;
 
 /**
  *
@@ -36,7 +35,7 @@ import java.io.Serializable;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public abstract class DataSourceAbstractImpl implements Serializable
+public abstract class DataSourceAbstractImpl implements CommonDataSource
 {
 
    /** The serialVersionUID */
@@ -160,6 +159,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the minPoolSize.
     */
 
+   @Override
    public final Integer getMinPoolSize()
    {
       return minPoolSize;
@@ -171,6 +171,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the maxPoolSize.
     */
 
+   @Override
    public final Integer getMaxPoolSize()
    {
       return maxPoolSize;
@@ -182,6 +183,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the prefill.
     */
 
+   @Override
    public final boolean isPrefill()
    {
       return prefill;
@@ -193,6 +195,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the transactionIsolation.
     */
 
+   @Override
    public final TransactionIsolation getTransactionIsolation()
    {
       return transactionIsolation;
@@ -204,6 +207,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the timeOut.
     */
 
+   @Override
    public final TimeOut getTimeOut()
    {
       return timeOut;
@@ -215,6 +219,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the security.
     */
 
+   @Override
    public final Security getSecurity()
    {
       return security;
@@ -226,6 +231,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the validation.
     */
 
+   @Override
    public final Validation getValidation()
    {
       return validation;
@@ -237,6 +243,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the useJavaContext.
     */
 
+   @Override
    public final boolean isUseJavaContext()
    {
       return useJavaContext;
@@ -248,6 +255,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the poolName.
     */
 
+   @Override
    public final String getPoolName()
    {
       return poolName;
@@ -259,6 +267,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the enabled.
     */
 
+   @Override
    public final boolean isEnabled()
    {
       return enabled;
@@ -270,6 +279,7 @@ public abstract class DataSourceAbstractImpl implements Serializable
     * @return the jndiName.
     */
 
+   @Override
    public final String getJndiName()
    {
       return jndiName;

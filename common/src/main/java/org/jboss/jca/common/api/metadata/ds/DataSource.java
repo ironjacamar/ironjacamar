@@ -21,9 +21,6 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,29 +31,9 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface DataSource extends JCAMetadata, MergeableMetadata<DataSource>
+public interface DataSource extends CommonDataSource
 {
 
-   /**
-    * Get the minPoolSize.
-    *
-    * @return the minPoolSize.
-    */
-   public Integer getMinPoolSize();
-
-   /**
-    * Get the maxPoolSize.
-    *
-    * @return the maxPoolSize.
-    */
-   public Integer getMaxPoolSize();
-
-   /**
-    * Get the prefill.
-    *
-    * @return the prefill.
-    */
-   public boolean isPrefill();
 
    /**
     * Get the userName.
@@ -86,12 +63,6 @@ public interface DataSource extends JCAMetadata, MergeableMetadata<DataSource>
     */
    public String getDriverClass();
 
-   /**
-    * Get the transactionIsolation.
-    *
-    * @return the transactionIsolation.
-    */
-   public TransactionIsolation getTransactionIsolation();
 
    /**
     * Get the connectionProperties.
@@ -100,19 +71,6 @@ public interface DataSource extends JCAMetadata, MergeableMetadata<DataSource>
     */
    public Map<String, String> getConnectionProperties();
 
-   /**
-    * Get the timeOut.
-    *
-    * @return the timeOut.
-    */
-   public TimeOut getTimeOut();
-
-   /**
-    * Get the security.
-    *
-    * @return the security.
-    */
-   public Security getSecurity();
 
    /**
     * Get the statement.
@@ -121,12 +79,6 @@ public interface DataSource extends JCAMetadata, MergeableMetadata<DataSource>
     */
    public Statement getStatement();
 
-   /**
-    * Get the validation.
-    *
-    * @return the validation.
-    */
-   public Validation getValidation();
 
    /**
     * Get the urlDelimiter.
@@ -149,33 +101,6 @@ public interface DataSource extends JCAMetadata, MergeableMetadata<DataSource>
     */
    public String getNewConnectionSql();
 
-   /**
-    * Get the useJavaContext.
-    *
-    * @return the useJavaContext.
-    */
-   public boolean isUseJavaContext();
-
-   /**
-    * Get the poolName.
-    *
-    * @return the poolName.
-    */
-   public String getPoolName();
-
-   /**
-    * Get the enabled.
-    *
-    * @return the enabled.
-    */
-   public boolean isEnabled();
-
-   /**
-    * Get the jndiName.
-    *
-    * @return the jndiName.
-    */
-   public String getJndiName();
 
    /**
    *

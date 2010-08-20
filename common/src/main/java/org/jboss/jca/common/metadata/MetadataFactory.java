@@ -23,6 +23,7 @@
 package org.jboss.jca.common.metadata;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
@@ -174,16 +175,17 @@ public class MetadataFactory
     *
     * Create a connector from a DataSource metadata
     *
-    * @param ds the datasource
+    * @param cds the datasource it is one of interface extending {@link CommonDataSource}.
+    *   IOW it can be both {@link DataSource} or {@link XaDataSource}
     * @param connector the connector to merge
     * @return the connector with mapped properties taken forn ds
     * @throws IllegalArgumentException if version is't 1.0, 1.5 or 1.6
     * @throws Exception in case of error
     */
-   public Connector mergeConnectorAndDs(DataSource ds, Connector connector)
+   public Connector mergeConnectorAndDs(CommonDataSource cds, Connector connector)
       throws IllegalArgumentException, Exception
    {
-      if (ds == null)
+      if (cds == null)
       {
          return null;
       }
@@ -216,13 +218,13 @@ public class MetadataFactory
          if (connector.getVersion() == Version.V_10)
          {
 
-            List<ConfigProperty> configProperties = createConfigProperties(ds,
-                  connector.getResourceadapter().getConfigProperties());
+            List<ConfigProperty> configProperties = createConfigProperties(cds, connector.getResourceadapter()
+                  .getConfigProperties());
 
             ResourceAdapter resourceadapter = new ResourceAdapter10Impl(managedconnectionfactoryClass,
-                     connectionfactoryInterface, connectionfactoryImplClass, connectionInterface, connectionImplClass,
-                     transactionSupport, authenticationMechanism, configProperties, reauthenticationSupport,
-                     securityPermissions, id);
+                  connectionfactoryInterface, connectionfactoryImplClass, connectionInterface,
+                  connectionImplClass, transactionSupport, authenticationMechanism, configProperties,
+                  reauthenticationSupport, securityPermissions, id);
 
             Connector newConnector = new Connector10Impl(moduleName, vendorName, eisType, resourceadapterVersion,
                   license, resourceadapter, description, displayNames, icons, id);
@@ -232,42 +234,42 @@ public class MetadataFactory
          else
          {
             List<? extends ConfigProperty> originalProperties = null;
-            if (connector.getResourceadapter() != null
-                  && connector.getResourceadapter() instanceof ResourceAdapter1516
-                  &&
-                  ((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter() != null
-                  &&
-                  ((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
-                        .getConnectionDefinitions() != null)
+            if (connector.getResourceadapter() != null &&
+                  connector.getResourceadapter() instanceof ResourceAdapter1516)
             {
-               originalProperties = ((ResourceAdapter1516) connector
-                     .getResourceadapter()).getOutboundResourceadapter()
-                     .getConnectionDefinitions().get(0).getConfigProperties();
+               ResourceAdapter1516 ra1516 = ((ResourceAdapter1516) connector.getResourceadapter());
+               if (ra1516.getOutboundResourceadapter() != null &&
+                     ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+               {
+                  originalProperties = ra1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+                        .getConfigProperties();
+               }
             }
 
-            List<ConfigProperty> configProperties = createConfigProperties(ds, originalProperties);
+            List<ConfigProperty> configProperties = createConfigProperties(cds, originalProperties);
 
             List<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>(1);
-            ConnectionDefinition connectionDefinition = new ConnectionDefinitionImpl(managedconnectionfactoryClass,
-                  configProperties, connectionfactoryInterface, connectionfactoryImplClass, connectionInterface,
-                  connectionImplClass, id);
+            ConnectionDefinition connectionDefinition = new ConnectionDefinitionImpl(
+                  managedconnectionfactoryClass, configProperties, connectionfactoryInterface,
+                  connectionfactoryImplClass, connectionInterface, connectionImplClass, id);
             connectionDefinitions.add(connectionDefinition);
-            OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(connectionDefinitions,
-                  transactionSupport, authenticationMechanism, reauthenticationSupport, id);
+            OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(
+                  connectionDefinitions, transactionSupport, authenticationMechanism, reauthenticationSupport, id);
             String resourceadapterClass = null;
             List<? extends ConfigProperty> raConfigProperties = null;
             InboundResourceAdapter inboundResourceadapter = null;
-            ResourceAdapter1516 resourceadapter = new ResourceAdapter1516Impl(resourceadapterClass, raConfigProperties,
-                  outboundResourceadapter, inboundResourceadapter, adminobjects, securityPermissions, id);
+            ResourceAdapter1516 resourceadapter = new ResourceAdapter1516Impl(resourceadapterClass,
+                  raConfigProperties, outboundResourceadapter, inboundResourceadapter, adminobjects,
+                  securityPermissions, id);
 
             if (connector.getVersion() == Version.V_16)
             {
                List<String> requiredWorkContexts = null;
                boolean metadataComplete = false;
 
-               Connector newConnector = new Connector16Impl(moduleName, vendorName, eisType, resourceadapterVersion,
-                     license,
-                     resourceadapter, requiredWorkContexts, metadataComplete, description, displayNames, icons, id);
+               Connector newConnector = new Connector16Impl(moduleName, vendorName, eisType,
+                     resourceadapterVersion, license, resourceadapter, requiredWorkContexts, metadataComplete,
+                     description, displayNames, icons, id);
 
                return newConnector.merge(connector);
             }
@@ -286,9 +288,19 @@ public class MetadataFactory
 
    }
 
-   private static List<ConfigProperty> createConfigProperties(DataSource ds,
+   private static List<ConfigProperty> createConfigProperties(CommonDataSource cds,
          List<? extends ConfigProperty> originalProperties)
    {
+      DataSource ds = null;
+      XaDataSource xads = null;
+      if (cds instanceof DataSource)
+      {
+         ds = (DataSource) cds;
+      }
+      if (cds instanceof XaDataSource)
+      {
+         xads = (XaDataSource) cds;
+      }
       if (originalProperties != null)
       {
          List<ConfigProperty> configProperties = new ArrayList<ConfigProperty>(originalProperties.size());
@@ -300,7 +312,7 @@ public class MetadataFactory
             switch (prototype)
             {
                case USERNAME : {
-                  if (ds.getUserName() != null && !ds.getUserName().trim().equals(""))
+                  if (ds != null && ds.getUserName() != null && !ds.getUserName().trim().equals(""))
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getUserName()));
                   }
@@ -309,7 +321,7 @@ public class MetadataFactory
                }
 
                case PASSWORD : {
-                  if (ds.getPassword() != null && !ds.getPassword().trim().equals(""))
+                  if (ds != null && ds.getPassword() != null && !ds.getPassword().trim().equals(""))
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getPassword()));
                   }
@@ -318,18 +330,18 @@ public class MetadataFactory
                }
 
                case XADATASOURCEPROPERTIES : {
-                  if (ds instanceof XaDataSource && ((XaDataSource) ds).getXaDataSourceProperty() != null)
+                  if (xads != null && xads.getXaDataSourceProperty() != null)
                   {
                      StringBuffer valueBuf = new StringBuffer();
-                     for (Entry<String, String> xaConfigProperty : ((XaDataSource) ds).getXaDataSourceProperty()
-                           .entrySet())
+                     for (Entry<String, String> xaConfigProperty : xads.getXaDataSourceProperty().entrySet())
                      {
                         valueBuf.append(xaConfigProperty.getKey());
                         valueBuf.append("=");
                         valueBuf.append(xaConfigProperty.getValue());
                         valueBuf.append(";");
                      }
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, valueBuf.toString()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
+                           valueBuf.toString()));
 
                   }
 
@@ -337,17 +349,18 @@ public class MetadataFactory
                }
 
                case URLDELIMITER : {
-                  if (ds.getUrlDelimiter() != null && !ds.getUrlDelimiter().trim().equals(""))
+                  if (ds != null && ds.getUrlDelimiter() != null && !ds.getUrlDelimiter().trim().equals(""))
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getUrlDelimiter()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
+                           ds.getUrlDelimiter()));
                   }
 
                   break;
                }
 
                case URLSELECTORSTRATEGYCLASSNAME : {
-                  if (ds.getUrlSelectorStrategyClassName() != null
-                        && !ds.getUrlSelectorStrategyClassName().trim().equals(""))
+                  if (ds != null && ds.getUrlSelectorStrategyClassName() != null &&
+                        !ds.getUrlSelectorStrategyClassName().trim().equals(""))
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
                            ds.getUrlSelectorStrategyClassName()));
@@ -357,17 +370,17 @@ public class MetadataFactory
                }
 
                case XADATASOURCECLASS : {
-                  if (ds instanceof XaDataSource && ((XaDataSource) ds).getXaDataSourceClass() != null)
+                  if (xads != null && xads.getXaDataSourceClass() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           ((XaDataSource) ds).getXaDataSourceClass()));
+                           xads.getXaDataSourceClass()));
                   }
 
                   break;
                }
 
                case TRANSACTIONISOLATION : {
-                  if (ds.getTransactionIsolation() != null)
+                  if (ds != null && ds.getTransactionIsolation() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds
                            .getTransactionIsolation().name()));
@@ -377,7 +390,8 @@ public class MetadataFactory
                }
 
                case PREPAREDSTATEMENTCACHESIZE : {
-                  if (ds.getStatement() != null && ds.getStatement().getPreparedStatementsCacheSize() != null)
+                  if (ds != null && ds.getStatement() != null &&
+                        ds.getStatement().getPreparedStatementsCacheSize() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getStatement()
                            .getPreparedStatementsCacheSize()));
@@ -387,18 +401,17 @@ public class MetadataFactory
                }
 
                case SHAREPREPAREDSTATEMENTS : {
-                  if (ds.getStatement() != null)
+                  if (ds != null && ds.getStatement() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           ds.getStatement() != null
-                                 && ds.getStatement().isSharePreparedStatements()));
+                           ds.getStatement() != null && ds.getStatement().isSharePreparedStatements()));
                   }
 
                   break;
                }
 
                case NEWCONNECTIONSQL : {
-                  if (ds.getNewConnectionSql() != null)
+                  if (ds != null && ds.getNewConnectionSql() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
                            ds.getNewConnectionSql()));
@@ -408,8 +421,9 @@ public class MetadataFactory
                }
 
                case CHECKVALIDCONNECTIONSQL : {
-                  if (ds.getValidation() != null && ds.getValidation().getCheckValidConnectionSql() != null
-                        && !ds.getValidation().getCheckValidConnectionSql().trim().equals(""))
+                  if (ds != null && ds.getValidation() != null &&
+                        ds.getValidation().getCheckValidConnectionSql() != null &&
+                        !ds.getValidation().getCheckValidConnectionSql().trim().equals(""))
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
                            .getCheckValidConnectionSql()));
@@ -419,7 +433,8 @@ public class MetadataFactory
                }
 
                case VALIDCONNECTIONCHECKERCLASSNAME : {
-                  if (ds.getValidation() != null && ds.getValidation().getCheckValidConnectionSql() != null)
+                  if (ds != null && ds.getValidation() != null &&
+                        ds.getValidation().getCheckValidConnectionSql() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
                            .getCheckValidConnectionSql()));
@@ -429,7 +444,8 @@ public class MetadataFactory
                }
 
                case EXCEPTIONSORTERCLASSNAME : {
-                  if (ds.getValidation() != null && ds.getValidation().getExceptionSorterClassName() != null)
+                  if (ds != null && ds.getValidation() != null &&
+                        ds.getValidation().getExceptionSorterClassName() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
                            .getExceptionSorterClassName()));
@@ -439,7 +455,8 @@ public class MetadataFactory
                }
 
                case STALECONNECTIONCHECKERCLASSNAME : {
-                  if (ds.getValidation() != null && ds.getValidation().getStaleConnectionCheckerClassName() != null)
+                  if (ds != null && ds.getValidation() != null &&
+                        ds.getValidation().getStaleConnectionCheckerClassName() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
                            .getStaleConnectionCheckerClassName()));
@@ -449,7 +466,7 @@ public class MetadataFactory
                }
 
                case TRACKSTATEMENTS : {
-                  if (ds.getStatement() != null && ds.getStatement().getTrackStatements() != null)
+                  if (ds != null && ds.getStatement() != null && ds.getStatement().getTrackStatements() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getStatement()
                            .getTrackStatements().name()));
@@ -459,7 +476,7 @@ public class MetadataFactory
                }
 
                case VALIDATEONMATCH : {
-                  if (ds.getValidation() != null)
+                  if (ds != null && ds.getValidation() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
                            .isValidateOnMatch()));
@@ -469,7 +486,7 @@ public class MetadataFactory
                }
 
                case TRANSACTIONQUERYTIMEOUT : {
-                  if (ds.getTimeOut() != null)
+                  if (ds != null && ds.getTimeOut() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
                            .isSetTxQueryTimeout()));
@@ -479,7 +496,7 @@ public class MetadataFactory
                }
 
                case QUERYTIMEOUT : {
-                  if (ds.getTimeOut() != null && ds.getTimeOut().getQueryTimeout() != null)
+                  if (ds != null && ds.getTimeOut() != null && ds.getTimeOut().getQueryTimeout() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
                            .getQueryTimeout()));
@@ -489,7 +506,7 @@ public class MetadataFactory
                }
 
                case USETRYLOCK : {
-                  if (ds.getTimeOut() != null && ds.getTimeOut().getUseTryLock() != null)
+                  if (ds != null && ds.getTimeOut() != null && ds.getTimeOut().getUseTryLock() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
                            .getUseTryLock()));
@@ -498,15 +515,16 @@ public class MetadataFactory
                   break;
                }
                case DRIVERCLASS : {
-                  if (ds.getDriverClass() != null)
+                  if (ds != null && ds.getDriverClass() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getDriverClass()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
+                           ds.getDriverClass()));
                   }
                   break;
                }
                case URLPROPERTY :
                case CONNECTIONPROPERTIES : {
-                  if (ds.getConnectionProperties() != null)
+                  if (ds != null && ds.getConnectionProperties() != null)
                   {
                      StringBuffer valueBuf = new StringBuffer();
                      for (Entry<String, String> connProperty : ds.getConnectionProperties().entrySet())
@@ -516,15 +534,17 @@ public class MetadataFactory
                         valueBuf.append(connProperty.getValue());
                         valueBuf.append(";");
                      }
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, valueBuf.toString()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
+                           valueBuf.toString()));
 
                   }
                   break;
                }
                case CONNECTIONURL : {
-                  if (ds.getConnectionUrl() != null)
+                  if (ds != null && ds.getConnectionUrl() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getConnectionUrl()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
+                           ds.getConnectionUrl()));
                   }
                   break;
                }
@@ -532,14 +552,17 @@ public class MetadataFactory
                   break;
             }
          }
-         for (Entry<String, String> connectionProperty : ds.getConnectionProperties().entrySet())
+         if (ds != null)
          {
-            ConfigPropertyFactory.Prototype prototype = ConfigPropertyFactory.Prototype.forName(connectionProperty
-                  .getKey());
-            if (prototype != ConfigPropertyFactory.Prototype.UNKNOWN)
+            for (Entry<String, String> connectionProperty : ds.getConnectionProperties().entrySet())
             {
-               configProperties
-                     .add(ConfigPropertyFactory.createConfigProperty(prototype, connectionProperty.getValue()));
+               ConfigPropertyFactory.Prototype prototype = ConfigPropertyFactory.Prototype
+                     .forName(connectionProperty.getKey());
+               if (prototype != ConfigPropertyFactory.Prototype.UNKNOWN)
+               {
+                  configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
+                        connectionProperty.getValue()));
+               }
             }
          }
          return configProperties;
@@ -570,9 +593,8 @@ public class MetadataFactory
       public static ConfigProperty createConfigProperty(Prototype prototype, String value)
       {
 
-         return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(), prototype.getLocalType(),
-               new XsdString(
-                     value, null), null);
+         return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
+               prototype.getLocalType(), new XsdString(value, null), null);
       }
 
       /**
@@ -586,9 +608,8 @@ public class MetadataFactory
       public static ConfigProperty createConfigProperty(Prototype prototype, boolean value)
       {
 
-         return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(), prototype.getLocalType(),
-               new XsdString(
-                     String.valueOf(value), null), null);
+         return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
+               prototype.getLocalType(), new XsdString(String.valueOf(value), null), null);
       }
 
       /**
@@ -602,9 +623,8 @@ public class MetadataFactory
       public static ConfigProperty createConfigProperty(Prototype prototype, Number value)
       {
 
-         return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(), prototype.getLocalType(),
-               new XsdString(
-                     String.valueOf(value), null), null);
+         return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
+               prototype.getLocalType(), new XsdString(String.valueOf(value), null), null);
       }
 
       /**
@@ -623,18 +643,17 @@ public class MetadataFactory
          /** CONNECTIONURL **/
          CONNECTIONURL("ConnectionURL", "java.lang.String", "The jdbc connection url class."),
          /** CONNECTIONPROPERTIES **/
-         CONNECTIONPROPERTIES("ConnectionProperties", "java.lang.String", "Connection properties for the database."),
+         CONNECTIONPROPERTIES("ConnectionProperties", "java.lang.String",
+               "Connection properties for the database."),
 
          /** USERNAME **/
          USERNAME("UserName", "java.lang.String", "The default user name used to create JDBC connections."),
          /** PASSWORD **/
          PASSWORD("Password", "java.lang.String", "The default password used to create JDBC connections."),
          /** XADATASOURCEPROPERTIES **/
-         XADATASOURCEPROPERTIES(
-               "XADataSourceProperties",
-               "java.lang.String",
-               "The properties to set up the XA driver. These properties must be in the form " +
-                     "name1=value1;name2=value2;...namen=valuen"),
+         XADATASOURCEPROPERTIES("XADataSourceProperties", "java.lang.String",
+               "The properties to set up the XA driver. These properties must be in the form "
+                     + "name1=value1;name2=value2;...namen=valuen"),
          /** URLDELIMITER **/
          URLDELIMITER("URLDelimiter", "java.lang.String", "The jdbc connection url delimeter."),
          /** URLPROPERTY **/
@@ -646,11 +665,9 @@ public class MetadataFactory
          XADATASOURCECLASS("XADataSourceClass", "java.lang.String",
                "The class name of the JDBC XA driver that handlesthis JDBC URL."),
          /** TRANSACTIONISOLATION **/
-         TRANSACTIONISOLATION(
-               "TransactionIsolation",
-               "java.lang.String",
-               "The transaction isolation for new connections. Not necessary: the driver default will be used " +
-                     "if ommitted."),
+         TRANSACTIONISOLATION("TransactionIsolation", "java.lang.String",
+               "The transaction isolation for new connections. Not necessary: the driver default will be used "
+                     + "if ommitted."),
          /** PREPAREDSTATEMENTCACHESIZE **/
          PREPAREDSTATEMENTCACHESIZE("PreparedStatementCacheSize", "java.lang.Integer",
                "The number of cached prepared statements per connection."),
@@ -661,32 +678,24 @@ public class MetadataFactory
          NEWCONNECTIONSQL("NewConnectionSQL", "java.lang.String",
                "An SQL statement to be executed when a new connection is created as auxillary setup."),
          /** CHECKVALIDCONNECTIONSQL **/
-         CHECKVALIDCONNECTIONSQL(
-               "CheckValidConnectionSQL",
-               "java.lang.String",
-               "An SQL statement that may be executed when a managed connection is taken out of the pool and is " +
-                     "about to be given to a client: the purpose is to verify that the connection still works."),
+         CHECKVALIDCONNECTIONSQL("CheckValidConnectionSQL", "java.lang.String",
+               "An SQL statement that may be executed when a managed connection is taken out of the pool and is "
+                     + "about to be given to a client: the purpose is to verify that the connection still works."),
          /** VALIDCONNECTIONCHECKERCLASSNAME **/
-         VALIDCONNECTIONCHECKERCLASSNAME(
-               "ValidConnectionCheckerClassName",
-               "java.lang.String",
-               "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ValidConnectionChecker" +
-                     " that can determine for a particular vender db when a connection is valid."),
+         VALIDCONNECTIONCHECKERCLASSNAME("ValidConnectionCheckerClassName", "java.lang.String",
+               "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ValidConnectionChecker"
+                     + " that can determine for a particular vender db when a connection is valid."),
          /** EXCEPTIONSORTERCLASSNAME **/
          EXCEPTIONSORTERCLASSNAME(
                "ExceptionSorterClassName",
                "java.lang.String",
                "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ExceptionSorter that"
-                     +
-                     " can determine for a particular vender db which exceptions are fatal and mean a connection should"
-                     +
-                     " be discarded."),
+                     + " can determine for a particular vender db which exceptions are "
+                     + "fatal and mean a connection should be discarded."),
          /** STALECONNECTIONCHECKERCLASSNAME **/
-         STALECONNECTIONCHECKERCLASSNAME(
-               "StaleConnectionCheckerClassName",
-               "java.lang.String",
-               "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.StaleConnectionChecker" +
-                     " that can determine for a particular vender db when a connection is stale."),
+         STALECONNECTIONCHECKERCLASSNAME("StaleConnectionCheckerClassName", "java.lang.String",
+               "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.StaleConnectionChecker"
+                     + " that can determine for a particular vender db when a connection is stale."),
          /** TRACKSTATEMENTS **/
          TRACKSTATEMENTS("TrackStatements", "java.lang.String",
                "Whether to track unclosed statements - false/true/nowarn"),
