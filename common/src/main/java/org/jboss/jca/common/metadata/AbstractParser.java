@@ -52,14 +52,16 @@ public abstract class AbstractParser
     *
     * @param reader the StAX reader
     * @param attributeName the name of the attribute
+    * @param defaultValue  defaultValue
     * @return the boolean representing element
     * @throws XMLStreamException StAX exception
     */
-   protected boolean attributeAsBoolean(XMLStreamReader reader, String attributeName) throws XMLStreamException
+   protected boolean attributeAsBoolean(XMLStreamReader reader, String attributeName, boolean defaultValue)
+      throws XMLStreamException
    {
       return reader.getAttributeValue("", attributeName) == null
             || reader.getAttributeValue("", attributeName).length() == 0
-            ? false :
+            ? defaultValue :
             Boolean.valueOf(reader.getAttributeValue("", attributeName).trim());
    }
 

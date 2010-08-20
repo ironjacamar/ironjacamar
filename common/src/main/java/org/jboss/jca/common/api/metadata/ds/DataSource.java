@@ -322,7 +322,7 @@ public interface DataSource extends JCAMetadata, MergeableMetadata<DataSource>
       /** jndiName attribute
        *
        */
-      JNDINAME("jndiName"),
+      JNDINAME("jndi-name"),
 
       /** jndiName attribute
       *

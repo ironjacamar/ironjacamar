@@ -177,7 +177,7 @@ public interface LocalTxConnectionFactory extends NoTxConnectionFactory
       /** jndiName attribute
        *
        */
-      JNDINAME("jndiName"),
+      JNDINAME("jndi-name"),
 
       /** class-name attribute
       *

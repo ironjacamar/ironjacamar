@@ -262,7 +262,7 @@ public interface NoTxConnectionFactory extends JCAMetadata
       /** jndiName attribute
        *
        */
-      JNDINAME("jndiName"),
+      JNDINAME("jndi-name"),
 
       /** class-name attribute
       *

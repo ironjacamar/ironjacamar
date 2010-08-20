@@ -63,7 +63,7 @@ public class DsParserTestCase
             //when
             DataSources ds = parser.parse(is);
             //then
-            assertThat(ds.getDatasource().size() + ds.getXaDataSource().size(), is(1));
+            assertThat(ds.getDataSource().size() + ds.getXaDataSource().size(), is(1));
 
          }
          finally

@@ -101,7 +101,7 @@ public class MetadataFactoryTestCase
 
          //when
          MetadataFactory mf = new MetadataFactory();
-         Connector merged = mf.mergeConnectorAndDs(ds.getDatasource().get(0), connector);
+         Connector merged = mf.mergeConnectorAndDs(ds.getDataSource().get(0), connector);
          //then
          assertThat(merged, instanceOf(Connector15.class));
          assertThat(merged.getVersion(), is(Version.V_15));

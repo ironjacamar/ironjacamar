@@ -81,7 +81,7 @@ public class DatasourcesImpl implements DataSources
     * @return the datasource.
     */
    @Override
-   public final List<DataSource> getDatasource()
+   public final List<DataSource> getDataSource()
    {
       return Collections.unmodifiableList(datasource);
    }

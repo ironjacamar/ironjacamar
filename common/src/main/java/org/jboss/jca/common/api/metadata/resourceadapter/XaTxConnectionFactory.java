@@ -175,7 +175,7 @@ public interface XaTxConnectionFactory extends LocalTxConnectionFactory
       /** jndiName attribute
        *
        */
-      JNDINAME("jndiName"),
+      JNDINAME("jndi-name"),
 
       /** class-name attribute
       *

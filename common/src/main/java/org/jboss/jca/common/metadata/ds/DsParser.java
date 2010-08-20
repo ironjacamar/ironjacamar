@@ -198,7 +198,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          switch (attribute)
          {
             case ENABLED : {
-               enabled = attributeAsBoolean(reader, attribute.getLocalName());
+               enabled = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
             case JNDINAME : {
@@ -210,7 +210,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                break;
             }
             case USEJAVACONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName());
+               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
             default :
@@ -431,7 +431,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          switch (attribute)
          {
             case ENABLED : {
-               enabled = attributeAsBoolean(reader, attribute.getLocalName());
+               enabled = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
             case JNDINAME : {
@@ -443,7 +443,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                break;
             }
             case USEJAVACONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName());
+               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
             default :

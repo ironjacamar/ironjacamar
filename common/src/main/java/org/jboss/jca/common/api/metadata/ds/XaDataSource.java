@@ -391,7 +391,7 @@ public interface XaDataSource extends JCAMetadata
       /** jndiName attribute
        *
        */
-      JNDINAME("jndiName"),
+      JNDINAME("jndi-name"),
 
       /** jndiName attribute
       *
@@ -405,7 +405,7 @@ public interface XaDataSource extends JCAMetadata
       /** jndiName attribute
       *
       */
-      USEJAVACONTEXT("useJavaContext");
+      USEJAVACONTEXT("use-java-context");
 
       private final String name;
 

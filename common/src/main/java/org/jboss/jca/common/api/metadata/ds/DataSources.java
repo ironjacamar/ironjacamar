@@ -45,7 +45,7 @@ public interface DataSources extends JCAMetadata
     *
     * @return the datasource.
     */
-   public List<DataSource> getDatasource();
+   public List<DataSource> getDataSource();
 
    /**
     * Get the xaDataSource.
