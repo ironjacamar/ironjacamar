@@ -915,11 +915,12 @@
   <macrodef name="deploy-file">
     <attribute name="file"/>
     <attribute name="artifact"/>
+    <attribute name="extension"/>
     <sequential>
       <concat destfile="${target.dir}/@{file}" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}.jar -DpomFile=${name}-@{artifact}.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifact}.xml $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
 </concat>
     </sequential>
   </macrodef>
@@ -927,18 +928,19 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-javadoc.jar -DgeneratePom
   <macrodef name="snapshot-deploy-file">
     <attribute name="file"/>
     <attribute name="artifact"/>
+    <attribute name="extension"/>
     <sequential>
       <concat destfile="${target.dir}/@{file}" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}.jar -DpomFile=${name}-@{artifact}.xml -DuniqueVersion=false $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/${name}-@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=${name}-@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifact}.xml -DuniqueVersion=false $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
+mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
 </concat>
     </sequential>
   </macrodef>
 
   <target name="nexus" depends="clean,artifacts">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli"
+                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
                   sync="true"/>
 
     <fail message="Required Apache Ivy update missing"/>
@@ -969,8 +971,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
       <mapping conf="${name}-codegenerator" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="codegenerator"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="codegenerator"/>
+    <deploy-file file="release.sh" artifact="${name}-codegenerator" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-codegenerator" extension="jar"/>
 
     <!-- ironjacamar-common-api -->
     <delete file="${target.dir}/${name}-common-api.xml"/>
@@ -983,8 +985,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
       <mapping conf="${name}-common-api" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="common-api"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="common-api"/>
+    <deploy-file file="release.sh" artifact="${name}-common-api" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-api" extension="jar"/>
 
     <!-- ironjacamar-common-impl -->
     <delete file="${target.dir}/${name}-common-impl.xml"/>
@@ -998,8 +1000,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="common-impl"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="common-impl"/>
+    <deploy-file file="release.sh" artifact="${name}-common-impl" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-impl" extension="jar"/>
 
     <!-- ironjacamar-core-api -->
     <delete file="${target.dir}/${name}-core-api.xml"/>
@@ -1014,8 +1016,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="core-api"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="core-api"/>
+    <deploy-file file="release.sh" artifact="${name}-core-api" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-core-api" extension="jar"/>
 
     <!-- ironjacamar-core-impl -->
     <delete file="${target.dir}/${name}-core-impl.xml"/>
@@ -1032,8 +1034,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="core-impl"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="core-impl"/>
+    <deploy-file file="release.sh" artifact="${name}-core-impl" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-core-impl" extension="jar"/>
 
     <!-- ironjacamar-core-spi -->
     <delete file="${target.dir}/${name}-core-spi.xml"/>
@@ -1046,8 +1048,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
       <mapping conf="${name}-core-spi" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="core-spi"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="core-spi"/>
+    <deploy-file file="release.sh" artifact="${name}-core-spi" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-core-spi" extension="jar"/>
 
     <!-- ironjacamar-depchain -->
     <delete file="${target.dir}/${name}-depchain.xml"/>
@@ -1084,8 +1086,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="deployers-fungal"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="deployers-fungal"/>
+    <deploy-file file="release.sh" artifact="${name}-deployers-fungal" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-deployers-fungal" extension="jar"/>
 
     <!-- ironjacamar-embedded -->
     <delete file="${target.dir}/${name}-embedded.xml"/>
@@ -1098,8 +1100,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
       <mapping conf="${name}-embedded" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="embedded"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="embedded"/>
+    <deploy-file file="release.sh" artifact="${name}-embedded" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-embedded" extension="jar"/>
 
     <!-- ironjacamar-embedded-arquillian -->
     <delete file="${target.dir}/${name}-embedded-arquillian.xml"/>
@@ -1113,8 +1115,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
       <dependency artifact="${name}-embedded" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="embedded-arquillian"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="embedded-arquillian"/>
+    <deploy-file file="release.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
 
     <!-- ironjacamar-spec-api -->
     <delete file="${target.dir}/${name}-spec-api.xml"/>
@@ -1127,8 +1129,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
       <mapping conf="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="spec-api"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="spec-api"/>
+    <deploy-file file="release.sh" artifact="${name}-spec-api" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-spec-api" extension="jar"/>
 
     <!-- ironjacamar-validator -->
     <delete file="${target.dir}/${name}-validator.xml"/>
@@ -1143,8 +1145,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="validator"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="validator"/>
+    <deploy-file file="release.sh" artifact="${name}-validator" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator" extension="jar"/>
 
     <!-- ironjacamar-validator-ant -->
     <delete file="${target.dir}/${name}-validator-ant.xml"/>
@@ -1158,8 +1160,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="validator-ant"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="validator-ant"/>
+    <deploy-file file="release.sh" artifact="${name}-validator-ant" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator-ant" extension="jar"/>
 
     <!-- ironjacamar-validator-cli -->
     <delete file="${target.dir}/${name}-validator-cli.xml"/>
@@ -1173,8 +1175,8 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="validator-cli"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="validator-cli"/>
+    <deploy-file file="release.sh" artifact="${name}-validator-cli" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator-cli" extension="jar"/>
 
     <!-- ironjacamar-validator-maven -->
     <delete file="${target.dir}/${name}-validator-maven.xml"/>
@@ -1188,8 +1190,36 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="validator-maven"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="validator-maven"/>
+    <deploy-file file="release.sh" artifact="${name}-validator-maven" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator-maven" extension="jar"/>
+
+    <!-- jdbc-local -->
+    <delete file="${target.dir}/jdbc-local.xml"/>
+    <ivy:makepom artifactName="jdbc-local" 
+                 conf="jdbc-local"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/jdbc-local.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
+      <mapping conf="jdbc-local" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="release.sh" artifact="jdbc-local" extension="rar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="jdbc-local" extension="rar"/>
+
+    <!-- jdbc-xa -->
+    <delete file="${target.dir}/jdbc-xa.xml"/>
+    <ivy:makepom artifactName="jdbc-xa" 
+                 conf="jdbc-xa"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/jdbc-xa.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
+      <mapping conf="jdbc-xa" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="release.sh" artifact="jdbc-xa" extension="rar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="jdbc-xa" extension="rar"/>
 
     <chmod file="${target.dir}/release.sh" perm="755"/>
     <chmod file="${target.dir}/snapshot.sh" perm="755"/>

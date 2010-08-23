@@ -33,7 +33,7 @@
     </description>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-depchain->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-depchain->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default">
     <conf name="common" transitive="false"/>
     <conf name="sjc" transitive="false"/>
     <conf name="embedded" transitive="false"/>
@@ -57,6 +57,8 @@
     <conf name="ironjacamar-validator-ant" transitive="false"/>
     <conf name="ironjacamar-validator-cli" transitive="false"/>
     <conf name="ironjacamar-validator-maven" transitive="false"/>
+    <conf name="jdbc-local" transitive="false"/>
+    <conf name="jdbc-xa" transitive="false"/>
   </configurations>
 
   <publications>
@@ -75,6 +77,8 @@
     <artifact name="ironjacamar-validator-cli" type="jar"/>
     <artifact name="ironjacamar-validator-ant" type="jar"/>
     <artifact name="ironjacamar-validator-maven" type="jar"/>
+    <artifact name="jdbc-local" type="rar"/>
+    <artifact name="jdbc-xa" type="rar"/>
   </publications>
 
   <dependencies>
