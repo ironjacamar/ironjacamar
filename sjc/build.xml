@@ -106,6 +106,7 @@
     <mkdir dir="${target.dir}/sjc/config/bootstrap"/>
     <mkdir dir="${target.dir}/sjc/doc"/>
     <mkdir dir="${target.dir}/sjc/doc/codegenerator"/>
+    <mkdir dir="${target.dir}/sjc/doc/datasources"/>
     <mkdir dir="${target.dir}/sjc/doc/validator"/>
     <mkdir dir="${target.dir}/sjc/lib"/>
     <mkdir dir="${target.dir}/sjc/lib/embedded"/>
@@ -158,6 +159,13 @@
     <copy todir="${target.dir}/sjc/system">
       <fileset dir="src/main/resources/system">
         <include name="*.xml"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/system">
+      <fileset dir="${target.dir}">
+        <include name="jdbc-local.rar"/>
+        <include name="jdbc-xa.rar"/>
       </fileset>
     </copy>
 
@@ -245,6 +253,13 @@
         <include name="dtd/connector_1_0.dtd"/>
         <include name="schema/connector_1_5.xsd"/>
         <include name="schema/connector_1_6.xsd"/>
+        <include name="schema/datasources_1_0.xsd"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/doc/datasources" flatten="true">
+      <fileset dir="../common/src/test/resources/ds">
+        <include name="*.xml"/>
       </fileset>
     </copy>
 

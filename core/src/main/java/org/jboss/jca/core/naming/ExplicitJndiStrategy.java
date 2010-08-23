@@ -40,24 +40,20 @@ import org.jboss.logging.Logger;
 import org.jboss.util.naming.Util;
 
 /**
- * A simple JNDI strategy that bind a single connection factory under the
- * name of "java:/eis/&lt;deployment&gt;" by default
+ * An explicit JNDI strategy that requires a JNDI for each connection factory
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class SimpleJndiStrategy implements JndiStrategy
+public class ExplicitJndiStrategy implements JndiStrategy
 {
-   private static Logger log = Logger.getLogger(SimpleJndiStrategy.class);
-
-   /** JNDI prefix */
-   private static final String JNDI_PREFIX = "java:/eis/";
+   private static Logger log = Logger.getLogger(ExplicitJndiStrategy.class);
 
    private static ConcurrentMap<String, Object> connectionFactories = new ConcurrentHashMap<String, Object>();
 
    /**
     * Constructor
     */
-   public SimpleJndiStrategy()
+   public ExplicitJndiStrategy()
    {
    }
 
@@ -80,9 +76,7 @@ public class SimpleJndiStrategy implements JndiStrategy
     */
    public String[] bindConnectionFactories(String deployment, Object[] cfs) throws Throwable
    {
-      String jndiName = JNDI_PREFIX + deployment;
-
-      return bindConnectionFactories(deployment, cfs, new String[] {jndiName});
+      throw new IllegalStateException("JNDI names are required");
    }
 
    /**
@@ -102,42 +96,41 @@ public class SimpleJndiStrategy implements JndiStrategy
       if (cfs.length == 0)
          throw new IllegalArgumentException("CFS is empty");
 
-      if (cfs.length > 1)
-         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
-                                            "a single connection factory per deployment");
       if (jndis == null)
          throw new IllegalArgumentException("JNDIs is null");
 
       if (jndis.length == 0)
          throw new IllegalArgumentException("JNDIs is empty");
 
-      if (jndis.length > 1)
-         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
-                                            "a single JNDI name per deployment");
-
-      String jndiName = jndis[0];
-      Object cf = cfs[0];
+      if (cfs.length != jndis.length)
+         throw new IllegalArgumentException("Number of connection factories doesn't match number of JNDI names");
 
       Context context = new InitialContext();
       try
       {
-         String className = cf.getClass().getName();
-         Reference ref = new Reference(className,
-                                       new StringRefAddr("class", className),
-                                       SimpleJndiStrategy.class.getName(),
-                                       null);
-         ref.add(new StringRefAddr("name", jndiName));
+         for (int i = 0; i < cfs.length; i++)
+         {
+            String jndiName = jndis[i];
+            Object cf = cfs[i];
 
-         if (connectionFactories.putIfAbsent(qualifiedName(jndiName, className), cf) != null)
-            throw new Exception("Deployment " + className + " failed, " + jndiName + " is already deployed");
+            String className = cf.getClass().getName();
+            Reference ref = new Reference(className,
+                                          new StringRefAddr("class", className),
+                                          ExplicitJndiStrategy.class.getName(),
+                                          null);
+            ref.add(new StringRefAddr("name", jndiName));
 
-         Referenceable referenceable = (Referenceable)cf;
-         referenceable.setReference(ref);
+            if (connectionFactories.putIfAbsent(qualifiedName(jndiName, className), cf) != null)
+               throw new Exception("Deployment " + className + " failed, " + jndiName + " is already deployed");
 
-         Util.bind(context, jndiName, cf);
+            Referenceable referenceable = (Referenceable)cf;
+            referenceable.setReference(ref);
+            
+            Util.bind(context, jndiName, cf);
 
-         if (log.isDebugEnabled())
-            log.debug("Bound " + cf.getClass().getName() + " under " + jndiName);
+            if (log.isDebugEnabled())
+               log.debug("Bound " + cf.getClass().getName() + " under " + jndiName);
+         }
       }
       finally
       {
@@ -154,7 +147,7 @@ public class SimpleJndiStrategy implements JndiStrategy
          }
       }
 
-      return new String[] {jndiName};
+      return jndis;
    }
 
    /**
@@ -162,9 +155,7 @@ public class SimpleJndiStrategy implements JndiStrategy
     */
    public void unbindConnectionFactories(String deployment, Object[] cfs) throws Throwable
    {
-      String jndiName = JNDI_PREFIX + deployment;
-
-      unbindConnectionFactories(deployment, cfs, new String[] {jndiName});
+      throw new IllegalStateException("JNDI names are required");
    }
 
    /**
@@ -178,35 +169,33 @@ public class SimpleJndiStrategy implements JndiStrategy
       if (cfs.length == 0)
          throw new IllegalArgumentException("CFS is empty");
 
-      if (cfs.length > 1)
-         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
-                                            "a single connection factory per deployment");
-
       if (jndis == null)
          throw new IllegalArgumentException("JNDIs is null");
 
       if (jndis.length == 0)
          throw new IllegalArgumentException("JNDIs is empty");
 
-      if (jndis.length > 1)
-         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
-                                            "a single JNDI name per deployment");
-
-      String jndiName = jndis[0];
-      Object cf = cfs[0];
-      String className = cf.getClass().getName();
+      if (cfs.length != jndis.length)
+         throw new IllegalArgumentException("Number of connection factories doesn't match number of JNDI names");
 
       Context context = null;
       try
       {
          context = new InitialContext();
 
-         Util.unbind(context, jndiName);
+         for (int i = 0; i < cfs.length; i++)
+         {
+            String jndiName = jndis[i];
+            Object cf = cfs[i];
+            String className = cf.getClass().getName();
 
-         connectionFactories.remove(qualifiedName(jndiName, className));
+            Util.unbind(context, jndiName);
 
-         if (log.isDebugEnabled())
-            log.debug("Unbound " + className + " under " + jndiName);
+            connectionFactories.remove(qualifiedName(jndiName, className));
+
+            if (log.isDebugEnabled())
+               log.debug("Unbound " + className + " under " + jndiName);
+         }
       }
       catch (Throwable t)
       {

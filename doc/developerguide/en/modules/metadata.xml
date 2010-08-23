@@ -94,20 +94,22 @@ org.jboss.metadata.rar.jboss.RARDeploymentMetaData
       <title>Interface</title>
       <para>The interface of the metadata repository is located in:</para>
       <programlisting>
-org.jboss.jca.core.api.MetaDataRepository
+org.jboss.jca.core.spi.MetaDataRepository
       </programlisting>
       <para>providing methods to query and update the repository.</para>
     </section>
 
     <section id="mdrbean">
       <title>Bean</title>
-      <para>The JBoss Microcontainer bean for the metadata repository can be defined as:</para>
+      <para>The implementation of the metadata repository can be defined as:</para>
       <programlisting>
 &lt;bean name="MetaDataRepository" 
-      interface="org.jboss.jca.core.api.MetaDataRepository" 
-      class="org.jboss.jca.core.mdr.MetaDataRepositoryImpl"&gt;
+      interface="org.jboss.jca.core.spi.MetaDataRepository" 
+      class="org.jboss.jca.core.mdr.SimpleMetaDataRepository"&gt;
 &lt;/bean&gt;
       </programlisting>
+
+      <para>which is a simple implementation of the metadata repository service provider interface (SPI).</para>
     </section>
 
 

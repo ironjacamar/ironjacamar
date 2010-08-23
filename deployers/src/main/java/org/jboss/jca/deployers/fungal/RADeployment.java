@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 
 import java.io.Closeable;
@@ -42,7 +43,8 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public class RADeployment implements Deployment
 {
-   private static Logger log = Logger.getLogger(RADeployer.class);
+   /** The logger */
+   private Logger log;
 
    /** The deployment */
    private URL deployment;
@@ -50,11 +52,17 @@ public class RADeployment implements Deployment
    /** The deployment name */
    private String deploymentName;
 
+   /** Activator */
+   private boolean activator;
+
    /** The resource adapter instance */
    private ResourceAdapter ra;
 
    /** The JNDI strategy */
    private JndiStrategy jndiStrategy;
+
+   /** The MDR */
+   private MetadataRepository mdr;
 
    /** The connection factories */
    private Object[] cfs;
@@ -69,27 +77,36 @@ public class RADeployment implements Deployment
     * Constructor
     * @param deployment The deployment
     * @param deploymentName The deployment name
+    * @param activator Is this the activator of the deployment
     * @param ra The resource adapter instance if present
     * @param jndiStrategy The JNDI strategy
+    * @param metadataRepository The metadata repository
     * @param cfs The connection factories
     * @param tmpDirectory The temporary directory
     * @param cl The classloader for the deployment
+    * @param log The logger
     */
    public RADeployment(URL deployment, 
                        String deploymentName,
+                       boolean activator,
                        ResourceAdapter ra, 
                        JndiStrategy jndiStrategy,
+                       MetadataRepository metadataRepository,
                        Object[] cfs, 
                        File tmpDirectory, 
-                       ClassLoader cl)
+                       ClassLoader cl,
+                       Logger log)
    {
       this.deployment = deployment;
       this.deploymentName = deploymentName;
+      this.activator = activator;
       this.ra = ra;
       this.jndiStrategy = jndiStrategy;
+      this.mdr = metadataRepository;
       this.cfs = cfs;
       this.tmpDirectory = tmpDirectory;
       this.cl = cl;
+      this.log = log;
    }
 
    /**
@@ -115,24 +132,39 @@ public class RADeployment implements Deployment
     */
    public void stop()
    {
-      log.debug("Undeploying: " + deployment.toExternalForm());
-
-      if (cfs != null)
+      if (activator)
       {
-         try
-         {
-            jndiStrategy.unbindConnectionFactories(deploymentName, cfs);
-         }
-         catch (Throwable t)
-         {
-            log.warn("Exception during JNDI unbinding", t);
-         }
-      }
+         log.debug("Undeploying: " + deployment.toExternalForm());
 
-      if (ra != null)
-      {
-         ra.stop();
-         ra = null;
+         if (mdr != null)
+         {
+            try
+            {
+               mdr.unregisterResourceAdapter(deployment);
+            }
+            catch (Throwable t)
+            {
+               log.warn("Exception during unregistering deployment", t);
+            }
+         }
+
+         if (cfs != null)
+         {
+            try
+            {
+               jndiStrategy.unbindConnectionFactories(deploymentName, cfs);
+            }
+            catch (Throwable t)
+            {
+               log.warn("Exception during JNDI unbinding", t);
+            }
+         }
+
+         if (ra != null)
+         {
+            ra.stop();
+            ra = null;
+         }
       }
    }
 
@@ -153,19 +185,22 @@ public class RADeployment implements Deployment
          }
       }
 
-      if (tmpDirectory != null && tmpDirectory.exists())
+      if (activator)
       {
-         try
+         if (tmpDirectory != null && tmpDirectory.exists())
          {
-            FileUtil fu = new FileUtil();
-            fu.recursiveDelete(tmpDirectory);
+            try
+            {
+               FileUtil fu = new FileUtil();
+               fu.recursiveDelete(tmpDirectory);
+            }
+            catch (IOException ioe)
+            {
+               // Ignore
+            }
          }
-         catch (IOException ioe)
-         {
-            // Ignore
-         }
+         
+         log.info("Undeployed: " + deployment.toExternalForm());
       }
-
-      log.info("Undeployed: " + deployment.toExternalForm());
    }
 }

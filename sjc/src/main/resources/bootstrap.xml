@@ -4,5 +4,6 @@
   <url>bootstrap/stdio.xml</url>
   <url>bootstrap/transaction.xml</url>
   <url>bootstrap/jca.xml</url>
+  <url>bootstrap/ds.xml</url>
 
 </bootstrap>

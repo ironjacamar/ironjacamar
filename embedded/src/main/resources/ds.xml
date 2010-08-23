@@ -1,0 +1,13 @@
+<deployment>
+
+  <!-- Datasource deployer -->
+  <bean name="DsXmlDeployer" 
+        class="org.jboss.jca.deployers.fungal.DsXmlDeployer">
+    <property name="JDBCLocal">jdbc-local.rar</property>
+    <property name="JDBCXA">jdbc-xa.rar</property>
+    <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
+    <property name="MetadataRepository"><inject bean="MDR"/></property>
+    <property name="Kernel"><inject bean="Kernel"/></property>
+  </bean>
+
+</deployment>

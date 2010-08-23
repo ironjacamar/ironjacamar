@@ -36,6 +36,7 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.KernelFactory;
 import com.github.fungal.api.classloading.ClassLoaderFactory;
+import com.github.fungal.api.configuration.DeploymentOrder;
 import com.github.fungal.api.configuration.KernelConfiguration;
 
 /**
@@ -81,6 +82,11 @@ public class EmbeddedJCA
     */
    public void startup() throws Throwable
    {
+      List<String> order = new ArrayList<String>(3);
+      order.add(".xml");
+      order.add(".rar");
+      order.add("-ds.xml");
+
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
       kernelConfiguration = kernelConfiguration.name("iron.jacamar");
       kernelConfiguration = kernelConfiguration.home(null);
@@ -90,6 +96,7 @@ public class EmbeddedJCA
       kernelConfiguration = kernelConfiguration.hotDeployment(false);
       kernelConfiguration = kernelConfiguration.eventListener(new PreClassLoaderEventListener());
       kernelConfiguration = kernelConfiguration.eventListener(new PostClassLoaderEventListener());
+      kernelConfiguration = kernelConfiguration.deploymentOrder(new DeploymentOrder(order));
 
       kernel = KernelFactory.create(kernelConfiguration);
       kernel.startup();
@@ -100,6 +107,7 @@ public class EmbeddedJCA
          deploy(EmbeddedJCA.class.getClassLoader(), "transaction.xml");
          deploy(EmbeddedJCA.class.getClassLoader(), "stdio.xml");
          deploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
+         deploy(EmbeddedJCA.class.getClassLoader(), "ds.xml");
       }
    }
 
@@ -120,6 +128,7 @@ public class EmbeddedJCA
 
       if (fullProfile)
       {
+         undeploy(EmbeddedJCA.class.getClassLoader(), "ds.xml");
          undeploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
          undeploy(EmbeddedJCA.class.getClassLoader(), "stdio.xml");
          undeploy(EmbeddedJCA.class.getClassLoader(), "transaction.xml");

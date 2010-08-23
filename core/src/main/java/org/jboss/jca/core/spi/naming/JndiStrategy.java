@@ -31,7 +31,7 @@ import javax.naming.spi.ObjectFactory;
  */
 public interface JndiStrategy extends Cloneable, ObjectFactory
 {
-   /**
+    /**
     * Bind connection factories for a deployment
     * @param deployment The deployment name
     * @param cfs The connection factories
@@ -40,6 +40,16 @@ public interface JndiStrategy extends Cloneable, ObjectFactory
     */
    public String[] bindConnectionFactories(String deployment, Object[] cfs) throws Throwable;
 
+    /**
+    * Bind connection factories for a deployment
+    * @param deployment The deployment name
+    * @param cfs The connection factories
+    * @param jndis The JNDI names for the connection factories
+    * @return The JNDI names for the connection factories
+    * @exception Throwable Thrown if an error occurs
+    */
+   public String[] bindConnectionFactories(String deployment, Object[] cfs, String[] jndis) throws Throwable;
+
    /**
     * Unbind connection factories for a deployment
     * @param deployment The deployment name
@@ -47,6 +57,15 @@ public interface JndiStrategy extends Cloneable, ObjectFactory
     * @exception Throwable Thrown if an error occurs
     */
    public void unbindConnectionFactories(String deployment, Object[] cfs) throws Throwable;
+
+   /**
+    * Unbind connection factories for a deployment
+    * @param deployment The deployment name
+    * @param cfs The connection factories
+    * @param jndis The JNDI names for the connection factories
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void unbindConnectionFactories(String deployment, Object[] cfs, String[] jndis) throws Throwable;
 
    /**
     * Clone the JNDI strategy implementation

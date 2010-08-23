@@ -58,11 +58,7 @@ public class NoopJndiStrategy implements JndiStrategy
    }
 
    /**
-    * Bind connection factories for a deployment
-    * @param deployment The deployment name
-    * @param cfs The connection factories
-    * @return The JNDI names for the connection factories
-    * @exception Throwable Thrown if an error occurs
+    * {@inheritDoc}
     */
    public String[] bindConnectionFactories(String deployment, Object[] cfs) throws Throwable
    {
@@ -70,12 +66,24 @@ public class NoopJndiStrategy implements JndiStrategy
    }
 
    /**
-    * Unbind connection factories for a deployment
-    * @param deployment The deployment name
-    * @param cfs The connection factories
-    * @exception Throwable Thrown if an error occurs
+    * {@inheritDoc}
+    */
+   public String[] bindConnectionFactories(String deployment, Object[] cfs, String[] jndis) throws Throwable
+   {
+      return new String[0];
+   }
+
+   /**
+    * {@inheritDoc}
     */
    public void unbindConnectionFactories(String deployment, Object[] cfs) throws Throwable
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unbindConnectionFactories(String deployment, Object[] cfs, String[] jndis) throws Throwable
    {
    }
 

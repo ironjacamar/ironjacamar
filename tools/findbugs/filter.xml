@@ -35,11 +35,11 @@
 
   <!--  org.jboss.jca.core filter -->
   <Match>
-    <Class name="org.jboss.jca.core.api.ConnectionManager"/>
+    <Class name="org.jboss.jca.core.api.connectionmanager.ConnectionManager"/>
     <Bug code="Nm"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.core.api.WorkManager"/>
+    <Class name="org.jboss.jca.core.api.workmanager.WorkManager"/>
     <Bug code="Nm"/>
   </Match>
   <Match>
@@ -47,11 +47,27 @@
     <Bug code="Nm"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
+    <Bug code="Dm"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.core.security.UsersRoles"/>
     <Bug code="Se,PZLA"/>
   </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.spi.mdr.MetadataRepository"/>
+    <Bug code="Dm"/>
+  </Match>
 
   <!--  org.jboss.jca.deployers filter -->
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.DsXmlDeployer"/>
+    <Bug code="IS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.DsXmlDeployment"/>
+    <Bug code="EI2"/>
+  </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.RADeployer"/>
     <Bug code="DLS,ST"/>
@@ -73,6 +89,12 @@
   <Match>
     <Class name="org.jboss.jca.sjc.Shutdown"/>
     <Bug code="Dm,PZLA"/>
+  </Match>
+
+  <!--  org.jboss.jca.validator filter -->
+  <Match>
+    <Class name="org.jboss.jca.validator.maven.ValidatorMojo"/>
+    <Bug code="EI,EI2"/>
   </Match>
 
   <!--  org.jboss.jca.web filter -->
@@ -117,5 +139,4 @@
     <Bug code="RCN"/>
   </Match>
   
-
 </FindBugsFilter>

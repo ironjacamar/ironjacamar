@@ -62,8 +62,11 @@ public class RADeployerTestCase
    public void validateArchiveShouldReturnNullIfNoValidationIsPerformed() throws Throwable
    {
       //given
+      RAConfiguration configuration = new RAConfiguration();
       RADeployer deployer = new RADeployer();
-      deployer.setArchiveValidation(false);
+      deployer.setConfiguration(configuration);
+
+      deployer.getConfiguration().setArchiveValidation(false);
       //when
       List<Failure> returnValue = deployer.validateArchive(null, null);
       //then
@@ -79,7 +82,10 @@ public class RADeployerTestCase
    public void printFailuresLogShouldReturnNotEmptyStringForWarning() throws Throwable
    {
       //given
+      RAConfiguration configuration = new RAConfiguration();
       RADeployer deployer = new RADeployer();
+      deployer.setConfiguration(configuration);
+
       File mockedDirectory = mock(File.class);
       given(mockedDirectory.exists()).willReturn(false);
       Failure failure = mock(Failure.class);
@@ -88,7 +94,7 @@ public class RADeployerTestCase
       FailureHelper fh = mock(FailureHelper.class);
       given(fh.asText((ResourceBundle) anyObject())).willReturn("myText");
 
-      deployer.setArchiveValidationFailOnWarn(true);
+      deployer.getConfiguration().setArchiveValidationFailOnWarn(true);
 
       //when
       String returnValue = deployer.printFailuresLog(null, mock(Validator.class), failures, mockedDirectory, fh);
@@ -107,7 +113,10 @@ public class RADeployerTestCase
    public void printFailuresLogShouldReturnNotEmptyStringForError() throws Throwable
    {
       //given
+      RAConfiguration configuration = new RAConfiguration();
       RADeployer deployer = new RADeployer();
+      deployer.setConfiguration(configuration);
+
       File mockedDirectory = mock(File.class);
       given(mockedDirectory.exists()).willReturn(false);
       Failure failure = mock(Failure.class);
@@ -116,7 +125,7 @@ public class RADeployerTestCase
       FailureHelper fh = mock(FailureHelper.class);
       given(fh.asText((ResourceBundle) anyObject())).willReturn("myText");
 
-      deployer.setArchiveValidationFailOnError(true);
+      deployer.getConfiguration().setArchiveValidationFailOnError(true);
 
       //when
       String returnValue = deployer.printFailuresLog(null, mock(Validator.class), failures, mockedDirectory, fh);
@@ -136,8 +145,11 @@ public class RADeployerTestCase
       BufferedReader input = null;
 
       //given
+      RAConfiguration configuration = new RAConfiguration();
       RADeployer deployer = new RADeployer();
-      deployer.setArchiveValidationFailOnError(true);
+      deployer.setConfiguration(configuration);
+
+      deployer.getConfiguration().setArchiveValidationFailOnError(true);
       Failure failure = mock(Failure.class);
       given(failure.getSeverity()).willReturn(Severity.ERROR);
       List<Failure> failures = Arrays.asList(failure);

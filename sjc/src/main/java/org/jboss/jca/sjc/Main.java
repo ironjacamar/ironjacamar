@@ -25,10 +25,13 @@ package org.jboss.jca.sjc;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.KernelFactory;
 import com.github.fungal.api.classloading.ClassLoaderFactory;
+import com.github.fungal.api.configuration.DeploymentOrder;
 import com.github.fungal.api.configuration.KernelConfiguration;
 
 /**
@@ -59,6 +62,12 @@ public class Main
    {
       try
       {
+         List<String> order = new ArrayList<String>(4);
+         order.add(".xml");
+         order.add(".rar");
+         order.add("-ds.xml");
+         order.add(".war");
+
          KernelConfiguration kernelConfiguration = new KernelConfiguration();
          kernelConfiguration = kernelConfiguration.name("iron.jacamar");
          kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
@@ -67,6 +76,7 @@ public class Main
          kernelConfiguration = kernelConfiguration.eventListener(new PreClassLoaderEventListener());
          kernelConfiguration = kernelConfiguration.eventListener(new PostClassLoaderEventListener());
          kernelConfiguration = kernelConfiguration.command(new Shutdown());
+         kernelConfiguration = kernelConfiguration.deploymentOrder(new DeploymentOrder(order));
 
          String home = SecurityActions.getSystemProperty("iron.jacamar.home");
          if (home != null)

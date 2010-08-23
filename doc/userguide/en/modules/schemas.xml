@@ -2712,4 +2712,615 @@ standard information into the standard deployment descriptor.
     </programlisting>
   </section>
 
+  <section id="ds10">
+    <title>Datasources 1.0</title>
+
+    <programlisting>
+<![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="datasources" type="datasourcesType">
+    <xs:annotation>
+      <xs:documentation>
+        The datasources element is the root of the jdbc datasource configuration 
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="datasourcesType">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="datasource" type="datasourceType">
+        <xs:annotation>
+          <xs:documentation>
+            Specify a jca-jdbc non-XADatasource (local) wrapper, using local 
+            transactions
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="xa-datasource" type="xa-datasourceType">
+        <xs:annotation>
+          <xs:documentation>
+            Specify a jca-jdbc XADatasource wrapper
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="datasourceType" mixed="false">
+    <xs:sequence>
+      <xs:element name="min-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The min-pool-size element indicates the minimum number of connections 
+            a pool should hold. These are not created until a Subject is known from a 
+            request for a connection. This default to 0. Ex: <min-pool-size>1</min-pool-size>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="max-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The max-pool-size element indicates the maximum number of connections 
+            for a pool. No more than MaxSize connections will be created in each sub-pool. 
+            This defaults to 20. 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="prefill" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Whether to attempt to prefill the connection pool. Empty element denotes 
+            a true value. e.g. <prefill>true</prefill>.
+            Default is true
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="user-name" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specify the default username used when creating a new connection. 
+            Ex: <user-name>sa</user-name>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="password" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specify the default password used when creating a new connection. 
+            Ex: <password>sa-pass</password>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="connection-url" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+            The JDBC driver connection URL string Ex: <connection-url>jdbc:hsqldb:hsql://localhost:1701</connection-url>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="driver-class" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+            The fully qualifed name of the JDBC driver class Ex: <driver-class>org.hsqldb.jdbcDriver</driver-class>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="transaction-isolation" type="transaction-isolationType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Set java.sql.Connection transaction isolation level to use. The constants 
+            defined by transaction-isolation-values are the possible transaction isolation 
+            levels and include: TRANSACTION_READ_UNCOMMITTED TRANSACTION_READ_COMMITTED 
+            TRANSACTION_REPEATABLE_READ TRANSACTION_SERIALIZABLE TRANSACTION_NONE
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="connection-property" type="connection-propertyType" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            The connection-property element allows you to pass in arbitrary connection 
+            properties to the Driver.connect(url, props) method. Each connection-property 
+            specifies a string name/value pair with the property name coming from the 
+            name attribute and the value coming from the element content. 
+            Ex: <connection-property name="char.encoding">UTF-8</connection-property>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="time-out" type="time-outType" minOccurs="0" />
+      <xs:element name="security" type="securityType" minOccurs="0">
+      </xs:element>
+      <xs:element name="statement" type="statementType" minOccurs="0">
+      </xs:element>
+      <xs:element name="validation" type="validationType" minOccurs="0" />
+      <xs:element name="url-delimiter" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the delimeter for URLs in connection-url for ha datasources
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="url-selector-strategy-class-name" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            A class that implements org.jboss.resource.adapter.jdbc.URLSelectorStrategy
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="new-connection-sql" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specify an SQL statement to execute whenever a connection is added 
+            to the connection pool.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attributeGroup ref="common-datasourceAttributes" />
+  </xs:complexType>
+  <xs:complexType name="xa-datasourceType">
+    <xs:sequence>
+      <xs:element name="min-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The min-pool-size element indicates the minimum number of connections 
+            a pool should hold. These are not created until a Subject is known from a 
+            request for a connection. This default to 0. Ex: <min-pool-size>1</min-pool-size>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="max-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The max-pool-size element indicates the maximum number of connections 
+            for a pool. No more than MaxSize connections will be created in each sub-pool. 
+            This defaults to 20. 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="prefill" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Whether to attempt to prefill the connection pool. Empty element denotes 
+            a false value. e.g. <prefill>true</prefill>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="user-name " type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specify the default username used when creating a new connection. 
+            Ex: <user-name>sa</user-name>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="password" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specify the default password used when creating a new connection. 
+            Ex: <password>sa-pass</password>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="xa-datasource-property" type="xa-datasource-propertyType" minOccurs="1"
+        maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            InSpecify a property to assign to the XADataSource implementation class. 
+            Each property is identified by the name attribute and the property value 
+            is given by the xa-datasource-property element content. The property is mapped 
+            onto the XADataSource implementation by looking for a JavaBeans style getter 
+            method for the property name. If found, the value of the property is set 
+            using the JavaBeans setter with the element text translated to the true property 
+            type using the java.beans.PropertyEditor for the type. Ex: 
+            <xa-datasource-property name="IfxWAITTIME">10</xa-datasource-property> 
+            <xa-datasource-property name="IfxIFXHOST">myhost.mydomain.com</xa-datasource-property> 
+            <xa-datasource-property name="PortNumber">1557</xa-datasource-property> 
+            <xa-datasource-property name="DatabaseName">mydb</xa-datasource-property>
+            <xa-datasource-property name="ServerName">myserver</xa-datasource-property>  
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="xa-datasource-class" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+            The fully qualifed name of the javax.sql.XADataSource implementation 
+            class. Ex: <xa-datasource-class>com.informix.jdbcx.IfxXADataSource</xa-datasource-class>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="transaction-isolation" type="transaction-isolationType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Set java.sql.Connection transaction isolation level to use. The constants 
+            defined by transaction-isolation-values are the possible transaction isolation 
+            levels and include: TRANSACTION_READ_UNCOMMITTED TRANSACTION_READ_COMMITTED 
+            TRANSACTION_REPEATABLE_READ TRANSACTION_SERIALIZABLE TRANSACTION_NONE
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="is-same-rm-override" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The isSameRM-override-value element allows one to unconditionally 
+            set whether the javax.transaction.xa.XAResource.isSameRM(XAResource) returns 
+            true or false. Ex: <isSameRM-override-value>true</isSameRM-override-value>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="interleaving" type="boolean-presenceType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            An element to enable interleaving for XA connection factories Ex: 
+            <interleaving/>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="recovery" type="recoveryType" minOccurs="0" />
+      <xs:element name="time-out" type="time-outType" minOccurs="0" />
+      <xs:element name="security" type="securityType" minOccurs="0"></xs:element>
+      <xs:element name="statement" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="track-statements" type="track-statementsType" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  Whether to check for unclosed statements when a connection is returned 
+                  to the pool and result sets are closed when a statement is closed/return 
+                  to the prepared statement cache. valid values are: false - do not track statements 
+                  and results true - track statements and result sets and warn when they are 
+                  not closed nowarn - track statements but do no warn about them being unclosed 
+                  (the default) e.g. <track-statements>nowarn</track-statements>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="prepared-statement-cache-size" type="xs:nonNegativeInteger" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  The number of prepared statements per connection in an LRU cache
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="share-prepared-statements" type="boolean-presenceType" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  whether to share prepare statements, i.e. whether asking for same 
+                  statement twice without closing uses the same underlying prepared statement. 
+                  The default is false. e.g. <share-prepared-statements/>
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="validation" type="validationType" minOccurs="0" />
+      <xs:element name="url-delimiter" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the delimeter for URLs in connection-url for ha datasources
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="url-selector-strategy-class-name" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            A class that implements org.jboss.resource.adapter.jdbc.URLSelectorStrategy
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="new-connection-sql" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specify an SQL statement to execute whenever a connection is added 
+            to the connection pool.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="pad-xid" type="xs:boolean" default="false" minOccurs="0" />
+      <xs:element name="wrap-xa-resource" type="xs:boolean" default="false" minOccurs="0" />
+      <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0" />
+      <xs:element name="track-connection-by-tx" type="xs:boolean" minOccurs="0"></xs:element>
+    </xs:sequence>
+    <xs:attributeGroup ref="common-datasourceAttributes" />
+  </xs:complexType>
+  <xs:complexType name="boolean-presenceType" />
+  <xs:attributeGroup name="common-datasourceAttributes">
+    <xs:attribute name="jndi-name" type="xs:token" use="required" />
+    <xs:attribute name="pool-name" type="xs:token" use="required" />
+    <xs:attribute name="enabled" type="xs:boolean" default="true" form="unqualified" use="optional" />
+    <xs:attribute default="false" name="use-java-context" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>
+          Setting this to false will bind the DataSource into global jndi
+          Ex:
+          <use-java-context>false</use-java-context>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+  <xs:simpleType name="transaction-isolationType">
+    <xs:annotation>
+      <xs:documentation> Define constants used as the possible transaction isolation levels in transaction-isolation
+        type. Include: TRANSACTION_READ_UNCOMMITTED TRANSACTION_READ_COMMITTED TRANSACTION_REPEATABLE_READ
+        TRANSACTION_SERIALIZABLE TRANSACTION_NONE</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="TRANSACTION_READ_UNCOMMITTED" />
+      <xs:enumeration value="TRANSACTION_READ_COMMITTED" />
+      <xs:enumeration value="TRANSACTION_REPEATABLE_READ" />
+      <xs:enumeration value="TRANSACTION_SERIALIZABLE" />
+      <xs:enumeration value="TRANSACTION_NONE" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="security-managerType">
+    <xs:annotation>
+      <xs:documentation> Define constants used as the possible security manager in security-settings_type. See there for
+        complete documentation Include: APPLICATION DOMAIN APPLICATION_AND_DOMAIN NONE</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="APPLICATION" />
+      <xs:enumeration value="DOMAIN" />
+      <xs:enumeration value="APPLICATION_AND_DOMAIN" />
+      <xs:enumeration value="NONE" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="securityType">
+    <xs:sequence>
+      <xs:element name="security-manager" type="security-managerType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Possible value are:
+            * APPLICATION: Indicates that app supplied parameters (such as from getConnection(user, 
+            pw)) are used to distinguish connections in the pool.
+            * DOMAIN: Indicates Subject (from security domain) are used to distinguish connections 
+            in the pool. The content is the security-domain is the name of the JAAS security
+            manager that will handle authentication.
+            * APPLICATION-AND-DOMAIN: Indicates that either app supplied parameters (such as from getConnection(user, 
+            pw)) or Subject (from security domain) are used to distinguish connections 
+            in the pool. The content is the security-domain is the name of the JAAS security
+            manager that will handle authentication.
+            * NONE: user/password provided in datasource definition are used.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="security-domain" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The content of the security-domain is the name of the JAAS security 
+            manager that will handle authentication. This name correlates to the JAAS 
+            login-config.xml descriptor application-policy/name attribute. 
+            Ex: <security-domain>HsqlDbRealm</security-domain> 
+            used for DOMAIN and APPLICATION-AND-DOMAIN security manager
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="xa-datasource-propertyType" mixed="true">
+    <xs:attribute use="required" name="name" type="xs:token" />
+  </xs:complexType>
+  <xs:complexType name="connection-propertyType" mixed="true">
+    <xs:attribute use="required" name="name" type="xs:token" />
+  </xs:complexType>
+  <xs:complexType name="validationType">
+    <xs:sequence>
+      <xs:element name="valid-connection-checker-class-name" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            An org.jboss.resource.adapter.jdbc.ValidConnectionChecker that provides 
+            a SQLException isValidConnection(Connection e) method to validate is a connection 
+            is valid. An exception means the connection is destroyed. This overrides 
+            the check-valid-connection-sql when present. Ex: <exception-sorter-class-name> 
+              org.jboss.resource.adapter.jdbc.vendor.OracleValidConnectionChecker </exception-sorter-class-name>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="check-valid-connection-sql " type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specify an SQL statement to check validity of a pool connection. This 
+            may be called when managed connection is taken from pool for use. 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="validate-on-match " type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The validate-on-match element indicates whether or not connection 
+            level validation should be done when a connection factory attempts to match 
+            a managed connection for a given set. This is typically exclusive to the 
+            use of background validation 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="background-validation" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            An element to specify that connections should be validated on a background 
+            thread versus being validated prior to use 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="background-validation-minutes" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The background-validation-minutes element specifies the amount of 
+            time, in minutes, that background validation will run. 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="use-fast-fail" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Whether fail a connection allocation on the first connection if it 
+            is invalid (true) or keep trying until the pool is exhausted of all potential 
+            connections (false) default false. e.g. <use-fast-fail>true</use-fast-fail>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="stale-connection-checker-class-name" type="xs:token">
+        <xs:annotation>
+          <xs:documentation>
+            An org.jboss.resource.adapter.jdbc.StaleConnectionChecker that provides 
+            a boolean isStaleConnection(SQLException e) method which if it it returns 
+            true will wrap the exception in an org.jboss.resource.adapter.jdbc.StaleConnectionException 
+            which is a subclass of SQLException. Ex: <stale-connection-checker-class-name> 
+              org.jboss.resource.adapter.jdbc.vendor.OracleStaleConnectionChecker </stale-connection-checker-class-name> 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="exception-sorter-class-name" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            An org.jboss.resource.adapter.jdbc.ExceptionSorter that provides a 
+            boolean isExceptionFatal(SQLException e) method to validate is an exception 
+            should be broadcast to all javax.resource.spi.ConnectionEventListener as 
+            a connectionErrorOccurred message. Ex: <exception-sorter-class-name> org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter 
+            </exception-sorter-class-name> <exception-sorter-class-name> org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter 
+            </exception-sorter-class-name>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="time-outType">
+    <xs:sequence>
+      <xs:element name="blocking-timeout-millis" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The blocking-timeout-millis element indicates the maximum time in 
+            milliseconds to block while waiting for a connection before throwing an exception. 
+            Note that this blocks only while waiting for a permit for a connection, and 
+            will never throw an exception if creating a new connection takes an inordinately 
+            long time. The default is 30000 (30 seconds).  
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="idle-timeout-minutes" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The idle-timeout-minutes elements indicates the maximum time in minutes 
+            a connection may be idle before being closed. The actual maximum time depends 
+            also on the IdleRemover scan time, which is 1/2 the smallest idle-timeout-minutes 
+            of any pool. 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="set-tx-query-timeout" type="boolean-presenceType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            whether to set the query timeout based on the time remaining until 
+            transaction timeout, any configured query timeout will be used if there is 
+            no transaction. The default is false. e.g. <set-tx-query-timeout/>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="query-timeout" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Any configured query timeout in seconds The default is no timeout 
+            e.g. 5 minutes <query-timeout>300</query-timeout>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="use-try-lock" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Any configured timeout for internal locks on the resource adapter 
+            objects in seconds The default is a 60 second timeout e.g. 5 minutes <use-try-lock>300</use-try-lock>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="allocation-retry" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The allocation retry element indicates the number of times that allocating 
+            a connection should be tried before throwing an exception. The default is 
+            0.  
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The allocation retry wait millis element indicates the time in milliseconds 
+            to wait between retrying to allocate a connection. The default is 5000 (5 
+            seconds). 
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="xa-resource-timeout" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Passed to XAResource.setTransactionTimeout() Default is zero which 
+            does not invoke the setter e.g. 5 minutes <xa-resource-timeout>300</xa-resource-timeout>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="recoveryType">
+    <xs:choice>
+      <xs:element name="no-recover" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specify if the xa-datasource should be excluded from recovery. Default: 
+            false Ex: <no-recover>true</no-recover>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:sequence minOccurs="0">
+        <xs:element name="recover-user-name" type="xs:token" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              Specify the username used when creating a connection during recovery. 
+              Ex: <recover-user-name>sa</recover-user-name>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="recover-password " type="xs:token" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              Specify the password used when creating a connection during recovery. 
+              Ex: <recover-password>sa-pass</recover-password>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="recover-security-domain" type="xs:token" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              Indicates the Subject (from security domain) that are used to distinguish 
+              connection used for recovery. The content of the recover-security-domain 
+              is the name of the JAAS security manager that will handle authentication. 
+              This name correlates to the JAAS login-config.xml descriptor application-policy/name 
+              attribute. Ex: <recover-security-domain>OracleDbRealm</recover-security-domain> 
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:choice>
+  </xs:complexType>
+  <xs:simpleType name="track-statementsType">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="true" />
+      <xs:enumeration value="false" />
+      <xs:enumeration value="nowarn" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="statementType">
+    <xs:sequence>
+      <xs:element name="track-statements" type="track-statementsType" minOccurs="0">
+        <xs:annotation></xs:annotation>
+      </xs:element>
+      <xs:element name="prepared-statement-cache-size" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation></xs:annotation>
+      </xs:element>
+      <xs:element name="share-prepared-statements" type="boolean-presenceType" minOccurs="0">
+        <xs:annotation></xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema> ]]>
+    </programlisting>
+  </section>
+
+
 </appendix>

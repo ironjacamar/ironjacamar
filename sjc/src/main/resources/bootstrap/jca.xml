@@ -128,20 +128,49 @@
   </bean>
 
   <!-- JNDI strategy -->
-  <bean name="JNDIStrategy"
+  <bean name="JndiStrategy"
         interface="org.jboss.jca.core.spi.naming.JndiStrategy"
         class="org.jboss.jca.core.naming.SimpleJndiStrategy"/>
 
-  <!-- RA deployer -->
-  <bean name="RADeployer" interface="com.github.fungal.spi.deployers.Deployer" class="org.jboss.jca.deployers.fungal.RADeployer">
+  <!-- MDR -->
+  <bean name="MDR"
+        interface="org.jboss.jca.core.spi.mdr.MetadataRepository"
+        class="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
+
+  <!-- RA configuration -->
+  <bean name="RAConfiguration"
+        class="org.jboss.jca.deployers.fungal.RAConfiguration">
     <property name="ArchiveValidation">true</property>
     <property name="ArchiveValidationFailOnWarn">false</property>
     <property name="ArchiveValidationFailOnError">true</property>
     <property name="BeanValidation">true</property>
     <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
     <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
-    <property name="JndiStrategy"><inject bean="JNDIStrategy"/></property>
+    <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
     <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
+    <property name="MetadataRepository"><inject bean="MDR"/></property>
+  </bean>
+
+  <!-- RA deployer -->
+  <bean name="RADeployer"
+        interface="com.github.fungal.spi.deployers.Deployer" 
+        class="org.jboss.jca.deployers.fungal.RADeployer">
+    <property name="Configuration"><inject bean="RAConfiguration"/></property>
+    <depends>BeanValidation</depends>
+    <depends>JBossStdioContextSelector</depends>
+  </bean>
+
+  <!-- RA activator -->
+  <bean name="RAActivator" 
+        class="org.jboss.jca.deployers.fungal.RAActivator">
+    <property name="Configuration"><inject bean="RAConfiguration"/></property>
+    <property name="Kernel"><inject bean="Kernel"/></property>
+    <property name="ExcludeArchives">
+      <set elementClass="java.lang.String">
+        <value>jdbc-local.rar</value>
+        <value>jdbc-xa.rar</value>
+      </set>
+    </property>
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
   </bean>
