@@ -68,6 +68,9 @@
     <copy todir="${build.validator.dir}/jars/validator/META-INF/maven">
       <fileset dir="src/main/resources/"
                includes="plugin.xml"/>
+      <filterset>
+        <filter token="VERSION.IRONJACAMAR" value="${version}"/>
+      </filterset>
     </copy>
 
     <jar destfile="${target.dir}/${name}-validator.jar"

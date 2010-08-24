@@ -274,7 +274,11 @@
       <fileset dir="../validator/src/main/resources/">
         <include name="**/*.sh"/>
         <include name="**/*.bat"/>
+        <include name="**/pom.xml"/>
       </fileset>
+      <filterset>
+        <filter token="VERSION.IRONJACAMAR" value="${version}"/>
+      </filterset>
     </copy>
 
     <copy todir="${target.dir}/sjc/doc/codegenerator">
