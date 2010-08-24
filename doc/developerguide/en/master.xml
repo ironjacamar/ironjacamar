@@ -5,6 +5,7 @@
         <!ENTITY preface SYSTEM "../../userguide/en/modules/preface.xml">
         <!ENTITY introduction SYSTEM "../../userguide/en/modules/introduction.xml">
         <!ENTITY building SYSTEM "modules/building.xml">
+        <!ENTITY releases SYSTEM "modules/releases.xml">
         <!ENTITY issuetracking SYSTEM "modules/issuetracking.xml">
         <!ENTITY testing SYSTEM "modules/testing.xml">
         <!ENTITY metadata SYSTEM "modules/metadata.xml">
@@ -34,6 +35,8 @@
    &introduction;
 
    &building;
+
+   &releases;
 
    &issuetracking;
 
