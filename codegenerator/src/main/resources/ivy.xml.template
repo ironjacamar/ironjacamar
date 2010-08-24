@@ -2,16 +2,16 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-  <info organisation="org.jboss.ironjacamar" 
-        module="ironjacamar"
+  <info organisation="${ivy.package.name}" 
+        module="${ivy.module.name}"
         revision="${version}">
-    <license name="lgpl" url="http://repository.jboss.org/licenses/lgpl.txt"/>
-    <repository name="jboss" url="http://repository.jboss.org"/>
+    <license name="lgpl" url="TODO"/>
+    <repository name="jboss" url="TODO"/>
   </info>
 
   <configurations defaultconfmapping="compile->default;test->default">
     <conf name="compile" transitive="false"/>
-    <conf name="test" transitive="true"/>
+    <conf name="test" extends="compile" transitive="true"/>
   </configurations>
 
   <dependencies>

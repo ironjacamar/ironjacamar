@@ -62,6 +62,9 @@
     <copy todir="${build.codegenerator.dir}/jars/codegenerator">
       <fileset dir="src/main/resources/"
                includes="**/*.template **/*.properties"/>
+      <filterset>
+        <filter token="VERSION.IRONJACAMAR" value="${version}"/>
+      </filterset>
     </copy>
 
     <jar destfile="${target.dir}/${name}-codegenerator.jar"

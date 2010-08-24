@@ -22,11 +22,15 @@
 package org.jboss.jca.codegenerator.xml;
 
 import org.jboss.jca.codegenerator.Definition;
+import org.jboss.jca.codegenerator.SimpleTemplate;
+import org.jboss.jca.codegenerator.Template;
 import org.jboss.jca.codegenerator.Utils;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A IvyXmlGen.
@@ -48,6 +52,20 @@ public class IvyXmlGen extends AbstractXmlGen
       
       URL buildFile = IvyXmlGen.class.getResource("/ivy.xml.template");
       String buildString = Utils.readFileIntoString(buildFile);
-      out.write(buildString);
+      
+      int pos = def.getRaPackage().lastIndexOf(".");
+      String packageName = "";
+      String moduleName = "";
+      if (pos > 0)
+      {
+         packageName = def.getRaPackage().substring(0, pos);
+         moduleName = def.getRaPackage().substring(pos + 1);
+      }
+      Map<String, String> map = new HashMap<String, String>();
+      map.put("ivy.package.name", packageName);
+      map.put("ivy.module.name", moduleName);
+      Template template = new SimpleTemplate(buildString);
+      template.process(map, out);
+      //out.write(buildString);
    }
 }

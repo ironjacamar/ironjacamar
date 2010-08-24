@@ -58,7 +58,7 @@
        ================================= -->
 
   <property name="version.junit" value="4.8.1"/>
-  <property name="version.ironjacamar" value="1.0.0-SNAPSHOT"/>
+  <property name="version.ironjacamar" value="@VERSION.IRONJACAMAR@"/>
 
   <!-- ================================= 
        Bootstrap Ivy

@@ -64,9 +64,9 @@ public class BaseProfile implements Profile
       generateTestCode(def);
 
       if (def.getBuild().equals("ivy"))
-         generateAntIvyXml(def.getOutputDir());
+         generateAntIvyXml(def, def.getOutputDir());
       else
-         generateAntXml(def.getOutputDir());
+         generateAntXml(def, def.getOutputDir());
 
       generateRaXml(def, def.getOutputDir());
    }
@@ -184,15 +184,16 @@ public class BaseProfile implements Profile
    
    /**
     * generate ant build.xml
+    * @param def Definition
     * @param outputDir output directory
     */
-   void generateAntXml(String outputDir)
+   void generateAntXml(Definition def, String outputDir)
    {
       try
       {
          FileWriter antfw = Utils.createFile("build.xml", outputDir);
          BuildXmlGen bxGen = new BuildXmlGen();
-         bxGen.generate(null, antfw);
+         bxGen.generate(def, antfw);
          antfw.close();
       }
       catch (IOException ioe)
@@ -203,25 +204,26 @@ public class BaseProfile implements Profile
 
    /**
     * generate ant + ivy build.xml and ivy files
+    * @param def Definition
     * @param outputDir output directory
     */
-   void generateAntIvyXml(String outputDir)
+   void generateAntIvyXml(Definition def, String outputDir)
    {
       try
       {
          FileWriter antfw = Utils.createFile("build.xml", outputDir);
          BuildIvyXmlGen bxGen = new BuildIvyXmlGen();
-         bxGen.generate(null, antfw);
+         bxGen.generate(def, antfw);
          antfw.close();
          
          FileWriter ivyfw = Utils.createFile("ivy.xml", outputDir);
          IvyXmlGen ixGen = new IvyXmlGen();
-         ixGen.generate(null, ivyfw);
+         ixGen.generate(def, ivyfw);
          ivyfw.close();
          
          FileWriter ivySettingsfw = Utils.createFile("ivy.settings.xml", outputDir);
          IvySettingsXmlGen isxGen = new IvySettingsXmlGen();
-         isxGen.generate(null, ivySettingsfw);
+         isxGen.generate(def, ivySettingsfw);
          ivySettingsfw.close();
       }
       catch (IOException ioe)

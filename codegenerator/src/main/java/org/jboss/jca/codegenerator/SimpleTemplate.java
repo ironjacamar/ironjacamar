@@ -114,8 +114,8 @@ public class SimpleTemplate implements Template
             if (varMap.containsKey(varName))
             {
                newString.append(varMap.get(varName));
+               p0 = p + 1;
             }
-            p0 = p + 1;
          }
       }
       return newString.toString();
