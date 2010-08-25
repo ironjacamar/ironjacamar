@@ -125,20 +125,14 @@
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-spec-api"/>
     <dependency org="org.jboss.jbossts" name="jbossjts" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.jbossts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-jdk" rev="${version.jboss.logging}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-log4j" rev="${version.jboss.logging}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-logmanager" rev="${version.jboss.logging}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-spi" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal"/>
-    <dependency org="org.jboss.logging" name="logging-service-metadata" rev="${version.jboss.logging.metadata}" conf="common,ironjacamar-depchain"/>
+    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.logmanager" name="jboss-logmanager-log4j" rev="${version.jboss.logmanager.log4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common,ironjacamar-common-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.security" name="jboss-security-spi-bare" rev="${version.jboss.security}" conf="common,ironjacamar-core-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain,ironjacamar-embedded,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-impl-base" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-spi" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>
-    <dependency org="org.jboss.slf4j" name="slf4j-jboss-logging" rev="${version.jboss.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logmanager" rev="${version.jboss.slf4j.logmanager}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.stdio" name="jboss-stdio" rev="${version.jboss.stdio}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.threads" name="jboss-threads" rev="${version.jboss.threads}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain"/>
