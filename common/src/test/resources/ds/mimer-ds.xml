@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: mimer-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-<!-- ==================================================================== -->
-<!-- ConnectionManager setup for Mimer SQL for local transactions -->
-<!-- -->
-<!-- Supplied by fredrik.alund@upright.se -->
 <!-- ==================================================================== -->
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
+<!-- ==================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="MimerDS" pool-name="MimerDS">
     <min-pool-size>5</min-pool-size>
     <max-pool-size>100</max-pool-size>

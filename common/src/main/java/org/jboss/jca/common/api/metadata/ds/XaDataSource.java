@@ -137,13 +137,6 @@ public interface XaDataSource extends CommonDataSource
    public boolean isNoTxSeparatePool();
 
    /**
-    * Get the trackConnectionByTx.
-    *
-    * @return the trackConnectionByTx.
-    */
-   public boolean isTrackConnectionByTx();
-
-   /**
    *
    * A Tag.
    *
@@ -243,12 +236,7 @@ public interface XaDataSource extends CommonDataSource
       /**
        * no-tx-separate-pools tag
        */
-      NO_TX_SEPARATE_POOLS("no-tx-separate-pools"),
-
-      /**
-       * track-connection-by-tx tag
-       */
-      TRACK_CONNECTION_BY_TX("track-connection-by-tx");
+      NO_TX_SEPARATE_POOLS("no-tx-separate-pools");
 
       private final String name;
 

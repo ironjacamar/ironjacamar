@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Example of the pointbase 4.8 XA datasource configuration -->
-<!-- $Id: pointbase-xa-ds.xml 23720 2004-09-15 14:37:40Z loubyansky $ -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <xa-datasource jndi-name="PointbaseXA" pool-name="PointbaseXA">
     <user-name>@pointbase.user@</user-name>
     <password>@pointbase.passwd@</password>

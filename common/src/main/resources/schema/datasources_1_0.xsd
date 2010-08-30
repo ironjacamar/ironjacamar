@@ -357,7 +357,6 @@
       <xs:element name="pad-xid" type="xs:boolean" default="false" minOccurs="0" />
       <xs:element name="wrap-xa-resource" type="xs:boolean" default="false" minOccurs="0" />
       <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0" />
-      <xs:element name="track-connection-by-tx" type="xs:boolean" minOccurs="0"></xs:element>
     </xs:sequence>
     <xs:attributeGroup ref="common-datasourceAttributes" />
   </xs:complexType>

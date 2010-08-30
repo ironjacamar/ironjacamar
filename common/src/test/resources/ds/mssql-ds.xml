@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ===================================================================== -->
-<!-- -->
-<!-- JBoss Server Configuration -->
-<!-- -->
-<!-- ===================================================================== -->
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
-<!-- $Id: mssql-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-<!-- ====================================================================== -->
-<!-- New ConnectionManager setup for Microsoft SQL Server 2005 driver -->
-<!-- Further information about the Microsoft JDBC Driver version 1.1 -->
-<!-- can be found here: -->
-<!-- http://msdn2.microsoft.com/en-us/library/aa496082.aspx -->
 <!-- ===================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="MSSQLDS" pool-name="MSSQLDS">
     <user-name>x</user-name>
     <password>y</password>

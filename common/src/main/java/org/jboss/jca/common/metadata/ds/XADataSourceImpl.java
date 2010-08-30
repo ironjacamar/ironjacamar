@@ -67,8 +67,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final boolean noTxSeparatePool;
 
-   private final boolean trackConnectionByTx;
-
    /**
     * Create a new XADataSourceImpl.
     *
@@ -97,7 +95,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param padXid padXid
     * @param wrapXaDataSource wrapXaDataSource
     * @param noTxSeparatePool noTxSeparatePool
-    * @param trackConnectionByTx trackConnectionByTx
     */
    public XADataSourceImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String userName, String password,
          Map<String, String> xaDataSourceProperty, String xaDataSourceClass,
@@ -105,8 +102,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          Recovery recovery, TimeOut timeOut, Security security,
          Statement statement, Validation validation, String urlDelimiter,
          String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
-         boolean enabled, String jndiName, boolean padXid, boolean wrapXaDataSource, boolean noTxSeparatePool,
-         boolean trackConnectionByTx)
+         boolean enabled, String jndiName, boolean padXid, boolean wrapXaDataSource, boolean noTxSeparatePool)
    {
       super(minPoolSize, maxPoolSize, prefill, transactionIsolation, timeOut, security,
             statement, validation, urlDelimiter, urlSelectorStrategyClassName, useJavaContext,
@@ -130,7 +126,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       this.padXid = padXid;
       this.wrapXaDataSource = wrapXaDataSource;
       this.noTxSeparatePool = noTxSeparatePool;
-      this.trackConnectionByTx = trackConnectionByTx;
    }
 
    /**
@@ -257,7 +252,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       result = prime * result + (padXid ? 1231 : 1237);
       result = prime * result + ((password == null) ? 0 : password.hashCode());
       result = prime * result + ((recovery == null) ? 0 : recovery.hashCode());
-      result = prime * result + (trackConnectionByTx ? 1231 : 1237);
       result = prime * result + ((userName == null) ? 0 : userName.hashCode());
       result = prime * result + (wrapXaDataSource ? 1231 : 1237);
       result = prime * result + ((xaDataSourceClass == null) ? 0 : xaDataSourceClass.hashCode());
@@ -304,8 +298,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       }
       else if (!recovery.equals(other.recovery))
          return false;
-      if (trackConnectionByTx != other.trackConnectionByTx)
-         return false;
       if (userName == null)
       {
          if (other.userName != null)
@@ -339,8 +331,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
             + xaDataSourceProperty + ", xaDataSourceClass=" + xaDataSourceClass + ", isSameRmOverride="
             + isSameRmOverride + ", interleaving=" + interleaving + ", recovery=" + recovery
             + ", newConnectionSql=" + newConnectionSql + ", padXid=" + padXid + ", wrapXaDataSource="
-            + wrapXaDataSource + ", noTxSeparatePool=" + noTxSeparatePool + ", trackConnectionByTx="
-            + trackConnectionByTx + "]";
+            + wrapXaDataSource + ", noTxSeparatePool=" + noTxSeparatePool + "]";
    }
 
    /**
@@ -385,16 +376,5 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public final boolean isNoTxSeparatePool()
    {
       return noTxSeparatePool;
-   }
-
-   /**
-    * Get the trackConnectionByTx.
-    *
-    * @return the trackConnectionByTx.
-    */
-   @Override
-   public final boolean isTrackConnectionByTx()
-   {
-      return trackConnectionByTx;
    }
 }

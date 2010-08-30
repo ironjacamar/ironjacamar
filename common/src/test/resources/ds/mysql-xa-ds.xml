@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: mysql-ds.xml 88948 2009-05-15 14:09:08Z jesper.pedersen $ -->
-<!-- Datasource config for MySQL using 3.0.9 available from: http://www.mysql.com/downloads/api-jdbc-stable.html -->
+
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <xa-datasource jndi-name="MysqlXADS" pool-name="MysqlXADS">
     <xa-datasource-property name="ServerName">server_name</xa-datasource-property>
     <xa-datasource-property name="DatabaseName">database_name</xa-datasource-property>
@@ -15,6 +14,5 @@
         for newer drivers <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql> -->
     </validation>
     <!-- sql to call when connection is created <new-connection-sql>some arbitrary sql</new-connection-sql> -->
-    <track-connection-by-tx>true</track-connection-by-tx>
   </xa-datasource>
 </datasources>

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ===================================================================== -->
-<!-- -->
-<!-- JBoss Server Configuration -->
-<!-- -->
-<!-- ===================================================================== -->
-<!-- $Id: informix-xa-ds.xml 26313 2004-12-02 10:52:37Z schrouf $ -->
+
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <xa-datasource jndi-name="InformixXADS" pool-name="InformixXADS">
     <xa-datasource-property name="IfxWAITTIME">10</xa-datasource-property>
     <xa-datasource-property name="Description">Something Descriptive</xa-datasource-property>

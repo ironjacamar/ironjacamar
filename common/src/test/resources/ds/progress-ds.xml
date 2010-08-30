@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ===================================================================== -->
-<!-- -->
-<!-- JBoss Server Configuration -->
-<!-- -->
-<!-- ===================================================================== -->
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
-<!-- $Id: progress-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-<!-- ==================================================================== -->
-<!-- Datasource config for Progress 9.1 -->
-<!-- -->
-<!-- Based on config provided by victorstar in the forums -->
-<!-- -->
-<!-- Beside adding the driver jar to server/[config]/lib you also -->
-<!-- need to add the native library to your path. -->
-<!-- e.g. JdbcProgress.dll on windows -->
 <!-- ==================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="ProgressDS" pool-name="ProgressDS">
     <user-name>user</user-name>
     <password>password</password>

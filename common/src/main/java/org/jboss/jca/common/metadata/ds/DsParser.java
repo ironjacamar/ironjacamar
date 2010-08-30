@@ -184,7 +184,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       boolean padXid = false;
       boolean noTxSeparatePool = false;
       boolean wrapXaDataSource = false;
-      boolean trackConnectionByTx = false;
 
       //attributes reading
 
@@ -232,8 +231,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                         xaDataSourceProperty, xaDataSourceClass, transactionIsolation, isSameRmOverrideValue,
                         interleaving, recoverySettings, timeOutSettings, securitySettings, statementSettings,
                         validationSettings, urlDelimiter, urlSelectorStrategyClassName, newConnectionSql,
-                        useJavaContext, poolName, enabled, jndiName, padXid, wrapXaDataSource, noTxSeparatePool,
-                        trackConnectionByTx);
+                        useJavaContext, poolName, enabled, jndiName, padXid, wrapXaDataSource, noTxSeparatePool);
                }
                else
                {
@@ -329,10 +327,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case WRAP_XA_RESOURCE : {
                      wrapXaDataSource = elementAsBoolean(reader);
-                     break;
-                  }
-                  case TRACK_CONNECTION_BY_TX : {
-                     trackConnectionByTx = elementAsBoolean(reader);
                      break;
                   }
                   default :

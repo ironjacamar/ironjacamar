@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ===================================================================== -->
-<!-- -->
-<!-- JBoss Server Configuration -->
-<!-- -->
-<!-- ===================================================================== -->
-<!-- $Id: oracle-xa-ds.xml 77479 2008-08-26 10:33:09Z alex.loubyansky@jboss.com $ -->
-<!-- ===================================================================== -->
 <!-- ATTENTION: DO NOT FORGET TO SET Pad=true IN transaction-service.xml -->
 <!-- ===================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

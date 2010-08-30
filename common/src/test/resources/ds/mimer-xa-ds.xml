@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: mimer-xa-ds.xml 23720 2004-09-15 14:37:40Z loubyansky $ -->
-<!-- ==================================================================== -->
-<!-- ConnectionManager setup for Mimer SQL for distributed transactions -->
-<!-- -->
-<!-- Requires version 9 -->
-<!-- -->
-<!-- Supplied by fredrik.alund@upright.se -->
-<!-- ==================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <xa-datasource jndi-name="XAMimerDS" pool-name="XAMimerDS">
     <min-pool-size>5</min-pool-size>
     <max-pool-size>100</max-pool-size>
