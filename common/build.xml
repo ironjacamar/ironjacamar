@@ -62,13 +62,28 @@
       </manifest>
     </jar>
 
+    <jar destfile="${target.dir}/${name}-common-spi.jar"
+         basedir="${build.common.dir}"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/common/spi/**">
+      <manifest>
+	<attribute name="Implementation-Title" value="IronJacamar Common SPI"/>
+	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
     <jar destfile="${target.dir}/${name}-common-impl.jar"
          basedir="${build.common.dir}"
          index="true"
          indexMetaInf="true"
          update="true"
          level="9"
-         excludes="**/*.java, **/common/api/**">
+         excludes="**/*.java, **/common/api/**, **/common/spi/**">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common Implementation"/>
 	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
