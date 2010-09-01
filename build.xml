@@ -938,7 +938,7 @@ mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -
 
   <target name="nexus" depends="clean,artifacts">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
+                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
                   sync="true"/>
 
     <fail message="Required Apache Ivy update missing"/>
@@ -1000,6 +1000,20 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-common-impl" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-impl" extension="jar"/>
+
+    <!-- ironjacamar-common-spi -->
+    <delete file="${target.dir}/${name}-common-spi.xml"/>
+    <ivy:makepom artifactName="${name}-common-spi" 
+                 conf="${name}-common-spi"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-common-spi.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 printIvyInfo="false">
+      <mapping conf="${name}-common-spi" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="release.sh" artifact="${name}-common-spi" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-spi" extension="jar"/>
 
     <!-- ironjacamar-core-api -->
     <delete file="${target.dir}/${name}-core-api.xml"/>
