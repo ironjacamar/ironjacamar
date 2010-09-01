@@ -23,7 +23,10 @@
 package org.jboss.jca.deployers.annotations;
 
 import org.jboss.jca.common.annotations.Annotations;
+import org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerFactory;
 import org.jboss.jca.common.api.validator.ValidateException;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import org.jboss.jca.embedded.EmbeddedJCA;
 
 import java.io.File;
@@ -31,9 +34,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
-import org.jboss.papaki.AnnotationRepository;
-import org.jboss.papaki.AnnotationScanner;
-import org.jboss.papaki.AnnotationScannerFactory;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -106,13 +106,14 @@ public class AnnotationsTestCase
       {
          URL url = getURL("ra16inoutanno.rar");
          System.out.println(url);
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationScanner asf = (new AnnotationScannerFactory()).createScanner();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          annotations.process(ar, null);
       }
       catch (Throwable t)
       {
+         t.printStackTrace();
          fail(t.getMessage());
       }
    }
@@ -127,7 +128,7 @@ public class AnnotationsTestCase
       try
       {
          URL url = getURL("rafail2connector.rar");
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationScanner asf = (new AnnotationScannerFactory()).createScanner();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          annotations.process(ar, null);
@@ -150,13 +151,14 @@ public class AnnotationsTestCase
       try
       {
          URL url = getURL("ra16annoconndefs.rar");
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationScanner asf = (new AnnotationScannerFactory()).createScanner();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          annotations.process(ar, null);
       }
       catch (Throwable t)
       {
+         t.printStackTrace();
          fail(t.getMessage());
       }
    }
@@ -172,7 +174,7 @@ public class AnnotationsTestCase
       try
       {
          URL url = getURL("ra16annoconndef.rar");
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationScanner asf = (new AnnotationScannerFactory()).createScanner();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          annotations.process(ar, null);
@@ -193,7 +195,7 @@ public class AnnotationsTestCase
       try
       {
          URL url = getURL("ra16annoactiv.rar");
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationScanner asf = (new AnnotationScannerFactory()).createScanner();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          annotations.process(ar, null);
@@ -214,7 +216,7 @@ public class AnnotationsTestCase
       try
       {
          URL url = getURL("ra16annoauthmech.rar");
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationScanner asf = (new AnnotationScannerFactory()).createScanner();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          annotations.process(ar, null);
@@ -235,7 +237,7 @@ public class AnnotationsTestCase
       try
       {
          URL url = getURL("ra16annoadminobj.rar");
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationScanner asf = (new AnnotationScannerFactory()).createScanner();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          annotations.process(ar, null);
@@ -256,7 +258,7 @@ public class AnnotationsTestCase
       try
       {
          URL url = getURL("ra16annoconfprop.rar");
-         AnnotationScanner asf = AnnotationScannerFactory.getDefault();
+         AnnotationScanner asf = (new AnnotationScannerFactory()).createScanner();
          AnnotationRepository ar = asf.scan(new URL[] {url}, Thread.currentThread().getContextClassLoader());
 
          annotations.process(ar, null);

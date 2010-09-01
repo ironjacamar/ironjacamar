@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.annotations.Annotations;
+import org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerFactory;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.jbossra.jbossra20.BeanValidationGroup;
@@ -36,6 +37,8 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.MetadataFactory;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -168,7 +171,9 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
 
          // Annotation scanning
          Annotations annotator = new Annotations();
-         cmd = annotator.scan(cmd, cl.getURLs(), cl);
+         AnnotationScanner scanner = (new AnnotationScannerFactory()).createScanner();
+         AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
+         cmd = annotator.merge(cmd, repository);
 
          // Validate metadata
          cmd.validate();
@@ -210,13 +215,13 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                      failures.addAll(partialFailures);
                   }
 
-                  if (!(getConfiguration().getArchiveValidationFailOnError() && 
+                  if (!(getConfiguration().getArchiveValidationFailOnError() &&
                         hasFailuresLevel(failures, Severity.ERROR)))
                   {
                      if (activateDeployment)
                      {
                         resourceAdapter =
-                           (ResourceAdapter)initAndInject(ra1516.getResourceadapterClass(), 
+                           (ResourceAdapter)initAndInject(ra1516.getResourceadapterClass(),
                                                           ra1516.getConfigProperties(), cl);
 
                         if (trace)
@@ -243,7 +248,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                if (activateDeployment)
                {
                   ManagedConnectionFactory mcf =
-                     (ManagedConnectionFactory) initAndInject(ra10.getManagedConnectionFactoryClass().getValue(), 
+                     (ManagedConnectionFactory) initAndInject(ra10.getManagedConnectionFactoryClass().getValue(),
                                                               ra10.getConfigProperties(), cl);
 
                   if (trace)
@@ -307,9 +312,9 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                                   + cf.getClass().getClassLoader());
                      }
                   }
-                  
+
                   archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
-                  
+
                   if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                   {
                      bindConnectionFactory(deploymentName, cf);
@@ -339,7 +344,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                            failures.addAll(partialFailures);
                         }
 
-                        if (!(getConfiguration().getArchiveValidationFailOnError() && 
+                        if (!(getConfiguration().getArchiveValidationFailOnError() &&
                               hasFailuresLevel(failures, Severity.ERROR)))
                         {
                            if (activateDeployment)
@@ -369,7 +374,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                               PoolFactory pf = new PoolFactory();
 
                               Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-                              
+
                               // Add a connection manager
                               ConnectionManager cm = null;
                               TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
@@ -416,7 +421,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                               }
 
                               archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
-                              
+
                               if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                               {
                                  if (cdMetas.size() == 1)
@@ -457,8 +462,8 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                             mlMeta.getActivationspec().getActivationspecClass().getValue() != null)
                         {
                            partialFailures =
-                              validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.ACTIVATION_SPEC, 
-                                 mlMeta.getActivationspec().getActivationspecClass().getValue(), cl, 
+                              validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.ACTIVATION_SPEC,
+                                 mlMeta.getActivationspec().getActivationspecClass().getValue(), cl,
                                  mlMeta.getActivationspec().getConfigProperties())));
 
                            if (partialFailures != null)
@@ -467,20 +472,20 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                               failures.addAll(partialFailures);
                            }
 
-                           if (!(getConfiguration().getArchiveValidationFailOnError() && 
+                           if (!(getConfiguration().getArchiveValidationFailOnError() &&
                                  hasFailuresLevel(failures, Severity.ERROR)))
                            {
                               if (activateDeployment)
                               {
                                  List<? extends ConfigProperty> cpm = mlMeta.getActivationspec().getConfigProperties();
-                              
+
                                  Object o = initAndInject(mlMeta
                                     .getActivationspec().getActivationspecClass().getValue(), cpm, cl);
 
                                  if (trace)
                                  {
                                     log.trace("ActivationSpec: " + o.getClass().getName());
-                                    log.trace("ActivationSpec defined in classloader: " + 
+                                    log.trace("ActivationSpec defined in classloader: " +
                                               o.getClass().getClassLoader());
                                  }
 
@@ -512,14 +517,14 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                            partialFailures =
                               validateArchive(url, Arrays.asList((Validate) new ValidateClass(Key.ADMIN_OBJECT,
                                  aoMeta.getAdminobjectClass().getValue(), cl, aoMeta.getConfigProperties())));
-                           
+
                            if (partialFailures != null)
                            {
                               failures = new HashSet<Failure>();
                               failures.addAll(partialFailures);
                            }
 
-                           if (!(getConfiguration().getArchiveValidationFailOnError() && 
+                           if (!(getConfiguration().getArchiveValidationFailOnError() &&
                                  hasFailuresLevel(failures, Severity.ERROR)))
                            {
                               if (activateDeployment)
@@ -533,7 +538,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                                     log.trace("AdminObject: " + o.getClass().getName());
                                     log.trace("AdminObject defined in classloader: " + o.getClass().getClassLoader());
                                  }
-                                 
+
                                  archiveValidationObjects
                                     .add(new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta.getConfigProperties()));
                                  beanValidationObjects.add(o);
@@ -631,15 +636,15 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
          {
             log.debug("Activated: " + url.toExternalForm());
          }
-         
-         return new RADeployment(url, 
-                                 deploymentName, 
+
+         return new RADeployment(url,
+                                 deploymentName,
                                  activateDeployment,
-                                 resourceAdapter, 
-                                 getConfiguration().getJndiStrategy(), 
+                                 resourceAdapter,
+                                 getConfiguration().getJndiStrategy(),
                                  getConfiguration().getMetadataRepository(),
                                  cfs,
-                                 destination, 
+                                 destination,
                                  cl,
                                  log);
 

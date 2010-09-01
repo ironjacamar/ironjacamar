@@ -56,11 +56,12 @@ import org.jboss.jca.common.metadata.ra.common.SecurityPermissionImpl;
 import org.jboss.jca.common.metadata.ra.ra16.Activationspec16Impl;
 import org.jboss.jca.common.metadata.ra.ra16.ConfigProperty16Impl;
 import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
+import org.jboss.jca.common.spi.annotations.repository.Annotation;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -73,11 +74,6 @@ import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.work.WorkContext;
 
 import org.jboss.logging.Logger;
-import org.jboss.papaki.Annotation;
-import org.jboss.papaki.AnnotationRepository;
-import org.jboss.papaki.AnnotationScanner;
-import org.jboss.papaki.AnnotationScannerFactory;
-import org.jboss.papaki.AnnotationType;
 
 /**
  * The annotation processor for JCA 1.6
@@ -104,20 +100,16 @@ public class Annotations
    /**
     * Scan for annotations in the URLs specified
     * @param connector The connector adapter metadata
-    * @param urls The URLs to be scanned
-    * @param cl The referenced classloader
+    * @param annotationRepository annotationRepository to use
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   public Connector scan(Connector connector, URL[] urls, ClassLoader cl) throws Exception
+   public Connector merge(Connector connector, AnnotationRepository annotationRepository)
+      throws Exception
    {
       // Process annotations
       if (connector == null || connector.getVersion() == Version.V_16)
       {
-         AnnotationScanner annotationScanner =
-               AnnotationScannerFactory.getStrategy(AnnotationScannerFactory.JAVASSIST_INPUT_STREAM);
-         annotationScanner.configure().constructorLevel(false).parameterLevel(false);
-         AnnotationRepository annotationRepository = annotationScanner.scan(urls, cl);
 
          boolean isMetadataComplete = false;
          if (connector != null && connector instanceof Connector16)
@@ -840,11 +832,11 @@ public class Annotations
    private String getConfigPropertyName(Annotation annotation)
       throws ClassNotFoundException, NoSuchFieldException, NoSuchMethodException
    {
-      if (AnnotationType.FIELD.equals(annotation.getType()))
+      if (annotation.isOnField())
       {
          return annotation.getMemberName();
       }
-      else if (AnnotationType.METHOD.equals(annotation.getType()))
+      else if (annotation.isOnMethod())
       {
          String name = annotation.getMemberName();
 
@@ -884,7 +876,7 @@ public class Annotations
    private String getConfigPropertyType(Annotation annotation)
       throws ClassNotFoundException
    {
-      if (AnnotationType.FIELD.equals(annotation.getType()))
+      if (annotation.isOnField())
       {
          ClassLoader cl = SecurityActions.getThreadContextClassLoader();
          Class clz = Class.forName(annotation.getClassName(), true, cl);
@@ -903,7 +895,7 @@ public class Annotations
             }
          }
       }
-      else if (AnnotationType.METHOD.equals(annotation.getType()))
+      else if (annotation.isOnMethod())
       {
          ClassLoader cl = SecurityActions.getThreadContextClassLoader();
          Class clz = Class.forName(annotation.getClassName(), true, cl);
@@ -912,11 +904,11 @@ public class Annotations
 
          if (annotation.getParameterTypes() != null)
          {
-            parameters = new Class[annotation.getParameterTypes().length];
+            parameters = new Class[annotation.getParameterTypes().size()];
 
-            for (int i = 0; i < annotation.getParameterTypes().length; i++)
+            for (int i = 0; i < annotation.getParameterTypes().size(); i++)
             {
-               String parameter = annotation.getParameterTypes()[i];
+               String parameter = annotation.getParameterTypes().get(i);
                parameters[i] = Class.forName(parameter, true, cl);
             }
          }

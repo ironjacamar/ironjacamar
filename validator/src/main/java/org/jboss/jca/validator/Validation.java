@@ -22,6 +22,7 @@
 package org.jboss.jca.validator;
 
 import org.jboss.jca.common.annotations.Annotations;
+import org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerFactory;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
@@ -32,6 +33,8 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
 import org.jboss.jca.common.metadata.MetadataFactory;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -141,7 +144,9 @@ public class Validation
 
          // Annotation scanning
          Annotations annotator = new Annotations();
-         cmd = annotator.scan(cmd, cl.getURLs(), cl);
+         AnnotationScanner scanner = (new AnnotationScannerFactory()).createScanner();
+         AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
+         cmd = annotator.merge(cmd, repository);
 
          List<Validate> validateClasses = new ArrayList<Validate>();
          List<Failure> failures = new ArrayList<Failure>();
