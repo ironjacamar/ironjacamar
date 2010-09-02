@@ -27,6 +27,7 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -149,12 +150,11 @@ public abstract class AbstractPool implements Pool
       if (subPoolContext == null)
       {
          SubPoolContext newSubPoolContext = new SubPoolContext(getTransactionManager(), mcf, clf, subject, 
-                                                               cri, poolConfiguration);
+                                                               cri, poolConfiguration, this, log);
          subPoolContext = subPools.putIfAbsent(key, newSubPoolContext);
          if (subPoolContext == null)
          {
             subPoolContext = newSubPoolContext;
-            subPoolContext.initialize();
          }
       }
 
@@ -307,7 +307,7 @@ public abstract class AbstractPool implements Pool
 
             // Make sure that IMCP is running
             if (!imcp.isRunning())
-               imcp.initialize();  
+               imcp.reenable();  
          
             //Getting connection from pool
             cl = imcp.getConnection(subject, cri);

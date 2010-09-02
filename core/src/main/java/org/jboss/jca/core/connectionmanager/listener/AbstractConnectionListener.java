@@ -72,9 +72,6 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /** Track by transaction or not */
    private AtomicBoolean trackByTx = new AtomicBoolean(false);
    
-   /** Connection permit */
-   private boolean permit;
-   
    /** Connection last use */
    private long lastUse;
    
@@ -179,22 +176,6 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    public ConnectionState getState()
    {      
       return this.state;
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public void grantPermit(boolean value)
-   {      
-      this.permit = value;
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public boolean hasPermit()
-   {      
-      return this.permit;
    }
 
    /**
@@ -380,9 +361,29 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    }
 
    /**
+    * Compare
+    * @param o The other object
+    * @return 0 if equal; -1 if less than based on lastUse; otherwise 1
+    */
+   public int compareTo(Object o)
+   {
+      if (this == o)
+         return 0;
+
+      if (!(o instanceof AbstractConnectionListener))
+         throw new ClassCastException("Not correct type: " + o.getClass().getName());
+
+      final AbstractConnectionListener acl = (AbstractConnectionListener)o;
+
+      if (lastUse < acl.lastUse)
+         return -1;
+
+      return 1;
+   }
+
+   /**
     * {@inheritDoc}
     */
-   // For debugging
    public String toString()
    {
       StringBuffer buffer = new StringBuffer(100);
@@ -408,7 +409,6 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       buffer.append(" managed connection=").append(this.managedConnection);
       buffer.append(" connection handles=").append(this.connectionHandles.size());
       buffer.append(" lastUse=").append(lastUse);
-      buffer.append(" permit=").append(permit);
       buffer.append(" trackByTx=").append(trackByTx.get());
       buffer.append(" pool=").append(this.pool);
       buffer.append(" pool internal context=").append(this.internalManagedPoolContext);
@@ -422,10 +422,8 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * Add specific properties.
     * @param buffer buffer instance
     */
-   // For debugging
    protected void toString(StringBuffer buffer)
    {
       
    }
-      
 }

@@ -23,7 +23,7 @@ package org.jboss.jca.core.connectionmanager.pool.api;
 
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
-import org.jboss.jca.core.connectionmanager.pool.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.pool;
+package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,7 +37,7 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @version $Rev: $
  */
-public class PoolFiller implements Runnable
+class PoolFiller implements Runnable
 {
    /** Log instance */
    private static Logger log = Logger.getLogger(PoolFiller.class);
@@ -69,7 +69,7 @@ public class PoolFiller implements Runnable
     * 
     * @param mcp internal managed connection pool
     */
-   public static void fillPool(ManagedConnectionPool mcp)
+   static void fillPool(ManagedConnectionPool mcp)
    {
       FILLER.internalFillPool(mcp);
    }
@@ -77,7 +77,7 @@ public class PoolFiller implements Runnable
    /**
     * Creates a new pool filler instance.
     */
-   public PoolFiller()
+   PoolFiller()
    {
       fillerThread = new Thread(this, THREAD_FILLER_NAME);
       fillerThread.setDaemon(true);

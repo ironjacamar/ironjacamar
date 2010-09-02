@@ -36,7 +36,7 @@ import javax.transaction.SystemException;
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
  * @author <a href="weston.price@jboss.com">Weston Price</a>
  */
-public interface ConnectionListener extends ConnectionEventListener
+public interface ConnectionListener extends ConnectionEventListener, Comparable
 {
    /**
     * Retrieve the managed connection for this listener.
@@ -146,20 +146,6 @@ public interface ConnectionListener extends ConnectionEventListener
    void setTrackByTx(boolean trackByTx);
 
    /**
-    * Whether the connection has a permit
-    * 
-    * @return true when it has permit, false otherwise
-    */
-   boolean hasPermit();
-
-   /**
-    * Tell the connection listener whether it owns the permit.
-    * 
-    * @param value true for owning the permit, false otherwise
-    */
-   void grantPermit(boolean value);
-
-   /**
     * Retrieve the last time this connection was validated.
     * 
     * @return the last time the connection was validated
@@ -173,5 +159,4 @@ public interface ConnectionListener extends ConnectionEventListener
     *           milliseconds.
     */
    void setLastValidatedTime(long lastValidated);
-
 }

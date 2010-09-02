@@ -26,8 +26,8 @@ import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
-import org.jboss.jca.core.connectionmanager.pool.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.xa.LocalXAResource;
 import org.jboss.jca.core.connectionmanager.xa.XAResourceWrapperImpl;
 

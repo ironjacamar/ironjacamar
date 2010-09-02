@@ -23,13 +23,18 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
 
+import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
+import org.jboss.logging.Logger;
 import org.jboss.tm.TransactionLocal;
 
 /**
@@ -55,14 +60,28 @@ public class SubPoolContext
     * @param subject the subject
     * @param cri the connection request info
     * @param pc the pool configuration
+    * @param p the pool
+    * @param log The logger for the managed connection pool
+    * @throws ResourceException for any error
     */
    public SubPoolContext(TransactionManager tm, ManagedConnectionFactory mcf, ConnectionListenerFactory clf, 
-                         Subject subject, ConnectionRequestInfo cri, PoolConfiguration pc)
+                         Subject subject, ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log)
+      throws ResourceException
    {
-      subPool = new ManagedConnectionPool(mcf, clf, subject, cri, pc, this);
-      if (tm != null)
+      try
       {
-         trackByTx = new TransactionLocal(tm);  
+         ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
+
+         subPool = mcpf.create(mcf, clf, subject, cri, pc, p, this, log);
+
+         if (tm != null)
+         {
+            trackByTx = new TransactionLocal(tm);  
+         }
+      }
+      catch (Throwable t)
+      {
+         throw new ResourceException("Exception while creating sub pool", t);
       }
    }
 
@@ -85,13 +104,4 @@ public class SubPoolContext
    {
       return trackByTx;
    }
-
-   /**
-    * Initialize the subpool context
-    */
-   public void initialize()
-   {
-      subPool.initialize();
-   }
-
 }

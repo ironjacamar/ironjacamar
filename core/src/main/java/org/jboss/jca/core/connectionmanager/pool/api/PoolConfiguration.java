@@ -75,6 +75,9 @@ public class PoolConfiguration
     */
    public int getMinSize()
    {
+      if (minSize > maxSize)
+         return maxSize;
+
       return minSize;
    }
 
@@ -91,6 +94,9 @@ public class PoolConfiguration
     */
    public int getMaxSize()
    {
+      if (maxSize < minSize)
+         return minSize;
+
       return maxSize;
    }
 

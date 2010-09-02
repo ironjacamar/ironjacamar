@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.validator;
 
-import org.jboss.jca.core.connectionmanager.pool.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;

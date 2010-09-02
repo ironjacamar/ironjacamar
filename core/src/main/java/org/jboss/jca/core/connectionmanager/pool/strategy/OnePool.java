@@ -23,8 +23,8 @@
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
 import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
-import org.jboss.jca.core.connectionmanager.pool.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
