@@ -11,17 +11,20 @@
         <para>Java Connector Architecture Metadata</para>
       </listitem>
       <listitem>
-        <para>JBoss Metadata</para>
+        <para>IronJacamar Metadata</para>
       </listitem>
       <listitem>
-        <para>DataSource Metadata</para>
+        <para>Resource adapter deployment Metadata</para>
+      </listitem>
+      <listitem>
+        <para>DataSource deployment Metadata</para>
       </listitem>
     </itemizedlist>
 
-    <para>The implementation of these areas is done in the JBoss Metadata (JBMETA) project, which is a common
-    project for all metadata inside JBoss.</para>
+    <para>All metadata parsing is done using the StAX model (<code>javax.xml.stream</code>) for
+      optimal performance.</para>
 
-    <para>The issue tracking system for JBoss Metadata is located here: <ulink url="https://jira.jboss.org/jira/browse/JBMETA"/>.</para>
+    <para>The implementation of these areas is done within the common module of the project.</para>
 
     <section id="jcametadata">
       <title>Java Connector Architecture Metadata</title>
@@ -40,48 +43,354 @@
         </listitem>
       </itemizedlist>
 
-      <para>These metadata versions have a common super class</para>
+      <para>An instance of the metadata is bundle with the resource adapter archive as</para>
       <programlisting>
-org.jboss.metadata.rar.spec.ConnectorMetaData
+META-INF/ra.xml
       </programlisting>
-      <para>which allow the developer to for example query the version of the metadata.</para>
 
-      <para>The metadata is part of the</para>
+      <para>The implementation is split into two package hierarchies - the API in</para>
       <programlisting>
-org.jboss.metadata.rar.jboss.RARDeploymentMetaData
+org.jboss.jca.common.api.metadata.ra
       </programlisting>
-      <para>structure.</para>
+      <para>and the implementation in</para>
+
+      <programlisting>
+org.jboss.jca.common.metadata.ra
+      </programlisting>
+      <para>.</para>
 
     </section>
 
-    <section id="jbossmetadata">
-      <title>JBoss Metadata</title>
-      <para>The JBoss metadata implement JBoss specific extensions to the standard Java Connector Architecture
-      metadata. We have metadata representing:</para>
+    <section id="ironjacamarmetadata">
+      <title>IronJacamar Metadata</title>
+      <para>The IronJacamar metadata can provide overrides for the values specified in the
+        standard Java Connector Architecture metdata. It is also possible to specify
+        deployment metadata, which will active an instance of the resource adapter without
+        any other deployment plans.</para>
 
+      <para>Supported versions of the metadata:</para>
       <itemizedlist spacing="compact">
         <listitem>
-          <para>JBoss RA 1.0</para>
+          <para>IronJacamar 1.0</para>
         </listitem>
       </itemizedlist>
-      
-      <para>The metadata can be found in:</para>
+
+      <para>An instance of the metadata is bundle with the resource adapter archive as</para>
       <programlisting>
-org.jboss.metadata.rar.jboss.JBossRAMetaData
+META-INF/ironjacamar.xml
       </programlisting>
 
-      <para>The metadata is part of the</para>
+      <para>The implementation is split into two package hierarchies - the API in</para>
       <programlisting>
-org.jboss.metadata.rar.jboss.RARDeploymentMetaData
+org.jboss.jca.common.api.metadata.ironjacamar
       </programlisting>
-      <para>structure.</para>
+      <para>and the implementation in</para>
+
+      <programlisting>
+org.jboss.jca.common.metadata.ironjacamar
+      </programlisting>
+      <para>.</para>
 
     </section>
 
-    <section id="datasourcemetadata">
-      <title>DataSource Metadata</title>
-      <para>TODO</para>
+    <section id="resourceadapterdeploymentmetadata">
+      <title>Resource adapter deployment Metadata</title>
+      <para>The resource adapter deployment metadata provides a deployment plan for
+        the specified resource adapter archive. It is possible to override
+        metadata specified as part of the Java Connector Architecture metadata or 
+        the IronJacamar metadata.</para>
+
+      <para>Supported versions of the metadata:</para>
+      <itemizedlist spacing="compact">
+        <listitem>
+          <para>Resource adapter deployment 1.0</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The implementation is split into two package hierarchies - the API in</para>
+      <programlisting>
+org.jboss.jca.common.api.metadata.resourceadapters
+      </programlisting>
+      <para>and the implementation in</para>
+
+      <programlisting>
+org.jboss.jca.common.metadata.resourceadapters
+      </programlisting>
+      <para>.</para>
+
+    </section>
+
+    <section id="datasourcedeploymentmetadata">
+      <title>Datasource deployment Metadata</title>
    
+      <para>The datasource deployment metadata provides a deployment plan for
+        datasources. The metadata allows the developer to setup connection parameters, pooling
+        settings and security.</para>
+
+      <para>Supported versions of the metadata:</para>
+      <itemizedlist spacing="compact">
+        <listitem>
+          <para>Datasource deployment 1.0</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The implementation is split into two package hierarchies - the API in</para>
+      <programlisting>
+org.jboss.jca.common.api.metadata.ds
+      </programlisting>
+      <para>and the implementation in</para>
+
+      <programlisting>
+org.jboss.jca.common.metadata.ds
+      </programlisting>
+      <para>.</para>
+
+      <section id="datasourcedeploymentmetadatamapping">
+        <title>Datasource mapping</title>
+        
+        <para>The table below specifies how each atrbiute/element map to the resource adapter
+          or the container.</para>
+
+        <table frame="all">
+          <title>Datasource mapping</title>
+          <tgroup cols="3" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1"/>
+            <colspec colname="c2"/>
+            <colspec colname="c3"/>
+            <thead>
+              <row>
+                <entry align="left">Tag</entry>
+                <entry align="left">Resource Adapter</entry>
+                <entry align="left">Container</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry><code>min-pool-size</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>max-pool-size</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>prefill</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>user-name</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>password</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>connection-url</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>driver-class</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>transaction-isolation</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>connection-property</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>url-delimiter</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>url-selector-strategy-class-name</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>new-connection-sql</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>xa-datasource-property</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>xa-datasource-class</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>is-same-rm-override</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>interleaving</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>prepared-statement-cache-size</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>share-prepared-statements</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>pad-xid</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>wrap-xa-resource</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>no-tx-separate-pools</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>jndi-name</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>pool-name</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>enabled</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>use-java-context</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>valid-connection-checker-class-name</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>check-valid-connection-sql</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>validate-on-match</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>background-validation</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>background-validation-minutes</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>use-fast-fail</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>stale-connection-checker-class-name</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>exception-sorter-class-name</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>blocking-timeout-millis</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>idle-timeout-minutes</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>set-tx-query-timeout</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>query-timeout</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>use-try-lock</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>allocation-retry</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>allocation-retry-wait-millis</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>xa-resource-timeout</code></entry>
+                <entry></entry>
+                <entry>X</entry>
+              </row>
+              <row>
+                <entry><code>track-statements</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>prepared-statement-cache-size</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry><code>share-prepared-statements</code></entry>
+                <entry>X</entry>
+                <entry></entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+      </section>
+
     </section>
 
   </section>
