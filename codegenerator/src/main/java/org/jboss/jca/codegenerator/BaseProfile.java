@@ -26,6 +26,7 @@ import org.jboss.jca.codegenerator.xml.BuildIvyXmlGen;
 import org.jboss.jca.codegenerator.xml.BuildXmlGen;
 import org.jboss.jca.codegenerator.xml.IvySettingsXmlGen;
 import org.jboss.jca.codegenerator.xml.IvyXmlGen;
+import org.jboss.jca.codegenerator.xml.PomXmlGen;
 import org.jboss.jca.codegenerator.xml.RaXmlGen;
 
 import java.io.File;
@@ -65,6 +66,8 @@ public class BaseProfile implements Profile
 
       if (def.getBuild().equals("ivy"))
          generateAntIvyXml(def, def.getOutputDir());
+      else if (def.getBuild().equals("maven"))
+         generateMavenXml(def, def.getOutputDir());
       else
          generateAntXml(def, def.getOutputDir());
 
@@ -231,6 +234,27 @@ public class BaseProfile implements Profile
          ioe.printStackTrace();
       }
    }
+   
+   /**
+    * generate ant build.xml
+    * @param def Definition
+    * @param outputDir output directory
+    */
+   void generateMavenXml(Definition def, String outputDir)
+   {
+      try
+      {
+         FileWriter pomfw = Utils.createFile("pom.xml", outputDir);
+         PomXmlGen pxGen = new PomXmlGen();
+         pxGen.generate(def, pomfw);
+         pomfw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+   }
+   
    /**
     * generate ra.xml
     * @param def Definition

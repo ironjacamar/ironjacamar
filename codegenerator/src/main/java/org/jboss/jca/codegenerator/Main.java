@@ -431,6 +431,11 @@ public class Main
          {
             def.setBuild("ivy");
          }
+         else if (buildEnv.equalsIgnoreCase("m") || 
+            buildEnv.equalsIgnoreCase("maven"))
+         {
+            def.setBuild("maven");
+         }
          else
             def.setBuild("ant");
       }

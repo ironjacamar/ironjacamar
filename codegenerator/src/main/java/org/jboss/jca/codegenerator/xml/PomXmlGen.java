@@ -33,26 +33,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A IvyXmlGen.
+ * A PomXmlGen.
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class IvyXmlGen extends AbstractXmlGen
+public class PomXmlGen extends AbstractXmlGen
 {
    @Override
    public void writeXmlBody(Definition def, Writer out) throws IOException
    {
-      out.write("<!--");
-      writeEol(out);
-      writeheader(def, out);
-      out.write("-->");
-      writeEol(out);
-      writeEol(out);
-      
-      URL buildFile = IvyXmlGen.class.getResource("/ivy.xml.template");
+      URL buildFile = PomXmlGen.class.getResource("/pom.xml.template");
       String buildString = Utils.readFileIntoString(buildFile);
-      
+
       String packageName = "";
       String moduleName;
       int pos = def.getRaPackage().lastIndexOf(".");
@@ -66,8 +59,8 @@ public class IvyXmlGen extends AbstractXmlGen
          moduleName = def.getRaPackage();
       }
       Map<String, String> map = new HashMap<String, String>();
-      map.put("ivy.package.name", packageName);
-      map.put("ivy.module.name", moduleName);
+      map.put("pom.package.name", packageName);
+      map.put("pom.module.name", moduleName);
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);
    }
