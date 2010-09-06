@@ -22,11 +22,6 @@
     <time-out>
       <idle-timeout-minutes>15</idle-timeout-minutes>
     </time-out>
-    <security>
-      <!-- Use the security domain defined in conf/login-config.xml -->
-      <security-manager>APPLICATION</security-manager>
-      <security-domain>SybaseXADSRealm</security-domain>
-    </security>
     <validation>
       <check-valid-connection-sql>select 1 from mytable</check-valid-connection-sql>
       <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>

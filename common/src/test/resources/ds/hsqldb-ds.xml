@@ -10,8 +10,10 @@
     <!-- The maximum connections in a pool/sub-pool -->
     <max-pool-size>20</max-pool-size>
     <!-- The login and password -->
-    <user-name>sa</user-name>
-    <password></password>
+    <security>
+      <user-name>sa</user-name>
+      <password></password>
+    </security> 
     <!-- For server mode db, allowing other processes to use hsqldb over tcp. This requires the org.jboss.jdbc.HypersonicDatabase 
       mbean. <connection-url>jdbc:hsqldb:hsql://${jboss.bind.address}:1701</connection-url> -->
     <!-- For totally in-memory db, not saved when jboss stops. The org.jboss.jdbc.HypersonicDatabase mbean is required for 
@@ -27,10 +29,6 @@
       <!-- TEMPORARY FIX! - Disable idle connection removal, HSQLDB has a problem with not reaping threads on closed connections -->
       <idle-timeout-minutes>0</idle-timeout-minutes>
     </time-out>
-    <security>
-      <security-manager>APPLICATION_AND_DOMAIN</security-manager>
-      <security-domain>HsqlDbRealm</security-domain>
-    </security>
     <statement>
       <!-- Whether to check all statements are closed when the connection is returned to the pool, this is a debugging feature 
         that should be turned off in production -->

@@ -5,8 +5,10 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="OracleDS" pool-name="OracleDS">
-    <user-name>x</user-name>
-    <password>y</password>
+    <security>
+      <user-name>x</user-name>
+      <password>y</password>
+    </security> 
     <connection-url>jdbc:oracle:thin:@youroraclehost:1521:yoursid</connection-url>
     <!-- Here are a couple of the possible OCI configurations. For more information, see http://otn.oracle.com/docs/products/oracle9i/doc_library/release2/java.920/a96654/toc.htm 
       <connection-url>jdbc:oracle:oci:@youroracle-tns-name</connection-url> or <connection-url>jdbc:oracle:oci:@(description=(address=(host=youroraclehost)(protocol=tcp)(port=1521))(connect_data=(SERVICE_NAME=yourservicename)))</connection-url> 

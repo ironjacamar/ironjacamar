@@ -4,8 +4,10 @@
     <datasource jndi-name="DB2DS" pool-name="DB2DS">
         <min-pool-size>0</min-pool-size>
         <max-pool-size>50</max-pool-size>
-        <user-name>x</user-name>
-        <password>y</password>
+        <security>
+         <user-name>x</user-name>
+         <password>y</password>
+        </security> 
         <connection-url>jdbc:db2:yourdatabase</connection-url>
         <driver-class>COM.ibm.db2.jdbc.app.DB2Driver</driver-class>
          

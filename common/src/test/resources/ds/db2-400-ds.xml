@@ -3,8 +3,10 @@
     xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
     <datasource jndi-name="DB2-400" pool-name="DB2-400">
         <min-pool-size>0</min-pool-size>
-        <user-name>[username]</user-name>
-        <password>[password]</password>
+        <security>
+         <user-name>[username]</user-name>
+         <password>[password]</password>
+        </security> 
         <connection-url>jdbc:as400://[systemname]/[schema];extended dynamic=true;package=jbpkg;package cache=true;package library=jboss;errors=full</connection-url>
         <driver-class>com.ibm.as400.access.AS400JDBCDriver</driver-class>
     </datasource>

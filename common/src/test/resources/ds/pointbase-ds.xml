@@ -3,8 +3,10 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="DefaultDS" pool-name="DefaultDS">
-    <user-name>@pointbase.user@</user-name>
-    <password>@pointbase.passwd@</password>
+    <security>
+      <user-name>@pointbase.user@</user-name>
+      <password>@pointbase.passwd@</password>
+    </security>
     <connection-url>jdbc:pointbase:server://@pointbase.server@:@pointbase.port/pointbase.dbName@,new</connection-url>
     <driver-class>com.pointbase.jdbc.jdbcUniversalDriver</driver-class>
     <!-- sql to call when connection is created <new-connection-sql>some arbitrary sql</new-connection-sql> -->

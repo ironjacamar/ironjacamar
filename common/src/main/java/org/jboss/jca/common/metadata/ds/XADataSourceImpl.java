@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
@@ -45,10 +44,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    /** The serialVersionUID */
    private static final long serialVersionUID = -1401087499308709724L;
 
-   private final String userName;
-
-   private final String password;
-
    private final HashMap<String, String> xaDataSourceProperty;
 
    private final String xaDataSourceClass;
@@ -56,8 +51,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    private final boolean isSameRmOverride;
 
    private final boolean interleaving;
-
-   private final Recovery recovery;
 
    private final String newConnectionSql;
 
@@ -73,14 +66,11 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param minPoolSize minPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
-    * @param userName userName
-    * @param password password
     * @param xaDataSourceProperty xaDataSoourceProperty
     * @param xaDataSourceClass xaDataSourceClass
     * @param transactionIsolation transactionIsolation
     * @param isSameRmOverride isSameRmOverride
     * @param interleaving interleaving
-    * @param recovery recovery
     * @param timeOut timeOut
     * @param security security
     * @param statement statement
@@ -96,19 +86,15 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param wrapXaDataSource wrapXaDataSource
     * @param noTxSeparatePool noTxSeparatePool
     */
-   public XADataSourceImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String userName, String password,
-         Map<String, String> xaDataSourceProperty, String xaDataSourceClass,
-         TransactionIsolation transactionIsolation, boolean isSameRmOverride, boolean interleaving,
-         Recovery recovery, TimeOut timeOut, Security security,
-         Statement statement, Validation validation, String urlDelimiter,
-         String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
-         boolean enabled, String jndiName, boolean padXid, boolean wrapXaDataSource, boolean noTxSeparatePool)
+   public XADataSourceImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill,
+      Map<String, String> xaDataSourceProperty, String xaDataSourceClass,
+      TransactionIsolation transactionIsolation, boolean isSameRmOverride, boolean interleaving, TimeOut timeOut,
+      Security security, Statement statement, Validation validation, String urlDelimiter,
+      String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
+      boolean enabled, String jndiName, boolean padXid, boolean wrapXaDataSource, boolean noTxSeparatePool)
    {
-      super(minPoolSize, maxPoolSize, prefill, transactionIsolation, timeOut, security,
-            statement, validation, urlDelimiter, urlSelectorStrategyClassName, useJavaContext,
-            poolName, enabled, jndiName);
-      this.userName = userName;
-      this.password = password;
+      super(minPoolSize, maxPoolSize, prefill, transactionIsolation, timeOut, security, statement, validation,
+            urlDelimiter, urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
       if (xaDataSourceProperty != null)
       {
          this.xaDataSourceProperty = new HashMap<String, String>(xaDataSourceProperty.size());
@@ -121,7 +107,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       this.xaDataSourceClass = xaDataSourceClass;
       this.isSameRmOverride = isSameRmOverride;
       this.interleaving = interleaving;
-      this.recovery = recovery;
       this.newConnectionSql = newConnectionSql;
       this.padXid = padXid;
       this.wrapXaDataSource = wrapXaDataSource;
@@ -129,34 +114,10 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    }
 
    /**
-    * Get the userName.
-    *
-    * @return the userName.
-    */
-   @Override
-   public final String getUserName()
-   {
-      return userName;
-   }
-
-   /**
-    * Get the password.
-    *
-    * @return the password.
-    */
-   @Override
-   public final String getPassword()
-   {
-      return password;
-   }
-
-
-
-   /**
-    * Get the xaDataSourceClass.
-    *
-    * @return the xaDataSourceClass.
-    */
+   * Get the xaDataSourceClass.
+   *
+   * @return the xaDataSourceClass.
+   */
    @Override
    public final String getXaDataSourceClass()
    {
@@ -183,17 +144,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public final boolean isInterleaving()
    {
       return interleaving;
-   }
-
-   /**
-    * Get the recovery.
-    *
-    * @return the recovery.
-    */
-   @Override
-   public final Recovery getRecovery()
-   {
-      return recovery;
    }
 
    /**
@@ -250,9 +200,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
       result = prime * result + (noTxSeparatePool ? 1231 : 1237);
       result = prime * result + (padXid ? 1231 : 1237);
-      result = prime * result + ((password == null) ? 0 : password.hashCode());
-      result = prime * result + ((recovery == null) ? 0 : recovery.hashCode());
-      result = prime * result + ((userName == null) ? 0 : userName.hashCode());
       result = prime * result + (wrapXaDataSource ? 1231 : 1237);
       result = prime * result + ((xaDataSourceClass == null) ? 0 : xaDataSourceClass.hashCode());
       result = prime * result + ((xaDataSourceProperty == null) ? 0 : xaDataSourceProperty.hashCode());
@@ -284,27 +231,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          return false;
       if (padXid != other.padXid)
          return false;
-      if (password == null)
-      {
-         if (other.password != null)
-            return false;
-      }
-      else if (!password.equals(other.password))
-         return false;
-      if (recovery == null)
-      {
-         if (other.recovery != null)
-            return false;
-      }
-      else if (!recovery.equals(other.recovery))
-         return false;
-      if (userName == null)
-      {
-         if (other.userName != null)
-            return false;
-      }
-      else if (!userName.equals(other.userName))
-         return false;
       if (wrapXaDataSource != other.wrapXaDataSource)
          return false;
       if (xaDataSourceClass == null)
@@ -327,11 +253,10 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    @Override
    public String toString()
    {
-      return "XADataSourceImpl [userName=" + userName + ", password=" + password + ", xaDataSourceProperty="
-            + xaDataSourceProperty + ", xaDataSourceClass=" + xaDataSourceClass + ", isSameRmOverride="
-            + isSameRmOverride + ", interleaving=" + interleaving + ", recovery=" + recovery
-            + ", newConnectionSql=" + newConnectionSql + ", padXid=" + padXid + ", wrapXaDataSource="
-            + wrapXaDataSource + ", noTxSeparatePool=" + noTxSeparatePool + "]";
+      return "XADataSourceImpl [xaDataSourceProperty=" + xaDataSourceProperty + ", xaDataSourceClass=" +
+             xaDataSourceClass + ", isSameRmOverride=" + isSameRmOverride + ", interleaving=" + interleaving +
+             ", newConnectionSql=" + newConnectionSql + ", padXid=" + padXid + ", wrapXaDataSource=" +
+             wrapXaDataSource + ", noTxSeparatePool=" + noTxSeparatePool + "]";
    }
 
    /**

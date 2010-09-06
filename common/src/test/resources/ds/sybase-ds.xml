@@ -5,8 +5,10 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="jdbc/SybaseDB" pool-name="jdbc/SybaseDB">
-    <user-name>x</user-name>
-    <password>y</password>
+    <security>
+      <user-name>x</user-name>
+      <password>y</password>
+    </security> 
     <!-- Sybase jConnect URL for the database. NOTE: The hostname and port are made up values. The optional database name 
       is provided, as well as some additinal Driver parameters. -->
     <connection-url>jdbc:sybase:Tds:host.at.some.domain:5000/db_name?JCONNECT_VERSION=6</connection-url>

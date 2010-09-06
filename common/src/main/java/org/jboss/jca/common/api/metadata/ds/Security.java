@@ -22,7 +22,6 @@
 package org.jboss.jca.common.api.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,18 +36,18 @@ import java.util.Map;
 public interface Security extends JCAMetadata
 {
    /**
-    * Get the securityManager.
+    * Get the userName.
     *
-    * @return the securityManager.
+    * @return the userName.
     */
-   public SecurityManager getSecurityManager();
+   public String getUserName();
 
    /**
-    * Get the securityDomain.
+    * Get the password.
     *
-    * @return the securityDomain.
+    * @return the password.
     */
-   public String getSecurityDomain();
+   public String getPassword();
 
    /**
    *
@@ -65,13 +64,13 @@ public interface Security extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      * securityManager tag
-      */
-      SECURITYMANAGER("security-manager"),
+       * userName tag
+       */
+      USERNAME("user-name"),
       /**
-      * securityDomain tag
+      * password tag
       */
-      SECURITYDOMAIN("security-domain");
+      PASSWORD("password");
 
       private final String name;
 

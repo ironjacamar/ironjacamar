@@ -44,10 +44,6 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    /** The serialVersionUID */
    private static final long serialVersionUID = -5214100851560229431L;
 
-   private final String userName;
-
-   private final String password;
-
    private final String connectionUrl;
 
    private final String driverClass;
@@ -62,8 +58,6 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param minPoolSize minPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
-    * @param userName userName
-    * @param password password
     * @param connectionUrl connectionUrl
     * @param driverClass driverClass
     * @param transactionIsolation transactionIsolation
@@ -80,18 +74,14 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param enabled enabled
     * @param jndiName jndiName
     */
-   public DataSourceImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String userName, String password,
-         String connectionUrl, String driverClass, TransactionIsolation transactionIsolation,
-         Map<String, String> connectionProperties, TimeOut timeOut,
-         Security security, Statement statement, Validation validation,
-         String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext,
-         String poolName, boolean enabled, String jndiName)
+   public DataSourceImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, String connectionUrl,
+      String driverClass, TransactionIsolation transactionIsolation, Map<String, String> connectionProperties,
+      TimeOut timeOut, Security security, Statement statement, Validation validation, String urlDelimiter,
+      String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
+      boolean enabled, String jndiName)
    {
-      super(minPoolSize, maxPoolSize, prefill, transactionIsolation, timeOut, security,
-            statement, validation, urlDelimiter, urlSelectorStrategyClassName, useJavaContext,
-            poolName, enabled, jndiName);
-      this.userName = userName;
-      this.password = password;
+      super(minPoolSize, maxPoolSize, prefill, transactionIsolation, timeOut, security, statement, validation,
+            urlDelimiter, urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
       this.connectionUrl = connectionUrl;
       this.driverClass = driverClass;
       if (connectionProperties != null)
@@ -105,28 +95,6 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       }
       this.newConnectionSql = newConnectionSql;
 
-   }
-
-   /**
-    * Get the userName.
-    *
-    * @return the userName.
-    */
-   @Override
-   public final String getUserName()
-   {
-      return userName;
-   }
-
-   /**
-    * Get the password.
-    *
-    * @return the password.
-    */
-   @Override
-   public final String getPassword()
-   {
-      return password;
    }
 
    /**
@@ -219,7 +187,6 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       result = prime * result + ((maxPoolSize == null) ? 0 : maxPoolSize.hashCode());
       result = prime * result + ((minPoolSize == null) ? 0 : minPoolSize.hashCode());
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
-      result = prime * result + ((password == null) ? 0 : password.hashCode());
       result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
       result = prime * result + (prefill ? 1231 : 1237);
       result = prime * result + ((security == null) ? 0 : security.hashCode());
@@ -227,9 +194,9 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       result = prime * result + ((timeOut == null) ? 0 : timeOut.hashCode());
       result = prime * result + ((transactionIsolation == null) ? 0 : transactionIsolation.hashCode());
       result = prime * result + ((urlDelimiter == null) ? 0 : urlDelimiter.hashCode());
-      result = prime * result + ((urlSelectorStrategyClassName == null) ? 0 : urlSelectorStrategyClassName.hashCode());
+      result = prime * result +
+               ((urlSelectorStrategyClassName == null) ? 0 : urlSelectorStrategyClassName.hashCode());
       result = prime * result + (useJavaContext ? 1231 : 1237);
-      result = prime * result + ((userName == null) ? 0 : userName.hashCode());
       result = prime * result + ((validation == null) ? 0 : validation.hashCode());
       return result;
    }
@@ -295,13 +262,6 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       }
       else if (!newConnectionSql.equals(other.newConnectionSql))
          return false;
-      if (password == null)
-      {
-         if (other.password != null)
-            return false;
-      }
-      else if (!password.equals(other.password))
-         return false;
       if (poolName == null)
       {
          if (other.poolName != null)
@@ -350,13 +310,6 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
          return false;
       if (useJavaContext != other.useJavaContext)
          return false;
-      if (userName == null)
-      {
-         if (other.userName != null)
-            return false;
-      }
-      else if (!userName.equals(other.userName))
-         return false;
       if (validation == null)
       {
          if (other.validation != null)
@@ -370,16 +323,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    @Override
    public String toString()
    {
-      return "DataSourceImpl [minPoolSize=" + minPoolSize + ", maxPoolSize=" + maxPoolSize + ", prefill=" + prefill
-            + ", userName=" + userName + ", password=" + password + ", connectionUrl=" + connectionUrl
-            + ", driverClass=" + driverClass + ", transactionIsolation=" + transactionIsolation
-            + ", connectionProperties=" + connectionProperties + ", timeOut=" + timeOut
-            + ", security=" + security + ", statement=" + statement
-            + ", validation=" + validation + ", urlDelimiter=" + urlDelimiter
-            + ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName + ", newConnectionSql="
-            + newConnectionSql + ", useJavaContext=" + useJavaContext + ", poolName=" + poolName + ", enabled="
-            + enabled + ", jndiName=" + jndiName + "]";
+      return "DataSourceImpl [minPoolSize=" + minPoolSize + ", maxPoolSize=" + maxPoolSize + ", prefill=" +
+             prefill + ", connectionUrl=" + connectionUrl + ", driverClass=" + driverClass +
+             ", transactionIsolation=" + transactionIsolation + ", connectionProperties=" + connectionProperties +
+             ", timeOut=" + timeOut + ", security=" + security + ", statement=" + statement + ", validation=" +
+             validation + ", urlDelimiter=" + urlDelimiter + ", urlSelectorStrategyClassName=" +
+             urlSelectorStrategyClassName + ", newConnectionSql=" + newConnectionSql + ", useJavaContext=" +
+             useJavaContext + ", poolName=" + poolName + ", enabled=" + enabled + ", jndiName=" + jndiName + "]";
    }
-
 
 }

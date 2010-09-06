@@ -36,20 +36,6 @@ public interface DataSource extends CommonDataSource
 
 
    /**
-    * Get the userName.
-    *
-    * @return the userName.
-    */
-   public String getUserName();
-
-   /**
-    * Get the password.
-    *
-    * @return the password.
-    */
-   public String getPassword();
-
-   /**
     * Get the connectionUrl.
     *
     * @return the connectionUrl.
@@ -129,17 +115,10 @@ public interface DataSource extends CommonDataSource
       * prefill tag
       */
       PREFILL("prefill"),
+
       /**
-      * userName tag
-      */
-      USERNAME("user-name"),
-      /**
-      * password tag
-      */
-      PASSWORD("password"),
-      /**
-      * connectionUrl tag
-      */
+       * connection-url tag
+       */
       CONNECTIONURL("connection-url"),
       /**
       * driverClass tag

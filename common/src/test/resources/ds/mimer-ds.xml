@@ -7,8 +7,10 @@
   <datasource jndi-name="MimerDS" pool-name="MimerDS">
     <min-pool-size>5</min-pool-size>
     <max-pool-size>100</max-pool-size>
-    <user-name>changeme</user-name>
-    <password>changeme</password>
+    <security>
+      <user-name>changeme</user-name>
+      <password>changeme</password>
+    </security> 
     <connection-url>jdbc:mimer:multi1</connection-url>
     <driver-class>com.mimer.jdbc.Driver</driver-class>
     <time-out>

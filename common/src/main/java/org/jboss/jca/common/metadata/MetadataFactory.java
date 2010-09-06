@@ -25,6 +25,7 @@ package org.jboss.jca.common.metadata;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
+import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
@@ -219,15 +220,20 @@ public class MetadataFactory
          {
 
             List<ConfigProperty> configProperties = createConfigProperties(cds, connector.getResourceadapter()
-                  .getConfigProperties());
+               .getConfigProperties());
 
             ResourceAdapter resourceadapter = new ResourceAdapter10Impl(managedconnectionfactoryClass,
-                  connectionfactoryInterface, connectionfactoryImplClass, connectionInterface,
-                  connectionImplClass, transactionSupport, authenticationMechanism, configProperties,
-                  reauthenticationSupport, securityPermissions, id);
+                                                                        connectionfactoryInterface,
+                                                                        connectionfactoryImplClass,
+                                                                        connectionInterface, connectionImplClass,
+                                                                        transactionSupport,
+                                                                        authenticationMechanism, configProperties,
+                                                                        reauthenticationSupport,
+                                                                        securityPermissions, id);
 
             Connector newConnector = new Connector10Impl(moduleName, vendorName, eisType, resourceadapterVersion,
-                  license, resourceadapter, description, displayNames, icons, id);
+                                                         license, resourceadapter, description, displayNames,
+                                                         icons, id);
 
             return newConnector.merge(connector);
          }
@@ -235,14 +241,14 @@ public class MetadataFactory
          {
             List<? extends ConfigProperty> originalProperties = null;
             if (connector.getResourceadapter() != null &&
-                  connector.getResourceadapter() instanceof ResourceAdapter1516)
+                connector.getResourceadapter() instanceof ResourceAdapter1516)
             {
                ResourceAdapter1516 ra1516 = ((ResourceAdapter1516) connector.getResourceadapter());
                if (ra1516.getOutboundResourceadapter() != null &&
-                     ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+                   ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
                {
                   originalProperties = ra1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                        .getConfigProperties();
+                     .getConfigProperties();
                }
             }
 
@@ -250,17 +256,28 @@ public class MetadataFactory
 
             List<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>(1);
             ConnectionDefinition connectionDefinition = new ConnectionDefinitionImpl(
-                  managedconnectionfactoryClass, configProperties, connectionfactoryInterface,
-                  connectionfactoryImplClass, connectionInterface, connectionImplClass, id);
+                                                                                     managedconnectionfactoryClass,
+                                                                                     configProperties,
+                                                                                     connectionfactoryInterface,
+                                                                                     connectionfactoryImplClass,
+                                                                                     connectionInterface,
+                                                                                     connectionImplClass, id);
             connectionDefinitions.add(connectionDefinition);
             OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(
-                  connectionDefinitions, transactionSupport, authenticationMechanism, reauthenticationSupport, id);
+                                                                                              connectionDefinitions,
+                                                                                              transactionSupport,
+                                                                                              authenticationMechanism,
+                                                                                              reauthenticationSupport,
+                                                                                              id);
             String resourceadapterClass = null;
             List<? extends ConfigProperty> raConfigProperties = null;
             InboundResourceAdapter inboundResourceadapter = null;
             ResourceAdapter1516 resourceadapter = new ResourceAdapter1516Impl(resourceadapterClass,
-                  raConfigProperties, outboundResourceadapter, inboundResourceadapter, adminobjects,
-                  securityPermissions, id);
+                                                                              raConfigProperties,
+                                                                              outboundResourceadapter,
+                                                                              inboundResourceadapter,
+                                                                              adminobjects, securityPermissions,
+                                                                              id);
 
             if (connector.getVersion() == Version.V_16)
             {
@@ -268,15 +285,16 @@ public class MetadataFactory
                boolean metadataComplete = false;
 
                Connector newConnector = new Connector16Impl(moduleName, vendorName, eisType,
-                     resourceadapterVersion, license, resourceadapter, requiredWorkContexts, metadataComplete,
-                     description, displayNames, icons, id);
+                                                            resourceadapterVersion, license, resourceadapter,
+                                                            requiredWorkContexts, metadataComplete, description,
+                                                            displayNames, icons, id);
 
                return newConnector.merge(connector);
             }
             else if (connector.getVersion() == Version.V_15)
             {
                Connector newConnector = new Connector15Impl(vendorName, eisType, resourceadapterVersion, license,
-                     resourceadapter, description, displayNames, icons, id);
+                                                            resourceadapter, description, displayNames, icons, id);
 
                return newConnector.merge(connector);
             }
@@ -289,7 +307,7 @@ public class MetadataFactory
    }
 
    private static List<ConfigProperty> createConfigProperties(CommonDataSource cds,
-         List<? extends ConfigProperty> originalProperties)
+      List<? extends ConfigProperty> originalProperties)
    {
       DataSource ds = null;
       XaDataSource xads = null;
@@ -308,22 +326,33 @@ public class MetadataFactory
          {
 
             ConfigPropertyFactory.Prototype prototype = ConfigPropertyFactory.Prototype.forName(property
-                  .getConfigPropertyName().getValue());
+               .getConfigPropertyName().getValue());
             switch (prototype)
             {
                case USERNAME : {
-                  if (ds != null && ds.getUserName() != null && !ds.getUserName().trim().equals(""))
+                  if (ds != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getUserName()));
+                     Security security = ds.getSecurity();
+                     if (security != null && security.getUserName() != null &&
+                         !security.getUserName().trim().equals(""))
+                     {
+                        configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
+                           security.getUserName()));
+                     }
                   }
-
                   break;
                }
 
                case PASSWORD : {
-                  if (ds != null && ds.getPassword() != null && !ds.getPassword().trim().equals(""))
+                  if (ds != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getPassword()));
+                     Security security = ds.getSecurity();
+                     if (security != null && security.getPassword() != null &&
+                         !security.getPassword().trim().equals(""))
+                     {
+                        configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
+                           security.getPassword()));
+                     }
                   }
 
                   break;
@@ -341,7 +370,7 @@ public class MetadataFactory
                         valueBuf.append(";");
                      }
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           valueBuf.toString()));
+                        valueBuf.toString()));
 
                   }
 
@@ -352,7 +381,7 @@ public class MetadataFactory
                   if (ds != null && ds.getUrlDelimiter() != null && !ds.getUrlDelimiter().trim().equals(""))
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           ds.getUrlDelimiter()));
+                        ds.getUrlDelimiter()));
                   }
 
                   break;
@@ -360,10 +389,10 @@ public class MetadataFactory
 
                case URLSELECTORSTRATEGYCLASSNAME : {
                   if (ds != null && ds.getUrlSelectorStrategyClassName() != null &&
-                        !ds.getUrlSelectorStrategyClassName().trim().equals(""))
+                      !ds.getUrlSelectorStrategyClassName().trim().equals(""))
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           ds.getUrlSelectorStrategyClassName()));
+                        ds.getUrlSelectorStrategyClassName()));
                   }
 
                   break;
@@ -373,7 +402,7 @@ public class MetadataFactory
                   if (xads != null && xads.getXaDataSourceClass() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           xads.getXaDataSourceClass()));
+                        xads.getXaDataSourceClass()));
                   }
 
                   break;
@@ -383,7 +412,7 @@ public class MetadataFactory
                   if (ds != null && ds.getTransactionIsolation() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds
-                           .getTransactionIsolation().name()));
+                        .getTransactionIsolation().name()));
                   }
 
                   break;
@@ -391,10 +420,10 @@ public class MetadataFactory
 
                case PREPAREDSTATEMENTCACHESIZE : {
                   if (ds != null && ds.getStatement() != null &&
-                        ds.getStatement().getPreparedStatementsCacheSize() != null)
+                      ds.getStatement().getPreparedStatementsCacheSize() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getStatement()
-                           .getPreparedStatementsCacheSize()));
+                        .getPreparedStatementsCacheSize()));
                   }
 
                   break;
@@ -404,7 +433,7 @@ public class MetadataFactory
                   if (ds != null && ds.getStatement() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           ds.getStatement() != null && ds.getStatement().isSharePreparedStatements()));
+                        ds.getStatement() != null && ds.getStatement().isSharePreparedStatements()));
                   }
 
                   break;
@@ -414,7 +443,7 @@ public class MetadataFactory
                   if (ds != null && ds.getNewConnectionSql() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           ds.getNewConnectionSql()));
+                        ds.getNewConnectionSql()));
                   }
 
                   break;
@@ -422,11 +451,11 @@ public class MetadataFactory
 
                case CHECKVALIDCONNECTIONSQL : {
                   if (ds != null && ds.getValidation() != null &&
-                        ds.getValidation().getCheckValidConnectionSql() != null &&
-                        !ds.getValidation().getCheckValidConnectionSql().trim().equals(""))
+                      ds.getValidation().getCheckValidConnectionSql() != null &&
+                      !ds.getValidation().getCheckValidConnectionSql().trim().equals(""))
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                           .getCheckValidConnectionSql()));
+                        .getCheckValidConnectionSql()));
                   }
 
                   break;
@@ -434,10 +463,10 @@ public class MetadataFactory
 
                case VALIDCONNECTIONCHECKERCLASSNAME : {
                   if (ds != null && ds.getValidation() != null &&
-                        ds.getValidation().getCheckValidConnectionSql() != null)
+                      ds.getValidation().getCheckValidConnectionSql() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                           .getCheckValidConnectionSql()));
+                        .getCheckValidConnectionSql()));
                   }
 
                   break;
@@ -445,10 +474,10 @@ public class MetadataFactory
 
                case EXCEPTIONSORTERCLASSNAME : {
                   if (ds != null && ds.getValidation() != null &&
-                        ds.getValidation().getExceptionSorterClassName() != null)
+                      ds.getValidation().getExceptionSorterClassName() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                           .getExceptionSorterClassName()));
+                        .getExceptionSorterClassName()));
                   }
 
                   break;
@@ -456,10 +485,10 @@ public class MetadataFactory
 
                case STALECONNECTIONCHECKERCLASSNAME : {
                   if (ds != null && ds.getValidation() != null &&
-                        ds.getValidation().getStaleConnectionCheckerClassName() != null)
+                      ds.getValidation().getStaleConnectionCheckerClassName() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                           .getStaleConnectionCheckerClassName()));
+                        .getStaleConnectionCheckerClassName()));
                   }
 
                   break;
@@ -469,7 +498,7 @@ public class MetadataFactory
                   if (ds != null && ds.getStatement() != null && ds.getStatement().getTrackStatements() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getStatement()
-                           .getTrackStatements().name()));
+                        .getTrackStatements().name()));
                   }
 
                   break;
@@ -479,7 +508,7 @@ public class MetadataFactory
                   if (ds != null && ds.getValidation() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                           .isValidateOnMatch()));
+                        .isValidateOnMatch()));
                   }
 
                   break;
@@ -489,7 +518,7 @@ public class MetadataFactory
                   if (ds != null && ds.getTimeOut() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
-                           .isSetTxQueryTimeout()));
+                        .isSetTxQueryTimeout()));
                   }
 
                   break;
@@ -499,7 +528,7 @@ public class MetadataFactory
                   if (ds != null && ds.getTimeOut() != null && ds.getTimeOut().getQueryTimeout() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
-                           .getQueryTimeout()));
+                        .getQueryTimeout()));
                   }
 
                   break;
@@ -509,7 +538,7 @@ public class MetadataFactory
                   if (ds != null && ds.getTimeOut() != null && ds.getTimeOut().getUseTryLock() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
-                           .getUseTryLock()));
+                        .getUseTryLock()));
                   }
 
                   break;
@@ -518,7 +547,7 @@ public class MetadataFactory
                   if (ds != null && ds.getDriverClass() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           ds.getDriverClass()));
+                        ds.getDriverClass()));
                   }
                   break;
                }
@@ -535,7 +564,7 @@ public class MetadataFactory
                         valueBuf.append(";");
                      }
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           valueBuf.toString()));
+                        valueBuf.toString()));
 
                   }
                   break;
@@ -544,7 +573,7 @@ public class MetadataFactory
                   if (ds != null && ds.getConnectionUrl() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           ds.getConnectionUrl()));
+                        ds.getConnectionUrl()));
                   }
                   break;
                }
@@ -557,11 +586,11 @@ public class MetadataFactory
             for (Entry<String, String> connectionProperty : ds.getConnectionProperties().entrySet())
             {
                ConfigPropertyFactory.Prototype prototype = ConfigPropertyFactory.Prototype
-                     .forName(connectionProperty.getKey());
+                  .forName(connectionProperty.getKey());
                if (prototype != ConfigPropertyFactory.Prototype.UNKNOWN)
                {
                   configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                        connectionProperty.getValue()));
+                     connectionProperty.getValue()));
                }
             }
          }
@@ -594,7 +623,7 @@ public class MetadataFactory
       {
 
          return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
-               prototype.getLocalType(), new XsdString(value, null), null);
+                                       prototype.getLocalType(), new XsdString(value, null), null);
       }
 
       /**
@@ -609,7 +638,7 @@ public class MetadataFactory
       {
 
          return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
-               prototype.getLocalType(), new XsdString(String.valueOf(value), null), null);
+                                       prototype.getLocalType(), new XsdString(String.valueOf(value), null), null);
       }
 
       /**
@@ -624,7 +653,7 @@ public class MetadataFactory
       {
 
          return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
-               prototype.getLocalType(), new XsdString(String.valueOf(value), null), null);
+                                       prototype.getLocalType(), new XsdString(String.valueOf(value), null), null);
       }
 
       /**
@@ -644,7 +673,7 @@ public class MetadataFactory
          CONNECTIONURL("ConnectionURL", "java.lang.String", "The jdbc connection url class."),
          /** CONNECTIONPROPERTIES **/
          CONNECTIONPROPERTIES("ConnectionProperties", "java.lang.String",
-               "Connection properties for the database."),
+            "Connection properties for the database."),
 
          /** USERNAME **/
          USERNAME("UserName", "java.lang.String", "The default user name used to create JDBC connections."),
@@ -652,59 +681,57 @@ public class MetadataFactory
          PASSWORD("Password", "java.lang.String", "The default password used to create JDBC connections."),
          /** XADATASOURCEPROPERTIES **/
          XADATASOURCEPROPERTIES("XADataSourceProperties", "java.lang.String",
-               "The properties to set up the XA driver. These properties must be in the form "
-                     + "name1=value1;name2=value2;...namen=valuen"),
+            "The properties to set up the XA driver. These properties must be in the form "
+               + "name1=value1;name2=value2;...namen=valuen"),
          /** URLDELIMITER **/
          URLDELIMITER("URLDelimiter", "java.lang.String", "The jdbc connection url delimeter."),
          /** URLPROPERTY **/
          URLPROPERTY("URLProperty", "java.lang.String", "The property that contains the list of URLs."),
          /** URLSELECTORSTRATEGYCLASSNAME **/
          URLSELECTORSTRATEGYCLASSNAME("UrlSelectorStrategyClassName", "java.lang.String",
-               "The configurable URLSelectorStrategy class name."),
+            "The configurable URLSelectorStrategy class name."),
          /** XADATASOURCECLASS **/
          XADATASOURCECLASS("XADataSourceClass", "java.lang.String",
-               "The class name of the JDBC XA driver that handlesthis JDBC URL."),
+            "The class name of the JDBC XA driver that handlesthis JDBC URL."),
          /** TRANSACTIONISOLATION **/
          TRANSACTIONISOLATION("TransactionIsolation", "java.lang.String",
-               "The transaction isolation for new connections. Not necessary: the driver default will be used "
-                     + "if ommitted."),
+            "The transaction isolation for new connections. Not necessary: the driver default will be used "
+               + "if ommitted."),
          /** PREPAREDSTATEMENTCACHESIZE **/
          PREPAREDSTATEMENTCACHESIZE("PreparedStatementCacheSize", "java.lang.Integer",
-               "The number of cached prepared statements per connection."),
+            "The number of cached prepared statements per connection."),
          /** SHAREPREPAREDSTATEMENTS **/
          SHAREPREPAREDSTATEMENTS("SharePreparedStatements", "java.lang.Boolean",
-               "Whether to share prepared statements."),
+            "Whether to share prepared statements."),
          /** NEWCONNECTIONSQL **/
          NEWCONNECTIONSQL("NewConnectionSQL", "java.lang.String",
-               "An SQL statement to be executed when a new connection is created as auxillary setup."),
+            "An SQL statement to be executed when a new connection is created as auxillary setup."),
          /** CHECKVALIDCONNECTIONSQL **/
          CHECKVALIDCONNECTIONSQL("CheckValidConnectionSQL", "java.lang.String",
-               "An SQL statement that may be executed when a managed connection is taken out of the pool and is "
-                     + "about to be given to a client: the purpose is to verify that the connection still works."),
+            "An SQL statement that may be executed when a managed connection is taken out of the pool and is "
+               + "about to be given to a client: the purpose is to verify that the connection still works."),
          /** VALIDCONNECTIONCHECKERCLASSNAME **/
          VALIDCONNECTIONCHECKERCLASSNAME("ValidConnectionCheckerClassName", "java.lang.String",
-               "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ValidConnectionChecker"
-                     + " that can determine for a particular vender db when a connection is valid."),
+            "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ValidConnectionChecker"
+               + " that can determine for a particular vender db when a connection is valid."),
          /** EXCEPTIONSORTERCLASSNAME **/
-         EXCEPTIONSORTERCLASSNAME(
-               "ExceptionSorterClassName",
-               "java.lang.String",
-               "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ExceptionSorter that"
-                     + " can determine for a particular vender db which exceptions are "
-                     + "fatal and mean a connection should be discarded."),
+         EXCEPTIONSORTERCLASSNAME("ExceptionSorterClassName", "java.lang.String",
+            "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ExceptionSorter that"
+               + " can determine for a particular vender db which exceptions are "
+               + "fatal and mean a connection should be discarded."),
          /** STALECONNECTIONCHECKERCLASSNAME **/
          STALECONNECTIONCHECKERCLASSNAME("StaleConnectionCheckerClassName", "java.lang.String",
-               "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.StaleConnectionChecker"
-                     + " that can determine for a particular vender db when a connection is stale."),
+            "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.StaleConnectionChecker"
+               + " that can determine for a particular vender db when a connection is stale."),
          /** TRACKSTATEMENTS **/
          TRACKSTATEMENTS("TrackStatements", "java.lang.String",
-               "Whether to track unclosed statements - false/true/nowarn"),
+            "Whether to track unclosed statements - false/true/nowarn"),
          /** VALIDATEONMATCH **/
          VALIDATEONMATCH("ValidateOnMatch", "java.lang.Boolean",
-               "Whether to validate the connection on the ManagedConnectionFactory.matchManagedConnection method"),
+            "Whether to validate the connection on the ManagedConnectionFactory.matchManagedConnection method"),
          /** TRANSACTIONQUERYTIMEOUT **/
          TRANSACTIONQUERYTIMEOUT("TransactionQueryTimeout", "java.lang.Boolean",
-               "Whether to set the query timeout based on the transaction timeout"),
+            "Whether to set the query timeout based on the transaction timeout"),
          /** QUERYTIMEOUT **/
          QUERYTIMEOUT("QueryTimeout", "java.lang.Integer", "A configured query timeout"),
          /** USETRYLOCK **/

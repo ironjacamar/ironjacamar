@@ -21,10 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
-import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
@@ -165,8 +163,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
       boolean prefill = false;
-      String userName = null;
-      String password = null;
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
@@ -180,7 +176,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       boolean interleaving = false;
       boolean isSameRmOverrideValue = false;
       String xaDataSourceClass = null;
-      Recovery recoverySettings = null;
       boolean padXid = false;
       boolean noTxSeparatePool = false;
       boolean wrapXaDataSource = false;
@@ -226,12 +221,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.XA_DATASOURCE)
                {
 
-
-                  return new XADataSourceImpl(minPoolSize, maxPoolSize, prefill, userName, password,
-                        xaDataSourceProperty, xaDataSourceClass, transactionIsolation, isSameRmOverrideValue,
-                        interleaving, recoverySettings, timeOutSettings, securitySettings, statementSettings,
-                        validationSettings, urlDelimiter, urlSelectorStrategyClassName, newConnectionSql,
-                        useJavaContext, poolName, enabled, jndiName, padXid, wrapXaDataSource, noTxSeparatePool);
+                  return new XADataSourceImpl(minPoolSize, maxPoolSize, prefill, xaDataSourceProperty,
+                                              xaDataSourceClass, transactionIsolation, isSameRmOverrideValue,
+                                              interleaving, timeOutSettings, securitySettings,
+                                              statementSettings, validationSettings, urlDelimiter,
+                                              urlSelectorStrategyClassName, newConnectionSql, useJavaContext,
+                                              poolName, enabled, jndiName, padXid, wrapXaDataSource,
+                                              noTxSeparatePool);
                }
                else
                {
@@ -263,14 +259,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case NEWCONNECTIONSQL : {
                      newConnectionSql = elementAsString(reader);
-                     break;
-                  }
-                  case PASSWORD : {
-                     password = elementAsString(reader);
-                     break;
-                  }
-                  case USERNAME : {
-                     userName = elementAsString(reader);
                      break;
                   }
                   case PREFILL : {
@@ -313,10 +301,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      isSameRmOverrideValue = elementAsBoolean(reader);
                      break;
                   }
-                  case RECOVERY : {
-                     recoverySettings = parseRecoverySettings(reader);
-                     break;
-                  }
                   case NO_TX_SEPARATE_POOLS : {
                      noTxSeparatePool = elementAsBoolean(reader);
                      break;
@@ -339,69 +323,12 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private Recovery parseRecoverySettings(XMLStreamReader reader) throws XMLStreamException, ParserException
-   {
-      String recoverUserName = null;
-      String recoverPassword = null;
-      String recoverSecurityDomain = null;
-      boolean noRecover = false;
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (XaDataSource.Tag.forName(reader.getLocalName()) == XaDataSource.Tag.RECOVERY)
-               {
-
-
-                  return new RecoveryImpl(noRecover, recoverUserName, recoverPassword, recoverSecurityDomain);
-               }
-               else
-               {
-                  if (Recovery.Tag.forName(reader.getLocalName()) == Recovery.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (Recovery.Tag.forName(reader.getLocalName()))
-               {
-                  case NORECOVER : {
-                     noRecover = elementAsBoolean(reader);
-                     break;
-                  }
-                  case RECOVERPASSWORD : {
-                     recoverPassword = elementAsString(reader);
-                     break;
-                  }
-                  case RECOVERUSERNAME : {
-                     recoverUserName = elementAsString(reader);
-                     break;
-                  }
-                  case RECOVERSECURITYDOMAIN : {
-                     recoverSecurityDomain = elementAsString(reader);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
 
    private DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
       boolean prefill = false;
-      String userName = null;
-      String password = null;
       String connectionUrl = null;
       String driverClass = null;
       TransactionIsolation transactionIsolation = null;
@@ -454,10 +381,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DATASOURCE)
                {
 
-                  return new DataSourceImpl(minPoolSize, maxPoolSize, prefill, userName, password, connectionUrl,
-                        driverClass, transactionIsolation, connectionProperties, timeOutSettings, securitySettings,
-                        statementSettings, validationSettings, urlDelimiter, urlSelectorStrategyClassName,
-                        newConnectionSql, useJavaContext, poolName, enabled, jndiName);
+                  return new DataSourceImpl(minPoolSize, maxPoolSize, prefill, connectionUrl,
+                                            driverClass, transactionIsolation, connectionProperties,
+                                            timeOutSettings, securitySettings, statementSettings,
+                                            validationSettings, urlDelimiter, urlSelectorStrategyClassName,
+                                            newConnectionSql, useJavaContext, poolName, enabled, jndiName);
                }
                else
                {
@@ -493,14 +421,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case NEWCONNECTIONSQL : {
                      newConnectionSql = elementAsString(reader);
-                     break;
-                  }
-                  case PASSWORD : {
-                     password = elementAsString(reader);
-                     break;
-                  }
-                  case USERNAME : {
-                     userName = elementAsString(reader);
                      break;
                   }
                   case PREFILL : {
@@ -565,8 +485,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
 
                   return new ValidationImpl(validConnectionCheckerClassName, checkValidConnectionSql,
-                        validateOnMatch, backgroundValidation, backgroundValidationMinutes, useFastFail,
-                        staleConnectionCheckerClassName, exceptionSorterClassName);
+                                            validateOnMatch, backgroundValidation, backgroundValidationMinutes,
+                                            useFastFail, staleConnectionCheckerClassName, exceptionSorterClassName);
 
                }
                else
@@ -644,7 +564,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
 
                   return new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, setTxQuertTimeout,
-                        queryTimeout, useTryLock, allocationRetry, allocationRetryWaitMillis, xaResourceTimeout);
+                                         queryTimeout, useTryLock, allocationRetry, allocationRetryWaitMillis,
+                                         xaResourceTimeout);
                }
                else
                {
@@ -715,8 +636,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.STATEMENT)
                {
 
-                  return new StatementImpl(sharePreparedStatements, preparedStatementsCacheSize,
-                        trackStatements);
+                  return new StatementImpl(sharePreparedStatements, preparedStatementsCacheSize, trackStatements);
                }
                else
                {
@@ -737,7 +657,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   case TRACKSTATEMENTS : {
                      String elementString = elementAsString(reader);
                      trackStatements = TrackStatementsEnum.valueOf(elementString == null ? "FALSE" : elementString
-                           .toUpperCase(Locale.US));
+                        .toUpperCase(Locale.US));
                      break;
                   }
                   case SHAREPREPAREDSTATEMENTS : {
@@ -757,8 +677,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    private Security parseSecuritySettings(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
 
-      SecurityManager securityManager = null;
-      String securityDomain = null;
+      String userName = null;
+      String password = null;
 
       while (reader.hasNext())
       {
@@ -768,7 +688,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
                {
 
-                  return new SecurityImpl(securityManager, securityDomain);
+                  return new SecurityImpl(userName, password);
                }
                else
                {
@@ -782,12 +702,12 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case START_ELEMENT : {
                switch (Security.Tag.forName(reader.getLocalName()))
                {
-                  case SECURITYDOMAIN : {
-                     securityDomain = elementAsString(reader);
+                  case PASSWORD : {
+                     password = elementAsString(reader);
                      break;
                   }
-                  case SECURITYMANAGER : {
-                     securityManager = SecurityManager.valueOf(elementAsString(reader));
+                  case USERNAME : {
+                     userName = elementAsString(reader);
                      break;
                   }
                   default :

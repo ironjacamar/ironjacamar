@@ -9,8 +9,10 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="JDataStoreDS" pool-name="JDataStoreDS">
-    <user-name>x</user-name>
-    <password>y</password>
+    <security>
+      <user-name>x</user-name>
+      <password>y</password>
+    </security> 
     <connection-url>jdbc:borland:dslocal:/home/brent/JBuilder6/samples/JDataStore/datastores/employee.jds</connection-url>
     <driver-class>com.borland.datastore.jdbc.DataStoreDriver</driver-class>
   </datasource>

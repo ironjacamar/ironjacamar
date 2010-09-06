@@ -5,8 +5,10 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="MSSQLDS" pool-name="MSSQLDS">
-    <user-name>x</user-name>
-    <password>y</password>
+    <security>
+      <user-name>x</user-name>
+      <password>y</password>
+    </security> 
     <connection-url>jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=MyDatabase</connection-url>
     <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
     <!-- sql to call on an existing pooled connection when it is obtained from pool 

@@ -5,8 +5,10 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="ProgressDS" pool-name="ProgressDS">
-    <user-name>user</user-name>
-    <password>password</password>
+    <security>
+      <user-name>user</user-name>
+      <password>password</password>
+    </security>
     <connection-url>jdbc:JdbcProgress:T:dbserver:3305:liveappl</connection-url>
     <driver-class>com.progress.sql.jdbc.JdbcProgressDriver</driver-class>
   </datasource>

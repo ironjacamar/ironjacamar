@@ -35,21 +35,6 @@ public interface XaDataSource extends CommonDataSource
 {
 
    /**
-    * Get the userName.
-    *
-    * @return the userName.
-    */
-   public String getUserName();
-
-   /**
-    * Get the password.
-    *
-    * @return the password.
-    */
-   public String getPassword();
-
-
-   /**
     * Get the xaDataSourceClass.
     *
     * @return the xaDataSourceClass.
@@ -70,14 +55,6 @@ public interface XaDataSource extends CommonDataSource
     * @return the interleaving.
     */
    public boolean isInterleaving();
-
-   /**
-    * Get the recoverySettings.
-    *
-    * @return the recoverySettings.
-    */
-   public Recovery getRecovery();
-
 
    /**
     * Get the statement.
@@ -163,14 +140,6 @@ public interface XaDataSource extends CommonDataSource
       */
       PREFILL("prefill"),
       /**
-      * userName tag
-      */
-      USERNAME("user-name"),
-      /**
-      * password tag
-      */
-      PASSWORD("password"),
-      /**
       * xaDatasourceProperty tag
       */
       XADATASOURCEPROPERTY("xa-datasource-property"),
@@ -190,10 +159,6 @@ public interface XaDataSource extends CommonDataSource
       * interleaving tag
       */
       INTERLEAVING("interleaving"),
-      /**
-      * recoverySettings tag
-      */
-      RECOVERY("recovery"),
       /**
       * timeOut tag
       */

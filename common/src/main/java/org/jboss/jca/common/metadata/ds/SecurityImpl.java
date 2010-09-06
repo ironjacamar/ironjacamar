@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
 import org.jboss.jca.common.api.metadata.ds.Security;
 
 
@@ -38,43 +37,43 @@ public class SecurityImpl implements Security
    /** The serialVersionUID */
    private static final long serialVersionUID = -5842402120520191086L;
 
-   private final SecurityManager securityManager;
+   private final String userName;
 
-   private final String securityDomain;
+   private final String password;
 
    /**
     * Create a new SecurityImpl.
     *
-    * @param securityManager securityManager
-    * @param securityDomain securityDomain
+    * @param userName userName
+    * @param password password
     */
-   public SecurityImpl(SecurityManager securityManager, String securityDomain)
+   public SecurityImpl(String userName, String password)
    {
       super();
-      this.securityManager = securityManager;
-      this.securityDomain = securityDomain;
+      this.userName = userName;
+      this.password = password;
    }
 
    /**
-    * Get the securityManager.
+    * Get the userName.
     *
-    * @return the securityManager.
+    * @return the userName.
     */
    @Override
-   public final SecurityManager getSecurityManager()
+   public final String getUserName()
    {
-      return securityManager;
+      return userName;
    }
 
    /**
-    * Get the securityDomain.
+    * Get the password.
     *
-    * @return the securityDomain.
+    * @return the password.
     */
    @Override
-   public final String getSecurityDomain()
+   public final String getPassword()
    {
-      return securityDomain;
+      return password;
    }
 
    @Override
@@ -82,8 +81,8 @@ public class SecurityImpl implements Security
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((securityDomain == null) ? 0 : securityDomain.hashCode());
-      result = prime * result + ((securityManager == null) ? 0 : securityManager.hashCode());
+      result = prime * result + ((password == null) ? 0 : password.hashCode());
+      result = prime * result + ((userName == null) ? 0 : userName.hashCode());
       return result;
    }
 
@@ -97,14 +96,19 @@ public class SecurityImpl implements Security
       if (!(obj instanceof SecurityImpl))
          return false;
       SecurityImpl other = (SecurityImpl) obj;
-      if (securityDomain == null)
+      if (password == null)
       {
-         if (other.securityDomain != null)
+         if (other.password != null)
             return false;
       }
-      else if (!securityDomain.equals(other.securityDomain))
+      else if (!password.equals(other.password))
          return false;
-      if (securityManager != other.securityManager)
+      if (userName == null)
+      {
+         if (other.userName != null)
+            return false;
+      }
+      else if (!userName.equals(other.userName))
          return false;
       return true;
    }
@@ -112,7 +116,8 @@ public class SecurityImpl implements Security
    @Override
    public String toString()
    {
-      return "SecurityImpl [securityManager=" + securityManager + ", securityDomain=" + securityDomain + "]";
+      return "SecurityImpl [userName=" + userName + ", password=" + password + "]";
    }
+
 
 }
