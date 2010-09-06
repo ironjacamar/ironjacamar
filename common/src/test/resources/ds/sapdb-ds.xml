@@ -2,14 +2,13 @@
 <!-- ===================================================================== -->
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
 <!-- ===================================================================== -->
-<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="SapdbDS" pool-name="SapdbDS">
+    <connection-url>jdbc:sapdb://127.0.0.1/DB_NAME</connection-url>
+    <driver-class>com.sap.dbtech.jdbc.DriverSapDB</driver-class>
     <security>
       <user-name>x</user-name>
       <password>y</password>
     </security>
-    <connection-url>jdbc:sapdb://127.0.0.1/DB_NAME</connection-url>
-    <driver-class>com.sap.dbtech.jdbc.DriverSapDB</driver-class>
   </datasource>
 </datasources>

@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.Pool;
 import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
@@ -31,6 +32,7 @@ import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute;
+import org.jboss.jca.common.api.metadata.ds.XaPool;
 import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
@@ -160,9 +162,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
    private XaDataSource parseXADataSource(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      Integer minPoolSize = null;
-      Integer maxPoolSize = null;
-      boolean prefill = false;
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
@@ -172,13 +171,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String urlDelimiter = null;
       String urlSelectorStrategyClassName = null;
       String newConnectionSql = null;
+      XaPool xaPool = null;
 
-      boolean interleaving = false;
-      boolean isSameRmOverrideValue = false;
       String xaDataSourceClass = null;
-      boolean padXid = false;
-      boolean noTxSeparatePool = false;
-      boolean wrapXaDataSource = false;
 
       //attributes reading
 
@@ -221,13 +216,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.XA_DATASOURCE)
                {
 
-                  return new XADataSourceImpl(minPoolSize, maxPoolSize, prefill, xaDataSourceProperty,
-                                              xaDataSourceClass, transactionIsolation, isSameRmOverrideValue,
-                                              interleaving, timeOutSettings, securitySettings,
+                  return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter,
-                                              urlSelectorStrategyClassName, newConnectionSql, useJavaContext,
-                                              poolName, enabled, jndiName, padXid, wrapXaDataSource,
-                                              noTxSeparatePool);
+                                              urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
+                                              jndiName, xaDataSourceProperty, xaDataSourceClass, newConnectionSql,
+                                              xaPool);
                }
                else
                {
@@ -249,20 +242,12 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      xaDataSourceClass = elementAsString(reader);
                      break;
                   }
-                  case MAXPOOLSIZE : {
-                     maxPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case MINPOOLSIZE : {
-                     minPoolSize = elementAsInteger(reader);
+                  case XA_POOL : {
+                     xaPool = parseXaPool(reader);
                      break;
                   }
                   case NEWCONNECTIONSQL : {
                      newConnectionSql = elementAsString(reader);
-                     break;
-                  }
-                  case PREFILL : {
-                     prefill = elementAsBoolean(reader);
                      break;
                   }
                   case URLDELIMITER : {
@@ -293,26 +278,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      validationSettings = parseValidationSetting(reader);
                      break;
                   }
-                  case INTERLEAVING : {
-                     interleaving = elementAsBoolean(reader);
-                     break;
-                  }
-                  case ISSAMERMOVERRIDEVALUE : {
-                     isSameRmOverrideValue = elementAsBoolean(reader);
-                     break;
-                  }
-                  case NO_TX_SEPARATE_POOLS : {
-                     noTxSeparatePool = elementAsBoolean(reader);
-                     break;
-                  }
-                  case PAD_XID : {
-                     padXid = elementAsBoolean(reader);
-                     break;
-                  }
-                  case WRAP_XA_RESOURCE : {
-                     wrapXaDataSource = elementAsBoolean(reader);
-                     break;
-                  }
                   default :
                      throw new ParserException("Unexpected element:" + reader.getLocalName());
                }
@@ -322,7 +287,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       }
       throw new ParserException("Reached end of xml document unexpectedly");
    }
-
 
    private DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
@@ -340,6 +304,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String urlDelimiter = null;
       String urlSelectorStrategyClassName = null;
       String newConnectionSql = null;
+      Pool pool = null;
 
       //attributes reading
       boolean useJavaContext = false;
@@ -381,11 +346,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DATASOURCE)
                {
 
-                  return new DataSourceImpl(minPoolSize, maxPoolSize, prefill, connectionUrl,
-                                            driverClass, transactionIsolation, connectionProperties,
-                                            timeOutSettings, securitySettings, statementSettings,
-                                            validationSettings, urlDelimiter, urlSelectorStrategyClassName,
-                                            newConnectionSql, useJavaContext, poolName, enabled, jndiName);
+                  return new DataSourceImpl(connectionUrl, driverClass, transactionIsolation,
+                                            connectionProperties, timeOutSettings, securitySettings,
+                                            statementSettings, validationSettings, urlDelimiter,
+                                            urlSelectorStrategyClassName, newConnectionSql, useJavaContext,
+                                            poolName, enabled, jndiName, pool);
                }
                else
                {
@@ -411,20 +376,12 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      driverClass = elementAsString(reader);
                      break;
                   }
-                  case MAXPOOLSIZE : {
-                     maxPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case MIN_POOL_SIZE : {
-                     minPoolSize = elementAsInteger(reader);
+                  case POOL : {
+                     pool = parsePool(reader);
                      break;
                   }
                   case NEWCONNECTIONSQL : {
                      newConnectionSql = elementAsString(reader);
-                     break;
-                  }
-                  case PREFILL : {
-                     prefill = elementAsBoolean(reader);
                      break;
                   }
                   case URLDELIMITER : {
@@ -453,6 +410,145 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case VALIDATION : {
                      validationSettings = parseValidationSetting(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   private XaPool parseXaPool(XMLStreamReader reader) throws XMLStreamException, ParserException
+   {
+      Integer minPoolSize = null;
+      Integer maxPoolSize = null;
+      boolean prefill = false;
+      boolean interleaving = false;
+      boolean isSameRmOverrideValue = false;
+      boolean padXid = false;
+      boolean noTxSeparatePool = false;
+      boolean wrapXaDataSource = false;
+      boolean useStrictMin = false;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (XaDataSource.Tag.forName(reader.getLocalName()) == XaDataSource.Tag.XA_POOL)
+               {
+
+                  return new XaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, isSameRmOverrideValue,
+                                        interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
+
+               }
+               else
+               {
+                  if (XaPool.Tag.forName(reader.getLocalName()) == XaPool.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (XaPool.Tag.forName(reader.getLocalName()))
+               {
+                  case MAXPOOLSIZE : {
+                     maxPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case MIN_POOL_SIZE : {
+                     minPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case INTERLEAVING : {
+                     interleaving = elementAsBoolean(reader);
+                     break;
+                  }
+                  case ISSAMERMOVERRIDEVALUE : {
+                     isSameRmOverrideValue = elementAsBoolean(reader);
+                     break;
+                  }
+                  case NO_TX_SEPARATE_POOLS : {
+                     noTxSeparatePool = elementAsBoolean(reader);
+                     break;
+                  }
+                  case PAD_XID : {
+                     padXid = elementAsBoolean(reader);
+                     break;
+                  }
+                  case WRAP_XA_RESOURCE : {
+                     wrapXaDataSource = elementAsBoolean(reader);
+                     break;
+                  }
+                  case PREFILL : {
+                     prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case USE_STRICT_MIN : {
+                     useStrictMin = elementAsBoolean(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   private Pool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException
+   {
+      Integer minPoolSize = null;
+      Integer maxPoolSize = null;
+      boolean prefill = false;
+      boolean useStrictMin = false;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.POOL)
+               {
+
+                  return new PoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin);
+
+               }
+               else
+               {
+                  if (Pool.Tag.forName(reader.getLocalName()) == Pool.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (Pool.Tag.forName(reader.getLocalName()))
+               {
+                  case MAXPOOLSIZE : {
+                     maxPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case MIN_POOL_SIZE : {
+                     minPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+
+                  case PREFILL : {
+                     prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case USE_STRICT_MIN : {
+                     useStrictMin = elementAsBoolean(reader);
                      break;
                   }
                   default :

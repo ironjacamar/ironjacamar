@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
+import org.jboss.jca.common.api.metadata.ds.XaPool;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,53 +49,37 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final String xaDataSourceClass;
 
-   private final boolean isSameRmOverride;
-
-   private final boolean interleaving;
-
    private final String newConnectionSql;
 
-   private final boolean padXid;
-
-   private final boolean wrapXaDataSource;
-
-   private final boolean noTxSeparatePool;
+   private final XaPool xaPool;
 
    /**
     * Create a new XADataSourceImpl.
     *
-    * @param minPoolSize minPoolSize
-    * @param maxPoolSize maxPoolSize
-    * @param prefill prefill
-    * @param xaDataSourceProperty xaDataSoourceProperty
-    * @param xaDataSourceClass xaDataSourceClass
     * @param transactionIsolation transactionIsolation
-    * @param isSameRmOverride isSameRmOverride
-    * @param interleaving interleaving
     * @param timeOut timeOut
     * @param security security
     * @param statement statement
     * @param validation validation
     * @param urlDelimiter urlDelimiter
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
-    * @param newConnectionSql newConnectionSql
     * @param useJavaContext useJavaContext
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
-    * @param padXid padXid
-    * @param wrapXaDataSource wrapXaDataSource
-    * @param noTxSeparatePool noTxSeparatePool
+    * @param xaDataSourceProperty xaDataSourceProperty
+    * @param xaDataSourceClass xaDataSourceClass
+    * @param newConnectionSql newConnectionSql
+    * @param xaPool xaPool
     */
-   public XADataSourceImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill,
-      Map<String, String> xaDataSourceProperty, String xaDataSourceClass,
-      TransactionIsolation transactionIsolation, boolean isSameRmOverride, boolean interleaving, TimeOut timeOut,
-      Security security, Statement statement, Validation validation, String urlDelimiter,
-      String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
-      boolean enabled, String jndiName, boolean padXid, boolean wrapXaDataSource, boolean noTxSeparatePool)
+   public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, Security security,
+      Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
+      boolean useJavaContext, String poolName, boolean enabled, String jndiName,
+      Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String newConnectionSql,
+      XaPool xaPool)
    {
-      super(minPoolSize, maxPoolSize, prefill, transactionIsolation, timeOut, security, statement, validation,
-            urlDelimiter, urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
+      super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
+            urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
       if (xaDataSourceProperty != null)
       {
          this.xaDataSourceProperty = new HashMap<String, String>(xaDataSourceProperty.size());
@@ -105,12 +90,8 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          this.xaDataSourceProperty = new HashMap<String, String>(0);
       }
       this.xaDataSourceClass = xaDataSourceClass;
-      this.isSameRmOverride = isSameRmOverride;
-      this.interleaving = interleaving;
       this.newConnectionSql = newConnectionSql;
-      this.padXid = padXid;
-      this.wrapXaDataSource = wrapXaDataSource;
-      this.noTxSeparatePool = noTxSeparatePool;
+      this.xaPool = xaPool;
    }
 
    /**
@@ -122,28 +103,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public final String getXaDataSourceClass()
    {
       return xaDataSourceClass;
-   }
-
-   /**
-    * Get the isSameRmOverride.
-    *
-    * @return the isSameRmOverride.
-    */
-   @Override
-   public final boolean isSameRmOverride()
-   {
-      return isSameRmOverride;
-   }
-
-   /**
-    * Get the interleaving.
-    *
-    * @return the interleaving.
-    */
-   @Override
-   public final boolean isInterleaving()
-   {
-      return interleaving;
    }
 
    /**
@@ -195,14 +154,10 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (interleaving ? 1231 : 1237);
-      result = prime * result + (isSameRmOverride ? 1231 : 1237);
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
-      result = prime * result + (noTxSeparatePool ? 1231 : 1237);
-      result = prime * result + (padXid ? 1231 : 1237);
-      result = prime * result + (wrapXaDataSource ? 1231 : 1237);
       result = prime * result + ((xaDataSourceClass == null) ? 0 : xaDataSourceClass.hashCode());
       result = prime * result + ((xaDataSourceProperty == null) ? 0 : xaDataSourceProperty.hashCode());
+      result = prime * result + ((xaPool == null) ? 0 : xaPool.hashCode());
       return result;
    }
 
@@ -216,22 +171,12 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       if (!(obj instanceof XADataSourceImpl))
          return false;
       XADataSourceImpl other = (XADataSourceImpl) obj;
-      if (interleaving != other.interleaving)
-         return false;
-      if (isSameRmOverride != other.isSameRmOverride)
-         return false;
       if (newConnectionSql == null)
       {
          if (other.newConnectionSql != null)
             return false;
       }
       else if (!newConnectionSql.equals(other.newConnectionSql))
-         return false;
-      if (noTxSeparatePool != other.noTxSeparatePool)
-         return false;
-      if (padXid != other.padXid)
-         return false;
-      if (wrapXaDataSource != other.wrapXaDataSource)
          return false;
       if (xaDataSourceClass == null)
       {
@@ -247,6 +192,13 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       }
       else if (!xaDataSourceProperty.equals(other.xaDataSourceProperty))
          return false;
+      if (xaPool == null)
+      {
+         if (other.xaPool != null)
+            return false;
+      }
+      else if (!xaPool.equals(other.xaPool))
+         return false;
       return true;
    }
 
@@ -254,9 +206,11 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public String toString()
    {
       return "XADataSourceImpl [xaDataSourceProperty=" + xaDataSourceProperty + ", xaDataSourceClass=" +
-             xaDataSourceClass + ", isSameRmOverride=" + isSameRmOverride + ", interleaving=" + interleaving +
-             ", newConnectionSql=" + newConnectionSql + ", padXid=" + padXid + ", wrapXaDataSource=" +
-             wrapXaDataSource + ", noTxSeparatePool=" + noTxSeparatePool + "]";
+             xaDataSourceClass + ", newConnectionSql=" + newConnectionSql + ", xaPool=" + xaPool +
+             ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut + ", security=" + security +
+             ", statement=" + statement + ", validation=" + validation + ", urlDelimiter=" + urlDelimiter +
+             ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName + ", useJavaContext=" +
+             useJavaContext + ", poolName=" + poolName + ", enabled=" + enabled + ", jndiName=" + jndiName + "]";
    }
 
    /**
@@ -270,36 +224,15 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       return Collections.unmodifiableMap(xaDataSourceProperty);
    }
 
-   /**
-    * Get the padXid.
-    *
-    * @return the padXid.
-    */
-   @Override
-   public final boolean isPadXid()
-   {
-      return padXid;
-   }
 
    /**
-    * Get the wrapXaDataSource.
+    * Get the xaPool.
     *
-    * @return the wrapXaDataSource.
+    * @return the xaPool.
     */
    @Override
-   public final boolean isWrapXaDataSource()
+   public final XaPool getXaPool()
    {
-      return wrapXaDataSource;
-   }
-
-   /**
-    * Get the noTxSeparatePool.
-    *
-    * @return the noTxSeparatePool.
-    */
-   @Override
-   public final boolean isNoTxSeparatePool()
-   {
-      return noTxSeparatePool;
+      return xaPool;
    }
 }

@@ -21,69 +21,48 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.JCAMetadata;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A XaDataSource.
+ * A Pool.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface XaDataSource extends CommonDataSource
+public interface Pool extends JCAMetadata
 {
 
    /**
-    * Get the xaDataSourceClass.
+    * Get the minPoolSize.
     *
-    * @return the xaDataSourceClass.
+    * @return the minPoolSize.
     */
-   public String getXaDataSourceClass();
-
+   public Integer getMinPoolSize();
 
    /**
-    * Get the statement.
+    * Get the maxPoolSize.
     *
-    * @return the statement.
+    * @return the maxPoolSize.
     */
-   public Statement getStatement();
-
-
-   /**
-    * Get the urlDelimiter.
-    *
-    * @return the urlDelimiter.
-    */
-   public String getUrlDelimiter();
+   public Integer getMaxPoolSize();
 
    /**
-    * Get the urlSelectorStrategyClassName.
+    * Get the prefill.
     *
-    * @return the urlSelectorStrategyClassName.
+    * @return the prefill.
     */
-   public String getUrlSelectorStrategyClassName();
+   public boolean isPrefill();
 
    /**
-    * Get the newConnectionSql.
+    * Get the useStrictMin.
     *
-    * @return the newConnectionSql.
+    * @return the useStrictMin.
     */
-   public String getNewConnectionSql();
-
-   /**
-    * Get the xaDataSourceProperty.
-    *
-    * @return the xaDataSourceProperty.
-    */
-   public Map<String, String> getXaDataSourceProperty();
-
-   /**
-    * Get the xaPool.
-    *
-    * @return the xaPool.
-    */
-   public XaPool getXaPool();
+   public boolean isUseStrictMin();
 
    /**
    *
@@ -100,50 +79,23 @@ public interface XaDataSource extends CommonDataSource
       UNKNOWN(null),
 
       /**
-      * xaDatasourceProperty tag
-      */
-      XADATASOURCEPROPERTY("xa-datasource-property"),
-      /**
-      * xaDatasourceClass tag
-      */
-      XADATASOURCECLASS("xa-datasource-class"),
-      /**
-      * transactionIsolation tag
-      */
-      TRANSACTIONISOLATION("transaction-isolation"),
-      /**
-      * timeOut tag
-      */
-      TIMEOUT("time-out"),
-      /**
-      * security tag
-      */
-      SECURITY("security"),
-      /**
-      * statement tag
-      */
-      STATEMENT("statement"),
-      /**
-      * validation tag
-      */
-      VALIDATION("validation"),
-      /**
-      * urlDelimiter tag
-      */
-      URLDELIMITER("url-delimiter"),
-      /**
-      * urlSelectorStrategyClassName tag
-      */
-      URLSELECTORSTRATEGYCLASSNAME("url-selector-strategy-class-name"),
-      /**
-      * newConnectionSql tag
-      */
-      NEWCONNECTIONSQL("new-connection-sql"),
+       * min-pool-size tag
+       */
+      MIN_POOL_SIZE("min-pool-size"),
 
       /**
-       * xa-pool tag
+      * maxPoolSize tag
+      */
+      MAXPOOLSIZE("max-pool-size"),
+      /**
+      * prefill tag
+      */
+      PREFILL("prefill"),
+
+      /**
+       * use-strict-min tag
        */
-      XA_POOL("xa-pool");
+      USE_STRICT_MIN("use-strict-min");
 
       private final String name;
 
@@ -197,57 +149,4 @@ public interface XaDataSource extends CommonDataSource
 
    }
 
-   /**
-    *
-    * A Attribute.
-    *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-    *
-    */
-   public enum Attribute
-   {
-
-      /** jndiName attribute
-       *
-       */
-      JNDINAME("jndi-name"),
-
-      /** jndiName attribute
-      *
-      */
-      POOL_NAME("pool-name"),
-
-      /** jndiName attribute
-      *
-      */
-      ENABLED("enabled"),
-      /** jndiName attribute
-      *
-      */
-      USEJAVACONTEXT("use-java-context");
-
-      private final String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Attribute(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
-      }
-
-   }
 }

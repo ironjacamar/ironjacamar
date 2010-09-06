@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <xa-datasource jndi-name="PointbaseXA" pool-name="PointbaseXA">
+    <xa-datasource-property name="ServerName">@pointbase.server@</xa-datasource-property>
+    <xa-datasource-property name="DatabaseName">9092</xa-datasource-property>
+    <xa-datasource-class>com.pointbase.xa.xaDataSource</xa-datasource-class>
     <security>
       <user-name>@pointbase.user@</user-name>
       <password>@pointbase.passwd@</password>
     </security>
-    <xa-datasource-property name="ServerName">@pointbase.server@</xa-datasource-property>
-    <xa-datasource-property name="DatabaseName">9092</xa-datasource-property>
-    <xa-datasource-class>com.pointbase.xa.xaDataSource</xa-datasource-class>
   </xa-datasource>
 </datasources>

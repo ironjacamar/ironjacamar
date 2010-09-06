@@ -2,16 +2,18 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <xa-datasource jndi-name="XAMimerDS" pool-name="XAMimerDS">
-    <min-pool-size>5</min-pool-size>
-    <max-pool-size>100</max-pool-size>
-    <security>
-      <user-name>changeme</user-name>
-      <password>changeme</password>
-    </security> 
     <xa-datasource-property name="DatabaseName">multi1</xa-datasource-property>
     <xa-datasource-property name="ServerName">localhost</xa-datasource-property>
     <xa-datasource-property name="PortNumber">1360</xa-datasource-property>
     <xa-datasource-class>com.mimer.jdbc.MimerXADataSource</xa-datasource-class>
+    <xa-pool>
+      <min-pool-size>5</min-pool-size>
+      <max-pool-size>100</max-pool-size>
+    </xa-pool>
+    <security>
+      <user-name>changeme</user-name>
+      <password>changeme</password>
+    </security> 
     <time-out>
       <blocking-timeout-millis>5000</blocking-timeout-millis>
       <idle-timeout-minutes>15</idle-timeout-minutes>

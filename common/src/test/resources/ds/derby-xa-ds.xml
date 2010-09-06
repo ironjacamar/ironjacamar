@@ -10,7 +10,9 @@
       <xa-datasource-property name="CreateDatabase">create</xa-datasource-property>
       <xa-datasource-class>org.apache.derby.jdbc.EmbeddedXADataSource</xa-datasource-class>
      
-      <!-- uncomment to enable interleaving <interleaving/> -->
-      <is-same-rm-override>false</is-same-rm-override>
+      <xa-pool>
+         <!-- uncomment to enable interleaving <interleaving/> -->
+         <is-same-rm-override>false</is-same-rm-override>
+      </xa-pool>
    </xa-datasource>
 </datasources>

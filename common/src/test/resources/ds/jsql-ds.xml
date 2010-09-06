@@ -5,12 +5,12 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="JSQLDS" pool-name="JSQLDS">
+    <connection-url>jdbc:JSQLConnect://localhost:1433/databaseName=testdb</connection-url>
+    <driver-class>com.jnetdirect.jsql.JSQLDriver</driver-class>
     <security>
       <user-name>x</user-name>
       <password>y</password>
     </security> 
-    <connection-url>jdbc:JSQLConnect://localhost:1433/databaseName=testdb</connection-url>
-    <driver-class>com.jnetdirect.jsql.JSQLDriver</driver-class>
     <!-- sql to call on an existing pooled connection when it is obtained from pool 
     <validation>
       <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql>

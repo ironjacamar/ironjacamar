@@ -26,74 +26,48 @@ import java.util.Map;
 
 /**
  *
- * A DataSource.
+ * A XaPool.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface DataSource extends CommonDataSource
+public interface XaPool extends Pool
 {
 
+   /**
+    * Get the isSameRmOverride.
+    *
+    * @return the isSameRmOverride.
+    */
+   public boolean isSameRmOverride();
 
    /**
-    * Get the connectionUrl.
+    * Get the interleaving.
     *
-    * @return the connectionUrl.
+    * @return the interleaving.
     */
-   public String getConnectionUrl();
+   public boolean isInterleaving();
 
    /**
-    * Get the driverClass.
+    * Get the padXid.
     *
-    * @return the driverClass.
+    * @return the padXid.
     */
-   public String getDriverClass();
-
+   public boolean isPadXid();
 
    /**
-    * Get the connectionProperties.
+    * Get the wrapXaDataSource.
     *
-    * @return the connectionProperties.
+    * @return the wrapXaDataSource.
     */
-   public Map<String, String> getConnectionProperties();
-
+   public boolean isWrapXaDataSource();
 
    /**
-    * Get the statement.
+    * Get the noTxSeparatePool.
     *
-    * @return the statement.
+    * @return the noTxSeparatePool.
     */
-   public Statement getStatement();
-
-
-   /**
-    * Get the urlDelimiter.
-    *
-    * @return the urlDelimiter.
-    */
-   public String getUrlDelimiter();
-
-   /**
-    * Get the urlSelectorStrategyClassName.
-    *
-    * @return the urlSelectorStrategyClassName.
-    */
-   public String getUrlSelectorStrategyClassName();
-
-   /**
-    * Get the newConnectionSql.
-    *
-    * @return the newConnectionSql.
-    */
-   public String getNewConnectionSql();
-
-   /**
-    * Get the pool.
-    *
-    * @return the pool.
-    */
-   public Pool getPool();
-
+   public boolean isNoTxSeparatePool();
 
    /**
    *
@@ -110,53 +84,45 @@ public interface DataSource extends CommonDataSource
       UNKNOWN(null),
 
       /**
-       * pool tag
+       * min-pool-size tag
        */
-      POOL("pool"),
+      MIN_POOL_SIZE("min-pool-size"),
+
       /**
-       * connection-url tag
+      * maxPoolSize tag
+      */
+      MAXPOOLSIZE("max-pool-size"),
+      /**
+      * prefill tag
+      */
+      PREFILL("prefill"),
+
+      /**
+       * use-strict-min tag
        */
-      CONNECTIONURL("connection-url"),
+      USE_STRICT_MIN("use-strict-min"),
       /**
-      * driverClass tag
-      */
-      DRIVERCLASS("driver-class"),
+       * isSameRmOverrideValue tag
+       */
+      ISSAMERMOVERRIDEVALUE("is-same-rm-override"),
       /**
-      * transactionIsolation tag
+      * interleaving tag
       */
-      TRANSACTIONISOLATION("transaction-isolation"),
+      INTERLEAVING("interleaving"),
       /**
-      * connectionProperty tag
-      */
-      CONNECTIONPROPERTY("connection-property"),
+       * pad-xid tag
+       */
+      PAD_XID("pad-xid"),
+
       /**
-      * timeOut tag
-      */
-      TIMEOUT("time-out"),
+       * wrap-xa-resource tag
+       */
+      WRAP_XA_RESOURCE("wrap-xa-resource"),
+
       /**
-      * security tag
-      */
-      SECURITY("security"),
-      /**
-      * statement tag
-      */
-      STATEMENT("statement"),
-      /**
-      * validation tag
-      */
-      VALIDATION("validation"),
-      /**
-      * urlDelimiter tag
-      */
-      URLDELIMITER("url-delimiter"),
-      /**
-      * urlSelectorStrategyClassName tag
-      */
-      URLSELECTORSTRATEGYCLASSNAME("url-selector-strategy-className"),
-      /**
-      * newConnectionSql tag
-      */
-      NEWCONNECTIONSQL("new-connection-sql");
+       * no-tx-separate-pools tag
+       */
+      NO_TX_SEPARATE_POOLS("no-tx-separate-pools");
 
       private final String name;
 
@@ -206,60 +172,6 @@ public interface DataSource extends CommonDataSource
       {
          final Tag element = MAP.get(localName);
          return element == null ? UNKNOWN : element;
-      }
-
-   }
-
-   /**
-    *
-    * A Attribute.
-    *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-    *
-    */
-   public enum Attribute
-   {
-
-      /** jndiName attribute
-       *
-       */
-      JNDINAME("jndi-name"),
-
-      /** jndiName attribute
-      *
-      */
-      POOL_NAME("pool-name"),
-
-      /** jndiName attribute
-      *
-      */
-      ENABLED("enabled"),
-      /** jndiName attribute
-      *
-      */
-      USEJAVACONTEXT("use-java-context");
-
-      private final String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Attribute(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
       }
 
    }

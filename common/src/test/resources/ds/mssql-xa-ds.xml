@@ -8,7 +8,9 @@
     <xa-datasource-property name="User">myuser</xa-datasource-property>
     <xa-datasource-property name="Password">mypassword</xa-datasource-property>
     <xa-datasource-class>com.microsoft.sqlserver.jdbc.SQLServerXADataSource</xa-datasource-class>
-    <!-- uncomment to enable interleaving <interleaving/> -->
-    <is-same-rm-override>false</is-same-rm-override>
+    <xa-pool>
+      <!-- uncomment to enable interleaving <interleaving/> -->
+      <is-same-rm-override>false</is-same-rm-override>
+    </xa-pool>
   </xa-datasource>
 </datasources>

@@ -201,7 +201,7 @@ public final class DsXmlDeployer implements Deployer
          return null;
 
       log.debug("Deploying: " + url.toExternalForm());
-      
+
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
       InputStream is = null;
       try
@@ -269,7 +269,7 @@ public final class DsXmlDeployer implements Deployer
          else
          {
             if (dataSources.getDataSource() != null && dataSources.getDataSource().size() > 0)
-               log.error("Deployment of datasources disabled since jdbc-local.rar couldn't be found"); 
+               log.error("Deployment of datasources disabled since jdbc-local.rar couldn't be found");
          }
 
          if (urlJdbcXA != null)
@@ -304,13 +304,13 @@ public final class DsXmlDeployer implements Deployer
          else
          {
             if (dataSources.getXaDataSource() != null && dataSources.getXaDataSource().size() > 0)
-               log.error("Deployment of XA datasources disabled since jdbc-xa.rar couldn't be found"); 
+               log.error("Deployment of XA datasources disabled since jdbc-xa.rar couldn't be found");
          }
-         
-         return new DsXmlDeployment(url, 
-                                    deploymentName, 
+
+         return new DsXmlDeployment(url,
+                                    deploymentName,
                                     cfs.toArray(new Object[cfs.size()]),
-                                    jndis.toArray(new String[jndis.size()]), 
+                                    jndis.toArray(new String[jndis.size()]),
                                     parent);
       }
       catch (DeployException de)
@@ -368,12 +368,12 @@ public final class DsXmlDeployer implements Deployer
                                                  cd.getConfigProperties(),
                                                  cl);
       // Create the pool
-      Integer minSize = ds.getMinPoolSize();
-      Integer maxSize = ds.getMaxPoolSize();
+      Integer minSize = ds.getPool() == null ? null : ds.getPool().getMinPoolSize();
+      Integer maxSize = ds.getPool() == null ? null : ds.getPool().getMaxPoolSize();
       Long blockingTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getBlockingTimeoutMillis() : null;
       Long idleTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getIdleTimeoutMinutes() : null;
       Long backgroundValidationInterval = null; // TODO
-      Boolean prefill = ds.isPrefill();
+      Boolean prefill = ds.getPool() == null ? false : ds.getPool().isPrefill();
       Boolean strictMin = null; // TODO
       Boolean useFastFail = ds.getValidation() != null ? ds.getValidation().isUseFastFail() : null;
 
@@ -396,7 +396,7 @@ public final class DsXmlDeployer implements Deployer
 
       // ConnectionFactory
       Object cf = mcf.createConnectionFactory(cm);
-      
+
       return cf;
    }
 
@@ -428,12 +428,12 @@ public final class DsXmlDeployer implements Deployer
                                                  cd.getConfigProperties(),
                                                  cl);
       // Create the pool
-      Integer minSize = ds.getMinPoolSize();
-      Integer maxSize = ds.getMaxPoolSize();
+      Integer minSize = ds.getXaPool() == null ? null : ds.getXaPool().getMinPoolSize();
+      Integer maxSize = ds.getXaPool() == null ? null : ds.getXaPool().getMaxPoolSize();
       Long blockingTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getBlockingTimeoutMillis() : null;
       Long idleTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getIdleTimeoutMinutes() : null;
       Long backgroundValidationInterval = null; // TODO
-      Boolean prefill = ds.isPrefill();
+      Boolean prefill = ds.getXaPool() == null ? false : ds.getXaPool().isPrefill();
       Boolean strictMin = null; // TODO
       Boolean useFastFail = ds.getValidation() != null ? ds.getValidation().isUseFastFail() : null;
 
@@ -456,7 +456,7 @@ public final class DsXmlDeployer implements Deployer
 
       // ConnectionFactory
       Object cf = mcf.createConnectionFactory(cm);
-      
+
       return cf;
    }
 

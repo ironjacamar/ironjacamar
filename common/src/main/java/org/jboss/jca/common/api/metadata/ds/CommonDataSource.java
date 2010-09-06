@@ -34,30 +34,6 @@ public interface CommonDataSource extends JCAMetadata
 {
 
    /**
-    * Get the minPoolSize.
-    *
-    * @return the minPoolSize.
-    */
-
-   public Integer getMinPoolSize();
-
-   /**
-    * Get the maxPoolSize.
-    *
-    * @return the maxPoolSize.
-    */
-
-   public Integer getMaxPoolSize();
-
-   /**
-    * Get the prefill.
-    *
-    * @return the prefill.
-    */
-
-   public boolean isPrefill();
-
-   /**
     * Get the transactionIsolation.
     *
     * @return the transactionIsolation.

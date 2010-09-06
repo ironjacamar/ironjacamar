@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <!-- TODO: add driver name, version and download url here -->
   <!-- The example posted in the forums uses a security domain. What is the user/password xa-datasource-property? try javap 
     com.sybase.jdbc3.jdbc.SybXADataSource For the security domain. Add something like the following to conf/login-config.xml 
@@ -9,9 +8,6 @@
     <module-option name = "managedConnectionFactoryName">jboss.jca:service=XATxCM,name=SybaseXADS</module-option> </login-module> 
     </application-policy> -->
   <xa-datasource jndi-name="SybaseXADS" pool-name="SybaseXADS">
-    <min-pool-size>1</min-pool-size>
-    <max-pool-size>20</max-pool-size>
-    <!-- uncomment to enable interleaving <interleaving/> -->
     <xa-datasource-property name="NetworkProtocol">Tds</xa-datasource-property>
     <xa-datasource-property name="ServerName">myserver</xa-datasource-property>
     <xa-datasource-property name="PortNumber">4100</xa-datasource-property>
@@ -19,12 +15,18 @@
     <xa-datasource-property name="User">user</xa-datasource-property>
     <xa-datasource-property name="Password">password</xa-datasource-property>
     <xa-datasource-class>com.sybase.jdbc3.jdbc.SybXADataSource</xa-datasource-class>
+    <xa-pool>
+      <min-pool-size>1</min-pool-size>
+      <max-pool-size>20</max-pool-size>
+      <!-- uncomment to enable interleaving <interleaving/> -->
+    </xa-pool>
     <time-out>
       <idle-timeout-minutes>15</idle-timeout-minutes>
     </time-out>
     <validation>
       <check-valid-connection-sql>select 1 from mytable</check-valid-connection-sql>
-      <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+      <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.SybaseExceptionSorter
+      </exception-sorter-class-name>
     </validation>
   </xa-datasource>
 </datasources>

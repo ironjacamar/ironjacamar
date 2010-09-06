@@ -42,21 +42,6 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    private static final long serialVersionUID = -5612846950298960159L;
 
    /**
-   * minPoolSize
-   */
-   protected final Integer minPoolSize;
-
-   /**
-   * maxPoolSize
-   */
-   protected final Integer maxPoolSize;
-
-   /**
-   * prefill
-   */
-   protected final boolean prefill;
-
-   /**
    * transactionIsolation
    */
    protected final TransactionIsolation transactionIsolation;
@@ -114,9 +99,6 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
     * Create a new DataSourceAbstractImpl.
     *
-    * @param minPoolSize minPoolSize
-    * @param maxPoolSize maxPoolSize
-    * @param prefill prefill
     * @param transactionIsolation transactionIsolation
     * @param timeOut timeOut
     * @param security security
@@ -129,17 +111,11 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param enabled enabled
     * @param jndiName jndiName
     */
-   protected DataSourceAbstractImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill,
-          TransactionIsolation transactionIsolation,
-         TimeOut timeOut,
-         Security security, Statement statement, Validation validation,
-         String urlDelimiter, String urlSelectorStrategyClassName, boolean useJavaContext,
-         String poolName, boolean enabled, String jndiName)
+   protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, Security security,
+      Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
+      boolean useJavaContext, String poolName, boolean enabled, String jndiName)
    {
       super();
-      this.minPoolSize = minPoolSize;
-      this.maxPoolSize = maxPoolSize;
-      this.prefill = prefill;
       this.transactionIsolation = transactionIsolation;
       this.timeOut = timeOut;
       this.security = security;
@@ -153,41 +129,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.jndiName = jndiName;
    }
 
-   /**
-    * Get the minPoolSize.
-    *
-    * @return the minPoolSize.
-    */
 
-   @Override
-   public final Integer getMinPoolSize()
-   {
-      return minPoolSize;
-   }
-
-   /**
-    * Get the maxPoolSize.
-    *
-    * @return the maxPoolSize.
-    */
-
-   @Override
-   public final Integer getMaxPoolSize()
-   {
-      return maxPoolSize;
-   }
-
-   /**
-    * Get the prefill.
-    *
-    * @return the prefill.
-    */
-
-   @Override
-   public final boolean isPrefill()
-   {
-      return prefill;
-   }
 
    /**
     * Get the transactionIsolation.

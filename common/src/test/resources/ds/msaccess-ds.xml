@@ -5,12 +5,12 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
   <datasource jndi-name="MSAccessDS" pool-name="MSAccessDS">
+  <!-- format of URL is "jdbc:odbc:DSNNAME" -->
+    <connection-url>jdbc:odbc:INsightDSN</connection-url>
+    <driver-class>sun.jdbc.odbc.JdbcOdbcDriver</driver-class>
     <security>
       <user-name>x</user-name>
       <password>y</password>
     </security> 
-    <!-- format of URL is "jdbc:odbc:DSNNAME" -->
-    <connection-url>jdbc:odbc:INsightDSN</connection-url>
-    <driver-class>sun.jdbc.odbc.JdbcOdbcDriver</driver-class>
   </datasource>
 </datasources>
