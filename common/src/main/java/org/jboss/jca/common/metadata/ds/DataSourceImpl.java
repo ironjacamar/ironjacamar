@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
-import org.jboss.jca.common.api.metadata.ds.Pool;
-import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
@@ -53,7 +53,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
    private final String newConnectionSql;
 
-   private final Pool pool;
+   private final CommonPool pool;
 
    /**
     * Create a new DataSourceImpl.
@@ -76,9 +76,9 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param pool pool
     */
    public DataSourceImpl(String connectionUrl, String driverClass, TransactionIsolation transactionIsolation,
-      Map<String, String> connectionProperties, TimeOut timeOut, Security security, Statement statement,
+      Map<String, String> connectionProperties, TimeOut timeOut, CommonSecurity security, Statement statement,
       Validation validation, String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql,
-      boolean useJavaContext, String poolName, boolean enabled, String jndiName, Pool pool)
+      boolean useJavaContext, String poolName, boolean enabled, String jndiName, CommonPool pool)
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
             urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
@@ -181,7 +181,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @return the pool.
     */
    @Override
-   public final Pool getPool()
+   public final CommonPool getPool()
    {
       return pool;
    }

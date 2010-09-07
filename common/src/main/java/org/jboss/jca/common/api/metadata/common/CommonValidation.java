@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
+package org.jboss.jca.common.api.metadata.common;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 
@@ -28,26 +28,33 @@ import java.util.Map;
 
 /**
  *
- * A Security.
+ * A Validation.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Security extends JCAMetadata
+public interface CommonValidation extends JCAMetadata
 {
    /**
-    * Get the userName.
+    * Get the backgroundValidation.
     *
-    * @return the userName.
+    * @return the backgroundValidation.
     */
-   public String getUserName();
+   public boolean isBackgroundValidation();
 
    /**
-    * Get the password.
+    * Get the backgroundValidationMinutes.
     *
-    * @return the password.
+    * @return the backgroundValidationMinutes.
     */
-   public String getPassword();
+   public Long getBackgroundValidationMinutes();
+
+   /**
+    * Get the useFastFail.
+    *
+    * @return the useFastFail.
+    */
+   public boolean isUseFastFail();
 
    /**
    *
@@ -64,13 +71,17 @@ public interface Security extends JCAMetadata
       UNKNOWN(null),
 
       /**
-       * userName tag
-       */
-      USERNAME("user-name"),
-      /**
-      * password tag
+      backgroundValidation tag
       */
-      PASSWORD("password");
+      BACKGROUNDVALIDATION("background-validation"),
+      /**
+       * backgroundValidationMinutes tag
+       */
+      BACKGROUNDVALIDATIONMINUTES("background-validation-minutes"),
+      /**
+      useFastFail tag
+      */
+      USEFASTFAIL("use-fast-fail");
 
       private final String name;
 

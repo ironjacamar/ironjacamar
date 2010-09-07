@@ -30,14 +30,10 @@ import org.jboss.jca.common.api.metadata.ds.TimeOut;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class TimeOutImpl implements TimeOut
+public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTimeOutImpl implements TimeOut
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -8797718258493768716L;
-
-   private final Long blockingTimeoutMillis;
-
-   private final Long idleTimeoutMinutes;
 
    private final boolean setTxQuertTimeout;
 
@@ -45,59 +41,27 @@ public class TimeOutImpl implements TimeOut
 
    private final Long useTryLock;
 
-   private final Long allocationRetry;
-
-   private final Long allocationRetryWaitMillis;
-
-   private final Long xaResourceTimeout;
-
    /**
     * Create a new TimeOutImpl.
     *
     * @param blockingTimeoutMillis blockingTimeoutMillis
     * @param idleTimeoutMinutes idleTimeoutMinutes
-    * @param setTxQuertTimeout setTxQuertTimeout
-    * @param queryTimeout queryTimeout
-    * @param useTryLock useTryLock
     * @param allocationRetry allocationRetry
     * @param allocationRetryWaitMillis allocationRetryWaitMillis
     * @param xaResourceTimeout xaResourceTimeout
+    * @param setTxQuertTimeout setTxQuertTimeout
+    * @param queryTimeout queryTimeout
+    * @param useTryLock useTryLock
     */
-   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, boolean setTxQuertTimeout,
-         Long queryTimeout, Long useTryLock, Long allocationRetry, Long allocationRetryWaitMillis,
-         Long xaResourceTimeout)
+   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Long allocationRetry,
+      Long allocationRetryWaitMillis, Long xaResourceTimeout, boolean setTxQuertTimeout, Long queryTimeout,
+      Long useTryLock)
    {
-      super();
-      this.blockingTimeoutMillis = blockingTimeoutMillis;
-      this.idleTimeoutMinutes = idleTimeoutMinutes;
+      super(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,
+            xaResourceTimeout);
       this.setTxQuertTimeout = setTxQuertTimeout;
       this.queryTimeout = queryTimeout;
       this.useTryLock = useTryLock;
-      this.allocationRetry = allocationRetry;
-      this.allocationRetryWaitMillis = allocationRetryWaitMillis;
-      this.xaResourceTimeout = xaResourceTimeout;
-   }
-
-   /**
-    * Get the blockingTimeoutMillis.
-    *
-    * @return the blockingTimeoutMillis.
-    */
-   @Override
-   public final Long getBlockingTimeoutMillis()
-   {
-      return blockingTimeoutMillis;
-   }
-
-   /**
-    * Get the idleTimeoutMinutes.
-    *
-    * @return the idleTimeoutMinutes.
-    */
-   @Override
-   public final Long getIdleTimeoutMinutes()
-   {
-      return idleTimeoutMinutes;
    }
 
    /**
@@ -133,41 +97,14 @@ public class TimeOutImpl implements TimeOut
       return useTryLock;
    }
 
-   /**
-    * Get the allocationRetry.
-    *
-    * @return the allocationRetry.
-    */
-   @Override
-   public final Long getAllocationRetry()
-   {
-      return allocationRetry;
-   }
-
-   /**
-    * Get the allocationRetryWaitMillis.
-    *
-    * @return the allocationRetryWaitMillis.
-    */
-   @Override
-   public final Long getAllocationRetryWaitMillis()
-   {
-      return allocationRetryWaitMillis;
-   }
-
    @Override
    public int hashCode()
    {
       final int prime = 31;
-      int result = 1;
-      result = prime * result + ((allocationRetry == null) ? 0 : allocationRetry.hashCode());
-      result = prime * result + ((allocationRetryWaitMillis == null) ? 0 : allocationRetryWaitMillis.hashCode());
-      result = prime * result + ((blockingTimeoutMillis == null) ? 0 : blockingTimeoutMillis.hashCode());
-      result = prime * result + ((idleTimeoutMinutes == null) ? 0 : idleTimeoutMinutes.hashCode());
+      int result = super.hashCode();
       result = prime * result + ((queryTimeout == null) ? 0 : queryTimeout.hashCode());
       result = prime * result + (setTxQuertTimeout ? 1231 : 1237);
       result = prime * result + ((useTryLock == null) ? 0 : useTryLock.hashCode());
-      result = prime * result + ((xaResourceTimeout == null) ? 0 : xaResourceTimeout.hashCode());
       return result;
    }
 
@@ -176,39 +113,11 @@ public class TimeOutImpl implements TimeOut
    {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (!(obj instanceof TimeOutImpl))
          return false;
       TimeOutImpl other = (TimeOutImpl) obj;
-      if (allocationRetry == null)
-      {
-         if (other.allocationRetry != null)
-            return false;
-      }
-      else if (!allocationRetry.equals(other.allocationRetry))
-         return false;
-      if (allocationRetryWaitMillis == null)
-      {
-         if (other.allocationRetryWaitMillis != null)
-            return false;
-      }
-      else if (!allocationRetryWaitMillis.equals(other.allocationRetryWaitMillis))
-         return false;
-      if (blockingTimeoutMillis == null)
-      {
-         if (other.blockingTimeoutMillis != null)
-            return false;
-      }
-      else if (!blockingTimeoutMillis.equals(other.blockingTimeoutMillis))
-         return false;
-      if (idleTimeoutMinutes == null)
-      {
-         if (other.idleTimeoutMinutes != null)
-            return false;
-      }
-      else if (!idleTimeoutMinutes.equals(other.idleTimeoutMinutes))
-         return false;
       if (queryTimeout == null)
       {
          if (other.queryTimeout != null)
@@ -225,35 +134,14 @@ public class TimeOutImpl implements TimeOut
       }
       else if (!useTryLock.equals(other.useTryLock))
          return false;
-      if (xaResourceTimeout == null)
-      {
-         if (other.xaResourceTimeout != null)
-            return false;
-      }
-      else if (!xaResourceTimeout.equals(other.xaResourceTimeout))
-         return false;
       return true;
    }
 
    @Override
    public String toString()
    {
-      return "TimeOutImpl [blockingTimeoutMillis=" + blockingTimeoutMillis + ", idleTimeoutMinutes="
-            + idleTimeoutMinutes + ", setTxQuertTimeout=" + setTxQuertTimeout + ", queryTimeout=" + queryTimeout
-            + ", useTryLock=" + useTryLock + ", allocationRetry=" + allocationRetry + ", allocationRetryWaitMillis="
-            + allocationRetryWaitMillis + ", xaResourceTimeout=" + xaResourceTimeout + "]";
-   }
-
-   /**
-    * Get the xaResourceTimeout.
-    *
-    * @return the xaResourceTimeout.
-    */
-   @Override
-   public Long getXaResourceTimeout()
-   {
-      return xaResourceTimeout;
+      return "TimeOutImpl [setTxQuertTimeout=" + setTxQuertTimeout + ", queryTimeout=" + queryTimeout +
+             ", useTryLock=" + useTryLock + "]";
    }
 
 }
-

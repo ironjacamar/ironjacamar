@@ -23,12 +23,14 @@ package org.jboss.jca.common.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
-import org.jboss.jca.common.api.metadata.resourceadapter.NoTxConnectionFactory;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -44,32 +46,37 @@ public class ResourceAdapterImpl implements ResourceAdapter
    private final String archive;
    private final TransactionSupportEnum transactionSupport;
 
-   private final ArrayList<NoTxConnectionFactory> connectionFactories;
+   private final HashMap<String, String> configProperties;
 
    private final ArrayList<AdminObject> adminObjects;
 
+   private final ArrayList<ConnectionDefinition> connectionDefinitions;
+
    /**
+    *
     * Create a new ResourceAdapterImpl.
     *
     * @param archive archive
     * @param transactionSupport transactionSupport
-    * @param connectionFactories connectionFactories
+    * @param connectionDefinitions connectionDefinitions
     * @param adminObjects adminObjects
+    * @param configProperties configProperties
     */
    public ResourceAdapterImpl(String archive, TransactionSupportEnum transactionSupport,
-         List<? extends NoTxConnectionFactory> connectionFactories, List<AdminObject> adminObjects)
+      List<ConnectionDefinition> connectionDefinitions, List<AdminObject> adminObjects,
+      Map<String, String> configProperties)
    {
       super();
       this.archive = archive;
       this.transactionSupport = transactionSupport;
-      if (connectionFactories != null)
+      if (connectionDefinitions != null)
       {
-         this.connectionFactories = new ArrayList<NoTxConnectionFactory>(connectionFactories.size());
-         this.connectionFactories.addAll(connectionFactories);
+         this.connectionDefinitions = new ArrayList<ConnectionDefinition>(connectionDefinitions.size());
+         this.connectionDefinitions.addAll(connectionDefinitions);
       }
       else
       {
-         this.connectionFactories = new ArrayList<NoTxConnectionFactory>(0);
+         this.connectionDefinitions = new ArrayList<ConnectionDefinition>(0);
       }
 
       if (adminObjects != null)
@@ -80,6 +87,15 @@ public class ResourceAdapterImpl implements ResourceAdapter
       else
       {
          this.adminObjects = new ArrayList<AdminObject>(0);
+      }
+      if (configProperties != null)
+      {
+         this.configProperties = new HashMap<String, String>(configProperties.size());
+         this.configProperties.putAll(configProperties);
+      }
+      else
+      {
+         this.configProperties = new HashMap<String, String>(0);
       }
 
    }
@@ -112,9 +128,9 @@ public class ResourceAdapterImpl implements ResourceAdapter
     * @return the connectionFactories.
     */
    @Override
-   public final List<? extends NoTxConnectionFactory> getConnectionFactories()
+   public final List<ConnectionDefinition> getConnectionDefinitions()
    {
-      return Collections.unmodifiableList(connectionFactories);
+      return Collections.unmodifiableList(connectionDefinitions);
    }
 
    /**
@@ -123,64 +139,20 @@ public class ResourceAdapterImpl implements ResourceAdapter
     * @return the adminObjects.
     */
    @Override
-   public final List<AdminObject> getAdminobjects()
+   public final List<AdminObject> getAdminObjects()
    {
       return Collections.unmodifiableList(adminObjects);
    }
 
+   /**
+    * Get the configProperties.
+    *
+    * @return the configProperties.
+    */
    @Override
-   public int hashCode()
+   public Map<String, String> getConfigProperties()
    {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((adminObjects == null) ? 0 : adminObjects.hashCode());
-      result = prime * result + ((archive == null) ? 0 : archive.hashCode());
-      result = prime * result + ((connectionFactories == null) ? 0 : connectionFactories.hashCode());
-      result = prime * result + ((transactionSupport == null) ? 0 : transactionSupport.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (!(obj instanceof ResourceAdapterImpl))
-         return false;
-      ResourceAdapterImpl other = (ResourceAdapterImpl) obj;
-      if (adminObjects == null)
-      {
-         if (other.adminObjects != null)
-            return false;
-      }
-      else if (!adminObjects.equals(other.adminObjects))
-         return false;
-      if (archive == null)
-      {
-         if (other.archive != null)
-            return false;
-      }
-      else if (!archive.equals(other.archive))
-         return false;
-      if (connectionFactories == null)
-      {
-         if (other.connectionFactories != null)
-            return false;
-      }
-      else if (!connectionFactories.equals(other.connectionFactories))
-         return false;
-      if (transactionSupport != other.transactionSupport)
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString()
-   {
-      return "ResourceAdapterImpl [archive=" + archive + ", transactionSupport=" + transactionSupport
-            + ", connectionFactories=" + connectionFactories + ", adminObjects=" + adminObjects + "]";
+      return Collections.unmodifiableMap(configProperties);
    }
 }
 

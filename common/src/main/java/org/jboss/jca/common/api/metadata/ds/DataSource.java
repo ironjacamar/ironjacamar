@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,7 +94,7 @@ public interface DataSource extends CommonDataSource
     *
     * @return the pool.
     */
-   public Pool getPool();
+   public CommonPool getPool();
 
 
    /**

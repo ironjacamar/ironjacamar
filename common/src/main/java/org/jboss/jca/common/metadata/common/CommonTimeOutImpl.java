@@ -19,9 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadapter;
+package org.jboss.jca.common.metadata.common;
 
-import org.jboss.jca.common.api.metadata.resourceadapter.TimeOut;
+import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 
 /**
  *
@@ -30,36 +30,45 @@ import org.jboss.jca.common.api.metadata.resourceadapter.TimeOut;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class TimeOutImpl implements TimeOut
+public class CommonTimeOutImpl implements CommonTimeOut
 {
 
    /** The serialVersionUID */
-   private static final long serialVersionUID = -4482517387845540925L;
+   private static final long serialVersionUID = 7351813875143571341L;
 
-   private final Long blockingTimeoutMillis;
+   /** blockingTimeoutMillis **/
+   protected final Long blockingTimeoutMillis;
 
-   private final Long idleTimeoutMinutes;
+   /** idleTimeoutMinutes **/
+   protected final Long idleTimeoutMinutes;
 
-   private final Long allocationRetryWaitMillis;
+   /** allocationRetry **/
+   protected final Long allocationRetry;
 
-   private final Long backgroundValidationMinutes;
+   /** allocationRetryWaitMillis **/
+   protected final Long allocationRetryWaitMillis;
+
+   /** xaResourceTimeout **/
+   protected final Long xaResourceTimeout;
 
    /**
-    * Create a new TimeOutImpl.
+    * Create a new STimeOutImpl.
     *
     * @param blockingTimeoutMillis blockingTimeoutMillis
     * @param idleTimeoutMinutes idleTimeoutMinutes
+    * @param allocationRetry allocationRetry
     * @param allocationRetryWaitMillis allocationRetryWaitMillis
-    * @param backgroundValidationMinutes backgroundValidationMinutes
+    * @param xaResourceTimeout xaResourceTimeout
     */
-   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Long allocationRetryWaitMillis,
-         Long backgroundValidationMinutes)
+   public CommonTimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Long allocationRetry,
+      Long allocationRetryWaitMillis, Long xaResourceTimeout)
    {
       super();
       this.blockingTimeoutMillis = blockingTimeoutMillis;
       this.idleTimeoutMinutes = idleTimeoutMinutes;
+      this.allocationRetry = allocationRetry;
       this.allocationRetryWaitMillis = allocationRetryWaitMillis;
-      this.backgroundValidationMinutes = backgroundValidationMinutes;
+      this.xaResourceTimeout = xaResourceTimeout;
    }
 
    /**
@@ -85,6 +94,17 @@ public class TimeOutImpl implements TimeOut
    }
 
    /**
+    * Get the allocationRetry.
+    *
+    * @return the allocationRetry.
+    */
+   @Override
+   public final Long getAllocationRetry()
+   {
+      return allocationRetry;
+   }
+
+   /**
     * Get the allocationRetryWaitMillis.
     *
     * @return the allocationRetryWaitMillis.
@@ -96,14 +116,14 @@ public class TimeOutImpl implements TimeOut
    }
 
    /**
-    * Get the backgroundValidationMinutes.
+    * Get the xaResourceTimeout.
     *
-    * @return the backgroundValidationMinutes.
+    * @return the xaResourceTimeout.
     */
    @Override
-   public final Long getBackgroundValidationMinutes()
+   public Long getXaResourceTimeout()
    {
-      return backgroundValidationMinutes;
+      return xaResourceTimeout;
    }
 
    @Override
@@ -111,10 +131,11 @@ public class TimeOutImpl implements TimeOut
    {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((allocationRetry == null) ? 0 : allocationRetry.hashCode());
       result = prime * result + ((allocationRetryWaitMillis == null) ? 0 : allocationRetryWaitMillis.hashCode());
-      result = prime * result + ((backgroundValidationMinutes == null) ? 0 : backgroundValidationMinutes.hashCode());
       result = prime * result + ((blockingTimeoutMillis == null) ? 0 : blockingTimeoutMillis.hashCode());
       result = prime * result + ((idleTimeoutMinutes == null) ? 0 : idleTimeoutMinutes.hashCode());
+      result = prime * result + ((xaResourceTimeout == null) ? 0 : xaResourceTimeout.hashCode());
       return result;
    }
 
@@ -125,22 +146,22 @@ public class TimeOutImpl implements TimeOut
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof TimeOutImpl))
+      if (!(obj instanceof CommonTimeOutImpl))
          return false;
-      TimeOutImpl other = (TimeOutImpl) obj;
+      CommonTimeOutImpl other = (CommonTimeOutImpl) obj;
+      if (allocationRetry == null)
+      {
+         if (other.allocationRetry != null)
+            return false;
+      }
+      else if (!allocationRetry.equals(other.allocationRetry))
+         return false;
       if (allocationRetryWaitMillis == null)
       {
          if (other.allocationRetryWaitMillis != null)
             return false;
       }
       else if (!allocationRetryWaitMillis.equals(other.allocationRetryWaitMillis))
-         return false;
-      if (backgroundValidationMinutes == null)
-      {
-         if (other.backgroundValidationMinutes != null)
-            return false;
-      }
-      else if (!backgroundValidationMinutes.equals(other.backgroundValidationMinutes))
          return false;
       if (blockingTimeoutMillis == null)
       {
@@ -156,15 +177,22 @@ public class TimeOutImpl implements TimeOut
       }
       else if (!idleTimeoutMinutes.equals(other.idleTimeoutMinutes))
          return false;
+      if (xaResourceTimeout == null)
+      {
+         if (other.xaResourceTimeout != null)
+            return false;
+      }
+      else if (!xaResourceTimeout.equals(other.xaResourceTimeout))
+         return false;
       return true;
    }
 
    @Override
    public String toString()
    {
-      return "TimeOutImpl [blockingTimeoutMillis=" + blockingTimeoutMillis + ", idleTimeoutMinutes="
-            + idleTimeoutMinutes + ", allocationRetryWaitMillis=" + allocationRetryWaitMillis
-            + ", backgroundValidationMinutes=" + backgroundValidationMinutes + "]";
+      return "CommonTimeOutImpl [blockingTimeoutMillis=" + blockingTimeoutMillis + ", idleTimeoutMinutes=" +
+             idleTimeoutMinutes + ", allocationRetry=" + allocationRetry + ", allocationRetryWaitMillis=" +
+             allocationRetryWaitMillis + ", xaResourceTimeout=" + xaResourceTimeout + "]";
    }
-}
 
+}

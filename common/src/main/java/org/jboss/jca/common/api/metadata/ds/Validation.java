@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +32,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Validation extends JCAMetadata
+public interface Validation extends org.jboss.jca.common.api.metadata.common.CommonValidation
 {
 
    /**
@@ -56,27 +55,6 @@ public interface Validation extends JCAMetadata
     * @return the validateOnMatch.
     */
    public boolean isValidateOnMatch();
-
-   /**
-    * Get the backgroundValidation.
-    *
-    * @return the backgroundValidation.
-    */
-   public boolean isBackgroundValidation();
-
-   /**
-    * Get the backgroundValidationMinutes.
-    *
-    * @return the backgroundValidationMinutes.
-    */
-   public Long getBackgroundValidationMinutes();
-
-   /**
-    * Get the useFastFail.
-    *
-    * @return the useFastFail.
-    */
-   public boolean isUseFastFail();
 
    /**
     * Get the staleConnectionCheckerClassName.

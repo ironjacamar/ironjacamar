@@ -542,9 +542,9 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
             if (cmd.getVersion() != Version.V_10)
             {
                ResourceAdapter1516 ra1516 = (ResourceAdapter1516) cmd.getResourceadapter();
-               if (ra1516 != null && ra1516.getAdminobjects() != null)
+               if (ra1516 != null && ra1516.getAdminObjects() != null)
                {
-                  List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminobjects();
+                  List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminObjects();
                   if (aoMetas.size() > 0)
                   {
                      for (AdminObject aoMeta : aoMetas)

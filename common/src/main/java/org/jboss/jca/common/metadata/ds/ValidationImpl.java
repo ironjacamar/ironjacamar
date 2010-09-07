@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.Validation;
 
+
 /**
  *
  * A ValidationImpl.
@@ -30,7 +31,7 @@ import org.jboss.jca.common.api.metadata.ds.Validation;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class ValidationImpl implements Validation
+public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonValidationImpl implements Validation
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 7816717816552118419L;
@@ -41,12 +42,6 @@ public class ValidationImpl implements Validation
 
    private final boolean validateOnMatch;
 
-   private final boolean backgroundValidation;
-
-   private final Long backgroundValidationMinutes;
-
-   private final boolean useFastFail;
-
    private final String staleConnectionCheckerClassName;
 
    private final String exceptionSorterClassName;
@@ -54,26 +49,23 @@ public class ValidationImpl implements Validation
    /**
     * Create a new ValidationImpl.
     *
-    * @param validConnectionCheckerClassName validConnectionCheckerClassName
-    * @param checkValidConnectionSql checkValidConnectionSql
-    * @param validateOnMatch validateOnMatch
     * @param backgroundValidation backgroundValidation
     * @param backgroundValidationMinutes backgroundValidationMinutes
     * @param useFastFail useFastFail
+    * @param validConnectionCheckerClassName validConnectionCheckerClassName
+    * @param checkValidConnectionSql checkValidConnectionSql
+    * @param validateOnMatch validateOnMatch
     * @param staleConnectionCheckerClassName staleConnectionCheckerClassName
     * @param exceptionSorterClassName exceptionSorterClassName
     */
-   public ValidationImpl(String validConnectionCheckerClassName, String checkValidConnectionSql,
-         boolean validateOnMatch, boolean backgroundValidation, Long backgroundValidationMinutes, boolean useFastFail,
-         String staleConnectionCheckerClassName, String exceptionSorterClassName)
+   public ValidationImpl(boolean backgroundValidation, Long backgroundValidationMinutes, boolean useFastFail,
+      String validConnectionCheckerClassName, String checkValidConnectionSql, boolean validateOnMatch,
+      String staleConnectionCheckerClassName, String exceptionSorterClassName)
    {
-      super();
+      super(backgroundValidation, backgroundValidationMinutes, useFastFail);
       this.validConnectionCheckerClassName = validConnectionCheckerClassName;
       this.checkValidConnectionSql = checkValidConnectionSql;
       this.validateOnMatch = validateOnMatch;
-      this.backgroundValidation = backgroundValidation;
-      this.backgroundValidationMinutes = backgroundValidationMinutes;
-      this.useFastFail = useFastFail;
       this.staleConnectionCheckerClassName = staleConnectionCheckerClassName;
       this.exceptionSorterClassName = exceptionSorterClassName;
    }
@@ -112,39 +104,6 @@ public class ValidationImpl implements Validation
    }
 
    /**
-    * Get the backgroundValidation.
-    *
-    * @return the backgroundValidation.
-    */
-   @Override
-   public final boolean isBackgroundValidation()
-   {
-      return backgroundValidation;
-   }
-
-   /**
-    * Get the backgroundValidationMinutes.
-    *
-    * @return the backgroundValidationMinutes.
-    */
-   @Override
-   public final Long getBackgroundValidationMinutes()
-   {
-      return backgroundValidationMinutes;
-   }
-
-   /**
-    * Get the useFastFail.
-    *
-    * @return the useFastFail.
-    */
-   @Override
-   public final boolean isUseFastFail()
-   {
-      return useFastFail;
-   }
-
-   /**
     * Get the staleConnectionCheckerClassName.
     *
     * @return the staleConnectionCheckerClassName.
@@ -170,16 +129,13 @@ public class ValidationImpl implements Validation
    public int hashCode()
    {
       final int prime = 31;
-      int result = 1;
-      result = prime * result + (backgroundValidation ? 1231 : 1237);
-      result = prime * result + ((backgroundValidationMinutes == null) ? 0 : backgroundValidationMinutes.hashCode());
+      int result = super.hashCode();
       result = prime * result + ((checkValidConnectionSql == null) ? 0 : checkValidConnectionSql.hashCode());
       result = prime * result + ((exceptionSorterClassName == null) ? 0 : exceptionSorterClassName.hashCode());
-      result = prime * result
-            + ((staleConnectionCheckerClassName == null) ? 0 : staleConnectionCheckerClassName.hashCode());
-      result = prime * result + (useFastFail ? 1231 : 1237);
-      result = prime * result
-            + ((validConnectionCheckerClassName == null) ? 0 : validConnectionCheckerClassName.hashCode());
+      result = prime * result +
+               ((staleConnectionCheckerClassName == null) ? 0 : staleConnectionCheckerClassName.hashCode());
+      result = prime * result +
+               ((validConnectionCheckerClassName == null) ? 0 : validConnectionCheckerClassName.hashCode());
       result = prime * result + (validateOnMatch ? 1231 : 1237);
       return result;
    }
@@ -189,20 +145,11 @@ public class ValidationImpl implements Validation
    {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (!(obj instanceof ValidationImpl))
          return false;
       ValidationImpl other = (ValidationImpl) obj;
-      if (backgroundValidation != other.backgroundValidation)
-         return false;
-      if (backgroundValidationMinutes == null)
-      {
-         if (other.backgroundValidationMinutes != null)
-            return false;
-      }
-      else if (!backgroundValidationMinutes.equals(other.backgroundValidationMinutes))
-         return false;
       if (checkValidConnectionSql == null)
       {
          if (other.checkValidConnectionSql != null)
@@ -224,8 +171,6 @@ public class ValidationImpl implements Validation
       }
       else if (!staleConnectionCheckerClassName.equals(other.staleConnectionCheckerClassName))
          return false;
-      if (useFastFail != other.useFastFail)
-         return false;
       if (validConnectionCheckerClassName == null)
       {
          if (other.validConnectionCheckerClassName != null)
@@ -241,11 +186,12 @@ public class ValidationImpl implements Validation
    @Override
    public String toString()
    {
-      return "ValidationImpl [validConnectionCheckerClassName=" + validConnectionCheckerClassName
-            + ", checkValidConnectionSql=" + checkValidConnectionSql + ", validateOnMatch=" + validateOnMatch
-            + ", backgroundValidation=" + backgroundValidation + ", backgroundValidationMinutes="
-            + backgroundValidationMinutes + ", useFastFail=" + useFastFail + ", staleConnectionCheckerClassName="
-            + staleConnectionCheckerClassName + ", exceptionSorterClassName=" + exceptionSorterClassName + "]";
+      return "ValidationImpl [validConnectionCheckerClassName=" + validConnectionCheckerClassName +
+             ", checkValidConnectionSql=" + checkValidConnectionSql + ", validateOnMatch=" + validateOnMatch +
+             ", staleConnectionCheckerClassName=" + staleConnectionCheckerClassName +
+             ", exceptionSorterClassName=" + exceptionSorterClassName + ", backgroundValidation=" +
+             backgroundValidation + ", backgroundValidationMinutes=" + backgroundValidationMinutes +
+             ", useFastFail=" + useFastFail + "]";
    }
 }
 

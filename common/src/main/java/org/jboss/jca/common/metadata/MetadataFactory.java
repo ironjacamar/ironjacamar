@@ -22,10 +22,10 @@
 
 package org.jboss.jca.common.metadata;
 
+import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
-import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
@@ -332,7 +332,7 @@ public class MetadataFactory
                case USERNAME : {
                   if (ds != null)
                   {
-                     Security security = ds.getSecurity();
+                     CommonSecurity security = ds.getSecurity();
                      if (security != null && security.getUserName() != null &&
                          !security.getUserName().trim().equals(""))
                      {
@@ -346,7 +346,7 @@ public class MetadataFactory
                case PASSWORD : {
                   if (ds != null)
                   {
-                     Security security = ds.getSecurity();
+                     CommonSecurity security = ds.getSecurity();
                      if (security != null && security.getPassword() != null &&
                          !security.getPassword().trim().equals(""))
                      {

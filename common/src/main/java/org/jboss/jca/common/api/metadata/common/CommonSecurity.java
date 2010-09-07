@@ -19,27 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.resourceadapter;
+package org.jboss.jca.common.api.metadata.common;
+
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A XaTxConnectionFactory.
+ * A Security.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface XaTxConnectionFactory extends LocalTxConnectionFactory
+public interface CommonSecurity extends JCAMetadata
 {
+   /**
+    * Get the userName.
+    *
+    * @return the userName.
+    */
+   public String getUserName();
 
    /**
-    * Get the xaResourceTimeout.
+    * Get the password.
     *
-    * @return the xaResourceTimeout.
+    * @return the password.
     */
-   public Long getXaResourceTimeout();
+   public String getPassword();
 
    /**
    *
@@ -56,59 +64,13 @@ public interface XaTxConnectionFactory extends LocalTxConnectionFactory
       UNKNOWN(null),
 
       /**
-      minPoolSize tag
-      */
-      MINPOOLSIZE("min-pool-size"),
-      /**
-      maxPoolSize tag
-      */
-      MAXPOOLSIZE("max-pool-size"),
-      /**
-      prefill tag
-      */
-      PREFILL("prefill"),
-      /**
-      userName tag
-      */
+       * userName tag
+       */
       USERNAME("user-name"),
       /**
-      password tag
+      * password tag
       */
-      PASSWORD("password"),
-      /**
-      connectionDefinition tag
-      */
-      CONNECTIONDEFINITION("connection-definition"),
-      /**
-      configProperty tag
-      */
-      CONFIGPROPERTY("config-property"),
-      /**
-      security tag
-      */
-      SECURITY("security"),
-      /**
-      timeOut tag
-      */
-      TIMEOUT("time-out"),
-      /**
-      validation tag
-      */
-      VALIDATION("validation"),
-
-      /**
-       * no-tx-separate-pools tag
-       */
-      NOTXSEPARATEPOOLS("no-tx-separate-pools"),
-      /**
-       * track-connection-by-tx
-       */
-      TRACKCONNECTIONBYTX("track-connection-by-tx"),
-
-      /**
-       * xa-resource-timeout tag
-       */
-      XARESOURCETIMEOUT("xa-resource-timeout");
+      PASSWORD("password");
 
       private final String name;
 
@@ -162,60 +124,4 @@ public interface XaTxConnectionFactory extends LocalTxConnectionFactory
 
    }
 
-   /**
-    *
-    * A Attribute.
-    *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-    *
-    */
-   public enum Attribute
-   {
-
-      /** jndiName attribute
-       *
-       */
-      JNDINAME("jndi-name"),
-
-      /** class-name attribute
-      *
-      */
-      CLASS_NAME("class-name"),
-
-      /** enabled attribute
-      *
-      */
-      ENABLED("enabled"),
-      /** use-java-context attribute
-      *
-      */
-      USEJAVACONTEXT("use-java-context"),
-
-      /** pool-name attribute **/
-      POOL_NAME("pool-name");
-
-      private final String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Attribute(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
-      }
-
-   }
 }

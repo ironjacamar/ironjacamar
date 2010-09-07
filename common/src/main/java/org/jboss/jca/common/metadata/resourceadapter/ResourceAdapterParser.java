@@ -21,20 +21,21 @@
  */
 package org.jboss.jca.common.metadata.resourceadapter;
 
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonSecurity;
+import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
+import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject.Attribute;
-import org.jboss.jca.common.api.metadata.resourceadapter.LocalTxConnectionFactory;
-import org.jboss.jca.common.api.metadata.resourceadapter.NoTxConnectionFactory;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
-import org.jboss.jca.common.api.metadata.resourceadapter.Security;
-import org.jboss.jca.common.api.metadata.resourceadapter.TimeOut;
-import org.jboss.jca.common.api.metadata.resourceadapter.Validation;
-import org.jboss.jca.common.api.metadata.resourceadapter.XaTxConnectionFactory;
+import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
+import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
+import org.jboss.jca.common.metadata.common.CommonValidationImpl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -55,15 +56,15 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class ResourceAdapterParser extends AbstractParser implements MetadataParser<ResourceAdapter>
+public class ResourceAdapterParser extends AbstractParser implements MetadataParser<ResourceAdapters>
 {
 
    @Override
-   public ResourceAdapter parse(InputStream xmlInputStream) throws Exception
+   public ResourceAdapters parse(InputStream xmlInputStream) throws Exception
    {
 
       XMLStreamReader reader = null;
-      ResourceAdapter adapter = null;
+      ResourceAdapters adapters = null;
 
       try
       {
@@ -91,8 +92,8 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
 
                switch (Tag.forName(reader.getLocalName()))
                {
-                  case RESOURCE_ADPTER : {
-                     adapter = parseResourceAdapter(reader);
+                  case RESOURCE_ADPTERS : {
+                     adapters = parseResourceAdapters(reader);
                      break;
                   }
                   default :
@@ -110,24 +111,66 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
          if (reader != null)
             reader.close();
       }
-      return adapter;
+      return adapters;
 
    }
 
-   private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private ResourceAdapters parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException,
+      ParserException
    {
-      ArrayList<NoTxConnectionFactory> connectionFactories = new ArrayList<NoTxConnectionFactory>();
-      ArrayList<AdminObject> adminObjects = new ArrayList<AdminObject>();
-      String archive = null;
-      TransactionSupportEnum transactionSupport = null;
+      ArrayList<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>();
       while (reader.hasNext())
       {
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (Tag.forName(reader.getLocalName()) == Tag.RESOURCE_ADPTER)
+               if (Tag.forName(reader.getLocalName()) == Tag.RESOURCE_ADPTERS)
                {
-                  return new ResourceAdapterImpl(archive, transactionSupport, connectionFactories, adminObjects);
+                  resourceAdapters.trimToSize();
+                  return new ResourceAdaptersImpl(resourceAdapters);
+               }
+               else
+               {
+                  if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (ResourceAdapters.Tag.forName(reader.getLocalName()))
+               {
+                  case RESOURCE_ADPTER : {
+                     resourceAdapters.add(parseResourceAdapter(reader));
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException
+   {
+      ArrayList<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>();
+      ArrayList<AdminObject> adminObjects = new ArrayList<AdminObject>();
+      String archive = null;
+      TransactionSupportEnum transactionSupport = null;
+      HashMap<String, String> configProperties = new HashMap<String, String>();
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.RESOURCE_ADPTER)
+               {
+                  return new ResourceAdapterImpl(archive, transactionSupport, connectionDefinitions, adminObjects,
+                                                 configProperties);
                }
                else
                {
@@ -141,23 +184,26 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
             case START_ELEMENT : {
                switch (ResourceAdapter.Tag.forName(reader.getLocalName()))
                {
-                  case ADMINOBJECT : {
+                  case ADMIN_OBJECTS :
+                  case CONNECTION_DEFINITIONS : {
+                     //ignore it, we will parse single admin_object and connection_definition directly
+                     break;
+                  }
+                  case ADMIN_OBJECT : {
                      adminObjects.add(parseAdminObjects(reader));
                      break;
                   }
-                  case LOCALTXCONNECTIONFACTORY : {
-                     connectionFactories.add(parseLocalTxConnectionFactrory(reader));
+
+                  case CONNECTION_DEFINITION : {
+                     connectionDefinitions.add(parseConnectionDefinitions(reader));
                      break;
                   }
-                  case NOTXCONNECTIONFACTORY : {
-                     connectionFactories.add(parseNoTxConnectionFactrory(reader));
+                  case CONFIG_PROPERTY : {
+                     configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
+
                   }
-                  case XATXCONNECTIONFACTORY : {
-                     connectionFactories.add(parseXaTxConnectionFactrory(reader));
-                     break;
-                  }
-                  case TRANSACTIONSUPPORT : {
+                  case TRANSACTION_SUPPORT : {
                      transactionSupport = TransactionSupportEnum.valueOf(elementAsString(reader));
                      break;
                   }
@@ -175,22 +221,16 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private XaTxConnectionFactory parseXaTxConnectionFactrory(XMLStreamReader reader) throws XMLStreamException,
+   private ConnectionDefinition parseConnectionDefinitions(XMLStreamReader reader) throws XMLStreamException,
       ParserException
    {
       HashMap<String, String> configProperties = new HashMap<String, String>();
-      String connectionDefinition = null;
-      Integer minPoolSize = null;
-      Integer maxPoolSize = null;
-      String userName = null;
-      Security security = null;
-      TimeOut timeOut = null;
+      CommonSecurity security = null;
+      CommonTimeOut timeOut = null;
       boolean prefill = false;
-      Validation validation = null;
-      String password = null;
-      boolean trackConnectionByTx = false;
+      CommonValidation validation = null;
       boolean noTxSeparatePools = false;
-      Long xaResourceTimeout = null;
+      CommonPool pool = null;
 
       //attributes reading
       boolean useJavaContext = false;
@@ -199,7 +239,7 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
       String jndiName = null;
       String poolName = null;
 
-      for (XaTxConnectionFactory.Attribute attribute : XaTxConnectionFactory.Attribute.values())
+      for (ConnectionDefinition.Attribute attribute : ConnectionDefinition.Attribute.values())
       {
          switch (attribute)
          {
@@ -233,16 +273,16 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.XATXCONNECTIONFACTORY)
+               if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.CONNECTION_DEFINITION)
                {
 
-                  return new XaTxConnectionFactoryImpl(minPoolSize, maxPoolSize, prefill, userName, password,
-                        connectionDefinition, configProperties, security, timeOut, validation, poolName, className,
-                        jndiName, enabled, useJavaContext, noTxSeparatePools, trackConnectionByTx, xaResourceTimeout);
+                  return new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
+                                                      useJavaContext, pool, timeOut, validation, security,
+                                                      noTxSeparatePools);
                }
                else
                {
-                  if (XaTxConnectionFactory.Tag.forName(reader.getLocalName()) == XaTxConnectionFactory.Tag.UNKNOWN)
+                  if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.UNKNOWN)
                   {
                      throw new ParserException("unexpected end tag" + reader.getLocalName());
                   }
@@ -250,38 +290,14 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                break;
             }
             case START_ELEMENT : {
-               switch (XaTxConnectionFactory.Tag.forName(reader.getLocalName()))
+               switch (ConnectionDefinition.Tag.forName(reader.getLocalName()))
                {
-                  case CONFIGPROPERTY : {
+                  case CONFIG_PROPERTY : {
                      configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
                   }
-                  case CONNECTIONDEFINITION : {
-                     connectionDefinition = elementAsString(reader);
-                     break;
-                  }
-                  case MAXPOOLSIZE : {
-                     maxPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case MINPOOLSIZE : {
-                     minPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case USERNAME : {
-                     userName = elementAsString(reader);
-                     break;
-                  }
-                  case PASSWORD : {
-                     password = elementAsString(reader);
-                     break;
-                  }
-                  case PREFILL : {
-                     prefill = elementAsBoolean(reader);
-                     break;
-                  }
                   case SECURITY : {
-                     security = parseSecurity(reader);
+                     security = parseSecuritySettings(reader);
                      break;
                   }
                   case TIMEOUT : {
@@ -292,16 +308,12 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                      validation = parseValidation(reader);
                      break;
                   }
-                  case NOTXSEPARATEPOOLS : {
+                  case NO_TX_SEPARATE_POOL : {
                      noTxSeparatePools = elementAsBoolean(reader);
                      break;
                   }
-                  case TRACKCONNECTIONBYTX : {
-                     trackConnectionByTx = elementAsBoolean(reader);
-                     break;
-                  }
-                  case XARESOURCETIMEOUT : {
-                     xaResourceTimeout = elementAsLong(reader);
+                  case POOL : {
+                     pool = parsePool(reader);
                      break;
                   }
                   default :
@@ -314,284 +326,25 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private LocalTxConnectionFactory parseLocalTxConnectionFactrory(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+   private CommonValidation parseValidation(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      HashMap<String, String> configProperties = new HashMap<String, String>();
-      String connectionDefinition = null;
-      Integer minPoolSize = null;
-      Integer maxPoolSize = null;
-      String userName = null;
-      Security security = null;
-      TimeOut timeOut = null;
-      boolean prefill = false;
-      Validation validation = null;
-      String password = null;
-      boolean trackConnectionByTx = false;
-      boolean noTxSeparatePools = false;
-
-      //attributes reading
-      boolean useJavaContext = false;
-      String className = null;
-      boolean enabled = true;
-      String jndiName = null;
-      String poolName = null;
-
-      for (LocalTxConnectionFactory.Attribute attribute : LocalTxConnectionFactory.Attribute.values())
-      {
-         switch (attribute)
-         {
-            case ENABLED : {
-               enabled = attributeAsBoolean(reader, attribute.getLocalName(), true);
-               break;
-            }
-            case JNDINAME : {
-               jndiName = attributeAsString(reader, attribute.getLocalName());
-               break;
-            }
-            case CLASS_NAME : {
-               className = attributeAsString(reader, attribute.getLocalName());
-               break;
-            }
-            case POOL_NAME : {
-               poolName = attributeAsString(reader, attribute.getLocalName());
-               break;
-            }
-            case USEJAVACONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
-               break;
-            }
-            default :
-               break;
-         }
-      }
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.LOCALTXCONNECTIONFACTORY)
-               {
-
-                  return new LocalTxConnectionFactoryImpl(minPoolSize, maxPoolSize, prefill, userName, password,
-                        connectionDefinition, configProperties, security, timeOut, validation, poolName, className,
-                        jndiName, enabled, useJavaContext, noTxSeparatePools, trackConnectionByTx);
-               }
-               else
-               {
-                  if (LocalTxConnectionFactory.Tag.
-                        forName(reader.getLocalName()) == LocalTxConnectionFactory.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (LocalTxConnectionFactory.Tag.forName(reader.getLocalName()))
-               {
-                  case CONFIGPROPERTY : {
-                     configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
-                     break;
-                  }
-                  case CONNECTIONDEFINITION : {
-                     connectionDefinition = elementAsString(reader);
-                     break;
-                  }
-                  case MAXPOOLSIZE : {
-                     maxPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case MINPOOLSIZE : {
-                     minPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case USERNAME : {
-                     userName = elementAsString(reader);
-                     break;
-                  }
-                  case PASSWORD : {
-                     password = elementAsString(reader);
-                     break;
-                  }
-                  case PREFILL : {
-                     prefill = elementAsBoolean(reader);
-                     break;
-                  }
-                  case SECURITY : {
-                     security = parseSecurity(reader);
-                     break;
-                  }
-                  case TIMEOUT : {
-                     timeOut = parseTimeOut(reader);
-                     break;
-                  }
-                  case VALIDATION : {
-                     validation = parseValidation(reader);
-                     break;
-                  }
-                  case NOTXSEPARATEPOOLS : {
-                     noTxSeparatePools = elementAsBoolean(reader);
-                     break;
-                  }
-                  case TRACKCONNECTIONBYTX : {
-                     trackConnectionByTx = elementAsBoolean(reader);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
-   private NoTxConnectionFactory parseNoTxConnectionFactrory(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
-   {
-      HashMap<String, String> configProperties = new HashMap<String, String>();
-      String connectionDefinition = null;
-      Integer minPoolSize = null;
-      Integer maxPoolSize = null;
-      String userName = null;
-      Security security = null;
-      TimeOut timeOut = null;
-      boolean prefill = false;
-      Validation validation = null;
-      String password = null;
-
-      //attributes reading
-      boolean useJavaContext = false;
-      String className = null;
-      boolean enabled = true;
-      String jndiName = null;
-      String poolName = null;
-
-      for (NoTxConnectionFactory.Attribute attribute : NoTxConnectionFactory.Attribute.values())
-      {
-         switch (attribute)
-         {
-            case ENABLED : {
-               enabled = attributeAsBoolean(reader, attribute.getLocalName(), true);
-               break;
-            }
-            case JNDINAME : {
-               jndiName = attributeAsString(reader, attribute.getLocalName());
-               break;
-            }
-            case CLASS_NAME : {
-               className = attributeAsString(reader, attribute.getLocalName());
-               break;
-            }
-            case POOL_NAME : {
-               poolName = attributeAsString(reader, attribute.getLocalName());
-               break;
-            }
-            case USEJAVACONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
-               break;
-            }
-            default :
-               break;
-         }
-      }
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.NOTXCONNECTIONFACTORY)
-               {
-
-                  return new NoTxConnectionFactoryImpl(minPoolSize, maxPoolSize, prefill, userName, password,
-                        connectionDefinition, configProperties, security, timeOut, validation, poolName, className,
-                        jndiName, enabled, useJavaContext);
-               }
-               else
-               {
-                  if (NoTxConnectionFactory.Tag.forName(reader.getLocalName()) == NoTxConnectionFactory.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (NoTxConnectionFactory.Tag.forName(reader.getLocalName()))
-               {
-                  case CONFIGPROPERTY : {
-                     configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
-                     break;
-                  }
-                  case CONNECTIONDEFINITION : {
-                     connectionDefinition = elementAsString(reader);
-                     break;
-                  }
-                  case MAXPOOLSIZE : {
-                     maxPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case MINPOOLSIZE : {
-                     minPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case USERNAME : {
-                     userName = elementAsString(reader);
-                     break;
-                  }
-                  case PASSWORD : {
-                     password = elementAsString(reader);
-                     break;
-                  }
-                  case PREFILL : {
-                     prefill = elementAsBoolean(reader);
-                     break;
-                  }
-                  case SECURITY : {
-                     security = parseSecurity(reader);
-                     break;
-                  }
-                  case TIMEOUT : {
-                     timeOut = parseTimeOut(reader);
-                     break;
-                  }
-                  case VALIDATION : {
-                     validation = parseValidation(reader);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
-   private Validation parseValidation(XMLStreamReader reader) throws XMLStreamException, ParserException
-   {
-      Integer allocationRetry = null;
       boolean useFastFail = false;
       boolean backgroundValidation = false;
+      Long backgroundValidationMinutes = null;
 
       while (reader.hasNext())
       {
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (NoTxConnectionFactory.Tag.forName(reader.getLocalName()) == NoTxConnectionFactory.Tag.VALIDATION)
+               if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.VALIDATION)
                {
 
-                  return new ValidationImpl(allocationRetry, backgroundValidation, useFastFail);
+                  return new CommonValidationImpl(backgroundValidation, backgroundValidationMinutes, useFastFail);
                }
                else
                {
-                  if (Validation.Tag.forName(reader.getLocalName()) == Validation.Tag.UNKNOWN)
+                  if (CommonValidation.Tag.forName(reader.getLocalName()) == CommonValidation.Tag.UNKNOWN)
                   {
                      throw new ParserException("unexpected end tag" + reader.getLocalName());
                   }
@@ -599,10 +352,10 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                break;
             }
             case START_ELEMENT : {
-               switch (Validation.Tag.forName(reader.getLocalName()))
+               switch (CommonValidation.Tag.forName(reader.getLocalName()))
                {
-                  case ALLOCATIONRETRY : {
-                     allocationRetry = elementAsInteger(reader);
+                  case BACKGROUNDVALIDATIONMINUTES : {
+                     backgroundValidationMinutes = elementAsLong(reader);
                      break;
                   }
                   case BACKGROUNDVALIDATION : {
@@ -623,27 +376,28 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private TimeOut parseTimeOut(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private CommonTimeOut parseTimeOut(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       Long blockingTimeoutMillis = null;
-      Long backgroundValidationMinutes = null;
       Long allocationRetryWaitMillis = null;
       Long idleTimeoutMinutes = null;
+      Long allocationRetry = null;
+      Long xaResourceTimeout = null;
 
       while (reader.hasNext())
       {
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (NoTxConnectionFactory.Tag.forName(reader.getLocalName()) == NoTxConnectionFactory.Tag.TIMEOUT)
+               if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.TIMEOUT)
                {
 
-                  return new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetryWaitMillis,
-                        backgroundValidationMinutes);
+                  return new CommonTimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
+                                         allocationRetryWaitMillis, xaResourceTimeout);
                }
                else
                {
-                  if (TimeOut.Tag.forName(reader.getLocalName()) == TimeOut.Tag.UNKNOWN)
+                  if (CommonTimeOut.Tag.forName(reader.getLocalName()) == CommonTimeOut.Tag.UNKNOWN)
                   {
                      throw new ParserException("unexpected end tag" + reader.getLocalName());
                   }
@@ -651,14 +405,14 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                break;
             }
             case START_ELEMENT : {
-               switch (TimeOut.Tag.forName(reader.getLocalName()))
+               switch (CommonTimeOut.Tag.forName(reader.getLocalName()))
                {
                   case ALLOCATIONRETRYWAITMILLIS : {
                      allocationRetryWaitMillis = elementAsLong(reader);
                      break;
                   }
-                  case BACKGROUNDVALIDATIONMINUTES : {
-                     backgroundValidationMinutes = elementAsLong(reader);
+                  case ALLOCATIONRETRY : {
+                     allocationRetry = elementAsLong(reader);
                      break;
                   }
                   case BLOCKINGTIMEOUTMILLIS : {
@@ -669,48 +423,8 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                      idleTimeoutMinutes = elementAsLong(reader);
                      break;
                   }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
-   private Security parseSecurity(XMLStreamReader reader) throws XMLStreamException, ParserException
-   {
-      SecurityManager securityManager = null;
-      String securityDomain = null;
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (NoTxConnectionFactory.Tag.forName(reader.getLocalName()) == NoTxConnectionFactory.Tag.SECURITY)
-               {
-
-                  return new SecurityImpl(securityManager, securityDomain);
-               }
-               else
-               {
-                  if (Security.Tag.forName(reader.getLocalName()) == Security.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (Security.Tag.forName(reader.getLocalName()))
-               {
-                  case SECURITYDOMAIN : {
-                     securityDomain = elementAsString(reader);
-                     break;
-                  }
-                  case SECURITYMANAGER : {
-                     securityManager = SecurityManager.valueOf(elementAsString(reader));
+                  case XARESOURCETIMEOUT : {
+                     xaResourceTimeout = elementAsLong(reader);
                      break;
                   }
                   default :
@@ -732,6 +446,7 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
       String className = null;
       boolean enabled = true;
       String jndiName = null;
+      String poolName = null;
 
       for (Attribute attribute : AdminObject.Attribute.values())
       {
@@ -753,6 +468,10 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
+            case POOL_NAME : {
+               poolName = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
             default :
                break;
          }
@@ -763,10 +482,11 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.ADMINOBJECT)
+               if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.ADMIN_OBJECT)
                {
 
-                  return new AdminObjectImpl(configProperties, className, jndiName, enabled, useJavaContext);
+                  return new AdminObjectImpl(configProperties, className, jndiName, poolName, enabled,
+                                             useJavaContext);
                }
                else
                {
@@ -811,7 +531,7 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
       /** jboss-ra tag name
        *
        */
-      RESOURCE_ADPTER("resource-adapter");
+      RESOURCE_ADPTERS("resource-adapters");
 
       private final String name;
 

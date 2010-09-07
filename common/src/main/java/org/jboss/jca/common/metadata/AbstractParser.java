@@ -21,8 +21,17 @@
  */
 package org.jboss.jca.common.metadata;
 
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonSecurity;
+import org.jboss.jca.common.api.metadata.ds.DataSource;
+import org.jboss.jca.common.metadata.common.CommonPoolImpl;
+import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 /**
  *
@@ -137,6 +146,127 @@ public abstract class AbstractParser
          throw new ParserException(reader.getLocalName() + "isn't a valid number");
       }
       return longValue;
+   }
+
+   /**
+    *
+    * parse a {@link CommonPool} object
+    *
+    * @param reader reader
+    * @return the parsed {@link CommonPool} object
+    * @throws XMLStreamException XMLStreamException
+    * @throws ParserException ParserException
+    */
+   protected CommonPool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException
+   {
+      Integer minPoolSize = null;
+      Integer maxPoolSize = null;
+      boolean prefill = false;
+      boolean useStrictMin = false;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.POOL)
+               {
+
+                  return new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin);
+
+               }
+               else
+               {
+                  if (CommonPool.Tag.forName(reader.getLocalName()) == CommonPool.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (CommonPool.Tag.forName(reader.getLocalName()))
+               {
+                  case MAXPOOLSIZE : {
+                     maxPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case MIN_POOL_SIZE : {
+                     minPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+
+                  case PREFILL : {
+                     prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case USE_STRICT_MIN : {
+                     useStrictMin = elementAsBoolean(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   /**
+    *
+    * parse a {@link CommonSecurity} element
+    *
+    * @param reader reader
+    * @return a {@link CommonSecurity} object
+    * @throws XMLStreamException XMLStreamException
+    * @throws ParserException ParserException
+    */
+   protected CommonSecurity parseSecuritySettings(XMLStreamReader reader) throws XMLStreamException, ParserException
+   {
+
+      String userName = null;
+      String password = null;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
+               {
+
+                  return new CommonSecurityImpl(userName, password);
+               }
+               else
+               {
+                  if (CommonSecurity.Tag.forName(reader.getLocalName()) == CommonSecurity.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (CommonSecurity.Tag.forName(reader.getLocalName()))
+               {
+                  case PASSWORD : {
+                     password = elementAsString(reader);
+                     break;
+                  }
+                  case USERNAME : {
+                     userName = elementAsString(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
    }
 
 }

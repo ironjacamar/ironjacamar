@@ -19,52 +19,45 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadapter;
+package org.jboss.jca.common.metadata.common;
 
-import org.jboss.jca.common.api.metadata.resourceadapter.Validation;
+import org.jboss.jca.common.api.metadata.common.CommonValidation;
 
 /**
  *
- * A ValidationImpl.
+ * A SValidationImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class ValidationImpl implements Validation
+public class CommonValidationImpl implements CommonValidation
 {
+
    /** The serialVersionUID */
-   private static final long serialVersionUID = 2178081632626071094L;
+   private static final long serialVersionUID = 2158460908861877316L;
 
-   private final Integer allocationRetry;
+   /** backgroundValidation **/
+   protected final boolean backgroundValidation;
 
-   private final boolean backgroundValidation;
+   /** backgroundValidationMinutes **/
+   protected final Long backgroundValidationMinutes;
 
-   private final boolean useFastFail;
+   /** useFastFail **/
+   protected final boolean useFastFail;
 
    /**
-    * Create a new ValidationImpl.
+    * Create a new SValidationImpl.
     *
-    * @param allocationRetry allocationRetry
     * @param backgroundValidation backgroundValidation
+    * @param backgroundValidationMinutes backgroundValidationMinutes
     * @param useFastFail useFastFail
     */
-   public ValidationImpl(Integer allocationRetry, boolean backgroundValidation, boolean useFastFail)
+   public CommonValidationImpl(boolean backgroundValidation, Long backgroundValidationMinutes, boolean useFastFail)
    {
       super();
-      this.allocationRetry = allocationRetry;
       this.backgroundValidation = backgroundValidation;
+      this.backgroundValidationMinutes = backgroundValidationMinutes;
       this.useFastFail = useFastFail;
-   }
-
-   /**
-    * Get the allocationRetry.
-    *
-    * @return the allocationRetry.
-    */
-   @Override
-   public final Integer getAllocationRetry()
-   {
-      return allocationRetry;
    }
 
    /**
@@ -76,6 +69,17 @@ public class ValidationImpl implements Validation
    public final boolean isBackgroundValidation()
    {
       return backgroundValidation;
+   }
+
+   /**
+    * Get the backgroundValidationMinutes.
+    *
+    * @return the backgroundValidationMinutes.
+    */
+   @Override
+   public final Long getBackgroundValidationMinutes()
+   {
+      return backgroundValidationMinutes;
    }
 
    /**
@@ -94,8 +98,9 @@ public class ValidationImpl implements Validation
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((allocationRetry == null) ? 0 : allocationRetry.hashCode());
       result = prime * result + (backgroundValidation ? 1231 : 1237);
+      result = prime * result +
+               ((backgroundValidationMinutes == null) ? 0 : backgroundValidationMinutes.hashCode());
       result = prime * result + (useFastFail ? 1231 : 1237);
       return result;
    }
@@ -107,17 +112,17 @@ public class ValidationImpl implements Validation
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof ValidationImpl))
+      if (!(obj instanceof CommonValidationImpl))
          return false;
-      ValidationImpl other = (ValidationImpl) obj;
-      if (allocationRetry == null)
+      CommonValidationImpl other = (CommonValidationImpl) obj;
+      if (backgroundValidation != other.backgroundValidation)
+         return false;
+      if (backgroundValidationMinutes == null)
       {
-         if (other.allocationRetry != null)
+         if (other.backgroundValidationMinutes != null)
             return false;
       }
-      else if (!allocationRetry.equals(other.allocationRetry))
-         return false;
-      if (backgroundValidation != other.backgroundValidation)
+      else if (!backgroundValidationMinutes.equals(other.backgroundValidationMinutes))
          return false;
       if (useFastFail != other.useFastFail)
          return false;
@@ -127,9 +132,8 @@ public class ValidationImpl implements Validation
    @Override
    public String toString()
    {
-      return "ValidationImpl [allocationRetry=" + allocationRetry + ", backgroundValidation=" + backgroundValidation
-            + ", useFastFail=" + useFastFail + "]";
+      return "SValidationImpl [backgroundValidation=" + backgroundValidation + ", backgroundValidationMinutes=" +
+             backgroundValidationMinutes + ", useFastFail=" + useFastFail + "]";
    }
 
 }
-

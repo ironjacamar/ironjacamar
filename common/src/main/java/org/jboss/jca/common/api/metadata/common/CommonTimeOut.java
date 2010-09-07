@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
+package org.jboss.jca.common.api.metadata.common;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 
@@ -28,41 +28,48 @@ import java.util.Map;
 
 /**
  *
- * A Pool.
+ * A TimeOut.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Pool extends JCAMetadata
+public interface CommonTimeOut extends JCAMetadata
 {
 
    /**
-    * Get the minPoolSize.
+    * Get the blockingTimeoutMillis.
     *
-    * @return the minPoolSize.
+    * @return the blockingTimeoutMillis.
     */
-   public Integer getMinPoolSize();
+   public Long getBlockingTimeoutMillis();
 
    /**
-    * Get the maxPoolSize.
+    * Get the idleTimeoutMinutes.
     *
-    * @return the maxPoolSize.
+    * @return the idleTimeoutMinutes.
     */
-   public Integer getMaxPoolSize();
+   public Long getIdleTimeoutMinutes();
 
    /**
-    * Get the prefill.
+    * Get the allocationRetryWaitMillis.
     *
-    * @return the prefill.
+    * @return the allocationRetryWaitMillis.
     */
-   public boolean isPrefill();
+   public Long getAllocationRetry();
 
    /**
-    * Get the useStrictMin.
+    * Get the allocationRetryWaitMillis.
     *
-    * @return the useStrictMin.
+    * @return the allocationRetryWaitMillis.
     */
-   public boolean isUseStrictMin();
+   public Long getAllocationRetryWaitMillis();
+
+   /**
+    * Get the xaResourceTimeout.
+    *
+    * @return the xaResourceTimeout.
+    */
+   public Long getXaResourceTimeout();
 
    /**
    *
@@ -79,23 +86,25 @@ public interface Pool extends JCAMetadata
       UNKNOWN(null),
 
       /**
-       * min-pool-size tag
-       */
-      MIN_POOL_SIZE("min-pool-size"),
-
-      /**
-      * maxPoolSize tag
+      blockingTimeoutMillis tag
       */
-      MAXPOOLSIZE("max-pool-size"),
+      BLOCKINGTIMEOUTMILLIS("blocking-timeout-millis"),
       /**
-      * prefill tag
+      idleTimeoutMinutes tag
       */
-      PREFILL("prefill"),
-
+      IDLETIMEOUTMINUTES("idle-timeout-minutes"),
       /**
-       * use-strict-min tag
+       * xaResourceTimeout tag
        */
-      USE_STRICT_MIN("use-strict-min");
+      XARESOURCETIMEOUT("xa-resource-timeout"),
+      /**
+      allocationRetry tag
+      */
+      ALLOCATIONRETRY("allocation-retry"),
+      /**
+      allocationRetryWaitMillis tag
+      */
+      ALLOCATIONRETRYWAITMILLIS("allocation-retry-wait-millis");
 
       private final String name;
 
@@ -148,5 +157,4 @@ public interface Pool extends JCAMetadata
       }
 
    }
-
 }

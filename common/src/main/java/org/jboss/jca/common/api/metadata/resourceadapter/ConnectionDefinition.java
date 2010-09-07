@@ -21,98 +21,31 @@
  */
 package org.jboss.jca.common.api.metadata.resourceadapter;
 
-
 import org.jboss.jca.common.api.metadata.JCAMetadata;
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonSecurity;
+import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
+import org.jboss.jca.common.api.metadata.common.CommonValidation;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A NoTxConnectionFactory.
+ * A ConnectionDefinition.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface NoTxConnectionFactory extends JCAMetadata
+public interface ConnectionDefinition extends JCAMetadata
 {
 
    /**
-    * Get the minPoolSize.
+    * Get the configProperties.
     *
-    * @return the minPoolSize.
-    */
-   public Integer getMinPoolSize();
-
-   /**
-    * Get the maxPoolSize.
-    *
-    * @return the maxPoolSize.
-    */
-   public Integer getMaxPoolSize();
-
-   /**
-    * Get the prefill.
-    *
-    * @return the prefill.
-    */
-   public boolean isPrefill();
-
-   /**
-    * Get the userName.
-    *
-    * @return the userName.
-    */
-   public String getUserName();
-
-   /**
-    * Get the password.
-    *
-    * @return the password.
-    */
-   public String getPassword();
-
-   /**
-    * Get the connectionDefinition.
-    *
-    * @return the connectionDefinition.
-    */
-   public String getConnectionDefinition();
-
-   /**
-    * Get the configProperty.
-    *
-    * @return the configProperty.
+    * @return the configProperties.
     */
    public Map<String, String> getConfigProperties();
-
-   /**
-    * Get the security.
-    *
-    * @return the security.
-    */
-   public Security getSecurity();
-
-   /**
-    * Get the timeOut.
-    *
-    * @return the timeOut.
-    */
-   public TimeOut getTimeOut();
-
-   /**
-    * Get the validation.
-    *
-    * @return the validation.
-    */
-   public Validation getValidation();
-
-   /**
-    * Get the poolName.
-    *
-    * @return the poolName.
-    */
-   public String getPoolName();
 
    /**
     * Get the className.
@@ -129,6 +62,13 @@ public interface NoTxConnectionFactory extends JCAMetadata
    public String getJndiName();
 
    /**
+    * Get the poolName.
+    *
+    * @return the poolName.
+    */
+   public String getPoolName();
+
+   /**
     * Get the enabled.
     *
     * @return the enabled.
@@ -141,6 +81,42 @@ public interface NoTxConnectionFactory extends JCAMetadata
     * @return the useJavaContext.
     */
    public boolean isUseJavaContext();
+
+   /**
+    * Get the pool.
+    *
+    * @return the pool.
+    */
+   public CommonPool getPool();
+
+   /**
+    * Get the timeOut.
+    *
+    * @return the timeOut.
+    */
+   public CommonTimeOut getTimeOut();
+
+   /**
+    * Get the validation.
+    *
+    * @return the validation.
+    */
+   public CommonValidation getValidation();
+
+   /**
+    * Get the security.
+    *
+    * @return the security.
+    */
+   public CommonSecurity getSecurity();
+
+   /**
+    * Get the noTxSeparatePool.
+    *
+    * @return the noTxSeparatePool.
+    */
+
+   public boolean isNoTxSeparatePool();
 
    /**
    *
@@ -157,44 +133,28 @@ public interface NoTxConnectionFactory extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      minPoolSize tag
-      */
-      MINPOOLSIZE("min-pool-size"),
+       * config-property tag
+       */
+      CONFIG_PROPERTY("config-property"),
       /**
-      maxPoolSize tag
-      */
-      MAXPOOLSIZE("max-pool-size"),
+       * no-tx-separate-pool tag
+       */
+      NO_TX_SEPARATE_POOL("no-tx-separate-pool"),
       /**
-      prefill tag
-      */
-      PREFILL("prefill"),
+       * pool tag
+       */
+      POOL("pool"),
       /**
-      userName tag
-      */
-      USERNAME("user-name"),
-      /**
-      password tag
-      */
-      PASSWORD("password"),
-      /**
-      connectionDefinition tag
-      */
-      CONNECTIONDEFINITION("connection-definition"),
-      /**
-      configProperty tag
-      */
-      CONFIGPROPERTY("config-property"),
-      /**
-      security tag
-      */
+       * security tag
+       */
       SECURITY("security"),
       /**
-      timeOut tag
-      */
-      TIMEOUT("time-out"),
+       * timeout tag
+       */
+      TIMEOUT("timeout"),
       /**
-      validation tag
-      */
+       * validation tag
+       */
       VALIDATION("validation");
 
       private final String name;
@@ -250,12 +210,12 @@ public interface NoTxConnectionFactory extends JCAMetadata
    }
 
    /**
-    *
-    * A Attribute.
-    *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-    *
-    */
+   *
+   * A Attribute.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
    public enum Attribute
    {
 
@@ -269,6 +229,11 @@ public interface NoTxConnectionFactory extends JCAMetadata
       */
       CLASS_NAME("class-name"),
 
+      /** class-name attribute
+      *
+      */
+      POOL_NAME("class-name"),
+
       /** enabled attribute
       *
       */
@@ -276,10 +241,7 @@ public interface NoTxConnectionFactory extends JCAMetadata
       /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context"),
-
-      /** pool-name attribute **/
-      POOL_NAME("pool-name");
+      USEJAVACONTEXT("use-java-context");
 
       private final String name;
 

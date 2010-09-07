@@ -61,7 +61,7 @@ public interface ResourceAdapter1516 extends ResourceAdapter, MergeableMetadata<
    /**
     * @return adminobject
     */
-   public abstract List<AdminObject> getAdminobjects();
+   public abstract List<AdminObject> getAdminObjects();
 
    /**
     * @return securityPermission

@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.common.api.metadata.resourceadapter;
 
-import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 
 import java.util.HashMap;
@@ -35,7 +34,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface ResourceAdapter extends JCAMetadata
+public interface ResourceAdapter
 {
 
    /**
@@ -57,14 +56,21 @@ public interface ResourceAdapter extends JCAMetadata
     *
     * @return the connectionFactories.
     */
-   public List<? extends NoTxConnectionFactory> getConnectionFactories();
+   public List<ConnectionDefinition> getConnectionDefinitions();
 
    /**
     * Get the adminObjects.
     *
     * @return the adminObjects.
     */
-   public List<AdminObject> getAdminobjects();
+   public List<AdminObject> getAdminObjects();
+
+   /**
+    * Get the configProperties.
+    *
+    * @return the configProperties.
+    */
+   public Map<String, String> getConfigProperties();
 
    /**
    *
@@ -80,31 +86,38 @@ public interface ResourceAdapter extends JCAMetadata
        */
       UNKNOWN(null),
 
-      /**
-      transactionsupport tag
+      /** config-property tag
+      *
       */
-      TRANSACTIONSUPPORT("transaction-support"),
-      /**
-      localtxconnectionfactory tag
-      */
-      LOCALTXCONNECTIONFACTORY("local-tx-connection-factory"),
-      /**
-      xatxconnectionfactory tag
-      */
-      XATXCONNECTIONFACTORY("xa-tx-connection-factory"),
-      /**
-      notxconnectionfactory tag
-      */
-      NOTXCONNECTIONFACTORY("no-txconnection-factory"),
-      /**
-      adminobject tag
-      */
-      ADMINOBJECT("admin-object"),
+      CONFIG_PROPERTY("config-property"),
 
-      /** archive tag
-       *
+      /**
+       * archive tag
        */
-      ARCHIVE("archive");
+      ARCHIVE("archive"),
+
+      /**
+       * transaction-support tag
+       */
+      TRANSACTION_SUPPORT("transaction-support"),
+      /**
+       * connection-definitions tag
+       */
+      CONNECTION_DEFINITIONS("connection-definitions"),
+
+      /**
+       * admin-objects tag
+       */
+      ADMIN_OBJECTS("admin-objects"),
+      /**
+      * connection-definition tag
+      */
+     CONNECTION_DEFINITION("connection-definition"),
+
+     /**
+      * admin-objects tag
+      */
+     ADMIN_OBJECT("admin-object");
 
       private final String name;
 
@@ -145,9 +158,9 @@ public interface ResourceAdapter extends JCAMetadata
 
       /**
       *
-      * Static method to get enum instance given localName XsdString
+      * Static method to get enum instance given localName string
       *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+      * @param localName a string used as localname (typically tag name as defined in xsd)
       * @return the enum instance
       */
       public static Tag forName(String localName)
@@ -157,5 +170,4 @@ public interface ResourceAdapter extends JCAMetadata
       }
 
    }
-
 }

@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.resourceadapter;
+package org.jboss.jca.common.api.metadata.common;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 
@@ -28,34 +28,41 @@ import java.util.Map;
 
 /**
  *
- * A Validation.
+ * A Pool.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Validation extends JCAMetadata
+public interface CommonPool extends JCAMetadata
 {
 
    /**
-    * Get the allocationRetry.
+    * Get the minPoolSize.
     *
-    * @return the allocationRetry.
+    * @return the minPoolSize.
     */
-   public Integer getAllocationRetry();
+   public Integer getMinPoolSize();
 
    /**
-    * Get the backgroundValidation.
+    * Get the maxPoolSize.
     *
-    * @return the backgroundValidation.
+    * @return the maxPoolSize.
     */
-   public boolean isBackgroundValidation();
+   public Integer getMaxPoolSize();
 
    /**
-    * Get the useFastFail.
+    * Get the prefill.
     *
-    * @return the useFastFail.
+    * @return the prefill.
     */
-   public boolean isUseFastFail();
+   public boolean isPrefill();
+
+   /**
+    * Get the useStrictMin.
+    *
+    * @return the useStrictMin.
+    */
+   public boolean isUseStrictMin();
 
    /**
    *
@@ -72,17 +79,23 @@ public interface Validation extends JCAMetadata
       UNKNOWN(null),
 
       /**
-      allocationRetry tag
-      */
-      ALLOCATIONRETRY("allocation-retry"),
+       * min-pool-size tag
+       */
+      MIN_POOL_SIZE("min-pool-size"),
+
       /**
-      backgroundValidation tag
+      * maxPoolSize tag
       */
-      BACKGROUNDVALIDATION("background-validation"),
+      MAXPOOLSIZE("max-pool-size"),
       /**
-      useFastFail tag
+      * prefill tag
       */
-      USEFASTFAIL("use-fast-fail");
+      PREFILL("prefill"),
+
+      /**
+       * use-strict-min tag
+       */
+      USE_STRICT_MIN("use-strict-min");
 
       private final String name;
 
@@ -135,4 +148,5 @@ public interface Validation extends JCAMetadata
       }
 
    }
+
 }

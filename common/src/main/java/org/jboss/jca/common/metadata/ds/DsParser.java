@@ -21,10 +21,10 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
-import org.jboss.jca.common.api.metadata.ds.Pool;
-import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
@@ -165,7 +165,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
-      Security securitySettings = null;
+      CommonSecurity securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
@@ -298,13 +298,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       TransactionIsolation transactionIsolation = null;
       Map<String, String> connectionProperties = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
-      Security securitySettings = null;
+      CommonSecurity securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
       String urlSelectorStrategyClassName = null;
       String newConnectionSql = null;
-      Pool pool = null;
+      CommonPool pool = null;
 
       //attributes reading
       boolean useJavaContext = false;
@@ -504,63 +504,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private Pool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException
-   {
-      Integer minPoolSize = null;
-      Integer maxPoolSize = null;
-      boolean prefill = false;
-      boolean useStrictMin = false;
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.POOL)
-               {
-
-                  return new PoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin);
-
-               }
-               else
-               {
-                  if (Pool.Tag.forName(reader.getLocalName()) == Pool.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (Pool.Tag.forName(reader.getLocalName()))
-               {
-                  case MAXPOOLSIZE : {
-                     maxPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-                  case MIN_POOL_SIZE : {
-                     minPoolSize = elementAsInteger(reader);
-                     break;
-                  }
-
-                  case PREFILL : {
-                     prefill = elementAsBoolean(reader);
-                     break;
-                  }
-                  case USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
    private Validation parseValidationSetting(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       boolean validateOnMatch = false;
@@ -580,9 +523,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.VALIDATION)
                {
 
-                  return new ValidationImpl(validConnectionCheckerClassName, checkValidConnectionSql,
-                                            validateOnMatch, backgroundValidation, backgroundValidationMinutes,
-                                            useFastFail, staleConnectionCheckerClassName, exceptionSorterClassName);
+                  return new ValidationImpl(backgroundValidation, backgroundValidationMinutes, useFastFail,
+                                            validConnectionCheckerClassName, checkValidConnectionSql,
+                                            validateOnMatch, staleConnectionCheckerClassName,
+                                            exceptionSorterClassName);
 
                }
                else
@@ -659,9 +603,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.TIMEOUT)
                {
 
-                  return new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, setTxQuertTimeout,
-                                         queryTimeout, useTryLock, allocationRetry, allocationRetryWaitMillis,
-                                         xaResourceTimeout);
+                  return new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
+                                         allocationRetryWaitMillis, xaResourceTimeout, setTxQuertTimeout,
+                                         queryTimeout, useTryLock);
                }
                else
                {
@@ -758,52 +702,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case SHAREPREPAREDSTATEMENTS : {
                      sharePreparedStatements = elementAsBoolean(reader);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
-   private Security parseSecuritySettings(XMLStreamReader reader) throws XMLStreamException, ParserException
-   {
-
-      String userName = null;
-      String password = null;
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
-               {
-
-                  return new SecurityImpl(userName, password);
-               }
-               else
-               {
-                  if (Security.Tag.forName(reader.getLocalName()) == Security.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (Security.Tag.forName(reader.getLocalName()))
-               {
-                  case PASSWORD : {
-                     password = elementAsString(reader);
-                     break;
-                  }
-                  case USERNAME : {
-                     userName = elementAsString(reader);
                      break;
                   }
                   default :

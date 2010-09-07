@@ -394,9 +394,9 @@ public class Validation
 
       if (cmd.getResourceadapter() != null
             && cmd.getVersion() != Version.V_10
-            && ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminobjects() != null)
+            && ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminObjects() != null)
       {
-         List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminobjects();
+         List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminObjects();
          if (aoMetas.size() > 0)
          {
             for (AdminObject aoMeta : aoMetas)

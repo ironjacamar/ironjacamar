@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.XaPool;
+import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 
 /**
  *
@@ -30,7 +31,7 @@ import org.jboss.jca.common.api.metadata.ds.XaPool;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class XaPoolImpl extends PoolImpl implements XaPool
+public class XaPoolImpl extends CommonPoolImpl implements XaPool
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 3261597366235425250L;

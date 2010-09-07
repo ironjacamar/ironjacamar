@@ -148,7 +148,7 @@ public class ResourceAdapter1516Impl implements ResourceAdapter1516
     * @return adminobject
     */
    @Override
-   public List<AdminObject> getAdminobjects()
+   public List<AdminObject> getAdminObjects()
    {
       return adminobjects == null ? null : Collections.unmodifiableList(adminobjects);
    }

@@ -19,9 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds;
+package org.jboss.jca.common.metadata.common;
 
-import org.jboss.jca.common.api.metadata.ds.Pool;
+import org.jboss.jca.common.api.metadata.common.CommonPool;
 
 /**
  *
@@ -30,7 +30,7 @@ import org.jboss.jca.common.api.metadata.ds.Pool;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class PoolImpl implements Pool
+public class CommonPoolImpl implements CommonPool
 {
 
    /** The serialVersionUID */
@@ -64,7 +64,7 @@ public class PoolImpl implements Pool
     * @param prefill prefill
     * @param useStrictMin useStrictMin
     */
-   public PoolImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, boolean useStrictMin)
+   public CommonPoolImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, boolean useStrictMin)
    {
       super();
       this.minPoolSize = minPoolSize;

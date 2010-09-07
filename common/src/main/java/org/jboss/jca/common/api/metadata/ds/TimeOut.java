@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.JCAMetadata;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,22 +31,9 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface TimeOut extends JCAMetadata
+public interface TimeOut extends org.jboss.jca.common.api.metadata.common.CommonTimeOut
 {
 
-   /**
-    * Get the blockingTimeoutMillis.
-    *
-    * @return the blockingTimeoutMillis.
-    */
-   public Long getBlockingTimeoutMillis();
-
-   /**
-    * Get the idleTimeoutMinutes.
-    *
-    * @return the idleTimeoutMinutes.
-    */
-   public Long getIdleTimeoutMinutes();
 
    /**
     * Get the setTxQuertTimeout.
@@ -71,26 +56,6 @@ public interface TimeOut extends JCAMetadata
     */
    public Long getUseTryLock();
 
-   /**
-    * Get the allocationRetry.
-    *
-    * @return the allocationRetry.
-    */
-   public Long getAllocationRetry();
-
-   /**
-    * Get the allocationRetryWaitMillis.
-    *
-    * @return the allocationRetryWaitMillis.
-    */
-   public Long getAllocationRetryWaitMillis();
-
-   /**
-    * Get the xaResourceTimeout.
-    *
-    * @return the xaResourceTimeout.
-    */
-   public Long getXaResourceTimeout();
 
    /**
    *

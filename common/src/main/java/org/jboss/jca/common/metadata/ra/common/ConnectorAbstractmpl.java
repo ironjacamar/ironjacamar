@@ -414,11 +414,11 @@ public abstract class ConnectorAbstractmpl implements Connector
                {
                   if (this.getResourceadapter() != null
                         && !(this instanceof Connector10)
-                        && ((ResourceAdapter1516) this.getResourceadapter()).getAdminobjects() != null
-                        && ((ResourceAdapter1516) this.getResourceadapter()).getAdminobjects().size() > 0
-                        && ((ResourceAdapter1516) this.getResourceadapter()).getAdminobjects().get(0) != null)
+                        && ((ResourceAdapter1516) this.getResourceadapter()).getAdminObjects() != null
+                        && ((ResourceAdapter1516) this.getResourceadapter()).getAdminObjects().size() > 0
+                        && ((ResourceAdapter1516) this.getResourceadapter()).getAdminObjects().get(0) != null)
                   {
-                     listConfigProp = ((ResourceAdapter1516) this.getResourceadapter()).getAdminobjects().get(0)
+                     listConfigProp = ((ResourceAdapter1516) this.getResourceadapter()).getAdminObjects().get(0)
                            .getConfigProperties();
                   }
                }

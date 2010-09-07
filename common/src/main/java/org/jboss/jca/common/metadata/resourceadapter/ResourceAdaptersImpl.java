@@ -21,57 +21,56 @@
  */
 package org.jboss.jca.common.metadata.resourceadapter;
 
+import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 
-import java.io.File;
-import java.io.FileInputStream;
-
-import org.jboss.util.file.FileSuffixFilter;
-
-import org.junit.Test;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
- * A ResourceAdapterParserTestCase.
+ * A ResourceAdaptersImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class ResourceAdapterParserTestCase
+public class ResourceAdaptersImpl implements ResourceAdapters
 {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 4852619088689662467L;
+   private final ArrayList<ResourceAdapter> resourceAdapters;
+
    /**
-    * shouldParseAnyExample
-    * @throws Exception in case of error
+    * Create a new ResopurceAdaptersImpl.
+    *
+    * @param resourceAdapters resourceAdapters
     */
-   @Test
-   public void shouldParseAnyExample() throws Exception
+   public ResourceAdaptersImpl(List<ResourceAdapter> resourceAdapters)
    {
-      FileInputStream is = null;
-
-      //given
-      File directory = new File(Thread.currentThread().getContextClassLoader().getResource("resource-adapter").toURI());
-      for (File xmlFile : directory.listFiles(new FileSuffixFilter("-ds.xml")))
+      super();
+      if (resourceAdapters != null)
       {
-         System.out.println(xmlFile.getName());
-         try
-         {
-            is = new FileInputStream(xmlFile);
-            ResourceAdapterParser parser = new ResourceAdapterParser();
-            //when
-            ResourceAdapters ra = parser.parse(is);
-            //then
-            assertThat(ra.getResourceAdapters().size() >= 1, is(true));
-
-         }
-         finally
-         {
-            if (is != null)
-               is.close();
-         }
+         this.resourceAdapters = new ArrayList<ResourceAdapter>(resourceAdapters.size());
+         this.resourceAdapters.addAll(resourceAdapters);
+      }
+      else
+      {
+         this.resourceAdapters = new ArrayList<ResourceAdapter>(0);
       }
    }
 
+   /**
+    * Get the resourceAdapters.
+    *
+    * @return the resourceAdapters.
+    */
+   @Override
+   public final List<ResourceAdapter> getResourceAdapters()
+   {
+      return Collections.unmodifiableList(resourceAdapters);
+   }
+
 }
+

@@ -58,6 +58,13 @@ public interface AdminObject extends JCAMetadata
    public String getJndiName();
 
    /**
+    * Get the poolName.
+    *
+    * @return the poolName.
+    */
+   public String getPoolName();
+
+   /**
     * Get the enabled.
     *
     * @return the enabled.
@@ -161,6 +168,11 @@ public interface AdminObject extends JCAMetadata
       *
       */
       CLASS_NAME("class-name"),
+
+      /** class-name attribute
+      *
+      */
+      POOL_NAME("class-name"),
 
       /** enabled attribute
       *

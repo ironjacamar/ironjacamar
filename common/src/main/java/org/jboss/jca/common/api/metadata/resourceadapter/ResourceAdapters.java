@@ -21,35 +21,29 @@
  */
 package org.jboss.jca.common.api.metadata.resourceadapter;
 
+
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.SecurityManager;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  *
- * A Security.
+ * A ResourceAdapters.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface Security extends JCAMetadata
+public interface ResourceAdapters extends JCAMetadata
 {
 
    /**
-    * Get the securityManager.
+    * Get the resourceAdapters.
     *
-    * @return the securityManager.
+    * @return the resourceAdapters.
     */
-   public SecurityManager getSecurityManager();
-
-   /**
-    * Get the securityDomain.
-    *
-    * @return the securityDomain.
-    */
-   public String getSecurityDomain();
+   public List<ResourceAdapter> getResourceAdapters();
 
    /**
    *
@@ -65,14 +59,10 @@ public interface Security extends JCAMetadata
        */
       UNKNOWN(null),
 
-      /**
-      securityManager tag
-      */
-      SECURITYMANAGER("security-manager"),
-      /**
-      securityDomain tag
-      */
-      SECURITYDOMAIN("security-domain");
+      /** jboss-ra tag name
+       *
+       */
+      RESOURCE_ADPTER("resource-adapter");
 
       private final String name;
 
@@ -113,9 +103,9 @@ public interface Security extends JCAMetadata
 
       /**
       *
-      * Static method to get enum instance given localName XsdString
+      * Static method to get enum instance given localName string
       *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+      * @param localName a string used as localname (typically tag name as defined in xsd)
       * @return the enum instance
       */
       public static Tag forName(String localName)

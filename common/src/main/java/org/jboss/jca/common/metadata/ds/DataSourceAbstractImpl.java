@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
-import org.jboss.jca.common.api.metadata.ds.Security;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
@@ -54,7 +54,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
    * security
    */
-   protected final Security security;
+   protected final CommonSecurity security;
 
    /**
    * statement
@@ -111,7 +111,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param enabled enabled
     * @param jndiName jndiName
     */
-   protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, Security security,
+   protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, CommonSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
       boolean useJavaContext, String poolName, boolean enabled, String jndiName)
    {
@@ -162,7 +162,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     */
 
    @Override
-   public final Security getSecurity()
+   public final CommonSecurity getSecurity()
    {
       return security;
    }
