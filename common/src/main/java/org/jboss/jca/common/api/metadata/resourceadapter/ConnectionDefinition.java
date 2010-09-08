@@ -229,10 +229,10 @@ public interface ConnectionDefinition extends JCAMetadata
       */
       CLASS_NAME("class-name"),
 
-      /** class-name attribute
+      /** pool-name attribute
       *
       */
-      POOL_NAME("class-name"),
+      POOL_NAME("pool-name"),
 
       /** enabled attribute
       *

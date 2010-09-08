@@ -53,7 +53,7 @@ public class ResourceAdapterParserTestCase
 
       //given
       File directory = new File(Thread.currentThread().getContextClassLoader().getResource("resource-adapter").toURI());
-      for (File xmlFile : directory.listFiles(new FileSuffixFilter("-ds.xml")))
+      for (File xmlFile : directory.listFiles(new FileSuffixFilter("-ra.xml")))
       {
          System.out.println(xmlFile.getName());
          try

@@ -260,11 +260,12 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                break;
             }
             case USEJAVACONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
+               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), false);
                break;
             }
             default :
-               break;
+               throw new ParserException("Unexpected attribute:" + attribute.getLocalName() + "at " +
+                                         reader.getLocalName());
          }
       }
 
@@ -465,7 +466,7 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                break;
             }
             case USEJAVACONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
+               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), false);
                break;
             }
             case POOL_NAME : {
@@ -473,7 +474,8 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                break;
             }
             default :
-               break;
+               throw new ParserException("Unexpected attribute:" + attribute.getLocalName() + "at " +
+                                         reader.getLocalName());
          }
       }
 
