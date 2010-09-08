@@ -48,6 +48,8 @@ public class ExplicitJndiStrategy implements JndiStrategy
 {
    private static Logger log = Logger.getLogger(ExplicitJndiStrategy.class);
 
+   private static boolean trace = log.isTraceEnabled();
+
    private static ConcurrentMap<String, Object> connectionFactories = new ConcurrentHashMap<String, Object>();
 
    /**
@@ -112,6 +114,15 @@ public class ExplicitJndiStrategy implements JndiStrategy
          {
             String jndiName = jndis[i];
             Object cf = cfs[i];
+
+            if (trace)
+               log.trace("Binding " + cf.getClass().getName() + " under " + jndiName);
+
+            if (cf == null)
+               throw new IllegalArgumentException("Connection factory is null");
+
+            if (jndiName == null)
+               throw new IllegalArgumentException("JNDI name is null");
 
             String className = cf.getClass().getName();
             Reference ref = new Reference(className,
@@ -187,7 +198,17 @@ public class ExplicitJndiStrategy implements JndiStrategy
          {
             String jndiName = jndis[i];
             Object cf = cfs[i];
+
+            if (cf == null)
+               throw new IllegalArgumentException("Connection factory is null");
+
+            if (jndiName == null)
+               throw new IllegalArgumentException("JNDI name is null");
+
             String className = cf.getClass().getName();
+
+            if (trace)
+               log.trace("Unbinding " + className + " under " + jndiName);
 
             Util.unbind(context, jndiName);
 

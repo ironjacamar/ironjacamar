@@ -49,6 +49,8 @@ public class SimpleJndiStrategy implements JndiStrategy
 {
    private static Logger log = Logger.getLogger(SimpleJndiStrategy.class);
 
+   private static boolean trace = log.isTraceEnabled();
+
    /** JNDI prefix */
    private static final String JNDI_PREFIX = "java:/eis/";
 
@@ -117,6 +119,15 @@ public class SimpleJndiStrategy implements JndiStrategy
 
       String jndiName = jndis[0];
       Object cf = cfs[0];
+
+      if (trace)
+         log.trace("Binding " + cf.getClass().getName() + " under " + jndiName);
+      
+      if (cf == null)
+         throw new IllegalArgumentException("Connection factory is null");
+      
+      if (jndiName == null)
+         throw new IllegalArgumentException("JNDI name is null");
 
       Context context = new InitialContext();
       try
@@ -194,7 +205,17 @@ public class SimpleJndiStrategy implements JndiStrategy
 
       String jndiName = jndis[0];
       Object cf = cfs[0];
+
+      if (cf == null)
+         throw new IllegalArgumentException("Connection factory is null");
+
+      if (jndiName == null)
+         throw new IllegalArgumentException("JNDI name is null");
+
       String className = cf.getClass().getName();
+
+      if (trace)
+         log.trace("Unbinding " + className + " under " + jndiName);
 
       Context context = null;
       try
