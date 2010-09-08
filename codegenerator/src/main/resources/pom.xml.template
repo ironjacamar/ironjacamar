@@ -16,8 +16,8 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-spi</artifactId>
-      <version>2.2.0.CR1</version>
+      <artifactId>jboss-logging</artifactId>
+      <version>3.0.0.Beta3</version>
     </dependency>
 
     <dependency>
@@ -26,6 +26,12 @@
       <version>@VERSION.IRONJACAMAR@</version>
       <scope>test</scope>
     </dependency>    
+    <dependency>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-common-spi</artifactId>
+      <version>@VERSION.IRONJACAMAR@</version>
+      <scope>test</scope>
+    </dependency>   
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-common-impl</artifactId>
@@ -64,14 +70,33 @@
       <version>@VERSION.IRONJACAMAR@</version>
       <scope>test</scope>
     </dependency>
-<!--
+
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-depchain</artifactId>
       <version>@VERSION.IRONJACAMAR@</version>
       <scope>test</scope>
+      <type>pom</type>
+      <exclusions>
+        <exclusion>
+          <groupId>apache-xerces</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>wutka-dtdparser</groupId>
+          <artifactId>dtdparser121</artifactId>
+        </exclusion>      
+        <exclusion>
+          <groupId>apache-xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+        </exclusion>    
+        <exclusion>
+          <groupId>org.jboss.security</groupId>
+          <artifactId>jboss-security-spi</artifactId>
+        </exclusion>   
+      </exclusions>
     </dependency>   
---> 
+
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-deployers-fungal</artifactId>
@@ -103,6 +128,19 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.ironjacamar</groupId>
+        <artifactId>ironjacamar-depchain</artifactId>
+        <version>@VERSION.IRONJACAMAR@</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
   <build>
     <sourceDirectory>src/main</sourceDirectory>
     <testSourceDirectory>src/test</testSourceDirectory>
