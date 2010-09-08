@@ -32,6 +32,11 @@
     <Method name="mergeConnectorAndDs" />
     <Bug code="NP"/>
   </Match>
+<Match>
+    <Class name="org.jboss.jca.common.metadata.MetadataFactory"/>
+    <Method name="mergeConnectorWithProperties" />
+    <Bug code="NP"/>
+  </Match>
 
   <!--  org.jboss.jca.core filter -->
   <Match>

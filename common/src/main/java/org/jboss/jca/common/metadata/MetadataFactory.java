@@ -27,7 +27,7 @@ import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
-import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
+import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
@@ -43,7 +43,8 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.metadata.jbossra.JbossRaParser;
+import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
+import org.jboss.jca.common.metadata.ironjacamar.IronJacamarParser;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.common.metadata.ra.common.ConnectionDefinitionImpl;
@@ -52,6 +53,7 @@ import org.jboss.jca.common.metadata.ra.common.ResourceAdapter1516Impl;
 import org.jboss.jca.common.metadata.ra.ra10.Connector10Impl;
 import org.jboss.jca.common.metadata.ra.ra10.ResourceAdapter10Impl;
 import org.jboss.jca.common.metadata.ra.ra15.Connector15Impl;
+import org.jboss.jca.common.metadata.ra.ra16.ConfigProperty16Impl;
 import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
 
 import java.io.File;
@@ -136,11 +138,11 @@ public class MetadataFactory
     * @return The metadata
     * @exception Exception Thrown if an error occurs
     */
-   public JbossRa getJBossMetaData(File root) throws Exception
+   public IronJacamar getIronJacamarMetaData(File root) throws Exception
    {
-      JbossRa result = null;
+      IronJacamar result = null;
 
-      File metadataFile = new File(root, "/META-INF/jboss-ra.xml");
+      File metadataFile = new File(root, "/META-INF/ironjacamar.xml");
 
       if (metadataFile.exists())
       {
@@ -151,7 +153,7 @@ public class MetadataFactory
             long start = System.currentTimeMillis();
 
             input = new FileInputStream(metadataFile);
-            result = (new JbossRaParser()).parse(input);
+            result = (new IronJacamarParser()).parse(input);
 
             log.debugf("Total parse for %s took %d ms", url, (System.currentTimeMillis() - start));
 
@@ -174,15 +176,62 @@ public class MetadataFactory
 
    /**
     *
-    * Create a connector from a DataSource metadata
+    * Merge ironJacamar's properties with connector's one returning a List of COnnector's properties
     *
-    * @param cds the datasource it is one of interface extending {@link CommonDataSource}.
-    *   IOW it can be both {@link DataSource} or {@link XaDataSource}
-    * @param connector the connector to merge
-    * @return the connector with mapped properties taken forn ds
-    * @throws IllegalArgumentException if version is't 1.0, 1.5 or 1.6
-    * @throws Exception in case of error
+    * @param ijProperties ironjacamar's extension style properties
+    * @param original standard connector's properties
+    * @return merged standard connector's properties (ironjacamar's setting overwrite the standard's one.
+    *   No new property is added)
     */
+   public List<ConfigProperty> mergeConfigProperties(Map<String, String> ijProperties,
+      List<? extends ConfigProperty> original)
+   {
+      List<ConfigProperty> mergedProperties = new ArrayList<ConfigProperty>(original.size());
+      for (ConfigProperty c : original)
+      {
+         if (ijProperties.containsKey(c.getConfigPropertyName().getValue()))
+         {
+            if (original instanceof ConfigProperty16)
+            {
+               ConfigProperty16 c16 = (ConfigProperty16) c;
+               XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
+                  .getConfigPropertyName().getId());
+               ConfigProperty16 newProp = new ConfigProperty16Impl(c.getDescriptions(), c.getConfigPropertyName(),
+                                                                   c.getConfigPropertyName(), newValue,
+                                                                   c16.getConfigPropertyIgnore(),
+                                                                   c16.getConfigPropertySupportsDynamicUpdates(),
+                                                                   c16.getConfigPropertyConfidential(), c.getId());
+               mergedProperties.add(newProp);
+            }
+            else
+            {
+               XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
+                  .getConfigPropertyName().getId());
+               ConfigProperty newProp = new ConfigPropertyImpl(c.getDescriptions(), c.getConfigPropertyName(),
+                                                               c.getConfigPropertyName(), newValue, c.getId());
+               mergedProperties.add(newProp);
+            }
+
+         }
+         else
+         {
+            mergedProperties.add(c);
+         }
+      }
+      return mergedProperties;
+   }
+
+   /**
+   *
+   * Merge a connector with a DataSource metadata
+   *
+   * @param cds the datasource it is one of interface extending {@link CommonDataSource}.
+   *   IOW it can be both {@link DataSource} or {@link XaDataSource}
+   * @param connector the connector to merge
+   * @return the connector with mapped properties taken forn ds
+   * @throws IllegalArgumentException if version is't 1.0, 1.5 or 1.6
+   * @throws Exception in case of error
+   */
    public Connector mergeConnectorAndDs(CommonDataSource cds, Connector connector)
       throws IllegalArgumentException, Exception
    {
@@ -192,118 +241,138 @@ public class MetadataFactory
       }
       else
       {
+         return mergeConnectorWithProperties(connector, createConfigProperties(cds, extractProperties(connector)),
+            null);
+      }
+   }
 
-         XsdString managedconnectionfactoryClass = null;
+   private Connector mergeConnectorWithProperties(Connector connector,
+      List<ConfigProperty> connectioDefProperties, List<ConfigProperty> raConfigProperties)
+      throws IllegalArgumentException, Exception
+   {
 
-         String id = null;
+      XsdString managedconnectionfactoryClass = null;
 
-         XsdString connectionfactoryImplClass = null;
-         XsdString connectionfactoryInterface = null;
-         XsdString connectionImplClass = null;
-         XsdString connectionInterface = null;
-         List<AuthenticationMechanism> authenticationMechanism = null;
-         boolean reauthenticationSupport = false;
-         List<SecurityPermission> securityPermissions = null;
+      String id = null;
 
-         XsdString vendorName = null;
-         List<LocalizedXsdString> description = null;
-         XsdString resourceadapterVersion = null;
-         String moduleName = null;
-         XsdString eisType = null;
-         LicenseType license = null;
-         List<LocalizedXsdString> displayNames = null;
-         List<Icon> icons = null;
-         List<AdminObject> adminobjects = null;
-         TransactionSupportEnum transactionSupport = null;
+      XsdString connectionfactoryImplClass = null;
+      XsdString connectionfactoryInterface = null;
+      XsdString connectionImplClass = null;
+      XsdString connectionInterface = null;
+      List<AuthenticationMechanism> authenticationMechanism = null;
+      boolean reauthenticationSupport = false;
+      List<SecurityPermission> securityPermissions = null;
 
-         if (connector.getVersion() == Version.V_10)
+      XsdString vendorName = null;
+      List<LocalizedXsdString> description = null;
+      XsdString resourceadapterVersion = null;
+      String moduleName = null;
+      XsdString eisType = null;
+      LicenseType license = null;
+      List<LocalizedXsdString> displayNames = null;
+      List<Icon> icons = null;
+      List<AdminObject> adminobjects = null;
+      TransactionSupportEnum transactionSupport = null;
+
+      if (connector.getVersion() == Version.V_10)
+      {
+         if (raConfigProperties != null)
          {
+            if (connectioDefProperties == null)
+            {
+               connectioDefProperties = raConfigProperties;
+            }
+            else
+            {
+               connectioDefProperties.addAll(raConfigProperties);
+            }
+         }
+         ResourceAdapter resourceadapter = new ResourceAdapter10Impl(managedconnectionfactoryClass,
+                                                                     connectionfactoryInterface,
+                                                                     connectionfactoryImplClass,
+                                                                     connectionInterface, connectionImplClass,
+                                                                     transactionSupport, authenticationMechanism,
+                                                                     connectioDefProperties,
+                                                                     reauthenticationSupport, securityPermissions,
+                                                                     id);
 
-            List<ConfigProperty> configProperties = createConfigProperties(cds, connector.getResourceadapter()
-               .getConfigProperties());
+         Connector newConnector = new Connector10Impl(moduleName, vendorName, eisType, resourceadapterVersion,
+                                                      license, resourceadapter, description, displayNames, icons,
+                                                      id);
 
-            ResourceAdapter resourceadapter = new ResourceAdapter10Impl(managedconnectionfactoryClass,
-                                                                        connectionfactoryInterface,
-                                                                        connectionfactoryImplClass,
-                                                                        connectionInterface, connectionImplClass,
-                                                                        transactionSupport,
-                                                                        authenticationMechanism, configProperties,
-                                                                        reauthenticationSupport,
-                                                                        securityPermissions, id);
+         return newConnector.merge(connector);
+      }
+      else
+      {
+         List<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>(1);
+         ConnectionDefinition connectionDefinition = new ConnectionDefinitionImpl(managedconnectionfactoryClass,
+                                                                                  connectioDefProperties,
+                                                                                  connectionfactoryInterface,
+                                                                                  connectionfactoryImplClass,
+                                                                                  connectionInterface,
+                                                                                  connectionImplClass, id);
+         connectionDefinitions.add(connectionDefinition);
+         OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(
+                                                                                           connectionDefinitions,
+                                                                                           transactionSupport,
+                                                                                           authenticationMechanism,
+                                                                                           reauthenticationSupport,
+                                                                                           id);
+         String resourceadapterClass = null;
+         InboundResourceAdapter inboundResourceadapter = null;
+         ResourceAdapter1516 resourceadapter = new ResourceAdapter1516Impl(resourceadapterClass,
+                                                                           raConfigProperties,
+                                                                           outboundResourceadapter,
+                                                                           inboundResourceadapter, adminobjects,
+                                                                           securityPermissions, id);
 
-            Connector newConnector = new Connector10Impl(moduleName, vendorName, eisType, resourceadapterVersion,
-                                                         license, resourceadapter, description, displayNames,
-                                                         icons, id);
+         if (connector.getVersion() == Version.V_16)
+         {
+            List<String> requiredWorkContexts = null;
+            boolean metadataComplete = false;
+
+            Connector newConnector = new Connector16Impl(moduleName, vendorName, eisType, resourceadapterVersion,
+                                                         license, resourceadapter, requiredWorkContexts,
+                                                         metadataComplete, description, displayNames, icons, id);
+
+            return newConnector.merge(connector);
+         }
+         else if (connector.getVersion() == Version.V_15)
+         {
+            Connector newConnector = new Connector15Impl(vendorName, eisType, resourceadapterVersion, license,
+                                                         resourceadapter, description, displayNames, icons, id);
 
             return newConnector.merge(connector);
          }
          else
-         {
-            List<? extends ConfigProperty> originalProperties = null;
-            if (connector.getResourceadapter() != null &&
-                connector.getResourceadapter() instanceof ResourceAdapter1516)
-            {
-               ResourceAdapter1516 ra1516 = ((ResourceAdapter1516) connector.getResourceadapter());
-               if (ra1516.getOutboundResourceadapter() != null &&
-                   ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
-               {
-                  originalProperties = ra1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                     .getConfigProperties();
-               }
-            }
-
-            List<ConfigProperty> configProperties = createConfigProperties(cds, originalProperties);
-
-            List<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>(1);
-            ConnectionDefinition connectionDefinition = new ConnectionDefinitionImpl(
-                                                                                     managedconnectionfactoryClass,
-                                                                                     configProperties,
-                                                                                     connectionfactoryInterface,
-                                                                                     connectionfactoryImplClass,
-                                                                                     connectionInterface,
-                                                                                     connectionImplClass, id);
-            connectionDefinitions.add(connectionDefinition);
-            OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(
-                                                                                              connectionDefinitions,
-                                                                                              transactionSupport,
-                                                                                              authenticationMechanism,
-                                                                                              reauthenticationSupport,
-                                                                                              id);
-            String resourceadapterClass = null;
-            List<? extends ConfigProperty> raConfigProperties = null;
-            InboundResourceAdapter inboundResourceadapter = null;
-            ResourceAdapter1516 resourceadapter = new ResourceAdapter1516Impl(resourceadapterClass,
-                                                                              raConfigProperties,
-                                                                              outboundResourceadapter,
-                                                                              inboundResourceadapter,
-                                                                              adminobjects, securityPermissions,
-                                                                              id);
-
-            if (connector.getVersion() == Version.V_16)
-            {
-               List<String> requiredWorkContexts = null;
-               boolean metadataComplete = false;
-
-               Connector newConnector = new Connector16Impl(moduleName, vendorName, eisType,
-                                                            resourceadapterVersion, license, resourceadapter,
-                                                            requiredWorkContexts, metadataComplete, description,
-                                                            displayNames, icons, id);
-
-               return newConnector.merge(connector);
-            }
-            else if (connector.getVersion() == Version.V_15)
-            {
-               Connector newConnector = new Connector15Impl(vendorName, eisType, resourceadapterVersion, license,
-                                                            resourceadapter, description, displayNames, icons, id);
-
-               return newConnector.merge(connector);
-            }
-            else
-               throw new IllegalArgumentException("version= " + connector.getVersion().name());
-         }
-
+            throw new IllegalArgumentException("version= " + connector.getVersion().name());
       }
 
+   }
+
+   private List<? extends ConfigProperty> extractProperties(Connector connector)
+   {
+      List<? extends ConfigProperty> originalProperties = null;
+      if (connector.getVersion() == Version.V_10)
+      {
+         originalProperties = connector.getResourceadapter().getConfigProperties();
+      }
+      else
+      {
+
+         if (connector.getResourceadapter() != null &&
+             connector.getResourceadapter() instanceof ResourceAdapter1516)
+         {
+            ResourceAdapter1516 ra1516 = ((ResourceAdapter1516) connector.getResourceadapter());
+            if (ra1516.getOutboundResourceadapter() != null &&
+                ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+            {
+               originalProperties = ra1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+                  .getConfigProperties();
+            }
+         }
+      }
+      return originalProperties;
    }
 
    private static List<ConfigProperty> createConfigProperties(CommonDataSource cds,

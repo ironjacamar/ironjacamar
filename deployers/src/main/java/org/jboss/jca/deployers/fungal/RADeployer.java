@@ -25,9 +25,7 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.common.annotations.Annotations;
 import org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerFactory;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
-import org.jboss.jca.common.api.metadata.jbossra.jbossra20.BeanValidationGroup;
-import org.jboss.jca.common.api.metadata.jbossra.jbossra20.JbossRa20;
+import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
@@ -107,6 +105,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
     * Deployer order
     * @return The deployment
     */
+   @Override
    public int getOrder()
    {
       return Integer.MIN_VALUE;
@@ -119,6 +118,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
     * @return The deployment
     * @exception DeployException Thrown if an error occurs during deployment
     */
+   @SuppressWarnings("rawtypes")
    @Override
    public synchronized Deployment deploy(URL url, ClassLoader parent) throws DeployException
    {
@@ -167,7 +167,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
          // Parse metadata
          MetadataFactory metadataFactory = new MetadataFactory();
          Connector cmd = metadataFactory.getStandardMetaData(root);
-         JbossRa jrmd = metadataFactory.getJBossMetaData(root);
+         IronJacamar ijmd = metadataFactory.getIronJacamarMetaData(root);
 
          // Annotation scanning
          Annotations annotator = new Annotations();
@@ -179,7 +179,8 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
          cmd.validate();
 
          // Merge metadata
-         cmd.merge(jrmd);
+         //TODO: merge ironjacamar with connector properties. Select the right list of properties
+         // and use MetadataFavtory.mergeConfigProperties(Map<String, String>, List<? extends ConfigProperty> )
 
          // Notify regarding license terms
          if (cmd != null && cmd.getLicense() != null && cmd.getLicense().isLicenseRequired())
@@ -584,20 +585,14 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
             // Bean validation
             if (getConfiguration().getBeanValidation())
             {
-               JbossRa20 jrmd20 = null;
+
                List<Class> groupsClasses = null;
 
-               if (jrmd instanceof JbossRa20)
+               if (ijmd != null && ijmd.getBeanValidationGroups() != null &&
+                   ijmd.getBeanValidationGroups().size() > 0)
                {
-                  jrmd20 = (JbossRa20) jrmd;
-               }
-
-               if (jrmd20 != null && jrmd20.getBeanValidationGroups() != null &&
-                   jrmd20.getBeanValidationGroups().size() > 0)
-               {
-                  BeanValidationGroup bvGroups = jrmd20.getBeanValidationGroups().get(0);
                   groupsClasses = new ArrayList<Class>();
-                  for (String group : bvGroups.getBeanValidationGroup())
+                  for (String group : ijmd.getBeanValidationGroups())
                   {
                      groupsClasses.add(Class.forName(group, true, cl));
                   }
@@ -618,10 +613,9 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
             {
                String bootstrapIdentifier = null;
 
-               if (jrmd != null && jrmd instanceof JbossRa20)
+               if (ijmd != null)
                {
-                  JbossRa20 jrmd20 = (JbossRa20) jrmd;
-                  bootstrapIdentifier = jrmd20.getBootstrapContext();
+                  bootstrapIdentifier = ijmd.getBootstrapContext();
                }
 
                startContext(resourceAdapter, bootstrapIdentifier);

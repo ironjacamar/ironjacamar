@@ -24,7 +24,6 @@ package org.jboss.jca.common.metadata.ra.ra16;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
-import org.jboss.jca.common.api.metadata.jbossra.JbossRa;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Icon;
 import org.jboss.jca.common.api.metadata.ra.LicenseType;
@@ -193,11 +192,6 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
    @Override
    public Connector merge(MergeableMetadata<?> inputMd) throws Exception
    {
-      if (inputMd instanceof JbossRa)
-      {
-         mergeJbossMetaData((JbossRa) inputMd);
-         return this;
-      }
 
       if (inputMd instanceof Connector16Impl)
       {
