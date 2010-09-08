@@ -159,6 +159,8 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
    {
       ArrayList<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>();
       ArrayList<AdminObject> adminObjects = new ArrayList<AdminObject>();
+      ArrayList<String> beanValidationGroups = new ArrayList<String>();
+      String bootstrapContext = null;
       String archive = null;
       TransactionSupportEnum transactionSupport = null;
       HashMap<String, String> configProperties = new HashMap<String, String>();
@@ -170,7 +172,7 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.RESOURCE_ADPTER)
                {
                   return new ResourceAdapterImpl(archive, transactionSupport, connectionDefinitions, adminObjects,
-                                                 configProperties);
+                                                 configProperties, beanValidationGroups, bootstrapContext);
                }
                else
                {
@@ -185,8 +187,9 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
                switch (ResourceAdapter.Tag.forName(reader.getLocalName()))
                {
                   case ADMIN_OBJECTS :
-                  case CONNECTION_DEFINITIONS : {
-                     //ignore it, we will parse single admin_object and connection_definition directly
+                  case CONNECTION_DEFINITIONS :
+                  case BEAN_VALIDATION_GROUPS : {
+                     //ignore it,we will parse bean-validation-group,admin_object and connection_definition directly
                      break;
                   }
                   case ADMIN_OBJECT : {
@@ -196,6 +199,14 @@ public class ResourceAdapterParser extends AbstractParser implements MetadataPar
 
                   case CONNECTION_DEFINITION : {
                      connectionDefinitions.add(parseConnectionDefinitions(reader));
+                     break;
+                  }
+                  case BEAN_VALIDATION_GROUP : {
+                     beanValidationGroups.add(elementAsString(reader));
+                     break;
+                  }
+                  case BOOTSTRAP_CONTEXT : {
+                     bootstrapContext = elementAsString(reader);
                      break;
                   }
                   case CONFIG_PROPERTY : {

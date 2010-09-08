@@ -21,10 +21,12 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="bean-validation-groups" type="bean-validation-groupsType" minOccurs="0" maxOccurs="1"></xs:element>
+      <xs:element name="bootstrap-context" type="xs:token" minOccurs="0" maxOccurs="1"></xs:element>
       <xs:element name="transaction-support" type="transaction-supportType" minOccurs="0"></xs:element>
       <xs:element name="connection-definitions" type="connection-definitionsType" minOccurs="0" maxOccurs="1"></xs:element>
-            <xs:element name="admin-objects" type="admin-objectsType" minOccurs="0" maxOccurs="1"></xs:element>
-        </xs:sequence>
+      <xs:element name="admin-objects" type="admin-objectsType" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:sequence>
   </xs:complexType>
   <xs:simpleType name="transaction-supportType">
     <xs:annotation>
@@ -263,5 +265,11 @@
 
   <xs:complexType name="admin-objectsType">
     <xs:sequence><xs:element name="admin-object" type="admin-objectType" minOccurs="0" maxOccurs="unbounded"></xs:element></xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="bean-validation-groupsType">
+    <xs:sequence>
+      <xs:element name="bean-validation-group" type="xs:token" minOccurs="1" maxOccurs="unbounded"></xs:element>
+    </xs:sequence>
   </xs:complexType>
 </xs:schema>

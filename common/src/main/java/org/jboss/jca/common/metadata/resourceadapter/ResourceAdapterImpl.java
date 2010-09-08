@@ -52,6 +52,10 @@ public class ResourceAdapterImpl implements ResourceAdapter
 
    private final ArrayList<ConnectionDefinition> connectionDefinitions;
 
+   private final ArrayList<String> beanValidationGroups;
+
+   private final String bootstrapContext;
+
    /**
     *
     * Create a new ResourceAdapterImpl.
@@ -61,10 +65,12 @@ public class ResourceAdapterImpl implements ResourceAdapter
     * @param connectionDefinitions connectionDefinitions
     * @param adminObjects adminObjects
     * @param configProperties configProperties
+    * @param beanValidationGroups beanValidationGroups
+    * @param bootstrapContext bootstrapContext
     */
    public ResourceAdapterImpl(String archive, TransactionSupportEnum transactionSupport,
       List<ConnectionDefinition> connectionDefinitions, List<AdminObject> adminObjects,
-      Map<String, String> configProperties)
+      Map<String, String> configProperties, List<String> beanValidationGroups, String bootstrapContext)
    {
       super();
       this.archive = archive;
@@ -97,6 +103,16 @@ public class ResourceAdapterImpl implements ResourceAdapter
       {
          this.configProperties = new HashMap<String, String>(0);
       }
+      if (beanValidationGroups != null)
+      {
+         this.beanValidationGroups = new ArrayList<String>(beanValidationGroups.size());
+         this.beanValidationGroups.addAll(beanValidationGroups);
+      }
+      else
+      {
+         this.beanValidationGroups = new ArrayList<String>(0);
+      }
+      this.bootstrapContext = bootstrapContext;
 
    }
 
@@ -153,6 +169,109 @@ public class ResourceAdapterImpl implements ResourceAdapter
    public Map<String, String> getConfigProperties()
    {
       return Collections.unmodifiableMap(configProperties);
+   }
+
+   /**
+    * Get the beanValidationGroups.
+    *
+    * @return the beanValidationGroups.
+    */
+   @Override
+   public final List<String> getBeanValidationGroups()
+   {
+      return Collections.unmodifiableList(beanValidationGroups);
+   }
+
+   /**
+    * Get the bootstrapContext.
+    *
+    * @return the bootstrapContext.
+    */
+   @Override
+   public final String getBootstrapContext()
+   {
+      return bootstrapContext;
+   }
+
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((adminObjects == null) ? 0 : adminObjects.hashCode());
+      result = prime * result + ((archive == null) ? 0 : archive.hashCode());
+      result = prime * result + ((beanValidationGroups == null) ? 0 : beanValidationGroups.hashCode());
+      result = prime * result + ((bootstrapContext == null) ? 0 : bootstrapContext.hashCode());
+      result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
+      result = prime * result + ((connectionDefinitions == null) ? 0 : connectionDefinitions.hashCode());
+      result = prime * result + ((transactionSupport == null) ? 0 : transactionSupport.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (!(obj instanceof ResourceAdapterImpl))
+         return false;
+      ResourceAdapterImpl other = (ResourceAdapterImpl) obj;
+      if (adminObjects == null)
+      {
+         if (other.adminObjects != null)
+            return false;
+      }
+      else if (!adminObjects.equals(other.adminObjects))
+         return false;
+      if (archive == null)
+      {
+         if (other.archive != null)
+            return false;
+      }
+      else if (!archive.equals(other.archive))
+         return false;
+      if (beanValidationGroups == null)
+      {
+         if (other.beanValidationGroups != null)
+            return false;
+      }
+      else if (!beanValidationGroups.equals(other.beanValidationGroups))
+         return false;
+      if (bootstrapContext == null)
+      {
+         if (other.bootstrapContext != null)
+            return false;
+      }
+      else if (!bootstrapContext.equals(other.bootstrapContext))
+         return false;
+      if (configProperties == null)
+      {
+         if (other.configProperties != null)
+            return false;
+      }
+      else if (!configProperties.equals(other.configProperties))
+         return false;
+      if (connectionDefinitions == null)
+      {
+         if (other.connectionDefinitions != null)
+            return false;
+      }
+      else if (!connectionDefinitions.equals(other.connectionDefinitions))
+         return false;
+      if (transactionSupport != other.transactionSupport)
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString()
+   {
+      return "ResourceAdapterImpl [archive=" + archive + ", transactionSupport=" + transactionSupport +
+             ", configProperties=" + configProperties + ", adminObjects=" + adminObjects +
+             ", connectionDefinitions=" + connectionDefinitions + ", beanValidationGroups=" +
+             beanValidationGroups + ", bootstrapContext=" + bootstrapContext + "]";
    }
 }
 

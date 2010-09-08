@@ -73,6 +73,20 @@ public interface ResourceAdapter
    public Map<String, String> getConfigProperties();
 
    /**
+    * Get the beanValidationGroups.
+    *
+    * @return the beanValidationGroups.
+    */
+   public List<String> getBeanValidationGroups();
+
+   /**
+    * Get the bootstrapContext.
+    *
+    * @return the bootstrapContext.
+    */
+   public String getBootstrapContext();
+
+   /**
    *
    * A Tag.
    *
@@ -97,6 +111,21 @@ public interface ResourceAdapter
       ARCHIVE("archive"),
 
       /**
+       * bean-validation-groups tag
+       */
+      BEAN_VALIDATION_GROUPS("bean-validation-groups"),
+
+      /**
+       * bean-validation-group tag
+       */
+      BEAN_VALIDATION_GROUP("bean-validation-group"),
+
+      /**
+       * bootstrap-context tag
+       */
+      BOOTSTRAP_CONTEXT("bootstrap-context"),
+
+      /**
        * transaction-support tag
        */
       TRANSACTION_SUPPORT("transaction-support"),
@@ -104,15 +133,15 @@ public interface ResourceAdapter
        * connection-definitions tag
        */
       CONNECTION_DEFINITIONS("connection-definitions"),
+      /**
+       * connection-definition tag
+       */
+      CONNECTION_DEFINITION("connection-definition"),
 
       /**
        * admin-objects tag
        */
       ADMIN_OBJECTS("admin-objects"),
-      /**
-      * connection-definition tag
-      */
-     CONNECTION_DEFINITION("connection-definition"),
 
      /**
       * admin-objects tag
