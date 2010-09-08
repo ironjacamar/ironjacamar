@@ -21,10 +21,10 @@
  */
 package org.jboss.jca.common.api.metadata.resourceadapter;
 
-import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+
+import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +34,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface ResourceAdapter
+public interface ResourceAdapter extends CommonIronJacamar
 {
 
    /**
@@ -43,48 +43,6 @@ public interface ResourceAdapter
     * @return the archive.
     */
    public String getArchive();
-
-   /**
-    * Get the transactionSupport.
-    *
-    * @return the transactionSupport.
-    */
-   public TransactionSupportEnum getTransactionSupport();
-
-   /**
-    * Get the connectionFactories.
-    *
-    * @return the connectionFactories.
-    */
-   public List<ConnectionDefinition> getConnectionDefinitions();
-
-   /**
-    * Get the adminObjects.
-    *
-    * @return the adminObjects.
-    */
-   public List<AdminObject> getAdminObjects();
-
-   /**
-    * Get the configProperties.
-    *
-    * @return the configProperties.
-    */
-   public Map<String, String> getConfigProperties();
-
-   /**
-    * Get the beanValidationGroups.
-    *
-    * @return the beanValidationGroups.
-    */
-   public List<String> getBeanValidationGroups();
-
-   /**
-    * Get the bootstrapContext.
-    *
-    * @return the bootstrapContext.
-    */
-   public String getBootstrapContext();
 
    /**
    *

@@ -19,13 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadapter;
+package org.jboss.jca.common.metadata.ironjacamar;
 
 import org.jboss.jca.common.api.metadata.common.AdminObject;
 import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.common.CommonIronJacamarParser;
@@ -49,15 +48,15 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class ResourceAdapterParser extends CommonIronJacamarParser implements MetadataParser<ResourceAdapters>
+public class IronJacamarParser extends CommonIronJacamarParser implements MetadataParser<IronJacamar>
 {
 
    @Override
-   public ResourceAdapters parse(InputStream xmlInputStream) throws Exception
+   public IronJacamar parse(InputStream xmlInputStream) throws Exception
    {
 
       XMLStreamReader reader = null;
-      ResourceAdapters adapters = null;
+      IronJacamar ironJacamar = null;
 
       try
       {
@@ -85,8 +84,8 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
                switch (Tag.forName(reader.getLocalName()))
                {
-                  case RESOURCE_ADPTERS : {
-                     adapters = parseResourceAdapters(reader);
+                  case IRONJACAMAR : {
+                     ironJacamar = parseIronJacamar(reader);
                      break;
                   }
                   default :
@@ -104,57 +103,18 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
          if (reader != null)
             reader.close();
       }
-      return adapters;
+      return ironJacamar;
 
    }
 
-   private ResourceAdapters parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
-   {
-      ArrayList<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>();
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (Tag.forName(reader.getLocalName()) == Tag.RESOURCE_ADPTERS)
-               {
-                  resourceAdapters.trimToSize();
-                  return new ResourceAdaptersImpl(resourceAdapters);
-               }
-               else
-               {
-                  if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (ResourceAdapters.Tag.forName(reader.getLocalName()))
-               {
-                  case RESOURCE_ADPTER : {
-                     resourceAdapters.add(parseResourceAdapter(reader));
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
 
-   private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException
+
+   private IronJacamar parseIronJacamar(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       ArrayList<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>();
       ArrayList<AdminObject> adminObjects = new ArrayList<AdminObject>();
       ArrayList<String> beanValidationGroups = new ArrayList<String>();
       String bootstrapContext = null;
-      String archive = null;
       TransactionSupportEnum transactionSupport = null;
       HashMap<String, String> configProperties = new HashMap<String, String>();
       while (reader.hasNext())
@@ -162,14 +122,14 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.RESOURCE_ADPTER)
+               if (Tag.forName(reader.getLocalName()) == Tag.IRONJACAMAR)
                {
-                  return new ResourceAdapterImpl(archive, transactionSupport, connectionDefinitions, adminObjects,
-                                                 configProperties, beanValidationGroups, bootstrapContext);
+                  return new IronJacamarImpl(transactionSupport, configProperties, adminObjects,
+                                             connectionDefinitions, beanValidationGroups, bootstrapContext);
                }
                else
                {
-                  if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.UNKNOWN)
+                  if (IronJacamar.Tag.forName(reader.getLocalName()) == IronJacamar.Tag.UNKNOWN)
                   {
                      throw new ParserException("unexpected end tag" + reader.getLocalName());
                   }
@@ -177,7 +137,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                break;
             }
             case START_ELEMENT : {
-               switch (ResourceAdapter.Tag.forName(reader.getLocalName()))
+               switch (IronJacamar.Tag.forName(reader.getLocalName()))
                {
                   case ADMIN_OBJECTS :
                   case CONNECTION_DEFINITIONS :
@@ -211,10 +171,6 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                      transactionSupport = TransactionSupportEnum.valueOf(elementAsString(reader));
                      break;
                   }
-                  case ARCHIVE : {
-                     archive = elementAsString(reader);
-                     break;
-                  }
                   default :
                      throw new ParserException("Unexpected element:" + reader.getLocalName());
                }
@@ -242,7 +198,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       /** jboss-ra tag name
        *
        */
-      RESOURCE_ADPTERS("resource-adapters");
+      IRONJACAMAR("ironjacamar");
 
       private final String name;
 

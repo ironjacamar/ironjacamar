@@ -19,64 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.resourceadapter;
+package org.jboss.jca.common.api.metadata.ironjacamar;
 
-import org.jboss.jca.common.api.metadata.JCAMetadata;
+import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * A AdminObject.
+ * A IronJacamar.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface AdminObject extends JCAMetadata
+public interface IronJacamar extends CommonIronJacamar
 {
-
-   /**
-    * Get the configProperties.
-    *
-    * @return the configProperties.
-    */
-   public Map<String, String> getConfigProperties();
-
-   /**
-    * Get the className.
-    *
-    * @return the className.
-    */
-   public String getClassName();
-
-   /**
-    * Get the jndiName.
-    *
-    * @return the jndiName.
-    */
-   public String getJndiName();
-
-   /**
-    * Get the poolName.
-    *
-    * @return the poolName.
-    */
-   public String getPoolName();
-
-   /**
-    * Get the enabled.
-    *
-    * @return the enabled.
-    */
-   public boolean isEnabled();
-
-   /**
-    * Get the useJavaContext.
-    *
-    * @return the useJavaContext.
-    */
-   public boolean isUseJavaContext();
 
    /**
    *
@@ -92,10 +49,48 @@ public interface AdminObject extends JCAMetadata
        */
       UNKNOWN(null),
 
+      /** config-property tag
+      *
+      */
+      CONFIG_PROPERTY("config-property"),
+
       /**
-       * config-property tag
+       * bean-validation-groups tag
        */
-      CONFIG_PROPERTY("config-property");
+      BEAN_VALIDATION_GROUPS("bean-validation-groups"),
+
+      /**
+       * bean-validation-group tag
+       */
+      BEAN_VALIDATION_GROUP("bean-validation-group"),
+
+      /**
+       * bootstrap-context tag
+       */
+      BOOTSTRAP_CONTEXT("bootstrap-context"),
+
+      /**
+       * transaction-support tag
+       */
+      TRANSACTION_SUPPORT("transaction-support"),
+      /**
+       * connection-definitions tag
+       */
+      CONNECTION_DEFINITIONS("connection-definitions"),
+      /**
+       * connection-definition tag
+       */
+      CONNECTION_DEFINITION("connection-definition"),
+
+      /**
+       * admin-objects tag
+       */
+      ADMIN_OBJECTS("admin-objects"),
+
+      /**
+       * admin-objects tag
+       */
+      ADMIN_OBJECT("admin-object");
 
       private final String name;
 
@@ -136,9 +131,9 @@ public interface AdminObject extends JCAMetadata
 
       /**
       *
-      * Static method to get enum instance given localName XsdString
+      * Static method to get enum instance given localName string
       *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+      * @param localName a string used as localname (typically tag name as defined in xsd)
       * @return the enum instance
       */
       public static Tag forName(String localName)
@@ -148,63 +143,5 @@ public interface AdminObject extends JCAMetadata
       }
 
    }
-
-   /**
-    *
-    * A Attribute.
-    *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-    *
-    */
-   public enum Attribute
-   {
-
-      /** jndiName attribute
-       *
-       */
-      JNDINAME("jndi-name"),
-
-      /** class-name attribute
-      *
-      */
-      CLASS_NAME("class-name"),
-
-      /** pool-name attribute
-      *
-      */
-      POOL_NAME("pool-name"),
-
-      /** enabled attribute
-      *
-      */
-      ENABLED("enabled"),
-      /** use-java-context attribute
-      *
-      */
-      USEJAVACONTEXT("use-java-context");
-
-      private final String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Attribute(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
-      }
-
-   }
 }
+

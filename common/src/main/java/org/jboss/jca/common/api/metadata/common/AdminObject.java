@@ -19,25 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.resourceadapter;
+package org.jboss.jca.common.api.metadata.common;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A ConnectionDefinition.
+ * A AdminObject.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface ConnectionDefinition extends JCAMetadata
+public interface AdminObject extends JCAMetadata
 {
 
    /**
@@ -83,42 +79,6 @@ public interface ConnectionDefinition extends JCAMetadata
    public boolean isUseJavaContext();
 
    /**
-    * Get the pool.
-    *
-    * @return the pool.
-    */
-   public CommonPool getPool();
-
-   /**
-    * Get the timeOut.
-    *
-    * @return the timeOut.
-    */
-   public CommonTimeOut getTimeOut();
-
-   /**
-    * Get the validation.
-    *
-    * @return the validation.
-    */
-   public CommonValidation getValidation();
-
-   /**
-    * Get the security.
-    *
-    * @return the security.
-    */
-   public CommonSecurity getSecurity();
-
-   /**
-    * Get the noTxSeparatePool.
-    *
-    * @return the noTxSeparatePool.
-    */
-
-   public boolean isNoTxSeparatePool();
-
-   /**
    *
    * A Tag.
    *
@@ -135,27 +95,7 @@ public interface ConnectionDefinition extends JCAMetadata
       /**
        * config-property tag
        */
-      CONFIG_PROPERTY("config-property"),
-      /**
-       * no-tx-separate-pool tag
-       */
-      NO_TX_SEPARATE_POOL("no-tx-separate-pool"),
-      /**
-       * pool tag
-       */
-      POOL("pool"),
-      /**
-       * security tag
-       */
-      SECURITY("security"),
-      /**
-       * timeout tag
-       */
-      TIMEOUT("timeout"),
-      /**
-       * validation tag
-       */
-      VALIDATION("validation");
+      CONFIG_PROPERTY("config-property");
 
       private final String name;
 
@@ -210,12 +150,12 @@ public interface ConnectionDefinition extends JCAMetadata
    }
 
    /**
-   *
-   * A Attribute.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
    public enum Attribute
    {
 
