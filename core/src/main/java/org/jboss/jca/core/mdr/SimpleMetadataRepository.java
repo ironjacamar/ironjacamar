@@ -27,8 +27,13 @@ import org.jboss.jca.core.spi.mdr.AlreadyExistsException;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 
+import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -43,18 +48,26 @@ public class SimpleMetadataRepository implements MetadataRepository
    /** Resource adapter templates */
    private ConcurrentMap<URL, Connector> raTemplates;
 
+   /** Resource adapter roots */
+   private ConcurrentMap<URL, File> raRoots;
+
+   /** JNDI mappings */
+   private ConcurrentMap<URL, Map<String, List<String>>> jndiMappings;
+
    /**
     * Constructor
     */
    public SimpleMetadataRepository()
    {
       this.raTemplates = new ConcurrentHashMap<URL, Connector>();
+      this.raRoots = new ConcurrentHashMap<URL, File>();
+      this.jndiMappings = new ConcurrentHashMap<URL, Map<String, List<String>>>();
    }
 
    /**
     * {@inheritDoc}
     */
-   public void registerResourceAdapter(URL deployment, Connector md) throws AlreadyExistsException
+   public void registerResourceAdapter(URL deployment, File root, Connector md) throws AlreadyExistsException
    {
       if (deployment == null)
          throw new IllegalArgumentException("Deployment is null");
@@ -66,6 +79,7 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new AlreadyExistsException(deployment + " already registered");
 
       raTemplates.put(deployment, md);
+      raRoots.put(deployment, root);
    }
 
    /**
@@ -105,5 +119,102 @@ public class SimpleMetadataRepository implements MetadataRepository
    public Set<URL> getResourceAdapters()
    {
       return Collections.unmodifiableSet(raTemplates.keySet());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public File getRoot(URL deployment) throws NotFoundException
+   {
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");
+
+      if (!raRoots.containsKey(deployment))
+         throw new NotFoundException(deployment + " isn't registered");
+
+      return raRoots.get(deployment);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void registerJndiMapping(URL deployment, String clz, String jndi)
+   {
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");
+
+      if (clz == null)
+         throw new IllegalArgumentException("Clz is null");
+
+      if (jndi == null)
+         throw new IllegalArgumentException("Jndi is null");
+
+      Map<String, List<String>> mappings = jndiMappings.get(deployment);
+      if (mappings == null)
+      {
+         Map<String, List<String>> newMappings = new HashMap<String, List<String>>(1);
+         mappings = jndiMappings.putIfAbsent(deployment, newMappings);
+
+         if (mappings == null)
+         {
+            mappings = newMappings;
+         }
+      }
+      
+      List<String> l = mappings.get(clz);
+
+      if (l == null)
+         l = new ArrayList<String>(1);
+
+      l.add(jndi);
+      mappings.put(clz, l);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unregisterJndiMapping(URL deployment, String clz, String jndi)
+   {
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");
+
+      if (clz == null)
+         throw new IllegalArgumentException("Clz is null");
+
+      if (jndi == null)
+         throw new IllegalArgumentException("Jndi is null");
+
+      Map<String, List<String>> mappings = jndiMappings.get(deployment);
+
+      if (mappings != null)
+      {
+         List<String> l = mappings.get(clz);
+
+         if (l != null)
+         {
+            l.remove(jndi);
+
+            if (l.size() == 0)
+            {
+               mappings.remove(clz);
+            }
+         }
+
+         if (mappings.size() == 0)
+         {
+            jndiMappings.remove(deployment);
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Map<String, List<String>> getJndiMappings(URL deployment)
+   {
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");
+      
+      return jndiMappings.get(deployment);
    }
 }
