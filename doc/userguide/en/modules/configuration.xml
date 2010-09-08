@@ -288,6 +288,13 @@ config/bootstrap/jca.xml
                   </entry>
                 </row>
                 <row>
+                  <entry><code>Enabled</code></entry>
+                  <entry><code>boolean</code></entry>
+                  <entry>
+                    Should the activator be enabled. Default is <code>true</code>
+                  </entry>
+                </row>
+                <row>
                   <entry><code>Kernel</code></entry>
                   <entry><code>com.github.fungal.api.Kernel</code></entry>
                   <entry>

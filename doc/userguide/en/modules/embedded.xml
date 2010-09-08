@@ -161,6 +161,37 @@ public class MyTestCase
 
         <para>See the IronJacamar Embedded API documentation for additional functionality.</para>
 
+        <section id="embedded_usage_automaticactivation">
+          <title>Automatic activation of archives</title>
+
+          <para>IronJacamar features a bean called <code>RAActivator</code> which will automatic
+            create a JNDI binding for connection factories and administration objects. However, 
+            sometimes it is of benefit to define these bindings in a <code>-ra.xml</code> file, and therefore
+            <code>RAActivator</code> has to be disabled during that deployment phase.</para>
+          
+          <para>This done by using the following code snippet</para>
+
+          <programlisting>
+import org.jboss.jca.deployers.fungal.RAActivator;
+
+// Disable RAActivator
+RAActivator raa = embedded.lookup("RAActivator", RAActivator.class);
+
+if (raa == null)
+   throw new IllegalStateException("RAActivator not defined");
+
+raa.setEnabled(false);
+
+embedded.deploy("myrar.rar");
+embedded.deploy("myrar-ra.xml");
+
+raa.setEnabled(true);
+          </programlisting>
+
+          <para>which disables the bean, does the deployments and then reenables the bean again.</para>
+
+        </section>
+
       </section>
 
       <section id="embedded_usage_advanced">

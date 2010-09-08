@@ -26,7 +26,6 @@ import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
@@ -34,14 +33,13 @@ import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 
-import com.github.fungal.api.util.FileUtil;
 import com.github.fungal.spi.deployers.Deployment;
 
 /**
- * A resource adapter deployment for JCA/SJC
+ * A -ra.xml deployment for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class RADeployment implements Deployment
+public class RaXmlDeployment implements Deployment
 {
    /** The logger */
    private Logger log;
@@ -49,11 +47,11 @@ public class RADeployment implements Deployment
    /** The deployment */
    private URL deployment;
 
+   /** The resource adapter deployment */
+   private URL raDeployment;
+
    /** The deployment name */
    private String deploymentName;
-
-   /** Activator */
-   private boolean activator;
 
    /** The resource adapter instance */
    private ResourceAdapter ra;
@@ -67,8 +65,8 @@ public class RADeployment implements Deployment
    /** The connection factories */
    private Object[] cfs;
 
-   /** The temporary directory */
-   private File tmpDirectory;
+   /** The JNDI names of the connection factories */
+   private String[] jndis;
 
    /** The classloader */
    private ClassLoader cl;
@@ -76,35 +74,35 @@ public class RADeployment implements Deployment
    /**
     * Constructor
     * @param deployment The deployment
+    * @param raDeployment The resource adapter deployment
     * @param deploymentName The deployment name
-    * @param activator Is this the activator of the deployment
     * @param ra The resource adapter instance if present
     * @param jndiStrategy The JNDI strategy
     * @param metadataRepository The metadata repository
     * @param cfs The connection factories
-    * @param tmpDirectory The temporary directory
+    * @param jndis The JNDI names of the connection factories
     * @param cl The classloader for the deployment
     * @param log The logger
     */
-   public RADeployment(URL deployment, 
-                       String deploymentName,
-                       boolean activator,
-                       ResourceAdapter ra, 
-                       JndiStrategy jndiStrategy,
-                       MetadataRepository metadataRepository,
-                       Object[] cfs, 
-                       File tmpDirectory, 
-                       ClassLoader cl,
-                       Logger log)
+   public RaXmlDeployment(URL deployment, 
+                          URL raDeployment,
+                          String deploymentName,
+                          ResourceAdapter ra, 
+                          JndiStrategy jndiStrategy,
+                          MetadataRepository metadataRepository,
+                          Object[] cfs, 
+                          String[] jndis, 
+                          ClassLoader cl,
+                          Logger log)
    {
       this.deployment = deployment;
+      this.raDeployment = raDeployment;
       this.deploymentName = deploymentName;
-      this.activator = activator;
       this.ra = ra;
       this.jndiStrategy = jndiStrategy;
       this.mdr = metadataRepository;
       this.cfs = cfs;
-      this.tmpDirectory = tmpDirectory;
+      this.jndis = jndis;
       this.cl = cl;
       this.log = log;
    }
@@ -132,39 +130,35 @@ public class RADeployment implements Deployment
     */
    public void stop()
    {
-      if (mdr != null)
+      log.debug("Undeploying: " + deployment.toExternalForm());
+
+      if (mdr != null && cfs != null && jndis != null)
       {
-         try
+         for (int i = 0; i < cfs.length; i++)
          {
-            mdr.unregisterResourceAdapter(deployment);
-         }
-         catch (Throwable t)
-         {
-            log.warn("Exception during unregistering deployment", t);
+            String cf = cfs[i].getClass().getName();
+            String jndi = jndis[i];
+
+            mdr.unregisterJndiMapping(raDeployment, cf, jndi);
          }
       }
 
-      if (activator)
+      if (cfs != null && jndis != null)
       {
-         log.debug("Undeploying: " + deployment.toExternalForm());
-
-         if (cfs != null)
+         try
          {
-            try
-            {
-               jndiStrategy.unbindConnectionFactories(deploymentName, cfs);
-            }
-            catch (Throwable t)
-            {
-               log.warn("Exception during JNDI unbinding", t);
-            }
+            jndiStrategy.unbindConnectionFactories(deploymentName, cfs, jndis);
          }
-
-         if (ra != null)
+         catch (Throwable t)
          {
-            ra.stop();
-            ra = null;
+            log.warn("Exception during JNDI unbinding", t);
          }
+      }
+
+      if (ra != null)
+      {
+         ra.stop();
+         ra = null;
       }
    }
 
@@ -185,22 +179,6 @@ public class RADeployment implements Deployment
          }
       }
 
-      if (tmpDirectory != null && tmpDirectory.exists())
-      {
-         try
-         {
-            FileUtil fu = new FileUtil();
-            fu.recursiveDelete(tmpDirectory);
-         }
-         catch (IOException ioe)
-         {
-            // Ignore
-         }
-      }
-         
-      if (activator)
-      {
-         log.info("Undeployed: " + deployment.toExternalForm());
-      }
+      log.info("Undeployed: " + deployment.toExternalForm());
    }
 }

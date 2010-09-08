@@ -367,16 +367,43 @@ public abstract class AbstractResourceAdapterDeployer
 
    /**
     * Bind connection factory into JNDI
+    * @param url The deployment URL
     * @param deployment The deployment name
     * @param cf The connection factory
     * @return The JNDI names bound
     * @exception Throwable Thrown if an error occurs
     */
-   protected String[] bindConnectionFactory(String deployment, Object cf) throws Throwable
+   protected String[] bindConnectionFactory(URL url, String deployment, Object cf) throws Throwable
    {
       JndiStrategy js = getConfiguration().getJndiStrategy().clone();
 
-      return js.bindConnectionFactories(deployment, new Object[] {cf});
+      String[] result = js.bindConnectionFactories(deployment, new Object[] {cf});
+
+      getConfiguration().getMetadataRepository().
+         registerJndiMapping(url, cf.getClass().getName(), result[0]);                  
+
+      return result;
+   }
+
+   /**
+    * Bind connection factory into JNDI
+    * @param url The deployment URL
+    * @param deployment The deployment name
+    * @param cf The connection factory
+    * @param jndi The JNDI name
+    * @return The JNDI names bound
+    * @exception Throwable Thrown if an error occurs
+    */
+   protected String[] bindConnectionFactory(URL url, String deployment, Object cf, String jndi) throws Throwable
+   {
+      JndiStrategy js = getConfiguration().getJndiStrategy().clone();
+
+      String[] result = js.bindConnectionFactories(deployment, new Object[] {cf}, new String[] {jndi});
+
+      getConfiguration().getMetadataRepository().
+         registerJndiMapping(url, cf.getClass().getName(), jndi);                  
+
+      return result;
    }
 
    /**

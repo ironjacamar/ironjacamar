@@ -318,7 +318,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
 
                   if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                   {
-                     bindConnectionFactory(deploymentName, cf);
+                     bindConnectionFactory(url, deploymentName, cf);
                      cfs = new Object[] {cf};
                   }
                }
@@ -428,7 +428,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                                  if (cdMetas.size() == 1)
                                  {
                                     deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
-                                    bindConnectionFactory(deploymentName, cf);
+                                    bindConnectionFactory(url, deploymentName, cf);
                                     cfs = new Object[] {cf};
                                  }
                                  else
@@ -577,7 +577,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
          if (cmd != null)
          {
             // Register with MDR
-            getConfiguration().getMetadataRepository().registerResourceAdapter(url, cmd);
+            getConfiguration().getMetadataRepository().registerResourceAdapter(url, root, cmd);
          }
 
          if (activateDeployment)
@@ -585,7 +585,6 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
             // Bean validation
             if (getConfiguration().getBeanValidation())
             {
-
                List<Class> groupsClasses = null;
 
                if (ijmd != null && ijmd.getBeanValidationGroups() != null &&

@@ -23,15 +23,15 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Connector.Version;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
+import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -47,18 +47,19 @@ import org.jboss.jca.validator.Validator;
 import org.jboss.jca.validator.ValidatorException;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.resource.Referenceable;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
@@ -67,31 +68,28 @@ import org.jboss.logging.Logger;
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
-import com.github.fungal.api.util.FileUtil;
 import com.github.fungal.spi.deployers.DeployException;
+import com.github.fungal.spi.deployers.Deployer;
+import com.github.fungal.spi.deployers.DeployerOrder;
 import com.github.fungal.spi.deployers.DeployerPhases;
 import com.github.fungal.spi.deployers.Deployment;
+import com.github.fungal.spi.deployers.MultiStageDeployer;
 
 /**
- * The RA activator for JCA/SJC
+ * The -ra.xml deployer for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public final class RAActivator extends AbstractResourceAdapterDeployer implements DeployerPhases
+public final class RaXmlDeployer extends AbstractResourceAdapterDeployer implements Deployer,
+                                                                                    MultiStageDeployer,
+                                                                                    DeployerOrder,
+                                                                                    DeployerPhases
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(RAActivator.class);
+   private static Logger log = Logger.getLogger(RaXmlDeployer.class);
 
-   /** Trace enabled */
    private static boolean trace = log.isTraceEnabled();
 
    /** The kernel */
    private Kernel kernel;
-
-   /** Enabled */
-   private boolean enabled;
-
-   /** The archives that should be excluded for activation */
-   private Set<String> excludeArchives;
 
    /** The list of generated deployments */
    private List<Deployment> deployments;
@@ -99,12 +97,17 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
    /**
     * Constructor
     */
-   public RAActivator()
+   public RaXmlDeployer()
    {
-      kernel = null;
-      enabled = true;
-      excludeArchives = null;
-      deployments = null;
+   }
+
+   /**
+    * Deployer order
+    * @return The deployment
+    */
+   public int getOrder()
+   {
+      return 0;
    }
 
    /**
@@ -126,41 +129,6 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
    }
 
    /**
-    * Get the exclude archives
-    * @return The archives
-    */
-   public Set<String> getExcludeArchives()
-   {
-      return excludeArchives;
-   }
-
-   /**
-    * Set the exclude archives
-    * @param archives The archives
-    */
-   public void setExcludeArchives(Set<String> archives)
-   {
-      this.excludeArchives = archives;
-   }
-
-   /**
-    * Is enabled
-    * @return True if enabled; otherwise false
-    */
-   public boolean isEnabled()
-   {
-      return enabled;
-   }
-
-   /**
-    * Set the eanbled flag
-    * @param value The value
-    */
-   public void setEnabled(boolean value)
-   {
-      this.enabled = value;
-   }
-   /**
     * Pre deploy
     * @exception Throwable Thrown if an error occurs
     */
@@ -174,49 +142,6 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
     */
    public void postDeploy() throws Throwable
    {
-      if (enabled)
-      {
-         Set<URL> rarDeployments = getConfiguration().getMetadataRepository().getResourceAdapters();
-
-         for (URL deployment : rarDeployments)
-         {
-            if (trace)
-               log.trace("Processing: " + deployment.toExternalForm());
-
-            boolean include = true;
-         
-            if (excludeArchives != null)
-            {
-               for (String excludedArchive : excludeArchives)
-               {
-                  if (deployment.toExternalForm().endsWith(excludedArchive))
-                     include = false;
-               }
-            }
-            
-            if (include)
-            {
-               Map<String, List<String>> jndiMappings = 
-                  getConfiguration().getMetadataRepository().getJndiMappings(deployment);
-
-               // If there isn't any JNDI mappings then the archive isn't active
-               // so activate it
-               if (jndiMappings == null)
-               {
-                  Deployment raDeployment = deploy(deployment, kernel.getKernelClassLoader());
-                  if (raDeployment != null)
-                  {
-                     if (deployments == null)
-                        deployments = new ArrayList<Deployment>(1);
-
-                     deployments.add(raDeployment);
-
-                     kernel.getMainDeployer().registerDeployment(raDeployment);
-                  }
-               }
-            }
-         }
-      }
    }
 
    /**
@@ -258,33 +183,115 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
     * @return The deployment
     * @exception DeployException Thrown if an error occurs during deployment
     */
-   private Deployment deploy(URL url, ClassLoader parent) throws DeployException
+   @Override
+   public synchronized Deployment deploy(URL url, ClassLoader parent) throws DeployException
    {
-      Set<Failure> failures = null;
+      if (url == null || !(url.toExternalForm().endsWith("-ra.xml")))
+         return null;
 
       log.debug("Deploying: " + url.toExternalForm());
 
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
+      InputStream is = null;
       try
       {
          File f = new File(url.toURI());
 
          if (!f.exists())
-            return null;
+            throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
 
-         File root = null;
-         File destination = null;
+         // Parse metadata
+         is = new FileInputStream(f);
+         ResourceAdapterParser parser = new ResourceAdapterParser();
+         ResourceAdapters raXmlDeployment = parser.parse(is);
 
-         if (f.isFile())
+         int size = raXmlDeployment.getResourceAdapters().size();
+         if (size == 1)
          {
-            FileUtil fileUtil = new FileUtil();
-            destination = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/tmp/");
-            root = fileUtil.extract(f, destination);
+            return doDeploy(url, raXmlDeployment.getResourceAdapters().get(0), parent);
          }
          else
          {
-            root = f;
+            deployments = new ArrayList<Deployment>(size);
+
+            for (org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml : 
+                    raXmlDeployment.getResourceAdapters())
+            {
+               Deployment raDeployment = doDeploy(url, raxml, parent);
+               if (raDeployment != null)
+               {
+                  deployments.add(raDeployment);
+
+                  kernel.getMainDeployer().registerDeployment(raDeployment);
+               }
+            }
+
+            return null;
          }
+      }
+      catch (DeployException de)
+      {
+         // Just rethrow
+         throw de;
+      }
+      catch (Throwable t)
+      {
+         throw new DeployException("Exception during deployment of " + url.toExternalForm(), t);
+      }
+      finally
+      {
+         if (is != null)
+         {
+            try
+            {
+               is.close();
+            }
+            catch (IOException ioe)
+            {
+               // Ignore
+            }
+         }
+
+         SecurityActions.setThreadContextClassLoader(oldTCCL);
+      }
+   }
+
+   /**
+    * Deploy an entry in the -ra.xml deployment
+    * @param url The deployment url
+    * @param raxml The -ra.xml entry
+    * @param parent The parent classloader
+    * @return The deployment
+    * @exception DeployException Thrown if an error occurs during deployment
+    */
+   private Deployment doDeploy(URL url,
+                               org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml, 
+                               ClassLoader parent)
+      throws DeployException
+   {
+      Set<Failure> failures = null;
+
+      ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
+      try
+      {
+         // Find the archive in MDR
+         String archive = raxml.getArchive();
+         URL deployment = null;
+         Set<URL> deployments = getConfiguration().getMetadataRepository().getResourceAdapters();
+
+         for (URL u : deployments)
+         {
+            if (u.toExternalForm().endsWith(archive))
+               deployment = u;
+         }
+
+         if (deployment == null)
+         {
+            throw new DeployException("Archive " + archive + " couldn't be resolved in " + url.toExternalForm());
+         }
+
+         Connector cmd = getConfiguration().getMetadataRepository().getResourceAdapter(deployment);
+         File root = getConfiguration().getMetadataRepository().getRoot(deployment);
 
          // Create classloader
          URL[] urls = getUrls(root);
@@ -299,18 +306,14 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
          }
          SecurityActions.setThreadContextClassLoader(cl);
 
-         // Get metadata
-         Connector cmd = getConfiguration().getMetadataRepository().getResourceAdapter(url);
-         IronJacamar ijmd = null; // TODO - through MDR
-
-         ResourceAdapter resourceAdapter = null;
+         javax.resource.spi.ResourceAdapter resourceAdapter = null;
          List<Validate> archiveValidationObjects = new ArrayList<Validate>();
          List<Failure> partialFailures = null;
          List<Object> beanValidationObjects = new ArrayList<Object>();
 
-         String deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
+         String deploymentName = archive.substring(0, archive.indexOf(".rar"));
          Object[] cfs = null;
-         String[] jndis = null;
+         String[] jndiNames = null;
 
          // Create objects and inject values
          if (cmd != null)
@@ -322,7 +325,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                if (ra1516 != null && ra1516.getResourceadapterClass() != null)
                {
                   resourceAdapter =
-                     (ResourceAdapter) initAndInject(
+                     (javax.resource.spi.ResourceAdapter) initAndInject(
                          ra1516.getResourceadapterClass(), ra1516.getConfigProperties(), cl);
 
                   if (trace)
@@ -420,9 +423,14 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
 
                if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                {
-                  String[] jndiNames = bindConnectionFactory(url, deploymentName, cf);
+                  org.jboss.jca.common.api.metadata.common.ConnectionDefinition cd =
+                     findConnectionDefinition(mcf.getClass().getName(), raxml.getConnectionDefinitions());
+
+                  String jndiName = cd.getJndiName();
+
+                  bindConnectionFactory(deployment, deploymentName, cf, jndiName);
                   cfs = new Object[] {cf};
-                  jndis = new String[] {jndiNames[0]};
+                  jndiNames = new String[] {jndiName};
                }
             }
             else
@@ -432,98 +440,106 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                    ra.getOutboundResourceadapter() != null &&
                    ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
                {
-                  List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
+                  List<org.jboss.jca.common.api.metadata.ra.ConnectionDefinition> cdMetas = 
+                     ra.getOutboundResourceadapter().getConnectionDefinitions();
+
                   if (cdMetas.size() > 0)
                   {
-                     if (cdMetas.size() == 1)
+                     cfs = new Object[cdMetas.size()];
+                     jndiNames = new String[cdMetas.size()];
+
+                     for (int cdIndex = 0; cdIndex < cdMetas.size(); cdIndex++)
                      {
-                        ConnectionDefinition cdMeta = cdMetas.get(0);
+                        org.jboss.jca.common.api.metadata.ra.ConnectionDefinition cdMeta = cdMetas.get(cdIndex);
 
-                        ManagedConnectionFactory mcf =
-                           (ManagedConnectionFactory) initAndInject(cdMeta.getManagedConnectionFactoryClass()
-                                                                    .getValue(), cdMeta
-                                                                    .getConfigProperties(), cl);
+                        org.jboss.jca.common.api.metadata.common.ConnectionDefinition cdRaXml =
+                           findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(), 
+                                                    raxml.getConnectionDefinitions());
 
-                        if (trace)
+                        if (cdRaXml != null && cdRaXml.isEnabled())
                         {
-                           log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                           log.trace("ManagedConnectionFactory defined in classloader: " +
-                                     mcf.getClass().getClassLoader());
-                        }
-
-                        mcf.setLogWriter(new PrintWriter(getConfiguration().getPrintStream()));
-
-                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
-                                                                        mcf,
-                                                                        cdMeta.getConfigProperties()));
-                        beanValidationObjects.add(mcf);
-                        associateResourceAdapter(resourceAdapter, mcf);
-
-                        // Create the pool
-                        PoolConfiguration pc = new PoolConfiguration();
-                        PoolFactory pf = new PoolFactory();
-
-                        Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-
-                        // Add a connection manager
-                        ConnectionManager cm = null;
-                        TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
-                        TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
-
-                        tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
-                        
-                        if (tsmd == TransactionSupportEnum.NoTransaction)
-                        {
-                           tsl = TransactionSupportLevel.NoTransaction;
-                        }
-                        else if (tsmd == TransactionSupportEnum.LocalTransaction)
-                        {
-                           tsl = TransactionSupportLevel.LocalTransaction;
-                        }
-                        else if (tsmd == TransactionSupportEnum.XATransaction)
-                        {
-                           tsl = TransactionSupportLevel.XATransaction;
-                        }
-
-                        // Section 7.13 -- Read from metadata -> overwrite with specified value if present
-                        if (mcf instanceof TransactionSupport)
-                           tsl = ((TransactionSupport) mcf).getTransactionSupport();
-
-                        // Select the correct connection manager
-                        ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-                        cm = cmf.create(tsl, pool, getConfiguration().getTransactionManager());
-
-                        // ConnectionFactory
-                        Object cf = mcf.createConnectionFactory(cm);
-
-                        if (cf == null)
-                        {
-                           log.error("ConnectionFactory is null");
-                        }
-                        else
-                        {
+                           ManagedConnectionFactory mcf =
+                              (ManagedConnectionFactory) initAndInject(cdMeta.getManagedConnectionFactoryClass()
+                                                                       .getValue(), cdMeta
+                                                                       .getConfigProperties(), cl);
+                           
                            if (trace)
                            {
-                              log.trace("ConnectionFactory: " + cf.getClass().getName());
-                              log.trace("ConnectionFactory defined in classloader: "
-                                        + cf.getClass().getClassLoader());
+                              log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
+                              log.trace("ManagedConnectionFactory defined in classloader: " +
+                                        mcf.getClass().getClassLoader());
+                           }
+
+                           mcf.setLogWriter(new PrintWriter(getConfiguration().getPrintStream()));
+
+                           archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
+                                                                           mcf,
+                                                                           cdMeta.getConfigProperties()));
+                           beanValidationObjects.add(mcf);
+                           associateResourceAdapter(resourceAdapter, mcf);
+
+                           // Create the pool
+                           PoolConfiguration pc = new PoolConfiguration();
+                           PoolFactory pf = new PoolFactory();
+
+                           Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+
+                           // Add a connection manager
+                           ConnectionManager cm = null;
+                           TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
+                           TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
+
+                           tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
+                        
+                           if (tsmd == TransactionSupportEnum.NoTransaction)
+                           {
+                              tsl = TransactionSupportLevel.NoTransaction;
+                           }
+                           else if (tsmd == TransactionSupportEnum.LocalTransaction)
+                           {
+                              tsl = TransactionSupportLevel.LocalTransaction;
+                           }
+                           else if (tsmd == TransactionSupportEnum.XATransaction)
+                           {
+                              tsl = TransactionSupportLevel.XATransaction;
+                           }
+
+                           // Section 7.13 -- Read from metadata -> overwrite with specified value if present
+                           if (mcf instanceof TransactionSupport)
+                              tsl = ((TransactionSupport) mcf).getTransactionSupport();
+
+                           // Select the correct connection manager
+                           ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+                           cm = cmf.create(tsl, pool, getConfiguration().getTransactionManager());
+
+                           // ConnectionFactory
+                           Object cf = mcf.createConnectionFactory(cm);
+
+                           if (cf == null)
+                           {
+                              log.error("ConnectionFactory is null");
+                           }
+                           else
+                           {
+                              if (trace)
+                              {
+                                 log.trace("ConnectionFactory: " + cf.getClass().getName());
+                                 log.trace("ConnectionFactory defined in classloader: "
+                                           + cf.getClass().getClassLoader());
+                              }
+                           }
+                           
+                           archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
+                        
+                           if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
+                           {
+                              String jndiName = cdRaXml.getJndiName();
+
+                              bindConnectionFactory(deployment, deploymentName, cf, jndiName);
+                              cfs[cdIndex] = cf;
+                              jndiNames[cdIndex] = jndiName;
                            }
                         }
-
-                        archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
-                        
-                        if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
-                        {
-                           deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
-                           String[] jndiNames = bindConnectionFactory(url, deploymentName, cf);
-                           cfs = new Object[] {cf};
-                           jndis = new String[] {jndiNames[0]};
-                        }
-                     }
-                     else
-                     {
-                        log.warn("There are multiple connection factories for: " + f.getName());
-                        log.warn("Use an ironjacamar.xml or a -ra.xml to activate the deployment");
                      }
                   }
                }
@@ -630,11 +646,13 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
          {
             List<Class> groupsClasses = null;
 
-            if (ijmd != null && ijmd.getBeanValidationGroups() != null &&
-                ijmd.getBeanValidationGroups().size() > 0)
+            if (raxml.getBeanValidationGroups() != null &&
+                raxml.getBeanValidationGroups().size() > 0)
             {
-               groupsClasses = new ArrayList<Class>();
-               for (String group : ijmd.getBeanValidationGroups())
+               List<String> groups = raxml.getBeanValidationGroups();
+
+               groupsClasses = new ArrayList<Class>(groups.size());
+               for (String group : groups)
                {
                   groupsClasses.add(Class.forName(group, true, cl));
                }
@@ -655,9 +673,10 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
          {
             String bootstrapIdentifier = null;
 
-            if (ijmd != null)
+            if (raxml.getBootstrapContext() != null &&
+                !raxml.getBootstrapContext().trim().equals(""))
             {
-               bootstrapIdentifier = ijmd.getBootstrapContext();
+               bootstrapIdentifier = raxml.getBootstrapContext();
             }
 
             startContext(resourceAdapter, bootstrapIdentifier);
@@ -665,15 +684,16 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new RAActivatorDeployment(url, 
-                                          deploymentName, 
-                                          resourceAdapter, 
-                                          getConfiguration().getJndiStrategy(), 
-                                          getConfiguration().getMetadataRepository(), 
-                                          cfs,
-                                          jndis,
-                                          cl,
-                                          log);
+         return new RaXmlDeployment(url, 
+                                    deployment,
+                                    deploymentName, 
+                                    resourceAdapter, 
+                                    getConfiguration().getJndiStrategy(), 
+                                    getConfiguration().getMetadataRepository(), 
+                                    cfs,
+                                    jndiNames, 
+                                    cl,
+                                    log);
       }
       catch (DeployException de)
       {
@@ -696,6 +716,35 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
       {
          SecurityActions.setThreadContextClassLoader(oldTCCL);
       }
+   }
+
+   /**
+    * Find the JNDI name for a connection factory
+    * @param clz The fully quilified class name for the managed connection factory
+    * @param defs The connection definitions
+    * @return The JNDI name
+    */
+   private org.jboss.jca.common.api.metadata.common.ConnectionDefinition findConnectionDefinition(String clz,
+      List<org.jboss.jca.common.api.metadata.common.ConnectionDefinition> defs)
+   {
+      if (defs != null)
+      {
+         // If there is only one we will return that
+         if (defs.size() == 1)
+            return defs.get(0);
+
+         // If there are multiple definitions the MCF class name is mandatory
+         if (clz == null)
+            throw new IllegalArgumentException("ManagedConnectionFactory must be defined in class-name");
+
+         for (org.jboss.jca.common.api.metadata.common.ConnectionDefinition cd : defs)
+         {
+            if (clz.equals(cd.getClassName()))
+               return cd;
+         }
+      }
+
+      return null;
    }
 
    /**

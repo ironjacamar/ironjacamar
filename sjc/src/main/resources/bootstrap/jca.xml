@@ -127,8 +127,13 @@
     <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
   </bean>
 
-  <!-- JNDI strategy -->
-  <bean name="JndiStrategy"
+  <!-- Explicit JNDI strategy -->
+  <bean name="ExplicitJndiStrategy"
+        interface="org.jboss.jca.core.spi.naming.JndiStrategy"
+        class="org.jboss.jca.core.naming.ExplicitJndiStrategy"/>
+
+  <!-- Simple JNDI strategy -->
+  <bean name="SimpleJndiStrategy"
         interface="org.jboss.jca.core.spi.naming.JndiStrategy"
         class="org.jboss.jca.core.naming.SimpleJndiStrategy"/>
 
@@ -137,8 +142,8 @@
         interface="org.jboss.jca.core.spi.mdr.MetadataRepository"
         class="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
 
-  <!-- RA configuration -->
-  <bean name="RAConfiguration"
+  <!-- Deployer configuration -->
+  <bean name="DeployerConfiguration"
         class="org.jboss.jca.deployers.fungal.RAConfiguration">
     <property name="ArchiveValidation">true</property>
     <property name="ArchiveValidationFailOnWarn">false</property>
@@ -146,7 +151,21 @@
     <property name="BeanValidation">true</property>
     <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
     <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
-    <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
+    <property name="JndiStrategy"><inject bean="ExplicitJndiStrategy"/></property>
+    <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
+    <property name="MetadataRepository"><inject bean="MDR"/></property>
+  </bean>
+
+  <!-- Activator configuration -->
+  <bean name="ActivatorConfiguration"
+        class="org.jboss.jca.deployers.fungal.RAConfiguration">
+    <property name="ArchiveValidation">true</property>
+    <property name="ArchiveValidationFailOnWarn">false</property>
+    <property name="ArchiveValidationFailOnError">true</property>
+    <property name="BeanValidation">true</property>
+    <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
+    <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
+    <property name="JndiStrategy"><inject bean="SimpleJndiStrategy"/></property>
     <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
   </bean>
@@ -155,7 +174,17 @@
   <bean name="RADeployer"
         interface="com.github.fungal.spi.deployers.Deployer" 
         class="org.jboss.jca.deployers.fungal.RADeployer">
-    <property name="Configuration"><inject bean="RAConfiguration"/></property>
+    <property name="Configuration"><inject bean="DeployerConfiguration"/></property>
+    <depends>BeanValidation</depends>
+    <depends>JBossStdioContextSelector</depends>
+  </bean>
+
+  <!-- -ra.xml deployer -->
+  <bean name="RaXmlDeployer"
+        interface="com.github.fungal.spi.deployers.Deployer" 
+        class="org.jboss.jca.deployers.fungal.RaXmlDeployer">
+    <property name="Configuration"><inject bean="DeployerConfiguration"/></property>
+    <property name="Kernel"><inject bean="Kernel"/></property>
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
   </bean>
@@ -163,7 +192,8 @@
   <!-- RA activator -->
   <bean name="RAActivator" 
         class="org.jboss.jca.deployers.fungal.RAActivator">
-    <property name="Configuration"><inject bean="RAConfiguration"/></property>
+    <property name="Configuration"><inject bean="ActivatorConfiguration"/></property>
+    <property name="Enabled">true</property>
     <property name="Kernel"><inject bean="Kernel"/></property>
     <property name="ExcludeArchives">
       <set elementClass="java.lang.String">
