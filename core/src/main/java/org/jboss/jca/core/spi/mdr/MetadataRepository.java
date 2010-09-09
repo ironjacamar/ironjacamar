@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.spi.mdr;
 
+import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 
 import java.io.File;
@@ -41,10 +42,12 @@ public interface MetadataRepository
     * Register a resource adapter template
     * @param deployment The deployment
     * @param root The deployment root
-    * @param md The metadata
+    * @param md The connector metadata
+    * @param ijmd The IronJacamar metadata
     * @exception AlreadyExistsException Thrown if the deployment is already registered
     */
-   public void registerResourceAdapter(URL deployment, File root, Connector md) throws AlreadyExistsException;
+   public void registerResourceAdapter(URL deployment, File root, Connector md, IronJacamar ijmd) 
+      throws AlreadyExistsException;
 
    /**
     * Unregister a resource adapter template
@@ -74,6 +77,14 @@ public interface MetadataRepository
     * @exception NotFoundException Thrown if the deployment isn't registered
     */
    public File getRoot(URL deployment) throws NotFoundException;
+
+   /**
+    * Get the IronJacamar metadata for a resource adapter deployment
+    * @param deployment The deployment
+    * @return The metadata
+    * @exception NotFoundException Thrown if the deployment isn't registered
+    */
+   public IronJacamar getIronJacamar(URL deployment) throws NotFoundException;
 
    /**
     * Register a JNDI mapping for a deployment

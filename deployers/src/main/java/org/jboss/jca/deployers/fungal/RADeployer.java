@@ -577,7 +577,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
          if (cmd != null)
          {
             // Register with MDR
-            getConfiguration().getMetadataRepository().registerResourceAdapter(url, root, cmd);
+            getConfiguration().getMetadataRepository().registerResourceAdapter(url, root, cmd, ijmd);
          }
 
          if (activateDeployment)

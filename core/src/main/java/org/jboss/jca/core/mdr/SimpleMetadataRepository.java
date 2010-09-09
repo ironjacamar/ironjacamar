@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.mdr;
 
+import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.core.spi.mdr.AlreadyExistsException;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
@@ -51,6 +52,9 @@ public class SimpleMetadataRepository implements MetadataRepository
    /** Resource adapter roots */
    private ConcurrentMap<URL, File> raRoots;
 
+   /** IronJacamar metadata */
+   private Map<URL, IronJacamar> ironJacamar;
+
    /** JNDI mappings */
    private ConcurrentMap<URL, Map<String, List<String>>> jndiMappings;
 
@@ -61,13 +65,15 @@ public class SimpleMetadataRepository implements MetadataRepository
    {
       this.raTemplates = new ConcurrentHashMap<URL, Connector>();
       this.raRoots = new ConcurrentHashMap<URL, File>();
+      this.ironJacamar = new HashMap<URL, IronJacamar>();
       this.jndiMappings = new ConcurrentHashMap<URL, Map<String, List<String>>>();
    }
 
    /**
     * {@inheritDoc}
     */
-   public void registerResourceAdapter(URL deployment, File root, Connector md) throws AlreadyExistsException
+   public void registerResourceAdapter(URL deployment, File root, Connector md, IronJacamar ijmd)
+      throws AlreadyExistsException
    {
       if (deployment == null)
          throw new IllegalArgumentException("Deployment is null");
@@ -80,6 +86,7 @@ public class SimpleMetadataRepository implements MetadataRepository
 
       raTemplates.put(deployment, md);
       raRoots.put(deployment, root);
+      ironJacamar.put(deployment, ijmd);
    }
 
    /**
@@ -94,6 +101,8 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new NotFoundException(deployment + " isn't registered");
 
       raTemplates.remove(deployment);
+      raRoots.remove(deployment);
+      ironJacamar.remove(deployment);
    }
 
    /**
@@ -133,6 +142,20 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new NotFoundException(deployment + " isn't registered");
 
       return raRoots.get(deployment);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public IronJacamar getIronJacamar(URL deployment) throws NotFoundException
+   {
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");
+
+      if (!ironJacamar.containsKey(deployment))
+         throw new NotFoundException(deployment + " isn't registered");
+
+      return ironJacamar.get(deployment);
    }
 
    /**
