@@ -61,7 +61,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("/** The logger */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
+      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
       writeEol(out);
       writeEol(out);
       
@@ -115,7 +115,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("import javax.resource.spi.ResourceAdapter;");
       writeEol(out);
       writeEol(out);
-      out.write("import org.jboss.logging.Logger;");
+      out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
    }
@@ -174,7 +174,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("public void validate() throws InvalidPropertyException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call validate\");");
+      out.write("log.info(\"call validate\");");
 
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -209,7 +209,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("public ResourceAdapter getResourceAdapter()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call getResourceAdapter\");");
+      out.write("log.info(\"call getResourceAdapter\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return ra;");
@@ -236,7 +236,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("public void setResourceAdapter(ResourceAdapter ra)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call setResourceAdapter\");");
+      out.write("log.info(\"call setResourceAdapter\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("this.ra = ra;");

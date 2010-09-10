@@ -109,7 +109,7 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
+      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
       writeEol(out);
       writeEol(out);
       
@@ -246,7 +246,7 @@ public class RaCodeGen extends PropsCodeGen
       out.write("import javax.transaction.xa.XAResource;");
       writeEol(out);
       writeEol(out);
-      out.write("import org.jboss.logging.Logger;");
+      out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
    }
@@ -289,7 +289,7 @@ public class RaCodeGen extends PropsCodeGen
       out.write("throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call getXAResources\");");
+      out.write("log.info(\"call getXAResources\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null;");
@@ -332,7 +332,7 @@ public class RaCodeGen extends PropsCodeGen
       out.write("throws ResourceAdapterInternalException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call start\");");
+      out.write("log.info(\"call start\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -353,7 +353,7 @@ public class RaCodeGen extends PropsCodeGen
       out.write("public void stop()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call stop\");");
+      out.write("log.info(\"call stop\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -412,7 +412,7 @@ public class RaCodeGen extends PropsCodeGen
       }
       
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call endpointActivation\");");
+      out.write("log.info(\"call endpointActivation\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -457,7 +457,7 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
       }
       writeIndent(out, indent + 1);
-      out.write("log.debug(\"call endpointDeactivation\");");
+      out.write("log.info(\"call endpointDeactivation\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

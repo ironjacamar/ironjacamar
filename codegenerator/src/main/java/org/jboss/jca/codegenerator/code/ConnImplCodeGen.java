@@ -54,7 +54,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write("/** The logger */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
+      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
       writeEol(out);
       writeEol(out);
       
@@ -76,7 +76,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import org.jboss.logging.Logger;");
+      out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
    }
@@ -143,7 +143,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
                }
                writeLeftCurlyBracket(out, indent);
                writeIndent(out, indent + 1);
-               out.write("log.debug(\"call " + method.getMethodName() + "\");");
+               out.write("log.info(\"call " + method.getMethodName() + "\");");
                writeEol(out);
                if (!method.getReturnType().equals("void"))
                {
@@ -172,7 +172,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
          out.write("public void callMe()");
          writeLeftCurlyBracket(out, indent);
          writeIndent(out, indent + 1);
-         out.write("log.debug(\"call callMe\");");
+         out.write("log.info(\"call callMe\");");
 
          writeRightCurlyBracket(out, indent);
       }

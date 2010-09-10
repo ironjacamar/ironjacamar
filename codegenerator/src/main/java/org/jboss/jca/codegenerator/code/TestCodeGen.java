@@ -53,7 +53,7 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("public class " + getClassName(def));
       writeLeftCurlyBracket(out, 0);
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(" + getClassName(def) + ".class);");
+      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
       writeEol(out);
       writeEol(out);
       writeIndent(out, indent);
@@ -88,6 +88,8 @@ public class TestCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import java.util.UUID;");
       writeEol(out);
+      out.write("import java.util.logging.Logger;");
+      writeEol(out);
       writeEol(out);
       out.write("import javax.annotation.Resource;");
       writeEol(out);
@@ -95,8 +97,6 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("import org.jboss.arquillian.api.Deployment;");
       writeEol(out);
       out.write("import org.jboss.arquillian.junit.Arquillian;");
-      writeEol(out);
-      out.write("import org.jboss.logging.Logger;");
       writeEol(out);
       writeEol(out);
       out.write("import org.jboss.shrinkwrap.api.ShrinkWrap;");
