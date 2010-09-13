@@ -49,10 +49,29 @@ copy example.rar ironjacamar-1.0.0\deploy
 
      <para>on Windows.</para>
 
-     <para>The Java Naming and Directory Interface (JNDI) name of each connection factory or
-       admin ojbect is controlled through the <code>JndiStrategy</code> property on the
-       <code>RADeployer</code>. If the <code>SimpleJndiStrategy</code> class is used the
-       connection factory is bound under</para>
+     <para>The resource adapter can be configured and activated through deployment of a <code>-ra.xml</code>
+       file in the <code>deploy/</code> directory - f.ex. <code>deploy/example-ra.xml</code>. The format of the XML 
+       document is defined by the <code>resource-adapters_1_0.xsd</code> - f.ex</para>
+
+     <programlisting>
+<![CDATA[
+<resource-adapters>
+  <resource-adapter>
+    <archive>example.rar</archive>
+    <connection-definitions>
+      <connection-definition jndi-name="java:/eis/example" class="com.example.ra.MCF"/>
+    </connection-definitions>
+  </resource-adapter>
+</resource-adapters>
+]]>
+     </programlisting>
+
+     <para>to bind the connection factory from <code>com.example.ra.MCF</code> under <code>java:/eis/example</code>.</para>
+
+     <para>See the schema appendix for additional details about the format.</para>
+
+     <para>Alternative the resource adapter deployments will be picked up by the <code>RAActivator</code>
+       bean which bind a single connection factory under</para>
 
      <programlisting>
 java:/eis/&lt;deploymentName&gt;
