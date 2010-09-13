@@ -288,25 +288,26 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0" maxOccurs="1">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Whether to use separete pools for connection retrieved in a transaction 
-              and those retieved outside a transaction e.g. <no-tx-separate-pools/>  
-             ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="pool" type="poolType" minOccurs="0" maxOccurs="1">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Specifies pooling settings
-             ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:choice>
+        <xs:element name="pool" type="poolType" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+                <![CDATA[[
+                  Specifies pooling settings
+                 ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="xa-pool" type="xa-poolType" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+                <![CDATA[[
+                  Specifies xa-pooling settings
+                 ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
       <xs:element name="security" type="securityType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
@@ -383,6 +384,69 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="xa-poolType">
+    <xs:complexContent>
+      <xs:extension base="poolType">
+        <xs:sequence>
+          <xs:element name="is-same-rm-override" type="xs:boolean" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                <![CDATA[[
+                  The is-same-rm-override element allows one to unconditionally 
+                  set whether the javax.transaction.xa.XAResource.isSameRM(XAResource) returns 
+                  true or false. Ex: <is-same-rm-override>true</is-same-rm-override>
+                 ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="interleaving" type="boolean-presenceType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                <![CDATA[[
+                  An element to enable interleaving for XA connection factories 
+                  Ex: <interleaving/>
+                 ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                <![CDATA[[
+                  Oracle does not like XA connections getting used both inside and outside a JTA transaction. 
+                  To workaround the problem you can create separate sub-pools for the different contexts
+                  using <no-tx-separate-pools/>
+                  Ex: <no-tx-separate-pools/>
+                 ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="pad-xid" type="xs:boolean" default="false" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                <![CDATA[[
+                   Should the Xid be padded
+                   Ex: <pad-xid>true</pad-xid>
+                 ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="wrap-xa-resource" type="xs:boolean" default="false" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation>
+                <![CDATA[[
+                   Should the XAResource instances be wrapped in a org.jboss.tm.XAResourceWrapper
+                   instance
+                   Ex: <wrap-xa-resource>true</wrap-xa-resource>
+                 ]]>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="securityType">

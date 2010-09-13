@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
+import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
 
 import java.util.Collections;
@@ -63,7 +64,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
 
    private final CommonSecurity security;
 
-   private final boolean noTxSeparatePool;
 
    /**
     * Create a new ConnectionDefinition.
@@ -78,11 +78,10 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
     * @param timeOut timeOut
     * @param validation validation
     * @param security security
-    * @param noTxSeparatePool noTxSeparatePool
     */
    public ConnectionDefinitionImpl(Map<String, String> configProperties, String className, String jndiName,
       String poolName, boolean enabled, boolean useJavaContext, CommonPool pool, CommonTimeOut timeOut,
-      CommonValidation validation, CommonSecurity security, boolean noTxSeparatePool)
+      CommonValidation validation, CommonSecurity security)
    {
       super();
       if (configProperties != null)
@@ -103,7 +102,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       this.timeOut = timeOut;
       this.validation = validation;
       this.security = security;
-      this.noTxSeparatePool = noTxSeparatePool;
+
    }
 
    /**
@@ -216,15 +215,11 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       return security;
    }
 
-   /**
-    * Get the noTxSeparatePool.
-    *
-    * @return the noTxSeparatePool.
-    */
+
    @Override
-   public final boolean isNoTxSeparatePool()
+   public final boolean isXa()
    {
-      return noTxSeparatePool;
+      return (pool instanceof CommonXaPool);
    }
 
    @Override
@@ -236,7 +231,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
       result = prime * result + (enabled ? 1231 : 1237);
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
-      result = prime * result + (noTxSeparatePool ? 1231 : 1237);
       result = prime * result + ((pool == null) ? 0 : pool.hashCode());
       result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
       result = prime * result + ((security == null) ? 0 : security.hashCode());
@@ -278,8 +272,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
             return false;
       }
       else if (!jndiName.equals(other.jndiName))
-         return false;
-      if (noTxSeparatePool != other.noTxSeparatePool)
          return false;
       if (pool == null)
       {
@@ -327,7 +319,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       return "ConnectionDefinitionImpl [configProperties=" + configProperties + ", className=" + className +
              ", jndiName=" + jndiName + ", poolName=" + poolName + ", enabled=" + enabled + ", useJavaContext=" +
              useJavaContext + ", pool=" + pool + ", timeOut=" + timeOut + ", validation=" + validation +
-             ", security=" + security + ", noTxSeparatePool=" + noTxSeparatePool + "]";
+             ", security=" + security + "]";
    }
 
 }

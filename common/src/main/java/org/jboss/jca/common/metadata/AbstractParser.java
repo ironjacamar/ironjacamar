@@ -23,9 +23,12 @@ package org.jboss.jca.common.metadata;
 
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
+import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
+import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
+import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -257,6 +260,97 @@ public abstract class AbstractParser
                   }
                   case USERNAME : {
                      userName = elementAsString(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   /**
+   *
+   * parse a {@link CommonXaPool} object
+   *
+   * @param reader reader
+   * @return the parsed {@link CommonXaPool} object
+   * @throws XMLStreamException XMLStreamException
+   * @throws ParserException ParserException
+   */
+   protected CommonXaPool parseXaPool(XMLStreamReader reader) throws XMLStreamException, ParserException
+   {
+      Integer minPoolSize = null;
+      Integer maxPoolSize = null;
+      boolean prefill = false;
+      boolean interleaving = false;
+      boolean isSameRmOverrideValue = false;
+      boolean padXid = false;
+      boolean noTxSeparatePool = false;
+      boolean wrapXaDataSource = false;
+      boolean useStrictMin = false;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (XaDataSource.Tag.forName(reader.getLocalName()) == XaDataSource.Tag.XA_POOL)
+               {
+
+                  return new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, isSameRmOverrideValue,
+                                        interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
+
+               }
+               else
+               {
+                  if (CommonXaPool.Tag.forName(reader.getLocalName()) == CommonXaPool.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (CommonXaPool.Tag.forName(reader.getLocalName()))
+               {
+                  case MAXPOOLSIZE : {
+                     maxPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case MIN_POOL_SIZE : {
+                     minPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case INTERLEAVING : {
+                     interleaving = elementAsBoolean(reader);
+                     break;
+                  }
+                  case ISSAMERMOVERRIDEVALUE : {
+                     isSameRmOverrideValue = elementAsBoolean(reader);
+                     break;
+                  }
+                  case NO_TX_SEPARATE_POOLS : {
+                     noTxSeparatePool = elementAsBoolean(reader);
+                     break;
+                  }
+                  case PAD_XID : {
+                     padXid = elementAsBoolean(reader);
+                     break;
+                  }
+                  case WRAP_XA_RESOURCE : {
+                     wrapXaDataSource = elementAsBoolean(reader);
+                     break;
+                  }
+                  case PREFILL : {
+                     prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case USE_STRICT_MIN : {
+                     useStrictMin = elementAsBoolean(reader);
                      break;
                   }
                   default :

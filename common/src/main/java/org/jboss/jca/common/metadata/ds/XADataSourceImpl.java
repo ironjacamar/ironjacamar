@@ -22,12 +22,12 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
+import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
-import org.jboss.jca.common.api.metadata.ds.XaPool;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final String newConnectionSql;
 
-   private final XaPool xaPool;
+   private final CommonXaPool xaPool;
 
    /**
     * Create a new XADataSourceImpl.
@@ -76,7 +76,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
       boolean useJavaContext, String poolName, boolean enabled, String jndiName,
       Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String newConnectionSql,
-      XaPool xaPool)
+      CommonXaPool xaPool)
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
             urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
@@ -231,7 +231,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @return the xaPool.
     */
    @Override
-   public final XaPool getXaPool()
+   public final CommonXaPool getXaPool()
    {
       return xaPool;
    }

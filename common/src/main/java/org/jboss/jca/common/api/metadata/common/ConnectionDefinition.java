@@ -107,12 +107,12 @@ public interface ConnectionDefinition extends JCAMetadata
    public CommonSecurity getSecurity();
 
    /**
-    * Get the noTxSeparatePool.
+    * Return true if this connectionDefnition have defined an XaPool
     *
-    * @return the noTxSeparatePool.
+    * @return true if this connectionDefnition have defined an XaPool
     */
 
-   public boolean isNoTxSeparatePool();
+   public boolean isXa();
 
    /**
    *
@@ -133,9 +133,9 @@ public interface ConnectionDefinition extends JCAMetadata
        */
       CONFIG_PROPERTY("config-property"),
       /**
-       * no-tx-separate-pool tag
+       * pool tag
        */
-      NO_TX_SEPARATE_POOL("no-tx-separate-pool"),
+      XA_POOL("xa-pool"),
       /**
        * pool tag
        */

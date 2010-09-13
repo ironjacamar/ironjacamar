@@ -19,10 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds;
+package org.jboss.jca.common.metadata.common;
 
-import org.jboss.jca.common.api.metadata.ds.XaPool;
-import org.jboss.jca.common.metadata.common.CommonPoolImpl;
+import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 
 /**
  *
@@ -31,7 +30,7 @@ import org.jboss.jca.common.metadata.common.CommonPoolImpl;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class XaPoolImpl extends CommonPoolImpl implements XaPool
+public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 3261597366235425250L;
@@ -61,7 +60,7 @@ public class XaPoolImpl extends CommonPoolImpl implements XaPool
     * @param wrapXaDataSource wrapXaDataSource
     * @param noTxSeparatePool noTxSeparatePool
     */
-   public XaPoolImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, boolean useStrictMin,
+   public CommonXaPoolImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, boolean useStrictMin,
       boolean isSameRmOverride, boolean interleaving, boolean padXid, boolean wrapXaDataSource,
       boolean noTxSeparatePool)
    {
@@ -148,9 +147,9 @@ public class XaPoolImpl extends CommonPoolImpl implements XaPool
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof XaPoolImpl))
+      if (!(obj instanceof CommonXaPoolImpl))
          return false;
-      XaPoolImpl other = (XaPoolImpl) obj;
+      CommonXaPoolImpl other = (CommonXaPoolImpl) obj;
       if (interleaving != other.interleaving)
          return false;
       if (isSameRmOverride != other.isSameRmOverride)

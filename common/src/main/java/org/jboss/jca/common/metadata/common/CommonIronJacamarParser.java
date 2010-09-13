@@ -66,7 +66,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       CommonSecurity security = null;
       CommonTimeOut timeOut = null;
       CommonValidation validation = null;
-      boolean noTxSeparatePools = false;
       CommonPool pool = null;
 
       //attributes reading
@@ -115,8 +114,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
 
                   return new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
-                                                      useJavaContext, pool, timeOut, validation, security,
-                                                      noTxSeparatePools);
+                                                      useJavaContext, pool, timeOut, validation, security);
                }
                else
                {
@@ -146,11 +144,17 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      validation = parseValidation(reader);
                      break;
                   }
-                  case NO_TX_SEPARATE_POOL : {
-                     noTxSeparatePools = elementAsBoolean(reader);
+                  case XA_POOL : {
+                     if (pool != null)
+                        throw new ParserException("You cannot define more than one pool or xa-poll in same"
+                                                  + " connection-definition");
+                     pool = parseXaPool(reader);
                      break;
                   }
                   case POOL : {
+                     if (pool != null)
+                        throw new ParserException("You cannot define more than one pool or xa-poll in same"
+                                                  + " connection-definition");
                      pool = parsePool(reader);
                      break;
                   }

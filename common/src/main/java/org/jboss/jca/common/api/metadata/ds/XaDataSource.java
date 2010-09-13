@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,7 +85,7 @@ public interface XaDataSource extends CommonDataSource
     *
     * @return the xaPool.
     */
-   public XaPool getXaPool();
+   public CommonXaPool getXaPool();
 
    /**
    *
