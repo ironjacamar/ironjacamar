@@ -49,7 +49,10 @@ copy example.rar ironjacamar-1.0.0\deploy
 
      <para>on Windows.</para>
 
-     <para>The resource adapter can be configured and activated through deployment of a <code>-ra.xml</code>
+     <para>The resource adapter can configured and activated through a <code>META-INF/ironjacamar.xml</code>
+       file in the archive. The format of the XML document is defined by the <code>ironjacamar_1_0.xsd</code>.</para>
+
+     <para>A resource adapter can also be configured and activated through deployment of a <code>-ra.xml</code>
        file in the <code>deploy/</code> directory - f.ex. <code>deploy/example-ra.xml</code>. The format of the XML 
        document is defined by the <code>resource-adapters_1_0.xsd</code> - f.ex</para>
 
