@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ironjacamar;
 
-import org.jboss.jca.common.api.metadata.common.AdminObject;
-import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.metadata.MetadataParser;
@@ -111,8 +111,8 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
 
    private IronJacamar parseIronJacamar(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      ArrayList<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>();
-      ArrayList<AdminObject> adminObjects = new ArrayList<AdminObject>();
+      ArrayList<CommonConnDef> connectionDefinitions = new ArrayList<CommonConnDef>();
+      ArrayList<CommonAdminObject> adminObjects = new ArrayList<CommonAdminObject>();
       ArrayList<String> beanValidationGroups = new ArrayList<String>();
       String bootstrapContext = null;
       TransactionSupportEnum transactionSupport = null;

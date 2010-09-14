@@ -21,12 +21,7 @@
  */
 package org.jboss.jca.common.metadata.common;
 
-import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
-import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,15 +29,15 @@ import java.util.Map;
 
 /**
  *
- * A ConnectionDefinition.
+ * A AdminObjectImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class ConnectionDefinitionImpl implements ConnectionDefinition
+public class CommonAdminObjectImpl implements CommonAdminObject
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -7109775624169563102L;
+   private static final long serialVersionUID = 8137442556861441967L;
 
    private final HashMap<String, String> configProperties;
 
@@ -56,17 +51,8 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
 
    private final boolean useJavaContext;
 
-   private final CommonPool pool;
-
-   private final CommonTimeOut timeOut;
-
-   private final CommonValidation validation;
-
-   private final CommonSecurity security;
-
-
    /**
-    * Create a new ConnectionDefinition.
+    * Create a new AdminObjectImpl.
     *
     * @param configProperties configProperties
     * @param className className
@@ -74,14 +60,9 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
     * @param poolName poolName
     * @param enabled enabled
     * @param useJavaContext useJavaContext
-    * @param pool pool
-    * @param timeOut timeOut
-    * @param validation validation
-    * @param security security
     */
-   public ConnectionDefinitionImpl(Map<String, String> configProperties, String className, String jndiName,
-      String poolName, boolean enabled, boolean useJavaContext, CommonPool pool, CommonTimeOut timeOut,
-      CommonValidation validation, CommonSecurity security)
+   public CommonAdminObjectImpl(Map<String, String> configProperties, String className, String jndiName,
+      String poolName, boolean enabled, boolean useJavaContext)
    {
       super();
       if (configProperties != null)
@@ -98,11 +79,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       this.poolName = poolName;
       this.enabled = enabled;
       this.useJavaContext = useJavaContext;
-      this.pool = pool;
-      this.timeOut = timeOut;
-      this.validation = validation;
-      this.security = security;
-
    }
 
    /**
@@ -139,17 +115,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    }
 
    /**
-    * Get the poolName.
-    *
-    * @return the poolName.
-    */
-   @Override
-   public final String getPoolName()
-   {
-      return poolName;
-   }
-
-   /**
     * Get the enabled.
     *
     * @return the enabled.
@@ -171,57 +136,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       return useJavaContext;
    }
 
-   /**
-    * Get the pool.
-    *
-    * @return the pool.
-    */
-   @Override
-   public final CommonPool getPool()
-   {
-      return pool;
-   }
-
-   /**
-    * Get the timeOut.
-    *
-    * @return the timeOut.
-    */
-   @Override
-   public final CommonTimeOut getTimeOut()
-   {
-      return timeOut;
-   }
-
-   /**
-    * Get the validation.
-    *
-    * @return the validation.
-    */
-   @Override
-   public final CommonValidation getValidation()
-   {
-      return validation;
-   }
-
-   /**
-    * Get the security.
-    *
-    * @return the security.
-    */
-   @Override
-   public final CommonSecurity getSecurity()
-   {
-      return security;
-   }
-
-
-   @Override
-   public final boolean isXa()
-   {
-      return (pool instanceof CommonXaPool);
-   }
-
    @Override
    public int hashCode()
    {
@@ -231,12 +145,8 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
       result = prime * result + (enabled ? 1231 : 1237);
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
-      result = prime * result + ((pool == null) ? 0 : pool.hashCode());
       result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
-      result = prime * result + ((security == null) ? 0 : security.hashCode());
-      result = prime * result + ((timeOut == null) ? 0 : timeOut.hashCode());
       result = prime * result + (useJavaContext ? 1231 : 1237);
-      result = prime * result + ((validation == null) ? 0 : validation.hashCode());
       return result;
    }
 
@@ -247,9 +157,9 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof ConnectionDefinitionImpl))
+      if (!(obj instanceof CommonAdminObjectImpl))
          return false;
-      ConnectionDefinitionImpl other = (ConnectionDefinitionImpl) obj;
+      CommonAdminObjectImpl other = (CommonAdminObjectImpl) obj;
       if (className == null)
       {
          if (other.className != null)
@@ -273,13 +183,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       }
       else if (!jndiName.equals(other.jndiName))
          return false;
-      if (pool == null)
-      {
-         if (other.pool != null)
-            return false;
-      }
-      else if (!pool.equals(other.pool))
-         return false;
       if (poolName == null)
       {
          if (other.poolName != null)
@@ -287,28 +190,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       }
       else if (!poolName.equals(other.poolName))
          return false;
-      if (security == null)
-      {
-         if (other.security != null)
-            return false;
-      }
-      else if (!security.equals(other.security))
-         return false;
-      if (timeOut == null)
-      {
-         if (other.timeOut != null)
-            return false;
-      }
-      else if (!timeOut.equals(other.timeOut))
-         return false;
       if (useJavaContext != other.useJavaContext)
-         return false;
-      if (validation == null)
-      {
-         if (other.validation != null)
-            return false;
-      }
-      else if (!validation.equals(other.validation))
          return false;
       return true;
    }
@@ -316,10 +198,19 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    @Override
    public String toString()
    {
-      return "ConnectionDefinitionImpl [configProperties=" + configProperties + ", className=" + className +
-             ", jndiName=" + jndiName + ", poolName=" + poolName + ", enabled=" + enabled + ", useJavaContext=" +
-             useJavaContext + ", pool=" + pool + ", timeOut=" + timeOut + ", validation=" + validation +
-             ", security=" + security + "]";
+      return "AdminObjectImpl [configProperties=" + configProperties + ", className=" + className + ", jndiName=" +
+             jndiName + ", poolName=" + poolName + ", enabled=" + enabled + ", useJavaContext=" + useJavaContext +
+             "]";
    }
 
+   /**
+    * Get the poolName.
+    *
+    * @return the poolName.
+    */
+   @Override
+   public final String getPoolName()
+   {
+      return poolName;
+   }
 }

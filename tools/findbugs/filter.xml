@@ -28,12 +28,12 @@
     <Bug code="Nm"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.common.metadata.MetadataFactory"/>
+    <Class name="org.jboss.jca.common.metadata.merge.Merger"/>
     <Method name="mergeConnectorAndDs" />
     <Bug code="NP"/>
   </Match>
 <Match>
-    <Class name="org.jboss.jca.common.metadata.MetadataFactory"/>
+    <Class name="org.jboss.jca.common.metadata.merge.Merger"/>
     <Method name="mergeConnectorWithProperties" />
     <Bug code="NP"/>
   </Match>

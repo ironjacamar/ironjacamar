@@ -33,7 +33,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface AdminObject extends JCAMetadata
+public interface CommonAdminObject extends JCAMetadata
 {
 
    /**

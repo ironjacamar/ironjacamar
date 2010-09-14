@@ -32,6 +32,7 @@ import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.api.validator.ValidateException;
+import org.jboss.jca.common.metadata.ra.common.AbstractResourceAdapetrImpl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +42,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public class ResourceAdapter10Impl implements ResourceAdapter10
+public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implements ResourceAdapter10
 {
 
    /** The serialVersionUID */
@@ -57,11 +58,9 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
 
    private final XsdString connectionImplClass;
 
-   private final TransactionSupportEnum transactionSupport;
+   private TransactionSupportEnum transactionSupport;
 
    private final ArrayList<AuthenticationMechanism> authenticationMechanism;
-
-   private final ArrayList<ConfigProperty> configProperties;
 
    private final Boolean reauthenticationSupport;
 
@@ -190,9 +189,21 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
     * @return the transactionSupport.
     */
    @Override
-   public TransactionSupportEnum getTransactionSupport()
+   public synchronized TransactionSupportEnum getTransactionSupport()
    {
       return transactionSupport;
+   }
+
+   /**
+    *
+    * force transactionSupport to the new value
+    * This method is thread safe
+    *
+    * @param newTransactionSupport the new value
+    */
+   public synchronized void forceNewTrasactionSupport(TransactionSupportEnum newTransactionSupport)
+   {
+      this.transactionSupport = newTransactionSupport;
    }
 
    /**
@@ -204,17 +215,6 @@ public class ResourceAdapter10Impl implements ResourceAdapter10
    public List<AuthenticationMechanism> getAuthenticationMechanisms()
    {
       return authenticationMechanism == null ? null : Collections.unmodifiableList(authenticationMechanism);
-   }
-
-   /**
-    * Get the configProperties.
-    *
-    * @return the configProperties.
-    */
-   @Override
-   public List<ConfigProperty> getConfigProperties()
-   {
-      return configProperties;
    }
 
    /**

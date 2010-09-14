@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ironjacamar;
 
-import org.jboss.jca.common.api.metadata.common.AdminObject;
-import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.metadata.common.CommonIronJacamarImpl;
@@ -55,7 +55,7 @@ public class IronJacamarImpl extends CommonIronJacamarImpl implements IronJacama
     * @param bootstrapContext bootstrapContext
     */
    public IronJacamarImpl(TransactionSupportEnum transactionSupport, Map<String, String> configProperties,
-      List<AdminObject> adminObjects, List<ConnectionDefinition> connectionDefinitions,
+      List<CommonAdminObject> adminObjects, List<CommonConnDef> connectionDefinitions,
       List<String> beanValidationGroups, String bootstrapContext)
    {
       super(transactionSupport, configProperties, adminObjects, connectionDefinitions, beanValidationGroups,

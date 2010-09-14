@@ -44,9 +44,9 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
     */
    private static final long serialVersionUID = 421345307326415666L;
 
-   private final ArrayList<ConnectionDefinition> connectionDefinition;
+   private ArrayList<ConnectionDefinition> connectionDefinition;
 
-   private final TransactionSupportEnum transactionSupport;
+   private TransactionSupportEnum transactionSupport;
 
    private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
@@ -62,8 +62,8 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
     * @param id XML ID
     */
    public OutboundResourceAdapterImpl(List<ConnectionDefinition> connectionDefinition,
-         TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-         boolean reauthenticationSupport, String id)
+      TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
+      boolean reauthenticationSupport, String id)
    {
       super();
       if (connectionDefinition != null)
@@ -93,18 +93,50 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
     * @return connectionDefinition
     */
    @Override
-   public List<ConnectionDefinition> getConnectionDefinitions()
+   public synchronized List<ConnectionDefinition> getConnectionDefinitions()
    {
       return connectionDefinition == null ? null : Collections.unmodifiableList(connectionDefinition);
+   }
+
+   /**
+   *
+   * force connectionDefinition with new content.
+   * This method is thread safe
+   *
+   * @param newContent the list of new properties
+   */
+   public synchronized void forceConnectionDefinitionsContent(List<ConnectionDefinition> newContent)
+   {
+      if (newContent != null)
+      {
+         this.connectionDefinition = new ArrayList<ConnectionDefinition>(newContent.size());
+         this.connectionDefinition.addAll(newContent);
+      }
+      else
+      {
+         this.connectionDefinition = new ArrayList<ConnectionDefinition>(0);
+      }
    }
 
    /**
     * @return transactionSupport
     */
    @Override
-   public TransactionSupportEnum getTransactionSupport()
+   public synchronized TransactionSupportEnum getTransactionSupport()
    {
       return transactionSupport;
+   }
+
+   /**
+   *
+   * force transactionSupport to the new value
+   * This method is thread safe
+   *
+   * @param newTransactionSupport the new value
+   */
+   public synchronized void forceNewTrasactionSupport(TransactionSupportEnum newTransactionSupport)
+   {
+      this.transactionSupport = newTransactionSupport;
    }
 
    /**
@@ -221,9 +253,9 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
    @Override
    public String toString()
    {
-      return "OutboundResourceAdapter [connectionDefinition=" + connectionDefinition + ", transactionSupport="
-            + transactionSupport + ", authenticationMechanism=" + authenticationMechanism
-            + ", reauthenticationSupport=" + reauthenticationSupport + ", id=" + id + "]";
+      return "OutboundResourceAdapter [connectionDefinition=" + connectionDefinition + ", transactionSupport=" +
+             transactionSupport + ", authenticationMechanism=" + authenticationMechanism +
+             ", reauthenticationSupport=" + reauthenticationSupport + ", id=" + id + "]";
    }
 
    /**
@@ -238,9 +270,9 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       if (this.getConnectionDefinitions() == null || this.getConnectionDefinitions().size() == 0)
          return false;
       ConnectionDefinition cdm = this.getConnectionDefinitions().get(0);
-      if (cdm.getManagedConnectionFactoryClass() == null || cdm.getConnectionFactoryInterface() == null
-            || cdm.getConnectionFactoryImplClass() == null || cdm.getConnectionInterface() == null
-            || cdm.getConnectionImplClass() == null)
+      if (cdm.getManagedConnectionFactoryClass() == null || cdm.getConnectionFactoryInterface() == null ||
+          cdm.getConnectionFactoryImplClass() == null || cdm.getConnectionInterface() == null ||
+          cdm.getConnectionImplClass() == null)
          return false;
 
       return true;
@@ -255,36 +287,37 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
 
          String newId = this.id == null ? input.id : this.id;
 
-         List<ConnectionDefinition> newConnectionDefinition = new ArrayList<ConnectionDefinition>(
-               this.connectionDefinition.size());
+         List<ConnectionDefinition> newConnDef = new ArrayList<ConnectionDefinition>(
+                                                                                     this.connectionDefinition
+                                                                                        .size());
 
-         newConnectionDefinition.addAll(this.connectionDefinition);
+         newConnDef.addAll(this.connectionDefinition);
          for (ConnectionDefinition rcd : input.connectionDefinition)
          {
             boolean isNew = true;
             for (ConnectionDefinition lcd : this.connectionDefinition)
             {
-               if (lcd.getManagedConnectionFactoryClass() == null
-                     || rcd.getManagedConnectionFactoryClass().equals(lcd.getManagedConnectionFactoryClass()))
+               if (lcd.getManagedConnectionFactoryClass() == null ||
+                   rcd.getManagedConnectionFactoryClass().equals(lcd.getManagedConnectionFactoryClass()))
                {
-                  newConnectionDefinition.remove(lcd);
-                  newConnectionDefinition.add(lcd.merge(rcd));
+                  newConnDef.remove(lcd);
+                  newConnDef.add(lcd.merge(rcd));
                   isNew = false;
                }
             }
-            if (isNew) newConnectionDefinition.add(rcd);
+            if (isNew)
+               newConnDef.add(rcd);
          }
 
          TransactionSupportEnum newTransactionSupport = this.transactionSupport == null
-               ? input.transactionSupport
-               : this.transactionSupport;
+            ? input.transactionSupport
+            : this.transactionSupport;
 
          boolean newReauthenticationSupport = this.reauthenticationSupport || input.reauthenticationSupport;
          List<AuthenticationMechanism> newAuthenticationMechanism = MergeUtil.mergeList(
-               this.authenticationMechanism,
-               input.authenticationMechanism);
-         return new OutboundResourceAdapterImpl(newConnectionDefinition, newTransactionSupport,
-               newAuthenticationMechanism, newReauthenticationSupport, newId);
+            this.authenticationMechanism, input.authenticationMechanism);
+         return new OutboundResourceAdapterImpl(newConnDef, newTransactionSupport, newAuthenticationMechanism,
+                                                newReauthenticationSupport, newId);
       }
       else
       {
@@ -296,6 +329,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
    public CopyableMetaData copy()
    {
       return new OutboundResourceAdapterImpl(CopyUtil.cloneList(connectionDefinition), transactionSupport,
-            CopyUtil.cloneList(authenticationMechanism), reauthenticationSupport, CopyUtil.cloneString(id));
+                                             CopyUtil.cloneList(authenticationMechanism), reauthenticationSupport,
+                                             CopyUtil.cloneString(id));
    }
 }

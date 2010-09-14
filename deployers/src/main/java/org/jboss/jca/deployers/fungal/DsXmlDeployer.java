@@ -29,8 +29,8 @@ import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.common.metadata.ds.DsParser;
+import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -361,10 +361,10 @@ public final class DsXmlDeployer implements Deployer
    {
       log.debug("DataSource=" + ds);
 
-      MetadataFactory metaDataFactory = new MetadataFactory();
+      Merger merger = new Merger();
 
       Connector md = mdr.getResourceAdapter(ra);
-      md = metaDataFactory.mergeConnectorAndDs(ds, md);
+      md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one
       ResourceAdapter1516 ra1516 = (ResourceAdapter1516)md.getResourceadapter();
@@ -436,10 +436,10 @@ public final class DsXmlDeployer implements Deployer
    {
       log.debug("XaDataSource=" + ds);
 
-      MetadataFactory metaDataFactory = new MetadataFactory();
+      Merger merger = new Merger();
 
       Connector md = mdr.getResourceAdapter(ra);
-      md = metaDataFactory.mergeConnectorAndDs(ds, md);
+      md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one
       ResourceAdapter1516 ra1516 = (ResourceAdapter1516)md.getResourceadapter();

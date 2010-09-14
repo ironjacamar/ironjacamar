@@ -452,7 +452,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
 
                if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                {
-                  org.jboss.jca.common.api.metadata.common.ConnectionDefinition cd =
+                  org.jboss.jca.common.api.metadata.common.CommonConnDef cd =
                      findConnectionDefinition(mcf.getClass().getName(), raxml.getConnectionDefinitions());
 
                   String jndiName = cd.getJndiName();
@@ -483,7 +483,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                      {
                         org.jboss.jca.common.api.metadata.ra.ConnectionDefinition cdMeta = cdMetas.get(cdIndex);
 
-                        org.jboss.jca.common.api.metadata.common.ConnectionDefinition cdRaXml =
+                        org.jboss.jca.common.api.metadata.common.CommonConnDef cdRaXml =
                            findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(), 
                                                     raxml.getConnectionDefinitions());
 
@@ -784,8 +784,8 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
     * @param defs The connection definitions
     * @return The JNDI name
     */
-   private org.jboss.jca.common.api.metadata.common.ConnectionDefinition findConnectionDefinition(String clz,
-      List<org.jboss.jca.common.api.metadata.common.ConnectionDefinition> defs)
+   private org.jboss.jca.common.api.metadata.common.CommonConnDef findConnectionDefinition(String clz,
+      List<org.jboss.jca.common.api.metadata.common.CommonConnDef> defs)
    {
       if (defs != null)
       {
@@ -797,7 +797,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
          if (clz == null)
             throw new IllegalArgumentException("ManagedConnectionFactory must be defined in class-name");
 
-         for (org.jboss.jca.common.api.metadata.common.ConnectionDefinition cd : defs)
+         for (org.jboss.jca.common.api.metadata.common.CommonConnDef cd : defs)
          {
             if (clz.equals(cd.getClassName()))
                return cd;

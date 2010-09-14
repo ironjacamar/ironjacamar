@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.common.metadata.resourceadapter;
 
-import org.jboss.jca.common.api.metadata.common.AdminObject;
-import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
@@ -150,8 +150,8 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
    private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      ArrayList<ConnectionDefinition> connectionDefinitions = new ArrayList<ConnectionDefinition>();
-      ArrayList<AdminObject> adminObjects = new ArrayList<AdminObject>();
+      ArrayList<CommonConnDef> connectionDefinitions = new ArrayList<CommonConnDef>();
+      ArrayList<CommonAdminObject> adminObjects = new ArrayList<CommonAdminObject>();
       ArrayList<String> beanValidationGroups = new ArrayList<String>();
       String bootstrapContext = null;
       String archive = null;

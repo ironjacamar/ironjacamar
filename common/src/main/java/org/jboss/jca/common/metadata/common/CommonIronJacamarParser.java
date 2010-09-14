@@ -21,13 +21,13 @@
  */
 package org.jboss.jca.common.metadata.common;
 
-import org.jboss.jca.common.api.metadata.common.AdminObject;
-import org.jboss.jca.common.api.metadata.common.AdminObject.Attribute;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject.Attribute;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
-import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.ParserException;
@@ -55,12 +55,12 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     * parse a single connection-definition tag
     *
     * @param reader the reader
-    * @return the parse {@link ConnectionDefinition} object
+    * @return the parse {@link CommonConnDef} object
     * @throws XMLStreamException XMLStreamException
     * @throws ParserException ParserException
     */
-   protected ConnectionDefinition parseConnectionDefinitions(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+   protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader)
+      throws XMLStreamException, ParserException
    {
       HashMap<String, String> configProperties = new HashMap<String, String>();
       CommonSecurity security = null;
@@ -75,7 +75,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       String jndiName = null;
       String poolName = null;
 
-      for (ConnectionDefinition.Attribute attribute : ConnectionDefinition.Attribute.values())
+      for (CommonConnDef.Attribute attribute : CommonConnDef.Attribute.values())
       {
          switch (attribute)
          {
@@ -113,12 +113,13 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.CONNECTION_DEFINITION)
                {
 
-                  return new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
-                                                      useJavaContext, pool, timeOut, validation, security);
+                  return new CommonConnDefImpl(configProperties, className, jndiName, poolName,
+                                                            enabled, useJavaContext, pool, timeOut, validation,
+                                                            security);
                }
                else
                {
-                  if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.UNKNOWN)
+                  if (CommonConnDef.Tag.forName(reader.getLocalName()) == CommonConnDef.Tag.UNKNOWN)
                   {
                      throw new ParserException("unexpected end tag" + reader.getLocalName());
                   }
@@ -126,7 +127,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                break;
             }
             case START_ELEMENT : {
-               switch (ConnectionDefinition.Tag.forName(reader.getLocalName()))
+               switch (CommonConnDef.Tag.forName(reader.getLocalName()))
                {
                   case CONFIG_PROPERTY : {
                      configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
@@ -179,7 +180,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.VALIDATION)
+               if (CommonConnDef.Tag.forName(reader.getLocalName()) == CommonConnDef.Tag.VALIDATION)
                {
 
                   return new CommonValidationImpl(backgroundValidation, backgroundValidationMinutes, useFastFail);
@@ -231,7 +232,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.TIMEOUT)
+               if (CommonConnDef.Tag.forName(reader.getLocalName()) == CommonConnDef.Tag.TIMEOUT)
                {
 
                   return new CommonTimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
@@ -284,11 +285,12 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     * parse a single admin-oject tag
     *
     * @param reader the reader
-    * @return the parsed {@link AdminObject}
+    * @return the parsed {@link CommonAdminObject}
     * @throws XMLStreamException XMLStreamException
     * @throws ParserException ParserException
     */
-   protected AdminObject parseAdminObjects(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected CommonAdminObject parseAdminObjects(XMLStreamReader reader) throws XMLStreamException,
+      ParserException
    {
       HashMap<String, String> configProperties = new HashMap<String, String>();
 
@@ -299,7 +301,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       String jndiName = null;
       String poolName = null;
 
-      for (Attribute attribute : AdminObject.Attribute.values())
+      for (Attribute attribute : CommonAdminObject.Attribute.values())
       {
          switch (attribute)
          {
@@ -337,12 +339,12 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.ADMIN_OBJECT)
                {
 
-                  return new AdminObjectImpl(configProperties, className, jndiName, poolName, enabled,
-                                             useJavaContext);
+                  return new CommonAdminObjectImpl(configProperties, className, jndiName, poolName, enabled,
+                                                   useJavaContext);
                }
                else
                {
-                  if (AdminObject.Tag.forName(reader.getLocalName()) == AdminObject.Tag.UNKNOWN)
+                  if (CommonAdminObject.Tag.forName(reader.getLocalName()) == CommonAdminObject.Tag.UNKNOWN)
                   {
                      throw new ParserException("unexpected end tag" + reader.getLocalName());
                   }
@@ -350,7 +352,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                break;
             }
             case START_ELEMENT : {
-               switch (AdminObject.Tag.forName(reader.getLocalName()))
+               switch (CommonAdminObject.Tag.forName(reader.getLocalName()))
                {
                   case CONFIG_PROPERTY : {
                      configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));

@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
-
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
@@ -46,7 +45,7 @@ public class AdminObjectImpl implements AdminObject
 
    private final XsdString adminobjectClass;
 
-   private final ArrayList<ConfigProperty> configProperty;
+   private ArrayList<ConfigProperty> configProperties;
 
    private final String id;
 
@@ -57,19 +56,19 @@ public class AdminObjectImpl implements AdminObject
     * @param id xmlid
     */
    public AdminObjectImpl(final XsdString adminobjectInterface, final XsdString adminobjectClass,
-         final List<? extends ConfigProperty> configProperty, final String id)
+      final List<? extends ConfigProperty> configProperty, final String id)
    {
       super();
       this.adminobjectInterface = adminobjectInterface;
       this.adminobjectClass = adminobjectClass;
       if (configProperty != null)
       {
-         this.configProperty = new ArrayList<ConfigProperty>(configProperty.size());
-         this.configProperty.addAll(configProperty);
+         this.configProperties = new ArrayList<ConfigProperty>(configProperty.size());
+         this.configProperties.addAll(configProperty);
       }
       else
       {
-         this.configProperty = new ArrayList<ConfigProperty>(0);
+         this.configProperties = new ArrayList<ConfigProperty>(0);
       }
       this.id = id;
    }
@@ -96,11 +95,30 @@ public class AdminObjectImpl implements AdminObject
     * @return configProperty
     */
    @Override
-   public List<? extends ConfigProperty> getConfigProperties()
+   public synchronized List<? extends ConfigProperty> getConfigProperties()
    {
-      return configProperty == null ? null : Collections.unmodifiableList(configProperty);
+      return configProperties == null ? null : Collections.unmodifiableList(configProperties);
    }
 
+   /**
+   *
+   * force configProperties with new content.
+   * This method is thread safe
+   *
+   * @param newContents the list of new properties
+   */
+   public synchronized void forceNewConfigPropertiesContent(List<? extends ConfigProperty> newContents)
+   {
+      if (newContents != null)
+      {
+         this.configProperties = new ArrayList<ConfigProperty>(newContents.size());
+         this.configProperties.addAll(newContents);
+      }
+      else
+      {
+         this.configProperties = new ArrayList<ConfigProperty>(0);
+      }
+   }
 
    @Override
    public String getId()
@@ -115,7 +133,7 @@ public class AdminObjectImpl implements AdminObject
       int result = 1;
       result = prime * result + ((adminobjectClass == null) ? 0 : adminobjectClass.hashCode());
       result = prime * result + ((adminobjectInterface == null) ? 0 : adminobjectInterface.hashCode());
-      result = prime * result + ((configProperty == null) ? 0 : configProperty.hashCode());
+      result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       return result;
    }
@@ -144,12 +162,12 @@ public class AdminObjectImpl implements AdminObject
       }
       else if (!adminobjectInterface.equals(other.adminobjectInterface))
          return false;
-      if (configProperty == null)
+      if (configProperties == null)
       {
-         if (other.configProperty != null)
+         if (other.configProperties != null)
             return false;
       }
-      else if (!configProperty.equals(other.configProperty))
+      else if (!configProperties.equals(other.configProperties))
          return false;
       if (id == null)
       {
@@ -169,15 +187,15 @@ public class AdminObjectImpl implements AdminObject
    @Override
    public String toString()
    {
-      return "Adminobject [adminobjectInterface=" + adminobjectInterface + ", adminobjectClass=" + adminobjectClass
-            + ", configProperty=" + configProperty + ", id=" + id + "]";
+      return "Adminobject [adminobjectInterface=" + adminobjectInterface + ", adminobjectClass=" +
+             adminobjectClass + ", configProperty=" + configProperties + ", id=" + id + "]";
    }
 
    @Override
    public CopyableMetaData copy()
    {
       return new AdminObjectImpl(CopyUtil.clone(adminobjectInterface), CopyUtil.clone(adminobjectClass),
-            CopyUtil.cloneList(configProperty), CopyUtil.cloneString(id));
+                                 CopyUtil.cloneList(configProperties), CopyUtil.cloneString(id));
    }
 
 }

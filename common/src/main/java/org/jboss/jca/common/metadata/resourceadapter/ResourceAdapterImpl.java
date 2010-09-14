@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.common.metadata.resourceadapter;
 
-import org.jboss.jca.common.api.metadata.common.AdminObject;
-import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.metadata.common.CommonIronJacamarImpl;
@@ -55,7 +55,7 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
     * @param bootstrapContext bootstrapContext
     */
    public ResourceAdapterImpl(String archive, TransactionSupportEnum transactionSupport,
-      List<ConnectionDefinition> connectionDefinitions, List<AdminObject> adminObjects,
+      List<CommonConnDef> connectionDefinitions, List<CommonAdminObject> adminObjects,
       Map<String, String> configProperties, List<String> beanValidationGroups, String bootstrapContext)
    {
       super(transactionSupport, configProperties, adminObjects, connectionDefinitions, beanValidationGroups,

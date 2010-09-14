@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.common.metadata.common;
 
-import org.jboss.jca.common.api.metadata.common.AdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
-import org.jboss.jca.common.api.metadata.common.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 
 import java.util.ArrayList;
@@ -56,12 +56,12 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
    /**
     *  adminObjects
     */
-   protected final ArrayList<AdminObject> adminObjects;
+   protected final ArrayList<CommonAdminObject> adminObjects;
 
    /**
     *  connectionDefinitions
     */
-   protected final ArrayList<ConnectionDefinition> connectionDefinitions;
+   protected final ArrayList<CommonConnDef> connectionDefinitions;
 
    /**
     *  beanValidationGroups
@@ -82,30 +82,30 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
     * @param bootstrapContext bootstrapContext
     */
    protected CommonIronJacamarImpl(TransactionSupportEnum transactionSupport,
-      Map<String, String> configProperties, List<AdminObject> adminObjects,
-      List<ConnectionDefinition> connectionDefinitions, List<String> beanValidationGroups,
+      Map<String, String> configProperties, List<CommonAdminObject> adminObjects,
+      List<CommonConnDef> connectionDefinitions, List<String> beanValidationGroups,
       String bootstrapContext)
    {
       super();
       this.transactionSupport = transactionSupport;
       if (connectionDefinitions != null)
       {
-         this.connectionDefinitions = new ArrayList<ConnectionDefinition>(connectionDefinitions.size());
+         this.connectionDefinitions = new ArrayList<CommonConnDef>(connectionDefinitions.size());
          this.connectionDefinitions.addAll(connectionDefinitions);
       }
       else
       {
-         this.connectionDefinitions = new ArrayList<ConnectionDefinition>(0);
+         this.connectionDefinitions = new ArrayList<CommonConnDef>(0);
       }
 
       if (adminObjects != null)
       {
-         this.adminObjects = new ArrayList<AdminObject>(adminObjects.size());
+         this.adminObjects = new ArrayList<CommonAdminObject>(adminObjects.size());
          this.adminObjects.addAll(adminObjects);
       }
       else
       {
-         this.adminObjects = new ArrayList<AdminObject>(0);
+         this.adminObjects = new ArrayList<CommonAdminObject>(0);
       }
       if (configProperties != null)
       {
@@ -146,7 +146,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
     * @return the connectionFactories.
     */
    @Override
-   public final List<ConnectionDefinition> getConnectionDefinitions()
+   public final List<CommonConnDef> getConnectionDefinitions()
    {
       return Collections.unmodifiableList(connectionDefinitions);
    }
@@ -157,7 +157,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
     * @return the adminObjects.
     */
    @Override
-   public final List<AdminObject> getAdminObjects()
+   public final List<CommonAdminObject> getAdminObjects()
    {
       return Collections.unmodifiableList(adminObjects);
    }

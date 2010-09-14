@@ -19,64 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.common;
+package org.jboss.jca.common.metadata.merge;
 
-
-import org.jboss.jca.common.api.metadata.JCAMetadata;
-
-import java.util.List;
-import java.util.Map;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.ra.AdminObject;
+import org.jboss.jca.common.api.metadata.ra.XsdString;
 
 /**
  *
- * A CommonIronJacamar.
+ * A DefaultAdminObjectMatcher.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface CommonIronJacamar extends JCAMetadata
+public class DefaultAdminObjectMatcher implements ExtensionMatcher<AdminObject, CommonAdminObject>
 {
 
-   /**
-    * Get the transactionSupport.
-    *
-    * @return the transactionSupport.
-    */
-   public TransactionSupportEnum getTransactionSupport();
-
-   /**
-    * Get the connectionFactories.
-    *
-    * @return the connectionFactories.
-    */
-   public List<CommonConnDef> getConnectionDefinitions();
-
-   /**
-    * Get the adminObjects.
-    *
-    * @return the adminObjects.
-    */
-   public List<CommonAdminObject> getAdminObjects();
-
-   /**
-    * Get the configProperties.
-    *
-    * @return the configProperties.
-    */
-   public Map<String, String> getConfigProperties();
-
-   /**
-    * Get the beanValidationGroups.
-    *
-    * @return the beanValidationGroups.
-    */
-   public List<String> getBeanValidationGroups();
-
-   /**
-    * Get the bootstrapContext.
-    *
-    * @return the bootstrapContext.
-    */
-   public String getBootstrapContext();
+   @Override
+   public boolean match(AdminObject left, CommonAdminObject right)
+   {
+      if (!XsdString.isNull(left.getAdminobjectClass()))
+      {
+         return left.getAdminobjectClass().getValue().trim().equals(right.getClassName().trim());
+      }
+      else
+      {
+         return right.getClassName() == null || right.getClassName().trim().equals("");
+      }
+   }
 
 }

@@ -19,64 +19,27 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.common;
-
-
-import org.jboss.jca.common.api.metadata.JCAMetadata;
-
-import java.util.List;
-import java.util.Map;
+package org.jboss.jca.common.metadata.merge;
 
 /**
  *
- * A CommonIronJacamar.
+ * A ExtensionMatcher.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @param <T> type one
+ * @param <S> type two
  *
  */
-public interface CommonIronJacamar extends JCAMetadata
+public interface ExtensionMatcher<T, S>
 {
-
    /**
-    * Get the transactionSupport.
     *
-    * @return the transactionSupport.
-    */
-   public TransactionSupportEnum getTransactionSupport();
-
-   /**
-    * Get the connectionFactories.
+    * Match two Onject of give generics type as mergeable each other
     *
-    * @return the connectionFactories.
+    * @param left an object of T type
+    * @param right an object of S type
+    * @return true if objects could be considered mergeable. IOW if they refer to same artifact
     */
-   public List<CommonConnDef> getConnectionDefinitions();
-
-   /**
-    * Get the adminObjects.
-    *
-    * @return the adminObjects.
-    */
-   public List<CommonAdminObject> getAdminObjects();
-
-   /**
-    * Get the configProperties.
-    *
-    * @return the configProperties.
-    */
-   public Map<String, String> getConfigProperties();
-
-   /**
-    * Get the beanValidationGroups.
-    *
-    * @return the beanValidationGroups.
-    */
-   public List<String> getBeanValidationGroups();
-
-   /**
-    * Get the bootstrapContext.
-    *
-    * @return the bootstrapContext.
-    */
-   public String getBootstrapContext();
-
+   public boolean match(T left, S right);
 }
+
