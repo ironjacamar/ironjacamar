@@ -40,7 +40,6 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
-import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -48,7 +47,6 @@ import javax.transaction.TransactionManager;
 import org.jboss.logging.Logger;
 
 import org.jboss.security.SubjectFactory;
-import org.jboss.util.NotImplementedException;
 
 /**
  * AbstractConnectionManager.
@@ -56,7 +54,7 @@ import org.jboss.util.NotImplementedException;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public abstract class AbstractConnectionManager implements ConnectionManager 
+public abstract class AbstractConnectionManager implements ConnectionManager
 {
    /** Log instance */
    private Logger log = Logger.getLogger(getClass());
@@ -463,47 +461,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       
       return connection;
    }
-   
-   
-   /**
-    * {@inheritDoc}
-    */
-   public TransactionManager getTransactionManager()
-   {
-      return null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isTransactional()
-   {
-      return false;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public long getTimeLeftBeforeTransactionTimeout(boolean arg0) throws RollbackException
-   {
-      return -1;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public int getTransactionTimeout() throws SystemException
-   {
-      throw new NotImplementedException("NYI: getTransactionTimeout()");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void checkTransactionActive() throws RollbackException, SystemException
-   {
-      //Do Nothing as default
-   }
 
    /**
     * {@inheritDoc}
@@ -576,15 +533,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          cr.setConnectionListener(cl);
       }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void transactionStarted(Collection<ConnectionRecord> conns) throws SystemException
-   {
-      //reimplement in subclasses      
-   }
-   
    
    /**
     * Unregister association.
@@ -675,7 +623,35 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       cl.registerConnection(c);
    }
    
-   
+   /**
+    * {@inheritDoc}
+    */
+   public void transactionStarted(Collection<ConnectionRecord> conns) throws SystemException
+   {
+      // Reimplement in subclasses
+      // This needs to go away - as non-tx and tx should be separate
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public TransactionManager getTransactionManager()
+   {
+      // Reimplement in subclasses
+      // This needs to go away - as non-tx and tx should be separate
+      return null;
+   }
+ 
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isTransactional()
+   {
+      // Reimplement in subclasses
+      // This needs to go away - as non-tx and tx should be separate
+      return false;
+   }
+
    /**
     * Gets subject.
     * @return subject
@@ -696,6 +672,4 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       
       return subject;
    }
-
-
 }

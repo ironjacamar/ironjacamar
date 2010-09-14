@@ -273,6 +273,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                   Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
                   // Add a connection manager
+                  ConnectionManagerFactory cmf = new ConnectionManagerFactory();
                   ConnectionManager cm = null;
 
                   TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
@@ -292,10 +293,36 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                   {
                      tsl = TransactionSupportLevel.XATransaction;
                   }
+                  
+                  // Connection manager properties
+                  Long allocationRetry = null; // TODO
+                  Long allocationRetryWaitMillis = null;
+               
+                  if (ijmd != null)
+                  {
+                     /*
+                       TODO
+                       allocationRetry = ijmd.getTimeOut().getAllocationRetry();
+                       allocationRetryWaitMillis = ijmd.getTimeOut().getAllocationRetryWaitMillis();
+                     */
+                  }
 
                   // Select the correct connection manager
-                  ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-                  cm = cmf.create(tsl, pool, getConfiguration().getTransactionManager());
+                  if (tsl == TransactionSupportLevel.NoTransaction)
+                  {
+                     cm = cmf.createNonTransactional(tsl, 
+                                                     pool,
+                                                     allocationRetry,
+                                                     allocationRetryWaitMillis);
+                  }
+                  else
+                  {
+                     cm = cmf.createTransactional(tsl, 
+                                                  pool,
+                                                  allocationRetry,
+                                                  allocationRetryWaitMillis,
+                                                  getConfiguration().getTransactionManager());
+                  }
 
                   // ConnectionFactory
                   Object cf = mcf.createConnectionFactory(cm);
@@ -318,8 +345,10 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
 
                   if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                   {
-                     bindConnectionFactory(url, deploymentName, cf);
+                     String[] jndis = bindConnectionFactory(url, deploymentName, cf);
                      cfs = new Object[] {cf};
+                     
+                     cm.setJndiName(jndis[0]);
                   }
                }
             }
@@ -377,6 +406,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                               Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
                               // Add a connection manager
+                              ConnectionManagerFactory cmf = new ConnectionManagerFactory();
                               ConnectionManager cm = null;
                               TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
                               TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
@@ -400,9 +430,35 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                               if (mcf instanceof TransactionSupport)
                                  tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
+                              // Connection manager properties
+                              Long allocationRetry = null; // TODO
+                              Long allocationRetryWaitMillis = null;
+                              
+                              if (ijmd != null)
+                              {
+                                 /*
+                                   TODO
+                                   allocationRetry = ijmd.getTimeOut().getAllocationRetry();
+                                   allocationRetryWaitMillis = ijmd.getTimeOut().getAllocationRetryWaitMillis();
+                                 */
+                              }
+
                               // Select the correct connection manager
-                              ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-                              cm = cmf.create(tsl, pool, getConfiguration().getTransactionManager());
+                              if (tsl == TransactionSupportLevel.NoTransaction)
+                              {
+                                 cm = cmf.createNonTransactional(tsl,
+                                                                 pool,
+                                                                 allocationRetry,
+                                                                 allocationRetryWaitMillis);
+                              }
+                              else
+                              {
+                                 cm = cmf.createTransactional(tsl, 
+                                                              pool,
+                                                              allocationRetry,
+                                                              allocationRetryWaitMillis,
+                                                              getConfiguration().getTransactionManager());
+                              }
 
                               // ConnectionFactory
                               Object cf = mcf.createConnectionFactory(cm);
@@ -428,8 +484,10 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                                  if (cdMetas.size() == 1)
                                  {
                                     deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
-                                    bindConnectionFactory(url, deploymentName, cf);
+                                    String[] jndis = bindConnectionFactory(url, deploymentName, cf);
                                     cfs = new Object[] {cf};
+
+                                    cm.setJndiName(jndis[0]);
                                  }
                                  else
                                  {

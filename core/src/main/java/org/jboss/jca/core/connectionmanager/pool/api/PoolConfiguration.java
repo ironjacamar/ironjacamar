@@ -61,7 +61,7 @@ public class PoolConfiguration
    public PoolConfiguration()
    {
       minSize = 0;
-      maxSize = 10;
+      maxSize = 20;
       blockingTimeout = 30000;
       idleTimeout = 1000 * 60 * 30;
       backgroundValidationInterval = 0;

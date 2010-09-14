@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager.notx;
 
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.NoTxConnectionListener;
 
@@ -36,7 +37,7 @@ import javax.resource.spi.ManagedConnection;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class NoTxConnectionManager extends AbstractConnectionManager
+public class NoTxConnectionManagerImpl extends AbstractConnectionManager implements NoTxConnectionManager
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
@@ -44,7 +45,7 @@ public class NoTxConnectionManager extends AbstractConnectionManager
    /**
     * Default constructor.
     */
-   public NoTxConnectionManager()
+   public NoTxConnectionManagerImpl()
    {
    }
 

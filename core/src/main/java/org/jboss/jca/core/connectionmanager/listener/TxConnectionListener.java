@@ -25,7 +25,7 @@ import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
-import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
+import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.xa.LocalXAResource;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -211,7 +211,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          catch (Throwable t)
          {
             setTrackByTx(false);
-            TxConnectionManager.rethrowAsSystemException("Cannot register synchronization", threadTx, t);
+            TxConnectionManagerImpl.rethrowAsSystemException("Cannot register synchronization", threadTx, t);
          }
 
          // First time through, create a transaction synchronization

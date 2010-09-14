@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
@@ -291,6 +292,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
          }
 
          Connector cmd = getConfiguration().getMetadataRepository().getResourceAdapter(deployment);
+         IronJacamar ijmd = getConfiguration().getMetadataRepository().getIronJacamar(deployment);
          File root = getConfiguration().getMetadataRepository().getRoot(deployment);
 
          // Create classloader
@@ -375,6 +377,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
                // Add a connection manager
+               ConnectionManagerFactory cmf = new ConnectionManagerFactory();
                ConnectionManager cm = null;
 
                TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
@@ -398,9 +401,35 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                if (mcf instanceof TransactionSupport)
                   tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
+               // Connection manager properties
+               Long allocationRetry = null; // TODO
+               Long allocationRetryWaitMillis = null;
+               
+               if (ijmd != null)
+               {
+                  /*
+                    TODO
+                  allocationRetry = ijmd.getTimeOut().getAllocationRetry();
+                  allocationRetryWaitMillis = ijmd.getTimeOut().getAllocationRetryWaitMillis();
+                  */
+               }
+
                // Select the correct connection manager
-               ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-               cm = cmf.create(tsl, pool, getConfiguration().getTransactionManager());
+               if (tsl == TransactionSupportLevel.NoTransaction)
+               {
+                  cm = cmf.createNonTransactional(tsl,
+                                                  pool,
+                                                  allocationRetry,
+                                                  allocationRetryWaitMillis);
+               }
+               else
+               {
+                  cm = cmf.createTransactional(tsl,
+                                               pool,
+                                               allocationRetry,
+                                               allocationRetryWaitMillis,
+                                               getConfiguration().getTransactionManager());
+               }
 
                // ConnectionFactory
                Object cf = mcf.createConnectionFactory(cm);
@@ -431,6 +460,8 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                   bindConnectionFactory(deployment, deploymentName, cf, jndiName);
                   cfs = new Object[] {cf};
                   jndiNames = new String[] {jndiName};
+
+                  cm.setJndiName(jndiName);
                }
             }
             else
@@ -485,6 +516,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                            Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
                            // Add a connection manager
+                           ConnectionManagerFactory cmf = new ConnectionManagerFactory();
                            ConnectionManager cm = null;
                            TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
                            TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
@@ -508,9 +540,35 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                            if (mcf instanceof TransactionSupport)
                               tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
+                           // Connection manager properties
+                           Long allocationRetry = null; // TODO
+                           Long allocationRetryWaitMillis = null;
+               
+                           if (ijmd != null)
+                           {
+                              /*
+                                TODO
+                              allocationRetry = ijmd.getTimeOut().getAllocationRetry();
+                              allocationRetryWaitMillis = ijmd.getTimeOut().getAllocationRetryWaitMillis();
+                              */
+                           }
+
                            // Select the correct connection manager
-                           ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-                           cm = cmf.create(tsl, pool, getConfiguration().getTransactionManager());
+                           if (tsl == TransactionSupportLevel.NoTransaction)
+                           {
+                              cm = cmf.createNonTransactional(tsl,
+                                                              pool,
+                                                              allocationRetry,
+                                                              allocationRetryWaitMillis);
+                           }
+                           else
+                           {
+                              cm = cmf.createTransactional(tsl, 
+                                                           pool,
+                                                           allocationRetry,
+                                                           allocationRetryWaitMillis,
+                                                           getConfiguration().getTransactionManager());
+                           }
 
                            // ConnectionFactory
                            Object cf = mcf.createConnectionFactory(cm);
@@ -538,6 +596,8 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                               bindConnectionFactory(deployment, deploymentName, cf, jndiName);
                               cfs[cdIndex] = cf;
                               jndiNames[cdIndex] = jndiName;
+
+                              cm.setJndiName(jndiName);
                            }
                         }
                      }

@@ -23,9 +23,9 @@
 package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
-import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
+import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
-import org.jboss.jca.core.connectionmanager.tx.TxConnectionManager;
+import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
@@ -47,12 +47,14 @@ public class ConnectionManagerFactory
     * Create a connection manager
     * @param tsl The transaction support level
     * @param pool The pool for the connection manager
-    * @param tm The transaction manager
+    * @param allocationRetry The allocation retry value
+    * @param allocationRetryWaitMillis The allocation retry millis value
     * @return The connection manager instance
     */
-   public ConnectionManager create(final TransactionSupportLevel tsl,
-                                   final Pool pool,
-                                   final TransactionManager tm)
+   public NoTxConnectionManager createNonTransactional(final TransactionSupportLevel tsl,
+                                                       final Pool pool,
+                                                       final Long allocationRetry,
+                                                       final Long allocationRetryWaitMillis)
    {
       if (tsl == null)
          throw new IllegalArgumentException("TransactionSupportLevel is null");
@@ -60,34 +62,100 @@ public class ConnectionManagerFactory
       if (pool == null)
          throw new IllegalArgumentException("Pool is null");
 
-      ConnectionManager cm = null;
+      NoTxConnectionManagerImpl cm = null;
 
       switch (tsl)
       {
          case NoTransaction:
-            cm = new NoTxConnectionManager();
+            cm = new NoTxConnectionManagerImpl();
             break;
 
          case LocalTransaction:
-            if (tm == null)
-               throw new IllegalStateException("TransactionManager is null");
+            throw new IllegalArgumentException("Transactional connection manager not supported");
 
-            cm = new TxConnectionManager(tm, true);
+         case XATransaction:
+            throw new IllegalArgumentException("Transactional connection manager not supported");
+
+         default:
+            throw new IllegalArgumentException("Unknown transaction support level " + tsl);
+      }
+
+      setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, null);
+
+      return cm;
+   }
+
+   /**
+    * Create a transactional connection manager
+    * @param tsl The transaction support level
+    * @param pool The pool for the connection manager
+    * @param allocationRetry The allocation retry value
+    * @param allocationRetryWaitMillis The allocation retry millis value
+    * @param tm The transaction manager
+    * @return The connection manager instance
+    */
+   public TxConnectionManager createTransactional(final TransactionSupportLevel tsl,
+                                                  final Pool pool,
+                                                  final Long allocationRetry,
+                                                  final Long allocationRetryWaitMillis,
+                                                  final TransactionManager tm)
+   {
+      if (tsl == null)
+         throw new IllegalArgumentException("TransactionSupportLevel is null");
+
+      if (pool == null)
+         throw new IllegalArgumentException("Pool is null");
+
+      if (tm == null)
+         throw new IllegalArgumentException("TransactionManager is null");
+
+      TxConnectionManagerImpl cm = null;
+
+      switch (tsl)
+      {
+         case NoTransaction:
+            throw new IllegalArgumentException("Non transactional connection manager not supported");
+
+         case LocalTransaction:
+            cm = new TxConnectionManagerImpl(tm, true);
             break;
 
          case XATransaction:
-            if (tm == null)
-               throw new IllegalStateException("TransactionManager is null");
-
-            cm = new TxConnectionManager(tm, false);
+            cm = new TxConnectionManagerImpl(tm, false);
             break;
 
          default:
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
+      setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, tm);
+
+      return cm;
+   }
+
+   /**
+    * Common properties
+    * @param cm The connection manager
+    * @param pool The pool
+    * @param allocationRetry The allocation retry value
+    * @param allocationRetryWaitMillis The allocation retry millis value
+    * @param tm The transaction manager
+    * @return The updated connection manager
+    */
+   private AbstractConnectionManager setProperties(AbstractConnectionManager cm,
+                                                   Pool pool,
+                                                   Long allocationRetry,
+                                                   Long allocationRetryWaitMillis,
+                                                   TransactionManager tm)
+   {
       pool.setConnectionListenerFactory(cm);
       cm.setPool(pool);
+
+      if (allocationRetry != null)
+         cm.setAllocationRetry(allocationRetry.intValue());
+
+      if (allocationRetryWaitMillis != null)
+         cm.setAllocationRetryWaitMillis(allocationRetryWaitMillis.longValue());
 
       CachedConnectionManager ccm = new CachedConnectionManager(tm);
       cm.setCachedConnectionManager(ccm);

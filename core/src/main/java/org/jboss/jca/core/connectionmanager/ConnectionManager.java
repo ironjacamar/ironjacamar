@@ -21,14 +21,11 @@
  */
 package org.jboss.jca.core.connectionmanager;
 
-import org.jboss.jca.core.api.connectionmanager.transaction.JTATransactionChecker;
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
-
-import org.jboss.tm.TransactionTimeoutConfiguration;
 
 /**
  * Internal connection manager contract.
@@ -38,8 +35,6 @@ import org.jboss.tm.TransactionTimeoutConfiguration;
  *    components via {@link ConnectionCacheListener}</li>
  *    <li>Responsible for managing connection instances using event listener 
  *    via {@link ConnectionListenerFactory}</li>
- *    <li>Responsible for managing transaction operations via 
- *    {@link TransactionTimeoutConfiguration} and {@link JTATransactionChecker}</li>.
  * </ul>
  * </p> 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
@@ -48,16 +43,8 @@ import org.jboss.tm.TransactionTimeoutConfiguration;
 public interface ConnectionManager extends
    org.jboss.jca.core.api.connectionmanager.ConnectionManager,
    ConnectionCacheListener, 
-   ConnectionListenerFactory, 
-   TransactionTimeoutConfiguration, 
-   JTATransactionChecker
+   ConnectionListenerFactory
 {
-   /**
-    * Set the pool.
-    * @param pool the pool
-    */
-   public void setPool(Pool pool);
-   
    /**
     * Get the pool.
     * @return the pool
@@ -65,16 +52,34 @@ public interface ConnectionManager extends
    public Pool getPool();
 
    /**
-    * Sets cached connection manager.
-    * @param cachedConnectionManager cached connection manager
-    */
-   public void setCachedConnectionManager(CachedConnectionManager cachedConnectionManager);
-
-   /**
     * Gets cached connection manager
     * @return The cached connection manager
     */
    public CachedConnectionManager getCachedConnectionManager();
+
+   /**
+    * Get the number of allocation retries
+    * @return The number of retries
+    */
+   public int getAllocationRetry();
+
+   /**
+    * Get the wait time between each allocation retry
+    * @return The millis
+    */
+   public long getAllocationRetryWaitMillis();
+
+   /**
+    * Get the JNDI name
+    * @return The value
+    */
+   public String getJndiName();
+
+   /**
+    * Set the JNDI name
+    * @param value The value
+    */
+   public void setJndiName(String value);
 
    /**
     * Kill given connection listener wrapped connection instance.

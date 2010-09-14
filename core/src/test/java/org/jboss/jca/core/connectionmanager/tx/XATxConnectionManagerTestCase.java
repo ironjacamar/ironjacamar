@@ -23,6 +23,7 @@ package org.jboss.jca.core.connectionmanager.tx;
 
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
+import org.jboss.jca.core.connectionmanager.TxConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
@@ -36,6 +37,7 @@ import org.jboss.jca.embedded.EmbeddedJCA;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.transaction.RollbackException;
 import javax.transaction.TransactionManager;
 
 import org.junit.AfterClass;
@@ -72,7 +74,10 @@ public class XATxConnectionManagerTestCase
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
       
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager connectionManager = cmf.create(TransactionSupportLevel.XATransaction, pool, tm);
+      ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
+                                                                    pool,
+                                                                    null, null,
+                                                                    tm);
       assertNotNull(connectionManager);
       
       assertTrue(connectionManager instanceof TxConnectionManager);
@@ -92,6 +97,41 @@ public class XATxConnectionManagerTestCase
       assertTrue(handle instanceof MockHandle);
       
       transactionManager.commit();
+   }
+   
+   /**
+    * testGetTimeLeftBeforeTrsTimeout.
+    * @throws Throwable for exception
+    */
+   @Test
+   public void testGetTimeLeftBeforeTrsTimeout() throws Throwable
+   {
+      TransactionManager tm = embedded.lookup("RealTransactionManager", TransactionManager.class);
+      assertNotNull(tm);
+      
+      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
+      PoolConfiguration pc = new PoolConfiguration();      
+      PoolFactory pf = new PoolFactory();      
+      
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      
+      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+      ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction, 
+                                                                    pool, null, null, tm);
+      assertNotNull(connectionManager);
+      
+      assertTrue(connectionManager instanceof TxConnectionManager);
+
+      TxConnectionManager txConnectionManager = (TxConnectionManager)connectionManager;
+
+      try
+      {
+         assertEquals(-1L, txConnectionManager.getTimeLeftBeforeTransactionTimeout(false));
+      }
+      catch (RollbackException e)
+      {
+         //No action
+      }
    }
    
    /**

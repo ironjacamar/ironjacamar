@@ -32,11 +32,8 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 
 import javax.resource.ResourceException;
 import javax.security.auth.Subject;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 
 import org.jboss.security.SubjectFactory;
-import org.jboss.util.NotImplementedException;
 
 import org.junit.Test;
 
@@ -199,41 +196,6 @@ public class AbstractConnectionManagerTestCase
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertFalse(connectionManager.isTransactional());
    }
-   
-   /**
-    * testGetTimeLeftBeforeTrsTimeout.
-    */
-   @Test
-   public void testGetTimeLeftBeforeTrsTimeout()
-   {
-      AbstractConnectionManager connectionManager = new MockConnectionManager();
-      try
-      {
-         assertEquals(-1L, connectionManager.getTimeLeftBeforeTransactionTimeout(false));
-      }
-      catch (RollbackException e)
-      {
-         //No action
-      }
-   }
-   
-   /**
-    * testGetTransactionTimeout.
-    */
-   @Test(expected = NotImplementedException.class)
-   public void testGetTransactionTimeout()
-   {
-      AbstractConnectionManager connectionManager = new MockConnectionManager();
-      try
-      {
-         connectionManager.getTransactionTimeout();
-      }
-      catch (SystemException e)
-      {
-         //No action
-      }
-   }
-      
    
    /**
     * testGetManagedConnectionFactoryIsNull.

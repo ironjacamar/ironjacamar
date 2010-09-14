@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.tx;
 import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
+import org.jboss.jca.core.connectionmanager.TxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
@@ -55,6 +56,7 @@ import org.jboss.tm.TransactionLocal;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 import org.jboss.tm.TxUtils;
 import org.jboss.util.NestedRuntimeException;
+import org.jboss.util.NotImplementedException;
 
 /**
  * The TxConnectionManager is a JBoss ConnectionManager
@@ -128,7 +130,7 @@ import org.jboss.util.NestedRuntimeException;
  * @author <a href="weston.price@jboss.com">Weston Price</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class TxConnectionManager extends AbstractConnectionManager
+public class TxConnectionManagerImpl extends AbstractConnectionManager implements TxConnectionManager
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
@@ -162,7 +164,7 @@ public class TxConnectionManager extends AbstractConnectionManager
     * @param tm The transaction manager
     * @param localTransactions Is local transactions enabled
     */
-   public TxConnectionManager(final TransactionManager tm, final boolean localTransactions)
+   public TxConnectionManagerImpl(final TransactionManager tm, final boolean localTransactions)
    {
       this.transactionManager = tm;
 
@@ -545,6 +547,14 @@ public class TxConnectionManager extends AbstractConnectionManager
       return !TxUtils.isCompleted(this.transactionManager);
    }
    
+   /**
+    * {@inheritDoc}
+    */
+   public int getTransactionTimeout() throws SystemException
+   {
+      throw new NotImplementedException("NYI: getTransactionTimeout()");
+   }
+
    /**
     * RethrowAsSystemException.
     * @param context context

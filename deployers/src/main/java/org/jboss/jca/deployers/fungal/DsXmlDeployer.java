@@ -248,11 +248,15 @@ public final class DsXmlDeployer implements Deployer
                {
                   try
                   {
-                     Object cf = deployDataSource(dataSource, urlJdbcLocal, jdbcLocalDeployment.getClassLoader());
                      String jndiName = dataSource.getJndiName();
 
                      if (!jndiName.startsWith("java:/"))
                         jndiName = "java:/" + jndiName;
+
+                     Object cf = deployDataSource(dataSource, 
+                                                  jndiName,
+                                                  urlJdbcLocal,
+                                                  jdbcLocalDeployment.getClassLoader());
 
                      bindConnectionFactory(deploymentName, jndiName, cf);
 
@@ -283,11 +287,15 @@ public final class DsXmlDeployer implements Deployer
                {
                   try
                   {
-                     Object cf = deployXADataSource(xaDataSource, urlJdbcXA, jdbcXADeployment.getClassLoader());
                      String jndiName = xaDataSource.getJndiName();
 
                      if (!jndiName.startsWith("java:/"))
                         jndiName = "java:/" + jndiName;
+
+                     Object cf = deployXADataSource(xaDataSource,
+                                                    jndiName,
+                                                    urlJdbcXA,
+                                                    jdbcXADeployment.getClassLoader());
 
                      bindConnectionFactory(deploymentName, jndiName, cf);
 
@@ -343,12 +351,13 @@ public final class DsXmlDeployer implements Deployer
    /**
     * Deploy a datasource
     * @param ds The datasource
+    * @param jndiName The JNDI name
     * @param ra The resource adapter
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployDataSource(DataSource ds, URL ra, ClassLoader cl) throws Throwable
+   private Object deployDataSource(DataSource ds, String jndiName, URL ra, ClassLoader cl) throws Throwable
    {
       log.debug("DataSource=" + ds);
 
@@ -373,8 +382,8 @@ public final class DsXmlDeployer implements Deployer
       Long blockingTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getBlockingTimeoutMillis() : null;
       Long idleTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getIdleTimeoutMinutes() : null;
       Long backgroundValidationInterval = null; // TODO
-      Boolean prefill = ds.getPool() == null ? false : ds.getPool().isPrefill();
-      Boolean strictMin = null; // TODO
+      Boolean prefill = ds.getPool() == null ? null : ds.getPool().isPrefill();
+      Boolean strictMin = ds.getPool() == null ? null : ds.getPool().isUseStrictMin();
       Boolean useFastFail = ds.getValidation() != null ? ds.getValidation().isUseFastFail() : null;
 
       PoolConfiguration pc = createPoolConfiguration(minSize,
@@ -389,26 +398,41 @@ public final class DsXmlDeployer implements Deployer
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
+      // Connection manager properties
+      Long allocationRetry = null; // TODO
+      Long allocationRetryWaitMillis = null;
+
+      if (ds.getTimeOut() != null)
+      {
+         allocationRetry = ds.getTimeOut().getAllocationRetry();
+         allocationRetryWaitMillis = ds.getTimeOut().getAllocationRetryWaitMillis();
+      }
+
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm = cmf.create(tsl, pool, getTransactionManager());
+      ConnectionManager cm = cmf.createTransactional(tsl, 
+                                                     pool,
+                                                     allocationRetry,
+                                                     allocationRetryWaitMillis,
+                                                     getTransactionManager());
+
+      cm.setJndiName(jndiName);
 
       // ConnectionFactory
-      Object cf = mcf.createConnectionFactory(cm);
-
-      return cf;
+      return mcf.createConnectionFactory(cm);
    }
 
    /**
     * Deploy an XA datasource
     * @param ds The datasource
+    * @param jndiName The JNDI name
     * @param ra The resource adapter
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployXADataSource(XaDataSource ds, URL ra, ClassLoader cl) throws Throwable
+   private Object deployXADataSource(XaDataSource ds, String jndiName, URL ra, ClassLoader cl) throws Throwable
    {
       log.debug("XaDataSource=" + ds);
 
@@ -433,8 +457,8 @@ public final class DsXmlDeployer implements Deployer
       Long blockingTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getBlockingTimeoutMillis() : null;
       Long idleTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getIdleTimeoutMinutes() : null;
       Long backgroundValidationInterval = null; // TODO
-      Boolean prefill = ds.getXaPool() == null ? false : ds.getXaPool().isPrefill();
-      Boolean strictMin = null; // TODO
+      Boolean prefill = ds.getXaPool() == null ? null : ds.getXaPool().isPrefill();
+      Boolean strictMin = ds.getXaPool() == null ? null : ds.getXaPool().isUseStrictMin();
       Boolean useFastFail = ds.getValidation() != null ? ds.getValidation().isUseFastFail() : null;
 
       PoolConfiguration pc = createPoolConfiguration(minSize,
@@ -449,15 +473,29 @@ public final class DsXmlDeployer implements Deployer
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
+      // Connection manager properties
+      Long allocationRetry = null; // TODO
+      Long allocationRetryWaitMillis = null;
+
+      if (ds.getTimeOut() != null)
+      {
+         allocationRetry = ds.getTimeOut().getAllocationRetry();
+         allocationRetryWaitMillis = ds.getTimeOut().getAllocationRetryWaitMillis();
+      }
+
       // Select the correct connection manager
-      TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
+      TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm = cmf.create(tsl, pool, getTransactionManager());
+      ConnectionManager cm = cmf.createTransactional(tsl,
+                                                     pool,
+                                                     allocationRetry,
+                                                     allocationRetryWaitMillis,
+                                                     getTransactionManager());
+
+      cm.setJndiName(jndiName);
 
       // ConnectionFactory
-      Object cf = mcf.createConnectionFactory(cm);
-
-      return cf;
+      return mcf.createConnectionFactory(cm);
    }
 
    /**

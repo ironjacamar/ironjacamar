@@ -55,9 +55,9 @@ public class PoolConfigurationTestCase
    public void testMaxSize()
    {
       PoolConfiguration params = new PoolConfiguration();
-      assertEquals(10, params.getMaxSize());
-      params.setMaxSize(20);
-      assertEquals(20, params.getMaxSize());      
+      assertEquals(20, params.getMaxSize());
+      params.setMaxSize(30);
+      assertEquals(30, params.getMaxSize());      
    }
 
    /**

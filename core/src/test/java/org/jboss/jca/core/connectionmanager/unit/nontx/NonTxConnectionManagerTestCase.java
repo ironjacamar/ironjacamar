@@ -23,10 +23,10 @@ package org.jboss.jca.core.connectionmanager.unit.nontx;
 
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
+import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
-import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
@@ -70,7 +70,7 @@ public class NonTxConnectionManagerTestCase
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
       
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      connectionManager = cmf.create(TransactionSupportLevel.NoTransaction, pool, tm);
+      connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null);
       assertNotNull(connectionManager);
 
       assertTrue(connectionManager instanceof NoTxConnectionManager);
