@@ -37,20 +37,6 @@
       <artifactId>ironjacamar-common-impl</artifactId>
       <version>@VERSION.IRONJACAMAR@</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>apache-xerces</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>wutka-dtdparser</groupId>
-          <artifactId>dtdparser121</artifactId>
-        </exclusion>      
-        <exclusion>
-          <groupId>apache-xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </exclusion>    
-      </exclusions>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
@@ -78,18 +64,6 @@
       <scope>test</scope>
       <type>pom</type>
       <exclusions>
-        <exclusion>
-          <groupId>apache-xerces</groupId>
-          <artifactId>xml-apis</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>wutka-dtdparser</groupId>
-          <artifactId>dtdparser121</artifactId>
-        </exclusion>      
-        <exclusion>
-          <groupId>apache-xerces</groupId>
-          <artifactId>xercesImpl</artifactId>
-        </exclusion>    
         <exclusion>
           <groupId>org.jboss.security</groupId>
           <artifactId>jboss-security-spi</artifactId>
