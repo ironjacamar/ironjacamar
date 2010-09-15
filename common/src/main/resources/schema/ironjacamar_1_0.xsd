@@ -326,7 +326,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="vaidation" type="validationType" minOccurs="0" maxOccurs="1">
+      <xs:element name="validation" type="validationType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[

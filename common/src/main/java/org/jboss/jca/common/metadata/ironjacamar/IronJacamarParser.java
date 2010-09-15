@@ -117,6 +117,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
       String bootstrapContext = null;
       TransactionSupportEnum transactionSupport = null;
       HashMap<String, String> configProperties = null;
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())

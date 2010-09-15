@@ -6,7 +6,7 @@
     <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16standard303jbossra.SecondStep</bean-validation-group>
   </bean-validation-groups>
   <connection-definitions>
-   <connection-definition class-name="a">
+   <connection-definition class-name="a" jndi-name="aa">
       <config-property name="myStringProperty">newJCA</config-property>
    </connection-definition>
   </connection-definitions>

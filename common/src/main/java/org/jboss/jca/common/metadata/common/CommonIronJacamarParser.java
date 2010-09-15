@@ -22,7 +22,6 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject.Attribute;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
@@ -59,8 +58,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     * @throws XMLStreamException XMLStreamException
     * @throws ParserException ParserException
     */
-   protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader)
-      throws XMLStreamException, ParserException
+   protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader) throws XMLStreamException,
+      ParserException
    {
       HashMap<String, String> configProperties = new HashMap<String, String>();
       CommonSecurity security = null;
@@ -74,9 +73,13 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       boolean enabled = true;
       String jndiName = null;
       String poolName = null;
+      int attributeSize = reader.getAttributeCount();
 
-      for (CommonConnDef.Attribute attribute : CommonConnDef.Attribute.values())
+      boolean isXa = false;
+
+      for (int i = 0; i < attributeSize; i++)
       {
+         CommonConnDef.Attribute attribute = CommonConnDef.Attribute.forName(reader.getAttributeLocalName(i));
          switch (attribute)
          {
             case ENABLED : {
@@ -104,6 +107,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                                          reader.getLocalName());
          }
       }
+      if (jndiName == null || jndiName.trim().equals(""))
+         throw new ParserException("Missing jndiName mandatory attribute");
 
       while (reader.hasNext())
       {
@@ -113,9 +118,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.CONNECTION_DEFINITION)
                {
 
-                  return new CommonConnDefImpl(configProperties, className, jndiName, poolName,
-                                                            enabled, useJavaContext, pool, timeOut, validation,
-                                                            security);
+                  return new CommonConnDefImpl(configProperties, className, jndiName, poolName, enabled,
+                                               useJavaContext, pool, timeOut, validation, security);
                }
                else
                {
@@ -138,7 +142,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   case TIMEOUT : {
-                     timeOut = parseTimeOut(reader);
+                     timeOut = parseTimeOut(reader, isXa);
                      break;
                   }
                   case VALIDATION : {
@@ -150,6 +154,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                         throw new ParserException("You cannot define more than one pool or xa-poll in same"
                                                   + " connection-definition");
                      pool = parseXaPool(reader);
+                     isXa = true;
                      break;
                   }
                   case POOL : {
@@ -219,7 +224,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private CommonTimeOut parseTimeOut(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private CommonTimeOut parseTimeOut(XMLStreamReader reader, boolean isXa) throws XMLStreamException,
+      ParserException
    {
       Long blockingTimeoutMillis = null;
       Long allocationRetryWaitMillis = null;
@@ -267,6 +273,9 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   case XARESOURCETIMEOUT : {
+                     if (!isXa)
+                        throw new ParserException("Element:" + reader.getLocalName() +
+                                                  "cannot be set without an xa-pool");
                      xaResourceTimeout = elementAsLong(reader);
                      break;
                   }
@@ -301,8 +310,12 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       String jndiName = null;
       String poolName = null;
 
-      for (Attribute attribute : CommonAdminObject.Attribute.values())
+      int attributeSize = reader.getAttributeCount();
+
+      for (int i = 0; i < attributeSize; i++)
       {
+         CommonAdminObject.Attribute attribute = CommonAdminObject.Attribute.forName(reader
+            .getAttributeLocalName(i));
          switch (attribute)
          {
             case ENABLED : {
@@ -330,6 +343,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                                          reader.getLocalName());
          }
       }
+      if (jndiName == null || jndiName.trim().equals(""))
+         throw new ParserException("Missing jndiName mandatory attribute");
 
       while (reader.hasNext())
       {

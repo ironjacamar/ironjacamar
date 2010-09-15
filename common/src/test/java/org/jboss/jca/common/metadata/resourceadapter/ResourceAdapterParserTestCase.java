@@ -97,29 +97,29 @@ public class ResourceAdapterParserTestCase
       File directory = new File(Thread.currentThread().getContextClassLoader().getResource("resource-adapter")
          .toURI());
       File xmlFile = directory.listFiles(new FilenamePrefixFilter("empty-ra.xml"))[0];
-         try
-         {
-            is = new FileInputStream(xmlFile);
-            ResourceAdapterParser parser = new ResourceAdapterParser();
-            //when
-            ResourceAdapters ra = parser.parse(is);
-            //then
-            assertThat(ra.getResourceAdapters().size() == 1, is(true));
-            ResourceAdapter res = ra.getResourceAdapters().get(0);
+      try
+      {
+         is = new FileInputStream(xmlFile);
+         ResourceAdapterParser parser = new ResourceAdapterParser();
+         //when
+         ResourceAdapters ra = parser.parse(is);
+         //then
+         assertThat(ra.getResourceAdapters().size() == 1, is(true));
+         ResourceAdapter res = ra.getResourceAdapters().get(0);
          assertThat(res.getAdminObjects(), new IsNull<List<CommonAdminObject>>());
-            assertThat(res.getConfigProperties(), new IsNull<Map<String, String>>());
-            assertThat(res.getBeanValidationGroups(), new IsNull<List<String>>());
+         assertThat(res.getConfigProperties(), new IsNull<Map<String, String>>());
+         assertThat(res.getBeanValidationGroups(), new IsNull<List<String>>());
          assertThat(res.getConnectionDefinitions(), new IsNull<List<CommonConnDef>>());
-            assertThat(res.getBootstrapContext(), new IsNull<String>());
-            assertThat(res.getTransactionSupport(), new IsNull<TransactionSupportEnum>());
-            assertThat(res.getArchive(), is("token"));
+         assertThat(res.getBootstrapContext(), new IsNull<String>());
+         assertThat(res.getTransactionSupport(), new IsNull<TransactionSupportEnum>());
+         assertThat(res.getArchive(), is("token"));
 
-         }
-         finally
-         {
-            if (is != null)
-               is.close();
-         }
+      }
+      finally
+      {
+         if (is != null)
+            is.close();
+      }
 
    }
 }
