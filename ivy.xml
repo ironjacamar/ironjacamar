@@ -143,7 +143,7 @@
     <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="jetty"/>
     <dependency org="org.picketbox" name="jboss-security-spi" rev="${version.jboss.picketbox}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.picketbox" name="jbosssx" rev="${version.jboss.picketbox}" conf="common,ironjacamar-core-impl,ironjacamar-depchain"/>
-    <dependency org="org.picketbox" name="picketbox-bare" rev="${version.jboss.picketbox.bare}" conf="common,ironjacamar-depchain"/>
+    <dependency org="org.picketbox" name="picketbox-bare" rev="${version.jboss.picketbox}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="stax" name="stax-api" rev="${version.stax}" conf="common,ironjacamar-common-impl,ironjacamar-depchain"/>
