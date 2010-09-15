@@ -95,7 +95,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
       }
       else
       {
-         this.connectionDefinitions = new ArrayList<CommonConnDef>(0);
+         this.connectionDefinitions = null;
       }
 
       if (adminObjects != null)
@@ -105,7 +105,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
       }
       else
       {
-         this.adminObjects = new ArrayList<CommonAdminObject>(0);
+         this.adminObjects = null;
       }
       if (configProperties != null)
       {
@@ -114,7 +114,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
       }
       else
       {
-         this.configProperties = new HashMap<String, String>(0);
+         this.configProperties = null;
       }
       if (beanValidationGroups != null)
       {
@@ -123,7 +123,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
       }
       else
       {
-         this.beanValidationGroups = new ArrayList<String>(0);
+         this.beanValidationGroups = null;
       }
       this.bootstrapContext = bootstrapContext;
 
@@ -148,7 +148,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
    @Override
    public final List<CommonConnDef> getConnectionDefinitions()
    {
-      return Collections.unmodifiableList(connectionDefinitions);
+      return connectionDefinitions == null ? null : Collections.unmodifiableList(connectionDefinitions);
    }
 
    /**
@@ -159,7 +159,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
    @Override
    public final List<CommonAdminObject> getAdminObjects()
    {
-      return Collections.unmodifiableList(adminObjects);
+      return adminObjects == null ? null : Collections.unmodifiableList(adminObjects);
    }
 
    /**
@@ -170,7 +170,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
    @Override
    public Map<String, String> getConfigProperties()
    {
-      return Collections.unmodifiableMap(configProperties);
+      return configProperties == null ? null : Collections.unmodifiableMap(configProperties);
    }
 
    /**
@@ -181,7 +181,7 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
    @Override
    public final List<String> getBeanValidationGroups()
    {
-      return Collections.unmodifiableList(beanValidationGroups);
+      return beanValidationGroups == null ? null : Collections.unmodifiableList(beanValidationGroups);
    }
 
    /**

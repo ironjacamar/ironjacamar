@@ -150,13 +150,13 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
    private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      ArrayList<CommonConnDef> connectionDefinitions = new ArrayList<CommonConnDef>();
-      ArrayList<CommonAdminObject> adminObjects = new ArrayList<CommonAdminObject>();
-      ArrayList<String> beanValidationGroups = new ArrayList<String>();
+      ArrayList<CommonConnDef> connectionDefinitions = null;
+      ArrayList<CommonAdminObject> adminObjects = null;
+      ArrayList<String> beanValidationGroups = null;
       String bootstrapContext = null;
       String archive = null;
       TransactionSupportEnum transactionSupport = null;
-      HashMap<String, String> configProperties = new HashMap<String, String>();
+      HashMap<String, String> configProperties = null;
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -186,15 +186,21 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                      break;
                   }
                   case ADMIN_OBJECT : {
+                     if (adminObjects == null)
+                        adminObjects = new ArrayList<CommonAdminObject>();
                      adminObjects.add(parseAdminObjects(reader));
                      break;
                   }
 
                   case CONNECTION_DEFINITION : {
+                     if (connectionDefinitions == null)
+                        connectionDefinitions = new ArrayList<CommonConnDef>();
                      connectionDefinitions.add(parseConnectionDefinitions(reader));
                      break;
                   }
                   case BEAN_VALIDATION_GROUP : {
+                     if (beanValidationGroups == null)
+                        beanValidationGroups = new ArrayList<String>();
                      beanValidationGroups.add(elementAsString(reader));
                      break;
                   }
@@ -203,6 +209,8 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                      break;
                   }
                   case CONFIG_PROPERTY : {
+                     if (configProperties == null)
+                        configProperties = new HashMap<String, String>();
                      configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
 

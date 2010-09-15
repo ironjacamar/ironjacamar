@@ -21,16 +21,22 @@
  */
 package org.jboss.jca.common.metadata.ironjacamar;
 
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.jboss.util.file.FilenamePrefixFilter;
 
+import org.hamcrest.core.IsNull;
 import org.junit.Test;
 
-import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -55,7 +61,6 @@ public class IronJacamarParserTestCase
       File directory = new File(Thread.currentThread().getContextClassLoader().getResource("ironjacamar").toURI());
       for (File xmlFile : directory.listFiles(new FilenamePrefixFilter("ironjacamar-")))
       {
-         System.out.println(xmlFile.getName());
          try
          {
             is = new FileInputStream(xmlFile);
@@ -63,7 +68,44 @@ public class IronJacamarParserTestCase
             //when
             IronJacamar ij = parser.parse(is);
             //then
-            assertThat(ij.getConnectionDefinitions().size() >= 1, is(true));
+            assertThat(ij, not(new IsNull<IronJacamar>()));
+
+         }
+         finally
+         {
+            if (is != null)
+               is.close();
+         }
+      }
+   }
+
+   /**
+    *
+    * shouldParseEmptyFileAndHaveNullMDContents
+    * @throws Exception in case of error
+    */
+   @Test
+   public void shouldParseEmptyFileAndHaveNullMDContents() throws Exception
+   {
+      FileInputStream is = null;
+
+      //given
+      File directory = new File(Thread.currentThread().getContextClassLoader().getResource("ironjacamar").toURI());
+      for (File xmlFile : directory.listFiles(new FilenamePrefixFilter("ironjacamar-empty.xml")))
+      {
+         try
+         {
+            is = new FileInputStream(xmlFile);
+            IronJacamarParser parser = new IronJacamarParser();
+            //when
+            IronJacamar ij = parser.parse(is);
+            //then
+            assertThat(ij.getAdminObjects(), new IsNull<List<CommonAdminObject>>());
+            assertThat(ij.getConfigProperties(), new IsNull<Map<String, String>>());
+            assertThat(ij.getBeanValidationGroups(), new IsNull<List<String>>());
+            assertThat(ij.getConnectionDefinitions(), new IsNull<List<CommonConnDef>>());
+            assertThat(ij.getBootstrapContext(), new IsNull<String>());
+            assertThat(ij.getTransactionSupport(), new IsNull<TransactionSupportEnum>());
 
          }
          finally

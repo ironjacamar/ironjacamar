@@ -21,13 +21,21 @@
  */
 package org.jboss.jca.common.metadata.resourceadapter;
 
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.jboss.util.file.FileSuffixFilter;
+import org.jboss.util.file.FilenamePrefixFilter;
 
+import org.hamcrest.core.IsNull;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -52,7 +60,8 @@ public class ResourceAdapterParserTestCase
       FileInputStream is = null;
 
       //given
-      File directory = new File(Thread.currentThread().getContextClassLoader().getResource("resource-adapter").toURI());
+      File directory = new File(Thread.currentThread().getContextClassLoader().getResource("resource-adapter")
+         .toURI());
       for (File xmlFile : directory.listFiles(new FileSuffixFilter("-ra.xml")))
       {
          System.out.println(xmlFile.getName());
@@ -74,4 +83,43 @@ public class ResourceAdapterParserTestCase
       }
    }
 
+   /**
+   *
+   * shouldParseEmptyFileAndHaveNullMDContents
+   * @throws Exception in case of error
+   */
+   @Test
+   public void shouldParseEmptyFileAndHaveNullMDContents() throws Exception
+   {
+      FileInputStream is = null;
+
+      //given
+      File directory = new File(Thread.currentThread().getContextClassLoader().getResource("resource-adapter")
+         .toURI());
+      File xmlFile = directory.listFiles(new FilenamePrefixFilter("empty-ra.xml"))[0];
+         try
+         {
+            is = new FileInputStream(xmlFile);
+            ResourceAdapterParser parser = new ResourceAdapterParser();
+            //when
+            ResourceAdapters ra = parser.parse(is);
+            //then
+            assertThat(ra.getResourceAdapters().size() == 1, is(true));
+            ResourceAdapter res = ra.getResourceAdapters().get(0);
+         assertThat(res.getAdminObjects(), new IsNull<List<CommonAdminObject>>());
+            assertThat(res.getConfigProperties(), new IsNull<Map<String, String>>());
+            assertThat(res.getBeanValidationGroups(), new IsNull<List<String>>());
+         assertThat(res.getConnectionDefinitions(), new IsNull<List<CommonConnDef>>());
+            assertThat(res.getBootstrapContext(), new IsNull<String>());
+            assertThat(res.getTransactionSupport(), new IsNull<TransactionSupportEnum>());
+            assertThat(res.getArchive(), is("token"));
+
+         }
+         finally
+         {
+            if (is != null)
+               is.close();
+         }
+
+   }
 }
