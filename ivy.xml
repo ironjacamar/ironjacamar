@@ -84,6 +84,11 @@
   </publications>
 
   <dependencies>
+    <!-- Maven doesn't handle dependencies well, so logging has to be first -->
+    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal"/>
+    <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common,ironjacamar-depchain"/>
+
+    <!-- Keep these sorted -->
     <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="common,ironjacamar-depchain"/>
     <dependency org="com.github.fungal" name="fungal" rev="${version.fungal}" conf="sjc,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-embedded"/>
     <dependency org="com.github.fungal" name="fungal-cli" rev="${version.fungal}" conf="sjc,ironjacamar-depchain"/>
@@ -127,8 +132,6 @@
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-spec-api"/>
     <dependency org="org.jboss.jbossts" name="jbossjts" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.jbossts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal"/>
-    <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common,ironjacamar-common-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.security" name="jboss-security-spi-bare" rev="${version.jboss.security}" conf="common,ironjacamar-core-impl,ironjacamar-depchain"/>
