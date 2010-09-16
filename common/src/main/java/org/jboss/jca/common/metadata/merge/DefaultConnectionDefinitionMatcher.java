@@ -42,7 +42,8 @@ public class DefaultConnectionDefinitionMatcher
    {
       if (!XsdString.isNull(left.getConnectionImplClass()))
       {
-         return left.getManagedConnectionFactoryClass().getValue().trim().equals(right.getClassName().trim());
+         return right.isEnabled() &&
+                left.getManagedConnectionFactoryClass().getValue().trim().equals(right.getClassName().trim());
       }
       else
       {

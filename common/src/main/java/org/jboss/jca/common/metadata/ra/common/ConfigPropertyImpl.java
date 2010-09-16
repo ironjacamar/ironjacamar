@@ -199,13 +199,6 @@ public class ConfigPropertyImpl implements ConfigProperty
       }
       else if (!configPropertyValue.equals(other.configPropertyValue))
          return false;
-      if (description == null)
-      {
-         if (other.description != null)
-            return false;
-      }
-      else if (!description.equals(other.description))
-         return false;
       if (id == null)
       {
          if (other.id != null)

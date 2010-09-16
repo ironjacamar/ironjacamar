@@ -40,7 +40,8 @@ public class DefaultAdminObjectMatcher implements ExtensionMatcher<AdminObject, 
    {
       if (!XsdString.isNull(left.getAdminobjectClass()))
       {
-         return left.getAdminobjectClass().getValue().trim().equals(right.getClassName().trim());
+         return right.isEnabled() &&
+                left.getAdminobjectClass().getValue().trim().equals(right.getClassName().trim());
       }
       else
       {

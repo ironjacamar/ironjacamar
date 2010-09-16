@@ -154,7 +154,7 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
       if (newContent != null)
       {
          this.adminobjects = new ArrayList<AdminObject>(newContent.size());
-         this.adminobjects.addAll(adminobjects);
+         this.adminobjects.addAll(newContent);
       }
       else
       {
