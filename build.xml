@@ -964,6 +964,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-codegenerator.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-codegenerator" scope="runtime"/>
     </ivy:makepom>
@@ -978,6 +979,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-common-api.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-common-api" scope="runtime"/>
     </ivy:makepom>
@@ -992,6 +994,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-common-impl.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-spec-api" scope="runtime"/>
@@ -1007,6 +1010,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-common-spi.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-common-spi" scope="runtime"/>
     </ivy:makepom>
@@ -1021,6 +1025,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-core-api.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-core-api" scope="runtime"/>
       <dependency artifact="${name}-core-spi" scope="runtime"/>
@@ -1037,6 +1042,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-core-impl.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-core-impl" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
@@ -1055,6 +1061,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-core-spi.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-core-spi" scope="runtime"/>
     </ivy:makepom>
@@ -1069,6 +1076,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-depchain.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-depchain" scope="runtime"/>
     </ivy:makepom>
@@ -1087,6 +1095,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-deployers-fungal.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-deployers-fungal" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
@@ -1107,6 +1116,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-embedded.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-embedded" scope="runtime"/>
     </ivy:makepom>
@@ -1121,6 +1131,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-embedded-arquillian.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-embedded-arquillian" scope="runtime"/>
       <dependency artifact="${name}-embedded" scope="runtime"/>
@@ -1136,6 +1147,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-spec-api.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
@@ -1150,6 +1162,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-validator.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-validator" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
@@ -1166,6 +1179,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-validator-ant.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-validator-ant" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
@@ -1181,6 +1195,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-validator-cli.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-validator-cli" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
@@ -1196,6 +1211,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/${name}-validator-maven.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-validator-maven" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
@@ -1211,6 +1227,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/jdbc-local.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="jdbc-local" scope="runtime"/>
     </ivy:makepom>
@@ -1225,6 +1242,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
                  ivyfile="${basedir}/ivy.xml" 
                  pomfile="${target.dir}/jdbc-xa.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="jdbc-xa" scope="runtime"/>
     </ivy:makepom>
