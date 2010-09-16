@@ -23,14 +23,19 @@ package org.jboss.jca.common.metadata.merge;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Connector.Version;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
+import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 import org.jboss.jca.common.metadata.ds.DsParser;
+import org.jboss.jca.common.metadata.ironjacamar.IronJacamarParser;
 import org.jboss.jca.common.metadata.ra.RaParser;
+import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
+import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,6 +47,7 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 
@@ -68,13 +74,13 @@ public class MergerTestCase
       {
          //given
          File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("adapters/ra.xml")
-               .toURI());
+            .toURI());
          is = new FileInputStream(xmlFile);
          RaParser parser = new RaParser();
          Connector connector = parser.parse(is);
          is.close();
          xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/postgres-ds.xml")
-               .toURI());
+            .toURI());
          is = new FileInputStream(xmlFile);
          DsParser dsparser = new DsParser();
          //when
@@ -88,16 +94,15 @@ public class MergerTestCase
              resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
             properties = resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                  .getConfigProperties();
+               .getConfigProperties();
          }
 
          //verify pre-condition
          assertThat(resourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
-               is(TransactionSupportEnum.LocalTransaction));
-         assertThat(
-               resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                     .getManagedConnectionFactoryClass(),
-               equalTo(new XsdString("org.jboss.jca.adapters.jdbc.local." + "LocalManagedConnectionFactory", null)));
+            is(TransactionSupportEnum.LocalTransaction));
+         assertThat(resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+            .getManagedConnectionFactoryClass(), equalTo(new XsdString("org.jboss.jca.adapters.jdbc.local."
+                                                                       + "LocalManagedConnectionFactory", null)));
 
          //when
          Merger m = new Merger();
@@ -115,7 +120,7 @@ public class MergerTestCase
              resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
             mergedProperties = mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions()
-                  .get(0).getConfigProperties();
+               .get(0).getConfigProperties();
          }
          //then merged properties are presents
          assertThat((List<ConfigProperty>) mergedProperties,
@@ -127,17 +132,17 @@ public class MergerTestCase
          assertThat((List<ConfigProperty>) mergedProperties,
             hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.CONNECTIONURL,
-                     "jdbc:postgresql://[servername]:[port]/[database name]")));
+               "jdbc:postgresql://[servername]:[port]/[database name]")));
          assertThat((List<ConfigProperty>) mergedProperties,
             hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.DRIVERCLASS, "org.postgresql.Driver")));
 
          //then metadata read from ra.xml still present (not deleted by merge)
          assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
-               is(TransactionSupportEnum.LocalTransaction));
+            is(TransactionSupportEnum.LocalTransaction));
          assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-               .getManagedConnectionFactoryClass(),
-               equalTo(new XsdString("org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory", null)));
+            .getManagedConnectionFactoryClass(),
+            equalTo(new XsdString("org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory", null)));
 
          //then it have empty property for not set ones
          assertThat((List<ConfigProperty>) mergedProperties,
@@ -172,13 +177,13 @@ public class MergerTestCase
       {
          //given
          File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("adapters/ra-xa.xml")
-               .toURI());
+            .toURI());
          is = new FileInputStream(xmlFile);
          RaParser parser = new RaParser();
          Connector connector = parser.parse(is);
          is.close();
          xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/postgres-xa-ds.xml")
-               .toURI());
+            .toURI());
          is = new FileInputStream(xmlFile);
          DsParser dsparser = new DsParser();
          //when
@@ -192,15 +197,15 @@ public class MergerTestCase
              resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
             properties = resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                  .getConfigProperties();
+               .getConfigProperties();
          }
 
          //verify pre-condition
          assertThat(resourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
-               is(TransactionSupportEnum.XATransaction));
+            is(TransactionSupportEnum.XATransaction));
          assertThat(resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-               .getManagedConnectionFactoryClass(),
-               equalTo(new XsdString("org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory", null)));
+            .getManagedConnectionFactoryClass(),
+            equalTo(new XsdString("org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory", null)));
 
          //when
          Merger mf = new Merger();
@@ -218,7 +223,7 @@ public class MergerTestCase
              resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
             mergedProperties = mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions()
-                  .get(0).getConfigProperties();
+               .get(0).getConfigProperties();
          }
 
          //then merged properties are presents
@@ -226,20 +231,19 @@ public class MergerTestCase
          assertThat((List<ConfigProperty>) mergedProperties,
             hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.XADATASOURCEPROPERTIES,
-                     "DatabaseName=database_name;User=user;ServerName=server_name;PortNumber=5432;"
-                           + "Password=password;")));
+               "DatabaseName=database_name;User=user;ServerName=server_name;PortNumber=5432;"
+                  + "Password=password;")));
 
          assertThat((List<ConfigProperty>) mergedProperties,
             hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
-               Merger.ConfigPropertyFactory.Prototype.XADATASOURCECLASS,
-                     "org.postgresql.xa.PGXADataSource")));
+               Merger.ConfigPropertyFactory.Prototype.XADATASOURCECLASS, "org.postgresql.xa.PGXADataSource")));
 
          //then metadata read from ra.xml still present (not deleted by merge)
          assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
-               is(TransactionSupportEnum.XATransaction));
+            is(TransactionSupportEnum.XATransaction));
          assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-               .getManagedConnectionFactoryClass(),
-               equalTo(new XsdString("org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory", null)));
+            .getManagedConnectionFactoryClass(),
+            equalTo(new XsdString("org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory", null)));
 
          //then it have empty property for not set ones
          assertThat((List<ConfigProperty>) mergedProperties,
@@ -251,6 +255,106 @@ public class MergerTestCase
             not(hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.CONNECTIONURL, ""))));
 
+      }
+      finally
+      {
+         if (is != null)
+            is.close();
+      }
+
+   }
+
+   /**
+    * shouldMergeRaXmlConnector
+    * @throws Exception in case of error
+    */
+   @SuppressWarnings("unchecked")
+   @Test
+   public void shouldMergeRaXmlConnector() throws Exception
+   {
+      FileInputStream is = null;
+      try
+      {
+         //given
+         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("merger/connector-merging-with-ra.xml").toURI());
+         is = new FileInputStream(xmlFile);
+         RaParser parser = new RaParser();
+         Connector connector = parser.parse(is);
+         is.close();
+         xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("merger/ra-merging-with-connector.xml").toURI());
+         is = new FileInputStream(xmlFile);
+         ResourceAdapterParser raparser = new ResourceAdapterParser();
+         ResourceAdapters ra = raparser.parse(is);
+
+         assertThat(connector, notNullValue());
+         assertThat(ra.getResourceAdapters().get(0), notNullValue());
+
+         //when
+         Merger mf = new Merger();
+         Connector merged = mf.mergeConnectorWithCommonIronJacamar(ra.getResourceAdapters().get(0), connector);
+         //then
+
+         assertThat(merged, notNullValue());
+      }
+      finally
+      {
+         if (is != null)
+            is.close();
+      }
+
+   }
+
+   /**
+    * shouldMergeIronJacamarConnector
+    * @throws Exception in case of error
+    */
+   @SuppressWarnings("unchecked")
+   @Test
+   public void shouldMergeIronJacamarConnector() throws Exception
+   {
+      FileInputStream is = null;
+      try
+      {
+         //given
+         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("merger/connector-merging-with-ironjacamar.xml").toURI());
+         is = new FileInputStream(xmlFile);
+         RaParser parser = new RaParser();
+         Connector connector = parser.parse(is);
+         is.close();
+         xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("merger/ironjacamar-merging-with-connector.xml").toURI());
+         is = new FileInputStream(xmlFile);
+         IronJacamarParser raparser = new IronJacamarParser();
+         IronJacamar ij = raparser.parse(is);
+
+         assertThat(connector, notNullValue());
+         assertThat(ij, notNullValue());
+         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
+            .getConnectionDefinitions().size(), is(1));
+
+         //when
+         Merger mf = new Merger();
+         Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
+         //then
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, new XsdString("StringRAR", null),
+                                                                    new XsdString("java.lang.String", null),
+                                                                    new XsdString("XMLOVERRIDE", null), null);
+         assertThat(merged, notNullValue());
+         assertThat((List<ConfigProperty>) connector.getResourceadapter().getConfigProperties(),
+            hasItem(expectedConfigProp));
+         assertThat(merged.getEisType(), equalTo(connector.getEisType()));
+         assertThat(merged.getVersion(), equalTo(connector.getVersion()));
+         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getResourceadapterClass(),
+            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass()));
+         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter(),
+            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
+         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
+            .getConnectionDefinitions().size(), is(1));
+         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
+            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
       }
       finally
       {

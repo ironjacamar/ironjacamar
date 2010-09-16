@@ -35,6 +35,7 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.MetadataFactory;
+import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
@@ -179,8 +180,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
          cmd.validate();
 
          // Merge metadata
-         //TODO: merge ironjacamar with connector properties. Select the right list of properties
-         // and use MetadataFavtory.mergeConfigProperties(Map<String, String>, List<? extends ConfigProperty> )
+         cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 
          // Notify regarding license terms
          if (cmd != null && cmd.getLicense() != null && cmd.getLicense().isLicenseRequired())
@@ -293,11 +293,11 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                   {
                      tsl = TransactionSupportLevel.XATransaction;
                   }
-                  
+
                   // Connection manager properties
                   Long allocationRetry = null; // TODO
                   Long allocationRetryWaitMillis = null;
-               
+
                   if (ijmd != null)
                   {
                      /*
@@ -310,14 +310,14 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                   // Select the correct connection manager
                   if (tsl == TransactionSupportLevel.NoTransaction)
                   {
-                     cm = cmf.createNonTransactional(tsl, 
+                     cm = cmf.createNonTransactional(tsl,
                                                      pool,
                                                      allocationRetry,
                                                      allocationRetryWaitMillis);
                   }
                   else
                   {
-                     cm = cmf.createTransactional(tsl, 
+                     cm = cmf.createTransactional(tsl,
                                                   pool,
                                                   allocationRetry,
                                                   allocationRetryWaitMillis,
@@ -347,7 +347,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                   {
                      String[] jndis = bindConnectionFactory(url, deploymentName, cf);
                      cfs = new Object[] {cf};
-                     
+
                      cm.setJndiName(jndis[0]);
                   }
                }
@@ -433,7 +433,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                               // Connection manager properties
                               Long allocationRetry = null; // TODO
                               Long allocationRetryWaitMillis = null;
-                              
+
                               if (ijmd != null)
                               {
                                  /*
@@ -453,7 +453,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                               }
                               else
                               {
-                                 cm = cmf.createTransactional(tsl, 
+                                 cm = cmf.createTransactional(tsl,
                                                               pool,
                                                               allocationRetry,
                                                               allocationRetryWaitMillis,

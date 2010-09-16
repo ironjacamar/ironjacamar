@@ -32,6 +32,7 @@ import org.jboss.jca.common.api.metadata.ra.Connector.Version;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
+import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -184,7 +185,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                log.trace("Processing: " + deployment.toExternalForm());
 
             boolean include = true;
-         
+
             if (excludeArchives != null)
             {
                for (String excludedArchive : excludeArchives)
@@ -193,10 +194,10 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                      include = false;
                }
             }
-            
+
             if (include)
             {
-               Map<String, List<String>> jndiMappings = 
+               Map<String, List<String>> jndiMappings =
                   getConfiguration().getMetadataRepository().getJndiMappings(deployment);
 
                // If there isn't any JNDI mappings then the archive isn't active
@@ -303,6 +304,8 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
          Connector cmd = getConfiguration().getMetadataRepository().getResourceAdapter(url);
          IronJacamar ijmd = getConfiguration().getMetadataRepository().getIronJacamar(url);
 
+         cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
+
          ResourceAdapter resourceAdapter = null;
          List<Validate> archiveValidationObjects = new ArrayList<Validate>();
          List<Failure> partialFailures = null;
@@ -399,7 +402,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                // Connection manager properties
                Long allocationRetry = null; // TODO
                Long allocationRetryWaitMillis = null;
-               
+
                if (ijmd != null)
                {
                   /*
@@ -412,14 +415,14 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                // Select the correct connection manager
                if (tsl == TransactionSupportLevel.NoTransaction)
                {
-                  cm = cmf.createNonTransactional(tsl, 
+                  cm = cmf.createNonTransactional(tsl,
                                                   pool,
                                                   allocationRetry,
                                                   allocationRetryWaitMillis);
                }
                else
                {
-                  cm = cmf.createTransactional(tsl, 
+                  cm = cmf.createTransactional(tsl,
                                                pool,
                                                allocationRetry,
                                                allocationRetryWaitMillis,
@@ -501,7 +504,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                         TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
 
                         tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
-                        
+
                         if (tsmd == TransactionSupportEnum.NoTransaction)
                         {
                            tsl = TransactionSupportLevel.NoTransaction;
@@ -522,7 +525,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                         // Connection manager properties
                         Long allocationRetry = null; // TODO
                         Long allocationRetryWaitMillis = null;
-               
+
                         if (ijmd != null)
                         {
                            /*
@@ -535,14 +538,14 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                         // Select the correct connection manager
                         if (tsl == TransactionSupportLevel.NoTransaction)
                         {
-                           cm = cmf.createNonTransactional(tsl, 
+                           cm = cmf.createNonTransactional(tsl,
                                                            pool,
                                                            allocationRetry,
                                                            allocationRetryWaitMillis);
                         }
                         else
                         {
-                           cm = cmf.createTransactional(tsl, 
+                           cm = cmf.createTransactional(tsl,
                                                         pool,
                                                         allocationRetry,
                                                         allocationRetryWaitMillis,
@@ -567,7 +570,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                         }
 
                         archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
-                        
+
                         if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                         {
                            deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
@@ -596,7 +599,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                    ra1516.getInboundResourceadapter().getMessageadapter() != null &&
                    ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null)
                {
-                  List<MessageListener> mlMetas = 
+                  List<MessageListener> mlMetas =
                      ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners();
 
                   if (mlMetas.size() > 0)
@@ -723,11 +726,11 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new RAActivatorDeployment(url, 
-                                          deploymentName, 
-                                          resourceAdapter, 
-                                          getConfiguration().getJndiStrategy(), 
-                                          getConfiguration().getMetadataRepository(), 
+         return new RAActivatorDeployment(url,
+                                          deploymentName,
+                                          resourceAdapter,
+                                          getConfiguration().getJndiStrategy(),
+                                          getConfiguration().getMetadataRepository(),
                                           cfs,
                                           jndis,
                                           cl,

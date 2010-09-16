@@ -107,7 +107,7 @@ public class Merger
                XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
                   .getConfigPropertyName().getId());
                ConfigProperty newProp = new ConfigPropertyImpl(c.getDescriptions(), c.getConfigPropertyName(),
-                                                               c.getConfigPropertyName(), newValue, c.getId());
+                                                               c.getConfigPropertyType(), newValue, c.getId());
                mergedProperties.add(newProp);
             }
 
@@ -151,6 +151,9 @@ public class Merger
       ExtensionMatcher<ConnectionDefinition, CommonConnDef> connDefMatcher)
    {
 
+      if (ij == null)
+         return conn;
+
       if (adminMatcher == null)
          adminMatcher = new DefaultAdminObjectMatcher();
 
@@ -178,12 +181,16 @@ public class Merger
             for (AdminObject adminObj : ra1516.getAdminObjects())
             {
                boolean found = false;
-               for (CommonAdminObject commonAdminObj : ij.getAdminObjects())
+               if (ij.getAdminObjects() != null)
                {
-                  if (adminMatcher.match(adminObj, commonAdminObj))
+                  for (CommonAdminObject commonAdminObj : ij.getAdminObjects())
+
                   {
-                     found = true;
-                     newAdminObjects.add(mergeAdminObject(commonAdminObj, adminObj));
+                     if (adminMatcher.match(adminObj, commonAdminObj))
+                     {
+                        found = true;
+                        newAdminObjects.add(mergeAdminObject(commonAdminObj, adminObj));
+                     }
                   }
                }
                if (!found)
@@ -202,18 +209,22 @@ public class Merger
             for (ConnectionDefinition conDef : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
             {
                boolean found = false;
-               for (CommonConnDef commonConDef : ij.getConnectionDefinitions())
+               if (ij.getConnectionDefinitions() != null)
                {
-                  if (connDefMatcher.match(conDef, commonConDef))
+                  for (CommonConnDef commonConDef : ij.getConnectionDefinitions())
                   {
-                     found = true;
-                     newConDefs.add(mergeConDef(commonConDef, conDef));
+                     if (connDefMatcher.match(conDef, commonConDef))
+                     {
+                        found = true;
+                        newConDefs.add(mergeConDef(commonConDef, conDef));
+                     }
                   }
                }
                if (!found)
                {
                   newConDefs.add(conDef);
                }
+
             }
             ((OutboundResourceAdapterImpl) ra1516.getOutboundResourceadapter())
                .forceConnectionDefinitionsContent(newConDefs);
@@ -221,7 +232,7 @@ public class Merger
 
       }
 
-      return null;
+      return conn;
    }
 
    private ConnectionDefinition mergeConDef(CommonConnDef commonConDef, ConnectionDefinition conDef)

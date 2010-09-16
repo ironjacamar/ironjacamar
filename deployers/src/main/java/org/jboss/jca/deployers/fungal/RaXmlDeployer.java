@@ -32,6 +32,7 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -215,7 +216,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
          {
             deployments = new ArrayList<Deployment>(size);
 
-            for (org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml : 
+            for (org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml :
                     raXmlDeployment.getResourceAdapters())
             {
                Deployment raDeployment = doDeploy(url, raxml, parent);
@@ -266,7 +267,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
     * @exception DeployException Thrown if an error occurs during deployment
     */
    private Deployment doDeploy(URL url,
-                               org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml, 
+                               org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml,
                                ClassLoader parent)
       throws DeployException
    {
@@ -295,6 +296,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
          IronJacamar ijmd = getConfiguration().getMetadataRepository().getIronJacamar(deployment);
          File root = getConfiguration().getMetadataRepository().getRoot(deployment);
 
+         cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(raxml, cmd);
          // Create classloader
          URL[] urls = getUrls(root);
          KernelClassLoader cl = null;
@@ -404,7 +406,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                // Connection manager properties
                Long allocationRetry = null; // TODO
                Long allocationRetryWaitMillis = null;
-               
+
                if (ijmd != null)
                {
                   /*
@@ -471,7 +473,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                    ra.getOutboundResourceadapter() != null &&
                    ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
                {
-                  List<org.jboss.jca.common.api.metadata.ra.ConnectionDefinition> cdMetas = 
+                  List<org.jboss.jca.common.api.metadata.ra.ConnectionDefinition> cdMetas =
                      ra.getOutboundResourceadapter().getConnectionDefinitions();
 
                   if (cdMetas.size() > 0)
@@ -484,7 +486,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                         org.jboss.jca.common.api.metadata.ra.ConnectionDefinition cdMeta = cdMetas.get(cdIndex);
 
                         org.jboss.jca.common.api.metadata.common.CommonConnDef cdRaXml =
-                           findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(), 
+                           findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(),
                                                     raxml.getConnectionDefinitions());
 
                         if (cdRaXml != null && cdRaXml.isEnabled())
@@ -493,7 +495,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                               (ManagedConnectionFactory) initAndInject(cdMeta.getManagedConnectionFactoryClass()
                                                                        .getValue(), cdMeta
                                                                        .getConfigProperties(), cl);
-                           
+
                            if (trace)
                            {
                               log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
@@ -522,7 +524,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                            TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
 
                            tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
-                        
+
                            if (tsmd == TransactionSupportEnum.NoTransaction)
                            {
                               tsl = TransactionSupportLevel.NoTransaction;
@@ -543,7 +545,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                            // Connection manager properties
                            Long allocationRetry = null; // TODO
                            Long allocationRetryWaitMillis = null;
-               
+
                            if (ijmd != null)
                            {
                               /*
@@ -563,7 +565,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                            }
                            else
                            {
-                              cm = cmf.createTransactional(tsl, 
+                              cm = cmf.createTransactional(tsl,
                                                            pool,
                                                            allocationRetry,
                                                            allocationRetryWaitMillis,
@@ -586,9 +588,9 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                                            + cf.getClass().getClassLoader());
                               }
                            }
-                           
+
                            archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
-                        
+
                            if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                            {
                               String jndiName = cdRaXml.getJndiName();
@@ -614,7 +616,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                    ra1516.getInboundResourceadapter().getMessageadapter() != null &&
                    ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null)
                {
-                  List<MessageListener> mlMetas = 
+                  List<MessageListener> mlMetas =
                      ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners();
 
                   if (mlMetas.size() > 0)
@@ -744,14 +746,14 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new RaXmlDeployment(url, 
+         return new RaXmlDeployment(url,
                                     deployment,
-                                    deploymentName, 
-                                    resourceAdapter, 
-                                    getConfiguration().getJndiStrategy(), 
-                                    getConfiguration().getMetadataRepository(), 
+                                    deploymentName,
+                                    resourceAdapter,
+                                    getConfiguration().getJndiStrategy(),
+                                    getConfiguration().getMetadataRepository(),
                                     cfs,
-                                    jndiNames, 
+                                    jndiNames,
                                     cl,
                                     log);
       }
