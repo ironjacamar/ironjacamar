@@ -31,7 +31,7 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
 
 /**
- * The connection manager factory. 
+ * The connection manager factory.
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class ConnectionManagerFactory
@@ -51,10 +51,8 @@ public class ConnectionManagerFactory
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @return The connection manager instance
     */
-   public NoTxConnectionManager createNonTransactional(final TransactionSupportLevel tsl,
-                                                       final Pool pool,
-                                                       final Long allocationRetry,
-                                                       final Long allocationRetryWaitMillis)
+   public NoTxConnectionManager createNonTransactional(final TransactionSupportLevel tsl, final Pool pool,
+      final Integer allocationRetry, final Long allocationRetryWaitMillis)
    {
       if (tsl == null)
          throw new IllegalArgumentException("TransactionSupportLevel is null");
@@ -66,17 +64,17 @@ public class ConnectionManagerFactory
 
       switch (tsl)
       {
-         case NoTransaction:
+         case NoTransaction :
             cm = new NoTxConnectionManagerImpl();
             break;
 
-         case LocalTransaction:
+         case LocalTransaction :
             throw new IllegalArgumentException("Transactional connection manager not supported");
 
-         case XATransaction:
+         case XATransaction :
             throw new IllegalArgumentException("Transactional connection manager not supported");
 
-         default:
+         default :
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
@@ -94,11 +92,8 @@ public class ConnectionManagerFactory
     * @param tm The transaction manager
     * @return The connection manager instance
     */
-   public TxConnectionManager createTransactional(final TransactionSupportLevel tsl,
-                                                  final Pool pool,
-                                                  final Long allocationRetry,
-                                                  final Long allocationRetryWaitMillis,
-                                                  final TransactionManager tm)
+   public TxConnectionManager createTransactional(final TransactionSupportLevel tsl, final Pool pool,
+      final Integer allocationRetry, final Long allocationRetryWaitMillis, final TransactionManager tm)
    {
       if (tsl == null)
          throw new IllegalArgumentException("TransactionSupportLevel is null");
@@ -113,18 +108,18 @@ public class ConnectionManagerFactory
 
       switch (tsl)
       {
-         case NoTransaction:
+         case NoTransaction :
             throw new IllegalArgumentException("Non transactional connection manager not supported");
 
-         case LocalTransaction:
+         case LocalTransaction :
             cm = new TxConnectionManagerImpl(tm, true);
             break;
 
-         case XATransaction:
+         case XATransaction :
             cm = new TxConnectionManagerImpl(tm, false);
             break;
 
-         default:
+         default :
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
@@ -142,11 +137,8 @@ public class ConnectionManagerFactory
     * @param tm The transaction manager
     * @return The updated connection manager
     */
-   private AbstractConnectionManager setProperties(AbstractConnectionManager cm,
-                                                   Pool pool,
-                                                   Long allocationRetry,
-                                                   Long allocationRetryWaitMillis,
-                                                   TransactionManager tm)
+   private AbstractConnectionManager setProperties(AbstractConnectionManager cm, Pool pool,
+      Integer allocationRetry, Long allocationRetryWaitMillis, TransactionManager tm)
    {
       pool.setConnectionListenerFactory(cm);
       cm.setPool(pool);

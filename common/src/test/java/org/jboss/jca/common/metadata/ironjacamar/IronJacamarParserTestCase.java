@@ -420,11 +420,11 @@ public class IronJacamarParserTestCase
 
             //timeout defaults
             CommonTimeOut t = connDef.getTimeOut();
-            assertThat(t.getAllocationRetry(), new IsNull<Long>());
+            assertThat(t.getAllocationRetry(), new IsNull<Integer>());
             assertThat(t.getAllocationRetryWaitMillis(), new IsNull<Long>());
             assertThat(t.getBlockingTimeoutMillis(), new IsNull<Long>());
             assertThat(t.getIdleTimeoutMinutes(), new IsNull<Long>());
-            assertThat(t.getXaResourceTimeout(), new IsNull<Long>());
+            assertThat(t.getXaResourceTimeout(), new IsNull<Integer>());
 
             //validation default
             CommonValidation v = connDef.getValidation();
@@ -482,11 +482,11 @@ public class IronJacamarParserTestCase
 
             //timeout defaults
             CommonTimeOut t = connDef.getTimeOut();
-            assertThat(t.getAllocationRetry(), new IsNull<Long>());
+            assertThat(t.getAllocationRetry(), new IsNull<Integer>());
             assertThat(t.getAllocationRetryWaitMillis(), new IsNull<Long>());
             assertThat(t.getBlockingTimeoutMillis(), new IsNull<Long>());
             assertThat(t.getIdleTimeoutMinutes(), new IsNull<Long>());
-            assertThat(t.getXaResourceTimeout(), new IsNull<Long>());
+            assertThat(t.getXaResourceTimeout(), new IsNull<Integer>());
 
             //validation default
             CommonValidation v = connDef.getValidation();
@@ -560,7 +560,7 @@ public class IronJacamarParserTestCase
 
             //timeout
             CommonTimeOut t = connDef.getTimeOut();
-            assertThat(t.getXaResourceTimeout(), is(100L));
+            assertThat(t.getXaResourceTimeout(), is(100));
 
          }
          finally

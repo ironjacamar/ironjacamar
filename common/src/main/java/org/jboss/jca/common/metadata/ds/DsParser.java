@@ -508,10 +508,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Long idleTimeoutMinutes = null;
       boolean setTxQuertTimeout = false;
       Long queryTimeout = null;
-      Long allocationRetry = null;
+      Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
       Long useTryLock = null;
-      Long xaResourceTimeout = null;
+      Integer xaResourceTimeout = null;
 
       while (reader.hasNext())
       {
@@ -538,7 +538,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (TimeOut.Tag.forName(reader.getLocalName()))
                {
                   case ALLOCATIONRETRY : {
-                     allocationRetry = elementAsLong(reader);
+                     allocationRetry = elementAsInteger(reader);
                      break;
                   }
                   case ALLOCATIONRETRYWAITMILLIS : {
@@ -566,7 +566,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case XARESOURCETIMEOUT : {
-                     xaResourceTimeout = elementAsLong(reader);
+                     xaResourceTimeout = elementAsInteger(reader);
                      break;
                   }
                   default :

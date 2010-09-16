@@ -53,8 +53,8 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
     * @param queryTimeout queryTimeout
     * @param useTryLock useTryLock
     */
-   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Long allocationRetry,
-      Long allocationRetryWaitMillis, Long xaResourceTimeout, boolean setTxQuertTimeout, Long queryTimeout,
+   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
+      Long allocationRetryWaitMillis, Integer xaResourceTimeout, boolean setTxQuertTimeout, Long queryTimeout,
       Long useTryLock)
    {
       super(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,

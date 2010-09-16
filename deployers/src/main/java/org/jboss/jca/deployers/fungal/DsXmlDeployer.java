@@ -253,7 +253,7 @@ public final class DsXmlDeployer implements Deployer
                      if (!jndiName.startsWith("java:/"))
                         jndiName = "java:/" + jndiName;
 
-                     Object cf = deployDataSource(dataSource, 
+                     Object cf = deployDataSource(dataSource,
                                                   jndiName,
                                                   urlJdbcLocal,
                                                   jdbcLocalDeployment.getClassLoader());
@@ -399,7 +399,7 @@ public final class DsXmlDeployer implements Deployer
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
       // Connection manager properties
-      Long allocationRetry = null; // TODO
+      Integer allocationRetry = null; // TODO
       Long allocationRetryWaitMillis = null;
 
       if (ds.getTimeOut() != null)
@@ -411,7 +411,7 @@ public final class DsXmlDeployer implements Deployer
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm = cmf.createTransactional(tsl, 
+      ConnectionManager cm = cmf.createTransactional(tsl,
                                                      pool,
                                                      allocationRetry,
                                                      allocationRetryWaitMillis,
@@ -474,7 +474,7 @@ public final class DsXmlDeployer implements Deployer
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
       // Connection manager properties
-      Long allocationRetry = null; // TODO
+      Integer allocationRetry = null; // TODO
       Long allocationRetryWaitMillis = null;
 
       if (ds.getTimeOut() != null)

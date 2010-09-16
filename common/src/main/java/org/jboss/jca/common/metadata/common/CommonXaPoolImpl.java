@@ -35,15 +35,15 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
    /** The serialVersionUID */
    private static final long serialVersionUID = 3261597366235425250L;
 
-   private final boolean isSameRmOverride;
+   private final Boolean isSameRmOverride;
 
-   private final boolean interleaving;
+   private final Boolean interleaving;
 
-   private final boolean padXid;
+   private final Boolean padXid;
 
-   private final boolean wrapXaDataSource;
+   private final Boolean wrapXaDataSource;
 
-   private final boolean noTxSeparatePool;
+   private final Boolean noTxSeparatePool;
 
 
 
@@ -60,9 +60,9 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @param wrapXaDataSource wrapXaDataSource
     * @param noTxSeparatePool noTxSeparatePool
     */
-   public CommonXaPoolImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, boolean useStrictMin,
-      boolean isSameRmOverride, boolean interleaving, boolean padXid, boolean wrapXaDataSource,
-      boolean noTxSeparatePool)
+   public CommonXaPoolImpl(Integer minPoolSize, Integer maxPoolSize, Boolean prefill, Boolean useStrictMin,
+      Boolean isSameRmOverride, Boolean interleaving, Boolean padXid, Boolean wrapXaDataSource,
+      Boolean noTxSeparatePool)
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin);
       this.isSameRmOverride = isSameRmOverride;
@@ -78,7 +78,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @return the isSameRmOverride.
     */
    @Override
-   public final boolean isSameRmOverride()
+   public final Boolean isSameRmOverride()
    {
       return isSameRmOverride;
    }
@@ -89,7 +89,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @return the interleaving.
     */
    @Override
-   public final boolean isInterleaving()
+   public final Boolean isInterleaving()
    {
       return interleaving;
    }
@@ -100,7 +100,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @return the padXid.
     */
    @Override
-   public final boolean isPadXid()
+   public final Boolean isPadXid()
    {
       return padXid;
    }
@@ -111,7 +111,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @return the wrapXaDataSource.
     */
    @Override
-   public final boolean isWrapXaDataSource()
+   public final Boolean isWrapXaDataSource()
    {
       return wrapXaDataSource;
    }
@@ -122,7 +122,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @return the noTxSeparatePool.
     */
    @Override
-   public final boolean isNoTxSeparatePool()
+   public final Boolean isNoTxSeparatePool()
    {
       return noTxSeparatePool;
    }
@@ -132,11 +132,11 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (interleaving ? 1231 : 1237);
-      result = prime * result + (isSameRmOverride ? 1231 : 1237);
-      result = prime * result + (noTxSeparatePool ? 1231 : 1237);
-      result = prime * result + (padXid ? 1231 : 1237);
-      result = prime * result + (wrapXaDataSource ? 1231 : 1237);
+      result = prime * result + ((interleaving == null) ? 0 : interleaving.hashCode());
+      result = prime * result + ((isSameRmOverride == null) ? 0 : isSameRmOverride.hashCode());
+      result = prime * result + ((noTxSeparatePool == null) ? 0 : noTxSeparatePool.hashCode());
+      result = prime * result + ((padXid == null) ? 0 : padXid.hashCode());
+      result = prime * result + ((wrapXaDataSource == null) ? 0 : wrapXaDataSource.hashCode());
       return result;
    }
 
@@ -150,15 +150,40 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
       if (!(obj instanceof CommonXaPoolImpl))
          return false;
       CommonXaPoolImpl other = (CommonXaPoolImpl) obj;
-      if (interleaving != other.interleaving)
+      if (interleaving == null)
+      {
+         if (other.interleaving != null)
+            return false;
+      }
+      else if (!interleaving.equals(other.interleaving))
          return false;
-      if (isSameRmOverride != other.isSameRmOverride)
+      if (isSameRmOverride == null)
+      {
+         if (other.isSameRmOverride != null)
+            return false;
+      }
+      else if (!isSameRmOverride.equals(other.isSameRmOverride))
          return false;
-      if (noTxSeparatePool != other.noTxSeparatePool)
+      if (noTxSeparatePool == null)
+      {
+         if (other.noTxSeparatePool != null)
+            return false;
+      }
+      else if (!noTxSeparatePool.equals(other.noTxSeparatePool))
          return false;
-      if (padXid != other.padXid)
+      if (padXid == null)
+      {
+         if (other.padXid != null)
+            return false;
+      }
+      else if (!padXid.equals(other.padXid))
          return false;
-      if (wrapXaDataSource != other.wrapXaDataSource)
+      if (wrapXaDataSource == null)
+      {
+         if (other.wrapXaDataSource != null)
+            return false;
+      }
+      else if (!wrapXaDataSource.equals(other.wrapXaDataSource))
          return false;
       return true;
    }

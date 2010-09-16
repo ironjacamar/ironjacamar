@@ -404,7 +404,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                   tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
                // Connection manager properties
-               Long allocationRetry = null; // TODO
+               Integer allocationRetry = null; // TODO
                Long allocationRetryWaitMillis = null;
 
                if (ijmd != null)
@@ -543,7 +543,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                               tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
                            // Connection manager properties
-                           Long allocationRetry = null; // TODO
+                           Integer allocationRetry = null; // TODO
                            Long allocationRetryWaitMillis = null;
 
                            if (ijmd != null)

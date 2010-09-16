@@ -40,35 +40,35 @@ public interface CommonXaPool extends CommonPool
     *
     * @return the isSameRmOverride.
     */
-   public boolean isSameRmOverride();
+   public Boolean isSameRmOverride();
 
    /**
     * Get the interleaving.
     *
     * @return the interleaving.
     */
-   public boolean isInterleaving();
+   public Boolean isInterleaving();
 
    /**
     * Get the padXid.
     *
     * @return the padXid.
     */
-   public boolean isPadXid();
+   public Boolean isPadXid();
 
    /**
     * Get the wrapXaDataSource.
     *
     * @return the wrapXaDataSource.
     */
-   public boolean isWrapXaDataSource();
+   public Boolean isWrapXaDataSource();
 
    /**
     * Get the noTxSeparatePool.
     *
     * @return the noTxSeparatePool.
     */
-   public boolean isNoTxSeparatePool();
+   public Boolean isNoTxSeparatePool();
 
    /**
    *

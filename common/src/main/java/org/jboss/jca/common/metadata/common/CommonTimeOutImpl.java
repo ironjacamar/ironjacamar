@@ -43,13 +43,13 @@ public class CommonTimeOutImpl implements CommonTimeOut
    protected final Long idleTimeoutMinutes;
 
    /** allocationRetry **/
-   protected final Long allocationRetry;
+   protected final Integer allocationRetry;
 
    /** allocationRetryWaitMillis **/
    protected final Long allocationRetryWaitMillis;
 
    /** xaResourceTimeout **/
-   protected final Long xaResourceTimeout;
+   protected final Integer xaResourceTimeout;
 
    /**
     * Create a new STimeOutImpl.
@@ -60,8 +60,8 @@ public class CommonTimeOutImpl implements CommonTimeOut
     * @param allocationRetryWaitMillis allocationRetryWaitMillis
     * @param xaResourceTimeout xaResourceTimeout
     */
-   public CommonTimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Long allocationRetry,
-      Long allocationRetryWaitMillis, Long xaResourceTimeout)
+   public CommonTimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
+      Long allocationRetryWaitMillis, Integer xaResourceTimeout)
    {
       super();
       this.blockingTimeoutMillis = blockingTimeoutMillis;
@@ -99,7 +99,7 @@ public class CommonTimeOutImpl implements CommonTimeOut
     * @return the allocationRetry.
     */
    @Override
-   public final Long getAllocationRetry()
+   public final Integer getAllocationRetry()
    {
       return allocationRetry;
    }
@@ -121,7 +121,7 @@ public class CommonTimeOutImpl implements CommonTimeOut
     * @return the xaResourceTimeout.
     */
    @Override
-   public Long getXaResourceTimeout()
+   public Integer getXaResourceTimeout()
    {
       return xaResourceTimeout;
    }

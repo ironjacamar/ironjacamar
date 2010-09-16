@@ -400,7 +400,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                   tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
                // Connection manager properties
-               Long allocationRetry = null; // TODO
+               Integer allocationRetry = null; // TODO
                Long allocationRetryWaitMillis = null;
 
                if (ijmd != null)
@@ -523,7 +523,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                            tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
                         // Connection manager properties
-                        Long allocationRetry = null; // TODO
+                        Integer allocationRetry = null; // TODO
                         Long allocationRetryWaitMillis = null;
 
                         if (ijmd != null)

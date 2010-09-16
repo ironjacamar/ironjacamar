@@ -55,7 +55,7 @@ public interface CommonTimeOut extends JCAMetadata
     *
     * @return the allocationRetryWaitMillis.
     */
-   public Long getAllocationRetry();
+   public Integer getAllocationRetry();
 
    /**
     * Get the allocationRetryWaitMillis.
@@ -69,7 +69,7 @@ public interface CommonTimeOut extends JCAMetadata
     *
     * @return the xaResourceTimeout.
     */
-   public Long getXaResourceTimeout();
+   public Integer getXaResourceTimeout();
 
    /**
    *

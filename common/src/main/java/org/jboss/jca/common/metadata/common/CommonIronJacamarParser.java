@@ -230,8 +230,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Long blockingTimeoutMillis = null;
       Long allocationRetryWaitMillis = null;
       Long idleTimeoutMinutes = null;
-      Long allocationRetry = null;
-      Long xaResourceTimeout = null;
+      Integer allocationRetry = null;
+      Integer xaResourceTimeout = null;
 
       while (reader.hasNext())
       {
@@ -261,7 +261,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   case ALLOCATIONRETRY : {
-                     allocationRetry = elementAsLong(reader);
+                     allocationRetry = elementAsInteger(reader);
                      break;
                   }
                   case BLOCKINGTIMEOUTMILLIS : {
@@ -276,7 +276,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      if (!isXa)
                         throw new ParserException("Element:" + reader.getLocalName() +
                                                   "cannot be set without an xa-pool");
-                     xaResourceTimeout = elementAsLong(reader);
+                     xaResourceTimeout = elementAsInteger(reader);
                      break;
                   }
                   default :

@@ -295,7 +295,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                   }
 
                   // Connection manager properties
-                  Long allocationRetry = null; // TODO
+                  Integer allocationRetry = null; // TODO
                   Long allocationRetryWaitMillis = null;
 
                   if (ijmd != null)
@@ -431,7 +431,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                                  tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
                               // Connection manager properties
-                              Long allocationRetry = null; // TODO
+                              Integer allocationRetry = null; // TODO
                               Long allocationRetryWaitMillis = null;
 
                               if (ijmd != null)
