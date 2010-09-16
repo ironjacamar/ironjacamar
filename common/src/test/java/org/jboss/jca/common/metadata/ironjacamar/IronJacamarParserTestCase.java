@@ -43,6 +43,7 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
+
 /**
  *
  * A IronJacamarParserTestCase.
@@ -402,7 +403,6 @@ public class IronJacamarParserTestCase
             //attribute defaults
             assertThat(connDef.getPoolName(), new IsNull<String>());
             assertThat(connDef.getClassName(), new IsNull<String>());
-            assertThat(connDef.getClassName(), new IsNull<String>());
             assertThat(connDef.isEnabled(), is(true));
             assertThat(connDef.isUseJavaContext(), is(false));
 
@@ -465,7 +465,6 @@ public class IronJacamarParserTestCase
             //attribute defaults
             assertThat(connDef.getPoolName(), new IsNull<String>());
             assertThat(connDef.getClassName(), new IsNull<String>());
-            assertThat(connDef.getClassName(), new IsNull<String>());
             assertThat(connDef.isEnabled(), is(true));
             assertThat(connDef.isUseJavaContext(), is(false));
 
@@ -524,7 +523,6 @@ public class IronJacamarParserTestCase
             //when
             IronJacamar ij = parser.parse(is);
             //then
-
 
          }
          finally

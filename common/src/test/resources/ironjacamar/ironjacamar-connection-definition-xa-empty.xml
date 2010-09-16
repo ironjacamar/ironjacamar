@@ -5,7 +5,6 @@
     <transaction-support>NoTransaction</transaction-support>
     <connection-definitions>
       <connection-definition jndi-name="aSAPXcess">
-        <config-property name="LogConfigFile">ASAP_SAP_1_0.xml</config-property>
         <xa-pool>
         </xa-pool>
         <security>
