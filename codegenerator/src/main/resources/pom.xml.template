@@ -15,12 +15,6 @@
       <version>@VERSION.IRONJACAMAR@</version>
     </dependency>
     <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <version>3.0.0.Beta3</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-common-api</artifactId>
       <version>@VERSION.IRONJACAMAR@</version>
@@ -56,21 +50,13 @@
       <version>@VERSION.IRONJACAMAR@</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-depchain</artifactId>
       <version>@VERSION.IRONJACAMAR@</version>
       <scope>test</scope>
       <type>pom</type>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jboss.security</groupId>
-          <artifactId>jboss-security-spi</artifactId>
-        </exclusion>   
-      </exclusions>
     </dependency>   
-
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-deployers-fungal</artifactId>
@@ -95,6 +81,7 @@
       <version>@VERSION.IRONJACAMAR@</version>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
