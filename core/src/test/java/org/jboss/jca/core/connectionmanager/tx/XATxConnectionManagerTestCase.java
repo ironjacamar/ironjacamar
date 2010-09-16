@@ -77,7 +77,8 @@ public class XATxConnectionManagerTestCase
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
                                                                     pool,
                                                                     null, null,
-                                                                    tm);
+                                                                    tm, 
+                                                                    Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);
       
       assertTrue(connectionManager instanceof TxConnectionManager);
@@ -117,7 +118,8 @@ public class XATxConnectionManagerTestCase
       
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction, 
-                                                                    pool, null, null, tm);
+                                                                    pool, null, null, tm, 
+                                                                    Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);
       
       assertTrue(connectionManager instanceof TxConnectionManager);

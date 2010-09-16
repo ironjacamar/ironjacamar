@@ -39,4 +39,39 @@ public interface TxConnectionManager extends ConnectionManager,
                                              TransactionTimeoutConfiguration, 
                                              JTATransactionChecker
 {
+   /**
+    * Get the interleaving status
+    * @return True if interleaving; otherwise false
+    */
+   public boolean isInterleaving();
+
+   /**
+    * Get the local transaction status
+    * @return True if local transactions; false if XA
+    */
+   public boolean isLocalTransactions();
+
+   /**
+    * Get the XA resource transaction time out in seconds
+    * @return The value
+    */
+   public int getXAResourceTimeout();
+
+   /**
+    * Get the IsSameRMOverride status
+    * @return True if isSameRM is overridden; otherwise false
+    */
+   public boolean getIsSameRMOverride();
+
+   /**
+    * Get the wrap XAResource status
+    * @return True if XAResource instances are wrapped; otherwise false
+    */
+   public boolean getWrapXAResource();
+
+   /**
+    * Get the PadXid status
+    * @return True if Xids are padded; otherwise false
+    */
+   public boolean getPadXid();
 }

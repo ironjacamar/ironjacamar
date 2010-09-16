@@ -396,10 +396,10 @@ public final class DsXmlDeployer implements Deployer
                                                      useFastFail);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, false);
 
       // Connection manager properties
-      Integer allocationRetry = null; // TODO
+      Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
 
       if (ds.getTimeOut() != null)
@@ -415,7 +415,12 @@ public final class DsXmlDeployer implements Deployer
                                                      pool,
                                                      allocationRetry,
                                                      allocationRetryWaitMillis,
-                                                     getTransactionManager());
+                                                     getTransactionManager(),
+                                                     null,
+                                                     null,
+                                                     null,
+                                                     null,
+                                                     null);
 
       cm.setJndiName(jndiName);
 
@@ -470,17 +475,36 @@ public final class DsXmlDeployer implements Deployer
                                                      strictMin,
                                                      useFastFail);
 
+      Boolean noTxSeparatePool = Boolean.FALSE;
+
+      if (ds.getXaPool() != null && ds.getXaPool().isNoTxSeparatePool() != null)
+         noTxSeparatePool = ds.getXaPool().isNoTxSeparatePool();
+
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
 
       // Connection manager properties
-      Integer allocationRetry = null; // TODO
+      Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
+      Boolean interleaving = null;
+      Integer xaResourceTimeout = null;
+      Boolean isSameRMOverride = null;
+      Boolean wrapXAResource = null;
+      Boolean padXid = null;
 
       if (ds.getTimeOut() != null)
       {
          allocationRetry = ds.getTimeOut().getAllocationRetry();
          allocationRetryWaitMillis = ds.getTimeOut().getAllocationRetryWaitMillis();
+         xaResourceTimeout = ds.getTimeOut().getXaResourceTimeout();
+      }
+
+      if (ds.getXaPool() != null)
+      {
+         interleaving = ds.getXaPool().isInterleaving();
+         isSameRMOverride = ds.getXaPool().isSameRmOverride();
+         wrapXAResource = ds.getXaPool().isWrapXaDataSource();
+         padXid = ds.getXaPool().isPadXid();
       }
 
       // Select the correct connection manager
@@ -490,7 +514,12 @@ public final class DsXmlDeployer implements Deployer
                                                      pool,
                                                      allocationRetry,
                                                      allocationRetryWaitMillis,
-                                                     getTransactionManager());
+                                                     getTransactionManager(),
+                                                     interleaving,
+                                                     xaResourceTimeout,
+                                                     isSameRMOverride,
+                                                     wrapXAResource,
+                                                     padXid);
 
       cm.setJndiName(jndiName);
 

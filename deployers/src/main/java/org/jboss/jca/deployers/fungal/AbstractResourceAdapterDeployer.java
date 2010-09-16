@@ -407,6 +407,46 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
+    * Find the connection factory for a managed connection factory
+    * @param clz The fully quilified class name for the managed connection factory
+    * @param defs The connection definitions
+    * @return The connection definiton; <code>null</code> if none could be found
+    */
+   protected org.jboss.jca.common.api.metadata.common.CommonConnDef 
+   findConnectionDefinition(String clz,
+                            List<org.jboss.jca.common.api.metadata.common.CommonConnDef> defs)
+   {
+      if (defs != null)
+      {
+         // If there is only one we will return that
+         if (defs.size() == 1)
+         {
+            org.jboss.jca.common.api.metadata.common.CommonConnDef cd = defs.get(0);
+
+            if (cd.getClassName() != null && !clz.equals(cd.getClassName()))
+            {
+               log.warn("Only one connection definitopn found with a mis-match in class-name: " + cd);
+               return null;
+            }
+
+            return cd;
+         }
+
+         // If there are multiple definitions the MCF class name is mandatory
+         if (clz == null)
+            throw new IllegalArgumentException("ManagedConnectionFactory must be defined in class-name");
+
+         for (org.jboss.jca.common.api.metadata.common.CommonConnDef cd : defs)
+         {
+            if (clz.equals(cd.getClassName()))
+               return cd;
+         }
+      }
+
+      return null;
+   }
+
+   /**
     * Start
     */
    public void start()

@@ -60,7 +60,7 @@ import org.jboss.util.NotImplementedException;
 
 /**
  * The TxConnectionManager is a JBoss ConnectionManager
- * implementation for jca adapters implementing LocalTransaction and XAResource support.
+ * implementation for JCA adapters implementing LocalTransaction and XAResource support.
  * 
  * It implements a ConnectionEventListener that implements XAResource to
  * manage transactions through the Transaction Manager. To assure that all
@@ -154,7 +154,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    private boolean wrapXAResource = true;
 
    /**Same RM override*/
-   private Boolean isSameRMOverrideValue;
+   private boolean isSameRMOverride;
    
    /**Log trace*/
    private boolean trace = getLog().isTraceEnabled();
@@ -166,7 +166,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     */
    public TxConnectionManagerImpl(final TransactionManager tm, final boolean localTransactions)
    {
-      this.transactionManager = tm;
+      transactionManager = tm;
 
       setLocalTransactions(localTransactions);
    }
@@ -193,9 +193,9 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     * Sets interleaving flag.
     * @param value interleaving
     */
-   private void setInterleaving(boolean value)
+   public void setInterleaving(boolean value)
    {
-      this.interleaving = value;
+      interleaving = value;
    }
    
    /**
@@ -213,7 +213,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     */
    void setLocalTransactions(boolean v)
    {
-      this.localTransactions = v;
+      localTransactions = v;
 
       if (v)
          setInterleaving(false);
@@ -223,7 +223,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     * Gets XA resource transaction time out.
     * @return xa resource transaction timeout
     */
-   public int getXAResourceTransactionTimeout()
+   public int getXAResourceTimeout()
    {
       return xaResourceTimeout;
    }
@@ -232,21 +232,29 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     * Sets XA resource transaction timeout.
     * @param timeout xa resource transaction timeout
     */
-   public void setXAResourceTransactionTimeout(int timeout)
+   public void setXAResourceTimeout(int timeout)
    {
-      this.xaResourceTimeout = timeout;
+      xaResourceTimeout = timeout;
    }
    
    /**
-    * Get the IsSameRMOverrideValue value.
-    * 
-    * @return the IsSameRMOverrideValue value.
+    * Get the IsSameRMOverride value
+    * @return The value
     */
-   public Boolean getIsSameRMOverrideValue()
+   public boolean getIsSameRMOverride()
    {
-      return isSameRMOverrideValue;
+      return isSameRMOverride;
    }
    
+   /**
+    * Set the IsSameRMOverride value.
+    * @param v The value
+    */
+   public void setIsSameRMOverride(boolean v)
+   {
+      isSameRMOverride = v;
+   }
+
    /**
     * Returns true if wrap xa resource.
     * @return true if wrap xa resource
@@ -257,41 +265,30 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    }
    
    /**
-    * Sets use xa wrapper.
-    * @param useXAWrapper use xa wrapper
+    * Set if the XAResource should be wrapped
+    * @param v The value
     */
-   public void setWrapXAResource(boolean useXAWrapper)
+   public void setWrapXAResource(boolean v)
    {
-      this.wrapXAResource = useXAWrapper;
-      
+      wrapXAResource = v;
    }
    
    /**
-    * Gets pad.
-    * @return pad 
+    * Get PadXis status
+    * @return The value
     */
    public boolean getPadXid()
    {
-      return this.padXid;
-      
+      return padXid;
    }
    
    /**
-    * Sets pad.
-    * @param padXid pad
+    * Set if the Xid should be padded
+    * @param v The value
     */
-   public void setPadXid(boolean padXid)
+   public void setPadXid(boolean v)
    {
-      this.padXid = padXid;
-   }
-   /**
-    * Set the IsSameRMOverrideValue value.
-    * 
-    * @param isSameRMOverrideValue The new IsSameRMOverrideValue value.
-    */
-   public void setIsSameRMOverrideValue(Boolean isSameRMOverrideValue)
-   {
-      this.isSameRMOverrideValue = isSameRMOverrideValue;
+      padXid = v;
    }
    
    /**
@@ -302,14 +299,14 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     */
    public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException
    {
-      if (this.transactionManager == null)
+      if (transactionManager == null)
       {
          throw new IllegalStateException("No transaction manager: " + getCachedConnectionManager());  
       }
 
-      if (this.transactionManager instanceof TransactionTimeoutConfiguration)
+      if (transactionManager instanceof TransactionTimeoutConfiguration)
       {
-         return ((TransactionTimeoutConfiguration) this.transactionManager).
+         return ((TransactionTimeoutConfiguration)transactionManager).
             getTimeLeftBeforeTransactionTimeout(errorRollback);  
       }
       
@@ -322,18 +319,19 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    @Override
    public void checkTransactionActive() throws RollbackException, SystemException
    {
-      if (this.transactionManager == null)
+      if (transactionManager == null)
       {
          throw new IllegalStateException("No transaction manager: " + getCachedConnectionManager());  
       }
       
-      Transaction tx = this.transactionManager.getTransaction();
+      Transaction tx = transactionManager.getTransaction();
       if (tx != null)
       {
          int status = tx.getStatus();
+
          // Only allow states that will actually succeed
          if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING && 
-               status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
+             status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
          {
             throw new RollbackException("Transaction " + tx + " cannot proceed " + TxUtils.getStatusAsString(status));  
          }
@@ -349,7 +347,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       Transaction trackByTransaction = null;
       try
       {
-         Transaction tx = this.transactionManager.getTransaction();
+         Transaction tx = transactionManager.getTransaction();
          if (tx != null && !TxUtils.isActive(tx))
          {
             throw new ResourceException("Transaction is not active: tx=" + tx);  
@@ -365,7 +363,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          JBossResourceException.rethrowAsResourceException("Error checking for a transaction.", t);
       }
 
-      if (this.trace)
+      if (trace)
       {
          getLog().trace("getManagedConnection interleaving=" + interleaving + " tx=" + trackByTransaction);  
       }
@@ -455,6 +453,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       {
          if (trace)
             getLog().trace("Disconnected isManagedConnectionFree=true" + " cl=" + cl);
+
          returnManagedConnection(cl, false);
       }
       else if (trace)
@@ -478,7 +477,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    {
       XAResource xaResource = null;
       
-      if (this.localTransactions)
+      if (localTransactions)
       {
          xaResource = new LocalXAResource(this);
     
@@ -486,12 +485,10 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          {
             getLog().debug("XAResource transaction timeout cannot be set for local transactions: " + getJndiName());  
          }
-      }
-      
+      }      
       else
-      {
-         
-         if (this.wrapXAResource)
+      {         
+         if (wrapXAResource)
          {
             String eisProductName = null;
             String eisProductVersion = null;
@@ -509,14 +506,23 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                // Ignore
             }
 
-            getLog().trace("Generating XAResourceWrapper for TxConnectionManager" + this);
+            if (eisProductName == null)
+               eisProductName = getJndiName();
+
+            if (eisProductVersion == null)
+               eisProductVersion = getJndiName();
+
+            if (trace)
+               getLog().trace("Generating XAResourceWrapper for TxConnectionManager" + this);
+
             xaResource = new XAResourceWrapperImpl(mc.getXAResource(), padXid, 
-                  isSameRMOverrideValue, eisProductName, eisProductVersion);
+                                                   isSameRMOverride, eisProductName, eisProductVersion);
          }
-         
          else
          {
-            getLog().trace("Not wrapping XAResource.");
+            if (trace)
+               getLog().trace("Not wrapping XAResource.");
+
             xaResource = mc.getXAResource();
          }
                                 
@@ -544,7 +550,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     */
    public boolean isTransactional()
    {
-      return !TxUtils.isCompleted(this.transactionManager);
+      return !TxUtils.isCompleted(transactionManager);
    }
    
    /**
@@ -567,12 +573,16 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    {
       if (t instanceof SystemException)
          throw (SystemException) t;
+
       if (t instanceof RuntimeException)
          throw (RuntimeException) t;
+
       if (t instanceof Error)
          throw (Error) t;
+
       if (t instanceof RollbackException)
          throw new IllegalStateException(context + " tx=" + tx + " marked for rollback.");
+
       throw new NestedRuntimeException(context + " tx=" + tx + " got unexpected error ", t);
    }
 
@@ -580,14 +590,11 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    private void writeObject(ObjectOutputStream out)
       throws IOException
    {
-
-
    }
 
 
    private void readObject(ObjectInputStream in)
       throws IOException, ClassNotFoundException
    {
-
    }
 }

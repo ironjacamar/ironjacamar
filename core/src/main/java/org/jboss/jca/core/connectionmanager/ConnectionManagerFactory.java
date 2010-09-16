@@ -51,8 +51,10 @@ public class ConnectionManagerFactory
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @return The connection manager instance
     */
-   public NoTxConnectionManager createNonTransactional(final TransactionSupportLevel tsl, final Pool pool,
-      final Integer allocationRetry, final Long allocationRetryWaitMillis)
+   public NoTxConnectionManager createNonTransactional(final TransactionSupportLevel tsl,
+                                                       final Pool pool,
+                                                       final Integer allocationRetry, 
+                                                       final Long allocationRetryWaitMillis)
    {
       if (tsl == null)
          throw new IllegalArgumentException("TransactionSupportLevel is null");
@@ -64,21 +66,22 @@ public class ConnectionManagerFactory
 
       switch (tsl)
       {
-         case NoTransaction :
+         case NoTransaction:
             cm = new NoTxConnectionManagerImpl();
             break;
 
-         case LocalTransaction :
+         case LocalTransaction:
             throw new IllegalArgumentException("Transactional connection manager not supported");
 
-         case XATransaction :
+         case XATransaction:
             throw new IllegalArgumentException("Transactional connection manager not supported");
 
-         default :
+         default:
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
       setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, null);
+      setNoTxProperties(cm);
 
       return cm;
    }
@@ -90,10 +93,23 @@ public class ConnectionManagerFactory
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
+    * @param interleaving Enable interleaving
+    * @param xaResourceTimeout The transaction timeout for XAResource
+    * @param isSameRMOverride Should isSameRM be overridden
+    * @param wrapXAResource Should XAResource be wrapped
+    * @param padXid Should Xids be padded
     * @return The connection manager instance
     */
-   public TxConnectionManager createTransactional(final TransactionSupportLevel tsl, final Pool pool,
-      final Integer allocationRetry, final Long allocationRetryWaitMillis, final TransactionManager tm)
+   public TxConnectionManager createTransactional(final TransactionSupportLevel tsl,
+                                                  final Pool pool,
+                                                  final Integer allocationRetry,
+                                                  final Long allocationRetryWaitMillis,
+                                                  final TransactionManager tm,
+                                                  final Boolean interleaving,
+                                                  final Integer xaResourceTimeout,
+                                                  final Boolean isSameRMOverride,
+                                                  final Boolean wrapXAResource,
+                                                  final Boolean padXid)
    {
       if (tsl == null)
          throw new IllegalArgumentException("TransactionSupportLevel is null");
@@ -108,22 +124,23 @@ public class ConnectionManagerFactory
 
       switch (tsl)
       {
-         case NoTransaction :
+         case NoTransaction:
             throw new IllegalArgumentException("Non transactional connection manager not supported");
 
-         case LocalTransaction :
+         case LocalTransaction:
             cm = new TxConnectionManagerImpl(tm, true);
             break;
 
-         case XATransaction :
+         case XATransaction:
             cm = new TxConnectionManagerImpl(tm, false);
             break;
 
-         default :
+         default:
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
       setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, tm);
+      setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
 
       return cm;
    }
@@ -135,10 +152,12 @@ public class ConnectionManagerFactory
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
-    * @return The updated connection manager
     */
-   private AbstractConnectionManager setProperties(AbstractConnectionManager cm, Pool pool,
-      Integer allocationRetry, Long allocationRetryWaitMillis, TransactionManager tm)
+   private void setProperties(AbstractConnectionManager cm,
+                              Pool pool,
+                              Integer allocationRetry,
+                              Long allocationRetryWaitMillis,
+                              TransactionManager tm)
    {
       pool.setConnectionListenerFactory(cm);
       cm.setPool(pool);
@@ -151,7 +170,45 @@ public class ConnectionManagerFactory
 
       CachedConnectionManager ccm = new CachedConnectionManager(tm);
       cm.setCachedConnectionManager(ccm);
+   }
 
-      return cm;
+   /**
+    * NoTxConnectionManager properties
+    * @param cm The connection manager
+    */
+   private void setNoTxProperties(NoTxConnectionManagerImpl cm)
+   {
+   }
+
+   /**
+    * TxConnectionManager properties
+    * @param cm The connection manager
+    * @param interleaving Enable interleaving
+    * @param xaResourceTimeout The transaction timeout for XAResource
+    * @param isSameRMOverride Should isSameRM be overridden
+    * @param wrapXAResource Should XAResource be wrapped
+    * @param padXid Should Xids be padded
+    */
+   private void setTxProperties(TxConnectionManagerImpl cm,
+                                Boolean interleaving,
+                                Integer xaResourceTimeout,
+                                Boolean isSameRMOverride,
+                                Boolean wrapXAResource,
+                                Boolean padXid)
+   {
+      if (interleaving != null)
+         cm.setInterleaving(interleaving.booleanValue());
+
+      if (xaResourceTimeout != null)
+         cm.setXAResourceTimeout(xaResourceTimeout.intValue());
+
+      if (isSameRMOverride != null)
+         cm.setIsSameRMOverride(isSameRMOverride.booleanValue());
+
+      if (wrapXAResource != null)
+         cm.setWrapXAResource(wrapXAResource.booleanValue());
+
+      if (padXid != null)
+         cm.setPadXid(padXid.booleanValue());
    }
 }
