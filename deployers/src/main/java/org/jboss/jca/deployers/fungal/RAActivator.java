@@ -345,155 +345,161 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
             // ManagedConnectionFactory
             if (cmd.getVersion() == Version.V_10)
             {
-               ManagedConnectionFactory mcf =
-                     (ManagedConnectionFactory) initAndInject(((ResourceAdapter10) cmd.getResourceadapter())
-                           .getManagedConnectionFactoryClass()
-                           .getValue(), ((ResourceAdapter10) cmd.getResourceadapter())
-                           .getConfigProperties(), cl);
-
-               if (trace)
-               {
-                  log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                  log.trace("ManagedConnectionFactory defined in classloader: " +
-                         mcf.getClass().getClassLoader());
-               }
-
                org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD = null;
-
+                        
                if (ijmd != null)
                {
-                  ijCD = findConnectionDefinition(mcf.getClass().getName(), ijmd.getConnectionDefinitions());
+                  ijCD = findConnectionDefinition(((ResourceAdapter10) cmd.getResourceadapter())
+                                                  .getManagedConnectionFactoryClass().getValue(),
+                                                  ijmd.getConnectionDefinitions());
                }
 
-               mcf.setLogWriter(new PrintWriter(getConfiguration().getPrintStream()));
-
-               archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
-                                                               mcf,
-                                                               ((ResourceAdapter10) cmd.getResourceadapter())
-                                                               .getConfigProperties()));
-               beanValidationObjects.add(mcf);
-               associateResourceAdapter(resourceAdapter, mcf);
-
-               // Create the pool
-               PoolConfiguration pc = new PoolConfiguration();
-               PoolFactory pf = new PoolFactory();
-
-               Boolean noTxSeparatePool = Boolean.FALSE;
-
-               if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
+               if (ijmd == null || ijCD == null || ijCD.isEnabled())
                {
-                  org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
-                     (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
+                  ManagedConnectionFactory mcf =
+                     (ManagedConnectionFactory) initAndInject(((ResourceAdapter10) cmd.getResourceadapter())
+                                                              .getManagedConnectionFactoryClass().getValue(), 
+                                                              ((ResourceAdapter10) cmd.getResourceadapter())
+                                                              .getConfigProperties(), cl);
 
-                  if (ijXaPool != null)
-                     noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
-               }
+                  if (trace)
+                  {
+                     log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
+                     log.trace("ManagedConnectionFactory defined in classloader: " +
+                               mcf.getClass().getClassLoader());
+                  }
 
-               Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
+                  mcf.setLogWriter(new PrintWriter(getConfiguration().getPrintStream()));
 
-               // Add a connection manager
-               ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-               ConnectionManager cm = null;
+                  archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
+                                                                  mcf,
+                                                                  ((ResourceAdapter10) cmd.getResourceadapter())
+                                                                  .getConfigProperties()));
+                  beanValidationObjects.add(mcf);
+                  associateResourceAdapter(resourceAdapter, mcf);
 
-               TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
-               TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
+                  // Create the pool
+                  PoolConfiguration pc = new PoolConfiguration();
+                  PoolFactory pf = new PoolFactory();
 
-               tsmd = ((ResourceAdapter10) cmd.getResourceadapter()).getTransactionSupport();
-
-               if (tsmd == TransactionSupportEnum.NoTransaction)
-               {
-                  tsl = TransactionSupportLevel.NoTransaction;
-               }
-               else if (tsmd == TransactionSupportEnum.LocalTransaction)
-               {
-                  tsl = TransactionSupportLevel.LocalTransaction;
-               }
-               else if (tsmd == TransactionSupportEnum.XATransaction)
-               {
-                  tsl = TransactionSupportLevel.XATransaction;
-               }
-               // Section 7.13 -- Read from metadata -> overwrite with specified value if present
-               if (mcf instanceof TransactionSupport)
-                  tsl = ((TransactionSupport) mcf).getTransactionSupport();
-
-               // Connection manager properties
-               Integer allocationRetry = null;
-               Long allocationRetryWaitMillis = null;
-
-               if (ijCD != null && ijCD.getTimeOut() != null)
-               {
-                  allocationRetry = ijCD.getTimeOut().getAllocationRetry();
-                  allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
-               }
-
-               // Select the correct connection manager
-               if (tsl == TransactionSupportLevel.NoTransaction)
-               {
-                  cm = cmf.createNonTransactional(tsl,
-                                                  pool,
-                                                  allocationRetry,
-                                                  allocationRetryWaitMillis);
-               }
-               else
-               {
-                  Boolean interleaving = null;
-                  Integer xaResourceTimeout = null;
-                  Boolean isSameRMOverride = null;
-                  Boolean wrapXAResource = null;
-                  Boolean padXid = null;
+                  Boolean noTxSeparatePool = Boolean.FALSE;
 
                   if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
                   {
                      org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                         (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
-
+                     
                      if (ijXaPool != null)
+                        noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
+                  }
+
+                  Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
+               
+                  // Add a connection manager
+                  ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+                  ConnectionManager cm = null;
+
+                  TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
+                  TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
+
+                  tsmd = ((ResourceAdapter10) cmd.getResourceadapter()).getTransactionSupport();
+
+                  if (tsmd == TransactionSupportEnum.NoTransaction)
+                  {
+                     tsl = TransactionSupportLevel.NoTransaction;
+                  }
+                  else if (tsmd == TransactionSupportEnum.LocalTransaction)
+                  {
+                     tsl = TransactionSupportLevel.LocalTransaction;
+                  }
+                  else if (tsmd == TransactionSupportEnum.XATransaction)
+                  {
+                     tsl = TransactionSupportLevel.XATransaction;
+                  }
+
+                  // Section 7.13 -- Read from metadata -> overwrite with specified value if present
+                  if (mcf instanceof TransactionSupport)
+                     tsl = ((TransactionSupport) mcf).getTransactionSupport();
+
+                  // Connection manager properties
+                  Integer allocationRetry = null;
+                  Long allocationRetryWaitMillis = null;
+
+                  if (ijCD != null && ijCD.getTimeOut() != null)
+                  {
+                     allocationRetry = ijCD.getTimeOut().getAllocationRetry();
+                     allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
+                  }
+
+                  // Select the correct connection manager
+                  if (tsl == TransactionSupportLevel.NoTransaction)
+                  {
+                     cm = cmf.createNonTransactional(tsl,
+                                                     pool,
+                                                     allocationRetry,
+                                                     allocationRetryWaitMillis);
+                  }
+                  else
+                  {
+                     Boolean interleaving = null;
+                     Integer xaResourceTimeout = null;
+                     Boolean isSameRMOverride = null;
+                     Boolean wrapXAResource = null;
+                     Boolean padXid = null;
+
+                     if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
                      {
-                        interleaving = ijXaPool.isInterleaving();
-                        isSameRMOverride = ijXaPool.isSameRmOverride();
-                        wrapXAResource = ijXaPool.isWrapXaDataSource();
-                        padXid = ijXaPool.isPadXid();
+                        org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
+                           (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
+                        
+                        if (ijXaPool != null)
+                        {
+                           interleaving = ijXaPool.isInterleaving();
+                           isSameRMOverride = ijXaPool.isSameRmOverride();
+                           wrapXAResource = ijXaPool.isWrapXaDataSource();
+                           padXid = ijXaPool.isPadXid();
+                        }
+                     }
+
+                     cm = cmf.createTransactional(tsl,
+                                                  pool,
+                                                  allocationRetry,
+                                                  allocationRetryWaitMillis,
+                                                  getConfiguration().getTransactionManager(),
+                                                  interleaving,
+                                                  xaResourceTimeout,
+                                                  isSameRMOverride,
+                                                  wrapXAResource,
+                                                  padXid);
+                  }
+
+                  // ConnectionFactory
+                  Object cf = mcf.createConnectionFactory(cm);
+               
+                  if (cf == null)
+                  {
+                     log.error("ConnectionFactory is null");
+                  }
+                  else
+                  {
+                     if (trace)
+                     {
+                        log.trace("ConnectionFactory: " + cf.getClass().getName());
+                        log.trace("ConnectionFactory defined in classloader: "
+                                  + cf.getClass().getClassLoader());
                      }
                   }
 
-                  cm = cmf.createTransactional(tsl,
-                                               pool,
-                                               allocationRetry,
-                                               allocationRetryWaitMillis,
-                                               getConfiguration().getTransactionManager(),
-                                               interleaving,
-                                               xaResourceTimeout,
-                                               isSameRMOverride,
-                                               wrapXAResource,
-                                               padXid);
-               }
+                  archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
-               // ConnectionFactory
-               Object cf = mcf.createConnectionFactory(cm);
-
-               if (cf == null)
-               {
-                  log.error("ConnectionFactory is null");
-               }
-               else
-               {
-                  if (trace)
+                  if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                   {
-                     log.trace("ConnectionFactory: " + cf.getClass().getName());
-                     log.trace("ConnectionFactory defined in classloader: "
-                           + cf.getClass().getClassLoader());
+                     String[] jndiNames = bindConnectionFactory(url, deploymentName, cf);
+                     cfs = new Object[] {cf};
+                     jndis = new String[] {jndiNames[0]};
+
+                     cm.setJndiName(jndiNames[0]);
                   }
-               }
-
-               archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
-
-               if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
-               {
-                  String[] jndiNames = bindConnectionFactory(url, deploymentName, cf);
-                  cfs = new Object[] {cf};
-                  jndis = new String[] {jndiNames[0]};
-
-                  cm.setJndiName(jndiNames[0]);
                }
             }
             else
@@ -510,158 +516,161 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                      {
                         ConnectionDefinition cdMeta = cdMetas.get(0);
 
-                        ManagedConnectionFactory mcf =
-                           (ManagedConnectionFactory) initAndInject(cdMeta.getManagedConnectionFactoryClass()
-                                                                    .getValue(), cdMeta
-                                                                    .getConfigProperties(), cl);
-
-                        if (trace)
-                        {
-                           log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                           log.trace("ManagedConnectionFactory defined in classloader: " +
-                                     mcf.getClass().getClassLoader());
-                        }
-
                         org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD = null;
-
+                        
                         if (ijmd != null)
                         {
-                           ijCD = findConnectionDefinition(mcf.getClass().getName(), ijmd.getConnectionDefinitions());
+                           ijCD = findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(),
+                                                           ijmd.getConnectionDefinitions());
                         }
 
-
-                        mcf.setLogWriter(new PrintWriter(getConfiguration().getPrintStream()));
-
-                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
-                                                                        mcf,
-                                                                        cdMeta.getConfigProperties()));
-                        beanValidationObjects.add(mcf);
-                        associateResourceAdapter(resourceAdapter, mcf);
-
-                        // Create the pool
-                        PoolConfiguration pc = new PoolConfiguration();
-                        PoolFactory pf = new PoolFactory();
-
-                        Boolean noTxSeparatePool = Boolean.FALSE;
-                        
-                        if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
+                        if (ijmd == null || ijCD == null || ijCD.isEnabled())
                         {
-                           org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
-                              (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
+                           ManagedConnectionFactory mcf =
+                              (ManagedConnectionFactory) initAndInject(cdMeta.getManagedConnectionFactoryClass()
+                                                                       .getValue(), cdMeta
+                                                                       .getConfigProperties(), cl);
                            
-                           if (ijXaPool != null)
-                              noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
-                        }
+                           if (trace)
+                           {
+                              log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
+                              log.trace("ManagedConnectionFactory defined in classloader: " +
+                                        mcf.getClass().getClassLoader());
+                           }
 
-                        Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
+                           mcf.setLogWriter(new PrintWriter(getConfiguration().getPrintStream()));
+                           
+                           archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
+                                                                           mcf,
+                                                                           cdMeta.getConfigProperties()));
+                           beanValidationObjects.add(mcf);
+                           associateResourceAdapter(resourceAdapter, mcf);
+                           
+                           // Create the pool
+                           PoolConfiguration pc = new PoolConfiguration();
+                           PoolFactory pf = new PoolFactory();
 
-                        // Add a connection manager
-                        ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-                        ConnectionManager cm = null;
-                        TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
-                        TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
-
-                        tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
-
-                        if (tsmd == TransactionSupportEnum.NoTransaction)
-                        {
-                           tsl = TransactionSupportLevel.NoTransaction;
-                        }
-                        else if (tsmd == TransactionSupportEnum.LocalTransaction)
-                        {
-                           tsl = TransactionSupportLevel.LocalTransaction;
-                        }
-                        else if (tsmd == TransactionSupportEnum.XATransaction)
-                        {
-                           tsl = TransactionSupportLevel.XATransaction;
-                        }
-
-                        // Section 7.13 -- Read from metadata -> overwrite with specified value if present
-                        if (mcf instanceof TransactionSupport)
-                           tsl = ((TransactionSupport) mcf).getTransactionSupport();
-
-                        // Connection manager properties
-                        Integer allocationRetry = null;
-                        Long allocationRetryWaitMillis = null;
+                           Boolean noTxSeparatePool = Boolean.FALSE;
                         
-                        if (ijCD != null && ijCD.getTimeOut() != null)
-                        {
-                           allocationRetry = ijCD.getTimeOut().getAllocationRetry();
-                           allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
-                        }
-
-                        // Select the correct connection manager
-                        if (tsl == TransactionSupportLevel.NoTransaction)
-                        {
-                           cm = cmf.createNonTransactional(tsl,
-                                                           pool,
-                                                           allocationRetry,
-                                                           allocationRetryWaitMillis);
-                        }
-                        else
-                        {
-                           Boolean interleaving = null;
-                           Integer xaResourceTimeout = null;
-                           Boolean isSameRMOverride = null;
-                           Boolean wrapXAResource = null;
-                           Boolean padXid = null;
-
-                           if (ijCD != null && ijCD.isXa())
+                           if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
                            {
                               org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                                  (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
                               
-                              interleaving = ijXaPool.isInterleaving();
-                              isSameRMOverride = ijXaPool.isSameRmOverride();
-                              wrapXAResource = ijXaPool.isWrapXaDataSource();
-                              padXid = ijXaPool.isPadXid();
+                              if (ijXaPool != null)
+                                 noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
+                           }
+
+                           Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
+                           
+                           // Add a connection manager
+                           ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+                           ConnectionManager cm = null;
+                           TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
+                           TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
+
+                           tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
+
+                           if (tsmd == TransactionSupportEnum.NoTransaction)
+                           {
+                              tsl = TransactionSupportLevel.NoTransaction;
+                           }
+                           else if (tsmd == TransactionSupportEnum.LocalTransaction)
+                           {
+                              tsl = TransactionSupportLevel.LocalTransaction;
+                           }
+                           else if (tsmd == TransactionSupportEnum.XATransaction)
+                           {
+                              tsl = TransactionSupportLevel.XATransaction;
+                           }
+
+                           // Section 7.13 -- Read from metadata -> overwrite with specified value if present
+                           if (mcf instanceof TransactionSupport)
+                              tsl = ((TransactionSupport) mcf).getTransactionSupport();
+
+                           // Connection manager properties
+                           Integer allocationRetry = null;
+                           Long allocationRetryWaitMillis = null;
+                        
+                           if (ijCD != null && ijCD.getTimeOut() != null)
+                           {
+                              allocationRetry = ijCD.getTimeOut().getAllocationRetry();
+                              allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
                            }
                            
-                           cm = cmf.createTransactional(tsl,
-                                                        pool,
-                                                        allocationRetry,
-                                                        allocationRetryWaitMillis,
-                                                        getConfiguration().getTransactionManager(),
-                                                        interleaving,
-                                                        xaResourceTimeout,
-                                                        isSameRMOverride,
-                                                        wrapXAResource,
-                                                        padXid);
-                        }
+                           // Select the correct connection manager
+                           if (tsl == TransactionSupportLevel.NoTransaction)
+                           {
+                              cm = cmf.createNonTransactional(tsl,
+                                                              pool,
+                                                              allocationRetry,
+                                                              allocationRetryWaitMillis);
+                           }
+                           else
+                           {
+                              Boolean interleaving = null;
+                              Integer xaResourceTimeout = null;
+                              Boolean isSameRMOverride = null;
+                              Boolean wrapXAResource = null;
+                              Boolean padXid = null;
+                              
+                              if (ijCD != null && ijCD.isXa())
+                              {
+                                 org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
+                                    (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
+                                 
+                                 interleaving = ijXaPool.isInterleaving();
+                                 isSameRMOverride = ijXaPool.isSameRmOverride();
+                                 wrapXAResource = ijXaPool.isWrapXaDataSource();
+                                 padXid = ijXaPool.isPadXid();
+                              }
+                           
+                              cm = cmf.createTransactional(tsl,
+                                                           pool,
+                                                           allocationRetry,
+                                                           allocationRetryWaitMillis,
+                                                           getConfiguration().getTransactionManager(),
+                                                           interleaving,
+                                                           xaResourceTimeout,
+                                                           isSameRMOverride,
+                                                           wrapXAResource,
+                                                           padXid);
+                           }
 
-                        // ConnectionFactory
-                        Object cf = mcf.createConnectionFactory(cm);
+                           // ConnectionFactory
+                           Object cf = mcf.createConnectionFactory(cm);
 
-                        if (cf == null)
-                        {
-                           log.error("ConnectionFactory is null");
+                           if (cf == null)
+                           {
+                              log.error("ConnectionFactory is null");
+                           }
+                           else
+                           {
+                              if (trace)
+                              {
+                                 log.trace("ConnectionFactory: " + cf.getClass().getName());
+                                 log.trace("ConnectionFactory defined in classloader: "
+                                           + cf.getClass().getClassLoader());
+                              }
+                           }
+
+                           archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
+                           
+                           if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
+                           {
+                              deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
+                              String[] jndiNames = bindConnectionFactory(url, deploymentName, cf);
+                              cfs = new Object[] {cf};
+                              jndis = new String[] {jndiNames[0]};
+                              
+                              cm.setJndiName(jndiNames[0]);
+                           }
                         }
                         else
                         {
-                           if (trace)
-                           {
-                              log.trace("ConnectionFactory: " + cf.getClass().getName());
-                              log.trace("ConnectionFactory defined in classloader: "
-                                        + cf.getClass().getClassLoader());
-                           }
+                           log.warn("There are multiple connection factories for: " + f.getName());
+                           log.warn("Use an ironjacamar.xml or a -ra.xml to activate the deployment");
                         }
-
-                        archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
-
-                        if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
-                        {
-                           deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
-                           String[] jndiNames = bindConnectionFactory(url, deploymentName, cf);
-                           cfs = new Object[] {cf};
-                           jndis = new String[] {jndiNames[0]};
-
-                           cm.setJndiName(jndiNames[0]);
-                        }
-                     }
-                     else
-                     {
-                        log.warn("There are multiple connection factories for: " + f.getName());
-                        log.warn("Use an ironjacamar.xml or a -ra.xml to activate the deployment");
                      }
                   }
                }
