@@ -388,7 +388,7 @@ public final class DsXmlDeployer implements Deployer
 
       PoolConfiguration pc = createPoolConfiguration(minSize,
                                                      maxSize,
-                                                     blockingTimeout, // TODO
+                                                     blockingTimeout,
                                                      idleTimeout,
                                                      backgroundValidationInterval,
                                                      prefill,
@@ -468,7 +468,7 @@ public final class DsXmlDeployer implements Deployer
 
       PoolConfiguration pc = createPoolConfiguration(minSize,
                                                      maxSize,
-                                                     blockingTimeout, // TODO
+                                                     blockingTimeout,
                                                      idleTimeout,
                                                      backgroundValidationInterval,
                                                      prefill,
@@ -557,7 +557,7 @@ public final class DsXmlDeployer implements Deployer
          pc.setMaxSize(maxSize.intValue());
 
       if (blockingTimeout != null)
-         pc.setBlockingTimeout(blockingTimeout.intValue()); // TODO - Long -> int
+         pc.setBlockingTimeout(blockingTimeout.longValue());
 
       if (idleTimeout != null)
          pc.setIdleTimeout(idleTimeout.longValue());

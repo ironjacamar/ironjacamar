@@ -481,7 +481,7 @@ public abstract class AbstractResourceAdapterDeployer
       if (tp != null)
       {
          if (tp.getBlockingTimeoutMillis() != null)
-            pc.setBlockingTimeout(tp.getBlockingTimeoutMillis().intValue()); // TODO - Long -> int
+            pc.setBlockingTimeout(tp.getBlockingTimeoutMillis().longValue());
 
          if (tp.getIdleTimeoutMinutes() != null)
             pc.setIdleTimeout(tp.getIdleTimeoutMinutes().longValue());
@@ -495,6 +495,7 @@ public abstract class AbstractResourceAdapterDeployer
 
       if (vp != null)
       {
+         //if (vp.isUseFastFail() != null)
          pc.setUseFastFail(vp.isUseFastFail()); // TODO
       }
 

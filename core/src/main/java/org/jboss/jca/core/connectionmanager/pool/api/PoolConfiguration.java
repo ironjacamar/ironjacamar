@@ -35,24 +35,25 @@ public class PoolConfiguration
    /** Maximum size of the pool */
    private int maxSize;
 
-   /**Blocking timeout. In milliseconds*/
-   private int blockingTimeout;
+   /** Blocking timeout. In milliseconds */
+   private long blockingTimeout;
    
-   /**Idle timeout period. Default 30 mins. In milliseconds*/
+   /** Idle timeout period. Default 30 mins. In milliseconds */
    private long idleTimeout;
    
-   /**Background validation interval*/
+   /** Background validation interval */
    private long backgroundValidationInterval;
    
-   /**Prefill pool*/
+   /** Prefill pool*/
    private boolean prefill;
    
-   /**Strict minumum, default false*/
+   /** Strict minumum, default false */
    private boolean strictMin;
 
-   /**Do we want to immeadiately break when a connection cannot be matched and
-   *  not evaluate the rest of the pool? 
-   */
+   /** 
+    * Do we want to immeadiately break when a connection cannot be matched and
+    * not evaluate the rest of the pool? 
+    */
    private boolean useFastFail;
 
    /**
@@ -111,7 +112,7 @@ public class PoolConfiguration
    /**
     * @return the blockingTimeout
     */
-   public int getBlockingTimeout()
+   public long getBlockingTimeout()
    {
       return blockingTimeout;
    }
@@ -119,7 +120,7 @@ public class PoolConfiguration
    /**
     * @param blockingTimeout the blockingTimeout to set
     */
-   public void setBlockingTimeout(int blockingTimeout)
+   public void setBlockingTimeout(long blockingTimeout)
    {
       this.blockingTimeout = blockingTimeout;
    }
