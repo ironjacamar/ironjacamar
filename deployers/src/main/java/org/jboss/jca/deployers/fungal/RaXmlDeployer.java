@@ -387,7 +387,22 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                   associateResourceAdapter(resourceAdapter, mcf);
 
                   // Create the pool
-                  PoolConfiguration pc = new PoolConfiguration();
+                  PoolConfiguration pc = null;
+
+                  if (cdRaXml.getPool() != null || cdRaXml.getPool() != null || cdRaXml.getPool() != null)
+                  {
+                     pc = createPoolConfiguration(cdRaXml.getPool(), cdRaXml.getTimeOut(), cdRaXml.getValidation());
+                  }
+                  else if (ijCD != null)
+                  {
+                     pc = createPoolConfiguration(ijCD.getPool(), ijCD.getTimeOut(), ijCD.getValidation());
+                  }
+                  else
+                  {
+                     // Default default settings
+                     pc = createPoolConfiguration(null, null, null);
+                  }
+
                   PoolFactory pf = new PoolFactory();
                   
                   Boolean noTxSeparatePool = Boolean.FALSE;
@@ -615,7 +630,26 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                            associateResourceAdapter(resourceAdapter, mcf);
 
                            // Create the pool
-                           PoolConfiguration pc = new PoolConfiguration();
+                           PoolConfiguration pc = null;
+
+                           if (cdRaXml.getPool() != null || cdRaXml.getPool() != null || cdRaXml.getPool() != null)
+                           {
+                              pc = createPoolConfiguration(cdRaXml.getPool(), 
+                                                           cdRaXml.getTimeOut(),
+                                                           cdRaXml.getValidation());
+                           }
+                           else if (ijCD != null)
+                           {
+                              pc = createPoolConfiguration(ijCD.getPool(), 
+                                                           ijCD.getTimeOut(),
+                                                           ijCD.getValidation());
+                           }
+                           else
+                           {
+                              // Default default settings
+                              pc = createPoolConfiguration(null, null, null);
+                           }
+
                            PoolFactory pf = new PoolFactory();
 
                            Boolean noTxSeparatePool = Boolean.FALSE;

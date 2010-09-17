@@ -22,8 +22,12 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
+import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
+import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
@@ -444,6 +448,57 @@ public abstract class AbstractResourceAdapterDeployer
       }
 
       return null;
+   }
+
+   /**
+    * Create an instance of the pool configuration based on the input
+    * @param pp The pool parameters
+    * @param tp The timeout parameters
+    * @param vp The validation parameters
+    * @return The configuration
+    */
+   protected PoolConfiguration createPoolConfiguration(CommonPool pp,
+                                                       CommonTimeOut tp,
+                                                       CommonValidation vp)
+   {
+      PoolConfiguration pc = new PoolConfiguration();
+
+      if (pp != null)
+      {
+         if (pp.getMinPoolSize() != null)
+            pc.setMinSize(pp.getMinPoolSize().intValue());
+         
+         if (pp.getMaxPoolSize() != null)
+            pc.setMaxSize(pp.getMaxPoolSize().intValue());
+
+         //if (pp.isPrefill() != null)
+         pc.setPrefill(pp.isPrefill()); // TODO
+         
+         //if (pp.isUseStrictMin() != null)
+         pc.setStrictMin(pp.isUseStrictMin()); // TODO
+      }
+
+      if (tp != null)
+      {
+         if (tp.getBlockingTimeoutMillis() != null)
+            pc.setBlockingTimeout(tp.getBlockingTimeoutMillis().intValue()); // TODO - Long -> int
+
+         if (tp.getIdleTimeoutMinutes() != null)
+            pc.setIdleTimeout(tp.getIdleTimeoutMinutes().longValue());
+      }
+
+      /*
+        TODO
+        if (backgroundValidationInterval != null)
+           pc.setBackgroundValidationInterval(backgroundValidationInterval.longValue());
+      */
+
+      if (vp != null)
+      {
+         pc.setUseFastFail(vp.isUseFastFail()); // TODO
+      }
+
+      return pc;
    }
 
    /**

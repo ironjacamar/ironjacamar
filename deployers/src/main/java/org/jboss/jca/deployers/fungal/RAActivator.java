@@ -379,7 +379,9 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                   associateResourceAdapter(resourceAdapter, mcf);
 
                   // Create the pool
-                  PoolConfiguration pc = new PoolConfiguration();
+                  PoolConfiguration pc = createPoolConfiguration(ijCD != null ? ijCD.getPool() : null,
+                                                                 ijCD != null ? ijCD.getTimeOut() : null,
+                                                                 ijCD != null ? ijCD.getValidation() : null);
                   PoolFactory pf = new PoolFactory();
 
                   Boolean noTxSeparatePool = Boolean.FALSE;
@@ -547,7 +549,9 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
                            associateResourceAdapter(resourceAdapter, mcf);
                            
                            // Create the pool
-                           PoolConfiguration pc = new PoolConfiguration();
+                           PoolConfiguration pc = createPoolConfiguration(ijCD != null ? ijCD.getPool() : null,
+                                                                          ijCD != null ? ijCD.getTimeOut() : null,
+                                                                          ijCD != null ? ijCD.getValidation() : null);
                            PoolFactory pf = new PoolFactory();
 
                            Boolean noTxSeparatePool = Boolean.FALSE;
