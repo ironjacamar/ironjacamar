@@ -9,7 +9,7 @@
     <xa-datasource-property name="Password">password</xa-datasource-property>
     <xa-datasource-class>com.mysql.jdbc.jdbc2.optional.MysqlXADataSource</xa-datasource-class>
     <validation>
-      <!-- should only be used on drivers after 3.22.1 with "ping" support <valid-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.MySQLValidConnectionChecker</valid-connection-checker-class-name> -->
+      <!-- should only be used on drivers after 3.22.1 with "ping" support <valid-connection-checker-class-name>org.jboss.jca.adapters.jdbc.vendor.MySQLValidConnectionChecker</valid-connection-checker-class-name> -->
       <!-- sql to call on an existing pooled connection when it is obtained from pool - MySQLValidConnectionChecker is preferred 
         for newer drivers <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql> -->
     </validation>

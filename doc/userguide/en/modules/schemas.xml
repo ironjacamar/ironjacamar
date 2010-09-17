@@ -3923,7 +3923,7 @@ standard information into the standard deployment descriptor.
             a SQLException isValidConnection(Connection e) method to validate is a connection 
             is valid. An exception means the connection is destroyed. This overrides 
             the check-valid-connection-sql when present. Ex:
-            <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.OracleValidConnectionChecker</exception-sorter-class-name>
+            <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.OracleValidConnectionChecker</exception-sorter-class-name>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -3977,7 +3977,7 @@ standard information into the standard deployment descriptor.
             a boolean isStaleConnection(SQLException e) method which if it it returns 
             true will wrap the exception in an org.jboss.jca.adapters.jdbc.StaleConnectionException 
             which is a subclass of SQLException. Ex: 
-            <stale-connection-checker-class-name>org.jboss.resource.adapter.jdbc.vendor.OracleStaleConnectionChecker</stale-connection-checker-class-name> 
+            <stale-connection-checker-class-name>org.jboss.jca.adapters.jdbc.vendor.OracleStaleConnectionChecker</stale-connection-checker-class-name> 
           </xs:documentation>
         </xs:annotation>
       </xs:element>

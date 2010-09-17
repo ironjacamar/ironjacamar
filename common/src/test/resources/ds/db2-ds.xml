@@ -27,9 +27,9 @@
             Please see http://www-128.ibm.com/developerworks/db2/library/techarticle/dm-0512kokkat/
             or the DB2 JDBC application developers manual.
         -->  
-        <!-- New org.jboss.resource.adapter.jdbc.vendor.DB2ExceptionSorter
+        <!-- New org.jboss.jca.adapters.jdbc.vendor.DB2ExceptionSorter
             <validation>
-                 <exception-sorter-class-name>org.jboss.resource.adapter.jdbc.vendor.DB2ExceptionSorter</exception-sorter-class-name>
+                 <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.DB2ExceptionSorter</exception-sorter-class-name>
                  <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql>
             </validation>
         --> 
