@@ -191,11 +191,12 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
          List<Failure> partialFailures = null;
          List<Object> beanValidationObjects = new ArrayList<Object>();
          Object[] cfs = null;
+         String[] jndiNames = null;
 
          String deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
 
          // Check metadata for JNDI information and activate explicit
-         boolean activateDeployment = false;
+         boolean activateDeployment = checkActivation(cmd, ijmd);
 
          // Create objects and inject values
          if (cmd != null)
@@ -248,15 +249,11 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
 
                if (activateDeployment)
                {
-                  org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD = null;
-                  
-                  if (ijmd != null)
-                  {
-                     ijCD = findConnectionDefinition(ra10.getManagedConnectionFactoryClass().getValue(),
-                                                     ijmd.getConnectionDefinitions());
-                  }
+                  org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD =
+                     findConnectionDefinition(ra10.getManagedConnectionFactoryClass().getValue(),
+                                              ijmd.getConnectionDefinitions());
 
-                  if (ijmd == null || ijCD == null || ijCD.isEnabled())
+                  if (ijCD.isEnabled())
                   {
                      ManagedConnectionFactory mcf =
                         (ManagedConnectionFactory) initAndInject(ra10.getManagedConnectionFactoryClass().getValue(),
@@ -397,10 +394,13 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                      
                      if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                      {
-                        String[] jndis = bindConnectionFactory(url, deploymentName, cf);
+                        String jndiName = ijCD.getJndiName();
+                        
+                        bindConnectionFactory(url, deploymentName, cf, jndiName);
                         cfs = new Object[] {cf};
-
-                        cm.setJndiName(jndis[0]);
+                        jndiNames = new String[] {jndiName};
+                        
+                        cm.setJndiName(jndiName);
                      }
                   }
                }
@@ -414,8 +414,13 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                   List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
                   if (cdMetas.size() > 0)
                   {
-                     for (ConnectionDefinition cdMeta : cdMetas)
+                     cfs = new Object[cdMetas.size()];
+                     jndiNames = new String[cdMetas.size()];
+
+                     for (int cdIndex = 0; cdIndex < cdMetas.size(); cdIndex++)
                      {
+                        org.jboss.jca.common.api.metadata.ra.ConnectionDefinition cdMeta = cdMetas.get(cdIndex);
+
                         partialFailures =
                               validateArchive(url, Arrays
                                     .asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, cdMeta
@@ -432,15 +437,11 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                         {
                            if (activateDeployment)
                            {
-                              org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD = null;
-                              
-                              if (ijmd != null)
-                              {
-                                 ijCD = findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(),
-                                                                 ijmd.getConnectionDefinitions());
-                              }
+                              org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD =
+                                 findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(),
+                                                          ijmd.getConnectionDefinitions());
 
-                              if (ijmd == null || ijCD == null || ijCD.isEnabled())
+                              if (ijCD.isEnabled())
                               {
                                  ManagedConnectionFactory mcf =
                                     (ManagedConnectionFactory) initAndInject(cdMeta.getManagedConnectionFactoryClass()
@@ -584,18 +585,13 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                                  
                                  if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                                  {
-                                    if (cdMetas.size() == 1)
-                                    {
-                                       deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
-                                       String[] jndis = bindConnectionFactory(url, deploymentName, cf);
-                                       cfs = new Object[] {cf};
-                                       
-                                       cm.setJndiName(jndis[0]);
-                                    }
-                                    else
-                                    {
-                                       log.warn("NYI: There are multiple connection factories for: " + f.getName());
-                                    }
+                                    String jndiName = ijCD.getJndiName();
+
+                                    bindConnectionFactory(url, deploymentName, cf, jndiName);
+                                    cfs[cdIndex] = cf;
+                                    jndiNames[cdIndex] = jndiName;
+
+                                    cm.setJndiName(jndiName);
                                  }
                               }
                            }
@@ -799,6 +795,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
                                  getConfiguration().getJndiStrategy(),
                                  getConfiguration().getMetadataRepository(),
                                  cfs,
+                                 jndiNames,
                                  destination,
                                  cl,
                                  log);
@@ -827,5 +824,69 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
       {
          SecurityActions.setThreadContextClassLoader(oldTCCL);
       }
+   }
+
+   /**
+    * Check if the resource adapter should be activated based on the ironjacamar.xml input
+    * @param cmd The connector metadata
+    * @param ijmd The IronJacamar metadata
+    * @return True if the deployment should be activated; otherwise false
+    */
+   private boolean checkActivation(Connector cmd, IronJacamar ijmd)
+   {
+      if (cmd != null && ijmd != null)
+      {
+         Set<String> raClasses = new HashSet<String>();
+         Set<String> ijClasses = new HashSet<String>();
+         
+         if (cmd.getVersion() == Version.V_10)
+         {
+            ResourceAdapter10 ra10 = (ResourceAdapter10)cmd.getResourceadapter();
+            raClasses.add(ra10.getManagedConnectionFactoryClass().getValue());
+         }
+         else
+         {
+            ResourceAdapter1516 ra = (ResourceAdapter1516)cmd.getResourceadapter();
+            if (ra != null && ra.getOutboundResourceadapter() != null &&
+                ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
+            {
+               List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
+               if (cdMetas.size() > 0)
+               {
+                  for (ConnectionDefinition cdMeta : cdMetas)
+                  {
+                     raClasses.add(cdMeta.getManagedConnectionFactoryClass().getValue());
+                  }
+               }
+            }
+         }
+
+         if (raClasses.size() == 0)
+            return false;
+
+         if (ijmd.getConnectionDefinitions() != null)
+         {
+            for (org.jboss.jca.common.api.metadata.common.CommonConnDef def : ijmd.getConnectionDefinitions())
+            {
+               String clz = def.getClassName();
+
+               if (clz == null && raClasses.size() == 1)
+                  return true;
+
+               if (clz != null)
+                  ijClasses.add(clz);
+            }
+         }
+
+         for (String clz : raClasses)
+         {
+            if (!ijClasses.contains(clz))
+               return false;
+         }
+
+         return true;
+      }
+
+      return false;
    }
 }

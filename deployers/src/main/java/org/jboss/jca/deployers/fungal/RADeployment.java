@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -67,6 +67,9 @@ public class RADeployment implements Deployment
    /** The connection factories */
    private Object[] cfs;
 
+   /** The JNDI names of the connection factories */
+   private String[] jndis;
+
    /** The temporary directory */
    private File tmpDirectory;
 
@@ -82,6 +85,7 @@ public class RADeployment implements Deployment
     * @param jndiStrategy The JNDI strategy
     * @param metadataRepository The metadata repository
     * @param cfs The connection factories
+    * @param jndis The JNDI names of the connection factories
     * @param tmpDirectory The temporary directory
     * @param cl The classloader for the deployment
     * @param log The logger
@@ -93,6 +97,7 @@ public class RADeployment implements Deployment
                        JndiStrategy jndiStrategy,
                        MetadataRepository metadataRepository,
                        Object[] cfs, 
+                       String[] jndis, 
                        File tmpDirectory, 
                        ClassLoader cl,
                        Logger log)
@@ -104,6 +109,7 @@ public class RADeployment implements Deployment
       this.jndiStrategy = jndiStrategy;
       this.mdr = metadataRepository;
       this.cfs = cfs;
+      this.jndis = jndis;
       this.tmpDirectory = tmpDirectory;
       this.cl = cl;
       this.log = log;
@@ -148,11 +154,22 @@ public class RADeployment implements Deployment
       {
          log.debug("Undeploying: " + deployment.toExternalForm());
 
-         if (cfs != null)
+         if (mdr != null && cfs != null && jndis != null)
+         {
+            for (int i = 0; i < cfs.length; i++)
+            {
+               String cf = cfs[i].getClass().getName();
+               String jndi = jndis[i];
+
+               mdr.unregisterJndiMapping(deployment, cf, jndi);
+            }
+         }
+
+         if (cfs != null && jndis != null)
          {
             try
             {
-               jndiStrategy.unbindConnectionFactories(deploymentName, cfs);
+               jndiStrategy.unbindConnectionFactories(deploymentName, cfs, jndis);
             }
             catch (Throwable t)
             {

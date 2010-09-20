@@ -310,6 +310,13 @@
          includes="org/jboss/jca/test/deployers/spec/rars/ra16asso/*.class"/>
       <fileset dir="src/test/resources/ra16asso.rar"/>
    </jar>   
+    <jar destfile="${build.deployers.dir}/ra15outironjacamar.rar">
+       <fileset dir="${build.deployers.dir}/test"
+    	    includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/ra15out/*.class"/>
+       <fileset dir="src/test/resources/ra15outironjacamar.rar"/>
+    </jar>
   </target>
 
   <!-- ================================= 

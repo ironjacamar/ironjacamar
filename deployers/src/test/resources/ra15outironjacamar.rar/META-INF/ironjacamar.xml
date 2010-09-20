@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id $ -->
+
+<ironjacamar>
+
+  <connection-definitions>
+    <connection-definition jndi-name="java:/eis/ra15outironjacamar-explicit"
+                           class-name="org.jboss.jca.test.deployers.spec.rars.ra15out.TestManagedConnectionFactory"/>
+  </connection-definitions>
+
+</ironjacamar>
