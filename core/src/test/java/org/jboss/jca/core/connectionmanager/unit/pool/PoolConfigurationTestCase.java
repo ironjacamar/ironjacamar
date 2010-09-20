@@ -85,14 +85,21 @@ public class PoolConfigurationTestCase
    }
 
    /**
-    * Test {@link PoolConfiguration#getBackgroundValidationInterval()}
+    * Test {@link PoolConfiguration#isBackgroundValidation()}
     */
    @Test
-   public void testBackgroundValidationInterval()
+   public void testBackgroundValidation()
    {
       PoolConfiguration params = new PoolConfiguration();
+      assertFalse(params.isBackgroundValidation());
+      assertEquals(0L, params.getBackgroundValidationMinutes());
       assertEquals(0L, params.getBackgroundValidationInterval());
-      params.setBackgroundValidationInterval(50000L);
+
+      params.setBackgroundValidation(true);
+      params.setBackgroundValidationMinutes(50);
+
+      assertTrue(params.isBackgroundValidation());
+      assertEquals(50, params.getBackgroundValidationMinutes());
       assertEquals(50000L, params.getBackgroundValidationInterval());
    }
 
