@@ -52,9 +52,9 @@ public class CommonConnDefImpl implements CommonConnDef
 
    private final String poolName;
 
-   private final boolean enabled;
+   private final Boolean enabled;
 
-   private final boolean useJavaContext;
+   private final Boolean useJavaContext;
 
    private final CommonPool pool;
 
@@ -79,7 +79,7 @@ public class CommonConnDefImpl implements CommonConnDef
     * @param security security
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
-      String poolName, boolean enabled, boolean useJavaContext, CommonPool pool, CommonTimeOut timeOut,
+      String poolName, Boolean enabled, Boolean useJavaContext, CommonPool pool, CommonTimeOut timeOut,
       CommonValidation validation, CommonSecurity security)
    {
       super();
@@ -154,7 +154,7 @@ public class CommonConnDefImpl implements CommonConnDef
     * @return the enabled.
     */
    @Override
-   public final boolean isEnabled()
+   public final Boolean isEnabled()
    {
       return enabled;
    }
@@ -165,7 +165,7 @@ public class CommonConnDefImpl implements CommonConnDef
     * @return the useJavaContext.
     */
    @Override
-   public final boolean isUseJavaContext()
+   public final Boolean isUseJavaContext()
    {
       return useJavaContext;
    }
@@ -215,7 +215,7 @@ public class CommonConnDefImpl implements CommonConnDef
    }
 
    @Override
-   public final boolean isXa()
+   public final Boolean isXa()
    {
       return (pool instanceof CommonXaPool);
    }

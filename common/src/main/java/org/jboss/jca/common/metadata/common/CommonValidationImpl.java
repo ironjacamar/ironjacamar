@@ -37,13 +37,13 @@ public class CommonValidationImpl implements CommonValidation
    private static final long serialVersionUID = 2158460908861877316L;
 
    /** backgroundValidation **/
-   protected final boolean backgroundValidation;
+   protected final Boolean backgroundValidation;
 
    /** backgroundValidationMinutes **/
    protected final Long backgroundValidationMinutes;
 
    /** useFastFail **/
-   protected final boolean useFastFail;
+   protected final Boolean useFastFail;
 
    /**
     * Create a new SValidationImpl.
@@ -52,7 +52,7 @@ public class CommonValidationImpl implements CommonValidation
     * @param backgroundValidationMinutes backgroundValidationMinutes
     * @param useFastFail useFastFail
     */
-   public CommonValidationImpl(boolean backgroundValidation, Long backgroundValidationMinutes, boolean useFastFail)
+   public CommonValidationImpl(Boolean backgroundValidation, Long backgroundValidationMinutes, Boolean useFastFail)
    {
       super();
       this.backgroundValidation = backgroundValidation;
@@ -66,7 +66,7 @@ public class CommonValidationImpl implements CommonValidation
     * @return the backgroundValidation.
     */
    @Override
-   public final boolean isBackgroundValidation()
+   public final Boolean isBackgroundValidation()
    {
       return backgroundValidation;
    }
@@ -88,7 +88,7 @@ public class CommonValidationImpl implements CommonValidation
     * @return the useFastFail.
     */
    @Override
-   public final boolean isUseFastFail()
+   public final Boolean isUseFastFail()
    {
       return useFastFail;
    }

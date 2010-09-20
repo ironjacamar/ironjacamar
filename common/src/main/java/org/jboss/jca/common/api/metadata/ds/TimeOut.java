@@ -40,7 +40,7 @@ public interface TimeOut extends org.jboss.jca.common.api.metadata.common.Common
     *
     * @return the setTxQuertTimeout.
     */
-   public boolean isSetTxQueryTimeout();
+   public Boolean isSetTxQueryTimeout();
 
    /**
     * Get the queryTimeout.

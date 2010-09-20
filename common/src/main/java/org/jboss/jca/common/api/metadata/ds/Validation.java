@@ -54,7 +54,7 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
     *
     * @return the validateOnMatch.
     */
-   public boolean isValidateOnMatch();
+   public Boolean isValidateOnMatch();
 
    /**
     * Get the staleConnectionCheckerClassName.

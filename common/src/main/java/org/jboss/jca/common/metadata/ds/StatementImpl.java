@@ -36,7 +36,7 @@ public class StatementImpl implements Statement
    /** The serialVersionUID */
    private static final long serialVersionUID = 3361665706947342366L;
 
-   private final boolean sharePreparedStatements;
+   private final Boolean sharePreparedStatements;
 
    private final Long preparedStatementsCacheSize;
 
@@ -49,7 +49,7 @@ public class StatementImpl implements Statement
     * @param preparedStatementsCacheSize preparedStatementsCacheSize
     * @param trackStatements trackStatements
     */
-   public StatementImpl(boolean sharePreparedStatements, Long preparedStatementsCacheSize,
+   public StatementImpl(Boolean sharePreparedStatements, Long preparedStatementsCacheSize,
          TrackStatementsEnum trackStatements)
    {
       super();
@@ -64,7 +64,7 @@ public class StatementImpl implements Statement
     * @return the sharePreparedStatements.
     */
    @Override
-   public final boolean isSharePreparedStatements()
+   public final Boolean isSharePreparedStatements()
    {
       return sharePreparedStatements;
    }

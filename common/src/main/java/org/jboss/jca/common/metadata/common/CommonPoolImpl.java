@@ -49,12 +49,12 @@ public class CommonPoolImpl implements CommonPool
    /**
    * prefill
    */
-   protected final boolean prefill;
+   protected final Boolean prefill;
 
    /**
     * use-strict-min
     */
-   protected final boolean useStrictMin;
+   protected final Boolean useStrictMin;
 
    /**
     * Create a new PoolImpl.
@@ -64,7 +64,7 @@ public class CommonPoolImpl implements CommonPool
     * @param prefill prefill
     * @param useStrictMin useStrictMin
     */
-   public CommonPoolImpl(Integer minPoolSize, Integer maxPoolSize, boolean prefill, boolean useStrictMin)
+   public CommonPoolImpl(Integer minPoolSize, Integer maxPoolSize, Boolean prefill, Boolean useStrictMin)
    {
       super();
       this.minPoolSize = minPoolSize;
@@ -101,7 +101,7 @@ public class CommonPoolImpl implements CommonPool
     * @return the prefill.
     */
    @Override
-   public final boolean isPrefill()
+   public final Boolean isPrefill()
    {
       return prefill;
    }
@@ -112,7 +112,7 @@ public class CommonPoolImpl implements CommonPool
     * @return the useStrictMin.
     */
    @Override
-   public final boolean isUseStrictMin()
+   public final Boolean isUseStrictMin()
    {
       return useStrictMin;
    }

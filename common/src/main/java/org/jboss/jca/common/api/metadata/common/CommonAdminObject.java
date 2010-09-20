@@ -69,14 +69,14 @@ public interface CommonAdminObject extends JCAMetadata
     *
     * @return the enabled.
     */
-   public boolean isEnabled();
+   public Boolean isEnabled();
 
    /**
     * Get the useJavaContext.
     *
     * @return the useJavaContext.
     */
-   public boolean isUseJavaContext();
+   public Boolean isUseJavaContext();
 
    /**
    *

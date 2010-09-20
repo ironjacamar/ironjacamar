@@ -69,14 +69,14 @@ public interface CommonConnDef extends JCAMetadata
     *
     * @return the enabled.
     */
-   public boolean isEnabled();
+   public Boolean isEnabled();
 
    /**
     * Get the useJavaContext.
     *
     * @return the useJavaContext.
     */
-   public boolean isUseJavaContext();
+   public Boolean isUseJavaContext();
 
    /**
     * Get the pool.
@@ -112,7 +112,7 @@ public interface CommonConnDef extends JCAMetadata
     * @return true if this connectionDefnition have defined an XaPool
     */
 
-   public boolean isXa();
+   public Boolean isXa();
 
    /**
    *

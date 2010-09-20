@@ -72,7 +72,7 @@ public interface CommonDataSource extends JCAMetadata
     * @return the useJavaContext.
     */
 
-   public boolean isUseJavaContext();
+   public Boolean isUseJavaContext();
 
    /**
     * Get the poolName.
@@ -88,7 +88,7 @@ public interface CommonDataSource extends JCAMetadata
     * @return the enabled.
     */
 
-   public boolean isEnabled();
+   public Boolean isEnabled();
 
    /**
     * Get the jndiName.

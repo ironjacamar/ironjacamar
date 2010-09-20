@@ -55,14 +55,14 @@ public interface CommonPool extends JCAMetadata
     *
     * @return the prefill.
     */
-   public boolean isPrefill();
+   public Boolean isPrefill();
 
    /**
     * Get the useStrictMin.
     *
     * @return the useStrictMin.
     */
-   public boolean isUseStrictMin();
+   public Boolean isUseStrictMin();
 
    /**
    *

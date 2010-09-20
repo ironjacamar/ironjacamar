@@ -40,7 +40,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
 
    private final String checkValidConnectionSql;
 
-   private final boolean validateOnMatch;
+   private final Boolean validateOnMatch;
 
    private final String staleConnectionCheckerClassName;
 
@@ -58,8 +58,8 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     * @param staleConnectionCheckerClassName staleConnectionCheckerClassName
     * @param exceptionSorterClassName exceptionSorterClassName
     */
-   public ValidationImpl(boolean backgroundValidation, Long backgroundValidationMinutes, boolean useFastFail,
-      String validConnectionCheckerClassName, String checkValidConnectionSql, boolean validateOnMatch,
+   public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMinutes, Boolean useFastFail,
+      String validConnectionCheckerClassName, String checkValidConnectionSql, Boolean validateOnMatch,
       String staleConnectionCheckerClassName, String exceptionSorterClassName)
    {
       super(backgroundValidation, backgroundValidationMinutes, useFastFail);
@@ -98,7 +98,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     * @return the validateOnMatch.
     */
    @Override
-   public final boolean isValidateOnMatch()
+   public final Boolean isValidateOnMatch()
    {
       return validateOnMatch;
    }

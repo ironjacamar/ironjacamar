@@ -79,7 +79,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
    * useJavaContext
    */
-   protected final boolean useJavaContext;
+   protected final Boolean useJavaContext;
 
    /**
    * poolName
@@ -89,7 +89,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
    * enabled
    */
-   protected final boolean enabled;
+   protected final Boolean enabled;
 
    /**
    * jndiName
@@ -111,9 +111,10 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param enabled enabled
     * @param jndiName jndiName
     */
-   protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, CommonSecurity security,
-      Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
-      boolean useJavaContext, String poolName, boolean enabled, String jndiName)
+   protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
+      CommonSecurity security, Statement statement, Validation validation, String urlDelimiter,
+      String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled,
+      String jndiName)
    {
       super();
       this.transactionIsolation = transactionIsolation;
@@ -128,8 +129,6 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.enabled = enabled;
       this.jndiName = jndiName;
    }
-
-
 
    /**
     * Get the transactionIsolation.
@@ -186,7 +185,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     */
 
    @Override
-   public final boolean isUseJavaContext()
+   public final Boolean isUseJavaContext()
    {
       return useJavaContext;
    }
@@ -210,7 +209,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     */
 
    @Override
-   public final boolean isEnabled()
+   public final Boolean isEnabled()
    {
       return enabled;
    }

@@ -66,7 +66,7 @@ public interface Statement extends JCAMetadata
     *
     * @return the sharePreparedStatements.
     */
-   public boolean isSharePreparedStatements();
+   public Boolean isSharePreparedStatements();
 
    /**
     * Get the preparedStatementsCacheSize.

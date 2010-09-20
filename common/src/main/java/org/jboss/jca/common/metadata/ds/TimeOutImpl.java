@@ -35,7 +35,7 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    /** The serialVersionUID */
    private static final long serialVersionUID = -8797718258493768716L;
 
-   private final boolean setTxQuertTimeout;
+   private final Boolean setTxQuertTimeout;
 
    private final Long queryTimeout;
 
@@ -54,7 +54,7 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
     * @param useTryLock useTryLock
     */
    public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
-      Long allocationRetryWaitMillis, Integer xaResourceTimeout, boolean setTxQuertTimeout, Long queryTimeout,
+      Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQuertTimeout, Long queryTimeout,
       Long useTryLock)
    {
       super(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,
@@ -70,7 +70,7 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
     * @return the setTxQuertTimeout.
     */
    @Override
-   public final boolean isSetTxQueryTimeout()
+   public final Boolean isSetTxQueryTimeout()
    {
       return setTxQuertTimeout;
    }

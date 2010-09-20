@@ -47,9 +47,9 @@ public class CommonAdminObjectImpl implements CommonAdminObject
 
    private final String poolName;
 
-   private final boolean enabled;
+   private final Boolean enabled;
 
-   private final boolean useJavaContext;
+   private final Boolean useJavaContext;
 
    /**
     * Create a new AdminObjectImpl.
@@ -62,7 +62,7 @@ public class CommonAdminObjectImpl implements CommonAdminObject
     * @param useJavaContext useJavaContext
     */
    public CommonAdminObjectImpl(Map<String, String> configProperties, String className, String jndiName,
-      String poolName, boolean enabled, boolean useJavaContext)
+      String poolName, Boolean enabled, Boolean useJavaContext)
    {
       super();
       if (configProperties != null)
@@ -120,7 +120,7 @@ public class CommonAdminObjectImpl implements CommonAdminObject
     * @return the enabled.
     */
    @Override
-   public final boolean isEnabled()
+   public final Boolean isEnabled()
    {
       return enabled;
    }
@@ -131,7 +131,7 @@ public class CommonAdminObjectImpl implements CommonAdminObject
     * @return the useJavaContext.
     */
    @Override
-   public final boolean isUseJavaContext()
+   public final Boolean isUseJavaContext()
    {
       return useJavaContext;
    }

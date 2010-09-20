@@ -40,7 +40,7 @@ public interface CommonValidation extends JCAMetadata
     *
     * @return the backgroundValidation.
     */
-   public boolean isBackgroundValidation();
+   public Boolean isBackgroundValidation();
 
    /**
     * Get the backgroundValidationMinutes.
@@ -54,7 +54,7 @@ public interface CommonValidation extends JCAMetadata
     *
     * @return the useFastFail.
     */
-   public boolean isUseFastFail();
+   public Boolean isUseFastFail();
 
    /**
    *
