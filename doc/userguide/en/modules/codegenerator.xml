@@ -336,7 +336,7 @@
                 </entry>
                 <entry>All</entry>
                 <entry>
-                  Create build environment, ant or ant+ivy or maven
+                  Type of build environment
                 </entry>
                 <entry></entry>
               </row>
