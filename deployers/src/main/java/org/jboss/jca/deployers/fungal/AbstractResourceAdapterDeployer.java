@@ -471,11 +471,11 @@ public abstract class AbstractResourceAdapterDeployer
          if (pp.getMaxPoolSize() != null)
             pc.setMaxSize(pp.getMaxPoolSize().intValue());
 
-         //if (pp.isPrefill() != null)
-         pc.setPrefill(pp.isPrefill()); // TODO
+         if (pp.isPrefill() != null)
+            pc.setPrefill(pp.isPrefill());
          
-         //if (pp.isUseStrictMin() != null)
-         pc.setStrictMin(pp.isUseStrictMin()); // TODO
+         if (pp.isUseStrictMin() != null)
+            pc.setStrictMin(pp.isUseStrictMin());
       }
 
       if (tp != null)
@@ -487,16 +487,16 @@ public abstract class AbstractResourceAdapterDeployer
             pc.setIdleTimeout(tp.getIdleTimeoutMinutes().longValue());
       }
 
-      /*
-        TODO
-        if (backgroundValidationInterval != null)
-           pc.setBackgroundValidationInterval(backgroundValidationInterval.longValue());
-      */
-
       if (vp != null)
       {
-         //if (vp.isUseFastFail() != null)
-         pc.setUseFastFail(vp.isUseFastFail()); // TODO
+         if (vp.isBackgroundValidation() != null)
+            pc.setBackgroundValidation(vp.isBackgroundValidation().booleanValue());
+
+         if (vp.getBackgroundValidationMinutes() != null)
+            pc.setBackgroundValidationMinutes(vp.getBackgroundValidationMinutes().intValue());
+
+         if (vp.isUseFastFail() != null)
+            pc.setUseFastFail(vp.isUseFastFail());
       }
 
       return pc;

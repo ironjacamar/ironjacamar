@@ -40,9 +40,12 @@ public class PoolConfiguration
    
    /** Idle timeout period. Default 30 mins. In milliseconds */
    private long idleTimeout;
+
+   /** Background validation */
+   private boolean backgroundValidation;
    
-   /** Background validation interval */
-   private long backgroundValidationInterval;
+   /** Background validation - minutes */
+   private int backgroundValidationMinutes;
    
    /** Prefill pool*/
    private boolean prefill;
@@ -65,7 +68,8 @@ public class PoolConfiguration
       maxSize = 20;
       blockingTimeout = 30000;
       idleTimeout = 1000 * 60 * 30;
-      backgroundValidationInterval = 0;
+      backgroundValidation = false;
+      backgroundValidationMinutes = 0;
       prefill = false;
       strictMin = false;
       useFastFail = false;
@@ -142,19 +146,46 @@ public class PoolConfiguration
    }
 
    /**
-    * @return the backgroundInterval
+    * @return Should background validation be performed
     */
-   public long getBackgroundValidationInterval()
+   public boolean isBackgroundValidation()
    {
-      return backgroundValidationInterval;
+      return backgroundValidation;
    }
 
    /**
-    * @param backgroundValidationInterval the backgroundInterval to set
+    * @param v Should background validation be performed 
     */
-   public void setBackgroundValidationInterval(long backgroundValidationInterval)
+   public void setBackgroundValidation(boolean v)
    {
-      this.backgroundValidationInterval = backgroundValidationInterval;
+      this.backgroundValidation = v;
+   }
+
+   /**
+    * Get the background validation minutes setting
+    * @return The value
+    */
+   public int getBackgroundValidationMinutes()
+   {
+      return backgroundValidationMinutes;
+   }
+
+   /**
+    * Set the background validation minutes setting
+    * @param v The value
+    */
+   public void setBackgroundValidationMinutes(int v)
+   {
+      this.backgroundValidationMinutes = v;
+   }
+
+   /**
+    * Get the background validation interval in milliseconds
+    * @return The interval
+    */
+   public long getBackgroundValidationInterval()
+   {
+      return backgroundValidationMinutes * 1000L;
    }
 
    /**

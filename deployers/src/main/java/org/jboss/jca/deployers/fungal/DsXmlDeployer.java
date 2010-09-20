@@ -22,6 +22,9 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
+import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
@@ -377,23 +380,7 @@ public final class DsXmlDeployer implements Deployer
                                                  cd.getConfigProperties(),
                                                  cl);
       // Create the pool
-      Integer minSize = ds.getPool() == null ? null : ds.getPool().getMinPoolSize();
-      Integer maxSize = ds.getPool() == null ? null : ds.getPool().getMaxPoolSize();
-      Long blockingTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getBlockingTimeoutMillis() : null;
-      Long idleTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getIdleTimeoutMinutes() : null;
-      Long backgroundValidationInterval = null; // TODO
-      Boolean prefill = ds.getPool() == null ? null : ds.getPool().isPrefill();
-      Boolean strictMin = ds.getPool() == null ? null : ds.getPool().isUseStrictMin();
-      Boolean useFastFail = ds.getValidation() != null ? ds.getValidation().isUseFastFail() : null;
-
-      PoolConfiguration pc = createPoolConfiguration(minSize,
-                                                     maxSize,
-                                                     blockingTimeout,
-                                                     idleTimeout,
-                                                     backgroundValidationInterval,
-                                                     prefill,
-                                                     strictMin,
-                                                     useFastFail);
+      PoolConfiguration pc = createPoolConfiguration(ds.getPool(), ds.getTimeOut(), ds.getValidation());
 
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, false);
@@ -457,23 +444,7 @@ public final class DsXmlDeployer implements Deployer
                                                  cd.getConfigProperties(),
                                                  cl);
       // Create the pool
-      Integer minSize = ds.getXaPool() == null ? null : ds.getXaPool().getMinPoolSize();
-      Integer maxSize = ds.getXaPool() == null ? null : ds.getXaPool().getMaxPoolSize();
-      Long blockingTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getBlockingTimeoutMillis() : null;
-      Long idleTimeout = ds.getTimeOut() != null ? ds.getTimeOut().getIdleTimeoutMinutes() : null;
-      Long backgroundValidationInterval = null; // TODO
-      Boolean prefill = ds.getXaPool() == null ? null : ds.getXaPool().isPrefill();
-      Boolean strictMin = ds.getXaPool() == null ? null : ds.getXaPool().isUseStrictMin();
-      Boolean useFastFail = ds.getValidation() != null ? ds.getValidation().isUseFastFail() : null;
-
-      PoolConfiguration pc = createPoolConfiguration(minSize,
-                                                     maxSize,
-                                                     blockingTimeout,
-                                                     idleTimeout,
-                                                     backgroundValidationInterval,
-                                                     prefill,
-                                                     strictMin,
-                                                     useFastFail);
+      PoolConfiguration pc = createPoolConfiguration(ds.getXaPool(), ds.getTimeOut(), ds.getValidation());
 
       Boolean noTxSeparatePool = Boolean.FALSE;
 
@@ -529,50 +500,52 @@ public final class DsXmlDeployer implements Deployer
 
    /**
     * Create an instance of the pool configuration based on the input
-    * @param minSize The min size
-    * @param maxSize The max size
-    * @param blockingTimeout The blocking timeout
-    * @param idleTimeout The idle timeout
-    * @param backgroundValidationInterval The background valdation interval
-    * @param prefill The prefill
-    * @param strictMin The strict min
-    * @param useFastFail The use fast fail
+    * @param pp The pool parameters
+    * @param tp The timeout parameters
+    * @param vp The validation parameters
     * @return The configuration
     */
-   private PoolConfiguration createPoolConfiguration(Integer minSize,
-                                                     Integer maxSize,
-                                                     Long blockingTimeout,
-                                                     Long idleTimeout,
-                                                     Long backgroundValidationInterval,
-                                                     Boolean prefill,
-                                                     Boolean strictMin,
-                                                     Boolean useFastFail)
+   private PoolConfiguration createPoolConfiguration(CommonPool pp,
+                                                     CommonTimeOut tp,
+                                                     CommonValidation vp)
    {
       PoolConfiguration pc = new PoolConfiguration();
 
-      if (minSize != null)
-         pc.setMinSize(minSize.intValue());
+      if (pp != null)
+      {
+         if (pp.getMinPoolSize() != null)
+            pc.setMinSize(pp.getMinPoolSize().intValue());
+         
+         if (pp.getMaxPoolSize() != null)
+            pc.setMaxSize(pp.getMaxPoolSize().intValue());
 
-      if (maxSize != null)
-         pc.setMaxSize(maxSize.intValue());
+         if (pp.isPrefill() != null)
+            pc.setPrefill(pp.isPrefill());
+         
+         if (pp.isUseStrictMin() != null)
+            pc.setStrictMin(pp.isUseStrictMin());
+      }
 
-      if (blockingTimeout != null)
-         pc.setBlockingTimeout(blockingTimeout.longValue());
+      if (tp != null)
+      {
+         if (tp.getBlockingTimeoutMillis() != null)
+            pc.setBlockingTimeout(tp.getBlockingTimeoutMillis().longValue());
 
-      if (idleTimeout != null)
-         pc.setIdleTimeout(idleTimeout.longValue());
+         if (tp.getIdleTimeoutMinutes() != null)
+            pc.setIdleTimeout(tp.getIdleTimeoutMinutes().longValue());
+      }
 
-      if (backgroundValidationInterval != null)
-         pc.setBackgroundValidationInterval(backgroundValidationInterval.longValue());
+      if (vp != null)
+      {
+         if (vp.isBackgroundValidation() != null)
+            pc.setBackgroundValidation(vp.isBackgroundValidation().booleanValue());
 
-      if (prefill != null)
-         pc.setPrefill(prefill.booleanValue());
+         if (vp.getBackgroundValidationMinutes() != null)
+            pc.setBackgroundValidationMinutes(vp.getBackgroundValidationMinutes().intValue());
 
-      if (strictMin != null)
-         pc.setStrictMin(strictMin.booleanValue());
-
-      if (useFastFail != null)
-         pc.setUseFastFail(useFastFail.booleanValue());
+         if (vp.isUseFastFail() != null)
+            pc.setUseFastFail(vp.isUseFastFail());
+      }
 
       return pc;
    }
