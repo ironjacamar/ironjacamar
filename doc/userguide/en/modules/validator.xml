@@ -12,7 +12,7 @@
         and checks them against the rules defined in the validator.</para>
 
       <para>The validator is used in the deployer chain of the JCA container, and is available 
-        as a standalone tool and an Apache Ant too.</para>
+        as a standalone tool, as an Apache Ant task and as a Apache Maven plugin too.</para>
    </section>
 
    <section id="validator_reports">

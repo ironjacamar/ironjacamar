@@ -23,6 +23,8 @@ deployers/src/main/java/org/jboss/jca/deployers/fungal
 
       <para>directory.</para>
 
+      <!-- TODO: a picture showing the deployer chain classes -->
+
       <section id="rardeployer_fungal_radeployer">
         <title>RADeployer</title>
 
@@ -30,9 +32,11 @@ deployers/src/main/java/org/jboss/jca/deployers/fungal
 
         <programlisting>
 com.github.fungal.spi.deployers.Deployer
+com.github.fungal.spi.deployers.MultiStageDeployer
+com.github.fungal.spi.deployers.DeployerOrder
         </programlisting>
 
-        <para>interface.</para>
+        <para>interfaces.</para>
 
         <para>The responsible of the class is to</para>
 
@@ -53,6 +57,9 @@ com.github.fungal.spi.deployers.Deployer
             Register the metadata in the metadata repository
           </listitem>
           <listitem>
+            Register the resource adapter in the metadata repository
+          </listitem>
+          <listitem>
             Identify and activate the resource adapter objects - if JNDI information is available
           </listitem>
           <listitem>
@@ -60,6 +67,8 @@ com.github.fungal.spi.deployers.Deployer
           </listitem>
         </itemizedlist>
 
+        <para>If the resource adapter isn't activated in this step based on an <code>ironjacamar.xml</code>
+          file, the deployment will advance to the next step in the deployer chain.</para>
       
       </section>
 
@@ -78,6 +87,12 @@ com.github.fungal.spi.deployers.Deployment
 
         <itemizedlist>
           <listitem>
+            Unregister the resource adapter from the metadata repository
+          </listitem>
+          <listitem>
+            Unregister the JNDI bindings in the metadata repository - if the deployment was activated
+          </listitem>
+          <listitem>
             Unbind connection factories and admin objects in JNDI - if the deployment was activated
           </listitem>
           <listitem>
@@ -85,6 +100,87 @@ com.github.fungal.spi.deployers.Deployment
           </listitem>
           <listitem>
             Clean up any temporary files
+          </listitem>
+        </itemizedlist>
+
+      </section>
+
+      <section id="rardeployer_fungal_raxmldeployer">
+        <title>RaXmlDeployer</title>
+
+        <para>This class represent a resource adapter deployer and implements the</para>
+
+        <programlisting>
+com.github.fungal.spi.deployers.Deployer
+com.github.fungal.spi.deployers.MultiStageDeployer
+com.github.fungal.spi.deployers.DeployerOrder
+com.github.fungal.spi.deployers.DeployerPhases
+        </programlisting>
+
+        <para>interface.</para>
+
+        <para>The class deploys resource adapter archives based on a <code>-ra.xml</code> which
+          provides the necessary deployment information.</para>
+
+        <para>The responsible of the class is to</para>
+
+        <itemizedlist>
+          <listitem>
+            Create a classloader for the deployment
+          </listitem>
+          <listitem>
+            Retrieve metadata from the metadata repository
+          </listitem>
+          <listitem>
+            Merge metadata from the deployment descriptor
+          </listitem>
+          <listitem>
+            Perform archive validation using the JCA validator
+          </listitem>
+          <listitem>
+            Perform bean validation
+          </listitem>
+          <listitem>
+            Register the metadata in the metadata repository
+          </listitem>
+          <listitem>
+            Identify and activate the resource adapter objects
+          </listitem>
+          <listitem>
+            Bind connection factories and admin objects into JNDI
+          </listitem>
+        </itemizedlist>
+
+        <para>Since multiple resource adapter archives can be activated within a single <code>-ra.xml</code>
+          file the class uses the <code>DeployerPhases</code> callbacks to unregister these from the
+          container. If there is only a single resource adapter activation the deployer acts as part of 
+          the normal deployer chain.</para>
+      
+      </section>
+
+      <section id="rardeployer_fungal_raxmldeployment">
+        <title>RaXmlDeployment</title>
+      
+        <para>This class represent a resource adapter deployment from the <code>RaXmlDeployer</code>
+          and implements the</para>
+
+        <programlisting>
+com.github.fungal.spi.deployers.Deployment
+        </programlisting>
+
+        <para>interface.</para>
+
+        <para>The responsible of the class is to</para>
+
+        <itemizedlist>
+          <listitem>
+            Unregister the JNDI bindings in the metadata repository
+          </listitem>
+          <listitem>
+            Unbind connection factories and admin objects in JNDI
+          </listitem>
+          <listitem>
+            Close the classloader
           </listitem>
         </itemizedlist>
 
@@ -114,6 +210,34 @@ com.github.fungal.spi.deployers.DeployerPhases
           </listitem>
           <listitem>
             Register each deployment with the kernel through the main deployer
+          </listitem>
+        </itemizedlist>
+
+      </section>
+
+      <section id="rardeployer_fungal_raactivator_deployment">
+        <title>RAActivatorDeployment</title>
+      
+        <para>This class represent a resource adapter deployment activated by the <code>RAActivator</code>
+          and implements the</para>
+
+        <programlisting>
+com.github.fungal.spi.deployers.Deployment
+        </programlisting>
+
+        <para>interface.</para>
+
+        <para>The responsible of the class is to</para>
+
+        <itemizedlist>
+          <listitem>
+            Unregister the JNDI bindings in the metadata repository
+          </listitem>
+          <listitem>
+            Unbind connection factories and admin objects in JNDI
+          </listitem>
+          <listitem>
+            Close the classloader
           </listitem>
         </itemizedlist>
 

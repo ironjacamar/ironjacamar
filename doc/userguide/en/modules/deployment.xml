@@ -12,6 +12,8 @@
         bundles all Java classes in JAR files, and optionally contains metadata, resources and native
         libraries.</para>
 
+      <para>A resource adapter archive name ends in the <code>.rar</code> extension.</para>
+
       <para>An example of a resource adapter archive could look like</para>
 
       <programlisting>
