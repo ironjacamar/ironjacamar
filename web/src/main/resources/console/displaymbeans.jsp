@@ -32,7 +32,7 @@
 
   <table>
     <tr>
-      <td height="105" align="left"><h1>IronJacamar Management Console</h1></td>
+      <td><img src="/console/logo.png" alt="IronJacamar"/></td>
     </tr>
   </table>
   
