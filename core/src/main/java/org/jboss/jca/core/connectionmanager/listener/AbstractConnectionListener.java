@@ -93,8 +93,8 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       this.managedConnection = managedConnection;
       this.pool = pool;
       this.internalManagedPoolContext = context;
-      trace = this.log.isTraceEnabled();
-      lastUse = System.currentTimeMillis();
+      this.trace = log.isTraceEnabled();
+      this.lastUse = System.currentTimeMillis();
    }
    
    /**
@@ -103,7 +103,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */
    protected CachedConnectionManager getCachedConnectionManager()
    {
-      return this.cm.getCachedConnectionManager();
+      return cm.getCachedConnectionManager();
    }
    
    /**
@@ -112,7 +112,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */
    protected ConnectionManager getConnectionManager()
    {
-      return this.cm;
+      return cm;
    }
    
    /**
@@ -121,7 +121,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */
    protected Logger getLog()
    {
-      return this.log;
+      return log;
    }
    
    /**
@@ -143,7 +143,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public Object getContext()
    {
-      return this.internalManagedPoolContext;
+      return internalManagedPoolContext;
    }
 
    /**
@@ -151,7 +151,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public long getLastValidatedTime()
    {      
-      return this.lastValidated;
+      return lastValidated;
    }
 
    /**
@@ -159,7 +159,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public ManagedConnection getManagedConnection()
    {      
-      return this.managedConnection;
+      return managedConnection;
    }
 
    /**
@@ -167,7 +167,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public Pool getPool()
    {      
-      return this.pool;
+      return pool;
    }
 
    /**
@@ -175,7 +175,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public ConnectionState getState()
    {      
-      return this.state;
+      return state;
    }
 
    /**
@@ -183,7 +183,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public boolean isManagedConnectionFree()
    {      
-      return this.connectionHandles.isEmpty();
+      return connectionHandles.isEmpty();
    }
 
    /**
@@ -199,7 +199,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public boolean isTrackByTx()
    {      
-      return this.trackByTx.get();
+      return trackByTx.get();
    }
 
    /**
@@ -207,7 +207,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public void registerConnection(Object handle)
    {
-      this.connectionHandles.add(handle);      
+      if (handle != null)
+      {
+         connectionHandles.add(handle);      
+      }
+      else
+      {
+         log.info("Registered a null handle for managedConnection: " + managedConnection);
+      }
    }
 
    /**
@@ -246,15 +253,22 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public void unregisterConnection(Object handle)
    {
-      if (!this.connectionHandles.remove(handle))
+      if (handle != null)
       {
-         log.info("Unregistered handle that was not registered! " + handle + " for managedConnection: " + 
-               this.managedConnection);
+         if (!connectionHandles.remove(handle))
+         {
+            log.info("Unregistered handle that was not registered! " + handle + " for managedConnection: " + 
+                     managedConnection);
+         }
+      }
+      else
+      {
+         log.info("Unregistered a null handle for managedConnection: " + managedConnection);
       }
       
       if (trace)
       {
-         log.trace("unregisterConnection: " + this.connectionHandles.size() + " handles left");  
+         log.trace("unregisterConnection: " + connectionHandles.size() + " handles left");  
       }            
    }
    
@@ -265,7 +279,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    {
       try
       {
-         Iterator<Object> itHandles = this.connectionHandles.iterator();
+         Iterator<Object> itHandles = connectionHandles.iterator();
          
          while (itHandles.hasNext())
          {
@@ -276,7 +290,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       }
       finally
       {
-         this.connectionHandles.clear();
+         connectionHandles.clear();
       }
    }
    
@@ -286,7 +300,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */   
    public void used()
    {
-      this.lastUse = System.currentTimeMillis();      
+      lastUse = System.currentTimeMillis();      
    }
 
    /**
@@ -406,12 +420,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       {
          buffer.append("UNKNOWN?");  
       }
-      buffer.append(" managed connection=").append(this.managedConnection);
-      buffer.append(" connection handles=").append(this.connectionHandles.size());
+      buffer.append(" managed connection=").append(managedConnection);
+      buffer.append(" connection handles=").append(connectionHandles.size());
       buffer.append(" lastUse=").append(lastUse);
       buffer.append(" trackByTx=").append(trackByTx.get());
-      buffer.append(" pool=").append(this.pool);
-      buffer.append(" pool internal context=").append(this.internalManagedPoolContext);
+      buffer.append(" pool=").append(pool);
+      buffer.append(" pool internal context=").append(internalManagedPoolContext);
       toString(buffer);
       buffer.append(']');
       
