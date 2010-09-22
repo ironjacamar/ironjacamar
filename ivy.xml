@@ -94,7 +94,7 @@
     <dependency org="com.github.fungal" name="fungal-cli" rev="${version.fungal}" conf="sjc,ironjacamar-depchain"/>
     <dependency org="com.h2database" name="h2" rev="${version.h2}" conf="test"/>
     <dependency org="com.sun.xml.bind" name="jaxb-impl" rev="${version.jaxb.impl}" conf="common,ironjacamar-depchain"/>
-    <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="tools"/>
+    <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="jetty,tools"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="common,ironjacamar-depchain"/>
     <dependency org="javax.activation" name="activation" rev="${version.activation}" conf="common,ironjacamar-depchain"/>
     <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="common,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal"/>
