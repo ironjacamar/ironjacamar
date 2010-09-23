@@ -287,8 +287,8 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
                   //HACK for now until we can rethink the XADataSourceProperties variable and pass type information
                   Method isMethod = clazz.getMethod("is" + name, (Class[])null);
                   type = isMethod.getReturnType();
-               }                                                                                                         
-               catch(NoSuchMethodException nsme)                                                                         
+               }
+               catch (NoSuchMethodException nsme)
                {
                   type = String.class;
                }
@@ -539,8 +539,8 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
                      //HACK for now until we can rethink the XADataSourceProperties variable and pass type information
                      Method isMethod = clazz.getMethod("is" + name, (Class[])null);
                      type = isMethod.getReturnType();
-                  }                                                                                                         
-                  catch(NoSuchMethodException nsme)                                                                         
+                  }
+                  catch (NoSuchMethodException nsme)
                   {
                      type = String.class;
                   }

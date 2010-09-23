@@ -33,7 +33,7 @@
     </description>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-depchain->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-impl-papaki->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-depchain->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default">
     <conf name="common" transitive="false"/>
     <conf name="sjc" transitive="false"/>
     <conf name="embedded" transitive="false"/>
@@ -45,6 +45,7 @@
     <conf name="ironjacamar-codegenerator" transitive="false"/>
     <conf name="ironjacamar-common-api" transitive="false"/>
     <conf name="ironjacamar-common-impl" transitive="false"/>
+    <conf name="ironjacamar-common-impl-papaki" transitive="false"/>
     <conf name="ironjacamar-common-spi" transitive="false"/>
     <conf name="ironjacamar-core-api" transitive="false"/>
     <conf name="ironjacamar-core-impl" transitive="false"/>
@@ -66,6 +67,7 @@
     <artifact name="ironjacamar-codegenerator" type="jar"/>
     <artifact name="ironjacamar-common-api" type="jar"/>
     <artifact name="ironjacamar-common-impl" type="jar"/>
+    <artifact name="ironjacamar-common-impl-papaki" type="jar"/>
     <artifact name="ironjacamar-common-spi" type="jar"/>
     <artifact name="ironjacamar-core-api" type="jar"/>
     <artifact name="ironjacamar-core-impl" type="jar"/>
@@ -85,7 +87,7 @@
 
   <dependencies>
     <!-- Maven doesn't handle dependencies well, so logging has to be first -->
-    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal"/>
+    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-common-impl-papaki,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal"/>
     <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common,ironjacamar-depchain"/>
 
     <!-- Keep these sorted -->
@@ -133,7 +135,7 @@
     <dependency org="org.jboss.jbossts" name="jbossjts" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.jbossts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common,ironjacamar-common-impl,ironjacamar-depchain"/>
+    <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common,ironjacamar-common-impl-papaki,ironjacamar-depchain"/>
     <dependency org="org.jboss.security" name="jboss-security-spi-bare" rev="${version.jboss.security}" conf="common,ironjacamar-core-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain,ironjacamar-embedded,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-impl-base" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>

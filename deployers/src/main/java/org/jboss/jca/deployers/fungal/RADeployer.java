@@ -23,7 +23,6 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerFactory;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
@@ -38,6 +37,7 @@ import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -172,7 +172,7 @@ public final class RADeployer extends AbstractResourceAdapterDeployer implements
 
          // Annotation scanning
          Annotations annotator = new Annotations();
-         AnnotationScanner scanner = (new AnnotationScannerFactory()).createScanner();
+         AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
          AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
          cmd = annotator.merge(cmd, repository);
 

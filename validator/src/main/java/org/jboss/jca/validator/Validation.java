@@ -22,7 +22,6 @@
 package org.jboss.jca.validator;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerFactory;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
@@ -35,6 +34,7 @@ import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
 import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -144,7 +144,7 @@ public class Validation
 
          // Annotation scanning
          Annotations annotator = new Annotations();
-         AnnotationScanner scanner = (new AnnotationScannerFactory()).createScanner();
+         AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
          AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
          cmd = annotator.merge(cmd, repository);
 

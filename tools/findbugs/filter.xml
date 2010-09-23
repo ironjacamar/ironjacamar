@@ -81,6 +81,14 @@
     <Class name="org.jboss.jca.deployers.fungal.RADeployment"/>
     <Bug code="EI2"/>
   </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.RaXmlDeployment"/>
+    <Bug code="EI2"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.RAActivatorDeployment"/>
+    <Bug code="EI2"/>
+  </Match>
 
   <!--  org.jboss.jca.sjc filter -->
   <Match>

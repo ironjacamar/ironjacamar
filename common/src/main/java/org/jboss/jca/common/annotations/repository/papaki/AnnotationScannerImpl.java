@@ -27,36 +27,29 @@ import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import java.net.URL;
 
 /**
- *
- * A AnnotationScannerImpl.
+ * An AnnotationScannerImpl based on Papaki.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class AnnotationScannerImpl implements AnnotationScanner
 {
-   private final org.jboss.papaki.AnnotationScanner backingScanner;
+   private final org.jboss.papaki.AnnotationScanner annotationScanner;
 
    /**
-    *
-    * Create a new AnnotationScannerImpl with papaki backend
-    *
-    * @param annotationScanner the papaki backing annotation scanner
-    * @throws IllegalArgumentException in case passed papaki scanner is null
+    * Create a new AnnotationScannerImpl with a Papaki backend
     */
-   public AnnotationScannerImpl(org.jboss.papaki.AnnotationScanner annotationScanner)
-      throws IllegalArgumentException
+   public AnnotationScannerImpl()
    {
-      if (annotationScanner == null)
-         throw new IllegalArgumentException("annotationscanner cannot be null");
-      this.backingScanner = annotationScanner;
+      this.annotationScanner = org.jboss.papaki.AnnotationScannerFactory
+         .getStrategy(org.jboss.papaki.AnnotationScannerFactory.JAVASSIST_INPUT_STREAM);
 
+      this.annotationScanner.configure().constructorLevel(false).parameterLevel(false);
    }
 
    @Override
    public AnnotationRepository scan(URL[] urls, ClassLoader cl)
    {
-      return new AnnotationRepositoryImpl(backingScanner.scan(urls, cl));
+      return new AnnotationRepositoryImpl(annotationScanner.scan(urls, cl));
    }
-
 }

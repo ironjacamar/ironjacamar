@@ -83,9 +83,24 @@
          indexMetaInf="true"
          update="true"
          level="9"
-         excludes="**/*.java, **/common/api/**, **/common/spi/**">
+         excludes="**/*.java, **/common/api/**, **/common/spi/**, **/papaki/**">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common Implementation"/>
+	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <jar destfile="${target.dir}/${name}-common-impl-papaki.jar"
+         basedir="${build.common.dir}"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/papaki/**">
+      <manifest>
+	<attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki SPI Implementation"/>
 	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
 	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
@@ -276,9 +291,24 @@
          indexMetaInf="true"
          update="true"
          level="9"
-         excludes="**/common/api/**,**/common/spi/**">
+         excludes="**/common/api/**,**/common/spi/**,**/papaki/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Sources"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <jar destfile="${target.dir}/${name}-common-impl-papaki-sources.jar"
+         basedir="src/main/java"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/papaki/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki - Sources"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
@@ -380,6 +410,7 @@
       <packageset dir="src/main/java" defaultexcludes="yes">
         <exclude name="**/common/api/**"/>
         <exclude name="**/common/spi/**"/>
+        <exclude name="**/papaki/**"/>
       </packageset>
 
       <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
@@ -396,6 +427,44 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - JavaDoc"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <mkdir dir="${build.common.dir}/docs/papaki"/>
+    <javadoc destdir="${build.common.dir}/docs/papaki"
+             doclet="org.jboss.apiviz.APIviz"
+             docletpathref="sjc.lib.path.id"
+             author="true"
+             version="true"
+             windowtitle="IronJacamar Common - Implementation - Papaki"
+             doctitle="IronJacamar Common - Implementation - Papaki"
+             use="true"
+             additionalparam="-author -version"
+             classpath="${build.common.dir}"
+             classpathref="sjc.lib.path.id"
+             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+
+      <packageset dir="src/main/java" defaultexcludes="yes">
+        <include name="**/papaki/**"/>
+      </packageset>
+
+      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+    <copy todir="${build.common.dir}/docs/papaki" overwrite="true">
+      <fileset dir="${tools.dir}/api"/>
+    </copy>
+
+    <jar destfile="${target.dir}/${name}-common-impl-papaki-javadoc.jar"
+         basedir="${build.common.dir}/docs/papaki"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki - JavaDoc"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
