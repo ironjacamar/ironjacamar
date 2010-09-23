@@ -282,7 +282,16 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             }
             catch (NoSuchMethodException e)
             {
-               type = String.class;
+               try
+               {
+                  //HACK for now until we can rethink the XADataSourceProperties variable and pass type information
+                  Method isMethod = clazz.getMethod("is" + name, (Class[])null);
+                  type = isMethod.getReturnType();
+               }                                                                                                         
+               catch(NoSuchMethodException nsme)                                                                         
+               {
+                  type = String.class;
+               }
             }
 
             Method setter = clazz.getMethod("set" + name, new Class<?>[]{type});
@@ -525,7 +534,16 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
                }
                catch (NoSuchMethodException e)
                {
-                  type = String.class;
+                  try
+                  {
+                     //HACK for now until we can rethink the XADataSourceProperties variable and pass type information
+                     Method isMethod = clazz.getMethod("is" + name, (Class[])null);
+                     type = isMethod.getReturnType();
+                  }                                                                                                         
+                  catch(NoSuchMethodException nsme)                                                                         
+                  {
+                     type = String.class;
+                  }
                }
 
                Method setter = clazz.getMethod("set" + name, new Class<?>[] {type});
