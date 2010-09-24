@@ -476,6 +476,7 @@
       <class location="${target.dir}/${name}-core-api.jar" />
       <class location="${target.dir}/${name}-core-impl.jar" />
       <class location="${target.dir}/${name}-core-spi.jar" />
+      <class location="${target.dir}/${name}-deployers-common.jar" />
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
       <class location="${target.dir}/${name}-embedded-arquillian.jar" />
@@ -525,6 +526,7 @@
       <class location="${target.dir}/${name}-core-api.jar" />
       <class location="${target.dir}/${name}-core-impl.jar" />
       <class location="${target.dir}/${name}-core-spi.jar" />
+      <class location="${target.dir}/${name}-deployers-common.jar" />
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
       <class location="${target.dir}/${name}-embedded-arquillian.jar" />
@@ -941,7 +943,7 @@ mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -
 
   <target name="nexus" depends="clean,artifacts">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-impl-papaki,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
+                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-impl-papaki,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-common,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
                   sync="true"/>
 
     <!-- <fail message="Required Apache Ivy update missing"/> -->
@@ -1109,6 +1111,21 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
     <concat destfile="${target.dir}/snapshot.sh" append="true" force="true" eol="unix">
 mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depchain.xml -DuniqueVersion=false $REPOSITORY
 </concat>
+
+    <!-- ironjacamar-deployers-common -->
+    <delete file="${target.dir}/${name}-deployers-common.xml"/>
+    <ivy:makepom artifactName="${name}-deployers-common" 
+                 conf="${name}-deployers-common"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-deployers-common.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-deployers-common" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="release.sh" artifact="${name}-deployers-common" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-deployers-common" extension="jar"/>
 
     <!-- ironjacamar-deployers-fungal -->
     <delete file="${target.dir}/${name}-deployers-fungal.xml"/>

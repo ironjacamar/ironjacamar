@@ -51,27 +51,32 @@
   <target name="jars" depends="compile">
     <mkdir dir="${build.deployers.dir}/jars" />
 
-    <!-- Fungal -->
-    <mkdir dir="${build.deployers.dir}/jars/fungal" />
-
-    <copy todir="${build.deployers.dir}/jars/fungal">
-      <fileset dir="${build.deployers.dir}/impl"
-               includes="**/common/**,**/fungal/**"/>
-    </copy>
-
-    <copy todir="${build.deployers.dir}/jars/fungal">
-      <fileset dir="src/main/resources/"
-               includes="**/*.properties"/>
-    </copy>
-
-    <jar destfile="${target.dir}/${name}-deployers-fungal.jar"
-         basedir="${build.deployers.dir}/jars/fungal"
+    <!-- Common -->
+    <jar destfile="${target.dir}/${name}-deployers-common.jar"
+         basedir="${build.deployers.dir}/impl"
          index="true"
          indexMetaInf="true"
          update="true"
-         level="9">
+         level="9"
+         includes="**/common/**">
       <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar Deployers (Fungal)"/>
+        <attribute name="Implementation-Title" value="IronJacamar Deployers - Common"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <!-- Fungal -->
+    <jar destfile="${target.dir}/${name}-deployers-fungal.jar"
+         basedir="${build.deployers.dir}/impl"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/fungal/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Deployers - Fungal"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
@@ -468,13 +473,69 @@
        ================================= -->
   <target name="artifacts" depends="jars">
 
+    <!-- Common -->
+    <jar destfile="${target.dir}/${name}-deployers-common-sources.jar"
+         basedir="src/main/java"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/deployers/common/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Deployers Common - Sources"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <mkdir dir="${build.deployers.dir}/docs"/>
+    <mkdir dir="${build.deployers.dir}/docs/common"/>
+    <javadoc destdir="${build.deployers.dir}/docs/common"
+             doclet="org.jboss.apiviz.APIviz"
+             docletpathref="sjc.lib.path.id"
+             author="true"
+             version="true"
+             windowtitle="IronJacamar Deployers - Common"
+             doctitle="IronJacamar Deployers - Common"
+             use="true"
+             additionalparam="-author -version"
+             classpath="${build.deployers.dir}"
+             classpathref="sjc.lib.path.id"
+             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+
+      <packageset dir="src/main/java" defaultexcludes="yes">
+        <include name="**/deployers/common/**"/>
+      </packageset>
+
+      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+    <copy todir="${build.deployers.dir}/docs/common" overwrite="true">
+      <fileset dir="${tools.dir}/api"/>
+    </copy>
+
+    <jar destfile="${target.dir}/${name}-deployers-common-javadoc.jar"
+         basedir="${build.deployers.dir}/docs/common"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Deployers Common - JavaDoc"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <!-- Fungal -->
     <jar destfile="${target.dir}/${name}-deployers-fungal-sources.jar"
          basedir="src/main/java"
          index="true"
          indexMetaInf="true"
          update="true"
          level="9"
-         includes="**/deployers/common/**,**/deployers/fungal/**">
+         includes="**/deployers/fungal/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers Fungal - Sources"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
@@ -483,7 +544,6 @@
       </manifest>
     </jar>
 
-    <mkdir dir="${build.deployers.dir}/docs"/>
     <mkdir dir="${build.deployers.dir}/docs/fungal"/>
     <javadoc destdir="${build.deployers.dir}/docs/fungal"
              doclet="org.jboss.apiviz.APIviz"
@@ -499,7 +559,6 @@
              bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
-        <include name="**/deployers/common/**"/>
         <include name="**/deployers/fungal/**"/>
       </packageset>
 
