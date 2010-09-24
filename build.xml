@@ -1024,8 +1024,8 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
       <dependency artifact="${name}-common-spi" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="release.sh" artifact="${name}-common-impl" extension="jar"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-impl" extension="jar"/>
+    <deploy-file file="release.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
+    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
 
     <!-- ironjacamar-common-spi -->
     <delete file="${target.dir}/${name}-common-spi.xml"/>
