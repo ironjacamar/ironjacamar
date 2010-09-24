@@ -170,5 +170,54 @@ ironjacamar-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
 
   </section>
 
+  <section id="releases_nexus">
+    <title>Nexus</title>
+
+    <para>The IronJacamar artifacts are uploaded to the JBoss.org Nexus repository located at:</para>
+    <programlisting>
+https://repository.jboss.org/nexus/content/groups/public/
+    </programlisting>
+
+    <para>The IronJacamar artifacts are deployed under the <code>groupId</code> of:</para>
+    <programlisting>
+org.jboss.ironjacamar
+    </programlisting>
+
+    <para>See the User Guide for a complete list of artifacts.</para>
+
+    <section id="releases_nexus_deploying_release">
+      <title>Deploying a release</title>
+
+      <para>A release of IronJacamar is deployed using:</para>
+      <programlisting>
+ant nexus
+cd target
+./release.sh
+      </programlisting>
+
+      <para>After the artifacts have been uploaded the release must be promoted in Nexus by logging
+        in and choosing "Promote" and "Close". The path for the staging repository can be used for
+        testing the release.</para>
+      
+      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1.</para>
+
+    </section>
+
+    <section id="releases_nexus_deploying_snapshot">
+      <title>Deploying a snapshot</title>
+
+      <para>A snapshot of IronJacamar is deployed using:</para>
+      <programlisting>
+ant -Dsnapshot=true nexus
+cd target
+./snapshot.sh
+      </programlisting>
+      
+      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1.</para>
+
+    </section>
+
+  </section>
+
 
 </chapter>
