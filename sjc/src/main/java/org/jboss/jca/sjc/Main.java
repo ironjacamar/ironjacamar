@@ -159,8 +159,11 @@ public class Main
       }
       else
       {
-         System.out.println(o.toString());
-         t.printStackTrace(System.out);
+         if (o != null)
+            System.out.println(o.toString());
+
+         if (t != null)
+            t.printStackTrace(System.out);
       }
    }
 
@@ -186,7 +189,8 @@ public class Main
       }
       else
       {
-         System.out.println(o.toString());
+         if (o != null)
+            System.out.println(o.toString());
       }
    }
 
@@ -212,7 +216,8 @@ public class Main
       }
       else
       {
-         System.out.println(o.toString());
+         if (o != null)
+            System.out.println(o.toString());
       }
    }
 
@@ -261,7 +266,8 @@ public class Main
       }
       else
       {
-         System.out.println(o.toString());
+         if (o != null)
+            System.out.println(o.toString());
       }
    }
 

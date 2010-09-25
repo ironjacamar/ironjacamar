@@ -132,7 +132,7 @@ public class WARDeployer implements Deployer
          if (tmpDeployment.exists())
          {
             FileUtil fileUtil = new FileUtil();
-            fileUtil.recursiveDelete(tmpDeployment);
+            fileUtil.delete(tmpDeployment);
          }
 
          if (!tmpDeployment.mkdirs())

@@ -126,7 +126,7 @@ public class WARDeployment implements Deployment
          try
          {
             FileUtil fu = new FileUtil();
-            fu.recursiveDelete(tmpDirectory);
+            fu.delete(tmpDirectory);
          }
          catch (IOException ioe)
          {
