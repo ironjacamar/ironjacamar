@@ -136,7 +136,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
                ((staleConnectionCheckerClassName == null) ? 0 : staleConnectionCheckerClassName.hashCode());
       result = prime * result +
                ((validConnectionCheckerClassName == null) ? 0 : validConnectionCheckerClassName.hashCode());
-      result = prime * result + (validateOnMatch ? 1231 : 1237);
+      result = prime * result + ((validateOnMatch == null) ? 0 : validateOnMatch.hashCode());
       return result;
    }
 
@@ -178,7 +178,12 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
       }
       else if (!validConnectionCheckerClassName.equals(other.validConnectionCheckerClassName))
          return false;
-      if (validateOnMatch != other.validateOnMatch)
+      if (validateOnMatch == null)
+      {
+         if (other.validateOnMatch != null)
+            return false;
+      }
+      else if (!validateOnMatch.equals(other.validateOnMatch))
          return false;
       return true;
    }

@@ -32,7 +32,6 @@ import javax.naming.NamingException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
 import javax.validation.groups.Default;
 
 import org.jboss.logging.Logger;
@@ -46,6 +45,7 @@ import org.jboss.logging.Logger;
 public class BeanValidation
 {
    private static Logger log = Logger.getLogger(BeanValidation.class);
+
    private static boolean trace = log.isTraceEnabled();
 
    /**
@@ -75,7 +75,7 @@ public class BeanValidation
       {
          context = new InitialContext();
 
-         ValidatorFactory vf = (ValidatorFactory)context.lookup("java:/ValidatorFactory");
+         ValidatorFactory vf = (ValidatorFactory) context.lookup("java:/ValidatorFactory");
          Validator v = vf.usingContext().traversableResolver(new JCATraversableResolver()).getValidator();
 
          Set errors = null;

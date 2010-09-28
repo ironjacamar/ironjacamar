@@ -80,15 +80,8 @@ public class RAActivatorDeployment implements Deployment
     * @param cl The classloader for the deployment
     * @param log The logger
     */
-   public RAActivatorDeployment(URL deployment, 
-                                String deploymentName,
-                                ResourceAdapter ra, 
-                                JndiStrategy jndiStrategy,
-                                MetadataRepository metadataRepository,
-                                Object[] cfs, 
-                                String[] jndis,
-                                ClassLoader cl,
-                                Logger log)
+   public RAActivatorDeployment(URL deployment, String deploymentName, ResourceAdapter ra, JndiStrategy jndiStrategy,
+      MetadataRepository metadataRepository, Object[] cfs, String[] jndis, ClassLoader cl, Logger log)
    {
       this.deployment = deployment;
       this.deploymentName = deploymentName;
@@ -105,6 +98,7 @@ public class RAActivatorDeployment implements Deployment
     * Get the unique URL for the deployment
     * @return The URL
     */
+   @Override
    public URL getURL()
    {
       return deployment;
@@ -114,6 +108,7 @@ public class RAActivatorDeployment implements Deployment
     * Get the classloader
     * @return The classloader
     */
+   @Override
    public ClassLoader getClassLoader()
    {
       return cl;
@@ -125,7 +120,7 @@ public class RAActivatorDeployment implements Deployment
    public void stop()
    {
       log.debug("Undeploying: " + deployment.toExternalForm());
-      
+
       if (mdr != null && cfs != null && jndis != null)
       {
          for (int i = 0; i < cfs.length; i++)
@@ -165,7 +160,7 @@ public class RAActivatorDeployment implements Deployment
       {
          try
          {
-            ((Closeable)cl).close();
+            ((Closeable) cl).close();
          }
          catch (IOException ioe)
          {

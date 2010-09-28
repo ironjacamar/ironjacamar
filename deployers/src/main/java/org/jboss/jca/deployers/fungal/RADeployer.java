@@ -36,6 +36,7 @@ import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.deployers.common.CommonDeployment;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,17 +45,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.resource.spi.ResourceAdapter;
-
-import org.jboss.logging.Logger;
-
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.api.util.FileUtil;
 import com.github.fungal.spi.deployers.DeployException;
 import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.DeployerOrder;
-import com.github.fungal.spi.deployers.Deployment;
 import com.github.fungal.spi.deployers.MultiStageDeployer;
 
 /**
@@ -63,15 +59,8 @@ import com.github.fungal.spi.deployers.MultiStageDeployer;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
  */
-public final class RADeployer extends AbstractResourceAdapterDeployer
-   implements
-      Deployer,
-      MultiStageDeployer,
-      DeployerOrder
+public final class RADeployer extends AbstractFungalRADeployer implements Deployer, MultiStageDeployer, DeployerOrder
 {
-   static Logger log = Logger.getLogger(RADeployer.class);
-
-   static boolean trace = log.isTraceEnabled();
 
    /**
     * Constructor
@@ -100,7 +89,8 @@ public final class RADeployer extends AbstractResourceAdapterDeployer
     */
    @SuppressWarnings("rawtypes")
    @Override
-   public synchronized Deployment deploy(URL url, ClassLoader parent) throws DeployException
+   public synchronized com.github.fungal.spi.deployers.Deployment deploy(URL url, ClassLoader parent)
+      throws DeployException
    {
       if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
          return null;
@@ -130,11 +120,10 @@ public final class RADeployer extends AbstractResourceAdapterDeployer
          }
          String deploymentName = f.getName().substring(0, f.getName().indexOf(".rar"));
 
-
          // Create classloader
          URL[] urls = getUrls(root);
          KernelClassLoader cl = null;
-         if (getConfiguration().getScopeDeployment())
+         if (((RAConfiguration) getConfiguration()).getScopeDeployment())
          {
             cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_LAST, urls, parent);
          }
@@ -161,13 +150,22 @@ public final class RADeployer extends AbstractResourceAdapterDeployer
          // Merge metadata
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 
-         return createObjectsAndInjectValue(url, deploymentName, root, destination, cl, cmd, ijmd, null);
+         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, destination, cl, cmd, ijmd, null);
+         JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
+         MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
+         return new RADeployment(c.getURL(), c.getDeploymentName(), c.isActivateDeployment(), c.getResourceAdapter(),
+                                 jndiStrategy, metadataRepository, c.getCfs(), c.getJndiNames(), c.getDestination(),
+                                 c.getCl(), c.getLog());
 
       }
       catch (DeployException de)
       {
          //just rethrow
          throw de;
+      }
+      catch (org.jboss.jca.deployers.common.DeployException cde)
+      {
+         throw new DeployException(cde.getMessage(), cde.getCause());
       }
       catch (Throwable t)
       {
@@ -180,16 +178,6 @@ public final class RADeployer extends AbstractResourceAdapterDeployer
       {
          SecurityActions.setThreadContextClassLoader(oldTCCL);
       }
-   }
-
-
-   @Override
-   public Deployment createDeployment(URL deploymentUrl, String deploymentName, boolean activator,
-      ResourceAdapter resourceAdapter, JndiStrategy jndiStrategy, MetadataRepository metadataRepository, Object[] cfs,
-      File destination, ClassLoader cl, Logger log, String[] jndis, URL deployment, boolean activateDeployment)
-   {
-      return new RADeployment(deploymentUrl, deploymentName, activateDeployment, resourceAdapter, jndiStrategy,
-                              metadataRepository, cfs, jndis, destination, cl, log);
    }
 
    /**

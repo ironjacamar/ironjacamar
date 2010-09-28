@@ -84,16 +84,9 @@ public class RaXmlDeployment implements Deployment
     * @param cl The classloader for the deployment
     * @param log The logger
     */
-   public RaXmlDeployment(URL deployment, 
-                          URL raDeployment,
-                          String deploymentName,
-                          ResourceAdapter ra, 
-                          JndiStrategy jndiStrategy,
-                          MetadataRepository metadataRepository,
-                          Object[] cfs, 
-                          String[] jndis, 
-                          ClassLoader cl,
-                          Logger log)
+   public RaXmlDeployment(URL deployment, URL raDeployment, String deploymentName, ResourceAdapter ra,
+      JndiStrategy jndiStrategy, MetadataRepository metadataRepository, Object[] cfs, String[] jndis, ClassLoader cl,
+      Logger log)
    {
       this.deployment = deployment;
       this.raDeployment = raDeployment;
@@ -111,6 +104,7 @@ public class RaXmlDeployment implements Deployment
     * Get the unique URL for the deployment
     * @return The URL
     */
+   @Override
    public URL getURL()
    {
       return deployment;
@@ -120,6 +114,7 @@ public class RaXmlDeployment implements Deployment
     * Get the classloader
     * @return The classloader
     */
+   @Override
    public ClassLoader getClassLoader()
    {
       return cl;
@@ -171,7 +166,7 @@ public class RaXmlDeployment implements Deployment
       {
          try
          {
-            ((Closeable)cl).close();
+            ((Closeable) cl).close();
          }
          catch (IOException ioe)
          {

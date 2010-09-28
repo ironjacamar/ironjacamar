@@ -103,7 +103,7 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((queryTimeout == null) ? 0 : queryTimeout.hashCode());
-      result = prime * result + (setTxQuertTimeout ? 1231 : 1237);
+      result = prime * result + ((setTxQuertTimeout == null) ? 0 : setTxQuertTimeout.hashCode());
       result = prime * result + ((useTryLock == null) ? 0 : useTryLock.hashCode());
       return result;
    }
@@ -125,7 +125,12 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
       }
       else if (!queryTimeout.equals(other.queryTimeout))
          return false;
-      if (setTxQuertTimeout != other.setTxQuertTimeout)
+      if (setTxQuertTimeout == null)
+      {
+         if (other.setTxQuertTimeout != null)
+            return false;
+      }
+      else if (!setTxQuertTimeout.equals(other.setTxQuertTimeout))
          return false;
       if (useTryLock == null)
       {

@@ -98,10 +98,9 @@ public class CommonValidationImpl implements CommonValidation
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (backgroundValidation ? 1231 : 1237);
-      result = prime * result +
-               ((backgroundValidationMinutes == null) ? 0 : backgroundValidationMinutes.hashCode());
-      result = prime * result + (useFastFail ? 1231 : 1237);
+      result = prime * result + ((backgroundValidation == null) ? 0 : backgroundValidation.hashCode());
+      result = prime * result + ((backgroundValidationMinutes == null) ? 0 : backgroundValidationMinutes.hashCode());
+      result = prime * result + ((useFastFail == null) ? 0 : useFastFail.hashCode());
       return result;
    }
 
@@ -115,7 +114,12 @@ public class CommonValidationImpl implements CommonValidation
       if (!(obj instanceof CommonValidationImpl))
          return false;
       CommonValidationImpl other = (CommonValidationImpl) obj;
-      if (backgroundValidation != other.backgroundValidation)
+      if (backgroundValidation == null)
+      {
+         if (other.backgroundValidation != null)
+            return false;
+      }
+      else if (!backgroundValidation.equals(other.backgroundValidation))
          return false;
       if (backgroundValidationMinutes == null)
       {
@@ -124,7 +128,12 @@ public class CommonValidationImpl implements CommonValidation
       }
       else if (!backgroundValidationMinutes.equals(other.backgroundValidationMinutes))
          return false;
-      if (useFastFail != other.useFastFail)
+      if (useFastFail == null)
+      {
+         if (other.useFastFail != null)
+            return false;
+      }
+      else if (!useFastFail.equals(other.useFastFail))
          return false;
       return true;
    }

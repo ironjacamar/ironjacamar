@@ -53,9 +53,9 @@ public class JCATraversableResolver implements TraversableResolver
     * @return <code>true</code> if Bean Validation is allowed to reach the
     *         property state, <code>false</code> otherwise.
     */
-   public boolean isReachable(Object traversableObject, Path.Node traversableProperty,
-         Class<?> rootBeanType, Path pathToTraversableObject,
-         ElementType elementType)
+   @Override
+   public boolean isReachable(Object traversableObject, Path.Node traversableProperty, Class<?> rootBeanType,
+      Path pathToTraversableObject, ElementType elementType)
    {
       return true;
    }
@@ -82,9 +82,9 @@ public class JCATraversableResolver implements TraversableResolver
     * @return <code>true</code> if Bean Validation is allowed to cascade
     *         validation, <code>false</code> otherwise.
     */
-   public boolean isCascadable(Object traversableObject,
-         Path.Node traversableProperty, Class<?> rootBeanType,
-         Path pathToTraversableObject, ElementType elementType)
+   @Override
+   public boolean isCascadable(Object traversableObject, Path.Node traversableProperty, Class<?> rootBeanType,
+      Path pathToTraversableObject, ElementType elementType)
    {
       return true;
    }

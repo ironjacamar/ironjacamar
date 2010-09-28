@@ -65,11 +65,7 @@ public class DsXmlDeployment implements Deployment
     * @param jndis The JNDI names for the factories
     * @param cl The classloader
     */
-   public DsXmlDeployment(URL deployment,
-                          String deploymentName,
-                          Object[] cfs,
-                          String[] jndis,
-                          ClassLoader cl)
+   public DsXmlDeployment(URL deployment, String deploymentName, Object[] cfs, String[] jndis, ClassLoader cl)
    {
       this.deployment = deployment;
       this.deploymentName = deploymentName;
@@ -82,6 +78,7 @@ public class DsXmlDeployment implements Deployment
     * Get the unique URL for the deployment
     * @return The URL
     */
+   @Override
    public URL getURL()
    {
       return deployment;
@@ -91,6 +88,7 @@ public class DsXmlDeployment implements Deployment
     * Get the classloader
     * @return The classloader
     */
+   @Override
    public ClassLoader getClassLoader()
    {
       return cl;
@@ -127,7 +125,7 @@ public class DsXmlDeployment implements Deployment
       {
          try
          {
-            ((Closeable)cl).close();
+            ((Closeable) cl).close();
          }
          catch (IOException ioe)
          {

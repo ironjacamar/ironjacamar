@@ -97,7 +97,7 @@ public class StatementImpl implements Statement
       final int prime = 31;
       int result = 1;
       result = prime * result + ((preparedStatementsCacheSize == null) ? 0 : preparedStatementsCacheSize.hashCode());
-      result = prime * result + (sharePreparedStatements ? 1231 : 1237);
+      result = prime * result + ((sharePreparedStatements == null) ? 0 : sharePreparedStatements.hashCode());
       result = prime * result + ((trackStatements == null) ? 0 : trackStatements.hashCode());
       return result;
    }
@@ -119,7 +119,12 @@ public class StatementImpl implements Statement
       }
       else if (!preparedStatementsCacheSize.equals(other.preparedStatementsCacheSize))
          return false;
-      if (sharePreparedStatements != other.sharePreparedStatements)
+      if (sharePreparedStatements == null)
+      {
+         if (other.sharePreparedStatements != null)
+            return false;
+      }
+      else if (!sharePreparedStatements.equals(other.sharePreparedStatements))
          return false;
       if (trackStatements != other.trackStatements)
          return false;

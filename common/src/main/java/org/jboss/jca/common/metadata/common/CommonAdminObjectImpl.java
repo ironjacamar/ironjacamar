@@ -143,10 +143,10 @@ public class CommonAdminObjectImpl implements CommonAdminObject
       int result = 1;
       result = prime * result + ((className == null) ? 0 : className.hashCode());
       result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
-      result = prime * result + (enabled ? 1231 : 1237);
+      result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
       result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
-      result = prime * result + (useJavaContext ? 1231 : 1237);
+      result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
       return result;
    }
 
@@ -174,7 +174,12 @@ public class CommonAdminObjectImpl implements CommonAdminObject
       }
       else if (!configProperties.equals(other.configProperties))
          return false;
-      if (enabled != other.enabled)
+      if (enabled == null)
+      {
+         if (other.enabled != null)
+            return false;
+      }
+      else if (!enabled.equals(other.enabled))
          return false;
       if (jndiName == null)
       {
@@ -190,7 +195,12 @@ public class CommonAdminObjectImpl implements CommonAdminObject
       }
       else if (!poolName.equals(other.poolName))
          return false;
-      if (useJavaContext != other.useJavaContext)
+      if (useJavaContext == null)
+      {
+         if (other.useJavaContext != null)
+            return false;
+      }
+      else if (!useJavaContext.equals(other.useJavaContext))
          return false;
       return true;
    }

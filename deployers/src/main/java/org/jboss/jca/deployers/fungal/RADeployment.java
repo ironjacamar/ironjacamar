@@ -90,17 +90,9 @@ public class RADeployment implements Deployment
     * @param cl The classloader for the deployment
     * @param log The logger
     */
-   public RADeployment(URL deployment, 
-                       String deploymentName,
-                       boolean activator,
-                       ResourceAdapter ra, 
-                       JndiStrategy jndiStrategy,
-                       MetadataRepository metadataRepository,
-                       Object[] cfs, 
-                       String[] jndis, 
-                       File tmpDirectory, 
-                       ClassLoader cl,
-                       Logger log)
+   public RADeployment(URL deployment, String deploymentName, boolean activator, ResourceAdapter ra,
+      JndiStrategy jndiStrategy, MetadataRepository metadataRepository, Object[] cfs, String[] jndis,
+      File tmpDirectory, ClassLoader cl, Logger log)
    {
       this.deployment = deployment;
       this.deploymentName = deploymentName;
@@ -119,6 +111,7 @@ public class RADeployment implements Deployment
     * Get the unique URL for the deployment
     * @return The URL
     */
+   @Override
    public URL getURL()
    {
       return deployment;
@@ -128,6 +121,7 @@ public class RADeployment implements Deployment
     * Get the classloader
     * @return The classloader
     */
+   @Override
    public ClassLoader getClassLoader()
    {
       return cl;
@@ -194,7 +188,7 @@ public class RADeployment implements Deployment
       {
          try
          {
-            ((Closeable)cl).close();
+            ((Closeable) cl).close();
          }
          catch (IOException ioe)
          {
@@ -214,7 +208,7 @@ public class RADeployment implements Deployment
             // Ignore
          }
       }
-         
+
       if (activator)
       {
          log.info("Undeployed: " + deployment.toExternalForm());

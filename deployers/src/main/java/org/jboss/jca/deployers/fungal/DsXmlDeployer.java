@@ -256,10 +256,8 @@ public final class DsXmlDeployer implements Deployer
                      if (!jndiName.startsWith("java:/"))
                         jndiName = "java:/" + jndiName;
 
-                     Object cf = deployDataSource(dataSource,
-                                                  jndiName,
-                                                  urlJdbcLocal,
-                                                  jdbcLocalDeployment.getClassLoader());
+                     Object cf = deployDataSource(dataSource, jndiName, urlJdbcLocal,
+                        jdbcLocalDeployment.getClassLoader());
 
                      bindConnectionFactory(deploymentName, jndiName, cf);
 
@@ -295,10 +293,8 @@ public final class DsXmlDeployer implements Deployer
                      if (!jndiName.startsWith("java:/"))
                         jndiName = "java:/" + jndiName;
 
-                     Object cf = deployXADataSource(xaDataSource,
-                                                    jndiName,
-                                                    urlJdbcXA,
-                                                    jdbcXADeployment.getClassLoader());
+                     Object cf = deployXADataSource(xaDataSource, jndiName, urlJdbcXA,
+                        jdbcXADeployment.getClassLoader());
 
                      bindConnectionFactory(deploymentName, jndiName, cf);
 
@@ -318,11 +314,8 @@ public final class DsXmlDeployer implements Deployer
                log.error("Deployment of XA datasources disabled since jdbc-xa.rar couldn't be found");
          }
 
-         return new DsXmlDeployment(url,
-                                    deploymentName,
-                                    cfs.toArray(new Object[cfs.size()]),
-                                    jndis.toArray(new String[jndis.size()]),
-                                    parent);
+         return new DsXmlDeployment(url, deploymentName, cfs.toArray(new Object[cfs.size()]),
+                                    jndis.toArray(new String[jndis.size()]), parent);
       }
       catch (DeployException de)
       {
@@ -370,15 +363,13 @@ public final class DsXmlDeployer implements Deployer
       md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one
-      ResourceAdapter1516 ra1516 = (ResourceAdapter1516)md.getResourceadapter();
+      ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
       List<ConnectionDefinition> cds = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
       ConnectionDefinition cd = cds.get(0);
 
       // ManagedConnectionFactory
-      ManagedConnectionFactory mcf =
-         (ManagedConnectionFactory)initAndInject(cd.getManagedConnectionFactoryClass().getValue(),
-                                                 cd.getConfigProperties(),
-                                                 cl);
+      ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cd.getManagedConnectionFactoryClass()
+         .getValue(), cd.getConfigProperties(), cl);
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getPool(), ds.getTimeOut(), ds.getValidation());
 
@@ -398,16 +389,8 @@ public final class DsXmlDeployer implements Deployer
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm = cmf.createTransactional(tsl,
-                                                     pool,
-                                                     allocationRetry,
-                                                     allocationRetryWaitMillis,
-                                                     getTransactionManager(),
-                                                     null,
-                                                     null,
-                                                     null,
-                                                     null,
-                                                     null);
+      ConnectionManager cm = cmf.createTransactional(tsl, pool, allocationRetry, allocationRetryWaitMillis,
+         getTransactionManager(), null, null, null, null, null);
 
       cm.setJndiName(jndiName);
 
@@ -434,15 +417,13 @@ public final class DsXmlDeployer implements Deployer
       md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one
-      ResourceAdapter1516 ra1516 = (ResourceAdapter1516)md.getResourceadapter();
+      ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
       List<ConnectionDefinition> cds = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
       ConnectionDefinition cd = cds.get(0);
 
       // ManagedConnectionFactory
-      ManagedConnectionFactory mcf =
-         (ManagedConnectionFactory)initAndInject(cd.getManagedConnectionFactoryClass().getValue(),
-                                                 cd.getConfigProperties(),
-                                                 cl);
+      ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cd.getManagedConnectionFactoryClass()
+         .getValue(), cd.getConfigProperties(), cl);
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getXaPool(), ds.getTimeOut(), ds.getValidation());
 
@@ -481,16 +462,8 @@ public final class DsXmlDeployer implements Deployer
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm = cmf.createTransactional(tsl,
-                                                     pool,
-                                                     allocationRetry,
-                                                     allocationRetryWaitMillis,
-                                                     getTransactionManager(),
-                                                     interleaving,
-                                                     xaResourceTimeout,
-                                                     isSameRMOverride,
-                                                     wrapXAResource,
-                                                     padXid);
+      ConnectionManager cm = cmf.createTransactional(tsl, pool, allocationRetry, allocationRetryWaitMillis,
+         getTransactionManager(), interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
 
       cm.setJndiName(jndiName);
 
@@ -505,9 +478,7 @@ public final class DsXmlDeployer implements Deployer
     * @param vp The validation parameters
     * @return The configuration
     */
-   private PoolConfiguration createPoolConfiguration(CommonPool pp,
-                                                     CommonTimeOut tp,
-                                                     CommonValidation vp)
+   private PoolConfiguration createPoolConfiguration(CommonPool pp, CommonTimeOut tp, CommonValidation vp)
    {
       PoolConfiguration pc = new PoolConfiguration();
 
@@ -515,13 +486,13 @@ public final class DsXmlDeployer implements Deployer
       {
          if (pp.getMinPoolSize() != null)
             pc.setMinSize(pp.getMinPoolSize().intValue());
-         
+
          if (pp.getMaxPoolSize() != null)
             pc.setMaxSize(pp.getMaxPoolSize().intValue());
 
          if (pp.isPrefill() != null)
             pc.setPrefill(pp.isPrefill());
-         
+
          if (pp.isUseStrictMin() != null)
             pc.setStrictMin(pp.isUseStrictMin());
       }
@@ -558,9 +529,7 @@ public final class DsXmlDeployer implements Deployer
     * @return The object
     * @throws DeployException Thrown if the object cant be initialized
     */
-   private Object initAndInject(String className,
-                                List<? extends ConfigProperty> configs,
-                                ClassLoader cl)
+   private Object initAndInject(String className, List<? extends ConfigProperty> configs, ClassLoader cl)
       throws DeployException
    {
       try
@@ -575,7 +544,7 @@ public final class DsXmlDeployer implements Deployer
             {
                if (cpmd.isValueSet())
                   injector.inject(cpmd.getConfigPropertyType().getValue(), cpmd.getConfigPropertyName().getValue(),
-                        cpmd.getConfigPropertyValue().getValue(), o);
+                     cpmd.getConfigPropertyValue().getValue(), o);
             }
          }
 
@@ -599,7 +568,7 @@ public final class DsXmlDeployer implements Deployer
    {
       JndiStrategy js = new ExplicitJndiStrategy();
 
-      return js.bindConnectionFactories(deployment, new Object[] {cf}, new String[] {jndi});
+      return js.bindConnectionFactories(deployment, new Object[]{cf}, new String[]{jndi});
    }
 
    /**

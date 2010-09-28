@@ -25,6 +25,7 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.deployers.common.Configuration;
 
 import java.io.PrintStream;
 import java.util.Map;
@@ -38,7 +39,7 @@ import org.jboss.logging.Logger;
  * A configuration for the resource adapter deployer chain
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class RAConfiguration
+public class RAConfiguration implements Configuration
 {
    private static Logger log = Logger.getLogger(RAConfiguration.class);
 
@@ -48,16 +49,16 @@ public class RAConfiguration
    private TransactionManager transactionManager = null;
 
    /** Preform bean validation */
-   private AtomicBoolean beanValidation = new AtomicBoolean(true);
+   private final AtomicBoolean beanValidation = new AtomicBoolean(true);
 
    /** Preform archive validation */
-   private AtomicBoolean archiveValidation = new AtomicBoolean(true);
+   private final AtomicBoolean archiveValidation = new AtomicBoolean(true);
 
    /** Archive validation: Fail on Warn */
-   private AtomicBoolean archiveValidationFailOnWarn = new AtomicBoolean(false);
+   private final AtomicBoolean archiveValidationFailOnWarn = new AtomicBoolean(false);
 
    /** Archive validation: Fail on Error */
-   private AtomicBoolean archiveValidationFailOnError = new AtomicBoolean(true);
+   private final AtomicBoolean archiveValidationFailOnError = new AtomicBoolean(true);
 
    /** Print stream */
    private PrintStream printStream = null;
@@ -69,7 +70,7 @@ public class RAConfiguration
    private Map<String, CloneableBootstrapContext> bootstrapContexts = null;
 
    /** Scope deployment */
-   private AtomicBoolean scopeDeployment = new AtomicBoolean(false);
+   private final AtomicBoolean scopeDeployment = new AtomicBoolean(false);
 
    /** JNDI strategy */
    private JndiStrategy jndiStrategy = null;
@@ -106,6 +107,7 @@ public class RAConfiguration
     * Set if bean validation should be performed
     * @param value The value
     */
+   @Override
    public void setBeanValidation(boolean value)
    {
       beanValidation.set(value);
@@ -115,6 +117,7 @@ public class RAConfiguration
     * Should bean validation be performed
     * @return True if validation; otherwise false
     */
+   @Override
    public boolean getBeanValidation()
    {
       return beanValidation.get();
@@ -124,6 +127,7 @@ public class RAConfiguration
     * Set if archive validation should be performed
     * @param value The value
     */
+   @Override
    public void setArchiveValidation(boolean value)
    {
       archiveValidation.set(value);
@@ -133,6 +137,7 @@ public class RAConfiguration
     * Should archive validation be performed
     * @return True if validation; otherwise false
     */
+   @Override
    public boolean getArchiveValidation()
    {
       return archiveValidation.get();
@@ -142,6 +147,7 @@ public class RAConfiguration
     * Set if a failed warning archive validation report should fail the deployment
     * @param value The value
     */
+   @Override
    public void setArchiveValidationFailOnWarn(boolean value)
    {
       archiveValidationFailOnWarn.set(value);
@@ -151,6 +157,7 @@ public class RAConfiguration
     * Does a failed archive validation warning report fail the deployment
     * @return True if failing; otherwise false
     */
+   @Override
    public boolean getArchiveValidationFailOnWarn()
    {
       return archiveValidationFailOnWarn.get();
@@ -160,6 +167,7 @@ public class RAConfiguration
     * Set if a failed error archive validation report should fail the deployment
     * @param value The value
     */
+   @Override
    public void setArchiveValidationFailOnError(boolean value)
    {
       archiveValidationFailOnError.set(value);
@@ -169,6 +177,7 @@ public class RAConfiguration
     * Does a failed archive validation error report fail the deployment
     * @return True if failing; otherwise false
     */
+   @Override
    public boolean getArchiveValidationFailOnError()
    {
       return archiveValidationFailOnError.get();
@@ -196,6 +205,7 @@ public class RAConfiguration
     * Set the default bootstrap context
     * @param value The value
     */
+   @Override
    public void setDefaultBootstrapContext(CloneableBootstrapContext value)
    {
       defaultBootstrapContext = value;
@@ -205,6 +215,7 @@ public class RAConfiguration
     * Get the default bootstrap context
     * @return The handle
     */
+   @Override
    public CloneableBootstrapContext getDefaultBootstrapContext()
    {
       return defaultBootstrapContext;
@@ -214,6 +225,7 @@ public class RAConfiguration
     * Set the bootstrap context map
     * @param value The value
     */
+   @Override
    public void setBootstrapContexts(Map<String, CloneableBootstrapContext> value)
    {
       bootstrapContexts = value;
@@ -223,6 +235,7 @@ public class RAConfiguration
     * Get the bootstrap context map
     * @return The handle
     */
+   @Override
    public Map<String, CloneableBootstrapContext> getBootstrapContexts()
    {
       return bootstrapContexts;

@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.deployers.common.CommonDeployment;
 import org.jboss.jca.validator.Failure;
 
 import java.io.File;
@@ -35,8 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 
@@ -52,7 +51,7 @@ import com.github.fungal.spi.deployers.Deployment;
  * The RA activator for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public final class RAActivator extends AbstractResourceAdapterDeployer implements DeployerPhases
+public final class RAActivator extends AbstractFungalRADeployer implements DeployerPhases
 {
    /** The logger */
    static Logger log = Logger.getLogger(RAActivator.class);
@@ -143,6 +142,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
     * Pre deploy
     * @exception Throwable Thrown if an error occurs
     */
+   @Override
    public void preDeploy() throws Throwable
    {
    }
@@ -151,11 +151,12 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
     * Post deploy
     * @exception Throwable Thrown if an error occurs
     */
+   @Override
    public void postDeploy() throws Throwable
    {
       if (enabled)
       {
-         Set<URL> rarDeployments = getConfiguration().getMetadataRepository().getResourceAdapters();
+         Set<URL> rarDeployments = ((RAConfiguration) getConfiguration()).getMetadataRepository().getResourceAdapters();
 
          for (URL deployment : rarDeployments)
          {
@@ -175,8 +176,8 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
 
             if (include)
             {
-               Map<String, List<String>> jndiMappings = getConfiguration().getMetadataRepository().getJndiMappings(
-                  deployment);
+               Map<String, List<String>> jndiMappings = ((RAConfiguration) getConfiguration()).getMetadataRepository()
+                  .getJndiMappings(deployment);
 
                // If there isn't any JNDI mappings then the archive isn't active
                // so activate it
@@ -202,6 +203,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
     * Pre undeploy
     * @exception Throwable Thrown if an error occurs
     */
+   @Override
    public void preUndeploy() throws Throwable
    {
       if (deployments != null)
@@ -226,6 +228,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
     * Post undeploy
     * @exception Throwable Thrown if an error occurs
     */
+   @Override
    public void postUndeploy() throws Throwable
    {
    }
@@ -269,7 +272,7 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
          // Create classloader
          URL[] urls = getUrls(root);
          KernelClassLoader cl = null;
-         if (getConfiguration().getScopeDeployment())
+         if (((RAConfiguration) getConfiguration()).getScopeDeployment())
          {
             cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_LAST, urls, parent);
          }
@@ -280,19 +283,27 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Get metadata
-         Connector cmd = getConfiguration().getMetadataRepository().getResourceAdapter(url);
-         IronJacamar ijmd = getConfiguration().getMetadataRepository().getIronJacamar(url);
+         MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
+
+         Connector cmd = metadataRepository.getResourceAdapter(url);
+         IronJacamar ijmd = metadataRepository.getIronJacamar(url);
 
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 
-
-         return createObjectsAndInjectValue(url, deploymentName, root, destination, cl, cmd, ijmd, null);
+         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, destination, cl, cmd, ijmd, null);
+         JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
+         return new RAActivatorDeployment(c.getURL(), c.getDeploymentName(), c.getResourceAdapter(), jndiStrategy,
+                                          metadataRepository, c.getCfs(), c.getJndiNames(), c.getCl(), c.getLog());
 
       }
       catch (DeployException de)
       {
          //just rethrow
          throw de;
+      }
+      catch (org.jboss.jca.deployers.common.DeployException cde)
+      {
+         throw new DeployException(cde.getMessage(), cde.getCause());
       }
       catch (Throwable t)
       {
@@ -325,12 +336,4 @@ public final class RAActivator extends AbstractResourceAdapterDeployer implement
       return true;
    }
 
-   @Override
-   public Deployment createDeployment(URL deploymentUrl, String deploymentName, boolean activator,
-      ResourceAdapter resourceAdapter, JndiStrategy jndiStrategy, MetadataRepository metadataRepository, Object[] cfs,
-      File destination, ClassLoader cl, Logger log, String[] jndis, URL deployment, boolean activateDeployment)
-   {
-      return new RAActivatorDeployment(deploymentUrl, deploymentName, resourceAdapter, getConfiguration()
-         .getJndiStrategy(), getConfiguration().getMetadataRepository(), cfs, jndis, cl, log);
-   }
 }

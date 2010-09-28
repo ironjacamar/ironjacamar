@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Severity;
@@ -164,8 +165,8 @@ public class RADeployerTestCase
       String returnValue = deployer.printFailuresLog(fileName, mock(Validator.class), failures, directory, fh);
 
       //then
-      assertThat(returnValue, is("Validation failures - see: " + directory.getAbsolutePath() + File.separator
-            + "myFileName.rar.log"));
+      assertThat(returnValue, is("Validation failures - see: " + directory.getAbsolutePath() + File.separator +
+                                 "myFileName.rar.log"));
       assertThat(directory.listFiles().length, is(1));
       assertThat(directory.listFiles()[0].getName(), is("myFileName.rar.log"));
       try

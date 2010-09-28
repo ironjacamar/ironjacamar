@@ -32,7 +32,7 @@ import java.security.PrivilegedAction;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 class SecurityActions
-{ 
+{
    /**
     * Constructor
     */
@@ -46,8 +46,9 @@ class SecurityActions
     */
    static ClassLoader getThreadContextClassLoader()
    {
-      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() 
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
       {
+         @Override
          public ClassLoader run()
          {
             return Thread.currentThread().getContextClassLoader();
@@ -61,8 +62,9 @@ class SecurityActions
     */
    static void setThreadContextClassLoader(final ClassLoader cl)
    {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      AccessController.doPrivileged(new PrivilegedAction<Object>()
       {
+         @Override
          public Object run()
          {
             Thread.currentThread().setContextClassLoader(cl);
@@ -78,8 +80,9 @@ class SecurityActions
     */
    static String getSystemProperty(final String name)
    {
-      return AccessController.doPrivileged(new PrivilegedAction<String>() 
+      return AccessController.doPrivileged(new PrivilegedAction<String>()
       {
+         @Override
          public String run()
          {
             return System.getProperty(name);
@@ -95,8 +98,9 @@ class SecurityActions
     */
    static URLClassLoader createURLCLassLoader(final URL[] urls, final ClassLoader parent)
    {
-      return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() 
+      return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>()
       {
+         @Override
          public URLClassLoader run()
          {
             return new URLClassLoader(urls, parent);
