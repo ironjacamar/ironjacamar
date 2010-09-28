@@ -40,6 +40,8 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.spi.mdr.MetadataRepository;
+import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.Key;
 import org.jboss.jca.validator.Severity;
@@ -56,12 +58,12 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.resource.Referenceable;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
@@ -101,6 +103,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
     */
    public RaXmlDeployer()
    {
+      super(false);
    }
 
    /**
@@ -362,7 +365,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                                                               .getManagedConnectionFactoryClass().getValue(),
                                                               ((ResourceAdapter10) cmd.getResourceadapter())
                                                               .getConfigProperties(), cl);
-                  
+
                   if (trace)
                   {
                      log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
@@ -378,7 +381,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                   }
 
                   mcf.setLogWriter(new PrintWriter(getConfiguration().getPrintStream()));
-                  
+
                   archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY,
                                                                   mcf,
                                                                   ((ResourceAdapter10) cmd.getResourceadapter())
@@ -404,9 +407,9 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                   }
 
                   PoolFactory pf = new PoolFactory();
-                  
+
                   Boolean noTxSeparatePool = Boolean.FALSE;
-                  
+
                   if (cdRaXml.getPool() != null && cdRaXml.isXa())
                   {
                      org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
@@ -419,20 +422,20 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                   {
                      org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                         (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
-                     
+
                      if (ijXaPool != null)
                         noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
                   }
 
                   Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
-                  
+
                   // Add a connection manager
                   ConnectionManagerFactory cmf = new ConnectionManagerFactory();
                   ConnectionManager cm = null;
-                  
+
                   TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
                   TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
-                  
+
                   if (raxml.getTransactionSupport() != null)
                   {
                      tsmd = raxml.getTransactionSupport();
@@ -502,7 +505,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                      {
                         org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                            (org.jboss.jca.common.api.metadata.common.CommonXaPool)cdRaXml.getPool();
-                        
+
                         interleaving = ijXaPool.isInterleaving();
                         isSameRMOverride = ijXaPool.isSameRmOverride();
                         wrapXAResource = ijXaPool.isWrapXaDataSource();
@@ -513,7 +516,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                      {
                         org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                            (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
-                        
+
                         if (ijXaPool != null)
                         {
                            if (interleaving == null)
@@ -544,7 +547,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
 
                   // ConnectionFactory
                   Object cf = mcf.createConnectionFactory(cm);
-                  
+
                   if (cf == null)
                   {
                      log.error("ConnectionFactory is null");
@@ -565,13 +568,13 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                   {
                      org.jboss.jca.common.api.metadata.common.CommonConnDef cd =
                         findConnectionDefinition(mcf.getClass().getName(), raxml.getConnectionDefinitions());
-                     
+
                      String jndiName = cd.getJndiName();
-                     
+
                      bindConnectionFactory(deployment, deploymentName, cf, jndiName);
                      cfs = new Object[] {cf};
                      jndiNames = new String[] {jndiName};
-                     
+
                      cm.setJndiName(jndiName);
                   }
                }
@@ -612,12 +615,12 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                               log.trace("ManagedConnectionFactory defined in classloader: " +
                                         mcf.getClass().getClassLoader());
                            }
-                           
+
                            org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD = null;
 
                            if (ijmd != null)
                            {
-                              ijCD = findConnectionDefinition(mcf.getClass().getName(), 
+                              ijCD = findConnectionDefinition(mcf.getClass().getName(),
                                                               ijmd.getConnectionDefinitions());
                            }
 
@@ -634,13 +637,13 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
 
                            if (cdRaXml.getPool() != null || cdRaXml.getPool() != null || cdRaXml.getPool() != null)
                            {
-                              pc = createPoolConfiguration(cdRaXml.getPool(), 
+                              pc = createPoolConfiguration(cdRaXml.getPool(),
                                                            cdRaXml.getTimeOut(),
                                                            cdRaXml.getValidation());
                            }
                            else if (ijCD != null)
                            {
-                              pc = createPoolConfiguration(ijCD.getPool(), 
+                              pc = createPoolConfiguration(ijCD.getPool(),
                                                            ijCD.getTimeOut(),
                                                            ijCD.getValidation());
                            }
@@ -653,12 +656,12 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                            PoolFactory pf = new PoolFactory();
 
                            Boolean noTxSeparatePool = Boolean.FALSE;
-               
+
                            if (cdRaXml.getPool() != null && cdRaXml.isXa())
                            {
                               org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                                  (org.jboss.jca.common.api.metadata.common.CommonXaPool)cdRaXml.getPool();
-                              
+
                               if (ijXaPool != null)
                                  noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
                            }
@@ -666,11 +669,11 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                            {
                               org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                                  (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
-                              
+
                               if (ijXaPool != null)
                                  noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
                            }
-                           
+
                            Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
 
                            // Add a connection manager
@@ -743,12 +746,12 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                               Boolean isSameRMOverride = null;
                               Boolean wrapXAResource = null;
                               Boolean padXid = null;
-                              
+
                               if (cdRaXml.isXa())
                               {
                                  org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                                     (org.jboss.jca.common.api.metadata.common.CommonXaPool)cdRaXml.getPool();
-                                 
+
                                  interleaving = ijXaPool.isInterleaving();
                                  isSameRMOverride = ijXaPool.isSameRmOverride();
                                  wrapXAResource = ijXaPool.isWrapXaDataSource();
@@ -759,7 +762,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
                               {
                                  org.jboss.jca.common.api.metadata.common.CommonXaPool ijXaPool =
                                     (org.jboss.jca.common.api.metadata.common.CommonXaPool)ijCD.getPool();
-                                 
+
                                  if (interleaving == null)
                                     interleaving = ijXaPool.isInterleaving();
 
@@ -895,16 +898,7 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
          }
 
          // Archive validation
-         partialFailures = validateArchive(url, archiveValidationObjects);
-
-         if (partialFailures != null)
-         {
-            if (failures == null)
-            {
-               failures = new HashSet<Failure>();
-            }
-            failures.addAll(partialFailures);
-         }
+         failures = validateArchive(url, archiveValidationObjects, failures);
 
          if ((getConfiguration().getArchiveValidationFailOnWarn() && hasFailuresLevel(failures, Severity.WARNING)) ||
              (getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
@@ -1025,5 +1019,20 @@ public final class RaXmlDeployer extends AbstractResourceAdapterDeployer impleme
 
       if (kernel == null)
          throw new IllegalStateException("Kernel not defined");
+   }
+
+   @Override
+   protected boolean checkActivation(Connector cmd, IronJacamar ijmd)
+   {
+      return true;
+   }
+
+   @Override
+   public Deployment createDeployment(URL deploymentUrl, String deploymentName, boolean activator,
+      ResourceAdapter resourceAdapter, JndiStrategy jndiStrategy, MetadataRepository metadataRepository, Object[] cfs,
+      File destination, ClassLoader cl, Logger log, String[] jndis, URL deployment, boolean activateDeployment)
+   {
+      //NYI
+      return null;
    }
 }

@@ -32,6 +32,7 @@ import java.io.FileReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -63,14 +64,14 @@ public class RADeployerTestCase
    {
       //given
       RAConfiguration configuration = new RAConfiguration();
-      RADeployer deployer = new RADeployer();
+      AbstractResourceAdapterDeployer deployer = new RADeployer();
       deployer.setConfiguration(configuration);
 
       deployer.getConfiguration().setArchiveValidation(false);
       //when
-      List<Failure> returnValue = deployer.validateArchive(null, null);
+      Set<Failure> returnValue = deployer.validateArchive(null, null, null);
       //then
-      assertThat(returnValue, is((List) null));
+      assertThat(returnValue, is((Set) null));
    }
 
    /**
@@ -83,7 +84,7 @@ public class RADeployerTestCase
    {
       //given
       RAConfiguration configuration = new RAConfiguration();
-      RADeployer deployer = new RADeployer();
+      AbstractResourceAdapterDeployer deployer = new RADeployer();
       deployer.setConfiguration(configuration);
 
       File mockedDirectory = mock(File.class);
@@ -114,7 +115,7 @@ public class RADeployerTestCase
    {
       //given
       RAConfiguration configuration = new RAConfiguration();
-      RADeployer deployer = new RADeployer();
+      AbstractResourceAdapterDeployer deployer = new RADeployer();
       deployer.setConfiguration(configuration);
 
       File mockedDirectory = mock(File.class);
@@ -146,7 +147,7 @@ public class RADeployerTestCase
 
       //given
       RAConfiguration configuration = new RAConfiguration();
-      RADeployer deployer = new RADeployer();
+      AbstractResourceAdapterDeployer deployer = new RADeployer();
       deployer.setConfiguration(configuration);
 
       deployer.getConfiguration().setArchiveValidationFailOnError(true);

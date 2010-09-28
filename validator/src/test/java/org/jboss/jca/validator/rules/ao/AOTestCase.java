@@ -32,9 +32,9 @@ import java.io.FileReader;
 
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import com.github.fungal.spi.deployers.DeployException;
-
 import org.junit.Test;
+
+import com.github.fungal.spi.deployers.DeployException;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
