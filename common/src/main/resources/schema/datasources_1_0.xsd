@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           elementFormDefault="qualified"
+           targetNamespace="http://www.jboss.org/ironjacamar/schema"
+           xmlns="http://www.jboss.org/ironjacamar/schema">
+
   <xs:element name="datasources" type="datasourcesType">
     <xs:annotation>
       <xs:documentation>
