@@ -41,6 +41,14 @@
       <compilerarg value="-Xlint"/>
     </javac>
     
+    <copy todir="${build.common.dir}"
+          flatten="yes">
+      <fileset dir="src/main/resources/">
+        <include name="**/*.dtd"/>
+        <include name="**/*.xsd"/>
+      </fileset>
+    </copy>
+
   </target>
   
   <!-- ================================= 
@@ -53,7 +61,7 @@
          indexMetaInf="true"
          update="true"
          level="9"
-         includes="**/common/api/**">
+         includes="**/*.dtd,**/*.xsd,**/common/api/**">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common API"/>
 	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
