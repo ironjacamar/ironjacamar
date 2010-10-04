@@ -97,12 +97,9 @@
     <dependency org="com.github.fungal" name="fungal" rev="${version.fungal}" conf="sjc,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-embedded"/>
     <dependency org="com.github.fungal" name="fungal-cli" rev="${version.fungal}" conf="sjc,ironjacamar-depchain"/>
     <dependency org="com.h2database" name="h2" rev="${version.h2}" conf="test"/>
-    <dependency org="com.sun.xml.bind" name="jaxb-impl" rev="${version.jaxb.impl}" conf="common,ironjacamar-depchain"/>
     <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="jetty,tools"/>
     <dependency org="javassist" name="javassist" rev="${version.javassist}" conf="common,ironjacamar-depchain"/>
-    <dependency org="javax.activation" name="activation" rev="${version.activation}" conf="common,ironjacamar-depchain"/>
     <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="common,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal"/>
-    <dependency org="javax.xml.bind" name="jaxb-api" rev="${version.jaxb.api}" conf="common,ironjacamar-depchain,ironjacamar-codegenerator"/>
     <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="tools"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
     <dependency org="log4j" name="log4j" rev="${version.apache-log4j}" conf="common,ironjacamar-depchain"/>
@@ -122,8 +119,6 @@
     <dependency org="org.eclipse.jetty" name="jetty-xml" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.hibernate" name="hibernate-validator" rev="${version.hibernate-validator}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain"/>
-    <dependency org="org.jboss" name="jboss-reflect" rev="${version.jboss.reflect}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss" name="jbossxb" rev="${version.jboss.xb}" conf="common,ironjacamar-common-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="tools"/>
     <dependency org="org.jboss.arquillian" name="arquillian-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.arquillian" name="arquillian-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
@@ -153,8 +148,6 @@
     <dependency org="org.picketbox" name="picketbox-bare" rev="${version.jboss.picketbox}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
-    <dependency org="stax" name="stax-api" rev="${version.stax}" conf="common,ironjacamar-common-impl,ironjacamar-depchain"/>
-    <dependency org="xerces" name="xercesImpl" rev="${version.apache-xerces}" conf="common,ironjacamar-depchain"/>
   </dependencies>
 
 </ivy-module>

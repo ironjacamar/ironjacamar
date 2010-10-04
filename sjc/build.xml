@@ -198,9 +198,6 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${lib.dir}/common">
         <include name="*.jar"/>
-        <exclude name="jaxb-api.jar"/>
-        <exclude name="xercesImpl.jar"/>
-        <exclude name="stax-api.jar"/>
       </fileset>
     </copy>
 
@@ -219,20 +216,6 @@
     <copy todir="${target.dir}/sjc/lib/embedded/arquillian">
       <fileset dir="${lib.dir}/test">
         <include name="junit.jar"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${target.dir}/sjc/lib/endorsed">
-      <fileset dir="${lib.dir}/common">
-        <include name="jaxb-api.jar"/>
-        <include name="xercesImpl.jar"/>
-        <include name="stax-api.jar"/>
-      </fileset>
-    </copy>
-
-    <copy todir="${target.dir}/sjc/lib/jetty">
-      <fileset dir="${lib.dir}/common">
-        <include name="dom4j.jar"/>
       </fileset>
     </copy>
 
