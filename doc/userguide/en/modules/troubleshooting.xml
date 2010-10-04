@@ -42,7 +42,7 @@ ant clean cobertura
           All your test cases for the feature is passing
         </listitem>
         <listitem>
-          Your code is correctly formatted accoording to project rules
+          Your code is correctly formatted according to project rules
         </listitem>
         <listitem>
           There isn't any bug reports from the Findbugs environment

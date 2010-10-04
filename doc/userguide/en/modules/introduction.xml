@@ -5,7 +5,7 @@
    <para>The Java Connector Architecture (JCA) defines a standard architecture for connecting
      the Java EE platform to heterogeneous Enterprise Information Systems (EIS). 
      Examples of EISs include Enterprise Resource Planning (ERP), mainframe transaction processing (TP), 
-     database and messaging systems.</para>
+     databases and messaging systems.</para>
 
    <para>The connector architecture defines a set of scalable, secure, and transactional
      mechanisms that enable the integration of EISs with application servers and
@@ -43,7 +43,7 @@
       </listitem>
       <listitem>
         Security work context: A standard contract that enables a resource adapter to
-        establish security information while submiting a Work instance for execution to a
+        establish security information while submitting a Work instance for execution to a
         WorkManager and while delivering messages to message endpoints residing in
         the application server.
       </listitem>
