@@ -43,6 +43,23 @@
            optimize="${javac.optimize}">
       <compilerarg value="-Xlint"/>
     </javac> 
+
+    <copy file="src/main/java/org/jboss/jca/Version.java.in"
+          tofile="${build.core.dir}/impl/org/jboss/jca/Version.java">
+      <filterset>
+        <filter token="VERSION" value="${version}"/>
+      </filterset>
+    </copy>
+
+    <javac srcdir="${build.core.dir}/impl"
+           destdir="${build.core.dir}/impl"
+           classpathref="sjc.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
   </target>
 
   <!-- ================================= 
@@ -91,6 +108,7 @@
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+        <attribute name="Main-Class" value="org.jboss.jca.Version"/>
       </manifest>
     </jar>
   </target>
