@@ -40,6 +40,8 @@ import java.util.List;
 
 import javax.transaction.TransactionManager;
 
+import org.jboss.logging.Logger;
+
 import com.github.fungal.api.util.Injection;
 import com.github.fungal.api.util.JarFilter;
 
@@ -51,15 +53,15 @@ import com.github.fungal.api.util.JarFilter;
 public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDeployer
 {
 
-
    /**
     * Create a new AbstractResourceAdapterDeployer.
     *
     * @param validateClasses boolean to express if this instance will apply validation on classes structure
+    * @param log the right log where put messages
     */
-   public AbstractFungalRADeployer(boolean validateClasses)
+   public AbstractFungalRADeployer(boolean validateClasses, Logger log)
    {
-      super(validateClasses);
+      super(validateClasses, log);
    }
 
    /**
@@ -128,7 +130,6 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
       return list.toArray(new URL[list.size()]);
    }
 
-
    @Override
    public String[] bindConnectionFactory(URL url, String deployment, Object cf) throws Throwable
    {
@@ -136,12 +137,11 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
       String[] result = js.bindConnectionFactories(deployment, new Object[]{cf});
 
-      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url, cf.getClass().getName(),
-         result[0]);
+      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url,
+         cf.getClass().getName(), result[0]);
 
       return result;
    }
-
 
    @Override
    public String[] bindConnectionFactory(URL url, String deployment, Object cf, String jndi) throws Throwable
@@ -150,8 +150,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
       String[] result = js.bindConnectionFactories(deployment, new Object[]{cf}, new String[]{jndi});
 
-      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url, cf.getClass().getName(),
-         jndi);
+      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url,
+         cf.getClass().getName(), jndi);
 
       return result;
    }

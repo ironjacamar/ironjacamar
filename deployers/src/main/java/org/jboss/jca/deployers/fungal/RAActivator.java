@@ -28,7 +28,6 @@ import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.deployers.common.CommonDeployment;
-import org.jboss.jca.validator.Failure;
 
 import java.io.File;
 import java.net.URL;
@@ -76,7 +75,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
     */
    public RAActivator()
    {
-      super(false);
+      super(false, log);
       kernel = null;
       enabled = true;
       excludeArchives = null;
@@ -156,7 +155,8 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    {
       if (enabled)
       {
-         Set<URL> rarDeployments = ((RAConfiguration) getConfiguration()).getMetadataRepository().getResourceAdapters();
+         Set<URL> rarDeployments = ((RAConfiguration) getConfiguration()).getMetadataRepository()
+            .getResourceAdapters();
 
          for (URL deployment : rarDeployments)
          {
@@ -176,8 +176,8 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
 
             if (include)
             {
-               Map<String, List<String>> jndiMappings = ((RAConfiguration) getConfiguration()).getMetadataRepository()
-                  .getJndiMappings(deployment);
+               Map<String, List<String>> jndiMappings = ((RAConfiguration) getConfiguration())
+                  .getMetadataRepository().getJndiMappings(deployment);
 
                // If there isn't any JNDI mappings then the archive isn't active
                // so activate it
@@ -242,7 +242,6 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
     */
    private Deployment deploy(URL url, ClassLoader parent) throws DeployException
    {
-      Set<Failure> failures = null;
 
       log.debug("Deploying: " + url.toExternalForm());
 
@@ -290,7 +289,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
 
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 
-         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, destination, cl, cmd, ijmd, null);
+         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd);
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          return new RAActivatorDeployment(c.getURL(), c.getDeploymentName(), c.getResourceAdapter(), jndiStrategy,
                                           metadataRepository, c.getCfs(), c.getJndiNames(), c.getCl(), c.getLog());

@@ -92,10 +92,10 @@ import org.jboss.logging.Logger;
 public abstract class AbstractResourceAdapterDeployer
 {
    /** the logger **/
-   protected static final Logger log = Logger.getLogger(AbstractResourceAdapterDeployer.class);
+   protected final Logger log;
 
    /** trace boolean check */
-   protected static final boolean trace = log.isTraceEnabled();
+   protected final boolean trace;
 
    /** boolean to set if validation is needed at class level or it should be considered already valid
     * (IOW  object put in repository at previous steps have been already validated at class level**/
@@ -109,10 +109,13 @@ public abstract class AbstractResourceAdapterDeployer
     *
     * @param validateClasses validateClasses validateClasses  boolean to express if this instance will
     * apply validation on classes structure
+    * @param log the right log where put messages
     */
-   public AbstractResourceAdapterDeployer(boolean validateClasses)
+   public AbstractResourceAdapterDeployer(boolean validateClasses, Logger log)
    {
       super();
+      this.log = log;
+      trace = log.isTraceEnabled();
       this.validateClasses = validateClasses;
    }
 
@@ -202,7 +205,7 @@ public abstract class AbstractResourceAdapterDeployer
          {
             reportDirectory = getReportDirectory();
          }
-         if (reportDirectory.exists())
+         if (reportDirectory != null && reportDirectory.exists())
          {
             int lastSlashIndex = urlFileName.lastIndexOf("/");
             int lastSepaIndex = urlFileName.lastIndexOf(File.separator);
@@ -608,11 +611,9 @@ public abstract class AbstractResourceAdapterDeployer
     * @param url url
     * @param deploymentName deploymentName
     * @param root root
-    * @param destination  destination
     * @param cl cl
     * @param cmd connector md
     * @param ijmd ironjacamar md
-    * @param deployment deployment
     * @return return the exchange POJO with value useful for injection in the container (fungal or AS)
     * @throws DeployException DeployException
     * @throws ResourceException ResourceException
@@ -621,9 +622,9 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws ClassNotFoundException ClassNotFoundException
     * @throws Throwable Throwable
     */
-   protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root,
-      File destination, ClassLoader cl, Connector cmd, IronJacamar ijmd, URL deployment) throws DeployException,
-      ResourceException, ValidatorException, AlreadyExistsException, ClassNotFoundException, Throwable
+   protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root, ClassLoader cl,
+      Connector cmd, IronJacamar ijmd) throws DeployException, ResourceException, ValidatorException,
+      AlreadyExistsException, ClassNotFoundException, Throwable
    {
       Set<Failure> failures = null;
       try
@@ -1126,8 +1127,8 @@ public abstract class AbstractResourceAdapterDeployer
             log.debug("Activated: " + url.toExternalForm());
          }
 
-         return new CommonDeployment(url, deploymentName, activateDeployment, resourceAdapter, cfs, destination, cl,
-                                     log, jndiNames, deployment, activateDeployment);
+         return new CommonDeployment(url, deploymentName, activateDeployment, resourceAdapter, cfs, cl, log,
+                                     jndiNames);
 
       }
       catch (DeployException de)

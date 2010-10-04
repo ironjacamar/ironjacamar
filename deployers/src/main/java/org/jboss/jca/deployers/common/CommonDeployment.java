@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.deployers.common;
 
-import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 
@@ -49,17 +48,11 @@ public class CommonDeployment
 
    private final Object[] cfs;
 
-   private final File destination;
-
    private final ClassLoader cl;
 
    private final Logger log;
 
    private final String[] jndiNames;
-
-   private final URL deployment;
-
-   private final boolean activateDeployment2;
 
    /**
     * Create a new Deployment.
@@ -69,29 +62,23 @@ public class CommonDeployment
     * @param activateDeployment activateDeployment
     * @param resourceAdapter resourceAdapter
     * @param cfs cfs
-    * @param destination destination
     * @param cl cl
     * @param log log
     * @param jndiNames jndiNames
-    * @param deployment deployment
-    * @param activateDeployment2 activateDeployment2
     */
-   public CommonDeployment(URL url, String deploymentName, boolean activateDeployment, ResourceAdapter resourceAdapter,
-      Object[] cfs, File destination, ClassLoader cl, Logger log, String[] jndiNames, URL deployment,
-      boolean activateDeployment2)
+   public CommonDeployment(URL url, String deploymentName, boolean activateDeployment,
+      ResourceAdapter resourceAdapter, Object[] cfs, ClassLoader cl, Logger log, String[] jndiNames)
    {
       super();
       this.url = url;
       this.deploymentName = deploymentName;
       this.activateDeployment = activateDeployment;
       this.resourceAdapter = resourceAdapter;
-      this.cfs = Arrays.copyOf(cfs, cfs.length);
-      this.destination = destination;
+      this.cfs = cfs != null ? Arrays.copyOf(cfs, cfs.length) : null;
       this.cl = cl;
       this.log = log;
-      this.jndiNames = Arrays.copyOf(jndiNames, jndiNames.length);;
-      this.deployment = deployment;
-      this.activateDeployment2 = activateDeployment2;
+      this.jndiNames = jndiNames != null ? Arrays.copyOf(jndiNames, jndiNames.length) : null;
+
    }
 
    /**
@@ -141,17 +128,7 @@ public class CommonDeployment
     */
    public final Object[] getCfs()
    {
-      return Arrays.copyOf(cfs, cfs.length);
-   }
-
-   /**
-    * Get the destination.
-    *
-    * @return the destination.
-    */
-   public final File getDestination()
-   {
-      return destination;
+      return cfs != null ? Arrays.copyOf(cfs, cfs.length) : null;
    }
 
    /**
@@ -181,27 +158,7 @@ public class CommonDeployment
     */
    public final String[] getJndiNames()
    {
-      return Arrays.copyOf(jndiNames, jndiNames.length);
-   }
-
-   /**
-    * Get the deployment.
-    *
-    * @return the deployment.
-    */
-   public final URL getDeployment()
-   {
-      return deployment;
-   }
-
-   /**
-    * Get the activateDeployment2.
-    *
-    * @return the activateDeployment2.
-    */
-   public final boolean isActivateDeployment2()
-   {
-      return activateDeployment2;
+      return jndiNames != null ? Arrays.copyOf(jndiNames, jndiNames.length) : null;
    }
 
 }

@@ -45,6 +45,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.logging.Logger;
+
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.api.util.FileUtil;
@@ -62,12 +64,15 @@ import com.github.fungal.spi.deployers.MultiStageDeployer;
 public final class RADeployer extends AbstractFungalRADeployer implements Deployer, MultiStageDeployer, DeployerOrder
 {
 
+   /** The logger */
+   static Logger log = Logger.getLogger(RADeployer.class);
+
    /**
     * Constructor
     */
    public RADeployer()
    {
-      super(true);
+      super(true, log);
    }
 
    /**
@@ -87,7 +92,6 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
     * @return The deployment
     * @exception DeployException Thrown if an error occurs during deployment
     */
-   @SuppressWarnings("rawtypes")
    @Override
    public synchronized com.github.fungal.spi.deployers.Deployment deploy(URL url, ClassLoader parent)
       throws DeployException
@@ -150,11 +154,11 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
          // Merge metadata
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 
-         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, destination, cl, cmd, ijmd, null);
+         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd);
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
          return new RADeployment(c.getURL(), c.getDeploymentName(), c.isActivateDeployment(), c.getResourceAdapter(),
-                                 jndiStrategy, metadataRepository, c.getCfs(), c.getJndiNames(), c.getDestination(),
+                                 jndiStrategy, metadataRepository, c.getCfs(), c.getJndiNames(), destination,
                                  c.getCl(), c.getLog());
 
       }

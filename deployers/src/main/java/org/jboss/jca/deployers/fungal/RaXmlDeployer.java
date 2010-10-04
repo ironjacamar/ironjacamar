@@ -103,7 +103,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
     */
    public RaXmlDeployer()
    {
-      super(false);
+      super(false, log);
    }
 
    /**
