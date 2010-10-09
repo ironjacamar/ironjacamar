@@ -44,7 +44,7 @@
   <!-- ================================= 
        Ivy              
        ================================= -->
-  <property name="ivy.version" value="2.2.0-rc1"/>
+  <property name="ivy.version" value="2.2.0"/>
   <property name="ivy.dir" value="${user.home}/.ivy2/cache/org.apache.ivy/jars"/>
   <property name="ivy.jar.name" value="ivy-${ivy.version}.jar"/>
 
@@ -938,8 +938,6 @@ mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
                   conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-impl-papaki,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-common,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
                   sync="true"/>
-
-    <fail message="Required Apache Ivy update missing"/>
 
     <delete file="${target.dir}/release.sh"/>
     <delete file="${target.dir}/snapshot.sh"/>
