@@ -51,7 +51,6 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  */
 public class ResourceAdapterParser extends CommonIronJacamarParser implements MetadataParser<ResourceAdapters>
 {
-
    @Override
    public ResourceAdapters parse(InputStream xmlInputStream) throws Exception
    {
@@ -59,10 +58,19 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       XMLStreamReader reader = null;
       ResourceAdapters adapters = null;
 
+      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+      reader = inputFactory.createXMLStreamReader(xmlInputStream);
+      return parse(reader);
+   }
+
+   @Override
+   public ResourceAdapters parse(XMLStreamReader reader) throws Exception
+   {
+
+      ResourceAdapters adapters = null;
+
       try
       {
-         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-         reader = inputFactory.createXMLStreamReader(xmlInputStream);
 
          //iterate over tags
          int iterate;
@@ -108,8 +116,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
    }
 
-   private ResourceAdapters parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+   private ResourceAdapters parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       ArrayList<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>();
       while (reader.hasNext())

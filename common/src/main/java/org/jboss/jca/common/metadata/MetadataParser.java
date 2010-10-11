@@ -25,6 +25,8 @@ import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.io.InputStream;
 
+import javax.xml.stream.XMLStreamReader;
+
 /**
  *
  * A MetadataParser.
@@ -44,5 +46,14 @@ public interface MetadataParser<T extends JCAMetadata>
     * @exception Exception Thrown if an error occurs
     */
    public T parse(InputStream xmlInputStream) throws Exception;
+
+   /**
+    * Parse the xml file and return the JCAMetaData for which the concrete parser is designed.
+    * Note that is responsibility of the client to open and close the stream
+    * @param reader an XMLStreamReader opened on the xml file to parse
+    * @return The metadata
+    * @exception Exception Thrown if an error occurs
+    */
+   public T parse(XMLStreamReader reader) throws Exception;
 
 }

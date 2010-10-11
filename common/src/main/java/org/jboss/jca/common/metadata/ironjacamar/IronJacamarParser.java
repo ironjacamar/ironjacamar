@@ -56,13 +56,19 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
    {
 
       XMLStreamReader reader = null;
+      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+      reader = inputFactory.createXMLStreamReader(xmlInputStream);
+      return parse(reader);
+   }
+
+   @Override
+   public IronJacamar parse(XMLStreamReader reader) throws Exception
+   {
+
       IronJacamar ironJacamar = null;
 
       try
       {
-         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-         reader = inputFactory.createXMLStreamReader(xmlInputStream);
-
          //iterate over tags
          int iterate;
          try
@@ -106,8 +112,6 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
       return ironJacamar;
 
    }
-
-
 
    private IronJacamar parseIronJacamar(XMLStreamReader reader) throws XMLStreamException, ParserException
    {

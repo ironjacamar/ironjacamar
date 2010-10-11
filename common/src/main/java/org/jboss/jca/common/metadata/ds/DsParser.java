@@ -65,12 +65,20 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
 
       XMLStreamReader reader = null;
+
+      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+      reader = inputFactory.createXMLStreamReader(xmlInputStream);
+      return parse(reader);
+   }
+
+   @Override
+   public DataSources parse(XMLStreamReader reader) throws Exception
+   {
+
       DataSources dataSources = null;
 
       try
       {
-         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-         reader = inputFactory.createXMLStreamReader(xmlInputStream);
 
          //iterate over tags
          int iterate;
@@ -346,11 +354,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DATASOURCE)
                {
 
-                  return new DataSourceImpl(connectionUrl, driverClass, transactionIsolation,
-                                            connectionProperties, timeOutSettings, securitySettings,
-                                            statementSettings, validationSettings, urlDelimiter,
-                                            urlSelectorStrategyClassName, newConnectionSql, useJavaContext,
-                                            poolName, enabled, jndiName, pool);
+                  return new DataSourceImpl(connectionUrl, driverClass, transactionIsolation, connectionProperties,
+                                            timeOutSettings, securitySettings, statementSettings, validationSettings,
+                                            urlDelimiter, urlSelectorStrategyClassName, newConnectionSql,
+                                            useJavaContext, poolName, enabled, jndiName, pool);
                }
                else
                {
