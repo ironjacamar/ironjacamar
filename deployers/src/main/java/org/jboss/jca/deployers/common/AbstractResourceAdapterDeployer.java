@@ -45,7 +45,6 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.spi.mdr.AlreadyExistsException;
-import org.jboss.jca.deployers.fungal.BeanValidation;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;

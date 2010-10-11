@@ -41,6 +41,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.deployers.common.BeanValidation;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.Key;
 import org.jboss.jca.validator.Severity;

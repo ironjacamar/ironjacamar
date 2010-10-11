@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.fungal;
+package org.jboss.jca.deployers.common;
 
 import java.lang.annotation.ElementType;
 
