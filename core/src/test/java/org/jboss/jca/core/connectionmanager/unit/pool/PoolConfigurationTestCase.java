@@ -96,11 +96,11 @@ public class PoolConfigurationTestCase
       assertEquals(0L, params.getBackgroundValidationInterval());
 
       params.setBackgroundValidation(true);
-      params.setBackgroundValidationMinutes(50);
+      params.setBackgroundValidationMinutes(5);
 
       assertTrue(params.isBackgroundValidation());
-      assertEquals(50, params.getBackgroundValidationMinutes());
-      assertEquals(50000L, params.getBackgroundValidationInterval());
+      assertEquals(5, params.getBackgroundValidationMinutes());
+      assertEquals(300000L, params.getBackgroundValidationInterval());
    }
 
    /**

@@ -185,7 +185,7 @@ public class PoolConfiguration
     */
    public long getBackgroundValidationInterval()
    {
-      return backgroundValidationMinutes * 1000L;
+      return backgroundValidationMinutes * 60000L;
    }
 
    /**

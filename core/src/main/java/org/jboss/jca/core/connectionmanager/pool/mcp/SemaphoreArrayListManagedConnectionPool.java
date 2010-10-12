@@ -188,13 +188,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public void reenable()
    {
-      if (poolConfiguration.getIdleTimeout() != 0L)
+      if (poolConfiguration.getIdleTimeout() > 0L)
       {
          //Register removal support
          IdleRemover.registerPool(this, poolConfiguration.getIdleTimeout());
       }
       
-      if (poolConfiguration.getBackgroundValidationInterval() > 0)
+      if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationInterval() > 0)
       {
          log.debug("Registering for background validation at interval " + 
                    poolConfiguration.getBackgroundValidationInterval());
