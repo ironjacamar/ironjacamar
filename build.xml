@@ -417,7 +417,7 @@
                 classpathref="checkstyle.lib.path.id">
       <fileset dir="${basedir}"
                includes="**/*.java"
-	       excludes="target/**/*.java"/>
+	       excludes="${build.dir}/**/*.java"/>
       <formatter type="plain"/>
       <formatter type="xml" toFile="${reports.dir}/checkstyle/checkstyle-result.xml"/>
     </checkstyle>
