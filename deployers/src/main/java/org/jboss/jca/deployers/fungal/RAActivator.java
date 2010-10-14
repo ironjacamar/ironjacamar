@@ -155,13 +155,14 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    {
       if (enabled)
       {
-         Set<URL> rarDeployments = ((RAConfiguration) getConfiguration()).getMetadataRepository()
-            .getResourceAdapters();
+         MetadataRepository mdr = ((RAConfiguration) getConfiguration()).getMetadataRepository();
 
-         for (URL deployment : rarDeployments)
+         Set<String> rarDeployments = mdr.getResourceAdapters();
+
+         for (String deployment : rarDeployments)
          {
             if (trace)
-               log.trace("Processing: " + deployment.toExternalForm());
+               log.trace("Processing: " + deployment);
 
             boolean include = true;
 
@@ -169,30 +170,24 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
             {
                for (String excludedArchive : excludeArchives)
                {
-                  if (deployment.toExternalForm().endsWith(excludedArchive))
+                  if (deployment.endsWith(excludedArchive))
                      include = false;
                }
             }
 
-            if (include)
+            if (include && !mdr.hasJndiMappings(deployment))
             {
-               Map<String, List<String>> jndiMappings = ((RAConfiguration) getConfiguration())
-                  .getMetadataRepository().getJndiMappings(deployment);
-
                // If there isn't any JNDI mappings then the archive isn't active
                // so activate it
-               if (jndiMappings == null)
+               Deployment raDeployment = deploy(new URL(deployment), kernel.getKernelClassLoader());
+               if (raDeployment != null)
                {
-                  Deployment raDeployment = deploy(deployment, kernel.getKernelClassLoader());
-                  if (raDeployment != null)
-                  {
-                     if (deployments == null)
-                        deployments = new ArrayList<Deployment>(1);
+                  if (deployments == null)
+                     deployments = new ArrayList<Deployment>(1);
 
-                     deployments.add(raDeployment);
-
-                     kernel.getMainDeployer().registerDeployment(raDeployment);
-                  }
+                  deployments.add(raDeployment);
+                  
+                  kernel.getMainDeployer().registerDeployment(raDeployment);
                }
             }
          }
@@ -284,8 +279,8 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          // Get metadata
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
 
-         Connector cmd = metadataRepository.getResourceAdapter(url);
-         IronJacamar ijmd = metadataRepository.getIronJacamar(url);
+         Connector cmd = metadataRepository.getResourceAdapter(url.toExternalForm());
+         IronJacamar ijmd = metadataRepository.getIronJacamar(url.toExternalForm());
 
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 

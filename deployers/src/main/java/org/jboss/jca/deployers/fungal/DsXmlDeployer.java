@@ -221,19 +221,19 @@ public final class DsXmlDeployer implements Deployer
 
          String deploymentName = f.getName();
 
-         Set<URL> raDeployments = mdr.getResourceAdapters();
+         Set<String> raDeployments = mdr.getResourceAdapters();
          URL urlJdbcLocal = null;
          URL urlJdbcXA = null;
 
-         for (URL u : raDeployments)
+         for (String s : raDeployments)
          {
-            if (u.toExternalForm().endsWith(jdbcLocal))
+            if (s.endsWith(jdbcLocal))
             {
-               urlJdbcLocal = u;
+               urlJdbcLocal = new URL(s);
             }
-            else if (u.toExternalForm().endsWith(jdbcXA))
+            else if (s.endsWith(jdbcXA))
             {
-               urlJdbcXA = u;
+               urlJdbcXA = new URL(s);
             }
          }
 
@@ -359,7 +359,7 @@ public final class DsXmlDeployer implements Deployer
 
       Merger merger = new Merger();
 
-      Connector md = mdr.getResourceAdapter(ra);
+      Connector md = mdr.getResourceAdapter(ra.toExternalForm());
       md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one
@@ -413,7 +413,7 @@ public final class DsXmlDeployer implements Deployer
 
       Merger merger = new Merger();
 
-      Connector md = mdr.getResourceAdapter(ra);
+      Connector md = mdr.getResourceAdapter(ra.toExternalForm());
       md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one

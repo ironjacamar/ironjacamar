@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
+import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 
 import java.io.Closeable;
@@ -136,7 +137,7 @@ public class RADeployment implements Deployment
       {
          try
          {
-            mdr.unregisterResourceAdapter(deployment);
+            mdr.unregisterResourceAdapter(deployment.toExternalForm());
          }
          catch (Throwable t)
          {
@@ -152,10 +153,17 @@ public class RADeployment implements Deployment
          {
             for (int i = 0; i < cfs.length; i++)
             {
-               String cf = cfs[i].getClass().getName();
-               String jndi = jndis[i];
+               try
+               {
+                  String cf = cfs[i].getClass().getName();
+                  String jndi = jndis[i];
 
-               mdr.unregisterJndiMapping(deployment, cf, jndi);
+                  mdr.unregisterJndiMapping(deployment.toExternalForm(), cf, jndi);
+               }
+               catch (NotFoundException nfe)
+               {
+                  log.warn("Exception during unregistering deployment", nfe);
+               }
             }
          }
 

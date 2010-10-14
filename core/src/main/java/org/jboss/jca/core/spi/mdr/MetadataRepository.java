@@ -26,7 +26,6 @@ import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 
 import java.io.File;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,72 +39,88 @@ public interface MetadataRepository
 {
    /**
     * Register a resource adapter template
-    * @param deployment The deployment
+    * @param uniqueId An unique id that represents the deployment
     * @param root The deployment root
     * @param md The connector metadata
     * @param ijmd The IronJacamar metadata
-    * @exception AlreadyExistsException Thrown if the deployment is already registered
+    * @exception AlreadyExistsException Thrown if the unique id is already registered
     */
-   public void registerResourceAdapter(URL deployment, File root, Connector md, IronJacamar ijmd) 
+   public void registerResourceAdapter(String uniqueId, File root, Connector md, IronJacamar ijmd) 
       throws AlreadyExistsException;
 
    /**
     * Unregister a resource adapter template
-    * @param deployment The deployment
-    * @exception NotFoundException Thrown if the deployment isn't registered
+    * @param uniqueId An unique id that represents the deployment
+    * @exception NotFoundException Thrown if the unique id isn't registered
     */
-   public void unregisterResourceAdapter(URL deployment) throws NotFoundException;
+   public void unregisterResourceAdapter(String uniqueId) throws NotFoundException;
+
+   /**
+    * Check if there exists a resource adapter for a unique id
+    * @param uniqueId An unique id that represents the deployment
+    * @return True if there is a resource adapter; otherwise false
+    */
+   public boolean hasResourceAdapter(String uniqueId);
 
    /**
     * Get the metadata for a resource adapter
-    * @param deployment The deployment
+    * @param uniqueId An unique id that represents the deployment
     * @return The metadata
-    * @exception NotFoundException Thrown if the deployment isn't registered
+    * @exception NotFoundException Thrown if the unique id isn't registered
     */
-   public Connector getResourceAdapter(URL deployment) throws NotFoundException;
+   public Connector getResourceAdapter(String uniqueId) throws NotFoundException;
 
    /**
-    * Get the resource adapters deployments registered
-    * @return The names of the deployments
+    * Get the resource adapters unique ids registered
+    * @return The unique ids
     */
-   public Set<URL> getResourceAdapters();
+   public Set<String> getResourceAdapters();
 
    /**
     * Get the root for a resource adapter deployment
-    * @param deployment The deployment
+    * @param uniqueId An unique id that represents the deployment
     * @return The root
-    * @exception NotFoundException Thrown if the deployment isn't registered
+    * @exception NotFoundException Thrown if the unique id isn't registered
     */
-   public File getRoot(URL deployment) throws NotFoundException;
+   public File getRoot(String uniqueId) throws NotFoundException;
 
    /**
     * Get the IronJacamar metadata for a resource adapter deployment
-    * @param deployment The deployment
+    * @param uniqueId An unique id that represents the deployment
     * @return The metadata
-    * @exception NotFoundException Thrown if the deployment isn't registered
+    * @exception NotFoundException Thrown if the unique id isn't registered
     */
-   public IronJacamar getIronJacamar(URL deployment) throws NotFoundException;
+   public IronJacamar getIronJacamar(String uniqueId) throws NotFoundException;
 
    /**
-    * Register a JNDI mapping for a deployment
-    * @param deployment The deployment
+    * Register a JNDI mapping for a unique id
+    * @param uniqueId An unique id that represents the deployment
     * @param clz The fully qualified class name
     * @param jndi The JNDI name
     */
-   public void registerJndiMapping(URL deployment, String clz, String jndi);
+   public void registerJndiMapping(String uniqueId, String clz, String jndi);
 
    /**
-    * Unregister a JNDI mapping for a deployment
-    * @param deployment The deployment
+    * Unregister a JNDI mapping for a unique id
+    * @param uniqueId An unique id that represents the deployment
     * @param clz The fully qualified class name
     * @param jndi The JNDI name
+    * @exception NotFoundException Thrown if the unique id isn't registered
     */
-   public void unregisterJndiMapping(URL deployment, String clz, String jndi);
+   public void unregisterJndiMapping(String uniqueId, String clz, String jndi) throws NotFoundException;
 
    /**
-    * Get the JNDI mappings for a deployment
-    * @param deployment The deployment
+    * Check if there exists JNDI mappings for a unique id
+    * @param uniqueId An unique id that represents the deployment
+    * @return True if there are mappings; otherwise false
+    */
+   public boolean hasJndiMappings(String uniqueId);
+
+   /**
+    * Get the JNDI mappings for a unique id
+    * @param uniqueId An unique id that represents the deployment
     * @return The mappings
+    * @exception NotFoundException Thrown if the unique id isn't registered
     */
-   public Map<String, List<String>> getJndiMappings(URL deployment);
+   public Map<String, List<String>> getJndiMappings(String uniqueId) throws NotFoundException;
 }

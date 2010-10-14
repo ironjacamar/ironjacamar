@@ -137,7 +137,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
       String[] result = js.bindConnectionFactories(deployment, new Object[]{cf});
 
-      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url,
+      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url.toExternalForm(),
          cf.getClass().getName(), result[0]);
 
       return result;
@@ -150,7 +150,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
       String[] result = js.bindConnectionFactories(deployment, new Object[]{cf}, new String[]{jndi});
 
-      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url,
+      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url.toExternalForm(),
          cf.getClass().getName(), jndi);
 
       return result;
@@ -184,6 +184,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    protected void registerResourceAdapterToMDR(URL url, File root, Connector cmd, IronJacamar ijmd)
       throws AlreadyExistsException
    {
-      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerResourceAdapter(url, root, cmd, ijmd);
+      ((RAConfiguration) getConfiguration()).getMetadataRepository().
+         registerResourceAdapter(url.toExternalForm(), root, cmd, ijmd);
    }
 }

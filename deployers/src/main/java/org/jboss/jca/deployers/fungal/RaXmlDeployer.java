@@ -41,6 +41,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.deployers.common.BeanValidation;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.Key;
@@ -286,12 +287,12 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
          // Find the archive in MDR
          String archive = raxml.getArchive();
          URL deployment = null;
-         Set<URL> deployments = ((RAConfiguration) getConfiguration()).getMetadataRepository().getResourceAdapters();
+         Set<String> deployments = ((RAConfiguration) getConfiguration()).getMetadataRepository().getResourceAdapters();
 
-         for (URL u : deployments)
+         for (String s : deployments)
          {
-            if (u.toExternalForm().endsWith(archive))
-               deployment = u;
+            if (s.endsWith(archive))
+               deployment = new URL(s);
          }
 
          if (deployment == null)
@@ -299,10 +300,10 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
             throw new DeployException("Archive " + archive + " couldn't be resolved in " + url.toExternalForm());
          }
 
-         Connector cmd = ((RAConfiguration) getConfiguration()).getMetadataRepository()
-            .getResourceAdapter(deployment);
-         IronJacamar ijmd = ((RAConfiguration) getConfiguration()).getMetadataRepository().getIronJacamar(deployment);
-         File root = ((RAConfiguration) getConfiguration()).getMetadataRepository().getRoot(deployment);
+         MetadataRepository mdr = ((RAConfiguration) getConfiguration()).getMetadataRepository();
+         Connector cmd = mdr.getResourceAdapter(deployment.toExternalForm());
+         IronJacamar ijmd = mdr.getIronJacamar(deployment.toExternalForm());
+         File root = mdr.getRoot(deployment.toExternalForm());
 
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(raxml, cmd);
          // Create classloader

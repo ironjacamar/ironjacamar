@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
+import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 
 import java.io.Closeable;
@@ -131,10 +132,17 @@ public class RaXmlDeployment implements Deployment
       {
          for (int i = 0; i < cfs.length; i++)
          {
-            String cf = cfs[i].getClass().getName();
-            String jndi = jndis[i];
+            try
+            {
+               String cf = cfs[i].getClass().getName();
+               String jndi = jndis[i];
 
-            mdr.unregisterJndiMapping(raDeployment, cf, jndi);
+               mdr.unregisterJndiMapping(raDeployment.toExternalForm(), cf, jndi);
+            }
+            catch (NotFoundException nfe)
+            {
+               log.warn("Exception during unregistering deployment", nfe);
+            }
          }
       }
 

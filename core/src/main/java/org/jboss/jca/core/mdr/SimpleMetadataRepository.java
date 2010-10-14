@@ -29,7 +29,6 @@ import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,76 +46,104 @@ import java.util.concurrent.ConcurrentMap;
 public class SimpleMetadataRepository implements MetadataRepository
 {
    /** Resource adapter templates */
-   private ConcurrentMap<URL, Connector> raTemplates;
+   private ConcurrentMap<String, Connector> raTemplates;
 
    /** Resource adapter roots */
-   private ConcurrentMap<URL, File> raRoots;
+   private ConcurrentMap<String, File> raRoots;
 
    /** IronJacamar metadata */
-   private Map<URL, IronJacamar> ironJacamar;
+   private Map<String, IronJacamar> ironJacamar;
 
    /** JNDI mappings */
-   private ConcurrentMap<URL, Map<String, List<String>>> jndiMappings;
+   private ConcurrentMap<String, Map<String, List<String>>> jndiMappings;
 
    /**
     * Constructor
     */
    public SimpleMetadataRepository()
    {
-      this.raTemplates = new ConcurrentHashMap<URL, Connector>();
-      this.raRoots = new ConcurrentHashMap<URL, File>();
-      this.ironJacamar = new HashMap<URL, IronJacamar>();
-      this.jndiMappings = new ConcurrentHashMap<URL, Map<String, List<String>>>();
+      this.raTemplates = new ConcurrentHashMap<String, Connector>();
+      this.raRoots = new ConcurrentHashMap<String, File>();
+      this.ironJacamar = new HashMap<String, IronJacamar>();
+      this.jndiMappings = new ConcurrentHashMap<String, Map<String, List<String>>>();
    }
 
    /**
     * {@inheritDoc}
     */
-   public void registerResourceAdapter(URL deployment, File root, Connector md, IronJacamar ijmd)
+   public void registerResourceAdapter(String uniqueId, File root, Connector md, IronJacamar ijmd)
       throws AlreadyExistsException
    {
-      if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
+
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
+
+      if (root == null)
+         throw new IllegalArgumentException("Root is null");
 
       if (md == null)
-         throw new IllegalArgumentException("Metadata is null");
+         throw new IllegalArgumentException("Connector is null");
 
-      if (raTemplates.containsKey(deployment))
-         throw new AlreadyExistsException(deployment + " already registered");
+      // The IronJacamar metadata object can be null
 
-      raTemplates.put(deployment, md);
-      raRoots.put(deployment, root);
-      ironJacamar.put(deployment, ijmd);
+      if (raTemplates.containsKey(uniqueId))
+         throw new AlreadyExistsException(uniqueId + " already registered");
+
+      raTemplates.put(uniqueId, md);
+      raRoots.put(uniqueId, root);
+      ironJacamar.put(uniqueId, ijmd);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void unregisterResourceAdapter(URL deployment) throws NotFoundException
+   public void unregisterResourceAdapter(String uniqueId) throws NotFoundException
    {
-      if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
 
-      if (!raTemplates.containsKey(deployment))
-         throw new NotFoundException(deployment + " isn't registered");
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
 
-      raTemplates.remove(deployment);
-      raRoots.remove(deployment);
-      ironJacamar.remove(deployment);
+      if (!raTemplates.containsKey(uniqueId))
+         throw new NotFoundException(uniqueId + " isn't registered");
+
+      raTemplates.remove(uniqueId);
+      raRoots.remove(uniqueId);
+      ironJacamar.remove(uniqueId);
    }
 
    /**
     * {@inheritDoc}
     */
-   public Connector getResourceAdapter(URL deployment) throws NotFoundException
+   public boolean hasResourceAdapter(String uniqueId)
    {
-      if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
+      
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
 
-      if (!raTemplates.containsKey(deployment))
-         throw new NotFoundException(deployment + " isn't registered");
+      return raTemplates.containsKey(uniqueId);
+   }
 
-      Connector md = raTemplates.get(deployment);
+   /**
+    * {@inheritDoc}
+    */
+   public Connector getResourceAdapter(String uniqueId) throws NotFoundException
+   {
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
+
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
+
+      if (!raTemplates.containsKey(uniqueId))
+         throw new NotFoundException(uniqueId + " isn't registered");
+
+      Connector md = raTemplates.get(uniqueId);
 
       // Always return a copy as the caller may make changes to it
       return (Connector)md.copy();
@@ -125,7 +152,7 @@ public class SimpleMetadataRepository implements MetadataRepository
    /**
     * {@inheritDoc}
     */
-   public Set<URL> getResourceAdapters()
+   public Set<String> getResourceAdapters()
    {
       return Collections.unmodifiableSet(raTemplates.keySet());
    }
@@ -133,50 +160,65 @@ public class SimpleMetadataRepository implements MetadataRepository
    /**
     * {@inheritDoc}
     */
-   public File getRoot(URL deployment) throws NotFoundException
+   public File getRoot(String uniqueId) throws NotFoundException
    {
-      if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
 
-      if (!raRoots.containsKey(deployment))
-         throw new NotFoundException(deployment + " isn't registered");
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
 
-      return raRoots.get(deployment);
+      if (!raRoots.containsKey(uniqueId))
+         throw new NotFoundException(uniqueId + " isn't registered");
+
+      return raRoots.get(uniqueId);
    }
 
    /**
     * {@inheritDoc}
     */
-   public IronJacamar getIronJacamar(URL deployment) throws NotFoundException
+   public IronJacamar getIronJacamar(String uniqueId) throws NotFoundException
    {
-      if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
 
-      if (!ironJacamar.containsKey(deployment))
-         throw new NotFoundException(deployment + " isn't registered");
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
 
-      return ironJacamar.get(deployment);
+      if (!ironJacamar.containsKey(uniqueId))
+         throw new NotFoundException(uniqueId + " isn't registered");
+
+      return ironJacamar.get(uniqueId);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void registerJndiMapping(URL deployment, String clz, String jndi)
+   public void registerJndiMapping(String uniqueId, String clz, String jndi)
    {
-      if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
+
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
 
       if (clz == null)
          throw new IllegalArgumentException("Clz is null");
 
+      if (clz.trim().equals(""))
+         throw new IllegalArgumentException("Clz is empty");
+
       if (jndi == null)
          throw new IllegalArgumentException("Jndi is null");
 
-      Map<String, List<String>> mappings = jndiMappings.get(deployment);
+      if (jndi.trim().equals(""))
+         throw new IllegalArgumentException("Jndi is empty");
+
+      Map<String, List<String>> mappings = jndiMappings.get(uniqueId);
       if (mappings == null)
       {
          Map<String, List<String>> newMappings = new HashMap<String, List<String>>(1);
-         mappings = jndiMappings.putIfAbsent(deployment, newMappings);
+         mappings = jndiMappings.putIfAbsent(uniqueId, newMappings);
 
          if (mappings == null)
          {
@@ -196,18 +238,30 @@ public class SimpleMetadataRepository implements MetadataRepository
    /**
     * {@inheritDoc}
     */
-   public void unregisterJndiMapping(URL deployment, String clz, String jndi)
+   public void unregisterJndiMapping(String uniqueId, String clz, String jndi) throws NotFoundException
    {
-      if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
+
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("Uniqueid is empty");
 
       if (clz == null)
          throw new IllegalArgumentException("Clz is null");
 
+      if (clz.trim().equals(""))
+         throw new IllegalArgumentException("Clz is empty");
+
       if (jndi == null)
          throw new IllegalArgumentException("Jndi is null");
 
-      Map<String, List<String>> mappings = jndiMappings.get(deployment);
+      if (jndi.trim().equals(""))
+         throw new IllegalArgumentException("Jndi is empty");
+
+      if (!jndiMappings.containsKey(uniqueId))
+         throw new NotFoundException(uniqueId + " isn't registered");
+
+      Map<String, List<String>> mappings = jndiMappings.get(uniqueId);
 
       if (mappings != null)
       {
@@ -225,7 +279,7 @@ public class SimpleMetadataRepository implements MetadataRepository
 
          if (mappings.size() == 0)
          {
-            jndiMappings.remove(deployment);
+            jndiMappings.remove(uniqueId);
          }
       }
    }
@@ -233,11 +287,36 @@ public class SimpleMetadataRepository implements MetadataRepository
    /**
     * {@inheritDoc}
     */
-   public Map<String, List<String>> getJndiMappings(URL deployment)
+   public boolean hasJndiMappings(String uniqueId)
    {
-      if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
       
-      return jndiMappings.get(deployment);
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
+
+      return jndiMappings.containsKey(uniqueId);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Map<String, List<String>> getJndiMappings(String uniqueId) throws NotFoundException
+   {
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
+      
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
+
+      if (!jndiMappings.containsKey(uniqueId))
+         throw new NotFoundException(uniqueId + " isn't registered");
+
+      Map<String, List<String>> mappings = jndiMappings.get(uniqueId);
+
+      if (mappings == null)
+         return Collections.unmodifiableMap(new HashMap<String, List<String>>(0));
+
+      return Collections.unmodifiableMap(mappings);
    }
 }
