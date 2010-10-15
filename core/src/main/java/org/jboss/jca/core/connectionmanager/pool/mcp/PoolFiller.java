@@ -21,10 +21,8 @@
  */
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.jboss.logging.Logger;
 
@@ -46,8 +44,7 @@ class PoolFiller implements Runnable
    private static final PoolFiller FILLER = new PoolFiller();
 
    /** Pools list */
-   private final LinkedBlockingQueue<ManagedConnectionPool> pools = 
-      new LinkedBlockingQueue<ManagedConnectionPool>();
+   private final LinkedList<ManagedConnectionPool> pools = new LinkedList<ManagedConnectionPool>();
 
    /** Filler thread */
    private final Thread fillerThread;
@@ -55,12 +52,6 @@ class PoolFiller implements Runnable
    /** Thread name */
    private static final String THREAD_FILLER_NAME = "JCA PoolFiller";
 
-   /** Lock instance */
-   private ReentrantLock lock = new ReentrantLock();
-
-   /** Lock condition */
-   private Condition condition = this.lock.newCondition();
-   
    /**Thread is configured or not*/
    private AtomicBoolean threadStarted = new AtomicBoolean(false);
 
@@ -91,47 +82,45 @@ class PoolFiller implements Runnable
       final ClassLoader myClassLoader = getClass().getClassLoader();
       SecurityActions.setThreadContextClassLoader(myClassLoader);
 
-      // keep going unless interrupted
       while (true)
       {
-         ManagedConnectionPool mcp = null;
-         try
+         try 
          {
-            // keep iterating through pools till empty, exception escapes.
+            ManagedConnectionPool mcp = null;
+
             while (true)
             {
-               mcp = pools.remove();
-
-               if (mcp == null)
+               synchronized (pools)
                {
-                  break;
+                  mcp = pools.removeFirst();
                }
 
+               if (mcp == null) 
+                  break;
+                        
                mcp.fillToMin();
             }
          }
          catch (Exception e)
          {
-            log.warn("Exception is occured while filling pool : " + mcp);
+            // Ignore
          }
-
-         try
+                        
+         try 
          {
-            this.lock.lock();
-
-            while (pools.isEmpty())
+            synchronized (pools)
             {
-               condition.await();
+               while (pools.isEmpty())
+               {
+                  pools.wait();                        
+                  
+               }
             }
          }
          catch (InterruptedException ie)
          {
+            Thread.currentThread().interrupt();
             return;
-
-         }
-         finally
-         {
-            this.lock.unlock();
          }
       }
    }
@@ -147,7 +136,10 @@ class PoolFiller implements Runnable
          this.fillerThread.start();
       }
       
-      this.pools.add(mcp);
-      this.condition.signal();
+      synchronized (pools)
+      {
+         pools.addLast(mcp);
+         pools.notify();
+      }
    }
 }
