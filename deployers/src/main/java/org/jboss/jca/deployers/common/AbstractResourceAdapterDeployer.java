@@ -584,23 +584,30 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
-    * Check if the resource adapter should be activated based on the ironjacamar.xml input
-    * @param cmd cmd cmd The connector metadata
-    * @param ijmd ijmd ijmd The IronJacamar metadata
-    * @return True if the deployment should be activated; otherwise false
-    */
-   protected abstract boolean checkActivation(Connector cmd, IronJacamar ijmd);
-
-   /**
-    * Initialize and inject configuration properties into container
-    * @param value value
-    * @param cpm confi properties
-    * @param cl  The class loader
-    * @return The object
-    * @throws DeployException DeployException Thrown if the object cant be initialized
-    */
-   protected abstract Object initAndInject(String value, List<? extends ConfigProperty> cpm, ClassLoader cl)
-      throws DeployException;
+   *
+   * create objects and inject value for this depployment. it is a general method returning a {@link CommonDeployment}
+   * to be used to exchange objects needed to real injection in the container
+   *
+   * @param url url
+   * @param deploymentName deploymentName
+   * @param root root
+   * @param cl cl
+   * @param cmd connector md
+   * @param ijmd ironjacamar md
+   * @return return the exchange POJO with value useful for injection in the container (fungal or AS)
+   * @throws DeployException DeployException
+   * @throws ResourceException ResourceException
+   * @throws ValidatorException ValidatorException
+   * @throws AlreadyExistsException AlreadyExistsException
+   * @throws ClassNotFoundException ClassNotFoundException
+   * @throws Throwable Throwable
+   */
+   protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root, ClassLoader cl,
+      Connector cmd, IronJacamar ijmd) throws DeployException, ResourceException, ValidatorException,
+      AlreadyExistsException, ClassNotFoundException, Throwable
+   {
+      return createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd, null);
+   }
 
    /**
     *
@@ -613,6 +620,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param cl cl
     * @param cmd connector md
     * @param ijmd ironjacamar md
+    * @param raxml Resource Adapter from -ra.xml definition
     * @return return the exchange POJO with value useful for injection in the container (fungal or AS)
     * @throws DeployException DeployException
     * @throws ResourceException ResourceException
@@ -622,8 +630,9 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws Throwable Throwable
     */
    protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root, ClassLoader cl,
-      Connector cmd, IronJacamar ijmd) throws DeployException, ResourceException, ValidatorException,
-      AlreadyExistsException, ClassNotFoundException, Throwable
+      Connector cmd, IronJacamar ijmd, org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml)
+      throws DeployException, ResourceException, ValidatorException, AlreadyExistsException, ClassNotFoundException,
+      Throwable
    {
       Set<Failure> failures = null;
       try
@@ -685,7 +694,12 @@ public abstract class AbstractResourceAdapterDeployer
                if (activateDeployment)
                {
                   CommonConnDef ijCD = null;
-
+                  CommonConnDef cdRaXml = null;
+                  if (raxml != null)
+                  {
+                     cdRaXml = findConnectionDefinition(ra10.getManagedConnectionFactoryClass().getValue(),
+                        raxml.getConnectionDefinitions());
+                  }
                   if (ijmd != null)
                   {
                      ijCD = findConnectionDefinition(ra10.getManagedConnectionFactoryClass().getValue(),
@@ -693,7 +707,7 @@ public abstract class AbstractResourceAdapterDeployer
                   }
                   //
                   //                  if (ijmd == null || ijCD == null || ijCD.isEnabled())
-                  if (ijCD == null || ijCD.isEnabled())
+                  if (ijCD == null || ijCD.isEnabled() || (cdRaXml != null && cdRaXml.isEnabled()))
                   {
                      ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(ra10
                         .getManagedConnectionFactoryClass().getValue(), ra10.getConfigProperties(), cl);
@@ -711,15 +725,32 @@ public abstract class AbstractResourceAdapterDeployer
                         .getConfigProperties()));
                      beanValidationObjects.add(mcf);
                      associateResourceAdapter(resourceAdapter, mcf);
-
                      // Create the pool
-                     PoolConfiguration pc = createPoolConfiguration(ijCD != null ? ijCD.getPool() : null,
-                        ijCD != null ? ijCD.getTimeOut() : null, ijCD != null ? ijCD.getValidation() : null);
+                     PoolConfiguration pc = null;
+                     if (cdRaXml != null)
+                     {
+                        pc = createPoolConfiguration(cdRaXml.getPool(), cdRaXml.getTimeOut(), cdRaXml.getValidation());
+                     }
+                     else if (ijCD != null)
+                     {
+                        pc = createPoolConfiguration(ijCD.getPool(), ijCD.getTimeOut(), ijCD.getValidation());
+                     }
+                     else
+                     {
+                        // Default default settings
+                        pc = createPoolConfiguration(null, null, null);
+                     }
                      PoolFactory pf = new PoolFactory();
 
                      Boolean noTxSeparatePool = Boolean.FALSE;
+                     if (cdRaXml != null && cdRaXml.getPool() != null && cdRaXml.isXa())
+                     {
+                        CommonXaPool ijXaPool = (CommonXaPool) cdRaXml.getPool();
 
-                     if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
+                        if (ijXaPool != null)
+                           noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
+                     }
+                     else if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
                      {
                         CommonXaPool ijXaPool = (CommonXaPool) ijCD.getPool();
 
@@ -734,8 +765,11 @@ public abstract class AbstractResourceAdapterDeployer
                      ConnectionManager cm = null;
 
                      TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
-
-                     if (ijmd != null && ijmd.getTransactionSupport() != null)
+                     if (raxml != null && raxml.getTransactionSupport() != null)
+                     {
+                        tsmd = raxml.getTransactionSupport();
+                     }
+                     else if (ijmd != null && ijmd.getTransactionSupport() != null)
                      {
                         tsmd = ijmd.getTransactionSupport();
                      }
@@ -766,11 +800,19 @@ public abstract class AbstractResourceAdapterDeployer
                      // Connection manager properties
                      Integer allocationRetry = null;
                      Long allocationRetryWaitMillis = null;
+                     if (cdRaXml != null && cdRaXml.getTimeOut() != null)
+                     {
+                        allocationRetry = cdRaXml.getTimeOut().getAllocationRetry();
+                        allocationRetryWaitMillis = cdRaXml.getTimeOut().getAllocationRetryWaitMillis();
+                     }
 
                      if (ijCD != null && ijCD.getTimeOut() != null)
                      {
-                        allocationRetry = ijCD.getTimeOut().getAllocationRetry();
-                        allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
+                        if (allocationRetry == null)
+                           allocationRetry = ijCD.getTimeOut().getAllocationRetry();
+
+                        if (allocationRetryWaitMillis == null)
+                           allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
                      }
 
                      // Select the correct connection manager
@@ -785,6 +827,15 @@ public abstract class AbstractResourceAdapterDeployer
                         Boolean isSameRMOverride = null;
                         Boolean wrapXAResource = null;
                         Boolean padXid = null;
+                        if (cdRaXml != null && cdRaXml.isXa())
+                        {
+                           CommonXaPool ijXaPool = (CommonXaPool) cdRaXml.getPool();
+
+                           interleaving = ijXaPool.isInterleaving();
+                           isSameRMOverride = ijXaPool.isSameRmOverride();
+                           wrapXAResource = ijXaPool.isWrapXaDataSource();
+                           padXid = ijXaPool.isPadXid();
+                        }
 
                         if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
                         {
@@ -792,10 +843,17 @@ public abstract class AbstractResourceAdapterDeployer
 
                            if (ijXaPool != null)
                            {
-                              interleaving = ijXaPool.isInterleaving();
-                              isSameRMOverride = ijXaPool.isSameRmOverride();
-                              wrapXAResource = ijXaPool.isWrapXaDataSource();
-                              padXid = ijXaPool.isPadXid();
+                              if (interleaving == null)
+                                 interleaving = ijXaPool.isInterleaving();
+
+                              if (isSameRMOverride == null)
+                                 isSameRMOverride = ijXaPool.isSameRmOverride();
+
+                              if (wrapXAResource == null)
+                                 wrapXAResource = ijXaPool.isWrapXaDataSource();
+
+                              if (padXid == null)
+                                 padXid = ijXaPool.isPadXid();
                            }
                         }
 
@@ -824,9 +882,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                      if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                      {
-                        if (ijCD != null)
+                        if (cdRaXml != null || ijCD != null)
                         {
-                           String jndiName = ijCD.getJndiName();
+                           String jndiName;
+                           if (cdRaXml != null)
+                              jndiName = cdRaXml.getJndiName();
+                           else
+                              jndiName = ijCD.getJndiName();
 
                            bindConnectionFactory(url, deploymentName, cf, jndiName);
                            cfs = new Object[]{cf};
@@ -875,7 +937,13 @@ public abstract class AbstractResourceAdapterDeployer
                            if (activateDeployment)
                            {
                               org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD = null;
+                              org.jboss.jca.common.api.metadata.common.CommonConnDef cdRaXml = null;
 
+                              if (raxml != null)
+                              {
+                                 cdRaXml = findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass()
+                                    .getValue(), raxml.getConnectionDefinitions());
+                              }
                               if (ijmd != null)
                               {
                                  ijCD = findConnectionDefinition(
@@ -885,7 +953,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                               //                              if (ijmd == null || ijCD == null || ijCD.isEnabled())
                               //                              {
-                              if (ijCD == null || ijCD.isEnabled())
+                              if (ijCD == null || ijCD.isEnabled() || (cdRaXml != null && cdRaXml.isEnabled()))
                               {
                                  ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cdMeta
                                     .getManagedConnectionFactoryClass().getValue(), cdMeta.getConfigProperties(), cl);
@@ -903,17 +971,35 @@ public abstract class AbstractResourceAdapterDeployer
                                                                                  cdMeta.getConfigProperties()));
                                  beanValidationObjects.add(mcf);
                                  associateResourceAdapter(resourceAdapter, mcf);
-
                                  // Create the pool
-                                 PoolConfiguration pc = createPoolConfiguration(ijCD != null ? ijCD.getPool() : null,
-                                    ijCD != null ? ijCD.getTimeOut() : null, ijCD != null
-                                       ? ijCD.getValidation()
-                                       : null);
+                                 PoolConfiguration pc = null;
+                                 if (cdRaXml != null && cdRaXml.getPool() != null)
+                                 {
+                                    pc = createPoolConfiguration(cdRaXml.getPool(), cdRaXml.getTimeOut(),
+                                       cdRaXml.getValidation());
+                                 }
+                                 else if (ijCD != null)
+                                 {
+                                    pc = createPoolConfiguration(ijCD.getPool(), ijCD.getTimeOut(),
+                                       ijCD.getValidation());
+                                 }
+                                 else
+                                 {
+                                    // Default default settings
+                                    pc = createPoolConfiguration(null, null, null);
+                                 }
+
                                  PoolFactory pf = new PoolFactory();
 
                                  Boolean noTxSeparatePool = Boolean.FALSE;
+                                 if (cdRaXml != null && cdRaXml.getPool() != null && cdRaXml.isXa())
+                                 {
+                                    CommonXaPool ijXaPool = (CommonXaPool) cdRaXml.getPool();
 
-                                 if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
+                                    if (ijXaPool != null)
+                                       noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
+                                 }
+                                 else if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
                                  {
                                     CommonXaPool ijXaPool = (CommonXaPool) ijCD.getPool();
 
@@ -929,8 +1015,11 @@ public abstract class AbstractResourceAdapterDeployer
                                  ConnectionManager cm = null;
                                  TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
                                  TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
-
-                                 if (ijmd != null && ijmd.getTransactionSupport() != null)
+                                 if (raxml != null && raxml.getTransactionSupport() != null)
+                                 {
+                                    tsmd = raxml.getTransactionSupport();
+                                 }
+                                 else if (ijmd != null && ijmd.getTransactionSupport() != null)
                                  {
                                     tsmd = ijmd.getTransactionSupport();
                                  }
@@ -959,11 +1048,19 @@ public abstract class AbstractResourceAdapterDeployer
                                  // Connection manager properties
                                  Integer allocationRetry = null;
                                  Long allocationRetryWaitMillis = null;
+                                 if (cdRaXml != null && cdRaXml.getTimeOut() != null)
+                                 {
+                                    allocationRetry = cdRaXml.getTimeOut().getAllocationRetry();
+                                    allocationRetryWaitMillis = cdRaXml.getTimeOut().getAllocationRetryWaitMillis();
+                                 }
 
                                  if (ijCD != null && ijCD.getTimeOut() != null)
                                  {
-                                    allocationRetry = ijCD.getTimeOut().getAllocationRetry();
-                                    allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
+                                    if (allocationRetry == null)
+                                       allocationRetry = ijCD.getTimeOut().getAllocationRetry();
+
+                                    if (allocationRetryWaitMillis == null)
+                                       allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
                                  }
 
                                  // Select the correct connection manager
@@ -979,15 +1076,31 @@ public abstract class AbstractResourceAdapterDeployer
                                     Boolean isSameRMOverride = null;
                                     Boolean wrapXAResource = null;
                                     Boolean padXid = null;
-
-                                    if (ijCD != null && ijCD.isXa())
+                                    if (cdRaXml != null && cdRaXml.isXa())
                                     {
-                                       CommonXaPool ijXaPool = (CommonXaPool) ijCD.getPool();
+                                       CommonXaPool ijXaPool = (CommonXaPool) cdRaXml.getPool();
 
                                        interleaving = ijXaPool.isInterleaving();
                                        isSameRMOverride = ijXaPool.isSameRmOverride();
                                        wrapXAResource = ijXaPool.isWrapXaDataSource();
                                        padXid = ijXaPool.isPadXid();
+                                    }
+
+                                    if (ijCD != null && ijCD.isXa())
+                                    {
+                                       CommonXaPool ijXaPool = (CommonXaPool) ijCD.getPool();
+
+                                       if (interleaving == null)
+                                          interleaving = ijXaPool.isInterleaving();
+
+                                       if (isSameRMOverride == null)
+                                          isSameRMOverride = ijXaPool.isSameRmOverride();
+
+                                       if (wrapXAResource == null)
+                                          wrapXAResource = ijXaPool.isWrapXaDataSource();
+
+                                       if (padXid == null)
+                                          padXid = ijXaPool.isPadXid();
                                     }
 
                                     cm = cmf.createTransactional(tsl, pool, allocationRetry,
@@ -1016,9 +1129,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                                  if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                                  {
-                                    if (ijCD != null)
+                                    if (cdRaXml != null || ijCD != null)
                                     {
-                                       String jndiName = ijCD.getJndiName();
+                                       String jndiName;
+                                       if (cdRaXml != null)
+                                          jndiName = cdRaXml.getJndiName();
+                                       else
+                                          jndiName = ijCD.getJndiName();
 
                                        bindConnectionFactory(url, deploymentName, cf, jndiName);
                                        cfs[cdIndex] = cf;
@@ -1107,8 +1224,14 @@ public abstract class AbstractResourceAdapterDeployer
             if (resourceAdapter != null)
             {
                String bootstrapIdentifier = null;
+               if (raxml != null && raxml.getBootstrapContext() != null &&
+                   !raxml.getBootstrapContext().trim().equals(""))
+               {
+                  bootstrapIdentifier = raxml.getBootstrapContext();
+               }
 
-               if (ijmd != null)
+               if (bootstrapIdentifier == null && ijmd != null && ijmd.getBootstrapContext() != null &&
+                   !ijmd.getBootstrapContext().trim().equals(""))
                {
                   bootstrapIdentifier = ijmd.getBootstrapContext();
                }
@@ -1218,5 +1341,24 @@ public abstract class AbstractResourceAdapterDeployer
     * @return false if configuration is not valid
     */
    protected abstract boolean checkConfigurationIsValid();
+
+   /**
+    * Check if the resource adapter should be activated based on the ironjacamar.xml input
+    * @param cmd cmd cmd The connector metadata
+    * @param ijmd ijmd ijmd The IronJacamar metadata
+    * @return True if the deployment should be activated; otherwise false
+    */
+   protected abstract boolean checkActivation(Connector cmd, IronJacamar ijmd);
+
+   /**
+    * Initialize and inject configuration properties into container
+    * @param value value
+    * @param cpm confi properties
+    * @param cl  The class loader
+    * @return The object
+    * @throws DeployException DeployException Thrown if the object cant be initialized
+    */
+   protected abstract Object initAndInject(String value, List<? extends ConfigProperty> cpm, ClassLoader cl)
+      throws DeployException;
 
 }

@@ -2,6 +2,7 @@
 .settings
 .classpath
 standalone/**
+build.debug.xml
 # /
 /build
 /target

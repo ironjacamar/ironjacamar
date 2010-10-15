@@ -32,10 +32,14 @@
     <Method name="mergeConnectorAndDs" />
     <Bug code="NP"/>
   </Match>
-<Match>
+  <Match>
     <Class name="org.jboss.jca.common.metadata.merge.Merger"/>
     <Method name="mergeConnectorWithProperties" />
     <Bug code="NP"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.common.CommonDeployment"/>
+    <Bug code="PZLA"/>
   </Match>
 
   <!--  org.jboss.jca.core filter -->
