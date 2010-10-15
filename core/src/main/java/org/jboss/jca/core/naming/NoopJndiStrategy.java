@@ -88,6 +88,36 @@ public class NoopJndiStrategy implements JndiStrategy
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public String[] bindAdminObjects(String deployment, Object[] aos) throws Throwable
+   {
+      return new String[0];
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String[] bindAdminObjects(String deployment, Object[] aos, String[] jndis) throws Throwable
+   {
+      return new String[0];
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unbindAdminObjects(String deployment, Object[] aos) throws Throwable
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unbindAdminObjects(String deployment, Object[] aos, String[] jndis) throws Throwable
+   {
+   }
+
+   /**
     * Clone the JNDI strategy implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported

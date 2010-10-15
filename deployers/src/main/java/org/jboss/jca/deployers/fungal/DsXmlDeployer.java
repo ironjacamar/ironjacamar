@@ -118,7 +118,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
          Set<String> raDeployments = mdr.getResourceAdapters();
          CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, raDeployments, dataSources, parent);
 
-         return new DsXmlDeployment(c.getURL(), c.getDeploymentName(), c.getCfs(), c.getJndiNames(), c.getCl());
+         return new DsXmlDeployment(c.getURL(), c.getDeploymentName(), c.getCfs(), c.getCfJndiNames(), c.getCl());
       }
       catch (DeployException de)
       {

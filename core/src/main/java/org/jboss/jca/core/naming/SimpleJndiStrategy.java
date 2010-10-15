@@ -41,7 +41,9 @@ import org.jboss.util.naming.Util;
 
 /**
  * A simple JNDI strategy that bind a single connection factory under the
- * name of "java:/eis/&lt;deployment&gt;" by default
+ * name of "java:/eis/&lt;deployment&gt;" by default.
+ *
+ * A single admin object is bound under "java:/eis/ao/&lt;deployment&gt;" by default.
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
@@ -51,10 +53,13 @@ public class SimpleJndiStrategy implements JndiStrategy
 
    private static boolean trace = log.isTraceEnabled();
 
-   /** JNDI prefix */
-   private static final String JNDI_PREFIX = "java:/eis/";
+   /** JNDI prefix for connection factories */
+   private static final String CF_JNDI_PREFIX = "java:/eis/";
 
-   private static ConcurrentMap<String, Object> connectionFactories = new ConcurrentHashMap<String, Object>();
+   /** JNDI prefix for admin objects */
+   private static final String AO_JNDI_PREFIX = "java:/eis/ao/";
+
+   private static ConcurrentMap<String, Object> objs = new ConcurrentHashMap<String, Object>();
 
    /**
     * Constructor
@@ -74,7 +79,7 @@ public class SimpleJndiStrategy implements JndiStrategy
       String className = (String)ref.get("class").getContent();
       String cfname = (String)ref.get("name").getContent();
 
-      return connectionFactories.get(qualifiedName(cfname, className));
+      return objs.get(qualifiedName(cfname, className));
    }
 
    /**
@@ -82,7 +87,7 @@ public class SimpleJndiStrategy implements JndiStrategy
     */
    public String[] bindConnectionFactories(String deployment, Object[] cfs) throws Throwable
    {
-      String jndiName = JNDI_PREFIX + deployment;
+      String jndiName = CF_JNDI_PREFIX + deployment;
 
       return bindConnectionFactories(deployment, cfs, new String[] {jndiName});
    }
@@ -139,7 +144,7 @@ public class SimpleJndiStrategy implements JndiStrategy
                                        null);
          ref.add(new StringRefAddr("name", jndiName));
 
-         if (connectionFactories.putIfAbsent(qualifiedName(jndiName, className), cf) != null)
+         if (objs.putIfAbsent(qualifiedName(jndiName, className), cf) != null)
             throw new Exception("Deployment " + className + " failed, " + jndiName + " is already deployed");
 
          Referenceable referenceable = (Referenceable)cf;
@@ -173,7 +178,7 @@ public class SimpleJndiStrategy implements JndiStrategy
     */
    public void unbindConnectionFactories(String deployment, Object[] cfs) throws Throwable
    {
-      String jndiName = JNDI_PREFIX + deployment;
+      String jndiName = CF_JNDI_PREFIX + deployment;
 
       unbindConnectionFactories(deployment, cfs, new String[] {jndiName});
    }
@@ -224,7 +229,179 @@ public class SimpleJndiStrategy implements JndiStrategy
 
          Util.unbind(context, jndiName);
 
-         connectionFactories.remove(qualifiedName(jndiName, className));
+         objs.remove(qualifiedName(jndiName, className));
+
+         if (log.isDebugEnabled())
+            log.debug("Unbound " + className + " under " + jndiName);
+      }
+      catch (Throwable t)
+      {
+         log.warn("Exception during unbind", t);
+      }
+      finally
+      {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String[] bindAdminObjects(String deployment, Object[] aos) throws Throwable
+   {
+      String jndiName = AO_JNDI_PREFIX + deployment;
+
+      return bindAdminObjects(deployment, aos, new String[] {jndiName});
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String[] bindAdminObjects(String deployment, Object[] aos, String[] jndis) throws Throwable
+   {
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");
+
+      if (deployment.trim().equals(""))
+         throw new IllegalArgumentException("Deployment is empty");
+
+      if (aos == null)
+         throw new IllegalArgumentException("AOS is null");
+
+      if (aos.length == 0)
+         throw new IllegalArgumentException("AOS is empty");
+
+      if (aos.length > 1)
+         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
+                                            "a single admin object per deployment");
+      if (jndis == null)
+         throw new IllegalArgumentException("JNDIs is null");
+
+      if (jndis.length == 0)
+         throw new IllegalArgumentException("JNDIs is empty");
+
+      if (jndis.length > 1)
+         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
+                                            "a single JNDI name per deployment");
+
+      String jndiName = jndis[0];
+      Object ao = aos[0];
+
+      if (trace)
+         log.trace("Binding " + ao.getClass().getName() + " under " + jndiName);
+      
+      if (ao == null)
+         throw new IllegalArgumentException("Admin object is null");
+      
+      if (jndiName == null)
+         throw new IllegalArgumentException("JNDI name is null");
+
+      Context context = new InitialContext();
+      try
+      {
+         String className = ao.getClass().getName();
+         Reference ref = new Reference(className,
+                                       new StringRefAddr("class", className),
+                                       SimpleJndiStrategy.class.getName(),
+                                       null);
+         ref.add(new StringRefAddr("name", jndiName));
+
+         if (objs.putIfAbsent(qualifiedName(jndiName, className), ao) != null)
+            throw new Exception("Deployment " + className + " failed, " + jndiName + " is already deployed");
+
+         Referenceable referenceable = (Referenceable)ao;
+         referenceable.setReference(ref);
+
+         Util.bind(context, jndiName, ao);
+
+         if (log.isDebugEnabled())
+            log.debug("Bound " + ao.getClass().getName() + " under " + jndiName);
+      }
+      finally
+      {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      return new String[] {jndiName};
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unbindAdminObjects(String deployment, Object[] aos) throws Throwable
+   {
+      String jndiName = AO_JNDI_PREFIX + deployment;
+
+      unbindAdminObjects(deployment, aos, new String[] {jndiName});
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unbindAdminObjects(String deployment, Object[] aos, String[] jndis) throws Throwable
+   {
+      if (aos == null)
+         throw new IllegalArgumentException("AOS is null");
+
+      if (aos.length == 0)
+         throw new IllegalArgumentException("AOS is empty");
+
+      if (aos.length > 1)
+         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
+                                            "a single admin object per deployment");
+
+      if (jndis == null)
+         throw new IllegalArgumentException("JNDIs is null");
+
+      if (jndis.length == 0)
+         throw new IllegalArgumentException("JNDIs is empty");
+
+      if (jndis.length > 1)
+         throw new IllegalArgumentException("SimpleJndiStrategy only support " + 
+                                            "a single JNDI name per deployment");
+
+      String jndiName = jndis[0];
+      Object ao = aos[0];
+
+      if (ao == null)
+         throw new IllegalArgumentException("Admin object is null");
+
+      if (jndiName == null)
+         throw new IllegalArgumentException("JNDI name is null");
+
+      String className = ao.getClass().getName();
+
+      if (trace)
+         log.trace("Unbinding " + className + " under " + jndiName);
+
+      Context context = null;
+      try
+      {
+         context = new InitialContext();
+
+         Util.unbind(context, jndiName);
+
+         objs.remove(qualifiedName(jndiName, className));
 
          if (log.isDebugEnabled())
             log.debug("Unbound " + className + " under " + jndiName);

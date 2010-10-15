@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.common;
 
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
@@ -356,10 +357,10 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
-    * Find the connection factory for a managed connection factory
-    * @param clz clz clz The fully quilified class name for the managed connection factory
-    * @param defs defs defs The connection definitions
-    * @return The connection definiton; <code>null</code> if none could be found
+    * Find the metadata for a managed connection factory
+    * @param clz The fully quilified class name for the managed connection factory
+    * @param defs The connection definitions
+    * @return The metadata; <code>null</code> if none could be found
     */
    protected org.jboss.jca.common.api.metadata.common.CommonConnDef findConnectionDefinition(String clz,
       List<org.jboss.jca.common.api.metadata.common.CommonConnDef> defs)
@@ -373,7 +374,7 @@ public abstract class AbstractResourceAdapterDeployer
 
             if (cd.getClassName() != null && !clz.equals(cd.getClassName()))
             {
-               log.warn("Only one connection definitopn found with a mis-match in class-name: " + cd);
+               log.warn("Only one connection definition found with a mismatch in class-name: " + cd);
                return null;
             }
 
@@ -388,6 +389,45 @@ public abstract class AbstractResourceAdapterDeployer
          {
             if (clz.equals(cd.getClassName()))
                return cd;
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Find the metadata for an admin object
+    * @param clz The fully quilified class name for the admin object
+    * @param defs The admin object definitions
+    * @return The metadata; <code>null</code> if none could be found
+    */
+   protected org.jboss.jca.common.api.metadata.common.CommonAdminObject findAdminObject(String clz,
+      List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> defs)
+   {
+      if (defs != null)
+      {
+         // If there is only one we will return that
+         if (defs.size() == 1)
+         {
+            org.jboss.jca.common.api.metadata.common.CommonAdminObject cao = defs.get(0);
+
+            if (cao.getClassName() != null && !clz.equals(cao.getClassName()))
+            {
+               log.warn("Only one admin object found with a mismatch in class-name: " + cao);
+               return null;
+            }
+
+            return cao;
+         }
+
+         // If there are multiple definitions the admin object class name is mandatory
+         if (clz == null)
+            throw new IllegalArgumentException("AdminObject must be defined in class-name");
+
+         for (org.jboss.jca.common.api.metadata.common.CommonAdminObject cao : defs)
+         {
+            if (clz.equals(cao.getClassName()))
+               return cao;
          }
       }
 
@@ -532,12 +572,21 @@ public abstract class AbstractResourceAdapterDeployer
     * @param  beanValidationObjects beanValidationObjects
     * @param failures falures to be updated during implemented operations
     * @param url url
+    * @param deploymentName The deployment name
     * @param activateDeployment activateDeployment
+    * @param aosRaXml Admin object definitions from -ra.xml
+    * @param aosIronJacamar Admin object definitions from ironjacamar.xml
+    * @param aos The resulting array of admin objects
+    * @param aoJndiNames The resulting array of JNDI names
     * @return failures updated after implemented operations
     * @throws DeployException DeployException in case of errors
     */
    protected Set<Failure> initAdminObject(Connector cmd, ClassLoader cl, List<Validate> archiveValidationObjects,
-      List<Object> beanValidationObjects, Set<Failure> failures, URL url, boolean activateDeployment)
+         List<Object> beanValidationObjects, Set<Failure> failures, 
+         URL url, String deploymentName, boolean activateDeployment,
+         List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
+         List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
+         Object[] aos, String[] aoJndiNames)
       throws DeployException
    {
       // AdminObject
@@ -549,10 +598,18 @@ public abstract class AbstractResourceAdapterDeployer
             List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminObjects();
             if (aoMetas.size() > 0)
             {
-               for (AdminObject aoMeta : aoMetas)
+               aos = new Object[aoMetas.size()];
+               aoJndiNames = new String[aoMetas.size()];
+
+               for (int i = 0; i < aoMetas.size(); i++)
                {
+                  AdminObject aoMeta = aoMetas.get(i);
+
                   if (aoMeta.getAdminobjectClass() != null && aoMeta.getAdminobjectClass().getValue() != null)
                   {
+                     CommonAdminObject aoRaXml = findAdminObject(aoMeta.getAdminobjectClass().getValue(), aosRaXml);
+                     CommonAdminObject ijAO = findAdminObject(aoMeta.getAdminobjectClass().getValue(), aosIronJacamar);
+
                      failures = validateArchive(url,
                         Arrays.asList((Validate) new ValidateClass(Key.ADMIN_OBJECT, aoMeta.getAdminobjectClass()
                            .getValue(), cl, aoMeta.getConfigProperties())), failures);
@@ -561,18 +618,51 @@ public abstract class AbstractResourceAdapterDeployer
                      {
                         if (activateDeployment)
                         {
-                           Object o = initAndInject(aoMeta.getAdminobjectClass().getValue(),
-                              aoMeta.getConfigProperties(), cl);
+                           Object ao = initAndInject(aoMeta.getAdminobjectClass().getValue(),
+                                                     aoMeta.getConfigProperties(), cl);
 
                            if (trace)
                            {
-                              log.trace("AdminObject: " + o.getClass().getName());
-                              log.trace("AdminObject defined in classloader: " + o.getClass().getClassLoader());
+                              log.trace("AdminObject: " + ao.getClass().getName());
+                              log.trace("AdminObject defined in classloader: " + ao.getClass().getClassLoader());
                            }
 
-                           archiveValidationObjects.add(new ValidateObject(Key.ADMIN_OBJECT, o, aoMeta
-                              .getConfigProperties()));
-                           beanValidationObjects.add(o);
+                           archiveValidationObjects.add(new ValidateObject(Key.ADMIN_OBJECT, ao, aoMeta
+                                                                           .getConfigProperties()));
+                           beanValidationObjects.add(ao);
+
+                           if (ao != null && ao instanceof Serializable && ao instanceof Referenceable)
+                           {
+                              try
+                              {
+                                 String jndiName = null;
+                                 if (aoRaXml != null || ijAO != null)
+                                 {
+                                    if (aoRaXml != null)
+                                    {
+                                       jndiName = aoRaXml.getJndiName();
+                                    }
+                                    else
+                                    {
+                                       jndiName = ijAO.getJndiName();
+                                    }
+                                 
+                                    bindAdminObject(url, deploymentName, ao, jndiName);
+                                 }
+                                 else
+                                 {
+                                    String[] names = bindAdminObject(url, deploymentName, ao);
+                                    jndiName = names[0];
+                                 }
+                           
+                                 aos[i] = ao;
+                                 aoJndiNames[i] = jndiName;
+                              }
+                              catch (Throwable t)
+                              {
+                                 throw new DeployException("Failed to bind admin object", t);
+                              }
+                           }
                         }
                      }
                   }
@@ -645,7 +735,9 @@ public abstract class AbstractResourceAdapterDeployer
          List<Validate> archiveValidationObjects = new ArrayList<Validate>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
          Object[] cfs = null;
-         String[] jndiNames = null;
+         String[] cfJndiNames = null;
+         Object[] aos = null;
+         String[] aoJndiNames = null;
 
          // Check metadata for JNDI information and activate explicit
          boolean activateDeployment = checkActivation(cmd, ijmd);
@@ -892,16 +984,16 @@ public abstract class AbstractResourceAdapterDeployer
 
                            bindConnectionFactory(url, deploymentName, cf, jndiName);
                            cfs = new Object[]{cf};
-                           jndiNames = new String[]{jndiName};
+                           cfJndiNames = new String[]{jndiName};
 
                            cm.setJndiName(jndiName);
                         }
                         else
                         {
-                           jndiNames = bindConnectionFactory(url, deploymentName, cf);
+                           cfJndiNames = bindConnectionFactory(url, deploymentName, cf);
                            cfs = new Object[]{cf};
 
-                           cm.setJndiName(jndiNames[0]);
+                           cm.setJndiName(cfJndiNames[0]);
                         }
                      }
                   }
@@ -920,7 +1012,7 @@ public abstract class AbstractResourceAdapterDeployer
                      //                     {
                      //                        ConnectionDefinition cdMeta = cdMetas.get(0);
                      cfs = new Object[cdMetas.size()];
-                     jndiNames = new String[cdMetas.size()];
+                     cfJndiNames = new String[cdMetas.size()];
 
                      for (int cdIndex = 0; cdIndex < cdMetas.size(); cdIndex++)
                      {
@@ -1139,16 +1231,16 @@ public abstract class AbstractResourceAdapterDeployer
 
                                        bindConnectionFactory(url, deploymentName, cf, jndiName);
                                        cfs[cdIndex] = cf;
-                                       jndiNames[cdIndex] = jndiName;
+                                       cfJndiNames[cdIndex] = jndiName;
 
                                        cm.setJndiName(jndiName);
                                     }
                                     else
                                     {
-                                       jndiNames = bindConnectionFactory(url, deploymentName, cf);
+                                       cfJndiNames = bindConnectionFactory(url, deploymentName, cf);
                                        cfs = new Object[]{cf};
 
-                                       cm.setJndiName(jndiNames[0]);
+                                       cm.setJndiName(cfJndiNames[0]);
                                     }
 
                                  }
@@ -1161,10 +1253,13 @@ public abstract class AbstractResourceAdapterDeployer
             }
 
             failures = initActivationSpec(cl, cmd, resourceAdapter, archiveValidationObjects, beanValidationObjects,
-               failures, url, activateDeployment);
+                                          failures, url, activateDeployment);
 
             failures = initAdminObject(cmd, cl, archiveValidationObjects, beanValidationObjects, failures, url,
-               activateDeployment);
+                                       deploymentName, activateDeployment, 
+                                       raxml != null ? raxml.getAdminObjects() : null,
+                                       ijmd != null ? ijmd.getAdminObjects() : null, 
+                                       aos, aoJndiNames);
          }
 
          // Archive validation
@@ -1249,8 +1344,8 @@ public abstract class AbstractResourceAdapterDeployer
             log.debug("Activated: " + url.toExternalForm());
          }
 
-         return new CommonDeployment(url, deploymentName, activateDeployment, resourceAdapter, cfs, cl, log,
-                                     jndiNames);
+         return new CommonDeployment(url, deploymentName, activateDeployment, resourceAdapter, cfs, cfJndiNames,
+                                     aos, aoJndiNames, cl, log);
 
       }
       catch (DeployException de)
@@ -1333,6 +1428,28 @@ public abstract class AbstractResourceAdapterDeployer
     * @exception Throwable Thrown if an error occurs
     */
    protected abstract String[] bindConnectionFactory(URL url, String deploymentName, Object cf, String jndiName)
+      throws Throwable;
+
+   /**
+    * Bind admin object into JNDI
+    * @param url The deployment URL
+    * @param deploymentName The deployment name
+    * @param ao The admin object
+    * @return The JNDI names bound
+    * @exception Throwable Thrown if an error occurs
+    */
+   protected abstract String[] bindAdminObject(URL url, String deploymentName, Object ao) throws Throwable;
+
+   /**
+    * Bind admin object into JNDI
+    * @param url The deployment URL
+    * @param deploymentName The deployment name
+    * @param ao The admin object
+    * @param jndiName The JNDI name
+    * @return The JNDI names bound
+    * @exception Throwable Thrown if an error occurs
+    */
+   protected abstract String[] bindAdminObject(URL url, String deploymentName, Object ao, String jndiName)
       throws Throwable;
 
    /**

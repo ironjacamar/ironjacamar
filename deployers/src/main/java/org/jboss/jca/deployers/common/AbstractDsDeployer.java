@@ -62,7 +62,7 @@ import org.jboss.logging.Logger;
 public abstract class AbstractDsDeployer
 {
    /** log **/
-   protected static final Logger log = Logger.getLogger(DsXmlDeployer.class);
+   protected static Logger log = Logger.getLogger(DsXmlDeployer.class);
 
    /** jdbcLocal **/
    protected String jdbcLocal;
@@ -266,8 +266,10 @@ public abstract class AbstractDsDeployer
                log.error("Deployment of XA datasources disabled since jdbc-xa.rar couldn't be found");
          }
 
-         return new CommonDeployment(url, deploymentName, true, null, cfs.toArray(new Object[cfs.size()]),
-                                     parentClassLoader, log, jndis.toArray(new String[jndis.size()]));
+         return new CommonDeployment(url, deploymentName, true, null, 
+                                     cfs.toArray(new Object[cfs.size()]), jndis.toArray(new String[jndis.size()]),
+                                     null, null,
+                                     parentClassLoader, log);
       }
       catch (Throwable t)
       {

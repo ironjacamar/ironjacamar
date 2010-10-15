@@ -50,7 +50,7 @@ public class ExplicitJndiStrategy implements JndiStrategy
 
    private static boolean trace = log.isTraceEnabled();
 
-   private static ConcurrentMap<String, Object> connectionFactories = new ConcurrentHashMap<String, Object>();
+   private static ConcurrentMap<String, Object> objs = new ConcurrentHashMap<String, Object>();
 
    /**
     * Constructor
@@ -70,7 +70,7 @@ public class ExplicitJndiStrategy implements JndiStrategy
       String className = (String)ref.get("class").getContent();
       String cfname = (String)ref.get("name").getContent();
 
-      return connectionFactories.get(qualifiedName(cfname, className));
+      return objs.get(qualifiedName(cfname, className));
    }
 
    /**
@@ -131,7 +131,7 @@ public class ExplicitJndiStrategy implements JndiStrategy
                                           null);
             ref.add(new StringRefAddr("name", jndiName));
 
-            if (connectionFactories.putIfAbsent(qualifiedName(jndiName, className), cf) != null)
+            if (objs.putIfAbsent(qualifiedName(jndiName, className), cf) != null)
                throw new Exception("Deployment " + className + " failed, " + jndiName + " is already deployed");
 
             Referenceable referenceable = (Referenceable)cf;
@@ -212,7 +212,172 @@ public class ExplicitJndiStrategy implements JndiStrategy
 
             Util.unbind(context, jndiName);
 
-            connectionFactories.remove(qualifiedName(jndiName, className));
+            objs.remove(qualifiedName(jndiName, className));
+
+            if (log.isDebugEnabled())
+               log.debug("Unbound " + className + " under " + jndiName);
+         }
+      }
+      catch (Throwable t)
+      {
+         log.warn("Exception during unbind", t);
+      }
+      finally
+      {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String[] bindAdminObjects(String deployment, Object[] aos) throws Throwable
+   {
+      throw new IllegalStateException("JNDI names are required");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String[] bindAdminObjects(String deployment, Object[] aos, String[] jndis) throws Throwable
+   {
+      if (deployment == null)
+         throw new IllegalArgumentException("Deployment is null");
+
+      if (deployment.trim().equals(""))
+         throw new IllegalArgumentException("Deployment is empty");
+
+      if (aos == null)
+         throw new IllegalArgumentException("AOS is null");
+
+      if (aos.length == 0)
+         throw new IllegalArgumentException("AOS is empty");
+
+      if (jndis == null)
+         throw new IllegalArgumentException("JNDIs is null");
+
+      if (jndis.length == 0)
+         throw new IllegalArgumentException("JNDIs is empty");
+
+      if (aos.length != jndis.length)
+         throw new IllegalArgumentException("Number of admin objects doesn't match number of JNDI names");
+
+      Context context = new InitialContext();
+      try
+      {
+         for (int i = 0; i < aos.length; i++)
+         {
+            String jndiName = jndis[i];
+            Object ao = aos[i];
+
+            if (trace)
+               log.trace("Binding " + ao.getClass().getName() + " under " + jndiName);
+
+            if (ao == null)
+               throw new IllegalArgumentException("Admin object is null");
+
+            if (jndiName == null)
+               throw new IllegalArgumentException("JNDI name is null");
+
+            String className = ao.getClass().getName();
+            Reference ref = new Reference(className,
+                                          new StringRefAddr("class", className),
+                                          ExplicitJndiStrategy.class.getName(),
+                                          null);
+            ref.add(new StringRefAddr("name", jndiName));
+
+            if (objs.putIfAbsent(qualifiedName(jndiName, className), ao) != null)
+               throw new Exception("Deployment " + className + " failed, " + jndiName + " is already deployed");
+
+            Referenceable referenceable = (Referenceable)ao;
+            referenceable.setReference(ref);
+            
+            Util.bind(context, jndiName, ao);
+
+            if (log.isDebugEnabled())
+               log.debug("Bound " + ao.getClass().getName() + " under " + jndiName);
+         }
+      }
+      finally
+      {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      return jndis;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unbindAdminObjects(String deployment, Object[] aos) throws Throwable
+   {
+      throw new IllegalStateException("JNDI names are required");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unbindAdminObjects(String deployment, Object[] aos, String[] jndis) throws Throwable
+   {
+      if (aos == null)
+         throw new IllegalArgumentException("AOS is null");
+
+      if (aos.length == 0)
+         throw new IllegalArgumentException("AOS is empty");
+
+      if (jndis == null)
+         throw new IllegalArgumentException("JNDIs is null");
+
+      if (jndis.length == 0)
+         throw new IllegalArgumentException("JNDIs is empty");
+
+      if (aos.length != jndis.length)
+         throw new IllegalArgumentException("Number of admin objects doesn't match number of JNDI names");
+
+      Context context = null;
+      try
+      {
+         context = new InitialContext();
+
+         for (int i = 0; i < aos.length; i++)
+         {
+            String jndiName = jndis[i];
+            Object ao = aos[i];
+
+            if (ao == null)
+               throw new IllegalArgumentException("Admin object is null");
+
+            if (jndiName == null)
+               throw new IllegalArgumentException("JNDI name is null");
+
+            String className = ao.getClass().getName();
+
+            if (trace)
+               log.trace("Unbinding " + className + " under " + jndiName);
+
+            Util.unbind(context, jndiName);
+
+            objs.remove(qualifiedName(jndiName, className));
 
             if (log.isDebugEnabled())
                log.debug("Unbound " + className + " under " + jndiName);

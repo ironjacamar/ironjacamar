@@ -67,7 +67,13 @@ public class RaXmlDeployment implements Deployment
    private Object[] cfs;
 
    /** The JNDI names of the connection factories */
-   private String[] jndis;
+   private String[] cfJndis;
+
+   /** The admin objects */
+   private Object[] aos;
+
+   /** The JNDI names of the admin objects */
+   private String[] aoJndis;
 
    /** The classloader */
    private ClassLoader cl;
@@ -81,13 +87,17 @@ public class RaXmlDeployment implements Deployment
     * @param jndiStrategy The JNDI strategy
     * @param metadataRepository The metadata repository
     * @param cfs The connection factories
-    * @param jndis The JNDI names of the connection factories
+    * @param cfJndis The JNDI names of the connection factories
+    * @param aos The admin objects
+    * @param aoJndis The JNDI names of the admin objects
     * @param cl The classloader for the deployment
     * @param log The logger
     */
    public RaXmlDeployment(URL deployment, URL raDeployment, String deploymentName, ResourceAdapter ra,
-      JndiStrategy jndiStrategy, MetadataRepository metadataRepository, Object[] cfs, String[] jndis, ClassLoader cl,
-      Logger log)
+                          JndiStrategy jndiStrategy, MetadataRepository metadataRepository, 
+                          Object[] cfs, String[] cfJndis, 
+                          Object[] aos, String[] aoJndis, 
+                          ClassLoader cl, Logger log)
    {
       this.deployment = deployment;
       this.raDeployment = raDeployment;
@@ -96,7 +106,9 @@ public class RaXmlDeployment implements Deployment
       this.jndiStrategy = jndiStrategy;
       this.mdr = metadataRepository;
       this.cfs = cfs;
-      this.jndis = jndis;
+      this.cfJndis = cfJndis;
+      this.aos = aos;
+      this.aoJndis = aoJndis;
       this.cl = cl;
       this.log = log;
    }
@@ -128,14 +140,14 @@ public class RaXmlDeployment implements Deployment
    {
       log.debug("Undeploying: " + deployment.toExternalForm());
 
-      if (mdr != null && cfs != null && jndis != null)
+      if (mdr != null && cfs != null && cfJndis != null)
       {
          for (int i = 0; i < cfs.length; i++)
          {
             try
             {
                String cf = cfs[i].getClass().getName();
-               String jndi = jndis[i];
+               String jndi = cfJndis[i];
 
                mdr.unregisterJndiMapping(raDeployment.toExternalForm(), cf, jndi);
             }
@@ -146,11 +158,41 @@ public class RaXmlDeployment implements Deployment
          }
       }
 
-      if (cfs != null && jndis != null)
+      if (mdr != null && aos != null && aoJndis != null)
+      {
+         for (int i = 0; i < aos.length; i++)
+         {
+            try
+            {
+               String ao = aos[i].getClass().getName();
+               String jndi = aoJndis[i];
+
+               mdr.unregisterJndiMapping(raDeployment.toExternalForm(), ao, jndi);
+            }
+            catch (NotFoundException nfe)
+            {
+               log.warn("Exception during unregistering deployment", nfe);
+            }
+         }
+      }
+
+      if (cfs != null && cfJndis != null)
       {
          try
          {
-            jndiStrategy.unbindConnectionFactories(deploymentName, cfs, jndis);
+            jndiStrategy.unbindConnectionFactories(deploymentName, cfs, cfJndis);
+         }
+         catch (Throwable t)
+         {
+            log.warn("Exception during JNDI unbinding", t);
+         }
+      }
+
+      if (aos != null && aoJndis != null)
+      {
+         try
+         {
+            jndiStrategy.unbindAdminObjects(deploymentName, aos, aoJndis);
          }
          catch (Throwable t)
          {

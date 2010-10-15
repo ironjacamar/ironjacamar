@@ -31,7 +31,7 @@ import javax.naming.spi.ObjectFactory;
  */
 public interface JndiStrategy extends Cloneable, ObjectFactory
 {
-    /**
+   /**
     * Bind connection factories for a deployment
     * @param deployment The deployment name
     * @param cfs The connection factories
@@ -40,7 +40,7 @@ public interface JndiStrategy extends Cloneable, ObjectFactory
     */
    public String[] bindConnectionFactories(String deployment, Object[] cfs) throws Throwable;
 
-    /**
+   /**
     * Bind connection factories for a deployment
     * @param deployment The deployment name
     * @param cfs The connection factories
@@ -66,6 +66,42 @@ public interface JndiStrategy extends Cloneable, ObjectFactory
     * @exception Throwable Thrown if an error occurs
     */
    public void unbindConnectionFactories(String deployment, Object[] cfs, String[] jndis) throws Throwable;
+
+   /**
+    * Bind admin objects for a deployment
+    * @param deployment The deployment name
+    * @param aos The admin objects
+    * @return The JNDI names for the admin objects
+    * @exception Throwable Thrown if an error occurs
+    */
+   public String[] bindAdminObjects(String deployment, Object[] aos) throws Throwable;
+
+   /**
+    * Bind admin objects for a deployment
+    * @param deployment The deployment name
+    * @param aos The admin objects
+    * @param jndis The JNDI names for the admin objects
+    * @return The JNDI names for the admin objects
+    * @exception Throwable Thrown if an error occurs
+    */
+   public String[] bindAdminObjects(String deployment, Object[] aos, String[] jndis) throws Throwable;
+
+   /**
+    * Unbind admin objects for a deployment
+    * @param deployment The deployment name
+    * @param aos The admin objects
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void unbindAdminObjects(String deployment, Object[] aos) throws Throwable;
+
+   /**
+    * Unbind admin objects for a deployment
+    * @param deployment The deployment name
+    * @param aos The admin objects
+    * @param jndis The JNDI names for the admin objects
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void unbindAdminObjects(String deployment, Object[] aos, String[] jndis) throws Throwable;
 
    /**
     * Clone the JNDI strategy implementation

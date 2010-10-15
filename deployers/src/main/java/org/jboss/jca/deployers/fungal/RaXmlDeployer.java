@@ -294,8 +294,8 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
          return new RaXmlDeployment(c.getURL(), deployment, c.getDeploymentName(), c.getResourceAdapter(),
-                                 jndiStrategy, metadataRepository, c.getCfs(), c.getJndiNames(),
-                                 c.getCl(), c.getLog());
+                                    jndiStrategy, metadataRepository, c.getCfs(), c.getCfJndiNames(),
+                                    c.getAos(), c.getAoJndiNames(), c.getCl(), c.getLog());
       }
       catch (DeployException de)
       {

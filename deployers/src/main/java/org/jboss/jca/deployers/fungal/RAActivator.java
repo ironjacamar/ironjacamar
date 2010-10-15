@@ -286,7 +286,8 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd);
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          return new RAActivatorDeployment(c.getURL(), c.getDeploymentName(), c.getResourceAdapter(), jndiStrategy,
-                                          metadataRepository, c.getCfs(), c.getJndiNames(), c.getCl(), c.getLog());
+                                          metadataRepository, c.getCfs(), c.getCfJndiNames(), 
+                                          c.getAos(), c.getAoJndiNames(), c.getCl(), c.getLog());
 
       }
       catch (DeployException de)

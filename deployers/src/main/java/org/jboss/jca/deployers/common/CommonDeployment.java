@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
  * A CommonDeployment.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class CommonDeployment
 {
@@ -48,11 +48,15 @@ public class CommonDeployment
 
    private final Object[] cfs;
 
+   private final String[] cfJndiNames;
+
+   private final Object[] aos;
+
+   private final String[] aoJndiNames;
+
    private final ClassLoader cl;
 
    private final Logger log;
-
-   private final String[] jndiNames;
 
    /**
     * Create a new Deployment.
@@ -61,13 +65,17 @@ public class CommonDeployment
     * @param deploymentName deploymentName
     * @param activateDeployment activateDeployment
     * @param resourceAdapter resourceAdapter
-    * @param cfs cfs
+    * @param cfs The connection factories
+    * @param cfJndiNames The JNDI names for the connection factories
+    * @param aos The admin objects
+    * @param aoJndiNames The JNDI names for the admin objects
     * @param cl cl
     * @param log log
-    * @param jndiNames jndiNames
     */
    public CommonDeployment(URL url, String deploymentName, boolean activateDeployment,
-      ResourceAdapter resourceAdapter, Object[] cfs, ClassLoader cl, Logger log, String[] jndiNames)
+                           ResourceAdapter resourceAdapter, Object[] cfs, String[] cfJndiNames, 
+                           Object[] aos, String[] aoJndiNames,
+                           ClassLoader cl, Logger log)
    {
       super();
       this.url = url;
@@ -75,10 +83,11 @@ public class CommonDeployment
       this.activateDeployment = activateDeployment;
       this.resourceAdapter = resourceAdapter;
       this.cfs = cfs != null ? Arrays.copyOf(cfs, cfs.length) : null;
+      this.cfJndiNames = cfJndiNames != null ? Arrays.copyOf(cfJndiNames, cfJndiNames.length) : null;
+      this.aos = aos != null ? Arrays.copyOf(aos, aos.length) : null;
+      this.aoJndiNames = aoJndiNames != null ? Arrays.copyOf(aoJndiNames, aoJndiNames.length) : null;
       this.cl = cl;
       this.log = log;
-      this.jndiNames = jndiNames != null ? Arrays.copyOf(jndiNames, jndiNames.length) : null;
-
    }
 
    /**
@@ -132,6 +141,36 @@ public class CommonDeployment
    }
 
    /**
+    * Get the connection factory JNDI names.
+    *
+    * @return the jndiNames.
+    */
+   public final String[] getCfJndiNames()
+   {
+      return cfJndiNames != null ? Arrays.copyOf(cfJndiNames, cfJndiNames.length) : null;
+   }
+
+   /**
+    * Get the aos.
+    *
+    * @return the aos.
+    */
+   public final Object[] getAos()
+   {
+      return aos != null ? Arrays.copyOf(aos, aos.length) : null;
+   }
+
+   /**
+    * Get the admin object JNDI names.
+    *
+    * @return the jndiNames.
+    */
+   public final String[] getAoJndiNames()
+   {
+      return aoJndiNames != null ? Arrays.copyOf(aoJndiNames, aoJndiNames.length) : null;
+   }
+
+   /**
     * Get the cl.
     *
     * @return the cl.
@@ -150,15 +189,4 @@ public class CommonDeployment
    {
       return log;
    }
-
-   /**
-    * Get the jndiNames.
-    *
-    * @return the jndiNames.
-    */
-   public final String[] getJndiNames()
-   {
-      return jndiNames != null ? Arrays.copyOf(jndiNames, jndiNames.length) : null;
-   }
-
 }

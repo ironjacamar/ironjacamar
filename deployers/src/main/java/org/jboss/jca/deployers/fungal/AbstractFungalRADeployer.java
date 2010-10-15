@@ -157,6 +157,32 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    }
 
    @Override
+   public String[] bindAdminObject(URL url, String deployment, Object ao) throws Throwable
+   {
+      JndiStrategy js = ((RAConfiguration) getConfiguration()).getJndiStrategy().clone();
+
+      String[] result = js.bindAdminObjects(deployment, new Object[]{ao});
+
+      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url.toExternalForm(),
+         ao.getClass().getName(), result[0]);
+
+      return result;
+   }
+
+   @Override
+   public String[] bindAdminObject(URL url, String deployment, Object ao, String jndi) throws Throwable
+   {
+      JndiStrategy js = ((RAConfiguration) getConfiguration()).getJndiStrategy().clone();
+
+      String[] result = js.bindAdminObjects(deployment, new Object[]{ao}, new String[]{jndi});
+
+      ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url.toExternalForm(),
+         ao.getClass().getName(), jndi);
+
+      return result;
+   }
+
+   @Override
    protected File getReportDirectory()
    {
       return new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/log/");

@@ -158,8 +158,8 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
          return new RADeployment(c.getURL(), c.getDeploymentName(), c.isActivateDeployment(), c.getResourceAdapter(),
-                                 jndiStrategy, metadataRepository, c.getCfs(), c.getJndiNames(), destination,
-                                 c.getCl(), c.getLog());
+                                 jndiStrategy, metadataRepository, c.getCfs(), c.getCfJndiNames(), 
+                                 c.getAos(), c.getAoJndiNames(), destination, c.getCl(), c.getLog());
 
       }
       catch (DeployException de)
