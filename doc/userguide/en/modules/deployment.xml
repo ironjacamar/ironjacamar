@@ -82,8 +82,13 @@ copy example.rar ironjacamar-1.0.0\deploy
 java:/eis/&lt;deploymentName&gt;
      </programlisting>
 
-     <para>- f.ex. <code>java:/eis/example</code>.</para>
+     <para>- f.ex. <code>java:/eis/example</code> and a single admin object under</para>
 
+     <programlisting>
+java:/eis/ao/&lt;deploymentName&gt;
+     </programlisting>
+
+     <para>- f.ex. <code>java:/eis/ao/example</code>.</para>
    </section>
 
    <section id="deployingds">
