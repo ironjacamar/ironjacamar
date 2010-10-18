@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.deployers.common;
 
+import org.jboss.jca.core.management.Connector;
+
 import java.net.URL;
 import java.util.Arrays;
 
@@ -54,6 +56,8 @@ public class CommonDeployment
 
    private final String[] aoJndiNames;
 
+   private final Connector connector;
+
    private final ClassLoader cl;
 
    private final Logger log;
@@ -69,12 +73,14 @@ public class CommonDeployment
     * @param cfJndiNames The JNDI names for the connection factories
     * @param aos The admin objects
     * @param aoJndiNames The JNDI names for the admin objects
+    * @param connector The management view of a connector
     * @param cl cl
     * @param log log
     */
    public CommonDeployment(URL url, String deploymentName, boolean activateDeployment,
                            ResourceAdapter resourceAdapter, Object[] cfs, String[] cfJndiNames, 
                            Object[] aos, String[] aoJndiNames,
+                           Connector connector,
                            ClassLoader cl, Logger log)
    {
       super();
@@ -86,6 +92,7 @@ public class CommonDeployment
       this.cfJndiNames = cfJndiNames != null ? Arrays.copyOf(cfJndiNames, cfJndiNames.length) : null;
       this.aos = aos != null ? Arrays.copyOf(aos, aos.length) : null;
       this.aoJndiNames = aoJndiNames != null ? Arrays.copyOf(aoJndiNames, aoJndiNames.length) : null;
+      this.connector = connector;
       this.cl = cl;
       this.log = log;
    }
@@ -168,6 +175,15 @@ public class CommonDeployment
    public final String[] getAoJndiNames()
    {
       return aoJndiNames != null ? Arrays.copyOf(aoJndiNames, aoJndiNames.length) : null;
+   }
+
+   /**
+    * Get the management view of the connector
+    * @return The value
+    */
+   public final Connector getConnector()
+   {
+      return connector;
    }
 
    /**

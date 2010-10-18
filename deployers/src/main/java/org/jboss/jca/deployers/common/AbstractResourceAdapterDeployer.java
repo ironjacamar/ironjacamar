@@ -578,6 +578,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param aosIronJacamar Admin object definitions from ironjacamar.xml
     * @param aos The resulting array of admin objects
     * @param aoJndiNames The resulting array of JNDI names
+    * @param mgtConnector The management view of the connector
     * @return failures updated after implemented operations
     * @throws DeployException DeployException in case of errors
     */
@@ -586,7 +587,8 @@ public abstract class AbstractResourceAdapterDeployer
          URL url, String deploymentName, boolean activateDeployment,
          List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
          List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
-         Object[] aos, String[] aoJndiNames)
+         Object[] aos, String[] aoJndiNames,
+         org.jboss.jca.core.management.Connector mgtConnector)
       throws DeployException
    {
       // AdminObject
@@ -657,6 +659,14 @@ public abstract class AbstractResourceAdapterDeployer
                            
                                  aos[i] = ao;
                                  aoJndiNames[i] = jndiName;
+
+                                 org.jboss.jca.core.management.AdminObject mgtAo =
+                                    new org.jboss.jca.core.management.AdminObject(ao);
+
+                                 mgtAo.getConfigProperties().
+                                    addAll(createManagementView(aoMeta.getConfigProperties()));
+
+                                 mgtConnector.getAdminObjects().add(mgtAo);
                               }
                               catch (Throwable t)
                               {
@@ -731,6 +741,13 @@ public abstract class AbstractResourceAdapterDeployer
          if (cmd != null && cmd.getLicense() != null && cmd.getLicense().isLicenseRequired())
             log.info("Required license terms for " + url.toExternalForm());
 
+         String mgtUniqueId = url.getFile();
+         if (mgtUniqueId.indexOf("/") != -1)
+            mgtUniqueId = mgtUniqueId.substring(mgtUniqueId.lastIndexOf("/") + 1);
+
+         org.jboss.jca.core.management.Connector mgtConnector = 
+            new org.jboss.jca.core.management.Connector(mgtUniqueId);
+
          ResourceAdapter resourceAdapter = null;
          List<Validate> archiveValidationObjects = new ArrayList<Validate>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
@@ -773,6 +790,12 @@ public abstract class AbstractResourceAdapterDeployer
                         archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, resourceAdapter, ra1516
                            .getConfigProperties()));
                         beanValidationObjects.add(resourceAdapter);
+
+                        org.jboss.jca.core.management.ResourceAdapter mgtRa =
+                           new org.jboss.jca.core.management.ResourceAdapter(resourceAdapter);
+
+                        mgtRa.getConfigProperties().addAll(createManagementView(ra1516.getConfigProperties()));
+                        mgtConnector.setResourceAdapter(mgtRa);
                      }
                   }
                }
@@ -995,6 +1018,15 @@ public abstract class AbstractResourceAdapterDeployer
 
                            cm.setJndiName(cfJndiNames[0]);
                         }
+
+                        org.jboss.jca.core.management.ManagedConnectionFactory mgtMcf =
+                           new org.jboss.jca.core.management.ManagedConnectionFactory(mcf);
+
+                        mgtMcf.getConfigProperties().addAll(createManagementView(ra10.getConfigProperties()));
+                        mgtMcf.setPoolConfiguration(pc);
+                        mgtMcf.setPool(pool);
+
+                        mgtConnector.getManagedConnectionFactories().add(mgtMcf);
                      }
                   }
                }
@@ -1243,6 +1275,15 @@ public abstract class AbstractResourceAdapterDeployer
                                        cm.setJndiName(cfJndiNames[0]);
                                     }
 
+                                    org.jboss.jca.core.management.ManagedConnectionFactory mgtMcf =
+                                       new org.jboss.jca.core.management.ManagedConnectionFactory(mcf);
+
+                                    mgtMcf.getConfigProperties().
+                                       addAll(createManagementView(cdMeta.getConfigProperties()));
+                                    mgtMcf.setPoolConfiguration(pc);
+                                    mgtMcf.setPool(pool);
+
+                                    mgtConnector.getManagedConnectionFactories().add(mgtMcf);
                                  }
                               }
                            }
@@ -1259,7 +1300,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        deploymentName, activateDeployment, 
                                        raxml != null ? raxml.getAdminObjects() : null,
                                        ijmd != null ? ijmd.getAdminObjects() : null, 
-                                       aos, aoJndiNames);
+                                       aos, aoJndiNames, mgtConnector);
          }
 
          // Archive validation
@@ -1345,7 +1386,7 @@ public abstract class AbstractResourceAdapterDeployer
          }
 
          return new CommonDeployment(url, deploymentName, activateDeployment, resourceAdapter, cfs, cfJndiNames,
-                                     aos, aoJndiNames, cl, log);
+                                     aos, aoJndiNames, mgtConnector, cl, log);
 
       }
       catch (DeployException de)
@@ -1368,6 +1409,54 @@ public abstract class AbstractResourceAdapterDeployer
             throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
          }
       }
+   }
+
+   /**
+    * Get management views for config property's
+    * @param cps The config property's
+    * @return The management view of these
+    */
+   private List<org.jboss.jca.core.management.ConfigProperty> createManagementView(List<? extends ConfigProperty> cps)
+   {
+      List<org.jboss.jca.core.management.ConfigProperty> result =
+         new ArrayList<org.jboss.jca.core.management.ConfigProperty>();
+
+      if (cps != null)
+      {
+         for (ConfigProperty cp : cps)
+         {
+            org.jboss.jca.core.management.ConfigProperty mgtCp = null;
+
+            if (cp instanceof org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)
+            {
+               org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16 cp16 =
+                  (org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)cp;
+
+               Boolean dynamic = cp16.getConfigPropertySupportsDynamicUpdates();
+               if (dynamic == null)
+                  dynamic = Boolean.FALSE;
+
+               Boolean confidential = cp16.getConfigPropertyConfidential();
+               if (confidential == null)
+                  confidential = Boolean.FALSE;
+
+               mgtCp = 
+                  new org.jboss.jca.core.management.ConfigProperty(
+                     cp.getConfigPropertyName().getValue(),
+                     dynamic.booleanValue(), confidential.booleanValue());
+            }
+            else
+            {
+               mgtCp = 
+                  new org.jboss.jca.core.management.ConfigProperty(
+                     cp.getConfigPropertyName().getValue());
+            }
+
+            result.add(mgtCp);
+         }
+      }
+
+      return result;
    }
 
    /**

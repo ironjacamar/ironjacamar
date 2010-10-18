@@ -35,9 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.management.ObjectName;
+
 import org.jboss.logging.Logger;
 
-import com.github.fungal.api.Kernel;
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.api.util.FileUtil;
@@ -57,9 +58,6 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    /** Trace enabled */
    static boolean trace = log.isTraceEnabled();
 
-   /** The kernel */
-   private Kernel kernel;
-
    /** Enabled */
    private boolean enabled;
 
@@ -75,29 +73,9 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    public RAActivator()
    {
       super(false, log);
-      kernel = null;
       enabled = true;
       excludeArchives = null;
       deployments = null;
-
-   }
-
-   /**
-    * Get the kernel
-    * @return The kernel
-    */
-   public Kernel getKernel()
-   {
-      return kernel;
-   }
-
-   /**
-    * Set the kernel
-    * @param kernel The kernel
-    */
-   public void setKernel(Kernel kernel)
-   {
-      this.kernel = kernel;
    }
 
    /**
@@ -284,11 +262,15 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 
          CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd);
+
+         List<ObjectName> ons = registerManagementView(c.getConnector(), kernel.getMBeanServer());
+
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          return new RAActivatorDeployment(c.getURL(), c.getDeploymentName(), c.getResourceAdapter(), jndiStrategy,
                                           metadataRepository, c.getCfs(), c.getCfJndiNames(), 
-                                          c.getAos(), c.getAoJndiNames(), c.getCl(), c.getLog());
-
+                                          c.getAos(), c.getAoJndiNames(), 
+                                          kernel.getMBeanServer(), ons,
+                                          c.getCl(), c.getLog());
       }
       catch (DeployException de)
       {
@@ -312,22 +294,9 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
       }
    }
 
-   /**
-    * Start
-    */
-   @Override
-   public void start()
-   {
-      super.start();
-
-      if (kernel == null)
-         throw new IllegalStateException("Kernel not defined");
-   }
-
    @Override
    protected boolean checkActivation(Connector cmd, IronJacamar ijmd)
    {
       return true;
    }
-
 }

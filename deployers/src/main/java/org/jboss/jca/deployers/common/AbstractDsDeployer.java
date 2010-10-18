@@ -268,7 +268,7 @@ public abstract class AbstractDsDeployer
 
          return new CommonDeployment(url, deploymentName, true, null, 
                                      cfs.toArray(new Object[cfs.size()]), jndis.toArray(new String[jndis.size()]),
-                                     null, null,
+                                     null, null, null,
                                      parentClassLoader, log);
       }
       catch (Throwable t)

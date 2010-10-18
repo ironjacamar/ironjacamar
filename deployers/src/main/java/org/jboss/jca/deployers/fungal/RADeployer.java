@@ -45,6 +45,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.management.ObjectName;
+
 import org.jboss.logging.Logger;
 
 import com.github.fungal.api.classloading.ClassLoaderFactory;
@@ -155,11 +157,15 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 
          CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd);
+
+         List<ObjectName> ons = registerManagementView(c.getConnector(), kernel.getMBeanServer());
+
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
          return new RADeployment(c.getURL(), c.getDeploymentName(), c.isActivateDeployment(), c.getResourceAdapter(),
                                  jndiStrategy, metadataRepository, c.getCfs(), c.getCfJndiNames(), 
-                                 c.getAos(), c.getAoJndiNames(), destination, c.getCl(), c.getLog());
+                                 c.getAos(), c.getAoJndiNames(), destination, kernel.getMBeanServer(), ons,
+                                 c.getCl(), c.getLog());
 
       }
       catch (DeployException de)

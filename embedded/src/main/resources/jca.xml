@@ -172,6 +172,7 @@
         interface="com.github.fungal.spi.deployers.Deployer"
         class="org.jboss.jca.deployers.fungal.RADeployer">
     <property name="Configuration"><inject bean="DeployerConfiguration"/></property>
+    <property name="Kernel"><inject bean="Kernel"/></property>
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
   </bean>

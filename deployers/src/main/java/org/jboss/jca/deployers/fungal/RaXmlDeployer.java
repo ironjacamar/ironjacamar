@@ -40,9 +40,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.management.ObjectName;
+
 import org.jboss.logging.Logger;
 
-import com.github.fungal.api.Kernel;
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.spi.deployers.DeployException;
@@ -65,9 +66,6 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
 {
    private static Logger log = Logger.getLogger(RaXmlDeployer.class);
 
-   /** The kernel */
-   private Kernel kernel;
-
    /** The list of generated deployments */
    private List<Deployment> deployments;
 
@@ -87,24 +85,6 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
    public int getOrder()
    {
       return 0;
-   }
-
-   /**
-    * Get the kernel
-    * @return The kernel
-    */
-   public Kernel getKernel()
-   {
-      return kernel;
-   }
-
-   /**
-    * Set the kernel
-    * @param kernel The kernel
-    */
-   public void setKernel(Kernel kernel)
-   {
-      this.kernel = kernel;
    }
 
    /**
@@ -291,11 +271,15 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
          String deploymentName = archive.substring(0, archive.indexOf(".rar"));
 
          CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd, raxml);
+
+         List<ObjectName> ons = registerManagementView(c.getConnector(), kernel.getMBeanServer());
+
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
          return new RaXmlDeployment(c.getURL(), deployment, c.getDeploymentName(), c.getResourceAdapter(),
                                     jndiStrategy, metadataRepository, c.getCfs(), c.getCfJndiNames(),
-                                    c.getAos(), c.getAoJndiNames(), c.getCl(), c.getLog());
+                                    c.getAos(), c.getAoJndiNames(), kernel.getMBeanServer(), ons, 
+                                    c.getCl(), c.getLog());
       }
       catch (DeployException de)
       {
@@ -319,22 +303,9 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
       }
    }
 
-   /**
-    * Start
-    */
-   @Override
-   public void start()
-   {
-      super.start();
-
-      if (kernel == null)
-         throw new IllegalStateException("Kernel not defined");
-   }
-
    @Override
    protected boolean checkActivation(Connector cmd, IronJacamar ijmd)
    {
       return true;
    }
-
 }

@@ -35,14 +35,24 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import javax.management.DynamicMBean;
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 
+import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;
+import com.github.fungal.api.util.JMX;
 import com.github.fungal.api.util.JarFilter;
 
 /**
@@ -52,6 +62,8 @@ import com.github.fungal.api.util.JarFilter;
  */
 public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDeployer
 {
+   /** The kernel */
+   protected Kernel kernel;
 
    /**
     * Create a new AbstractResourceAdapterDeployer.
@@ -62,6 +74,37 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    public AbstractFungalRADeployer(boolean validateClasses, Logger log)
    {
       super(validateClasses, log);
+      kernel = null;
+   }
+
+   /**
+    * Get the kernel
+    * @return The kernel
+    */
+   public Kernel getKernel()
+   {
+      return kernel;
+   }
+
+   /**
+    * Set the kernel
+    * @param kernel The kernel
+    */
+   public void setKernel(Kernel kernel)
+   {
+      this.kernel = kernel;
+   }
+
+   /**
+    * Start
+    */
+   @Override
+   public void start()
+   {
+      super.start();
+
+      if (kernel == null)
+         throw new IllegalStateException("Kernel not defined");
    }
 
    /**
@@ -212,5 +255,174 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    {
       ((RAConfiguration) getConfiguration()).getMetadataRepository().
          registerResourceAdapter(url.toExternalForm(), root, cmd, ijmd);
+   }
+
+   /**
+    * Register management view of a connector in JMX
+    * @param mgtConnector The management view of the connector
+    * @param server The MBeanServer instance
+    * @return The ObjectName's generated for this connector
+    * @exception JMException Thrown in case of an error
+    */
+   protected List<ObjectName> registerManagementView(org.jboss.jca.core.management.Connector mgtConnector,
+                                                     MBeanServer server)
+      throws JMException
+   {
+      if (server == null)
+         throw new IllegalArgumentException("MBeanServer is null");
+
+      List<ObjectName> ons = new ArrayList<ObjectName>();
+
+      if (mgtConnector != null)
+      {
+         String baseName = server.getDefaultDomain() + ":deployment=" + mgtConnector.getUniqueId();
+
+         if (mgtConnector.getResourceAdapter() != null)
+         {
+            org.jboss.jca.core.management.ResourceAdapter mgtRa = mgtConnector.getResourceAdapter();
+
+            if (mgtRa.getResourceAdapter() != null)
+            {
+               Set<String> writeable = new HashSet<String>();
+               Set<String> excludeAttributes = new HashSet<String>();
+
+               for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtRa.getConfigProperties())
+               {
+                  if (mgtCp.isDynamic())
+                     writeable.add(mgtCp.getName());
+
+                  if (mgtCp.isConfidential())
+                     excludeAttributes.add(mgtCp.getName());
+               }
+
+               String raName = baseName + ",type=ResourceAdapter,class=" + 
+                  getClassName(mgtRa.getResourceAdapter().getClass().getName());
+
+               DynamicMBean raDMB = JMX.createMBean(mgtRa.getResourceAdapter(), 
+                                                    "Resource adapter",
+                                                    writeable,
+                                                    null,
+                                                    excludeAttributes,
+                                                    null);
+               ObjectName raON = new ObjectName(raName);
+
+               server.registerMBean(raDMB, raON);
+
+               ons.add(raON);
+            }
+         }
+
+         for (org.jboss.jca.core.management.ManagedConnectionFactory mgtMcf : 
+                 mgtConnector.getManagedConnectionFactories())
+         {
+            if (mgtMcf.getManagedConnectionFactory() != null)
+            {
+               Set<String> writeable = new HashSet<String>();
+               Set<String> excludeAttributes = new HashSet<String>();
+
+               for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtMcf.getConfigProperties())
+               {
+                  if (mgtCp.isDynamic())
+                     writeable.add(mgtCp.getName());
+
+                  if (mgtCp.isConfidential())
+                     excludeAttributes.add(mgtCp.getName());
+               }
+
+               String mcfName = baseName + ",type=ManagedConnectionFactory,class=" + 
+                  getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName());
+
+               DynamicMBean mcfDMB = JMX.createMBean(mgtMcf.getManagedConnectionFactory(), 
+                                                     "Managed connection factory",
+                                                     writeable,
+                                                     null,
+                                                     excludeAttributes,
+                                                     null);
+               ObjectName mcfON = new ObjectName(mcfName);
+
+               server.registerMBean(mcfDMB, mcfON);
+         
+               ons.add(mcfON);
+            }
+
+            if (mgtMcf.getPoolConfiguration() != null)
+            {
+               String mcfPCName = baseName + ",type=ManagedConnectionFactory,class=" + 
+                  getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName()) +
+                  ",subcategory=PoolConfiguration";
+
+               DynamicMBean mcfPCDMB = JMX.createMBean(mgtMcf.getPoolConfiguration(), "Pool configuration");
+               ObjectName mcfPCON = new ObjectName(mcfPCName);
+            
+               server.registerMBean(mcfPCDMB, mcfPCON);
+         
+               ons.add(mcfPCON);
+            }
+
+            if (mgtMcf.getPool() != null)
+            {
+               String mcfPName = baseName + ",type=ManagedConnectionFactory,class=" + 
+                  getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName()) + ",subcategory=Pool";
+               
+               DynamicMBean mcfPDMB = JMX.createMBean(mgtMcf.getPool(), "Pool");
+               ObjectName mcfPON = new ObjectName(mcfPName);
+               
+               server.registerMBean(mcfPDMB, mcfPON);
+               
+               ons.add(mcfPON);
+            }
+         }
+
+         for (org.jboss.jca.core.management.AdminObject mgtAo : mgtConnector.getAdminObjects())
+         {
+            if (mgtAo.getAdminObject() != null)
+            {
+               Set<String> writeable = new HashSet<String>();
+               Set<String> excludeAttributes = new HashSet<String>();
+
+               for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtAo.getConfigProperties())
+               {
+                  if (mgtCp.isDynamic())
+                     writeable.add(mgtCp.getName());
+
+                  if (mgtCp.isConfidential())
+                     excludeAttributes.add(mgtCp.getName());
+               }
+               
+               String aoName = baseName + ",type=AdminObject,class=" + 
+                  getClassName(mgtAo.getAdminObject().getClass().getName());
+               
+               DynamicMBean aoDMB = JMX.createMBean(mgtAo.getAdminObject(), 
+                                                    "Admin object",
+                                                    writeable,
+                                                    null,
+                                                    excludeAttributes,
+                                                    null);
+               ObjectName aoON = new ObjectName(aoName);
+               
+               server.registerMBean(aoDMB, aoON);
+               
+               ons.add(aoON);
+            }
+         }
+      }
+
+      return ons;
+   }
+
+   /**
+    * Get the class name without package name
+    * @param clz The fully qualified class name
+    * @return The class name
+    */
+   private String getClassName(String clz)
+   {
+      if (clz.indexOf(".") != -1)
+      {
+         int lastIndex = clz.lastIndexOf(".");
+         return clz.substring(lastIndex + 1);
+      }
+
+      return clz;
    }
 }
