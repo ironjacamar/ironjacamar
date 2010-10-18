@@ -237,6 +237,8 @@ public class WorkManagerImpl implements WorkManager
                       WorkListener workListener) 
       throws WorkException
    {
+      log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
+
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
@@ -331,6 +333,8 @@ public class WorkManagerImpl implements WorkManager
                          WorkListener workListener) 
       throws WorkException
    {
+      log.tracef("startWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
+
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
@@ -431,6 +435,8 @@ public class WorkManagerImpl implements WorkManager
                             WorkListener workListener) 
       throws WorkException
    {
+      log.tracef("scheduleWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
+
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
@@ -671,12 +677,12 @@ public class WorkManagerImpl implements WorkManager
                {
                   if (trace)
                   {
-                     log.trace("Not supported work context class : " + context.getClass());
+                     log.trace("Not supported work context class : " + context.getClass().getName());
                   }
                   
                   fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                   
-                  throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass(), 
+                  throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass().getName(), 
                       WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                }
                // Duplicate checks
@@ -689,13 +695,13 @@ public class WorkManagerImpl implements WorkManager
                      {
                         if (trace)
                         {
-                           log.trace("Duplicate transaction work context : " + context.getClass());
+                           log.trace("Duplicate transaction work context : " + context.getClass().getName());
                         }
 
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                         
                         throw new WorkCompletedException("Duplicate TransactionWorkContext class : " + 
-                            context.getClass(), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                           context.getClass().getName(), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -709,13 +715,14 @@ public class WorkManagerImpl implements WorkManager
                      {
                         if (trace)
                         {
-                           log.trace("Duplicate security work context : " + context.getClass());
+                           log.trace("Duplicate security work context : " + context.getClass().getName());
                         }
                         
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
 
-                        throw new WorkCompletedException("Duplicate SecurityWorkContext class : " + context.getClass(), 
-                              WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        throw new WorkCompletedException("Duplicate SecurityWorkContext class : " + 
+                                                         context.getClass().getName(), 
+                                                         WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -729,13 +736,14 @@ public class WorkManagerImpl implements WorkManager
                      {
                         if (trace)
                         {
-                           log.trace("Duplicate hint work context : " + context.getClass());
+                           log.trace("Duplicate hint work context : " + context.getClass().getName());
                         }
 
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                         
-                        throw new WorkCompletedException("Duplicate HintWorkContext class : " + context.getClass(), 
-                              WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        throw new WorkCompletedException("Duplicate HintWorkContext class : " + 
+                                                         context.getClass().getName(), 
+                                                         WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -747,8 +755,9 @@ public class WorkManagerImpl implements WorkManager
                   {
                      fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                      
-                     throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass(), 
-                           WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+                     throw new WorkCompletedException("Unsupported WorkContext class : " + 
+                                                      context.getClass().getName(), 
+                                                      WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                   }
                }
 
