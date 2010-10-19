@@ -41,18 +41,30 @@ import javax.transaction.Transaction;
 public interface Pool
 {
    /**
+    * Gets pool name.
+    * @return pool name
+    */
+   public String getName();
+
+   /**
+    * Sets pool name.
+    * @param poolName pool name
+    */
+   public void setName(String poolName);
+   
+   /**
     * Retrieve the managed connection factory for this pool.
     * 
     * @return the managed connection factory
     */ 
-   ManagedConnectionFactory getManagedConnectionFactory();
+   public ManagedConnectionFactory getManagedConnectionFactory();
 
    /**
     * Set the connection listener factory.
     * 
     * @param clf the connection event listener factory
     */
-   void setConnectionListenerFactory(ConnectionListenerFactory clf);
+   public void setConnectionListenerFactory(ConnectionListenerFactory clf);
 
    /**
     * Get a connection
@@ -63,7 +75,7 @@ public interface Pool
     * @return a connection event listener wrapping the connection
     * @throws ResourceException for any error
     */
-   ConnectionListener getConnection(Transaction trackByTransaction, Subject subject, ConnectionRequestInfo cri)
+   public ConnectionListener getConnection(Transaction trackByTransaction, Subject subject, ConnectionRequestInfo cri)
       throws ResourceException;
 
    /**
@@ -73,22 +85,22 @@ public interface Pool
     * @param kill whether to destroy the managed connection
     * @throws ResourceException for any error
     */
-   void returnConnection(ConnectionListener cl, boolean kill) 
+   public void returnConnection(ConnectionListener cl, boolean kill) 
       throws ResourceException;
 
    /**
     * Shutdown the pool
     */
-   void shutdown();
+   public void shutdown();
 
    /**
     * Flush the pool
     */
-   void flush();
+   public void flush();
 
    /**
     * Remove the matching SubPoolContext if the pool is empty
     * @param pool the internal managed connection pool
     */
-   void emptySubPool(ManagedConnectionPool pool);
+   public void emptySubPool(ManagedConnectionPool pool);
 }

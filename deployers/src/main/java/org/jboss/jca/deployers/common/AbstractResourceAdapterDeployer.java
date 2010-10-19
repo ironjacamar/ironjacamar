@@ -1010,6 +1010,17 @@ public abstract class AbstractResourceAdapterDeployer
                            cfJndiNames = new String[]{jndiName};
 
                            cm.setJndiName(jndiName);
+
+                           String poolName = null;
+                           if (cdRaXml != null)
+                              poolName = cdRaXml.getPoolName();
+                           else if (ijCD != null)
+                              poolName = ijCD.getPoolName();
+ 
+                           if (poolName == null)
+                              poolName = jndiName;
+
+                           pool.setName(poolName);
                         }
                         else
                         {
@@ -1017,6 +1028,17 @@ public abstract class AbstractResourceAdapterDeployer
                            cfs = new Object[]{cf};
 
                            cm.setJndiName(cfJndiNames[0]);
+
+                           String poolName = null;
+                           if (cdRaXml != null)
+                              poolName = cdRaXml.getPoolName();
+                           else if (ijCD != null)
+                              poolName = ijCD.getPoolName();
+ 
+                           if (poolName == null)
+                              poolName = cfJndiNames[0];
+
+                           pool.setName(poolName);
                         }
 
                         org.jboss.jca.core.management.ManagedConnectionFactory mgtMcf =
@@ -1266,6 +1288,17 @@ public abstract class AbstractResourceAdapterDeployer
                                        cfJndiNames[cdIndex] = jndiName;
 
                                        cm.setJndiName(jndiName);
+
+                                       String poolName = null;
+                                       if (cdRaXml != null)
+                                          poolName = cdRaXml.getPoolName();
+                                       else if (ijCD != null)
+                                          poolName = ijCD.getPoolName();
+                                       
+                                       if (poolName == null)
+                                          poolName = jndiName;
+
+                                       pool.setName(poolName);
                                     }
                                     else
                                     {
@@ -1273,6 +1306,17 @@ public abstract class AbstractResourceAdapterDeployer
                                        cfs = new Object[]{cf};
 
                                        cm.setJndiName(cfJndiNames[0]);
+
+                                       String poolName = null;
+                                       if (cdRaXml != null)
+                                          poolName = cdRaXml.getPoolName();
+                                       else if (ijCD != null)
+                                          poolName = ijCD.getPoolName();
+                                       
+                                       if (poolName == null)
+                                          poolName = cfJndiNames[0];
+
+                                       pool.setName(poolName);
                                     }
 
                                     org.jboss.jca.core.management.ManagedConnectionFactory mgtMcf =

@@ -108,7 +108,7 @@ public abstract class AbstractPool implements Pool
     * Sets pool name.
     * @param poolName pool name
     */
-   public void setPoolName(String poolName)
+   public void setName(String poolName)
    {
       this.poolName = poolName;
    }
@@ -117,7 +117,7 @@ public abstract class AbstractPool implements Pool
     * Gets pool name.
     * @return pool name
     */
-   public String getPoolName()
+   public String getName()
    {
       return poolName;
    }

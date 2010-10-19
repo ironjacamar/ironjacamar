@@ -76,7 +76,7 @@ public abstract class AbstractPrefillPool extends AbstractPool implements PreFil
       if (shouldPrefill())
       {
          if (log.isDebugEnabled())
-            log.debug("Attempting to prefill pool for pool with jndi name" + getPoolName());
+            log.debug("Attempting to prefill pool: " + getName());
 
          try
          {
@@ -89,7 +89,7 @@ public abstract class AbstractPrefillPool extends AbstractPool implements PreFil
          catch (Throwable t)
          {
             //No real need to throw here being that pool remains in the same state as before.
-            log.error("Unable to prefill pool with jndi name" + getPoolName(), t);
+            log.error("Unable to prefill pool: " + getName(), t);
          }
       }
    }
