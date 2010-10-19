@@ -130,8 +130,22 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             for (ConfigProperty cpmd : configs)
             {
                if (cpmd.isValueSet())
-                  injector.inject(cpmd.getConfigPropertyType().getValue(), cpmd.getConfigPropertyName().getValue(),
-                     cpmd.getConfigPropertyValue().getValue(), o);
+               {
+                  boolean setValue = true;
+
+                  if (cpmd instanceof org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)
+                  {
+                     org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16 cpmd16 =
+                        (org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)cpmd;
+
+                     if (cpmd16.getConfigPropertyIgnore() != null && cpmd16.getConfigPropertyIgnore().booleanValue())
+                        setValue = false;
+                  }
+
+                  if (setValue)
+                     injector.inject(cpmd.getConfigPropertyType().getValue(), cpmd.getConfigPropertyName().getValue(),
+                                     cpmd.getConfigPropertyValue().getValue(), o);
+               }
             }
          }
 
