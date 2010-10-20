@@ -68,7 +68,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       CommonPool pool = null;
 
       //attributes reading
-      boolean useJavaContext = false;
+      boolean useJavaContext = true;
       String className = null;
       boolean enabled = true;
       String jndiName = null;
@@ -99,7 +99,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                break;
             }
             case USEJAVACONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), false);
+               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
             default :
@@ -304,7 +304,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       HashMap<String, String> configProperties = new HashMap<String, String>();
 
       //attributes reading
-      boolean useJavaContext = false;
+      boolean useJavaContext = true;
       String className = null;
       boolean enabled = true;
       String jndiName = null;
@@ -331,7 +331,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                break;
             }
             case USEJAVACONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), false);
+               useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
             case POOL_NAME : {

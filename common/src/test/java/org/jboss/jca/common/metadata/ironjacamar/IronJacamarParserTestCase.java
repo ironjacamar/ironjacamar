@@ -404,7 +404,7 @@ public class IronJacamarParserTestCase
             assertThat(connDef.getPoolName(), new IsNull<String>());
             assertThat(connDef.getClassName(), new IsNull<String>());
             assertThat(connDef.isEnabled(), is(true));
-            assertThat(connDef.isUseJavaContext(), is(false));
+            assertThat(connDef.isUseJavaContext(), is(true));
 
             //pool default
             assertThat(connDef.isXa(), is(false));
@@ -466,7 +466,7 @@ public class IronJacamarParserTestCase
             assertThat(connDef.getPoolName(), new IsNull<String>());
             assertThat(connDef.getClassName(), new IsNull<String>());
             assertThat(connDef.isEnabled(), is(true));
-            assertThat(connDef.isUseJavaContext(), is(false));
+            assertThat(connDef.isUseJavaContext(), is(true));
 
             //pool default
             assertThat(connDef.isXa(), is(true));

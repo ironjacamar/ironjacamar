@@ -643,10 +643,24 @@ public abstract class AbstractResourceAdapterDeployer
                                     if (aoRaXml != null)
                                     {
                                        jndiName = aoRaXml.getJndiName();
+
+                                       if (aoRaXml.isUseJavaContext() != null && 
+                                           aoRaXml.isUseJavaContext().booleanValue() &&
+                                           !jndiName.startsWith("java:/"))
+                                       {
+                                          jndiName = "java:/" + jndiName;
+                                       }
                                     }
                                     else
                                     {
                                        jndiName = ijAO.getJndiName();
+
+                                       if (ijAO.isUseJavaContext() != null && 
+                                           ijAO.isUseJavaContext().booleanValue() &&
+                                           !jndiName.startsWith("java:/"))
+                                       {
+                                          jndiName = "java:/" + jndiName;
+                                       }
                                     }
                                  
                                     bindAdminObject(url, deploymentName, ao, jndiName);
@@ -1001,9 +1015,27 @@ public abstract class AbstractResourceAdapterDeployer
                         {
                            String jndiName;
                            if (cdRaXml != null)
+                           {
                               jndiName = cdRaXml.getJndiName();
+
+                              if (cdRaXml.isUseJavaContext() != null && 
+                                  cdRaXml.isUseJavaContext().booleanValue() &&
+                                  !jndiName.startsWith("java:/"))
+                              {
+                                 jndiName = "java:/" + jndiName;
+                              }
+                           }
                            else
+                           {
                               jndiName = ijCD.getJndiName();
+
+                              if (ijCD.isUseJavaContext() != null && 
+                                  ijCD.isUseJavaContext().booleanValue() &&
+                                  !jndiName.startsWith("java:/"))
+                              {
+                                 jndiName = "java:/" + jndiName;
+                              }
+                           }
 
                            bindConnectionFactory(url, deploymentName, cf, jndiName);
                            cfs = new Object[]{cf};
@@ -1013,9 +1045,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                            String poolName = null;
                            if (cdRaXml != null)
+                           {
                               poolName = cdRaXml.getPoolName();
+                           }
                            else if (ijCD != null)
+                           {
                               poolName = ijCD.getPoolName();
+                           }
  
                            if (poolName == null)
                               poolName = jndiName;
@@ -1031,9 +1067,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                            String poolName = null;
                            if (cdRaXml != null)
+                           {
                               poolName = cdRaXml.getPoolName();
+                           }
                            else if (ijCD != null)
+                           {
                               poolName = ijCD.getPoolName();
+                           }
  
                            if (poolName == null)
                               poolName = cfJndiNames[0];
@@ -1279,9 +1319,27 @@ public abstract class AbstractResourceAdapterDeployer
                                     {
                                        String jndiName;
                                        if (cdRaXml != null)
+                                       {
                                           jndiName = cdRaXml.getJndiName();
+
+                                          if (cdRaXml.isUseJavaContext() != null && 
+                                              cdRaXml.isUseJavaContext().booleanValue() &&
+                                              !jndiName.startsWith("java:/"))
+                                          {
+                                             jndiName = "java:/" + jndiName;
+                                          }
+                                       }
                                        else
+                                       {
                                           jndiName = ijCD.getJndiName();
+
+                                          if (ijCD.isUseJavaContext() != null && 
+                                              ijCD.isUseJavaContext().booleanValue() &&
+                                              !jndiName.startsWith("java:/"))
+                                          {
+                                             jndiName = "java:/" + jndiName;
+                                          }
+                                       }
 
                                        bindConnectionFactory(url, deploymentName, cf, jndiName);
                                        cfs[cdIndex] = cf;
@@ -1291,9 +1349,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                                        String poolName = null;
                                        if (cdRaXml != null)
+                                       {
                                           poolName = cdRaXml.getPoolName();
+                                       }
                                        else if (ijCD != null)
+                                       {
                                           poolName = ijCD.getPoolName();
+                                       }
                                        
                                        if (poolName == null)
                                           poolName = jndiName;
@@ -1309,9 +1371,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                                        String poolName = null;
                                        if (cdRaXml != null)
+                                       {
                                           poolName = cdRaXml.getPoolName();
+                                       }
                                        else if (ijCD != null)
+                                       {
                                           poolName = ijCD.getPoolName();
+                                       }
                                        
                                        if (poolName == null)
                                           poolName = cfJndiNames[0];

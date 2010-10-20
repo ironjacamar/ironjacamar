@@ -185,7 +185,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       //attributes reading
 
-      boolean useJavaContext = false;
+      boolean useJavaContext = true;
       String poolName = null;
       boolean enabled = true;
       String jndiName = null;
@@ -315,7 +315,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       CommonPool pool = null;
 
       //attributes reading
-      boolean useJavaContext = false;
+      boolean useJavaContext = true;
       String poolName = null;
       boolean enabled = true;
       String jndiName = null;

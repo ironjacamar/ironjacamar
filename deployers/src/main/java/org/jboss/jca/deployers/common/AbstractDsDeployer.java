@@ -207,8 +207,12 @@ public abstract class AbstractDsDeployer
                   {
                      String jndiName = dataSource.getJndiName();
 
-                     if (!jndiName.startsWith("java:/"))
+                     if (dataSource.isUseJavaContext() != null &&
+                         dataSource.isUseJavaContext().booleanValue() &&
+                         !jndiName.startsWith("java:/"))
+                     {
                         jndiName = "java:/" + jndiName;
+                     }
 
                      Object cf = deployDataSource(dataSource, jndiName, urlJdbcLocal, jdbcLocalDeploymentCl);
 
@@ -243,8 +247,12 @@ public abstract class AbstractDsDeployer
                   {
                      String jndiName = xaDataSource.getJndiName();
 
-                     if (!jndiName.startsWith("java:/"))
+                     if (xaDataSource.isUseJavaContext() != null &&
+                         xaDataSource.isUseJavaContext().booleanValue() &&
+                         !jndiName.startsWith("java:/"))
+                     {
                         jndiName = "java:/" + jndiName;
+                     }
 
                      Object cf = deployXADataSource(xaDataSource, jndiName, urlJdbcXA, jdbcXADeploymentCl);
 
@@ -327,6 +335,17 @@ public abstract class AbstractDsDeployer
 
       cm.setJndiName(jndiName);
 
+      String poolName = null;
+      if (ds.getPoolName() != null)
+      {
+         poolName = ds.getPoolName();
+      }
+ 
+      if (poolName == null)
+         poolName = jndiName;
+
+      pool.setName(poolName);
+
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }
@@ -399,6 +418,17 @@ public abstract class AbstractDsDeployer
          getTransactionManager(), interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
 
       cm.setJndiName(jndiName);
+
+      String poolName = null;
+      if (ds.getPoolName() != null)
+      {
+         poolName = ds.getPoolName();
+      }
+ 
+      if (poolName == null)
+         poolName = jndiName;
+
+      pool.setName(poolName);
 
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);

@@ -336,11 +336,11 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute default="false" name="use-java-context" type="xs:boolean">
+    <xs:attribute default="true" name="use-java-context" type="xs:boolean">
       <xs:annotation>
         <xs:documentation>
           <![CDATA[[
-            Setting this to false will bind the DataSource into global jndi
+            Setting this to false will bind the DataSource into global JNDI
             Ex: use-java-context="true"
            ]]>
         </xs:documentation>

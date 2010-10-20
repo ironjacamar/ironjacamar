@@ -133,11 +133,11 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute default="false" name="use-java-context" type="xs:boolean">
+    <xs:attribute default="true" name="use-java-context" type="xs:boolean">
       <xs:annotation>
         <xs:documentation>
           <![CDATA[[
-            Specifies if a global JNDI context should be used 
+            Specifies if a java:/ JNDI context should be used 
            ]]>
         </xs:documentation>
       </xs:annotation>
