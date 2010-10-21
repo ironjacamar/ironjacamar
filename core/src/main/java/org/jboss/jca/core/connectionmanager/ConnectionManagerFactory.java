@@ -25,6 +25,7 @@ package org.jboss.jca.core.connectionmanager;
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
@@ -141,6 +142,7 @@ public class ConnectionManagerFactory
 
       setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, tm);
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
+      handleTxIntegration(tm);
 
       return cm;
    }
@@ -210,5 +212,16 @@ public class ConnectionManagerFactory
 
       if (padXid != null)
          cm.setPadXid(padXid.booleanValue());
+   }
+   
+   /**
+    * Associate the transaction synchronizer with the transaction
+    * manager.
+    * 
+    * @param tm TransactionManager
+    */
+   public void handleTxIntegration(final TransactionManager tm)
+   {
+      TransactionSynchronizer.setTransactionManager(tm);
    }
 }
