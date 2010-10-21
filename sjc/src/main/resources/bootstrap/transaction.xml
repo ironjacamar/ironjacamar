@@ -184,4 +184,20 @@
     <depends>TransactionManager</depends>
   </bean>
   
+  <!-- Bind java:/UserTransaction -->
+  <bean name="UserTransactionJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
+    <property name="bindName">java:/UserTransaction</property>
+    <property name="className">
+      <inject bean="JTAEnvironmentBean" property="userTransactionClassName"/>
+    </property>
+    <property name="factory">
+      <inject bean="JTAEnvironmentBean" property="userTransactionClassName"/>
+    </property>
+
+    <install method="bind"/>
+    <uninstall method="unbind"/>
+
+    <depends>NamingServer</depends>
+  </bean>
+  
 </deployment>
