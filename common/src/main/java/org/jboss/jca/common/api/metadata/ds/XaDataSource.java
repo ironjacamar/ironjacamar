@@ -43,6 +43,11 @@ public interface XaDataSource extends CommonDataSource
     */
    public String getXaDataSourceClass();
 
+   /**
+    * Get the module
+    * @return The value
+    */
+   public String getModule();
 
    /**
     * Get the statement.
@@ -109,6 +114,10 @@ public interface XaDataSource extends CommonDataSource
       * xaDatasourceClass tag
       */
       XADATASOURCECLASS("xa-datasource-class"),
+      /**
+      * module tag
+      */
+      MODULE("module"),
       /**
       * transactionIsolation tag
       */

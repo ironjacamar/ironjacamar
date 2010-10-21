@@ -49,6 +49,8 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final String xaDataSourceClass;
 
+   private final String module;
+
    private final String newConnectionSql;
 
    private final CommonXaPool xaPool;
@@ -69,13 +71,14 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param jndiName jndiName
     * @param xaDataSourceProperty xaDataSourceProperty
     * @param xaDataSourceClass xaDataSourceClass
+    * @param module module
     * @param newConnectionSql newConnectionSql
     * @param xaPool xaPool
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, CommonSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
       boolean useJavaContext, String poolName, boolean enabled, String jndiName,
-      Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String newConnectionSql,
+      Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String module, String newConnectionSql,
       CommonXaPool xaPool)
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
@@ -90,19 +93,31 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          this.xaDataSourceProperty = new HashMap<String, String>(0);
       }
       this.xaDataSourceClass = xaDataSourceClass;
+      this.module = module;
       this.newConnectionSql = newConnectionSql;
       this.xaPool = xaPool;
    }
 
    /**
-   * Get the xaDataSourceClass.
-   *
-   * @return the xaDataSourceClass.
-   */
+    * Get the xaDataSourceClass.
+    *
+    * @return the xaDataSourceClass.
+    */
    @Override
    public final String getXaDataSourceClass()
    {
       return xaDataSourceClass;
+   }
+
+   /**
+    * Get the module.
+    *
+    * @return the module.
+    */
+   @Override
+   public final String getModule()
+   {
+      return module;
    }
 
    /**
@@ -156,6 +171,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       int result = 1;
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
       result = prime * result + ((xaDataSourceClass == null) ? 0 : xaDataSourceClass.hashCode());
+      result = prime * result + ((module == null) ? 0 : module.hashCode());
       result = prime * result + ((xaDataSourceProperty == null) ? 0 : xaDataSourceProperty.hashCode());
       result = prime * result + ((xaPool == null) ? 0 : xaPool.hashCode());
       return result;
@@ -185,6 +201,13 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       }
       else if (!xaDataSourceClass.equals(other.xaDataSourceClass))
          return false;
+      if (module == null)
+      {
+         if (other.module != null)
+            return false;
+      }
+      else if (!module.equals(other.module))
+         return false;
       if (xaDataSourceProperty == null)
       {
          if (other.xaDataSourceProperty != null)
@@ -206,7 +229,8 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public String toString()
    {
       return "XADataSourceImpl [xaDataSourceProperty=" + xaDataSourceProperty + ", xaDataSourceClass=" +
-             xaDataSourceClass + ", newConnectionSql=" + newConnectionSql + ", xaPool=" + xaPool +
+             xaDataSourceClass + ", module=" +
+             module + ", newConnectionSql=" + newConnectionSql + ", xaPool=" + xaPool +
              ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut + ", security=" + security +
              ", statement=" + statement + ", validation=" + validation + ", urlDelimiter=" + urlDelimiter +
              ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName + ", useJavaContext=" +

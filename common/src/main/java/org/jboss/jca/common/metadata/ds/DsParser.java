@@ -182,6 +182,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       CommonXaPool xaPool = null;
 
       String xaDataSourceClass = null;
+      String module = null;
 
       //attributes reading
 
@@ -227,8 +228,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
-                                              jndiName, xaDataSourceProperty, xaDataSourceClass, newConnectionSql,
-                                              xaPool);
+                                              jndiName, xaDataSourceProperty, xaDataSourceClass, module, 
+                                              newConnectionSql, xaPool);
                }
                else
                {
@@ -248,6 +249,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XADATASOURCECLASS : {
                      xaDataSourceClass = elementAsString(reader);
+                     break;
+                  }
+                  case MODULE : {
+                     module = elementAsString(reader);
                      break;
                   }
                   case XA_POOL : {
@@ -303,6 +308,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       boolean prefill = false;
       String connectionUrl = null;
       String driverClass = null;
+      String module = null;
       TransactionIsolation transactionIsolation = null;
       Map<String, String> connectionProperties = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
@@ -354,8 +360,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DATASOURCE)
                {
 
-                  return new DataSourceImpl(connectionUrl, driverClass, transactionIsolation, connectionProperties,
-                                            timeOutSettings, securitySettings, statementSettings, validationSettings,
+                  return new DataSourceImpl(connectionUrl, driverClass, module, transactionIsolation, 
+                                            connectionProperties, timeOutSettings, securitySettings, 
+                                            statementSettings, validationSettings,
                                             urlDelimiter, urlSelectorStrategyClassName, newConnectionSql,
                                             useJavaContext, poolName, enabled, jndiName, pool);
                }
@@ -381,6 +388,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case DRIVERCLASS : {
                      driverClass = elementAsString(reader);
+                     break;
+                  }
+                  case MODULE : {
+                     module = elementAsString(reader);
                      break;
                   }
                   case POOL : {

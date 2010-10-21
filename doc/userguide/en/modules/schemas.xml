@@ -2825,7 +2825,7 @@ standard information into the standard deployment descriptor.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute default="false" name="use-java-context" type="xs:boolean">
+    <xs:attribute default="true" name="use-java-context" type="xs:boolean">
       <xs:annotation>
         <xs:documentation>
           Specifies if a global JNDI context should be used 
@@ -3270,7 +3270,7 @@ standard information into the standard deployment descriptor.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute default="false" name="use-java-context" type="xs:boolean">
+    <xs:attribute default="true" name="use-java-context" type="xs:boolean">
       <xs:annotation>
         <xs:documentation>
           Specifies if a global JNDI context should be used 
@@ -3654,6 +3654,13 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="module" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            An unique reference to the classloader module which contains the JDBC driver
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="connection-property" type="connection-propertyType" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
@@ -3760,6 +3767,13 @@ standard information into the standard deployment descriptor.
           <xs:documentation>
             The fully qualifed name of the javax.sql.XADataSource implementation 
             class. Ex: <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="module" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            An unique reference to the classloader module which contains the JDBC driver
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -3883,7 +3897,7 @@ standard information into the standard deployment descriptor.
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute default="false" name="use-java-context" type="xs:boolean">
+    <xs:attribute default="true" name="use-java-context" type="xs:boolean">
       <xs:annotation>
         <xs:documentation>
           Setting this to false will bind the DataSource into global jndi

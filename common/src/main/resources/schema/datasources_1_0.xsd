@@ -55,6 +55,15 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="module" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              An unique reference to the classloader module which contains the JDBC driver
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="connection-property" type="connection-propertyType" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
@@ -184,6 +193,15 @@
             <![CDATA[[
               The fully qualifed name of the javax.sql.XADataSource implementation 
               class. Ex: <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="module" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              A unique reference to the classloader module which contains the JDBC driver
              ]]>
           </xs:documentation>
         </xs:annotation>

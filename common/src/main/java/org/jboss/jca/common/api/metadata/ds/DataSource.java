@@ -51,6 +51,11 @@ public interface DataSource extends CommonDataSource
     */
    public String getDriverClass();
 
+   /**
+    * Get the module
+    * @return The value
+    */
+   public String getModule();
 
    /**
     * Get the connectionProperties.
@@ -123,6 +128,10 @@ public interface DataSource extends CommonDataSource
       * driverClass tag
       */
       DRIVERCLASS("driver-class"),
+      /**
+      * module tag
+      */
+      MODULE("module"),
       /**
       * transactionIsolation tag
       */

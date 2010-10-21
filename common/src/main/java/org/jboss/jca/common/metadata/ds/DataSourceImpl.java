@@ -49,6 +49,8 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
    private final String driverClass;
 
+   private final String module;
+
    private final HashMap<String, String> connectionProperties;
 
    private final String newConnectionSql;
@@ -60,6 +62,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     *
     * @param connectionUrl connectionUrl
     * @param driverClass driverClass
+    * @param module module
     * @param transactionIsolation transactionIsolation
     * @param connectionProperties connectionProperties
     * @param timeOut timeOut
@@ -75,15 +78,18 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param jndiName jndiName
     * @param pool pool
     */
-   public DataSourceImpl(String connectionUrl, String driverClass, TransactionIsolation transactionIsolation,
-      Map<String, String> connectionProperties, TimeOut timeOut, CommonSecurity security, Statement statement,
-      Validation validation, String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql,
-      boolean useJavaContext, String poolName, boolean enabled, String jndiName, CommonPool pool)
+   public DataSourceImpl(String connectionUrl, String driverClass, String module,
+                         TransactionIsolation transactionIsolation,
+                         Map<String, String> connectionProperties, TimeOut timeOut, CommonSecurity security, 
+                         Statement statement, Validation validation, String urlDelimiter, 
+                         String urlSelectorStrategyClassName, String newConnectionSql,
+                         boolean useJavaContext, String poolName, boolean enabled, String jndiName, CommonPool pool)
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
             urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
       this.connectionUrl = connectionUrl;
       this.driverClass = driverClass;
+      this.module = module;
       if (connectionProperties != null)
       {
          this.connectionProperties = new HashMap<String, String>(connectionProperties.size());
@@ -118,6 +124,17 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    public final String getDriverClass()
    {
       return driverClass;
+   }
+
+   /**
+    * Get the module.
+    *
+    * @return the module.
+    */
+   @Override
+   public final String getModule()
+   {
+      return module;
    }
 
    /**
@@ -194,6 +211,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       result = prime * result + ((connectionProperties == null) ? 0 : connectionProperties.hashCode());
       result = prime * result + ((connectionUrl == null) ? 0 : connectionUrl.hashCode());
       result = prime * result + ((driverClass == null) ? 0 : driverClass.hashCode());
+      result = prime * result + ((module == null) ? 0 : module.hashCode());
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
       result = prime * result + ((pool == null) ? 0 : pool.hashCode());
       return result;
@@ -230,6 +248,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       }
       else if (!driverClass.equals(other.driverClass))
          return false;
+      if (module == null)
+      {
+         if (other.module != null)
+            return false;
+      }
+      else if (!module.equals(other.module))
+         return false;
       if (newConnectionSql == null)
       {
          if (other.newConnectionSql != null)
@@ -251,14 +276,12 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    public String toString()
    {
       return "DataSourceImpl [connectionUrl=" + connectionUrl + ", driverClass=" + driverClass +
-             ", connectionProperties=" + connectionProperties + ", newConnectionSql=" + newConnectionSql +
-             ", pool=" + pool + ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut +
-             ", security=" + security + ", statement=" + statement + ", validation=" + validation +
-             ", urlDelimiter=" + urlDelimiter + ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName +
-             ", useJavaContext=" + useJavaContext + ", poolName=" + poolName + ", enabled=" + enabled +
-             ", jndiName=" + jndiName + "]";
+         ", module=" + module +
+         ", connectionProperties=" + connectionProperties + ", newConnectionSql=" + newConnectionSql +
+         ", pool=" + pool + ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut +
+         ", security=" + security + ", statement=" + statement + ", validation=" + validation +
+         ", urlDelimiter=" + urlDelimiter + ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName +
+         ", useJavaContext=" + useJavaContext + ", poolName=" + poolName + ", enabled=" + enabled +
+         ", jndiName=" + jndiName + "]";
    }
-
-
-
 }
