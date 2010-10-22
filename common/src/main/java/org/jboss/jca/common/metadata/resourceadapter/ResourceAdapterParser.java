@@ -60,7 +60,15 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
       XMLInputFactory inputFactory = XMLInputFactory.newInstance();
       reader = inputFactory.createXMLStreamReader(xmlInputStream);
-      return parse(reader);
+      try
+      {
+         return parse(reader);
+      }
+      finally
+      {
+         if (reader != null)
+            reader.close();
+      }
    }
 
    @Override
@@ -69,49 +77,41 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
       ResourceAdapters adapters = null;
 
+      //iterate over tags
+      int iterate;
       try
       {
-
-         //iterate over tags
-         int iterate;
-         try
-         {
-            iterate = reader.nextTag();
-         }
-         catch (XMLStreamException e)
-         {
-            //founding a non tag..go on. Normally non-tag found at beginning are comments or DTD declaration
-            iterate = reader.nextTag();
-         }
-         switch (iterate)
-         {
-            case END_ELEMENT : {
-               // should mean we're done, so ignore it.
-               break;
-            }
-            case START_ELEMENT : {
-
-               switch (Tag.forName(reader.getLocalName()))
-               {
-                  case RESOURCE_ADPTERS : {
-                     adapters = parseResourceAdapters(reader);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-
-               break;
-            }
-            default :
-               throw new IllegalStateException();
-         }
+         iterate = reader.nextTag();
       }
-      finally
+      catch (XMLStreamException e)
       {
-         if (reader != null)
-            reader.close();
+         //founding a non tag..go on. Normally non-tag found at beginning are comments or DTD declaration
+         iterate = reader.nextTag();
       }
+      switch (iterate)
+      {
+         case END_ELEMENT : {
+            // should mean we're done, so ignore it.
+            break;
+         }
+         case START_ELEMENT : {
+
+            switch (Tag.forName(reader.getLocalName()))
+            {
+               case RESOURCE_ADPTERS : {
+                  adapters = parseResourceAdapters(reader);
+                  break;
+               }
+               default :
+                  throw new ParserException("Unexpected element:" + reader.getLocalName());
+            }
+
+            break;
+         }
+         default :
+            throw new IllegalStateException();
+      }
+
       return adapters;
 
    }
