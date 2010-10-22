@@ -86,4 +86,22 @@ public class ConfigProperty
    {
       return confidential;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("ConfigProperty@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[name=").append(name);
+      sb.append(" dynamic=").append(dynamic);
+      sb.append(" confidential=").append(confidential);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

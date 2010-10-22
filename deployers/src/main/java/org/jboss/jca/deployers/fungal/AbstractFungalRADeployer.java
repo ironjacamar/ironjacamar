@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.management.DynamicMBean;
@@ -302,11 +303,15 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
                for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtRa.getConfigProperties())
                {
+                  String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
+                  if (mgtCp.getName().length() > 1)
+                     mgtCpName += mgtCp.getName().substring(1);
+
                   if (mgtCp.isDynamic())
-                     writeable.add(mgtCp.getName());
+                     writeable.add(mgtCpName);
 
                   if (mgtCp.isConfidential())
-                     excludeAttributes.add(mgtCp.getName());
+                     excludeAttributes.add(mgtCpName);
                }
 
                String raName = baseName + ",type=ResourceAdapter,class=" + 
@@ -336,11 +341,15 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
                for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtMcf.getConfigProperties())
                {
+                  String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
+                  if (mgtCp.getName().length() > 1)
+                     mgtCpName += mgtCp.getName().substring(1);
+
                   if (mgtCp.isDynamic())
-                     writeable.add(mgtCp.getName());
+                     writeable.add(mgtCpName);
 
                   if (mgtCp.isConfidential())
-                     excludeAttributes.add(mgtCp.getName());
+                     excludeAttributes.add(mgtCpName);
                }
 
                String mcfName = baseName + ",type=ManagedConnectionFactory,class=" + 
@@ -396,11 +405,15 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
                for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtAo.getConfigProperties())
                {
+                  String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
+                  if (mgtCp.getName().length() > 1)
+                     mgtCpName += mgtCp.getName().substring(1);
+
                   if (mgtCp.isDynamic())
-                     writeable.add(mgtCp.getName());
+                     writeable.add(mgtCpName);
 
                   if (mgtCp.isConfidential())
-                     excludeAttributes.add(mgtCp.getName());
+                     excludeAttributes.add(mgtCpName);
                }
                
                String aoName = baseName + ",type=AdminObject,class=" + 
