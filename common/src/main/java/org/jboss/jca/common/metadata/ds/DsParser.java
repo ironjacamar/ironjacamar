@@ -68,7 +68,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       XMLInputFactory inputFactory = XMLInputFactory.newInstance();
       reader = inputFactory.createXMLStreamReader(xmlInputStream);
-      return parse(reader);
+      try
+      {
+         return parse(reader);
+      }
+      finally
+      {
+         if (reader != null)
+            reader.close();
+      }
    }
 
    @Override
@@ -77,49 +85,41 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       DataSources dataSources = null;
 
+      //iterate over tags
+      int iterate;
       try
       {
-
-         //iterate over tags
-         int iterate;
-         try
-         {
-            iterate = reader.nextTag();
-         }
-         catch (XMLStreamException e)
-         {
-            //founding a non tag..go on. Normally non-tag found at beginning are comments or DTD declaration
-            iterate = reader.nextTag();
-         }
-         switch (iterate)
-         {
-            case END_ELEMENT : {
-               // should mean we're done, so ignore it.
-               break;
-            }
-            case START_ELEMENT : {
-
-               switch (Tag.forName(reader.getLocalName()))
-               {
-                  case DATASOURCES : {
-                     dataSources = parseDataSources(reader);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-
-               break;
-            }
-            default :
-               throw new IllegalStateException();
-         }
+         iterate = reader.nextTag();
       }
-      finally
+      catch (XMLStreamException e)
       {
-         if (reader != null)
-            reader.close();
+         //founding a non tag..go on. Normally non-tag found at beginning are comments or DTD declaration
+         iterate = reader.nextTag();
       }
+      switch (iterate)
+      {
+         case END_ELEMENT : {
+            // should mean we're done, so ignore it.
+            break;
+         }
+         case START_ELEMENT : {
+
+            switch (Tag.forName(reader.getLocalName()))
+            {
+               case DATASOURCES : {
+                  dataSources = parseDataSources(reader);
+                  break;
+               }
+               default :
+                  throw new ParserException("Unexpected element:" + reader.getLocalName());
+            }
+
+            break;
+         }
+         default :
+            throw new IllegalStateException();
+      }
+
       return dataSources;
 
    }
@@ -228,7 +228,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
-                                              jndiName, xaDataSourceProperty, xaDataSourceClass, module, 
+                                              jndiName, xaDataSourceProperty, xaDataSourceClass, module,
                                               newConnectionSql, xaPool);
                }
                else
@@ -360,11 +360,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DATASOURCE)
                {
 
-                  return new DataSourceImpl(connectionUrl, driverClass, module, transactionIsolation, 
-                                            connectionProperties, timeOutSettings, securitySettings, 
-                                            statementSettings, validationSettings,
-                                            urlDelimiter, urlSelectorStrategyClassName, newConnectionSql,
-                                            useJavaContext, poolName, enabled, jndiName, pool);
+                  return new DataSourceImpl(connectionUrl, driverClass, module, transactionIsolation,
+                                            connectionProperties, timeOutSettings, securitySettings,
+                                            statementSettings, validationSettings, urlDelimiter,
+                                            urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
+                                            enabled, jndiName, pool);
                }
                else
                {
