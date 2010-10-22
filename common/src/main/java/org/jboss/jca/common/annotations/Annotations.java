@@ -613,8 +613,8 @@ public class Annotations
                configPropertyType = new XsdString(getConfigPropertyType(annotation), null);
             }
 
-            Boolean configPropertySupportsDynamicUpdates = false;
-            Boolean configPropertyConfidential = false;
+            Boolean configPropertySupportsDynamicUpdates = configPropertyAnnotation.supportsDynamicUpdates();
+            Boolean configPropertyConfidential = configPropertyAnnotation.confidential();
             // Description
             ArrayList<LocalizedXsdString> descriptions = null;
             if (configPropertyAnnotation.description() != null && configPropertyAnnotation.description().length != 0)
