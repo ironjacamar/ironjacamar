@@ -146,7 +146,7 @@ public class Validation
          Annotations annotator = new Annotations();
          AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
          AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
-         cmd = annotator.merge(cmd, repository);
+         cmd = annotator.merge(cmd, repository, cl);
 
          List<Validate> validateClasses = new ArrayList<Validate>();
          List<Failure> failures = new ArrayList<Failure>();

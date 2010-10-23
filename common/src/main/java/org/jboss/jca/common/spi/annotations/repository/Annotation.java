@@ -32,54 +32,40 @@ import java.util.List;
  */
 public interface Annotation
 {
-
    /**
-    *
-    * get the class Name of this annotation
-    *
+    * Get the class Name of this annotation
     * @return the classname
     */
    public String getClassName();
 
    /**
-    *
     * Get the Annotation Object
-    *
-    * @return te java.lang.Annotation instance
+    * @return the java.lang.Annotation instance
     */
    public Object getAnnotation();
 
    /**
-    *
-    * get the list of parameters type for this annotation
-    *
+    * Get the list of parameters type for this annotation
     * @return list of parameters types
     */
    public List<String> getParameterTypes();
 
    /**
-    *
-    * get the member name
-    *
+    * Get the member name
     * @return member name
     */
    public String getMemberName();
 
    /**
-    *
-    * check if the annotation is on a method
-    *
+    * Check if the annotation is on a method
     * @return true if the annotation is attached to a method
     */
-   boolean isOnMethod();
+   public boolean isOnMethod();
 
    /**
-    *
-    * check if the annotation is on a field
-    *
+    * Check if the annotation is on a field
     * @return true if the annotation is attached to a field
     */
-   boolean isOnField();
-
+   public boolean isOnField();
 }
 

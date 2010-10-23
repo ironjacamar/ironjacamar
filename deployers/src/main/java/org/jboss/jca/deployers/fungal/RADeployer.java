@@ -148,7 +148,7 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
          Annotations annotator = new Annotations();
          AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
          AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
-         cmd = annotator.merge(cmd, repository);
+         cmd = annotator.merge(cmd, repository, cl);
 
          // Validate metadata
          cmd.validate();

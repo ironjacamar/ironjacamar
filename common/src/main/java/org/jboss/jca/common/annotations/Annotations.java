@@ -101,10 +101,11 @@ public class Annotations
     * Scan for annotations in the URLs specified
     * @param connector The connector adapter metadata
     * @param annotationRepository annotationRepository to use
+    * @param classLoader The class loader used to generate the repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   public Connector merge(Connector connector, AnnotationRepository annotationRepository)
+   public Connector merge(Connector connector, AnnotationRepository annotationRepository, ClassLoader classLoader)
       throws Exception
    {
       // Process annotations
@@ -119,21 +120,21 @@ public class Annotations
 
          if (connector == null || !isMetadataComplete)
          {
-
             if (connector == null)
             {
-               Connector annotationsConnector = process(annotationRepository, null);
+               Connector annotationsConnector = process(annotationRepository, null, classLoader);
                connector = annotationsConnector;
             }
             else
             {
                Connector annotationsConnector = process(annotationRepository,
-                     ((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass());
+                  ((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass(),
+                  classLoader);
                connector = connector.merge(annotationsConnector);
             }
          }
-
       }
+
       return connector;
    }
 
@@ -141,10 +142,12 @@ public class Annotations
     * Process annotations
     * @param annotationRepository The annotation repository
     * @param xmlResourceAdapterClass resource adpater class name as define in xml
+    * @param classLoader The class loader used to generate the repository
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   public Connector process(AnnotationRepository annotationRepository, String xmlResourceAdapterClass)
+   public Connector process(AnnotationRepository annotationRepository, String xmlResourceAdapterClass,
+                            ClassLoader classLoader)
       throws Exception
    {
       if (annotationRepository == null)
@@ -162,7 +165,8 @@ public class Annotations
       */
 
       // @ConfigProperty handle at last
-      Map<Metadatas, ArrayList<ConfigProperty16>> configPropertiesMap = processConfigProperty(annotationRepository);
+      Map<Metadatas, ArrayList<ConfigProperty16>> configPropertiesMap = 
+         processConfigProperty(annotationRepository, classLoader);
 
       // @ConnectionDefinitions
       ArrayList<ConnectionDefinition> connectionDefinitions = processConnectionDefinitions(annotationRepository,
@@ -578,12 +582,13 @@ public class Annotations
 
    /**
     * Process: @ConfigProperty
-    * @param md The metadata
     * @param annotationRepository The annotation repository
+    * @param classLoader The class loader to use
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private Map<Metadatas, ArrayList<ConfigProperty16>> processConfigProperty(AnnotationRepository annotationRepository)
+   private Map<Metadatas, ArrayList<ConfigProperty16>> processConfigProperty(AnnotationRepository annotationRepository,
+                                                                             ClassLoader classLoader)
       throws Exception
    {
       Map<Metadatas, ArrayList<ConfigProperty16>> valueMap = null;
@@ -610,7 +615,7 @@ public class Annotations
             }
             else
             {
-               configPropertyType = new XsdString(getConfigPropertyType(annotation), null);
+               configPropertyType = new XsdString(getConfigPropertyType(annotation, classLoader), null);
             }
 
             Boolean configPropertySupportsDynamicUpdates = configPropertyAnnotation.supportsDynamicUpdates();
@@ -629,8 +634,7 @@ public class Annotations
             Boolean configPropertyIgnore = configPropertyAnnotation.ignore();
 
             String attachedClassName = annotation.getClassName();
-            ClassLoader cl = SecurityActions.getThreadContextClassLoader();
-            Class attachedClass = Class.forName(attachedClassName, true, cl);
+            Class attachedClass = Class.forName(attachedClassName, true, classLoader);
 
             if (hasInterface(attachedClass, "javax.resource.spi.ResourceAdapter"))
             {
@@ -869,17 +873,18 @@ public class Annotations
    /**
     * Get the config-property-type for an annotation
     * @param annotation The annotation
+    * @param classLoader The class loader to use
     * @return The fully qualified classname
     * @exception ClassNotFoundException Thrown if a class cannot be found
     */
    @SuppressWarnings("unchecked")
-   private String getConfigPropertyType(Annotation annotation)
+   private String getConfigPropertyType(Annotation annotation,
+                                        ClassLoader classLoader)
       throws ClassNotFoundException
    {
       if (annotation.isOnField())
       {
-         ClassLoader cl = SecurityActions.getThreadContextClassLoader();
-         Class clz = Class.forName(annotation.getClassName(), true, cl);
+         Class clz = Class.forName(annotation.getClassName(), true, classLoader);
 
          while (!Object.class.equals(clz))
          {
@@ -897,8 +902,7 @@ public class Annotations
       }
       else if (annotation.isOnMethod())
       {
-         ClassLoader cl = SecurityActions.getThreadContextClassLoader();
-         Class clz = Class.forName(annotation.getClassName(), true, cl);
+         Class clz = Class.forName(annotation.getClassName(), true, classLoader);
 
          Class[] parameters = null;
 
@@ -909,7 +913,7 @@ public class Annotations
             for (int i = 0; i < annotation.getParameterTypes().size(); i++)
             {
                String parameter = annotation.getParameterTypes().get(i);
-               parameters[i] = Class.forName(parameter, true, cl);
+               parameters[i] = Class.forName(parameter, true, classLoader);
             }
          }
 
