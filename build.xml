@@ -1012,6 +1012,13 @@ VERSION=${major}.${minor}.${patch}-SNAPSHOT
 REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapshots/ -DrepositoryId=jboss-snapshots'
 </concat>
 
+    <concat destfile="${target.dir}/install-snapshot.sh" append="true" force="true" eol="unix">#!/bin/sh
+PWD=`pwd`
+VERSION=${major}.${minor}.${patch}-SNAPSHOT
+REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapshots/ -DrepositoryId=jboss-snapshots'
+</concat>
+
+
     <!-- ironjacamar-codegenerator -->
     <delete file="${target.dir}/${name}-codegenerator.xml"/>
     <ivy:makepom artifactName="${name}-codegenerator" 
@@ -1026,7 +1033,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-codegenerator" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-codegenerator" extension="jar"/>
-  	<snapshot-install-file file="snapshot.sh" artifact="${name}-codegenerator" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-codegenerator" extension="jar"/>
 
     <!-- ironjacamar-common-api -->
     <delete file="${target.dir}/${name}-common-api.xml"/>
@@ -1042,7 +1049,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-common-api" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-api" extension="jar"/>
-  	<snapshot-install-file file="snapshot.sh" artifact="${name}-common-api" extension="jar"/>
+  	<snapshot-install-file file="install-snapshot.sh" artifact="${name}-common-api" extension="jar"/>
 
     <!-- ironjacamar-common-impl -->
     <delete file="${target.dir}/${name}-common-impl.xml"/>
@@ -1061,7 +1068,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-common-impl" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-impl" extension="jar"/>
-  	<snapshot-install-file file="snapshot.sh" artifact="${name}-common-impl" extension="jar"/>
+  	<snapshot-install-file file="install-snapshot.sh" artifact="${name}-common-impl" extension="jar"/>
 
     <!-- ironjacamar-common-impl-papaki -->
     <delete file="${target.dir}/${name}-common-impl-papaki.xml"/>
@@ -1078,7 +1085,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
-  	<snapshot-install-file file="snapshot.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
+  	<snapshot-install-file file="install-snapshot.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
 
     <!-- ironjacamar-common-spi -->
     <delete file="${target.dir}/${name}-common-spi.xml"/>
@@ -1094,7 +1101,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-common-spi" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-common-spi" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-common-spi" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-common-spi" extension="jar"/>
 
     <!-- ironjacamar-core-api -->
     <delete file="${target.dir}/${name}-core-api.xml"/>
@@ -1112,7 +1119,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-core-api" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-core-api" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-core-api" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-core-api" extension="jar"/>
 
     <!-- ironjacamar-core-impl -->
     <delete file="${target.dir}/${name}-core-impl.xml"/>
@@ -1132,7 +1139,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-core-impl" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-core-impl" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-core-impl" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-core-impl" extension="jar"/>
 
     <!-- ironjacamar-core-spi -->
     <delete file="${target.dir}/${name}-core-spi.xml"/>
@@ -1148,7 +1155,7 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
 
     <deploy-file file="release.sh" artifact="${name}-core-spi" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-core-spi" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-core-spi" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-core-spi" extension="jar"/>
 
     <!-- ironjacamar-depchain -->
     <delete file="${target.dir}/${name}-depchain.xml"/>
@@ -1168,6 +1175,9 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
     <concat destfile="${target.dir}/snapshot.sh" append="true" force="true" eol="unix">
 mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depchain.xml -DuniqueVersion=false $REPOSITORY
 </concat>
+<concat destfile="${target.dir}/install-snapshot.sh" append="true" force="true" eol="unix">
+mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depchain.xml -DuniqueVersion=false $REPOSITORY
+</concat>
 
     <!-- ironjacamar-deployers-common -->
     <delete file="${target.dir}/${name}-deployers-common.xml"/>
@@ -1183,7 +1193,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-deployers-common" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-deployers-common" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-deployers-common" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-deployers-common" extension="jar"/>
 
     <!-- ironjacamar-deployers-fungal -->
     <delete file="${target.dir}/${name}-deployers-fungal.xml"/>
@@ -1205,7 +1215,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-deployers-fungal" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-deployers-fungal" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-deployers-fungal" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-deployers-fungal" extension="jar"/>
 
     <!-- ironjacamar-embedded -->
     <delete file="${target.dir}/${name}-embedded.xml"/>
@@ -1221,7 +1231,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-embedded" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-embedded" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-embedded" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-embedded" extension="jar"/>
 
     <!-- ironjacamar-embedded-arquillian -->
     <delete file="${target.dir}/${name}-embedded-arquillian.xml"/>
@@ -1238,7 +1248,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
 
     <!-- ironjacamar-spec-api -->
     <delete file="${target.dir}/${name}-spec-api.xml"/>
@@ -1254,7 +1264,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-spec-api" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-spec-api" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-spec-api" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-spec-api" extension="jar"/>
 
     <!-- ironjacamar-validator -->
     <delete file="${target.dir}/${name}-validator.xml"/>
@@ -1274,7 +1284,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-validator" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-validator" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-validator" extension="jar"/>
 
     <!-- ironjacamar-validator-ant -->
     <delete file="${target.dir}/${name}-validator-ant.xml"/>
@@ -1291,7 +1301,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-validator-ant" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator-ant" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-validator" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-validator" extension="jar"/>
 
     <!-- ironjacamar-validator-cli -->
     <delete file="${target.dir}/${name}-validator-cli.xml"/>
@@ -1308,7 +1318,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-validator-cli" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator-cli" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-validator-cli" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-validator-cli" extension="jar"/>
 
     <!-- ironjacamar-validator-maven -->
     <delete file="${target.dir}/${name}-validator-maven.xml"/>
@@ -1325,7 +1335,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="${name}-validator-maven" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator-maven" extension="jar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="${name}-validator-maven" extension="jar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-validator-maven" extension="jar"/>
 
     <!-- jdbc-local -->
     <delete file="${target.dir}/jdbc-local.xml"/>
@@ -1341,7 +1351,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="jdbc-local" extension="rar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="jdbc-local" extension="rar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="jdbc-local" extension="rar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="jdbc-local" extension="rar"/>
 
     <!-- jdbc-xa -->
     <delete file="${target.dir}/jdbc-xa.xml"/>
@@ -1357,7 +1367,7 @@ mvn deploy:deploy-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depcha
 
     <deploy-file file="release.sh" artifact="jdbc-xa" extension="rar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="jdbc-xa" extension="rar"/>
-    <snapshot-install-file file="snapshot.sh" artifact="jdbc-xa" extension="rar"/>
+    <snapshot-install-file file="install-snapshot.sh" artifact="jdbc-xa" extension="rar"/>
 
     <chmod file="${target.dir}/release.sh" perm="755"/>
     <chmod file="${target.dir}/snapshot.sh" perm="755"/>
