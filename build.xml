@@ -999,6 +999,7 @@ mvn install:install-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false
 
     <delete file="${target.dir}/release.sh"/>
     <delete file="${target.dir}/snapshot.sh"/>
+    <delete file="${target.dir}/install-snapshot.sh"/>
 
     <concat destfile="${target.dir}/release.sh" append="true" force="true" eol="unix">#!/bin/sh
 PWD=`pwd`
@@ -1371,6 +1372,7 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
 
     <chmod file="${target.dir}/release.sh" perm="755"/>
     <chmod file="${target.dir}/snapshot.sh" perm="755"/>
+    <chmod file="${target.dir}/install-snapshot.sh" perm="755"/>
 
   </target>
 
