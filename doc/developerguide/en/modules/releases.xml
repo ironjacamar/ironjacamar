@@ -217,6 +217,20 @@ cd target
 
     </section>
 
+    <section id="releases_nexus_deploying_snapshot_locally">
+      <title>Deploying a snapshot (locally)</title>
+
+      <para>A snapshot of IronJacamar is deployed to the local Maven repository <code>$HOME/.m2/repository</code> using:</para>
+      <programlisting>
+ant -Dsnapshot=true nexus
+cd target
+./install-snapshot.sh
+      </programlisting>
+      
+      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1.</para>
+
+    </section>
+
   </section>
 
 
