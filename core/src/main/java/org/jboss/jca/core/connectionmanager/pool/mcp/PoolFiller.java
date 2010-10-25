@@ -84,26 +84,19 @@ class PoolFiller implements Runnable
 
       while (true)
       {
-         try 
-         {
-            ManagedConnectionPool mcp = null;
+         ManagedConnectionPool mcp = null;
 
-            while (true)
+         while (true)
+         {
+            synchronized (pools)
             {
-               synchronized (pools)
-               {
-                  mcp = pools.removeFirst();
-               }
-
-               if (mcp == null) 
-                  break;
-                        
-               mcp.fillToMin();
+               mcp = pools.removeFirst();
             }
-         }
-         catch (Exception e)
-         {
-            // Ignore
+
+            if (mcp == null) 
+               break;
+                        
+            mcp.fillToMin();
          }
                         
          try 
@@ -113,7 +106,6 @@ class PoolFiller implements Runnable
                while (pools.isEmpty())
                {
                   pools.wait();                        
-                  
                }
             }
          }
@@ -139,7 +131,7 @@ class PoolFiller implements Runnable
       synchronized (pools)
       {
          pools.addLast(mcp);
-         pools.notify();
+         pools.notifyAll();
       }
    }
 }

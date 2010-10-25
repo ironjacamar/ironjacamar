@@ -38,6 +38,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.logging.Logger;
+
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;
 import com.github.fungal.spi.deployers.DeployException;
@@ -50,15 +52,16 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 {
-
    /** The kernel */
-   Kernel kernel;
+   private Kernel kernel;
 
    /**
     * Constructor
     */
    public DsXmlDeployer()
    {
+      super(Logger.getLogger(DsXmlDeployer.class));
+
       transactionManager = null;
       jdbcLocal = null;
       jdbcXA = null;

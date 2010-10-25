@@ -39,7 +39,6 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
-import org.jboss.jca.deployers.fungal.DsXmlDeployer;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ import org.jboss.logging.Logger;
 public abstract class AbstractDsDeployer
 {
    /** log **/
-   protected static Logger log = Logger.getLogger(AbstractDsDeployer.class);
+   protected Logger log;
 
    /** jdbcLocal **/
    protected String jdbcLocal;
@@ -77,13 +76,12 @@ public abstract class AbstractDsDeployer
    protected MetadataRepository mdr;
 
    /**
-    *
     * Create a new AbstractDsDeployer.
-    *
+    * @param log The logger
     */
-   public AbstractDsDeployer()
+   public AbstractDsDeployer(Logger log)
    {
-      super();
+      this.log = log;
    }
 
    /**

@@ -70,6 +70,14 @@
 
   <!--  org.jboss.jca.deployers filter -->
   <Match>
+    <Class name="org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer"/>
+    <Bug code="IP"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.AbstractFungalDeployment"/>
+    <Bug code="EI2"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.deployers.fungal.DsXmlDeployer"/>
     <Bug code="IS"/>
   </Match>
