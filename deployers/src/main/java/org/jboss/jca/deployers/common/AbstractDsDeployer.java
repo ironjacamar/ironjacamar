@@ -52,22 +52,15 @@ import javax.transaction.TransactionManager;
 import org.jboss.logging.Logger;
 
 /**
- *
- * A AbstractDsDeployer.
+ * An abstract deployer implementation for datasources
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public abstract class AbstractDsDeployer
 {
    /** log **/
    protected Logger log;
-
-   /** jdbcLocal **/
-   protected String jdbcLocal;
-
-   /** jdbcXA **/
-   protected String jdbcXA;
 
    /** The transaction manager */
    protected TransactionManager transactionManager;
@@ -82,42 +75,8 @@ public abstract class AbstractDsDeployer
    public AbstractDsDeployer(Logger log)
    {
       this.log = log;
-   }
-
-   /**
-    * Set the name for the JDBC Local resource adapter
-    * @param value The value
-    */
-   public void setJDBCLocal(String value)
-   {
-      jdbcLocal = value;
-   }
-
-   /**
-    * Get the name for the JDBC Local resource adapter
-    * @return The value
-    */
-   public String getJDBCLocal()
-   {
-      return jdbcLocal;
-   }
-
-   /**
-    * Set the name for the JDBC XA resource adapter
-    * @param value The value
-    */
-   public void setJDBCXA(String value)
-   {
-      jdbcXA = value;
-   }
-
-   /**
-    * Get the name for the JDBC Xa resource adapter
-    * @return The value
-    */
-   public String getJDBCXA()
-   {
-      return jdbcXA;
+      this.transactionManager = null;
+      this.mdr = null;
    }
 
    /**
@@ -169,35 +128,25 @@ public abstract class AbstractDsDeployer
    * @return return the exchange POJO with value useful for injection in the container (fungal or AS)
    * @throws DeployException DeployException
    */
-   protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, Set<String> raDeployments,
-      DataSources dataSources, ClassLoader parentClassLoader) throws DeployException
+   protected CommonDeployment createObjectsAndInjectValue(URL url, 
+                                                          String deploymentName,
+                                                          String uniqueJdbcLocalId,
+                                                          String uniqueJdbcXAId,
+                                                          DataSources dataSources, 
+                                                          ClassLoader parentClassLoader)
+      throws DeployException
    {
       try
       {
-         URL urlJdbcLocal = null;
-         URL urlJdbcXA = null;
-
-         for (String s : raDeployments)
-         {
-            if (s.endsWith(jdbcLocal))
-            {
-               urlJdbcLocal = new URL(s);
-            }
-            else if (s.endsWith(jdbcXA))
-            {
-               urlJdbcXA = new URL(s);
-            }
-         }
-
          List<Object> cfs = new ArrayList<Object>(1);
          List<String> jndis = new ArrayList<String>(1);
 
-         if (urlJdbcLocal != null)
+         if (uniqueJdbcLocalId != null)
          {
             List<DataSource> ds = dataSources.getDataSource();
             if (ds != null)
             {
-               ClassLoader jdbcLocalDeploymentCl = getDeploymentCl(urlJdbcLocal);
+               ClassLoader jdbcLocalDeploymentCl = getDeploymentClassLoader(uniqueJdbcLocalId);
 
                for (DataSource dataSource : ds)
                {
@@ -211,7 +160,7 @@ public abstract class AbstractDsDeployer
                         jndiName = "java:/" + jndiName;
                      }
 
-                     Object cf = deployDataSource(dataSource, jndiName, urlJdbcLocal, jdbcLocalDeploymentCl);
+                     Object cf = deployDataSource(dataSource, jndiName, uniqueJdbcLocalId, jdbcLocalDeploymentCl);
 
                      bindConnectionFactory(deploymentName, jndiName, cf);
 
@@ -231,12 +180,12 @@ public abstract class AbstractDsDeployer
                log.error("Deployment of datasources disabled since jdbc-local.rar couldn't be found");
          }
 
-         if (urlJdbcXA != null)
+         if (uniqueJdbcXAId != null)
          {
             List<XaDataSource> xads = dataSources.getXaDataSource();
             if (xads != null)
             {
-               ClassLoader jdbcXADeploymentCl = getDeploymentCl(urlJdbcXA);
+               ClassLoader jdbcXADeploymentCl = getDeploymentClassLoader(uniqueJdbcXAId);
 
                for (XaDataSource xaDataSource : xads)
                {
@@ -250,7 +199,7 @@ public abstract class AbstractDsDeployer
                         jndiName = "java:/" + jndiName;
                      }
 
-                     Object cf = deployXADataSource(xaDataSource, jndiName, urlJdbcXA, jdbcXADeploymentCl);
+                     Object cf = deployXADataSource(xaDataSource, jndiName, uniqueJdbcXAId, jdbcXADeploymentCl);
 
                      bindConnectionFactory(deploymentName, jndiName, cf);
 
@@ -284,18 +233,18 @@ public abstract class AbstractDsDeployer
     * Deploy a datasource
     * @param ds The datasource
     * @param jndiName The JNDI name
-    * @param ra The resource adapter
+    * @param uniqueId The unique id for the resource adapter
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployDataSource(DataSource ds, String jndiName, URL ra, ClassLoader cl) throws Throwable
+   private Object deployDataSource(DataSource ds, String jndiName, String uniqueId, ClassLoader cl) throws Throwable
    {
       log.debug("DataSource=" + ds);
 
       Merger merger = new Merger();
 
-      Connector md = mdr.getResourceAdapter(ra.toExternalForm());
+      Connector md = mdr.getResourceAdapter(uniqueId);
       md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one
@@ -349,18 +298,18 @@ public abstract class AbstractDsDeployer
     * Deploy an XA datasource
     * @param ds The datasource
     * @param jndiName The JNDI name
-    * @param ra The resource adapter
+    * @param uniqueId The unique id for the resource adapter
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployXADataSource(XaDataSource ds, String jndiName, URL ra, ClassLoader cl) throws Throwable
+   private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId, ClassLoader cl) throws Throwable
    {
       log.debug("XaDataSource=" + ds);
 
       Merger merger = new Merger();
 
-      Connector md = mdr.getResourceAdapter(ra.toExternalForm());
+      Connector md = mdr.getResourceAdapter(uniqueId);
       md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one
@@ -480,13 +429,11 @@ public abstract class AbstractDsDeployer
    }
 
    /**
-    *
-    * provide classloader of passed deployment url
-    *
-    * @param urlJdbcXA the url used to identify deployment
-    * @return the classloader used by this deployment
+    * Provide the classloader of the deployment identified by the unique id
+    * @param uniqueId The 
+    * @return The classloader used by this deployment
     */
-   protected abstract ClassLoader getDeploymentCl(URL urlJdbcXA);
+   protected abstract ClassLoader getDeploymentClassLoader(String uniqueId);
 
    /**
     * Bind connection factory into JNDI
@@ -508,5 +455,4 @@ public abstract class AbstractDsDeployer
     */
    protected abstract Object initAndInject(String className, List<? extends ConfigProperty> configs, ClassLoader cl)
       throws DeployException;
-
 }

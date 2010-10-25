@@ -52,6 +52,12 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 {
+   /** jdbcLocal **/
+   private String jdbcLocal;
+
+   /** jdbcXA **/
+   private String jdbcXA;
+
    /** The kernel */
    private Kernel kernel;
 
@@ -62,11 +68,45 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    {
       super(Logger.getLogger(DsXmlDeployer.class));
 
-      transactionManager = null;
-      jdbcLocal = null;
-      jdbcXA = null;
-      mdr = null;
-      kernel = null;
+      this.kernel = null;
+      this.jdbcLocal = null;
+      this.jdbcXA = null;
+   }
+
+   /**
+    * Set the name for the JDBC Local resource adapter
+    * @param value The value
+    */
+   public void setJDBCLocal(String value)
+   {
+      jdbcLocal = value;
+   }
+
+   /**
+    * Get the name for the JDBC Local resource adapter
+    * @return The value
+    */
+   public String getJDBCLocal()
+   {
+      return jdbcLocal;
+   }
+
+   /**
+    * Set the name for the JDBC XA resource adapter
+    * @param value The value
+    */
+   public void setJDBCXA(String value)
+   {
+      jdbcXA = value;
+   }
+
+   /**
+    * Get the name for the JDBC Xa resource adapter
+    * @return The value
+    */
+   public String getJDBCXA()
+   {
+      return jdbcXA;
    }
 
    /**
@@ -119,7 +159,26 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
          String deploymentName = f.getName();
 
          Set<String> raDeployments = mdr.getResourceAdapters();
-         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, raDeployments, dataSources, parent);
+         String uniqueJdbcLocalId = null;
+         String uniqueJdbcXAId = null;
+
+         for (String s : raDeployments)
+         {
+            if (s.endsWith(jdbcLocal))
+            {
+               URL urlJdbcLocal = new URL(s);
+               uniqueJdbcLocalId = urlJdbcLocal.toExternalForm();
+            }
+            else if (s.endsWith(jdbcXA))
+            {
+               URL urlJdbcXA = new URL(s);
+               uniqueJdbcXAId = urlJdbcXA.toExternalForm();
+            }
+         }
+
+         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, 
+                                                          uniqueJdbcLocalId, uniqueJdbcXAId,
+                                                          dataSources, parent);
 
          return new DsXmlDeployment(c.getURL(), c.getDeploymentName(), c.getCfs(), c.getCfJndiNames(), c.getCl());
       }
@@ -215,11 +274,25 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
       if (kernel == null)
          throw new IllegalStateException("Kernel not defined");
+
+      if (jdbcLocal == null)
+         throw new IllegalStateException("JDBCLocal not defined");
+
+      if (jdbcXA == null)
+         throw new IllegalStateException("JDBCXA not defined");
    }
 
    @Override
-   protected ClassLoader getDeploymentCl(URL urlJdbc)
+   protected ClassLoader getDeploymentClassLoader(String uniqueId)
    {
-      return kernel.getDeployment(urlJdbc).getClassLoader();
+      try
+      {
+         URL urlJdbc = new URL(uniqueId);
+         return kernel.getDeployment(urlJdbc).getClassLoader();
+      }
+      catch (Throwable t)
+      {
+         throw new RuntimeException(t.getMessage(), t);
+      }
    }
 }
