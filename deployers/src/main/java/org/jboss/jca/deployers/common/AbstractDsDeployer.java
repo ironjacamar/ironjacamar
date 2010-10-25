@@ -62,7 +62,7 @@ import org.jboss.logging.Logger;
 public abstract class AbstractDsDeployer
 {
    /** log **/
-   protected static Logger log = Logger.getLogger(DsXmlDeployer.class);
+   protected static Logger log = Logger.getLogger(AbstractDsDeployer.class);
 
    /** jdbcLocal **/
    protected String jdbcLocal;
@@ -207,8 +207,7 @@ public abstract class AbstractDsDeployer
                   {
                      String jndiName = dataSource.getJndiName();
 
-                     if (dataSource.isUseJavaContext() != null &&
-                         dataSource.isUseJavaContext().booleanValue() &&
+                     if (dataSource.isUseJavaContext() != null && dataSource.isUseJavaContext().booleanValue() &&
                          !jndiName.startsWith("java:/"))
                      {
                         jndiName = "java:/" + jndiName;
@@ -247,8 +246,7 @@ public abstract class AbstractDsDeployer
                   {
                      String jndiName = xaDataSource.getJndiName();
 
-                     if (xaDataSource.isUseJavaContext() != null &&
-                         xaDataSource.isUseJavaContext().booleanValue() &&
+                     if (xaDataSource.isUseJavaContext() != null && xaDataSource.isUseJavaContext().booleanValue() &&
                          !jndiName.startsWith("java:/"))
                      {
                         jndiName = "java:/" + jndiName;
@@ -274,10 +272,9 @@ public abstract class AbstractDsDeployer
                log.error("Deployment of XA datasources disabled since jdbc-xa.rar couldn't be found");
          }
 
-         return new CommonDeployment(url, deploymentName, true, null, 
-                                     cfs.toArray(new Object[cfs.size()]), jndis.toArray(new String[jndis.size()]),
-                                     null, null, null,
-                                     parentClassLoader, log);
+         return new CommonDeployment(url, deploymentName, true, null, cfs.toArray(new Object[cfs.size()]),
+                                     jndis.toArray(new String[jndis.size()]), null, null, null, parentClassLoader,
+                                     log);
       }
       catch (Throwable t)
       {
@@ -340,7 +337,7 @@ public abstract class AbstractDsDeployer
       {
          poolName = ds.getPoolName();
       }
- 
+
       if (poolName == null)
          poolName = jndiName;
 
@@ -424,7 +421,7 @@ public abstract class AbstractDsDeployer
       {
          poolName = ds.getPoolName();
       }
- 
+
       if (poolName == null)
          poolName = jndiName;
 
