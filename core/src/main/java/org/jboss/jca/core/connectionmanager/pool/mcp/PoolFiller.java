@@ -90,7 +90,8 @@ class PoolFiller implements Runnable
          {
             synchronized (pools)
             {
-               mcp = pools.removeFirst();
+               if (!pools.isEmpty())
+                  mcp = pools.removeFirst();
             }
 
             if (mcp == null) 
