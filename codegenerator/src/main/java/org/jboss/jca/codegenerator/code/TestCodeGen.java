@@ -301,7 +301,21 @@ public class TestCodeGen extends AbstractCodeGen
          out.write("@Test");
          writeEol(out);
          writeIndent(out, indent);
-         out.write("public void test" + upcaseFirst(method.getMethodName()) + "() throws Throwable");
+         out.write("public void test" + upcaseFirst(method.getMethodName()));
+         int paramSize = method.getParams().size();
+
+         if (paramSize == 0)
+            out.write("NoArg");
+         else
+         {
+            for (int i = 0; i < paramSize; i++)
+            {
+               MethodParam param = method.getParams().get(i);
+               out.write(upcaseFirst(param.getName()));
+               out.write(param.getType());
+            }
+         }
+         out.write("() throws Throwable");
          writeLeftCurlyBracket(out, indent);
          
 
@@ -321,7 +335,6 @@ public class TestCodeGen extends AbstractCodeGen
             out.write(method.getReturnType() + " result = ");
          }
          out.write("connection." + method.getMethodName() + "(");
-         int paramSize = method.getParams().size();
          for (int i = 0; i < paramSize; i++)
          {
             MethodParam param = method.getParams().get(i);
