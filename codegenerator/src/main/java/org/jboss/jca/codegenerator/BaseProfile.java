@@ -24,6 +24,7 @@ package org.jboss.jca.codegenerator;
 import org.jboss.jca.codegenerator.code.AbstractCodeGen;
 import org.jboss.jca.codegenerator.xml.BuildIvyXmlGen;
 import org.jboss.jca.codegenerator.xml.BuildXmlGen;
+import org.jboss.jca.codegenerator.xml.IronjacamarXmlGen;
 import org.jboss.jca.codegenerator.xml.IvySettingsXmlGen;
 import org.jboss.jca.codegenerator.xml.IvyXmlGen;
 import org.jboss.jca.codegenerator.xml.PomXmlGen;
@@ -72,6 +73,7 @@ public class BaseProfile implements Profile
          generateAntXml(def, def.getOutputDir());
 
       generateRaXml(def, def.getOutputDir());
+      generateIronjacamarXml(def, def.getOutputDir());
    }
 
    /**
@@ -290,6 +292,27 @@ public class BaseProfile implements Profile
       return null;
    }
    
+   /**
+    * generate ant ironjacamar.xml
+    * @param def Definition
+    * @param outputDir output directory
+    */
+   void generateIronjacamarXml(Definition def, String outputDir)
+   {
+      try
+      {
+         outputDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
+            "main" + File.separatorChar + "resources";
+         FileWriter ijfw = Utils.createFile("ironjacamar.xml", outputDir + File.separatorChar + "META-INF");
+         IronjacamarXmlGen ijxGen = new IronjacamarXmlGen();
+         ijxGen.generate(def, ijfw);
+         ijfw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+   }
    
    /**
     * generate test code

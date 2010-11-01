@@ -1,0 +1,19 @@
+<ironjacamar>
+    <transaction-support>${transaction}</transaction-support>
+    <connection-definitions>
+      <connection-definition class-name="${mcf.class}" enabled="true" jndi-name="${jndi.name}" pool-name="${pool.name}">
+        <config-property name="UserName"></config-property>
+        <config-property name="Password"></config-property>
+        <pool>
+          <min-pool-size>0</min-pool-size>
+          <max-pool-size>20</max-pool-size>
+        </pool>
+        <security>
+        </security>
+        <timeout>
+          <blocking-timeout-millis>5000</blocking-timeout-millis>
+          <idle-timeout-minutes>15</idle-timeout-minutes>
+        </timeout>
+      </connection-definition>
+    </connection-definitions>
+</ironjacamar>
