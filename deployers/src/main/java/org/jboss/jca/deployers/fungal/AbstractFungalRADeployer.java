@@ -198,6 +198,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
       ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url.toExternalForm(),
          cf.getClass().getName(), result[0]);
 
+      log.infof("Bound connection factory under: %s", result[0]);
+
       return result;
    }
 
@@ -210,6 +212,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
       ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url.toExternalForm(),
          cf.getClass().getName(), jndi);
+
+      log.infof("Bound connection factory under: %s", jndi);
 
       return result;
    }
@@ -224,6 +228,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
       ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url.toExternalForm(),
          ao.getClass().getName(), result[0]);
 
+      log.infof("Bound admin object under: %s", result[0]);
+
       return result;
    }
 
@@ -236,6 +242,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
       ((RAConfiguration) getConfiguration()).getMetadataRepository().registerJndiMapping(url.toExternalForm(),
          ao.getClass().getName(), jndi);
+
+      log.infof("Bound admin object under: %s", jndi);
 
       return result;
    }

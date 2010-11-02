@@ -258,7 +258,11 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    {
       JndiStrategy js = new ExplicitJndiStrategy();
 
-      return js.bindConnectionFactories(deployment, new Object[]{cf}, new String[]{jndi});
+      String[] result = js.bindConnectionFactories(deployment, new Object[]{cf}, new String[]{jndi});
+      
+      log.infof("Bound data source at: %s", jndi);
+
+      return result;
    }
 
    /**

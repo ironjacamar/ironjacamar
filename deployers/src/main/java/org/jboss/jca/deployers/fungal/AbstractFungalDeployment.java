@@ -212,6 +212,11 @@ public abstract class AbstractFungalDeployment implements Deployment
             try
             {
                jndiStrategy.unbindConnectionFactories(deploymentName, cfs, cfJndis);
+
+               for (String jndi : cfJndis)
+               {
+                  log.infof("Unbound connection factory at: %s", jndi);
+               }
             }
             catch (Throwable t)
             {
@@ -224,6 +229,11 @@ public abstract class AbstractFungalDeployment implements Deployment
             try
             {
                jndiStrategy.unbindAdminObjects(deploymentName, aos, aoJndis);
+
+               for (String jndi : aoJndis)
+               {
+                  log.infof("Unbound admin object at: %s", jndi);
+               }
             }
             catch (Throwable t)
             {

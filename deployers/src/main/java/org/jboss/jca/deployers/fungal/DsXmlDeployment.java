@@ -108,6 +108,11 @@ public class DsXmlDeployment implements Deployment
          try
          {
             jndiStrategy.unbindConnectionFactories(deploymentName, cfs, jndis);
+
+            for (String jndi : jndis)
+            {
+               log.infof("Unbound data source at: %s", jndi);
+            }
          }
          catch (Throwable t)
          {
