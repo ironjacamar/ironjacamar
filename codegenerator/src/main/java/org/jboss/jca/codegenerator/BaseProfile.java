@@ -62,7 +62,8 @@ public class BaseProfile implements Profile
       generateRaCode(def);
       generateOutboundCode(def);
       generateInboundCode(def);
-
+      generateMBeanCode(def);
+      
       generateTestCode(def);
 
       if (def.getBuild().equals("ivy"))
@@ -130,12 +131,26 @@ public class BaseProfile implements Profile
    {
       if (def.isSupportInbound())
       {
-         generateClassCode(def, "Ml", true);
-         generateClassCode(def, "As", true);
-         generateClassCode(def, "Activation", true);
+         generateClassCode(def, "Ml", "inflow");
+         generateClassCode(def, "As", "inflow");
+         generateClassCode(def, "Activation", "inflow");
       }
    }
 
+   /**
+    * generate MBean code
+    * 
+    * @param def Definition 
+    */
+   void generateMBeanCode(Definition def)
+   {
+      if (def.isSupportOutbound())
+      {
+         generateClassCode(def, "MbeanInterface", "mbean");
+         generateClassCode(def, "MbeanImpl", "mbean");
+      }
+   }
+   
    /**
     * generate class code
     * @param def Definition 
@@ -143,17 +158,16 @@ public class BaseProfile implements Profile
     */
    void generateClassCode(Definition def, String className)
    {
-      //by default inflow is false
-      generateClassCode(def, className, false);
+      generateClassCode(def, className, null);
    }
 
    /**
     * generate class code
     * @param def Definition 
     * @param className class name 
-    * @param inflow inbound class put into sub-directory
+    * @param subDir sub-directory name
     */
-   void generateClassCode(Definition def, String className, boolean inflow)
+   void generateClassCode(Definition def, String className, String subDir)
    {
       if (className == null || className.equals(""))
          return;
@@ -164,10 +178,10 @@ public class BaseProfile implements Profile
          String javaFile = (String)Definition.class.getMethod(
             "get" + className + "Class").invoke(def, (Object[])null) + ".java";
          FileWriter fw = null;
-         if (!inflow)
+         if (subDir == null)
             fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
          else
-            fw = Utils.createSrcFile(javaFile, def.getRaPackage() + ".inflow", def.getOutputDir());
+            fw = Utils.createSrcFile(javaFile, def.getRaPackage() + "." + subDir, def.getOutputDir());
 
          Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
          AbstractCodeGen codeGen = (AbstractCodeGen)clazz.newInstance();

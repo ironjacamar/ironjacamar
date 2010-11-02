@@ -153,6 +153,13 @@ public class Definition
    @XmlElement(name = "build")
    private String build = "A";
 
+   /** MBean test interface  */
+   @XmlElement(name = "MBeanInterface")
+   private String mbeanInterfaceClass = "TestMBean";
+   /** MBean test impl  */
+   @XmlElement(name = "MBeanImpl")
+   private String mbeanImplClass = "Test";
+
    /**
     * Set the version.
     * 
@@ -946,5 +953,23 @@ public class Definition
    {
       return build;
    }
-
+   
+   /**
+    * Get the mbeanInterfaceClass.
+    * 
+    * @return the mbeanInterfaceClass.
+    */
+   public String getMbeanInterfaceClass()
+   {
+      return mbeanInterfaceClass;
+   }   
+   /**
+    * Get the mbeanImplClass.
+    * 
+    * @return the mbeanImplClass.
+    */
+   public String getMbeanImplClass()
+   {
+      return mbeanImplClass;
+   }
 }
