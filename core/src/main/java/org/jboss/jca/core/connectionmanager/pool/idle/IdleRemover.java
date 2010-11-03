@@ -64,7 +64,7 @@ public class IdleRemover
    private long next = Long.MAX_VALUE;
    
    /**Lock for condition*/
-   private Lock lock = new ReentrantLock();
+   private Lock lock = new ReentrantLock(true);
    
    /**Condition*/
    private Condition condition = lock.newCondition();

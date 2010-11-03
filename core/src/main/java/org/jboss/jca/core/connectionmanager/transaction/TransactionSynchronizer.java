@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.transaction;
 
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -71,7 +72,7 @@ public class TransactionSynchronizer implements Synchronization
    private Synchronization ccmSynch;
    
    /**Lock*/
-   private ReentrantLock lockObject = new ReentrantLock();
+   private ReentrantLock lockObject = new ReentrantLock(true);
    
    /**Condition*/
    private Condition condition = this.lockObject.newCondition();
@@ -111,7 +112,7 @@ public class TransactionSynchronizer implements Synchronization
     * 
     * @return the unenlisted synchronizations
     */
-   public CopyOnWriteArrayList<Synchronization> getUnenlisted()
+   public List<Synchronization> getUnenlisted()
    {
       Thread currentThread = Thread.currentThread();
       

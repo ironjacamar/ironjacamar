@@ -28,7 +28,7 @@ import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.xa.LocalXAResource;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
@@ -230,7 +230,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       }
 
       // Perform the enlistment(s)
-      CopyOnWriteArrayList<Synchronization> unenlisted = synchronizer.getUnenlisted();
+      List<Synchronization> unenlisted = synchronizer.getUnenlisted();
       if (unenlisted != null)
       {
          try
