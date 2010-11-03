@@ -60,8 +60,15 @@ final class KeyConnectionAssociation
     */
    public boolean equals(Object other)
    {
-      return (other instanceof KeyConnectionAssociation) && 
-            this.metaAwareObject == ((KeyConnectionAssociation) other).metaAwareObject;
+      if (other == this)
+         return true;
+
+      if (other == null || !(other instanceof KeyConnectionAssociation))
+         return false;
+
+      KeyConnectionAssociation kca = (KeyConnectionAssociation)other;
+
+      return metaAwareObject.equals(kca.metaAwareObject);
    }
 
    /**
@@ -69,7 +76,7 @@ final class KeyConnectionAssociation
     */
    public String toString()
    {
-      return Strings.defaultToString(this.metaAwareObject);
+      return Strings.defaultToString(metaAwareObject);
    }
    
    /**
@@ -77,7 +84,7 @@ final class KeyConnectionAssociation
     */
    public int hashCode()
    {
-      return System.identityHashCode(this.metaAwareObject);
+      return System.identityHashCode(metaAwareObject);
    }
 
    /**

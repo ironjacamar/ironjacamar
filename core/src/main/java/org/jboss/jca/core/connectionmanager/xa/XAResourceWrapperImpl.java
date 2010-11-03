@@ -251,7 +251,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
       if (xid instanceof XidWrapper)
          return xid;
       else
-         return new XidWrapperImpl(pad, xid);
+         return new XidWrapperImpl(xid, pad);
    }
 
    /**

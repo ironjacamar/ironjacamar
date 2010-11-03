@@ -31,12 +31,12 @@ import javax.transaction.xa.Xid;
  * A XidWrapper.
  * 
  * @author <a href="weston.price@jboss.com">Weston Price</a>
- * @version $Revision: 85945 $
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class XidWrapperImpl implements XidWrapper
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = 8226195409384804425L;
+   private static final long serialVersionUID = 396520266833097662L;
 
    /** The formatId */
    private int formatId;
@@ -52,9 +52,6 @@ public class XidWrapperImpl implements XidWrapper
 
    /** Cached hashCode() */
    private transient int cachedHashCode;
-
-   /** Whether or not to pad the id */
-   private boolean pad;
    
    /**
     * Creates a new XidWrapperImpl instance.
@@ -62,20 +59,19 @@ public class XidWrapperImpl implements XidWrapper
     */
    public XidWrapperImpl(Xid xid)
    {
-      this(false, xid);
+      this(xid, false);
    }
    
    /**
     * Creates a new XidWrapperImpl instance.
-    * @param pad pad
-    * @param xid xid instances
+    * @param xid The Xid instances
+    * @param pad Should the branch qualifier be padded
     */
-   public XidWrapperImpl(boolean pad, Xid xid)
+   public XidWrapperImpl(Xid xid, boolean pad)
    {
-      this.pad = pad;
-      
-      branchQualifier = (pad) ? new byte[Xid.MAXBQUALSIZE] : new byte[xid.getBranchQualifier().length];      
+      this.branchQualifier = pad ? new byte[Xid.MAXBQUALSIZE] : new byte[xid.getBranchQualifier().length];      
       System.arraycopy(xid.getBranchQualifier(), 0, branchQualifier, 0, xid.getBranchQualifier().length);      
+
       this.globalTransactionId = xid.getGlobalTransactionId();
       this.formatId = xid.getFormatId();
    }
@@ -85,9 +81,7 @@ public class XidWrapperImpl implements XidWrapper
     */
    public byte[] getBranchQualifier()
    {
-      byte[] temp = this.branchQualifier.clone();
-      
-      return temp;
+      return branchQualifier.clone();
    }
 
    /**
@@ -95,7 +89,7 @@ public class XidWrapperImpl implements XidWrapper
     */
    public int getFormatId()
    {
-      return this.formatId;
+      return formatId;
    }
 
    /**
@@ -103,9 +97,7 @@ public class XidWrapperImpl implements XidWrapper
     */
    public byte[] getGlobalTransactionId()
    {
-      byte[] temp = this.globalTransactionId.clone();
-      
-      return temp;
+      return globalTransactionId.clone();
    }
    
    /**
@@ -113,12 +105,13 @@ public class XidWrapperImpl implements XidWrapper
     */
    public boolean equals(Object object)
    {
-      if (object == null || !(object instanceof Xid))
-      {
-         return false;  
-      }
+      if (object == this)
+         return true;
 
-      Xid other = (Xid) object;
+      if (object == null || !(object instanceof Xid))
+         return false;  
+
+      Xid other = (Xid)object;
       return
          (
             formatId == other.getFormatId() && 

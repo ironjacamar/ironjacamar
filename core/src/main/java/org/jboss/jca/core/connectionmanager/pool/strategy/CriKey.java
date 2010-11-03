@@ -63,6 +63,7 @@ class CriKey
    {
       if (hashCode == Integer.MAX_VALUE)
          hashCode = cri.hashCode();
+
       return hashCode;
    }
 
@@ -73,15 +74,13 @@ class CriKey
    public boolean equals(Object obj)
    {
       if (this == obj)
-      {
          return true;  
-      }
+
       if (obj == null || !(obj instanceof CriKey))
-      {
          return false;  
-      }
       
       CriKey other = (CriKey) obj;
+
       return cri.equals(other.cri) && separateNoTx == other.separateNoTx;
    }
 }
