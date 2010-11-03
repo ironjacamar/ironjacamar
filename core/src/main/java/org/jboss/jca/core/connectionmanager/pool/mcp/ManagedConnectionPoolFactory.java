@@ -44,8 +44,8 @@ public class ManagedConnectionPoolFactory
    private static final String DEFAULT_IMPLEMENTATION = 
       "org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool";
 
-   /** Actual implementation */
-   private static String defaultImplementation;
+   /** Default class definition */
+   private static Class<?> defaultImplementation;
 
    static
    {
@@ -53,11 +53,22 @@ public class ManagedConnectionPoolFactory
 
       if (clz != null && !clz.trim().equals(""))
       {
-         defaultImplementation = clz.trim();
+         clz = clz.trim();
       }
       else
       {
-         defaultImplementation = DEFAULT_IMPLEMENTATION;
+         clz = DEFAULT_IMPLEMENTATION;
+      }
+
+      try
+      {
+         defaultImplementation = Class.forName(clz, 
+                                               true, 
+                                               ManagedConnectionPoolFactory.class.getClassLoader());
+      }
+      catch (Throwable t)
+      {
+         throw new RuntimeException("Unable to load default managed connection pool implementation: " + clz);
       }
    }
 
@@ -87,7 +98,9 @@ public class ManagedConnectionPoolFactory
                                        Logger log) 
       throws Throwable
    {
-      return create(defaultImplementation, mcf, clf, subject, cri, pc, p, spc, log);
+      ManagedConnectionPool mcp = (ManagedConnectionPool)defaultImplementation.newInstance();
+      
+      return init(mcp, mcf, clf, subject, cri, pc, p, spc, log);
    }
 
    /**
@@ -117,6 +130,27 @@ public class ManagedConnectionPoolFactory
       
       ManagedConnectionPool mcp = (ManagedConnectionPool)clz.newInstance();
       
+      return init(mcp, mcf, clf, subject, cri, pc, p, spc, log);
+   }
+
+   /**
+    * Initialize
+    * @param mcp The managed connection pool
+    * @param mcf the managed connection factory
+    * @param clf the connection listener factory
+    * @param subject the subject
+    * @param cri the connection request info
+    * @param pc the pool configuration
+    * @param p The pool
+    * @param spc The subpool context
+    * @param log The logger for the managed connection pool
+    * @return The initialized managed connection pool
+    */
+   private ManagedConnectionPool init(ManagedConnectionPool mcp, 
+                                      ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
+                                      ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, SubPoolContext spc,
+                                      Logger log)
+   {
       mcp.initialize(mcf, clf, subject, cri, pc, p, spc, log);
 
       return mcp;
