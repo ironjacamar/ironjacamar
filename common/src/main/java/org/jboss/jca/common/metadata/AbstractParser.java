@@ -285,7 +285,7 @@ public abstract class AbstractParser
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
-      boolean prefill = false;
+      boolean prefill = true;
       boolean interleaving = false;
       boolean isSameRmOverrideValue = false;
       boolean padXid = false;
