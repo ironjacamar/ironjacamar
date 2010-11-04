@@ -272,6 +272,11 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/doc/samples">
+      <fileset dir="../doc/samples"/>
+
+    </copy>
+
     <chmod dir="${target.dir}/sjc/bin" perm="ugo+rx" includes="**/*.sh"/>
     <chmod dir="${target.dir}/sjc/doc/codegenerator" perm="ugo+rx" includes="**/*.sh"/>
     <chmod dir="${target.dir}/sjc/doc/validator" perm="ugo+rx" includes="**/*.sh"/>
