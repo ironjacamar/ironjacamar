@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="helloworld/src/main/java"/>
+	<classpathentry excluding="**/*.java" kind="src" path="helloworld/src/main/resources"/>
+	<classpathentry kind="src" output="eclipse-target/tests-classes" path="helloworld/src/test/java"/>
+	<classpathentry excluding="**/*.java" kind="src" output="eclipse-target/tests-classes" path="helloworld/src/test/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
+	<classpathentry kind="output" path="eclipse-target/classes"/>
+</classpath>
