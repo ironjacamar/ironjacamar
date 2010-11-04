@@ -15,6 +15,7 @@
         <!ENTITY community SYSTEM "modules/community.xml">
         <!ENTITY troubleshooting SYSTEM "modules/troubleshooting.xml">
         <!ENTITY schemas SYSTEM "modules/schemas.xml">
+        <!ENTITY sample SYSTEM "modules/sample.xml">
         ]>
 <book lang="en">
    <bookinfo>
@@ -59,5 +60,7 @@
    &troubleshooting;
 
    &schemas;
+
+   &sample;
 
 </book>
