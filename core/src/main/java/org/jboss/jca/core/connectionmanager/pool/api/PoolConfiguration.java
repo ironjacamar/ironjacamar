@@ -235,4 +235,28 @@ public class PoolConfiguration
    {
       this.useFastFail = useFastFail;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("PoolConfiguration@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[minSize=").append(minSize);
+      sb.append(" maxSize=").append(maxSize);
+      sb.append(" blockingTimeout=").append(blockingTimeout);
+      sb.append(" idleTimeout=").append(idleTimeout);
+      sb.append(" backgroundValidation=").append(backgroundValidation);
+      sb.append(" backgroundValidationMinutes=").append(backgroundValidationMinutes);
+      sb.append(" prefill=").append(prefill);
+      sb.append(" strictMin=").append(strictMin);
+      sb.append(" useFastFail=").append(useFastFail);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }
