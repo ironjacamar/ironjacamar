@@ -305,7 +305,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
-      boolean prefill = false;
+      boolean prefill = true;
       String connectionUrl = null;
       String driverClass = null;
       String module = null;

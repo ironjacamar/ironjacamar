@@ -164,7 +164,7 @@ public abstract class AbstractParser
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
-      boolean prefill = false;
+      boolean prefill = true;
       boolean useStrictMin = false;
 
       while (reader.hasNext())

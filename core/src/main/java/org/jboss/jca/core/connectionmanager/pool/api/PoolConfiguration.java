@@ -70,7 +70,7 @@ public class PoolConfiguration
       idleTimeout = 1000 * 60 * 30;
       backgroundValidation = false;
       backgroundValidationMinutes = 0;
-      prefill = false;
+      prefill = true;
       strictMin = false;
       useFastFail = false;
    }
