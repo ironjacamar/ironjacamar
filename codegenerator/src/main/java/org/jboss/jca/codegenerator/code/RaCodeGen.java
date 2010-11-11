@@ -204,6 +204,10 @@ public class RaCodeGen extends PropsCodeGen
             writeEol(out);
          }
       }
+      out.write("import java.util.logging.Logger;");
+      writeEol(out);
+      writeEol(out);
+      
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       out.write("import javax.resource.spi.ActivationSpec;");
@@ -246,9 +250,7 @@ public class RaCodeGen extends PropsCodeGen
       out.write("import javax.transaction.xa.XAResource;");
       writeEol(out);
       writeEol(out);
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+
    }
 
    /**

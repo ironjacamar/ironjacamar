@@ -113,6 +113,29 @@ public class ConnImplCodeGen extends AbstractCodeGen
                writeIndent(out, indent);
                out.write(" * call " + method.getMethodName());
                writeEol(out);
+               
+               int paramSize = method.getParams().size();
+               for (int i = 0; i < paramSize; i++)
+               {
+                  MethodParam param = method.getParams().get(i);
+                  writeIndent(out, indent);
+                  out.write(" * @param " + param.getName() + " " + param.getType());
+                  writeEol(out);
+               }
+               int exceptionSize = method.getExceptionType().size();
+               for (int i = 0; i < exceptionSize; i++)
+               {
+                  String ex = method.getExceptionType().get(i);
+                  writeIndent(out, indent);
+                  out.write(" * @throws " + ex);
+                  writeEol(out);
+               }
+               if (!method.getReturnType().equals("void"))
+               {
+                  writeIndent(out, indent);
+                  out.write(" * @return " + method.getReturnType());
+                  writeEol(out); 
+               }
                writeIndent(out, indent);
                out.write(" */");
                writeEol(out);
@@ -120,7 +143,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
                writeIndent(out, indent);
                out.write("public " + method.getReturnType() + " " +
                   method.getMethodName() + "(");
-               int paramSize = method.getParams().size();
+
                for (int i = 0; i < paramSize; i++)
                {
                   MethodParam param = method.getParams().get(i);
@@ -131,7 +154,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
                      out.write(", ");
                }
                out.write(")");
-               int exceptionSize = method.getExceptionType().size();
+
                for (int i = 0; i < exceptionSize; i++)
                {
                   if (i == 0)

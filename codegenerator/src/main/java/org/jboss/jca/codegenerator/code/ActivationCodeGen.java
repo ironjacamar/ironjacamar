@@ -163,8 +163,6 @@ public class ActivationCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
-      out.write("import javax.resource.spi.ActivationSpec;");
-      writeEol(out);
       out.write("import javax.resource.spi.endpoint.MessageEndpointFactory;");
       writeEol(out);
       writeEol(out);

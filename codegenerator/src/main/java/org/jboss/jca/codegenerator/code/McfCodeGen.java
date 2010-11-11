@@ -149,6 +149,10 @@ public class McfCodeGen extends PropsCodeGen
       out.write("import java.util.Set;");
       writeEol(out);
       writeEol(out);
+      out.write("import java.util.logging.Logger;");
+      writeEol(out);
+      writeEol(out);
+
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       
@@ -181,9 +185,6 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       writeEol(out);
       out.write("import javax.security.auth.Subject;");
-      writeEol(out);
-      writeEol(out);
-      out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
    }

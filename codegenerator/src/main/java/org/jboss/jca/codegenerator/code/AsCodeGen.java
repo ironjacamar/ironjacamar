@@ -48,8 +48,8 @@ public class AsCodeGen extends PropsCodeGen
    {
       if (def.isUseAnnotation())
       {
-         out.write("@Activation(messageListeners = {" + def.getRaPackage() + 
-            ".inflow." + def.getMlClass() + ".class})");
+         out.write("@Activation(messageListeners = { " + def.getRaPackage() + 
+            ".inflow." + def.getMlClass() + ".class })");
          writeEol(out);
       }
       out.write("public class " + getClassName(def) + " implements ActivationSpec");
@@ -94,7 +94,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("package " + def.getRaPackage() + ".inflow;");
       writeEol(out);
       writeEol(out);
-      out.write("import java.io.PrintWriter;");
+      out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
@@ -113,9 +113,6 @@ public class AsCodeGen extends PropsCodeGen
       out.write("import javax.resource.spi.InvalidPropertyException;");
       writeEol(out);
       out.write("import javax.resource.spi.ResourceAdapter;");
-      writeEol(out);
-      writeEol(out);
-      out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
    }

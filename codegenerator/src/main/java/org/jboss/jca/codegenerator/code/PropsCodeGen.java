@@ -57,7 +57,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
          if (def.isUseAnnotation())
          {
             writeIndent(out, indent);
-            out.write("@ConfigProperty(defaultValue=\"" + getConfigProps(def).get(i).getValue() + "\")");
+            out.write("@ConfigProperty(defaultValue = \"" + getConfigProps(def).get(i).getValue() + "\")");
             writeEol(out);
          }
          writeIndent(out, indent);

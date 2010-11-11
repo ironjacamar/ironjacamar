@@ -75,7 +75,7 @@ public class MbeanInterfaceCodeGen extends AbstractCodeGen
                   writeEol(out);
                }
                writeIndent(out, indent);
-               out.write(" * @throws Exception");
+               out.write(" * @throws Exception exception");
                writeEol(out);
                writeIndent(out, indent);
                out.write(" */");
@@ -108,6 +108,9 @@ public class MbeanInterfaceCodeGen extends AbstractCodeGen
          writeEol(out);
          writeIndent(out, indent);
          out.write(" * call me");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" * @throws Exception exception");
          writeEol(out);
          writeIndent(out, indent);
          out.write(" */");

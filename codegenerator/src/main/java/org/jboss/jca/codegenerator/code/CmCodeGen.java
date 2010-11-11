@@ -127,7 +127,7 @@ public class CmCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public Object allocateConnection(ManagedConnectionFactory mcf," +
+      out.write("public Object allocateConnection(ManagedConnectionFactory mcf, " +
          "ConnectionRequestInfo cri) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);

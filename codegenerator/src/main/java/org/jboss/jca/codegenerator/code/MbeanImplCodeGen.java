@@ -51,6 +51,9 @@ public class MbeanImplCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, 0);
 
       writeIndent(out, indent);
+      out.write("/** JNDI name */");
+      writeEol(out);
+      writeIndent(out, indent);
       out.write("private static final String JNDI_NAME = \"java:/eis/" + def.getDefaultValue() + "\";");
       writeEol(out);
       writeEol(out);
@@ -67,6 +70,22 @@ public class MbeanImplCodeGen extends AbstractCodeGen
                writeIndent(out, indent);
                out.write(" * call " + method.getMethodName());
                writeEol(out);
+               for (MethodParam param : method.getParams())
+               {
+                  writeIndent(out, indent);
+                  out.write(" * @param " + param.getName() + " " + param.getName());
+                  writeEol(out);
+               }
+               if (!method.getReturnType().equals("void"))
+               {
+                  writeIndent(out, indent);
+                  out.write(" * @return " + method.getReturnType());
+                  writeEol(out);
+               }
+               writeIndent(out, indent);
+               out.write(" * @throws Exception");
+               writeEol(out);
+
                writeIndent(out, indent);
                out.write(" */");
                writeEol(out);
@@ -135,6 +154,9 @@ public class MbeanImplCodeGen extends AbstractCodeGen
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * getConnection");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return " + def.getConnInterfaceClass());
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

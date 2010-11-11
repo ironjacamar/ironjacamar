@@ -49,6 +49,9 @@ public class CfCodeGen extends AbstractCodeGen
       int indent = 1;
       
       writeIndent(out, indent);
+      out.write("/** reference */");
+      writeEol(out);
+      writeIndent(out, indent);
       out.write("private Reference reference;");
       writeEol(out);
       writeEol(out);
@@ -63,7 +66,7 @@ public class CfCodeGen extends AbstractCodeGen
       out.write(" * default constructor");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   cxManager ConnectionManager");
+      out.write(" * @param cxManager ConnectionManager");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -92,15 +95,10 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import java.io.Serializable;");
-      writeEol(out);
-      writeEol(out);
       out.write("import javax.naming.NamingException;");
       writeEol(out);
       out.write("import javax.naming.Reference;");
       writeEol(out);
-      writeEol(out);
-      out.write("import javax.resource.Referenceable;");
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
@@ -210,7 +208,7 @@ public class CfCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   reference  A Reference instance");
+      out.write(" * @param reference A Reference instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
