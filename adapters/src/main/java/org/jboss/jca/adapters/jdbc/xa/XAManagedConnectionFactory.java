@@ -23,7 +23,7 @@
 package org.jboss.jca.adapters.jdbc.xa;
 
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
-import org.jboss.jca.adapters.jdbc.URLSelectorStrategy;
+import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;

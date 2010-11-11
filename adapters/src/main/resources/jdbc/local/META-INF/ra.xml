@@ -108,15 +108,30 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
           <config-property-type>java.lang.String</config-property-type>
         </config-property>
         <config-property>
+          <description>TThe properties to inect into class implementing org.jboss.jca.adapters.jdbc.ValidConnectionChecker that can determine for a particular vender db when a connection is valid.</description>
+          <config-property-name>ValidConnectionCheckerProperties</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+        </config-property>
+        <config-property>
           <description>The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ExceptionSorter that can determine for a particular vender db which exceptions are fatal and mean a connection should be discarded.</description>
           <config-property-name>ExceptionSorterClassName</config-property-name>
           <config-property-type>java.lang.String</config-property-type>
         </config-property>
-	<config-property>
+        <config-property>
+          <description>The properties to inect into class implementing org.jboss.jca.adapters.jdbc.ExceptionSorter that can determine for a particular vender db which exceptions are fatal and mean a connection should be discarded.</description>
+          <config-property-name>ExceptionSorterProperties</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+        </config-property>
+        <config-property>
           <description>The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.StaleConnectionChecker that can determine for a particular vender db when a connection is stale.</description>
           <config-property-name>StaleConnectionCheckerClassName</config-property-name>
           <config-property-type>java.lang.String</config-property-type>
-        </config-property>			
+        </config-property>
+        <config-property>
+          <description>The properties to inect into class implementing org.jboss.jca.adapters.jdbc.StaleConnectionChecker that can determine for a particular vender db when a connection is stale.</description>
+          <config-property-name>StaleConnectionCheckerProperties</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+        </config-property> 		
         <config-property>
           <description>Whether to track unclosed statements - false/true/nowarn</description>
           <config-property-name>TrackStatements</config-property-name>

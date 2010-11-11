@@ -165,8 +165,7 @@ public class Merger
 
       // merge RA onfigProperties;
       List<? extends ConfigProperty> original = conn.getResourceadapter().getConfigProperties();
-      List<? extends ConfigProperty> newProperties = this
-         .mergeConfigProperties(ij.getConfigProperties(), original);
+      List<? extends ConfigProperty> newProperties = this.mergeConfigProperties(ij.getConfigProperties(), original);
 
       ((AbstractResourceAdapetrImpl) conn.getResourceadapter()).forceNewConfigPropertiesContent(newProperties);
 
@@ -233,8 +232,7 @@ public class Merger
    {
       // merge ConnectionDefinition onfigProperties;
       List<? extends ConfigProperty> original = conDef.getConfigProperties();
-      List<ConfigProperty> newProperties = this
-         .mergeConfigProperties(commonConDef.getConfigProperties(), original);
+      List<ConfigProperty> newProperties = this.mergeConfigProperties(commonConDef.getConfigProperties(), original);
 
       CommonSecurity security = commonConDef.getSecurity();
       if (security != null && security.getUserName() != null && !security.getUserName().trim().equals(""))
@@ -256,8 +254,8 @@ public class Merger
    {
       // merge AdminObject onfigProperties;
       List<? extends ConfigProperty> original = adminObj.getConfigProperties();
-      List<? extends ConfigProperty> newProperties = this.mergeConfigProperties(
-         commonAdminObj.getConfigProperties(), original);
+      List<? extends ConfigProperty> newProperties = this.mergeConfigProperties(commonAdminObj.getConfigProperties(),
+         original);
 
       ((AdminObjectImpl) adminObj).forceNewConfigPropertiesContent(newProperties);
       return adminObj;
@@ -270,8 +268,7 @@ public class Merger
       {
          if (conn.getVersion() == Version.V_10 && conn.getResourceadapter() != null)
          {
-            ((ResourceAdapter10Impl) conn.getResourceadapter()).forceNewTrasactionSupport(ij
-               .getTransactionSupport());
+            ((ResourceAdapter10Impl) conn.getResourceadapter()).forceNewTrasactionSupport(ij.getTransactionSupport());
          }
          else
          {
@@ -300,8 +297,8 @@ public class Merger
    * @throws IllegalArgumentException if version is't 1.0, 1.5 or 1.6
    * @throws Exception in case of error
    */
-   public Connector mergeConnectorAndDs(CommonDataSource cds, Connector connector)
-      throws IllegalArgumentException, Exception
+   public Connector mergeConnectorAndDs(CommonDataSource cds, Connector connector) throws IllegalArgumentException,
+      Exception
    {
       if (cds == null)
       {
@@ -314,9 +311,8 @@ public class Merger
       }
    }
 
-   private Connector mergeConnectorWithProperties(Connector connector,
-      List<ConfigProperty> connectioDefProperties, List<ConfigProperty> raConfigProperties)
-      throws IllegalArgumentException, Exception
+   private Connector mergeConnectorWithProperties(Connector connector, List<ConfigProperty> connectioDefProperties,
+      List<ConfigProperty> raConfigProperties) throws IllegalArgumentException, Exception
    {
 
       XsdString managedconnectionfactoryClass = null;
@@ -357,16 +353,13 @@ public class Merger
          }
          ResourceAdapter resourceadapter = new ResourceAdapter10Impl(managedconnectionfactoryClass,
                                                                      connectionfactoryInterface,
-                                                                     connectionfactoryImplClass,
-                                                                     connectionInterface, connectionImplClass,
-                                                                     transactionSupport, authenticationMechanism,
-                                                                     connectioDefProperties,
-                                                                     reauthenticationSupport, securityPermissions,
-                                                                     id);
+                                                                     connectionfactoryImplClass, connectionInterface,
+                                                                     connectionImplClass, transactionSupport,
+                                                                     authenticationMechanism, connectioDefProperties,
+                                                                     reauthenticationSupport, securityPermissions, id);
 
          Connector newConnector = new Connector10Impl(moduleName, vendorName, eisType, resourceadapterVersion,
-                                                      license, resourceadapter, description, displayNames, icons,
-                                                      id);
+                                                      license, resourceadapter, description, displayNames, icons, id);
 
          return newConnector.merge(connector);
       }
@@ -380,16 +373,14 @@ public class Merger
                                                                                   connectionInterface,
                                                                                   connectionImplClass, id);
          connectionDefinitions.add(connectionDefinition);
-         OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(
-                                                                                           connectionDefinitions,
+         OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(connectionDefinitions,
                                                                                            transactionSupport,
                                                                                            authenticationMechanism,
                                                                                            reauthenticationSupport,
                                                                                            id);
          String resourceadapterClass = null;
          InboundResourceAdapter inboundResourceadapter = null;
-         ResourceAdapter1516 resourceadapter = new ResourceAdapter1516Impl(resourceadapterClass,
-                                                                           raConfigProperties,
+         ResourceAdapter1516 resourceadapter = new ResourceAdapter1516Impl(resourceadapterClass, raConfigProperties,
                                                                            outboundResourceadapter,
                                                                            inboundResourceadapter, adminobjects,
                                                                            securityPermissions, id);
@@ -428,8 +419,7 @@ public class Merger
       else
       {
 
-         if (connector.getResourceadapter() != null &&
-             connector.getResourceadapter() instanceof ResourceAdapter1516)
+         if (connector.getResourceadapter() != null && connector.getResourceadapter() instanceof ResourceAdapter1516)
          {
             ResourceAdapter1516 ra1516 = ((ResourceAdapter1516) connector.getResourceadapter());
             if (ra1516.getOutboundResourceadapter() != null &&
@@ -506,8 +496,7 @@ public class Merger
                         valueBuf.append(xaConfigProperty.getValue());
                         valueBuf.append(";");
                      }
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                        valueBuf.toString()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, valueBuf.toString()));
 
                   }
 
@@ -517,8 +506,8 @@ public class Merger
                case URLDELIMITER : {
                   if (ds != null && ds.getUrlDelimiter() != null && !ds.getUrlDelimiter().trim().equals(""))
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                        ds.getUrlDelimiter()));
+                     configProperties
+                        .add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getUrlDelimiter()));
                   }
 
                   break;
@@ -600,34 +589,92 @@ public class Merger
 
                case VALIDCONNECTIONCHECKERCLASSNAME : {
                   if (ds != null && ds.getValidation() != null &&
-                      ds.getValidation().getCheckValidConnectionSql() != null)
+                      ds.getValidation().getValidConnectionChecker() != null &&
+                      ds.getValidation().getValidConnectionChecker().getClassName() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                        .getCheckValidConnectionSql()));
+                        .getValidConnectionChecker().getClassName()));
                   }
 
                   break;
                }
+               case VALIDCONNECTIONCHECKERPROPERTIES : {
+                  if (ds != null && ds.getValidation() != null &&
+                      ds.getValidation().getValidConnectionChecker() != null &&
+                      ds.getValidation().getValidConnectionChecker().getClassName() != null)
+                  {
+                     StringBuffer valueBuf = new StringBuffer();
+                     for (Entry<String, String> connProperty : ds.getValidation().getValidConnectionChecker()
+                        .getConfigPropertiesMap().entrySet())
+                     {
+                        valueBuf.append(connProperty.getKey());
+                        valueBuf.append("=");
+                        valueBuf.append(connProperty.getValue());
+                        valueBuf.append(";");
+                     }
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, valueBuf.toString()));
+
+                  }
+                  break;
+               }
 
                case EXCEPTIONSORTERCLASSNAME : {
-                  if (ds != null && ds.getValidation() != null &&
-                      ds.getValidation().getExceptionSorterClassName() != null)
+                  if (ds != null && ds.getValidation() != null && ds.getValidation().getExceptionSorter() != null &&
+                      ds.getValidation().getExceptionSorter().getClassName() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                        .getExceptionSorterClassName()));
+                        .getExceptionSorter().getClassName()));
                   }
 
+                  break;
+               }
+               case EXCEPTIONSORTERPROPERTIES : {
+                  if (ds != null && ds.getValidation() != null && ds.getValidation().getExceptionSorter() != null &&
+                      ds.getValidation().getExceptionSorter().getConfigPropertiesMap() != null)
+                  {
+                     StringBuffer valueBuf = new StringBuffer();
+                     for (Entry<String, String> connProperty : ds.getValidation().getExceptionSorter()
+                        .getConfigPropertiesMap().entrySet())
+                     {
+                        valueBuf.append(connProperty.getKey());
+                        valueBuf.append("=");
+                        valueBuf.append(connProperty.getValue());
+                        valueBuf.append(";");
+                     }
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, valueBuf.toString()));
+
+                  }
                   break;
                }
 
                case STALECONNECTIONCHECKERCLASSNAME : {
                   if (ds != null && ds.getValidation() != null &&
-                      ds.getValidation().getStaleConnectionCheckerClassName() != null)
+                      ds.getValidation().getStaleConnectionChecker() != null &&
+                      ds.getValidation().getStaleConnectionChecker().getClassName() != null)
                   {
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                        .getStaleConnectionCheckerClassName()));
+                        .getStaleConnectionChecker().getClassName()));
                   }
 
+                  break;
+               }
+               case STALECONNECTIONCHECKERPROPERTIES : {
+                  if (ds != null && ds.getValidation() != null &&
+                      ds.getValidation().getStaleConnectionChecker() != null &&
+                      ds.getValidation().getStaleConnectionChecker().getConfigPropertiesMap() != null)
+                  {
+                     StringBuffer valueBuf = new StringBuffer();
+                     for (Entry<String, String> connProperty : ds.getValidation().getStaleConnectionChecker()
+                        .getConfigPropertiesMap().entrySet())
+                     {
+                        valueBuf.append(connProperty.getKey());
+                        valueBuf.append("=");
+                        valueBuf.append(connProperty.getValue());
+                        valueBuf.append(";");
+                     }
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, valueBuf.toString()));
+
+                  }
                   break;
                }
 
@@ -683,8 +730,7 @@ public class Merger
                case DRIVERCLASS : {
                   if (ds != null && ds.getDriverClass() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                        ds.getDriverClass()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getDriverClass()));
                   }
                   break;
                }
@@ -700,8 +746,7 @@ public class Merger
                         valueBuf.append(connProperty.getValue());
                         valueBuf.append(";");
                      }
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                        valueBuf.toString()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, valueBuf.toString()));
 
                   }
                   break;
@@ -709,11 +754,12 @@ public class Merger
                case CONNECTIONURL : {
                   if (ds != null && ds.getConnectionUrl() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                        ds.getConnectionUrl()));
+                     configProperties
+                        .add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getConnectionUrl()));
                   }
                   break;
                }
+
                default :
                   break;
             }
@@ -722,8 +768,8 @@ public class Merger
          {
             for (Entry<String, String> connectionProperty : ds.getConnectionProperties().entrySet())
             {
-               ConfigPropertyFactory.Prototype prototype = ConfigPropertyFactory.Prototype
-                  .forName(connectionProperty.getKey());
+               ConfigPropertyFactory.Prototype prototype = ConfigPropertyFactory.Prototype.forName(connectionProperty
+                  .getKey());
                if (prototype != ConfigPropertyFactory.Prototype.UNKNOWN)
                {
                   configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
@@ -809,8 +855,7 @@ public class Merger
          /** CONNECTIONURL **/
          CONNECTIONURL("ConnectionURL", "java.lang.String", "The jdbc connection url class."),
          /** CONNECTIONPROPERTIES **/
-         CONNECTIONPROPERTIES("ConnectionProperties", "java.lang.String",
-            "Connection properties for the database."),
+         CONNECTIONPROPERTIES("ConnectionProperties", "java.lang.String", "Connection properties for the database."),
 
          /** USERNAME **/
          USERNAME("UserName", "java.lang.String", "The default user name used to create JDBC connections."),
@@ -851,14 +896,27 @@ public class Merger
          VALIDCONNECTIONCHECKERCLASSNAME("ValidConnectionCheckerClassName", "java.lang.String",
             "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ValidConnectionChecker"
                + " that can determine for a particular vender db when a connection is valid."),
+         /** VALIDCONNECTIONCHECKERPROPERTIES **/
+         VALIDCONNECTIONCHECKERPROPERTIES("ValidConnectionCheckerProperties", "java.lang.String",
+            "The properties to inect into class implementing org.jboss.jca.adapters.jdbc.ValidConnectionChecker"
+               + " that can determine for a particular vender db when a connection is valid."),
          /** EXCEPTIONSORTERCLASSNAME **/
          EXCEPTIONSORTERCLASSNAME("ExceptionSorterClassName", "java.lang.String",
             "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.ExceptionSorter that"
                + " can determine for a particular vender db which exceptions are "
                + "fatal and mean a connection should be discarded."),
+         /** EXCEPTIONSORTERPROPERTIES **/
+         EXCEPTIONSORTERPROPERTIES("ExceptionSorterProperties", "java.lang.String",
+            "The properties to inect into  class implementing org.jboss.jca.adapters.jdbc.ExceptionSorter that"
+               + " can determine for a particular vender db which exceptions are "
+               + "fatal and mean a connection should be discarded."),
          /** STALECONNECTIONCHECKERCLASSNAME **/
          STALECONNECTIONCHECKERCLASSNAME("StaleConnectionCheckerClassName", "java.lang.String",
             "The fully qualified name of a class implementing org.jboss.jca.adapters.jdbc.StaleConnectionChecker"
+               + " that can determine for a particular vender db when a connection is stale."),
+         /** STALECONNECTIONCHECKERPROPERTIES **/
+         STALECONNECTIONCHECKERPROPERTIES("StaleConnectionCheckerProperties", "java.lang.String",
+            "The properties to inect into  class implementing org.jboss.jca.adapters.jdbc.StaleConnectionChecker"
                + " that can determine for a particular vender db when a connection is stale."),
          /** TRACKSTATEMENTS **/
          TRACKSTATEMENTS("TrackStatements", "java.lang.String",

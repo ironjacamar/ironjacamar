@@ -37,11 +37,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
-import org.jboss.util.NestedSQLException;
 
 /**
  * A wrapper for a connection.
- * 
+ *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 96595 $
@@ -53,7 +52,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    private BaseWrapperManagedConnection mc;
 
    private WrapperDataSource dataSource;
-   
+
    private HashMap<WrappedStatement, Throwable> statements;
 
    private boolean closed = false;
@@ -68,7 +67,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       setManagedConnection(mc);
    }
-   
+
    /**
     * Set the managed connection
     * @param mc The managed connection
@@ -119,7 +118,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       return dataSource;
    }
-   
+
    /**
     * Set the datasource
     * @param dataSource The value
@@ -128,7 +127,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       this.dataSource = dataSource;
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -169,7 +168,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             {
                if (statements != null)
                {
-                  for (Iterator<Map.Entry<WrappedStatement, Throwable>> i = statements.entrySet().iterator(); 
+                  for (Iterator<Map.Entry<WrappedStatement, Throwable>> i = statements.entrySet().iterator();
                        i.hasNext();)
                   {
                      Map.Entry<WrappedStatement, Throwable> entry = i.next();
@@ -211,7 +210,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     * @return The wrapped statement
     */
    protected abstract WrappedStatement wrapStatement(Statement statement);
-   
+
    /**
     * {@inheritDoc}
     */
@@ -304,7 +303,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            return wrapPreparedStatement(mc.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, 
+            return wrapPreparedStatement(mc.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY,
                                                              ResultSet.CONCUR_READ_ONLY));
          }
          catch (Throwable t)
@@ -975,6 +974,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    /**
     * {@inheritDoc}
     */
+   @Override
    protected Connection getWrappedObject() throws SQLException
    {
       return getUnderlyingConnection();
@@ -1002,7 +1002,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    /**
     * The checkStatus method checks that the handle has not been closed and
     * that it is associated with a managed connection.
-    * 
+    *
     * @exception SQLException if an error occurs
     */
    protected void checkStatus() throws SQLException
@@ -1018,7 +1018,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     * The base checkException method rethrows the supplied exception, informing
     * the ManagedConnection of the error. Subclasses may override this to
     * filter exceptions based on their severity.
-    * 
+    *
     * @param t a throwable
     * @return the sql exception
     * @exception SQLException if an error occurs
@@ -1040,9 +1040,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       else
       {
-         throw new NestedSQLException("Error", result);
+         throw new SQLException("Error", result);
       }
-      
+
    }
 
    /**
@@ -1053,7 +1053,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       return trackStatements;
    }
-   
+
    /**
     * Register a statement
     * @param ws The statement
@@ -1062,12 +1062,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       if (trackStatements == BaseWrapperManagedConnectionFactory.TRACK_STATEMENTS_FALSE_INT)
          return;
-      
+
       synchronized (this)
       {
          if (statements == null)
             statements = new HashMap<WrappedStatement, Throwable>();
-         
+
          if (trackStatements == BaseWrapperManagedConnectionFactory.TRACK_STATEMENTS_TRUE_INT)
             statements.put(ws, new Throwable("STACKTRACE"));
          else
@@ -1100,20 +1100,20 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       if (mc == null || dataSource == null)
          return;
 
-      int timeout = 0; 
-      
+      int timeout = 0;
+
       // Use the transaction timeout
       if (mc.isTransactionQueryTimeout())
          timeout = dataSource.getTimeLeftBeforeTransactionTimeout();
-      
+
       // Look for a configured value
       if (timeout <= 0)
          timeout = mc.getQueryTimeout();
-      
+
       if (timeout > 0)
          ws.setQueryTimeout(timeout);
    }
-   
+
    /**
     * Get the logger
     * @return The value

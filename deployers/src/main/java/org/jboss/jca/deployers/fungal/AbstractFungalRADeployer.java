@@ -46,7 +46,6 @@ import javax.management.DynamicMBean;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;

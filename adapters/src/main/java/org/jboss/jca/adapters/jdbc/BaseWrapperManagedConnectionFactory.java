@@ -22,17 +22,28 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.jdbc.extensions.novendor.NullExceptionSorter;
+import org.jboss.jca.adapters.jdbc.extensions.novendor.NullStaleConnectionChecker;
+import org.jboss.jca.adapters.jdbc.extensions.novendor.NullValidConnectionChecker;
+import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
+import org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker;
+import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
+import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -46,17 +57,19 @@ import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
 
+import com.github.fungal.api.util.Injection;
+
 /**
  * BaseWrapperManagedConnectionFactory
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @author <a href="mailto:weston.price@jboss.com">Weston Price</a>
- * 
+ *
  * @version $Revision: 105426 $
  */
 
-public abstract class BaseWrapperManagedConnectionFactory 
+public abstract class BaseWrapperManagedConnectionFactory
    implements ManagedConnectionFactory, ValidatingManagedConnectionFactory, Serializable
 {
    /** @since 4.0.1 */
@@ -125,18 +138,37 @@ public abstract class BaseWrapperManagedConnectionFactory
     */
    protected String validConnectionCheckerClassName;
 
+   private String validConnectionCheckerProperties;
+
+   /**
+    * The properties injected in the class used to check whether a connection is valid
+    */
+   protected final Properties validConnectionCheckerProps = new Properties();
+
    /**
     * The instance of the valid connection checker
     */
    protected ValidConnectionChecker connectionChecker;
 
+
    /** The instance of the stale connection checker */
    protected StaleConnectionChecker staleConnectionChecker;
-   
+
    /** The staleConnectionCheckerClassName */
    private String staleConnectionCheckerClassName;
 
+   private String staleConnectionCheckerProperties;
+
+   /**
+    * The properties injected in the stale connection checker
+    */
+   protected final Properties staleConnectionCheckerProps = new Properties();
+
    private String exceptionSorterClassName;
+
+   private String exceptionSorterProperties;
+
+   private final Properties exceptionSorterProps = new Properties();
 
    private ExceptionSorter exceptionSorter;
 
@@ -145,19 +177,19 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** Whether to share cached prepared statements */
    protected Boolean sharePS = Boolean.FALSE;
-   
+
    /** Transaction query timeout */
    protected Boolean isTransactionQueryTimeout = Boolean.FALSE;
-   
+
    /** Query timeout */
    protected Integer queryTimeout = Integer.valueOf(0);
-   
-   /** 
-    * The variable <code>urlDelimiter</code> holds the url delimiter 
+
+   /**
+    * The variable <code>urlDelimiter</code> holds the url delimiter
     * information to be used for HA DS configuration .
     */
    protected String urlDelimiter;
-   
+
    /** URL selector strategy class name */
    protected String urlSelectorStrategyClassName;
 
@@ -397,7 +429,7 @@ public abstract class BaseWrapperManagedConnectionFactory
    {
       staleConnectionCheckerClassName = value;
    }
-   
+
    /**
     * Get the track statement value
     * @return The value
@@ -423,7 +455,7 @@ public abstract class BaseWrapperManagedConnectionFactory
    public void setTrackStatements(String value)
    {
       if (value == null)
-         throw new IllegalArgumentException("Null value for trackStatements"); 
+         throw new IllegalArgumentException("Null value for trackStatements");
 
       String trimmed = value.trim();
 
@@ -459,7 +491,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       if (validateOnMatch != null)
          this.validateOnMatch = validateOnMatch;
    }
-   
+
    /**
     * Get the exception sorter class name
     * @return The value
@@ -495,6 +527,8 @@ public abstract class BaseWrapperManagedConnectionFactory
    {
       validConnectionCheckerClassName = value;
    }
+
+
 
    /**
     * Is transaction query timeout set
@@ -533,7 +567,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       if (timeout != null)
          queryTimeout = timeout;
    }
-   
+
    /**
     * Get the use try lock value
     * @return The value
@@ -552,7 +586,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       if (useTryLock != null)
          this.useTryLock = useTryLock;
    }
-   
+
    /**
     * Get the url delimiter
     * @return The vlaue
@@ -570,7 +604,7 @@ public abstract class BaseWrapperManagedConnectionFactory
    public void setURLDelimiter(String urlDelimiter) throws ResourceException
    {
       this.urlDelimiter = urlDelimiter;
-   }   
+   }
 
    /**
     * Get the url selector strategy class name
@@ -589,7 +623,7 @@ public abstract class BaseWrapperManagedConnectionFactory
    {
       this.urlSelectorStrategyClassName = urlSelectorStrategyClassName;
    }
-   
+
    /**
     * Get the url selector strategy
     * @return The value
@@ -605,7 +639,7 @@ public abstract class BaseWrapperManagedConnectionFactory
     * @param constructorParameter The parameter
     * @return The URL selector strategy
     */
-   public Object loadClass(String className, Object constructorParameter) 
+   public Object loadClass(String className, Object constructorParameter)
    {
       Object result = null;
       try
@@ -636,7 +670,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       {
          log.error("Constructor or Method mismatch in URLSelectorStrategy :" + className);
       }
-      
+
       return result;
    }
 
@@ -668,8 +702,8 @@ public abstract class BaseWrapperManagedConnectionFactory
 
       return invalid;
    }
-   
-   
+
+
    /**
     * Gets full set of connection properties, i.e. whatever is provided
     * in config plus "user" and "password" from subject/cri.
@@ -737,6 +771,11 @@ public abstract class BaseWrapperManagedConnectionFactory
                ClassLoader cl = Thread.currentThread().getContextClassLoader();
                Class<?> clazz = cl.loadClass(exceptionSorterClassName);
                exceptionSorter = (ExceptionSorter)clazz.newInstance();
+               Injection injection = new Injection();
+               for (Entry<Object, Object> prop : exceptionSorterProps.entrySet())
+               {
+                  injection.inject(null, (String) prop.getKey(), (String) prop.getValue(), exceptionSorter);
+               }
                return exceptionSorter.isExceptionFatal(e);
             }
             catch (Exception e2)
@@ -772,6 +811,11 @@ public abstract class BaseWrapperManagedConnectionFactory
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             Class<?> clazz = cl.loadClass(validConnectionCheckerClassName);
             connectionChecker = (ValidConnectionChecker) clazz.newInstance();
+            Injection injection = new Injection();
+            for (Entry<Object, Object> prop : validConnectionCheckerProps.entrySet())
+            {
+               injection.inject(null, (String) prop.getKey(), (String) prop.getValue(), connectionChecker);
+            }
             return connectionChecker.isValidConnection(c);
          }
          catch (Exception e)
@@ -792,6 +836,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       return null;
    }
 
+
    /**
     * Is the connection stale
     * @param e The exception
@@ -800,8 +845,8 @@ public abstract class BaseWrapperManagedConnectionFactory
    boolean isStaleConnection(SQLException e)
    {
       if (staleConnectionChecker != null)
-         return staleConnectionChecker.isStaleConnection(e); 
-      
+         return staleConnectionChecker.isStaleConnection(e);
+
       if (staleConnectionCheckerClassName != null)
       {
          try
@@ -809,20 +854,25 @@ public abstract class BaseWrapperManagedConnectionFactory
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             Class<?> clazz = cl.loadClass(staleConnectionCheckerClassName);
             staleConnectionChecker = (StaleConnectionChecker)clazz.newInstance();
+            Injection injection = new Injection();
+            for (Entry<Object, Object> prop : staleConnectionCheckerProps.entrySet())
+            {
+               injection.inject(null, (String) prop.getKey(), (String) prop.getValue(), staleConnectionChecker);
+            }
             return staleConnectionChecker.isStaleConnection(e);
          }
          catch (Exception ex2)
          {
-            log.warn("exception trying to create stale connection checker (disabling) " + 
+            log.warn("exception trying to create stale connection checker (disabling) " +
                      staleConnectionCheckerClassName, ex2);
 
             staleConnectionChecker = new NullStaleConnectionChecker();
          }
       }
-            
+
       return false;
    }
-   
+
    /**
     * SubjectActions
     */
@@ -886,6 +936,150 @@ public abstract class BaseWrapperManagedConnectionFactory
          SubjectActions action = new SubjectActions(subject, props, mcf);
          Boolean matched = AccessController.doPrivileged(action);
          return matched.booleanValue();
+      }
+   }
+
+   /**
+    * Get the validConnectionCheckerProps.
+    *
+    * @return the validConnectionCheckerProps.
+    */
+   public final Properties getValidConnectionCheckerProps()
+   {
+      return validConnectionCheckerProps;
+   }
+
+   /**
+    * Get the staleConnectionCheckerProps.
+    *
+    * @return the staleConnectionCheckerProps.
+    */
+   public final Properties getStaleConnectionCheckerProps()
+   {
+      return staleConnectionCheckerProps;
+   }
+
+   /**
+    * Get the exceptionSorterProps.
+    *
+    * @return the exceptionSorterProps.
+    */
+   public final Properties getExceptionSorterProps()
+   {
+      return exceptionSorterProps;
+   }
+
+   /**
+    * Get the validConnectionCheckerProperties.
+    *
+    * @return the validConnectionCheckerProperties.
+    */
+   public final String getValidConnectionCheckerProperties()
+   {
+      return validConnectionCheckerProperties;
+   }
+
+   /**
+    * Set the validConnectionCheckerProperties.
+    *
+    * @param validConnectionCheckerProperties The validConnectionCheckerProperties to set.
+    */
+   public final void setValidConnectionCheckerProperties(String validConnectionCheckerProperties)
+   {
+      this.validConnectionCheckerProperties = validConnectionCheckerProperties;
+      validConnectionCheckerProps.clear();
+
+      if (validConnectionCheckerProperties != null)
+      {
+         // Map any \ to \\
+         validConnectionCheckerProperties = validConnectionCheckerProperties.replaceAll("\\\\", "\\\\\\\\");
+         validConnectionCheckerProperties = validConnectionCheckerProperties.replaceAll(";", "\n");
+
+         InputStream is = new ByteArrayInputStream(validConnectionCheckerProperties.getBytes());
+         try
+         {
+            validConnectionCheckerProps.load(is);
+         }
+         catch (IOException ioe)
+         {
+            throw new RuntimeException("Could not load connection properties", ioe);
+         }
+      }
+   }
+
+   /**
+    * Get the staleConnectionCheckerProperties.
+    *
+    * @return the staleConnectionCheckerProperties.
+    */
+   public final String getStaleConnectionCheckerProperties()
+   {
+      return staleConnectionCheckerProperties;
+   }
+
+   /**
+    * Set the staleConnectionCheckerProperties.
+    *
+    * @param staleConnectionCheckerProperties The staleConnectionCheckerProperties to set.
+    */
+   public final void setStaleConnectionCheckerProperties(String staleConnectionCheckerProperties)
+   {
+      this.staleConnectionCheckerProperties = staleConnectionCheckerProperties;
+      staleConnectionCheckerProps.clear();
+
+      if (staleConnectionCheckerProperties != null)
+      {
+         // Map any \ to \\
+         staleConnectionCheckerProperties = staleConnectionCheckerProperties.replaceAll("\\\\", "\\\\\\\\");
+         staleConnectionCheckerProperties = staleConnectionCheckerProperties.replaceAll(";", "\n");
+
+         InputStream is = new ByteArrayInputStream(staleConnectionCheckerProperties.getBytes());
+         try
+         {
+            staleConnectionCheckerProps.load(is);
+         }
+         catch (IOException ioe)
+         {
+            throw new RuntimeException("Could not load connection properties", ioe);
+         }
+      }
+   }
+
+   /**
+    * Get the exceptionSorterProperties.
+    *
+    * @return the exceptionSorterProperties.
+    */
+   public final String getExceptionSorterProperties()
+   {
+      return exceptionSorterProperties;
+   }
+
+   /**
+    * Set the exceptionSorterProperties.
+    *
+    * @param exceptionSorterProperties The exceptionSorterProperties to set.
+    */
+   public final void setExceptionSorterProperties(String exceptionSorterProperties)
+   {
+      this.exceptionSorterProperties = exceptionSorterProperties;
+      exceptionSorterProps.clear();
+
+      if (exceptionSorterProperties != null)
+      {
+         // Map any \ to \\
+         exceptionSorterProperties = exceptionSorterProperties.replaceAll("\\\\", "\\\\\\\\");
+         exceptionSorterProperties = exceptionSorterProperties.replaceAll(";", "\n");
+
+         InputStream is = new ByteArrayInputStream(exceptionSorterProperties.getBytes());
+         try
+         {
+            exceptionSorterProps.load(is);
+         }
+         catch (IOException ioe)
+         {
+            throw new RuntimeException("Could not load connection properties", ioe);
+         }
       }
    }
 }

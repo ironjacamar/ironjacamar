@@ -38,7 +38,6 @@ import javax.sql.DataSource;
 import javax.transaction.RollbackException;
 
 import org.jboss.tm.TransactionTimeoutConfiguration;
-import org.jboss.util.NestedSQLException;
 
 /**
  * WrapperDataSource
@@ -47,10 +46,10 @@ import org.jboss.util.NestedSQLException;
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 71788 $
  */
-public class WrapperDataSource extends JBossWrapper implements Referenceable, DataSource, Serializable  
+public class WrapperDataSource extends JBossWrapper implements Referenceable, DataSource, Serializable
 {
    private static final long serialVersionUID = 3570285419164793501L;
-   
+
    private final BaseWrapperManagedConnectionFactory mcf;
    private final ConnectionManager cm;
 
@@ -65,7 +64,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    protected WrapperDataSource(final BaseWrapperManagedConnectionFactory mcf, final ConnectionManager cm)
    {
       this.mcf = mcf;
-      this.cm = cm;   
+      this.cm = cm;
    }
 
    /**
@@ -98,13 +97,13 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    public void setLoginTimeout(int param1) throws SQLException
    {
    }
-   
+
    /**
     * {@inheritDoc}
     */
    public Connection getConnection() throws SQLException
    {
-      try 
+      try
       {
          WrappedConnection wc = (WrappedConnection) cm.allocateConnection(mcf, null);
          wc.setDataSource(this);
@@ -112,7 +111,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       }
       catch (ResourceException re)
       {
-         throw new NestedSQLException(re);
+         throw new SQLException(re);
       }
    }
 
@@ -122,7 +121,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    public Connection getConnection(String user, String password) throws SQLException
    {
       ConnectionRequestInfo cri = new WrappedConnectionRequestInfo(user, password);
-      try 
+      try
       {
          WrappedConnection wc = (WrappedConnection) cm.allocateConnection(mcf, cri);
          wc.setDataSource(this);
@@ -130,7 +129,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       }
       catch (ResourceException re)
       {
-         throw new NestedSQLException(re);
+         throw new SQLException(re);
       }
    }
 
@@ -149,7 +148,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    {
       return reference;
    }
-   
+
    /**
     * Get the time left before a transaction timeout
     * @return The amount in seconds; <code>-1</code> if no timeout
@@ -176,14 +175,14 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       }
       catch (RollbackException e)
       {
-         throw new NestedSQLException(e);
+         throw new SQLException(e);
       }
    }
-   
+
    /**
     * Check whether a tranasction is active
     *
-    * @throws SQLException if the transaction is not active, preparing, prepared or committing or 
+    * @throws SQLException if the transaction is not active, preparing, prepared or committing or
     *                      for any error in the transaction manager
     */
    protected void checkTransactionActive() throws SQLException
@@ -197,7 +196,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       }
       catch (Exception e)
       {
-         throw new NestedSQLException(e);
+         throw new SQLException(e);
       }
    }
 }

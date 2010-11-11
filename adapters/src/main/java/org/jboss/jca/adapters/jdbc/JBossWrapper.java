@@ -27,7 +27,7 @@ import java.sql.SQLException;
 
 /**
  * JBossWrapper.
- * 
+ *
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 85945 $
  */
@@ -64,6 +64,7 @@ public class JBossWrapper implements Serializable
 
    /**
     * Unwrap
+    * @param <T> the type
     * @param iface The interface
     * @return The object
     * @exception SQLException Thrown if an error occurs

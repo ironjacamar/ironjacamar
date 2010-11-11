@@ -176,7 +176,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
             }
          }
 
-         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, 
+         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName,
                                                           uniqueJdbcLocalId, uniqueJdbcXAId,
                                                           dataSources, parent);
 

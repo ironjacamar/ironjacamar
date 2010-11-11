@@ -23,7 +23,7 @@
 package org.jboss.jca.adapters.jdbc.local;
 
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
-import org.jboss.jca.adapters.jdbc.URLSelectorStrategy;
+import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -44,7 +44,6 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 
-import org.jboss.util.NestedRuntimeException;
 
 /**
  * LocalManagedConnectionFactory
@@ -62,7 +61,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    private transient Driver driver;
 
    private String connectionURL;
-   
+
    private URLSelectorStrategy urlSelector;
 
    /** The connection properties */
@@ -84,16 +83,16 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       // check some invariants before they come back to haunt us
       if (driverClass == null)
          throw new ResourceException("driverClass is null");
-      
+
       if (connectionURL == null)
          throw new ResourceException("connectionURL is null");
-      
+
       return super.createConnectionFactory(cm);
    }
-   
+
    /**
     * Get the value of ConnectionURL.
-    * 
+    *
     * @return value of ConnectionURL.
     */
    public String getConnectionURL()
@@ -103,7 +102,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    /**
     * Set the value of ConnectionURL.
-    * 
+    *
     * @param connectionURL  Value to assign to ConnectionURL.
     */
    public void setConnectionURL(final String connectionURL) //throws ResourceException
@@ -116,7 +115,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    /**
     * Get the DriverClass value.
-    * 
+    *
     * @return the DriverClass value.
     */
    public String getDriverClass()
@@ -126,7 +125,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    /**
     * Set the DriverClass value.
-    * 
+    *
     * @param driverClass The new DriverClass value.
     */
    public synchronized void setDriverClass(final String driverClass)
@@ -137,7 +136,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    /**
     * Get the value of connectionProperties.
-    * 
+    *
     * @return value of connectionProperties.
     */
    public String getConnectionProperties()
@@ -147,7 +146,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    /**
     * Set the value of connectionProperties.
-    * 
+    *
     * @param connectionProperties  Value to assign to connectionProperties.
     */
    public void setConnectionProperties(String connectionProperties)
@@ -159,6 +158,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       {
          // Map any \ to \\
          connectionProperties = connectionProperties.replaceAll("\\\\", "\\\\\\\\");
+         connectionProperties = connectionProperties.replaceAll(";", "\n");
 
          InputStream is = new ByteArrayInputStream(connectionProperties.getBytes());
          try
@@ -167,7 +167,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          }
          catch (IOException ioe)
          {
-            throw new NestedRuntimeException("Could not load connection properties", ioe);
+            throw new RuntimeException("Could not load connection properties", ioe);
          }
       }
    }
@@ -195,7 +195,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          }
          log.trace("Using properties: " + logCopy);
       }
-      
+
       if (urlSelector != null)
       {
          return getHALocalManagedConnection(props, copy);
@@ -206,14 +206,14 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
    }
 
-   private LocalManagedConnection getLocalManagedConnection(Properties props, Properties copy) 
+   private LocalManagedConnection getLocalManagedConnection(Properties props, Properties copy)
       throws ResourceException
    {
       Connection con = null;
       try
       {
          String url = getConnectionURL();
-         Driver d = getDriver(url); 
+         Driver d = getDriver(url);
          con = d.connect(url, copy);
          if (con == null)
             throw new ResourceException("Wrong driver class for this connection URL");
@@ -254,7 +254,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          Connection con = null;
          try
          {
-            Driver d = getDriver(url); 
+            Driver d = getDriver(url);
             con = d.connect(url, copy);
             if (con == null)
             {
@@ -283,16 +283,17 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
             urlSelector.failedUrlObject(url);
          }
       }
-      
+
       // we have supposedly tried all the urls
-      throw new ResourceException("Could not create connection using any of the URLs: " + 
+      throw new ResourceException("Could not create connection using any of the URLs: " +
                                   urlSelector.getAllUrlObjects());
    }
-   
+
    /**
     * Set the URL delimiter
     * @param urlDelimiter The value
     */
+   @Override
    public void setURLDelimiter(String urlDelimiter) //throws ResourceException
    {
       super.urlDelimiter = urlDelimiter;
@@ -301,14 +302,14 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          initUrlSelector();
       }
    }
-   
+
    /**
     * Init URL selector
     */
    protected void initUrlSelector() //throws ResourceException
    {
       boolean trace = log.isTraceEnabled();
-      
+
       List<String> urlsList = new ArrayList<String>();
       String urlsStr = getConnectionURL();
       String url;
@@ -346,7 +347,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          log.debug("Customized URLSelectorStrategy is being used : " + urlSelector);
       }
    }
-   
+
    /**
     * Default implementation
     */
@@ -355,7 +356,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       private final List<String> urls;
       private int urlIndex;
       private String url;
-      
+
       /**
        * Constructor
        * @param urls The urls
@@ -443,7 +444,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
                                                     final ConnectionRequestInfo cri) throws ResourceException
    {
       Properties newProps = getConnectionProperties(subject, cri);
-      
+
       for (Iterator<?> i = mcs.iterator(); i.hasNext();)
       {
          Object o = i.next();
@@ -470,6 +471,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    /**
     * {@inheritDoc}
     */
+   @Override
    public int hashCode()
    {
       int result = 17;
@@ -484,6 +486,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    /**
     * {@inheritDoc}
     */
+   @Override
    public boolean equals(Object other)
    {
       if (this == other)
@@ -511,7 +514,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    protected synchronized Driver getDriver(final String url) throws ResourceException
    {
       boolean trace = log.isTraceEnabled();
-      
+
       // don't bother if it is loaded already
       if (driver != null)
       {
@@ -553,14 +556,14 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          throw new ResourceException("Failed to register driver for: " + driverClass, e);
       }
 
-      throw new ResourceException("Apparently wrong driver class specified for URL: class: " + driverClass + 
+      throw new ResourceException("Apparently wrong driver class specified for URL: class: " + driverClass +
                                   ", url: " + url);
    }
 
    private boolean isDriverLoadedForURL(String url)
    {
       boolean trace = log.isTraceEnabled();
-      
+
       try
       {
          driver = DriverManager.getDriver(url);

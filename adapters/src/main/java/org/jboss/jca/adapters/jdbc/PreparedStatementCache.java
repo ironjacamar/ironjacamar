@@ -22,18 +22,20 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.util.LRUCachePolicy;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.jboss.logging.Logger;
-import org.jboss.util.LRUCachePolicy;
+
 
 /**
  * LRU cache for PreparedStatements.  When ps ages out, close it.
  *
  * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
- * @author Scott.Stark@jboss.org 
+ * @author Scott.Stark@jboss.org
  * @version $Revision: 73034 $
  */
 public class PreparedStatementCache extends LRUCachePolicy
@@ -55,7 +57,7 @@ public class PreparedStatementCache extends LRUCachePolicy
       private final int type;
       private final int resultSetType;
       private final int resultSetConcurrency;
-      
+
       /**
        * Constructor
        * @param sql The SQL string
@@ -83,13 +85,14 @@ public class PreparedStatementCache extends LRUCachePolicy
       /**
        * {@inheritDoc}
        */
+      @Override
       public boolean equals(Object o)
       {
          if (this == o) return true;
          if (o == null || !(o instanceof Key)) return false;
 
          final Key key = (Key) o;
-         
+
          if (resultSetConcurrency != key.resultSetConcurrency) return false;
          if (resultSetType != key.resultSetType) return false;
          if (type != key.type) return false;
@@ -99,6 +102,7 @@ public class PreparedStatementCache extends LRUCachePolicy
       /**
        * {@inheritDoc}
        */
+      @Override
       public int hashCode()
       {
          int result;
@@ -112,6 +116,7 @@ public class PreparedStatementCache extends LRUCachePolicy
       /**
        * {@inheritDoc}
        */
+      @Override
       public String toString()
       {
          StringBuffer tmp = new StringBuffer(super.toString());
@@ -176,11 +181,12 @@ public class PreparedStatementCache extends LRUCachePolicy
     * Age out an entry
     * @param entry The entry
     */
+   @Override
    protected void ageOut(LRUCachePolicy.LRUCacheEntry entry)
    {
       try
       {
-         CachedPreparedStatement ws = (CachedPreparedStatement) entry.m_object;
+         CachedPreparedStatement ws = (CachedPreparedStatement) entry.getObject();
          ws.agedOut();
       }
       catch (SQLException e)
@@ -192,17 +198,18 @@ public class PreparedStatementCache extends LRUCachePolicy
          super.ageOut(entry);
       }
    }
-   
+
    /**
     * {@inheritDoc}
     */
+   @Override
    public String toString()
    {
-      String s = " PreparedStatementCache size: " + m_list.m_count;
-      for (LRUCacheEntry entry = m_list.m_head; entry != null; entry = entry.m_next)
+      String s = " PreparedStatementCache size: " + lruList.getCount();
+      for (LRUCacheEntry entry = lruList.getHead(); entry != null; entry = entry.getNext())
       {
-         CachedPreparedStatement ws = (CachedPreparedStatement) entry.m_object;
-         PreparedStatementCache.Key key = (PreparedStatementCache.Key) entry.m_key;
+         CachedPreparedStatement ws = (CachedPreparedStatement) entry.getObject();
+         PreparedStatementCache.Key key = (PreparedStatementCache.Key) entry.getKey();
          s += "[" + key.getSql() + "] ";
       }
       return s + "\n";

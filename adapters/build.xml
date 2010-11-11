@@ -127,6 +127,7 @@
       <classpath>
         <pathelement location="${build.adapters.dir}/test"/>
         <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${build.adapters.dir}" includes="*.jar"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
@@ -176,6 +177,7 @@
       <classpath>
         <pathelement location="${build.adapters.dir}/test"/>
         <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${build.adapters.dir}" includes="*.jar"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
@@ -200,9 +202,13 @@
     <mkdir dir="${build.adapters.dir}" />
     <mkdir dir="${build.adapters.dir}/test" />
 
+    <path id="adapters.test.lib.path.id">
+	<path refid="test.lib.path.id"/>
+	<pathelement location="${build.adapters.dir}/${name}-jdbc.jar"/>		
+    </path>
     <javac srcdir="src/test"
            destdir="${build.adapters.dir}/test"
-           classpathref="test.lib.path.id"
+           classpathref="adapters.test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}">

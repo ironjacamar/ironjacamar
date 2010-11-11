@@ -22,6 +22,8 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -36,7 +38,7 @@ import java.sql.Statement;
 public class CheckValidConnectionSQL implements ValidConnectionChecker, Serializable
 {
    private static final long serialVersionUID = -222752863430216887L;
-   
+
    private String sql;
 
    /**
@@ -58,12 +60,13 @@ public class CheckValidConnectionSQL implements ValidConnectionChecker, Serializ
    /**
     * {@inheritDoc}
     */
+   @Override
    public SQLException isValidConnection(Connection c)
    {
       if (sql == null)
          return null;
 
-      try    
+      try
       {
          Statement s = c.createStatement();
          try

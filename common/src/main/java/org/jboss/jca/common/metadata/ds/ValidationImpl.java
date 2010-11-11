@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.ds.JdbcAdapterExtension;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 
 
@@ -33,18 +34,87 @@ import org.jboss.jca.common.api.metadata.ds.Validation;
  */
 public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonValidationImpl implements Validation
 {
+   @Override
+   public String toString()
+   {
+      return "ValidationImpl [validConnectionChecker=" + validConnectionChecker + ", checkValidConnectionSql=" +
+             checkValidConnectionSql + ", validateOnMatch=" + validateOnMatch + ", staleConnectionChecker=" +
+             staleConnectionChecker + ", exceptionSorter=" + exceptionSorter + "]";
+   }
+
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((checkValidConnectionSql == null) ? 0 : checkValidConnectionSql.hashCode());
+      result = prime * result + ((exceptionSorter == null) ? 0 : exceptionSorter.hashCode());
+      result = prime * result + ((staleConnectionChecker == null) ? 0 : staleConnectionChecker.hashCode());
+      result = prime * result + ((validConnectionChecker == null) ? 0 : validConnectionChecker.hashCode());
+      result = prime * result + ((validateOnMatch == null) ? 0 : validateOnMatch.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (!(obj instanceof ValidationImpl))
+         return false;
+      ValidationImpl other = (ValidationImpl) obj;
+      if (checkValidConnectionSql == null)
+      {
+         if (other.checkValidConnectionSql != null)
+            return false;
+      }
+      else if (!checkValidConnectionSql.equals(other.checkValidConnectionSql))
+         return false;
+      if (exceptionSorter == null)
+      {
+         if (other.exceptionSorter != null)
+            return false;
+      }
+      else if (!exceptionSorter.equals(other.exceptionSorter))
+         return false;
+      if (staleConnectionChecker == null)
+      {
+         if (other.staleConnectionChecker != null)
+            return false;
+      }
+      else if (!staleConnectionChecker.equals(other.staleConnectionChecker))
+         return false;
+      if (validConnectionChecker == null)
+      {
+         if (other.validConnectionChecker != null)
+            return false;
+      }
+      else if (!validConnectionChecker.equals(other.validConnectionChecker))
+         return false;
+      if (validateOnMatch == null)
+      {
+         if (other.validateOnMatch != null)
+            return false;
+      }
+      else if (!validateOnMatch.equals(other.validateOnMatch))
+         return false;
+      return true;
+   }
+
    /** The serialVersionUID */
    private static final long serialVersionUID = 7816717816552118419L;
 
-   private final String validConnectionCheckerClassName;
+   private final JdbcAdapterExtension validConnectionChecker;
 
    private final String checkValidConnectionSql;
 
    private final Boolean validateOnMatch;
 
-   private final String staleConnectionCheckerClassName;
+   private final JdbcAdapterExtension staleConnectionChecker;
 
-   private final String exceptionSorterClassName;
+   private final JdbcAdapterExtension exceptionSorter;
 
    /**
     * Create a new ValidationImpl.
@@ -52,34 +122,25 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     * @param backgroundValidation backgroundValidation
     * @param backgroundValidationMinutes backgroundValidationMinutes
     * @param useFastFail useFastFail
-    * @param validConnectionCheckerClassName validConnectionCheckerClassName
+    * @param validConnectionChecker validConnectionChecker
     * @param checkValidConnectionSql checkValidConnectionSql
     * @param validateOnMatch validateOnMatch
-    * @param staleConnectionCheckerClassName staleConnectionCheckerClassName
-    * @param exceptionSorterClassName exceptionSorterClassName
+    * @param staleConnectionChecker staleConnectionChecker
+    * @param exceptionSorter exceptionSorter
     */
    public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMinutes, Boolean useFastFail,
-      String validConnectionCheckerClassName, String checkValidConnectionSql, Boolean validateOnMatch,
-      String staleConnectionCheckerClassName, String exceptionSorterClassName)
+      JdbcAdapterExtension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
+      JdbcAdapterExtension staleConnectionChecker, JdbcAdapterExtension exceptionSorter)
    {
       super(backgroundValidation, backgroundValidationMinutes, useFastFail);
-      this.validConnectionCheckerClassName = validConnectionCheckerClassName;
+      this.validConnectionChecker = validConnectionChecker;
       this.checkValidConnectionSql = checkValidConnectionSql;
       this.validateOnMatch = validateOnMatch;
-      this.staleConnectionCheckerClassName = staleConnectionCheckerClassName;
-      this.exceptionSorterClassName = exceptionSorterClassName;
+      this.staleConnectionChecker = staleConnectionChecker;
+      this.exceptionSorter = exceptionSorter;
    }
 
-   /**
-    * Get the validConnectionCheckerClassName.
-    *
-    * @return the validConnectionCheckerClassName.
-    */
-   @Override
-   public final String getValidConnectionCheckerClassName()
-   {
-      return validConnectionCheckerClassName;
-   }
+
 
    /**
     * Get the checkValidConnectionSql.
@@ -103,100 +164,47 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
       return validateOnMatch;
    }
 
-   /**
-    * Get the staleConnectionCheckerClassName.
-    *
-    * @return the staleConnectionCheckerClassName.
-    */
-   @Override
-   public final String getStaleConnectionCheckerClassName()
-   {
-      return staleConnectionCheckerClassName;
-   }
+
 
    /**
-    * Get the exceptionSorterClassName.
+    * Get the validConnectionChecker.
     *
-    * @return the exceptionSorterClassName.
+    * @return the validConnectionChecker.
     */
-   @Override
-   public final String getExceptionSorterClassName()
+   public final JdbcAdapterExtension getValidConnectionChecker()
    {
-      return exceptionSorterClassName;
+      return validConnectionChecker;
    }
 
-   @Override
-   public int hashCode()
+   /**
+    * Get the validateOnMatch.
+    *
+    * @return the validateOnMatch.
+    */
+   public final Boolean getValidateOnMatch()
    {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((checkValidConnectionSql == null) ? 0 : checkValidConnectionSql.hashCode());
-      result = prime * result + ((exceptionSorterClassName == null) ? 0 : exceptionSorterClassName.hashCode());
-      result = prime * result +
-               ((staleConnectionCheckerClassName == null) ? 0 : staleConnectionCheckerClassName.hashCode());
-      result = prime * result +
-               ((validConnectionCheckerClassName == null) ? 0 : validConnectionCheckerClassName.hashCode());
-      result = prime * result + ((validateOnMatch == null) ? 0 : validateOnMatch.hashCode());
-      return result;
+      return validateOnMatch;
    }
 
-   @Override
-   public boolean equals(Object obj)
+   /**
+    * Get the staleConnectionChecker.
+    *
+    * @return the staleConnectionChecker.
+    */
+   public final JdbcAdapterExtension getStaleConnectionChecker()
    {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (!(obj instanceof ValidationImpl))
-         return false;
-      ValidationImpl other = (ValidationImpl) obj;
-      if (checkValidConnectionSql == null)
-      {
-         if (other.checkValidConnectionSql != null)
-            return false;
-      }
-      else if (!checkValidConnectionSql.equals(other.checkValidConnectionSql))
-         return false;
-      if (exceptionSorterClassName == null)
-      {
-         if (other.exceptionSorterClassName != null)
-            return false;
-      }
-      else if (!exceptionSorterClassName.equals(other.exceptionSorterClassName))
-         return false;
-      if (staleConnectionCheckerClassName == null)
-      {
-         if (other.staleConnectionCheckerClassName != null)
-            return false;
-      }
-      else if (!staleConnectionCheckerClassName.equals(other.staleConnectionCheckerClassName))
-         return false;
-      if (validConnectionCheckerClassName == null)
-      {
-         if (other.validConnectionCheckerClassName != null)
-            return false;
-      }
-      else if (!validConnectionCheckerClassName.equals(other.validConnectionCheckerClassName))
-         return false;
-      if (validateOnMatch == null)
-      {
-         if (other.validateOnMatch != null)
-            return false;
-      }
-      else if (!validateOnMatch.equals(other.validateOnMatch))
-         return false;
-      return true;
+      return staleConnectionChecker;
    }
 
-   @Override
-   public String toString()
+   /**
+    * Get the exceptionSorter.
+    *
+    * @return the exceptionSorter.
+    */
+   public final JdbcAdapterExtension getExceptionSorter()
    {
-      return "ValidationImpl [validConnectionCheckerClassName=" + validConnectionCheckerClassName +
-             ", checkValidConnectionSql=" + checkValidConnectionSql + ", validateOnMatch=" + validateOnMatch +
-             ", staleConnectionCheckerClassName=" + staleConnectionCheckerClassName +
-             ", exceptionSorterClassName=" + exceptionSorterClassName + ", backgroundValidation=" +
-             backgroundValidation + ", backgroundValidationMinutes=" + backgroundValidationMinutes +
-             ", useFastFail=" + useFastFail + "]";
+      return exceptionSorter;
    }
+
 }
 

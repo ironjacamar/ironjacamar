@@ -391,7 +391,7 @@
   </xs:complexType>
   <xs:complexType name="validationType">
     <xs:sequence>
-      <xs:element name="valid-connection-checker-class-name" type="xs:token" minOccurs="0">
+      <xs:element name="valid-connection-checker" type="jdbc-adapter-extensionType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -404,6 +404,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      
       <xs:element name="check-valid-connection-sql " type="xs:string" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
@@ -457,7 +458,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="stale-connection-checker-class-name" type="xs:token">
+      <xs:element minOccurs="0" name="stale-connection-checker" type="jdbc-adapter-extensionType">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -470,7 +471,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="exception-sorter-class-name" type="xs:token" minOccurs="0">
+      <xs:element name="exception-sorter" type="jdbc-adapter-extensionType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -725,5 +726,35 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="jdbc-adapter-extensionType">
+    <xs:sequence>
+      <xs:element name="config-property" type="config-propertyType"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="class-name" type="xs:token" use="required"></xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="config-propertyType" mixed="true">
+    <xs:annotation>
+      <xs:documentation>
+        <![CDATA[[
+          Specifies an override for a config-property element in ra.xml or a @ConfigProperty
+         ]]>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="xs:token">
+        <xs:attribute use="required" name="name" type="xs:token">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+                Specifies the name of the config-property
+               ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
   </xs:complexType>
 </xs:schema>

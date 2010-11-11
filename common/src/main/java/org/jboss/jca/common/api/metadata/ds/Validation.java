@@ -36,11 +36,11 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
 {
 
    /**
-    * Get the validConnectionCheckerClassName.
+    * Get the validConnectionChecker
     *
-    * @return the validConnectionCheckerClassName.
+    * @return the validConnectionChecker
     */
-   public String getValidConnectionCheckerClassName();
+   public JdbcAdapterExtension getValidConnectionChecker();
 
    /**
     * Get the checkValidConnectionSql.
@@ -57,18 +57,19 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
    public Boolean isValidateOnMatch();
 
    /**
-    * Get the staleConnectionCheckerClassName.
+    * Get the staleConnectionChecker
     *
-    * @return the staleConnectionCheckerClassName.
+    * @return the staleConnectionChecker
     */
-   public String getStaleConnectionCheckerClassName();
+   public JdbcAdapterExtension getStaleConnectionChecker();
 
    /**
-    * Get the exceptionSorterClassName.
+    * Get the exceptionSorter
     *
-    * @return the exceptionSorterClassName.
+    * @return the exceptionSorter
     */
-   public String getExceptionSorterClassName();
+   public JdbcAdapterExtension getExceptionSorter();
+
 
    /**
    *
@@ -87,7 +88,8 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
       /**
       * validConnectionCheckerClassName tag
       */
-      VALIDCONNECTIONCHECKERCLASSNAME("valid-connection-checker-class-name"),
+      VALIDCONNECTIONCHECKER("valid-connection-checker"),
+
       /**
       * checkValidConnectionSql tag
       */
@@ -111,11 +113,11 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
       /**
       * staleConnectionCheckerClassName tag
       */
-      STALECONNECTIONCHECKERCLASSNAME("stale-connection-checker-class-name"),
+      STALECONNECTIONCHECKER("stale-connection-checker"),
       /**
       * exceptionSorterClassName tag
       */
-      EXCEPTIONSORTERCLASSNAME("exception-sorter-class-name");
+      EXCEPTIONSORTER("exception-sorter");
 
       private final String name;
 

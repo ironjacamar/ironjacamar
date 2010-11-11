@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+  <datasource jndi-name="java:/H2DS" pool-name="H2DS">
+    <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1</connection-url>
+    <driver-class>org.h2.Driver</driver-class>
+    <pool>
+      <min-pool-size>1</min-pool-size>
+      <max-pool-size>2</max-pool-size>
+    </pool>
+    <security>
+      <user-name>sa</user-name>
+      <password>sa</password>
+    </security>
+    <validation>
+      <valid-connection-checker-class-name>org.jboss.jca.adapters.jdbc.spi.testimpl.TestValidConnectionChecker
+      </valid-connection-checker-class-name>
+      <validate-on-match>true</validate-on-match>
+      <background-validation>true</background-validation>
+      <background-validation-minutes>1</background-validation-minutes>
+      <ping-time-out>5</ping-time-out>
+    </validation>
+  </datasource>
+</datasources>

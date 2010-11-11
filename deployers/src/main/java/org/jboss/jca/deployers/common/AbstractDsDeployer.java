@@ -43,7 +43,6 @@ import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
@@ -122,17 +121,18 @@ public abstract class AbstractDsDeployer
    *
    * @param url url
    * @param deploymentName deploymentName
+   * @param uniqueJdbcLocalId uniqueJdbcLocalId
+   * @param uniqueJdbcXAId uniqueJdbcXAId
    * @param parentClassLoader cl
-   * @param raDeployments resource adapters deployments
    * @param dataSources datasources metadata defined in xml
    * @return return the exchange POJO with value useful for injection in the container (fungal or AS)
    * @throws DeployException DeployException
    */
-   protected CommonDeployment createObjectsAndInjectValue(URL url, 
+   protected CommonDeployment createObjectsAndInjectValue(URL url,
                                                           String deploymentName,
                                                           String uniqueJdbcLocalId,
                                                           String uniqueJdbcXAId,
-                                                          DataSources dataSources, 
+                                                          DataSources dataSources,
                                                           ClassLoader parentClassLoader)
       throws DeployException
    {
@@ -430,7 +430,7 @@ public abstract class AbstractDsDeployer
 
    /**
     * Provide the classloader of the deployment identified by the unique id
-    * @param uniqueId The 
+    * @param uniqueId The
     * @return The classloader used by this deployment
     */
    protected abstract ClassLoader getDeploymentClassLoader(String uniqueId);
