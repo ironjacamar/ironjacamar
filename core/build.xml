@@ -251,6 +251,21 @@
       <fileset dir="src/test/resources"/>
     </copy>
 
+    <jar destfile="${build.core.dir}/test/${name}-test-txmgr.jar"
+         basedir="${build.core.dir}/test"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/txmgr/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test - Transaction Manager"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
   </target>
 
   <!-- ================================= 

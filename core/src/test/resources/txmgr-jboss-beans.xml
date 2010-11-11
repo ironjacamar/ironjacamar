@@ -1,0 +1,51 @@
+<deployment>
+
+  <!-- Transaction registry -->
+  <bean name="TxRegistry"
+        class="org.jboss.jca.test.txmgr.TxRegistry">
+  </bean>
+
+  <!-- User transaction registry -->
+  <bean name="UserTxRegistry"
+        class="org.jboss.jca.test.txmgr.TxRegistry">
+  </bean>
+
+  <!-- XATerminator -->
+  <bean name="XATerminator"
+        interface="org.jboss.tm.JBossXATerminator" 
+        class="org.jboss.jca.test.txmgr.JBossXATerminatorImpl">
+  </bean>
+
+  <!-- Transaction manager -->
+  <bean name="TransactionManager"
+        interface="javax.transaction.TransactionManager" 
+        class="org.jboss.jca.test.txmgr.TransactionManagerImpl">
+    <property name="Registry"><inject bean="TxRegistry"/></property>
+    <property name="XATerminator"><inject bean="XATerminator"/></property>
+  </bean>
+
+  <!-- Real Transaction manager -->
+  <bean name="RealTransactionManager"
+        interface="javax.transaction.TransactionManager" 
+        class="org.jboss.jca.test.txmgr.RealTransactionManagerImpl">
+    <property name="Registry"><inject bean="TxRegistry"/></property>
+    <depends>NamingServer</depends>
+  </bean>
+
+  <!-- TransactionSynchronizationRegistry -->
+  <bean name="TransactionSynchronizationRegistry"
+        interface="javax.transaction.TransactionSynchronizationRegistry" 
+        class="org.jboss.jca.test.txmgr.TransactionSynchronizationRegistryImpl">
+    <property name="Registry"><inject bean="TxRegistry"/></property>
+    <depends>NamingServer</depends>
+  </bean>
+
+  <!-- UserTransaction -->
+  <bean name="UserTransaction"
+        interface="javax.transaction.UserTransaction" 
+        class="org.jboss.jca.test.txmgr.UserTransactionImpl">
+    <property name="Registry"><inject bean="UserTxRegistry"/></property>
+    <depends>NamingServer</depends>
+  </bean>
+
+</deployment>
