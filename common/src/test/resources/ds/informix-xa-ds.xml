@@ -15,7 +15,7 @@
     <validation>
       <!-- sql to call on an existing pooled connection when it is obtained from pool -->
       <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql>
-      <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.InformixExceptionSorter</exception-sorter-class-name>
+      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.vendor.InformixExceptionSorter"></exception-sorter>
     </validation>
   </xa-datasource>
 </datasources>

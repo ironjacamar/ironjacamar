@@ -20,7 +20,7 @@
       <!-- sql to call on an existing pooled connection when it is obtained from pool - the OracleValidConnectionChecker 
         is prefered <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql> -->
       <!-- Checks the Oracle error codes and messages for fatal errors -->
-      <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.OracleExceptionSorter</exception-sorter-class-name>
+      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.vendor.OracleExceptionSorter"></exception-sorter>
     </validation>
     <!-- sql to call when connection is created <new-connection-sql>some arbitrary sql</new-connection-sql> -->
   </datasource>

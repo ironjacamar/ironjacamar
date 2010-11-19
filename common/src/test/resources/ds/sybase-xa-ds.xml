@@ -19,7 +19,7 @@
     </time-out>
     <validation>
       <check-valid-connection-sql>select 1 from mytable</check-valid-connection-sql>
-      <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.vendor.SybaseExceptionSorter"></exception-sorter>
     </validation>
   </xa-datasource>
 </datasources>

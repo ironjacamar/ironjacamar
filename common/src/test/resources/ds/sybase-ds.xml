@@ -12,7 +12,7 @@
       <password>y</password>
     </security>
     <validation>
-      <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.SybaseExceptionSorter</exception-sorter-class-name>
+      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.vendor.SybaseExceptionSorter"></exception-sorter>
     </validation>
   </datasource>
 </datasources>
