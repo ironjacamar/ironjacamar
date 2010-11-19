@@ -12,12 +12,10 @@
       <password>sa</password>
     </security>
     <validation>
-      <valid-connection-checker-class-name>org.jboss.jca.adapters.jdbc.spi.testimpl.TestValidConnectionChecker
-      </valid-connection-checker-class-name>
+      <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.spi.testimpl.TestValidConnectionChecker"></valid-connection-checker>
       <validate-on-match>true</validate-on-match>
       <background-validation>true</background-validation>
       <background-validation-minutes>1</background-validation-minutes>
-      <ping-time-out>5</ping-time-out>
     </validation>
   </datasource>
 </datasources>
