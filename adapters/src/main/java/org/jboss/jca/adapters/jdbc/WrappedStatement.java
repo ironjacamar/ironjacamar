@@ -1068,7 +1068,7 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
       synchronized (this)
       {
          if (resultSets == null)
-            resultSets = new HashMap<WrappedResultSet, Throwable>();
+            resultSets = new HashMap<WrappedResultSet, Throwable>(1);
          
          if (lc.getTrackStatements() == BaseWrapperManagedConnectionFactory.TRACK_STATEMENTS_TRUE_INT)
             resultSets.put(wrapped, new Throwable("STACKTRACE"));

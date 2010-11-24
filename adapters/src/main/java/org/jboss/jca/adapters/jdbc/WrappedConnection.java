@@ -1066,7 +1066,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       synchronized (this)
       {
          if (statements == null)
-            statements = new HashMap<WrappedStatement, Throwable>();
+            statements = new HashMap<WrappedStatement, Throwable>(1);
 
          if (trackStatements == BaseWrapperManagedConnectionFactory.TRACK_STATEMENTS_TRUE_INT)
             statements.put(ws, new Throwable("STACKTRACE"));
