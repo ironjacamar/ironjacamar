@@ -166,7 +166,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          {
             synchronized (this)
             {
-               if (statements != null)
+               if (statements != null && statements.size() > 0)
                {
                   for (Iterator<Map.Entry<WrappedStatement, Throwable>> i = statements.entrySet().iterator();
                        i.hasNext();)

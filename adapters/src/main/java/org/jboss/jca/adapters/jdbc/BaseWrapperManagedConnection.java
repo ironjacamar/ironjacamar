@@ -429,19 +429,24 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       {
          handles.remove(handle);
       }
-      ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
-      ce.setConnectionHandle(handle);
 
       Collection<ConnectionEventListener> copy = null;
       synchronized (cels)
       {
-         copy = new ArrayList<ConnectionEventListener>(cels);
+         if (cels != null && cels.size() > 0)
+            copy = new ArrayList<ConnectionEventListener>(cels);
       }
 
-      for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
+      if (copy != null)
       {
-         ConnectionEventListener cel = i.next();
-         cel.connectionClosed(ce);
+         ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+         ce.setConnectionHandle(handle);
+
+         for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
+         {
+            ConnectionEventListener cel = i.next();
+            cel.connectionClosed(ce);
+         }
       }
    }
 
