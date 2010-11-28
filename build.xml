@@ -285,6 +285,16 @@
   </target>
   
   <!-- ================================= 
+       Target: manual
+       ================================= -->
+  <target name="manual" depends="manual-support">
+    <ant antfile="doc/build.xml" inheritrefs="false" inheritAll="false"/>
+  </target>
+  <target name="manual-support">
+    <ant antfile="tools/docant/build.xml" inheritrefs="false" inheritAll="false"/>
+  </target>
+
+  <!-- ================================= 
        Target: prepare test
        ================================= -->
   <target name="prepare-test" depends="jars">
