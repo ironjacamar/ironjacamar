@@ -1,0 +1,241 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="docant" 
+         default="support" 
+         basedir="." 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
+  <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
+
+  <!-- ================================= 
+       Project              
+       ================================= -->
+  <property name="name" value="docant"/>
+  <property name="major" value="1"/>
+  <property name="minor" value="0"/>
+  <property name="patch" value="0"/>
+  <property name="type" value="Alpha2"/>
+
+  <!-- ================================= 
+       Ivy              
+       ================================= -->
+  <property name="ivy.version" value="2.2.0"/>
+  <property name="ivy.dir" value="${user.home}/.ivy2/cache/org.apache.ivy/jars"/>
+  <property name="ivy.jar.name" value="ivy-${ivy.version}.jar"/>
+
+  <!-- ================================= 
+       Repositories              
+       ================================= -->
+  <property name="central.repo" value="http://repo1.maven.org/maven2"/>
+  <property name="jboss.repo" value="http://repository.jboss.org/nexus/content/groups/public/"/>
+  <property name="snapshots.repo" value="http://repository.jboss.org/nexus/content/repositories/snapshots/"/>
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="lib.dir" value="${basedir}/lib" />
+  <property name="build.dir" value="${basedir}/build" />
+  <property name="doc.dir" value="${basedir}/doc" />
+  <property name="target.dir" value="${basedir}/target" />
+
+  <property name="reports.dir" value="${basedir}/reports" />
+  <property name="test.dir" value="${reports.dir}" />
+  <property name="down.dir" value="${basedir}/down" />
+
+  <path id="lib.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${target.dir}">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+
+  <!-- ================================= 
+       Versions              
+       ================================= -->
+<!--
+  <property name="version.jdocbook-core" value="1.0.3"/>
+-->
+  <property name="version.docant" value="1.0.0.Alpha2-2010-11-28"/>
+
+  <property name="version.jdocbook-core" value="1.0.4"/>
+  <property name="version.jdocbook-core-ext" value="2010-11-18-SNAPSHOT"/>
+
+  <property name="version.docbook-xsl" value="1.76.1"/>
+  <property name="version.docbook-xsl-old" value="1.72.0"/>
+
+  <property name="version.ant" value="1.8.1"/>
+  <property name="version.saxon" value="6.5.3"/>
+  <property name="version.slf4j" value="1.5.8"/>
+  <property name="version.doctype-changer" value="1.1"/>
+  <property name="version.xercesImpl" value="2.9.1"/>
+  <property name="version.xml-apis" value="1.3.04"/>
+  <property name="version.saxon" value="6.5.3"/>
+  <property name="version.avalon-framework" value="4.3.1"/>
+  <property name="version.xml-resolver" value="1.1"/>
+  <property name="version.commons-exec" value="1.0.1"/>
+  <property name="version.plexus-utils" value="2.0.3"/>
+  <property name="version.fop" value="1.0"/>
+  <property name="version.xmlgraphics-commons" value="1.4"/>
+  <property name="version.jdom" value="1.0"/>
+  <property name="version.commons-io" value="1.4"/>
+  <property name="version.commons-logging" value="1.0.4"/>
+  <property name="version.jboss.highlight" value="1.0.0"/>
+  <property name="version.jhighlight" value="1.0"/>
+  <property name="version.richfaces.highlight" value="3.1.4.GA"/>
+  <property name="version.batik" value="1.7"/>
+
+  <property name="version.jbossorg-docbook-xslt" value="1.1.1"/>
+  <property name="version.jbossorg-jdocbook-style" value="1.1.1"/>
+
+  <!-- ================================= 
+       Target: download-docbook-files
+       ================================= -->
+  <target name="download-docbook-files">
+
+    <mkdir dir="${down.dir}/docbook"/>
+    <property name="docbook.url" value="http://www.docbook.org/xml"/>
+    <get src="${docbook.url}/4.3/docbook-xml-4.3.zip" dest="${down.dir}/docbook/docbook-xml-4.3.zip" skipexisting="true"/>
+    <get src="${docbook.url}/4.4/docbook-xml-4.4.zip" dest="${down.dir}/docbook/docbook-xml-4.4.zip" skipexisting="true"/>
+    <get src="${docbook.url}/4.5/docbook-xml-4.5.zip" dest="${down.dir}/docbook/docbook-xml-4.5.zip" skipexisting="true"/>
+    <get src="${docbook.url}/5.0/docbook-5.0.zip" dest="${down.dir}/docbook/docbook-5.0.zip" skipexisting="true"/>
+
+    <get src="http://sourceforge.net/projects/docbook/files/docbook-xsl/${version.docbook-xsl}/docbook-xsl-${version.docbook-xsl}.zip/download"
+         dest="${down.dir}/docbook/docbook-xsl-${version.docbook-xsl}.zip" skipexisting="true"/>
+
+    <get src="http://archive.apache.org/dist/xmlgraphics/batik/batik-${version.batik}.zip"
+         dest="${down.dir}/docbook/batik-${version.batik}.zip" skipexisting="true"/>
+  </target>
+
+  <!-- ================================= 
+       Bootstrap Ivy
+       ================================= -->
+  <mkdir dir="${ivy.dir}"/>
+  <get usetimestamp="true" src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.version}/${ivy.jar.name}" 
+       skipexisting="true"
+       dest="${ivy.dir}/${ivy.jar.name}"/>
+  <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpath="${ivy.dir}/${ivy.jar.name}"/>
+
+  <!-- ================================= 
+       Target: init              
+       ================================= -->
+  <target name="init">
+    <fail message="The performance test suite requires JDK5+" unless="HAVE_JDK_1.5"/>
+
+    <ivy:settings file="${basedir}/ivy.settings.xml"/>
+
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${target.dir}" />
+    <mkdir dir="${down.dir}"/>
+
+<!-- temp using hacked file -->
+    <get src="http://jeffzhang.github.com/docant/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar"
+         dest="${down.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar" skipexisting="true"/>
+
+    <get src="http://jeffzhang.github.com/docant/docant-${version.docant}.zip"
+         dest="${down.dir}/docant-${version.docant}.zip" skipexisting="true"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: resolve              
+       ================================= -->
+  <target name="resolve" depends="download-docbook-files, init">
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" sync="true"/>
+    <copy file="${down.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar" 
+          tofile="${lib.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: report              
+       ================================= -->
+  <target name="report" depends="resolve">
+    <ivy:report todir="${target.dir}"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="support" depends="resolve">
+    <property name="staging.dir" value="${target.dir}/docbook/staging"/>
+    <unzip src="${down.dir}/docant-${version.docant}.zip" dest="${lib.dir}">
+      <patternset>
+        <include name="docant.jar"/>
+      </patternset>
+    </unzip>
+
+    <unzip src="${down.dir}/docant-${version.docant}.zip" dest="${basedir}">
+      <patternset>
+        <include name="support.xml"/>
+      </patternset>
+    </unzip>
+
+    <unzip src="${down.dir}/docant-${version.docant}.zip" dest="${staging.dir}">
+      <patternset>
+        <include name="catalog.xml"/>
+      </patternset>
+    </unzip>
+
+    <copy todir="${lib.dir}/docbook">
+      <fileset dir="${down.dir}/docbook"
+               includes="*.zip"/>
+    </copy>
+
+    <unzip src="${down.dir}/docbook/batik-${version.batik}.zip" dest="${lib.dir}/batik">
+      <patternset>
+        <include name="batik-${version.batik}/lib/batik-*.jar"/>
+        <include name="batik-${version.batik}/lib/js.jar"/>
+      </patternset>
+      <mapper type="flatten"/>
+    </unzip>
+    <unzip src="${down.dir}/docbook/docbook-xsl-${version.docbook-xsl}.zip" dest="${staging.dir}"/>
+    <unzip src="${lib.dir}/style/jbossorg-jdocbook-style-${version.jbossorg-jdocbook-style}.jdocbook-style" dest="${staging.dir}"/>
+  </target>
+
+  <!-- ================================= 
+       Target: clean              
+       ================================= -->
+  <target name="clean">
+    <delete>
+      <fileset dir="${basedir}" defaultexcludes="no">
+        <include name="**/*~"/>
+        <include name="**/*.bak"/>
+      </fileset>
+    </delete>
+
+    <delete dir="${build.dir}"/>
+    <delete dir="${lib.dir}"/>
+    <delete dir="${target.dir}"/>
+  </target>
+
+
+  <!-- ================================= 
+       Target: clean-cache              
+       ================================= -->
+  <target name="clean-cache">
+    <ivy:cleancache />
+  </target>
+
+
+</project>
