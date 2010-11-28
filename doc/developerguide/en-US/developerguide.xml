@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+              "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+        <!ENTITY dedication SYSTEM "../../userguide/en-US/modules/dedication.xml">
+        <!ENTITY preface SYSTEM "../../userguide/en-US/modules/preface.xml">
+        <!ENTITY introduction SYSTEM "../../userguide/en-US/modules/introduction.xml">
+        <!ENTITY building SYSTEM "modules/building.xml">
+        <!ENTITY releases SYSTEM "modules/releases.xml">
+        <!ENTITY issuetracking SYSTEM "modules/issuetracking.xml">
+        <!ENTITY testing SYSTEM "modules/testing.xml">
+        <!ENTITY metadata SYSTEM "modules/metadata.xml">
+        <!ENTITY deployers SYSTEM "modules/deployers.xml">
+        <!ENTITY standalone SYSTEM "modules/standalone.xml">
+        ]>
+<book lang="en">
+   <bookinfo>
+      <title>IronJacamar 1.0 Developer's Guide</title>
+
+      <subtitle>Connecting your Enterprise Information Systems</subtitle>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/logo.png" align="center" valign="middle"/>
+        </imageobject>
+      </mediaobject>
+
+   </bookinfo>
+
+   &dedication;
+
+   <toc></toc>
+
+   &preface;
+
+   &introduction;
+
+   &building;
+
+   &releases;
+
+   &issuetracking;
+
+   &testing;
+
+   &metadata;
+
+   &deployers;
+
+   &standalone;
+
+</book>

@@ -1,0 +1,48 @@
+<project name="Docbook-Ironjacamar" default="process" basedir=".">
+
+  <property name="build.dir" value="build"/>
+  <property name="docant.dir" value="${basedir}/../tools/docant"/>
+  <import file="${docant.dir}/support.xml"/>
+
+  <macrodef name="transformer">
+    <attribute name="srcDir"/>
+    <attribute name="srcDocName"/>
+    <attribute name="pdfName"/>
+    <sequential>
+      <delete dir="${docant.dir}/target/docbook/publish"/>
+
+      <docant sourceDirectory="@{srcDir}" 
+              sourceDocumentName="@{srcDocName}"
+              baseOutputDirectory="${docant.dir}/target">
+
+	<format name="html_single" 
+	stylesheetResource="classpath:/xslt/org/jboss/xhtml-single.xsl"
+	targetFinalName="index.html"/>
+
+	<format name="html" 
+	stylesheetResource="classpath:/xslt/org/jboss/xhtml.xsl"
+	targetFinalName="index.html"/>
+	<format name="pdf" 
+	stylesheetResource="classpath:/xslt/org/jboss/pdf.xsl"
+	targetFinalName="@{pdfName}"/>
+      </docant>
+      <mkdir dir="${basedir}/target/publish/@{srcDir}"/>
+
+      <move file="${docant.dir}/target/docbook/publish" tofile="${basedir}/target/publish/@{srcDir}" failonerror="false"/>
+
+    </sequential>
+  </macrodef>
+
+  <target name="process">
+
+    <transformer srcDir="developerguide" 
+            srcDocName="developerguide.xml"
+            pdfName="ironjacamar_developerguide.pdf"/>
+
+    <transformer srcDir="userguide" 
+            srcDocName="userguide.xml"
+            pdfName="ironjacamar_userguide.pdf"/>
+
+  </target>
+
+</project>
