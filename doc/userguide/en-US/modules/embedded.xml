@@ -72,7 +72,7 @@ $IRON_JACAMAR_HOME/lib/embedded/arquillian
         <para>The code sample below shows a simple usage of deploying a pre-assembled resource adapter archive
           into the IronJacamar Embedded environment.</para>
 
-        <programlisting>
+        <programlisting language="java">
 import org.jboss.jca.embedded.EmbeddedJCA;
 
 import java.net.URL;

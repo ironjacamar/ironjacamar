@@ -5,23 +5,23 @@
   <import file="${basedir}/../../tools/docbook/support.xml"/>
 
   <target name="all" depends="clean">
-    <mkdir dir="en/images" />
-    <antcall target="lang.all"><param name="lang" value="en"/></antcall>
+    <mkdir dir="en-US/images" />
+    <antcall target="lang.all"><param name="lang" value="en-US"/></antcall>
   </target>
 
   <target name="pdf">
-    <mkdir dir="en/images" />
-    <antcall target="lang.docpdf"><param name="lang" value="en"/></antcall>
+    <mkdir dir="en-US/images" />
+    <antcall target="lang.docpdf"><param name="lang" value="en-US"/></antcall>
   </target>
 
   <target name="html">
-    <mkdir dir="en/images" />
-    <antcall target="lang.dochtml"><param name="lang" value="en"/></antcall>
+    <mkdir dir="en-US/images" />
+    <antcall target="lang.dochtml"><param name="lang" value="en-US"/></antcall>
   </target>
 
   <target name="htmlsingle">
-    <mkdir dir="en/images" />
-    <antcall target="lang.dochtmlsingle"><param name="lang" value="en"/></antcall>
+    <mkdir dir="en-US/images" />
+    <antcall target="lang.dochtmlsingle"><param name="lang" value="en-US"/></antcall>
   </target>
 
 </project>
