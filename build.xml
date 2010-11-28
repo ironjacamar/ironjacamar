@@ -951,6 +951,9 @@
     <delete dir="${reports.dir}"/>
     <delete file="${name}-${major}.${minor}.${patch}.${type}.zip" />
     <delete file="${name}-${major}.${minor}.${patch}.${type}.tar.gz" />
+
+    <ant antfile="tools/docant/build.xml" target="clean" inheritrefs="false" inheritAll="false"/>
+    <delete dir="${doc.dir}/target"/>
   </target>
   
   <!-- ================================= 

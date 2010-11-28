@@ -217,13 +217,7 @@
        Target: clean              
        ================================= -->
   <target name="clean">
-    <delete>
-      <fileset dir="${basedir}" defaultexcludes="no">
-        <include name="**/*~"/>
-        <include name="**/*.bak"/>
-      </fileset>
-    </delete>
-
+    <delete file="${basedir}/support.xml"/>
     <delete dir="${build.dir}"/>
     <delete dir="${lib.dir}"/>
     <delete dir="${target.dir}"/>
