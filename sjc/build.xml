@@ -201,6 +201,12 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/lib">
+      <fileset dir="${lib.dir}/sjc">
+        <include name="fungal-cli.jar"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/lib/embedded">
       <fileset dir="${lib.dir}/embedded">
         <include name="*.jar"/>
