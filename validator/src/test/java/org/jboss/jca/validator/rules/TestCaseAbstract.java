@@ -21,7 +21,8 @@
  */
 package org.jboss.jca.validator.rules;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.jca.validator.rules.ra.TestActivationSpec;
 import org.jboss.jca.validator.rules.ra.TestManagedConnection;
 import org.jboss.jca.validator.rules.ra.TestResourceAdapterRight;
@@ -49,7 +50,7 @@ public abstract class TestCaseAbstract
    /**
     * Protected embedded JCA used by subclass to deploy
     */
-   protected static EmbeddedJCA embedded;
+   protected static Embedded embedded;
 
    /**
     * It create the Resource adapter to deploy using shrinkwrap
@@ -109,7 +110,7 @@ public abstract class TestCaseAbstract
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA();
+      embedded = EmbeddedFactory.create();
 
       // Startup
       embedded.startup();

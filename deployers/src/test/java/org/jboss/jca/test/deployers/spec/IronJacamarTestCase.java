@@ -22,7 +22,8 @@
 
 package org.jboss.jca.test.deployers.spec;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -59,7 +60,7 @@ public class IronJacamarTestCase
    /*
     * Embedded
     */
-   private static EmbeddedJCA embedded;
+   private static Embedded embedded;
 
    // --------------------------------------------------------------------------------||
    // Tests --------------------------------------------------------------------------||
@@ -118,7 +119,7 @@ public class IronJacamarTestCase
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA();
+      embedded = EmbeddedFactory.create();
 
       // Startup
       embedded.startup();

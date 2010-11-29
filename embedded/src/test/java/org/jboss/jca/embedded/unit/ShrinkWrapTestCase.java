@@ -22,7 +22,8 @@
 
 package org.jboss.jca.embedded.unit;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.jca.embedded.rars.simple.MessageListener;
 import org.jboss.jca.embedded.rars.simple.TestActivationSpec;
 import org.jboss.jca.embedded.rars.simple.TestConnection;
@@ -70,7 +71,7 @@ public class ShrinkWrapTestCase
    /*
     * Embedded
     */
-   private static EmbeddedJCA embedded;
+   private static Embedded embedded;
 
    // --------------------------------------------------------------------------------||
    // Tests --------------------------------------------------------------------------||
@@ -174,7 +175,7 @@ public class ShrinkWrapTestCase
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA();
+      embedded = EmbeddedFactory.create();
 
       // Startup
       embedded.startup();

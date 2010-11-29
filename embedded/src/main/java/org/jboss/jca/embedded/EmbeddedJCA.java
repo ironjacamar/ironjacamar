@@ -43,7 +43,7 @@ import com.github.fungal.api.configuration.KernelConfiguration;
  * The embedded IronJacamar container
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EmbeddedJCA
+class EmbeddedJCA implements Embedded
 {
    /** Enable full profile */
    private boolean fullProfile;
@@ -58,7 +58,7 @@ public class EmbeddedJCA
     * Constructs an embedded JCA environment using
     * the full JCA 1.6 profile
     */
-   public EmbeddedJCA()
+   EmbeddedJCA()
    {
       this(true);
    }
@@ -70,7 +70,7 @@ public class EmbeddedJCA
     * to be added as deployments
     * @param fullProfile Should a full profile be initialized
     */
-   public EmbeddedJCA(boolean fullProfile)
+   EmbeddedJCA(boolean fullProfile)
    {
       this.fullProfile = fullProfile;
       this.shrinkwrapDeployments = null;
@@ -247,7 +247,7 @@ public class EmbeddedJCA
     * @param name The resource name
     * @exception Throwable If an error occurs
     */
-   public void deploy(ClassLoader cl, String name) throws Throwable
+   private void deploy(ClassLoader cl, String name) throws Throwable
    {
       if (cl == null)
          throw new IllegalArgumentException("ClassLoader is null");
@@ -256,23 +256,6 @@ public class EmbeddedJCA
          throw new IllegalArgumentException("Name is null");
 
       URL url = cl.getResource(name);
-      kernel.getMainDeployer().deploy(url);
-   }
-
-   /**
-    * Deploy
-    * @param clz The class
-    * @exception Throwable If an error occurs
-    */
-   public void deploy(Class<?> clz) throws Throwable
-   {
-      if (clz == null)
-         throw new IllegalArgumentException("Clz is null");      
-
-      String name = clz.getName().replace('.', '/');
-      name += "-jboss-beans.xml";
-
-      URL url = clz.getClassLoader().getResource(name);
       kernel.getMainDeployer().deploy(url);
    }
 
@@ -316,7 +299,7 @@ public class EmbeddedJCA
     * @param name The resource name
     * @exception Throwable If an error occurs
     */
-   public void undeploy(ClassLoader cl, String name) throws Throwable
+   private void undeploy(ClassLoader cl, String name) throws Throwable
    {
       if (cl == null)
          throw new IllegalArgumentException("ClassLoader is null");
@@ -325,23 +308,6 @@ public class EmbeddedJCA
          throw new IllegalArgumentException("Name is null");
 
       URL url = cl.getResource(name);
-      kernel.getMainDeployer().undeploy(url);
-   }
-
-   /**
-    * Undeploy
-    * @param clz The class
-    * @exception Throwable If an error occurs
-    */
-   public void undeploy(Class<?> clz) throws Throwable
-   {
-      if (clz == null)
-         throw new IllegalArgumentException("Clz is null");      
-
-      String name = clz.getName().replace('.', '/');
-      name += "-jboss-beans.xml";
-
-      URL url = clz.getClassLoader().getResource(name);
       kernel.getMainDeployer().undeploy(url);
    }
 

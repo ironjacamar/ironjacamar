@@ -21,11 +21,13 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.api;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.jca.test.core.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.MyWorkAdapter;
 
+import java.net.URL;
 import java.util.concurrent.CountDownLatch;
 
 import javax.resource.spi.work.ExecutionContext;
@@ -53,7 +55,7 @@ public class WorkManagerScheduleWorkTestCase
    /*
     * Embedded
     */
-   private static EmbeddedJCA embedded;
+   private static Embedded embedded;
    
    /**
     * scheduleWork method: TThis call does not block and returns immediately once a
@@ -399,15 +401,22 @@ public class WorkManagerScheduleWorkTestCase
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA(false);
+      embedded = EmbeddedFactory.create(false);
 
       // Startup
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      embedded.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      embedded.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.deploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      URL naming =
+         WorkManagerScheduleWorkTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction =
+         WorkManagerScheduleWorkTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL wm =
+         WorkManagerScheduleWorkTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+
+      embedded.deploy(naming);
+      embedded.deploy(transaction);
+      embedded.deploy(wm);
    }
 
    /**
@@ -418,9 +427,16 @@ public class WorkManagerScheduleWorkTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      embedded.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      embedded.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.undeploy(WorkManagerScheduleWorkTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      URL naming =
+         WorkManagerScheduleWorkTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction =
+         WorkManagerScheduleWorkTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL wm =
+         WorkManagerScheduleWorkTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+
+      embedded.undeploy(wm);
+      embedded.undeploy(transaction);
+      embedded.undeploy(naming);
 
       // Shutdown embedded
       embedded.shutdown();

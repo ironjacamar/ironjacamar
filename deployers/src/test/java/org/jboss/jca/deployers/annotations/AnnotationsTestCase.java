@@ -27,7 +27,6 @@ import org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerImpl;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
-import org.jboss.jca.embedded.EmbeddedJCA;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,11 +57,6 @@ public class AnnotationsTestCase
    // --------------------------------------------------------------------------------||
 
    private static Logger log = Logger.getLogger(AnnotationsTestCase.class);
-
-   /*
-    * Embedded
-    */
-   private static EmbeddedJCA embedded;
 
    /*
     * Annotations

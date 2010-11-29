@@ -22,7 +22,8 @@
 package org.jboss.jca.adapters.jdbc.spi;
 
 import org.jboss.jca.adapters.jdbc.spi.testimpl.TestExceptionSorter;
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -66,12 +67,12 @@ public class ExceptionSorterTestCase
       /*
        * Embedded
        */
-      EmbeddedJCA embedded = null;
+      Embedded embedded = null;
 
       try
       {
          // Create and set an embedded JCA instance
-         embedded = new EmbeddedJCA();
+         embedded = EmbeddedFactory.create();
 
          // Startup
          embedded.startup();

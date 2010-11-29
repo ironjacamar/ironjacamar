@@ -22,9 +22,11 @@
 
 package org.jboss.jca.test.core.spec.chapter11.section5;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.jca.test.core.spec.chapter11.common.TransactionContextWork;
-import org.jboss.jca.test.core.spec.chapter11.section4.subsection3.WorkContextHandlingAssignmentTestCase;
+
+import java.net.URL;
 
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.WorkManager;
@@ -44,7 +46,7 @@ public class TransactionContextTestCase
    /*
     * Embedded
     */
-   private static EmbeddedJCA embedded;
+   private static Embedded embedded;
 
    /**
     * Test whether or not work contains  both execution context and implement {@link WorkContextProvider}.
@@ -66,15 +68,19 @@ public class TransactionContextTestCase
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA(false);
+      embedded = EmbeddedFactory.create(false);
 
       // Startup
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.deploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      URL naming = TransactionContextTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction = TransactionContextTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL wm = TransactionContextTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+
+      embedded.deploy(naming);
+      embedded.deploy(transaction);
+      embedded.deploy(wm);
 
    }
 
@@ -85,12 +91,15 @@ public class TransactionContextTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
-      embedded.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      embedded.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.undeploy(WorkContextHandlingAssignmentTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      URL naming = TransactionContextTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction = TransactionContextTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL wm = TransactionContextTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+
+      embedded.undeploy(wm);
+      embedded.undeploy(transaction);
+      embedded.undeploy(naming);
       embedded.shutdown();
 
       embedded = null;
    }
-
 }

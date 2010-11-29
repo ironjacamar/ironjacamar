@@ -32,8 +32,10 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
-import org.jboss.jca.core.workmanager.unit.WorkManagerTestCase;
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
+
+import java.net.URL;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
@@ -55,7 +57,7 @@ import static org.junit.Assert.*;
 public class TxConnectionManagerTestCase
 {
    /**Embedded JCA*/
-   private static EmbeddedJCA embedded = null;
+   private static Embedded embedded = null;
    
    /**
     * testTxAllocateConnection.
@@ -254,14 +256,17 @@ public class TxConnectionManagerTestCase
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA(false);
+      embedded = EmbeddedFactory.create(false);
 
       // Startup
       embedded.startup();
 
       // Deploy Naming and Transaction
-      embedded.deploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      embedded.deploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
+      URL naming = TxConnectionManagerTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction = TxConnectionManagerTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+
+      embedded.deploy(naming);
+      embedded.deploy(transaction);
    }
    
    /**
@@ -272,8 +277,11 @@ public class TxConnectionManagerTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy Transaction and Naming
-      embedded.undeploy(WorkManagerTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.undeploy(WorkManagerTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      URL naming = TxConnectionManagerTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction = TxConnectionManagerTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+
+      embedded.undeploy(transaction);
+      embedded.undeploy(naming);
 
       // Shutdown embedded
       embedded.shutdown();
@@ -281,5 +289,4 @@ public class TxConnectionManagerTestCase
       // Set embedded to null
       embedded = null;
    }   
-   
 }

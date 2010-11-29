@@ -21,7 +21,10 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section1;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
+
+import java.net.URL;
 
 import org.jboss.threads.BlockingExecutor;
 
@@ -44,7 +47,7 @@ public class ManageThreadTestCase
    /*
     * Embedded
     */
-   private static EmbeddedJCA embedded;
+   private static Embedded embedded;
    
    /**
     * Test for paragraph 4 : bullet 1
@@ -110,15 +113,22 @@ public class ManageThreadTestCase
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA(false);
+      embedded = EmbeddedFactory.create(false);
 
       // Startup
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      embedded.deploy(ManageThreadTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      embedded.deploy(ManageThreadTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.deploy(ManageThreadTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      URL naming =
+         ManageThreadTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction =
+         ManageThreadTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL wm =
+         ManageThreadTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+
+      embedded.deploy(naming);
+      embedded.deploy(transaction);
+      embedded.deploy(wm);
    }
 
    /**
@@ -129,9 +139,16 @@ public class ManageThreadTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      embedded.undeploy(ManageThreadTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      embedded.undeploy(ManageThreadTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.undeploy(ManageThreadTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      URL naming =
+         ManageThreadTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction =
+         ManageThreadTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL wm =
+         ManageThreadTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+
+      embedded.undeploy(wm);
+      embedded.undeploy(transaction);
+      embedded.undeploy(naming);
 
       // Shutdown embedded
       embedded.shutdown();

@@ -22,7 +22,8 @@
 
 package org.jboss.jca.adapters.jdbc.unit;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 
 import java.io.File;
 import java.net.URL;
@@ -60,7 +61,7 @@ public class H2TestCase
    /*
     * Embedded
     */
-   private static EmbeddedJCA embedded;
+   private static Embedded embedded;
 
    // --------------------------------------------------------------------------------||
    // Tests --------------------------------------------------------------------------||
@@ -134,7 +135,7 @@ public class H2TestCase
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA();
+      embedded = EmbeddedFactory.create();
 
       // Startup
       embedded.startup();

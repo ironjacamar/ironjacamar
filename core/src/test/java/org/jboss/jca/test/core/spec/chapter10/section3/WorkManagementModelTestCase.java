@@ -21,10 +21,12 @@
  */
 package org.jboss.jca.test.core.spec.chapter10.section3;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.PriorityWork;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -53,7 +55,7 @@ public class WorkManagementModelTestCase
    /*
     * Embedded
     */
-   private static EmbeddedJCA embedded;
+   private static Embedded embedded;
       
    /**
     * Test for paragraph 1
@@ -280,18 +282,30 @@ public class WorkManagementModelTestCase
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = new EmbeddedJCA(false);
+      embedded = EmbeddedFactory.create(false);
 
       // Startup
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      embedded.deploy(WorkManagementModelTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
-      embedded.deploy(WorkManagementModelTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.deploy(WorkManagementModelTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
+      URL naming =
+         WorkManagementModelTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction =
+         WorkManagementModelTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL wm =
+         WorkManagementModelTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+
+      embedded.deploy(naming);
+      embedded.deploy(transaction);
+      embedded.deploy(wm);
 
       // Deploy Beans
-      embedded.deploy(WorkManagementModelTestCase.class);
+      String name = 
+         WorkManagementModelTestCase.class.getName().replace('.', '/') + "-jboss-beans.xml";
+      URL beans =
+         WorkManagementModelTestCase.class.getClassLoader().getResource(name);
+
+      embedded.deploy(beans);
    }
 
    /**
@@ -302,12 +316,24 @@ public class WorkManagementModelTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy Beans
-      embedded.undeploy(WorkManagementModelTestCase.class);
+      String name = 
+         WorkManagementModelTestCase.class.getName().replace('.', '/') + "-jboss-beans.xml";
+      URL beans =
+         WorkManagementModelTestCase.class.getClassLoader().getResource(name);
+
+      embedded.undeploy(beans);
 
       // Undeploy WorkManager, Transaction and Naming
-      embedded.undeploy(WorkManagementModelTestCase.class.getClassLoader(), "workmanager-jboss-beans.xml");
-      embedded.undeploy(WorkManagementModelTestCase.class.getClassLoader(), "transaction-jboss-beans.xml");
-      embedded.undeploy(WorkManagementModelTestCase.class.getClassLoader(), "naming-jboss-beans.xml");
+      URL naming =
+         WorkManagementModelTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL transaction =
+         WorkManagementModelTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL wm =
+         WorkManagementModelTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+
+      embedded.undeploy(wm);
+      embedded.undeploy(transaction);
+      embedded.undeploy(naming);
 
       // Shutdown MC
       embedded.shutdown();

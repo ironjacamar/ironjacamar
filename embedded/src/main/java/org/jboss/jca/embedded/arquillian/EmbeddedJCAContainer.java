@@ -21,7 +21,8 @@
  */
 package org.jboss.jca.embedded.arquillian;
 
-import org.jboss.jca.embedded.EmbeddedJCA;
+import org.jboss.jca.embedded.Embedded;
+import org.jboss.jca.embedded.EmbeddedFactory;
 
 import org.jboss.arquillian.protocol.local.LocalMethodExecutor;
 import org.jboss.arquillian.spi.Configuration;
@@ -42,7 +43,7 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 public class EmbeddedJCAContainer implements DeployableContainer
 {
    /** EmbeddedJCA */
-   private EmbeddedJCA embedded;
+   private Embedded embedded;
 
    /**
     * Constructor
@@ -126,7 +127,7 @@ public class EmbeddedJCAContainer implements DeployableContainer
    @Override
    public void start(final Context context) throws LifecycleException
    {
-      embedded = new EmbeddedJCA();
+      embedded = EmbeddedFactory.create();
       try
       {
          embedded.startup();
