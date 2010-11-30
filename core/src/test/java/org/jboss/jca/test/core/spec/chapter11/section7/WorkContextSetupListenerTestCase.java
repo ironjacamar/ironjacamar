@@ -111,10 +111,10 @@ public class WorkContextSetupListenerTestCase
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      URL naming = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL naming = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction = 
-         WorkContextSetupListenerTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
-      URL wm = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         WorkContextSetupListenerTestCase.class.getClassLoader().getResource("transaction.xml");
+      URL wm = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -129,10 +129,10 @@ public class WorkContextSetupListenerTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
-      URL naming = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+      URL naming = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction = 
-         WorkContextSetupListenerTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
-      URL wm = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         WorkContextSetupListenerTestCase.class.getClassLoader().getResource("transaction.xml");
+      URL wm = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.undeploy(wm);
       embedded.undeploy(transaction);

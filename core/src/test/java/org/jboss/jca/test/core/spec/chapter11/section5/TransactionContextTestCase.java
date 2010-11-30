@@ -74,9 +74,9 @@ public class TransactionContextTestCase
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      URL naming = TransactionContextTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
-      URL transaction = TransactionContextTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
-      URL wm = TransactionContextTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+      URL naming = TransactionContextTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = TransactionContextTestCase.class.getClassLoader().getResource("transaction.xml");
+      URL wm = TransactionContextTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -91,9 +91,9 @@ public class TransactionContextTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
-      URL naming = TransactionContextTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
-      URL transaction = TransactionContextTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
-      URL wm = TransactionContextTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+      URL naming = TransactionContextTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = TransactionContextTestCase.class.getClassLoader().getResource("transaction.xml");
+      URL wm = TransactionContextTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.undeploy(wm);
       embedded.undeploy(transaction);

@@ -120,11 +120,11 @@ public class ManageThreadTestCase
 
       // Deploy Naming, Transaction and WorkManager
       URL naming =
-         ManageThreadTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         ManageThreadTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction =
-         ManageThreadTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         ManageThreadTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm =
-         ManageThreadTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         ManageThreadTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -140,11 +140,11 @@ public class ManageThreadTestCase
    {
       // Undeploy WorkManager, Transaction and Naming
       URL naming =
-         ManageThreadTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         ManageThreadTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction =
-         ManageThreadTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         ManageThreadTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm =
-         ManageThreadTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         ManageThreadTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.undeploy(wm);
       embedded.undeploy(transaction);

@@ -98,12 +98,12 @@ public class WorkManagerRejectingStartWorkTestCase
 
       // Deploy Naming, Transaction and WorkManager
       URL naming =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm =
          WorkManagerRejectingStartWorkTestCase.class.getClassLoader().
-         getResource("rejecting-workmanager-jboss-beans.xml");
+         getResource("rejecting-workmanager.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -119,12 +119,12 @@ public class WorkManagerRejectingStartWorkTestCase
    {
       // Undeploy WorkManager, Transaction and Naming
       URL naming =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm =
          WorkManagerRejectingStartWorkTestCase.class.getClassLoader().
-         getResource("rejecting-workmanager-jboss-beans.xml");
+         getResource("rejecting-workmanager.xml");
 
       embedded.undeploy(wm);
       embedded.undeploy(transaction);

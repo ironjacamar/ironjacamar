@@ -262,8 +262,8 @@ public class TxConnectionManagerTestCase
       embedded.startup();
 
       // Deploy Naming and Transaction
-      URL naming = TxConnectionManagerTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
-      URL transaction = TxConnectionManagerTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL naming = TxConnectionManagerTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = TxConnectionManagerTestCase.class.getClassLoader().getResource("transaction.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -277,8 +277,8 @@ public class TxConnectionManagerTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy Transaction and Naming
-      URL naming = TxConnectionManagerTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
-      URL transaction = TxConnectionManagerTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL naming = TxConnectionManagerTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = TxConnectionManagerTestCase.class.getClassLoader().getResource("transaction.xml");
 
       embedded.undeploy(transaction);
       embedded.undeploy(naming);

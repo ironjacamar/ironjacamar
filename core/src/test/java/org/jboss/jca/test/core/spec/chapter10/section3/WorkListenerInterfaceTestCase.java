@@ -301,11 +301,11 @@ public class WorkListenerInterfaceTestCase
 
       // Deploy Naming, Transaction and WorkManager
       URL naming =
-         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction =
-         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm =
-         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -321,11 +321,11 @@ public class WorkListenerInterfaceTestCase
    {
       // Undeploy WorkManager, Transaction and Naming
       URL naming =
-         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction =
-         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm =
-         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         WorkListenerInterfaceTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.undeploy(wm);
       embedded.undeploy(transaction);

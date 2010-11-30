@@ -75,11 +75,11 @@ public class WorkContextProviderGetWorkContextsTestCase
 
       // Deploy Naming, Transaction and WorkManager
       URL naming = 
-         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction = 
-         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm = 
-         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("workmanager.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -94,11 +94,11 @@ public class WorkContextProviderGetWorkContextsTestCase
    public static void afterClass() throws Throwable
    {
       URL naming = 
-         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction = 
-         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm = 
-         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml"); 
+         WorkContextProviderGetWorkContextsTestCase.class.getClassLoader().getResource("workmanager.xml"); 
 
       embedded.undeploy(wm);
       embedded.undeploy(transaction);

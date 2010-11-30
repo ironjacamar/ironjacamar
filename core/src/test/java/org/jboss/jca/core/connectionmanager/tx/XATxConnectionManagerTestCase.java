@@ -223,8 +223,8 @@ public class XATxConnectionManagerTestCase
       embedded.startup();
 
       // Deploy Naming and Transaction
-      URL naming = XATxConnectionManagerTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
-      URL transaction = XATxConnectionManagerTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL naming = XATxConnectionManagerTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = XATxConnectionManagerTestCase.class.getClassLoader().getResource("transaction.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -238,8 +238,8 @@ public class XATxConnectionManagerTestCase
    public static void afterClass() throws Throwable
    {
       // Undeploy Transaction and Naming
-      URL naming = XATxConnectionManagerTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
-      URL transaction = XATxConnectionManagerTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+      URL naming = XATxConnectionManagerTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = XATxConnectionManagerTestCase.class.getClassLoader().getResource("transaction.xml");
 
       embedded.undeploy(transaction);
       embedded.undeploy(naming);

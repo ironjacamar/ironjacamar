@@ -327,23 +327,18 @@ public class WorkManagerInterfaceTestCase
 
       // Deploy Naming, Transaction and WorkManager
       URL naming =
-         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction =
-         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm =
-         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("workmanager.xml");
+      URL bootstrap =
+         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("bootstrap.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
       embedded.deploy(wm);
-
-      // Deploy Beans
-      String name = 
-         WorkManagerInterfaceTestCase.class.getName().replace('.', '/') + "-jboss-beans.xml";
-      URL beans =
-         WorkManagerInterfaceTestCase.class.getClassLoader().getResource(name);
-
-      embedded.deploy(beans);
+      embedded.deploy(bootstrap);
    }
 
    /**
@@ -353,22 +348,17 @@ public class WorkManagerInterfaceTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
-      // Undeploy Beans
-      String name = 
-         WorkManagerInterfaceTestCase.class.getName().replace('.', '/') + "-jboss-beans.xml";
-      URL beans =
-         WorkManagerInterfaceTestCase.class.getClassLoader().getResource(name);
-
-      embedded.deploy(beans);
-
-      // Undeploy WorkManager, Transaction and Naming
+      // Undeploy Bootstrap, WorkManager, Transaction and Naming
       URL naming =
-         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("naming-jboss-beans.xml");
+         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("naming.xml");
       URL transaction =
-         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("transaction-jboss-beans.xml");
+         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm =
-         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("workmanager-jboss-beans.xml");
+         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("workmanager.xml");
+      URL bootstrap =
+         WorkManagerInterfaceTestCase.class.getClassLoader().getResource("bootstrap.xml");
 
+      embedded.undeploy(bootstrap);
       embedded.undeploy(wm);
       embedded.undeploy(transaction);
       embedded.undeploy(naming);
