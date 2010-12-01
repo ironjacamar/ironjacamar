@@ -249,7 +249,7 @@
     </copy>
 
     <copy todir="${target.dir}/sjc/doc/datasources" flatten="true">
-      <fileset dir="../common/src/test/resources/ds">
+      <fileset dir="../common/src/test/resources/ds/example">
         <include name="*.xml"/>
       </fileset>
     </copy>
