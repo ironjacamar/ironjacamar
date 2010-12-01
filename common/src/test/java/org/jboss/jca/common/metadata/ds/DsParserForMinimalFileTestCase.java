@@ -26,52 +26,47 @@ import org.jboss.jca.common.api.metadata.ds.DataSources;
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.jboss.util.file.FileSuffixFilter;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-/**
- *
- * A RaParserTestCase.
- *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
- */
-public class DsParserTestCase
+public class DsParserForMinimalFileTestCase
 {
-   /**
-    * shouldParseAnyExample
-    * @throws Exception in case of error
-    */
-   @Test
-   public void shouldParseAnyExample() throws Exception
+
+   public static DsParser parser;
+
+   @BeforeClass
+   public static void beforeClass() throws Exception
    {
+      parser = new DsParser();
+   }
+
+   @Test
+   public void shouldFailIfNoDriverHasBeenSpecified() throws Exception
+   {
+
       FileInputStream is = null;
 
       //given
-      File directory = new File(Thread.currentThread().getContextClassLoader().getResource("ds").toURI());
-      for (File xmlFile : directory.listFiles(new FileSuffixFilter("-ds.xml")))
+      File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/unit/nodriver-ds.xml")
+         .toURI());
+      try
       {
-         System.out.println(xmlFile.getName());
-         try
-         {
-            is = new FileInputStream(xmlFile);
-            DsParser parser = new DsParser();
-            //when
-            DataSources ds = parser.parse(is);
-            //then
-            assertThat(ds.getDataSource().size() + ds.getXaDataSource().size(), is(1));
+         is = new FileInputStream(xmlFile);
+         //when
+         DataSources ds = parser.parse(is);
+         //then
+         assertThat(ds.getDataSource().size() + ds.getXaDataSource().size(), is(1));
 
-         }
-         finally
-         {
-            if (is != null)
-               is.close();
-         }
+      }
+      finally
+      {
+         if (is != null)
+            is.close();
       }
    }
 
 }
+
