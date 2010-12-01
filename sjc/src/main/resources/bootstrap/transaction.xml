@@ -104,6 +104,8 @@
 
   <bean name="TransactionSynchronizationRegistry" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple"/>
 
+  <bean name="TxControl" class="com.arjuna.ats.arjuna.coordinator.TxControl"/>
+
   <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
     <property name="jbossXATerminator"><inject bean="XATerminator"/></property>
     <property name="transactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
@@ -119,6 +121,7 @@
     <depends>ActionStoreObjectStoreEnvironmentBean</depends>
     <depends>StateStoreObjectStoreEnvironmentBean</depends>
     <depends>CommunicationStoreObjectStoreEnvironmentBean</depends>
+    <depends>TxControl</depends>
   </bean>
 
   <bean name="TransactionStatistics" class="com.arjuna.ats.arjuna.coordinator.TxStats">
