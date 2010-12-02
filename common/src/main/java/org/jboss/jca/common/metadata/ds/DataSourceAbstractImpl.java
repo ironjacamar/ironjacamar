@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
  *
@@ -110,11 +111,12 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
+    * @throws ValidateException ValidateException
     */
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
       CommonSecurity security, Statement statement, Validation validation, String urlDelimiter,
-      String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled,
-      String jndiName)
+      String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled, String jndiName)
+      throws ValidateException
    {
       super();
       this.transactionIsolation = transactionIsolation;
@@ -128,6 +130,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.poolName = poolName;
       this.enabled = enabled;
       this.jndiName = jndiName;
+      partialCommonValidation();
    }
 
    /**
@@ -224,6 +227,29 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    public final String getJndiName()
    {
       return jndiName;
+   }
+
+   /**
+    *
+    * Partial validation for common fields defined in this abstract class
+    *
+    * @throws ValidateException ValidateException
+    */
+   protected void partialCommonValidation() throws ValidateException
+   {
+      if (this.jndiName == null)
+         throw new ValidateException("jndiName is require in " + this.getClass().getCanonicalName());
+      if (this.poolName == null)
+         throw new ValidateException("poolName is require in " + this.getClass().getCanonicalName());
+
+      if (this.timeOut != null)
+         this.timeOut.validate();
+      if (this.security != null)
+         this.security.validate();
+      if (this.statement != null)
+         this.statement.validate();
+      if (this.validation != null)
+         this.validation.validate();
    }
 
 }

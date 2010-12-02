@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 
 /**
@@ -46,12 +47,14 @@ public class CommonSecurityImpl implements CommonSecurity
     *
     * @param userName userName
     * @param password password
+    * @throws ValidateException ValidateException
     */
-   public CommonSecurityImpl(String userName, String password)
+   public CommonSecurityImpl(String userName, String password) throws ValidateException
    {
       super();
       this.userName = userName;
       this.password = password;
+      this.validate();
    }
 
    /**
@@ -119,5 +122,10 @@ public class CommonSecurityImpl implements CommonSecurity
       return "SecurityImpl [userName=" + userName + ", password=" + password + "]";
    }
 
+   @Override
+   public void validate() throws ValidateException
+   {
+      //always validate, nothing is mandatory
+   }
 
 }

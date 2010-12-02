@@ -28,6 +28,7 @@ import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
+import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.ParserException;
 
@@ -57,9 +58,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     * @return the parse {@link CommonConnDef} object
     * @throws XMLStreamException XMLStreamException
     * @throws ParserException ParserException
+    * @throws ValidateException ValidateException
     */
    protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+      ParserException, ValidateException
    {
       HashMap<String, String> configProperties = new HashMap<String, String>();
       CommonSecurity security = null;

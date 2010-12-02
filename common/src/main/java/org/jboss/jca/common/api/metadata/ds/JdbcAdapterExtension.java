@@ -22,6 +22,8 @@
 package org.jboss.jca.common.api.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
+import org.jboss.jca.common.api.metadata.ValidatableMetadata;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,7 +36,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public final class JdbcAdapterExtension implements JCAMetadata
+public final class JdbcAdapterExtension implements JCAMetadata, ValidatableMetadata
 {
 
    /** The serialVersionUID */
@@ -49,8 +51,9 @@ public final class JdbcAdapterExtension implements JCAMetadata
     *
     * @param className the className
     * @param configPropertiesMap configPropertiesMap
+    * @throws ValidateException ValidateException
     */
-   public JdbcAdapterExtension(String className, Map<String, String> configPropertiesMap)
+   public JdbcAdapterExtension(String className, Map<String, String> configPropertiesMap) throws ValidateException
    {
       super();
       this.className = className;
@@ -63,6 +66,7 @@ public final class JdbcAdapterExtension implements JCAMetadata
       {
          this.configPropertiesMap = Collections.emptyMap();
       }
+      this.validate();
    }
 
    /**
@@ -240,6 +244,13 @@ public final class JdbcAdapterExtension implements JCAMetadata
          return name;
       }
 
+   }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      if (this.className == null || className.trim().length() == 0)
+         throw new ValidateException("connectionUrl is required in " + this.getClass().getCanonicalName());
    }
 
 }

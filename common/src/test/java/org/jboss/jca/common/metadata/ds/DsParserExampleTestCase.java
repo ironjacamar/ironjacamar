@@ -49,11 +49,18 @@ import static org.junit.Assert.fail;
 public class DsParserExampleTestCase
 {
 
-   public static DsParser parser;
+   private static DsParser parser;
 
+   /** Datapoints for junit Theory **/
    @DataPoints
    public static File[] xmlFiles;
 
+   /**
+    *
+    * beforeClass method
+    *
+    * @throws Exception in casae of file not found
+    */
    @BeforeClass
    public static void beforeClass() throws Exception
    {
@@ -86,6 +93,7 @@ public class DsParserExampleTestCase
       }
       catch (Exception e)
       {
+         e.printStackTrace();
          fail("got an exception for file" + xmlFile.toString() + " with message: " + e.getMessage());
       }
       finally

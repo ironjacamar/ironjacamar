@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,18 +33,38 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ *
+ * A DsParserForMinimalFileTestCase.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ *
+ */
 public class DsParserForMinimalFileTestCase
 {
 
-   public static DsParser parser;
+   private static DsParser parser;
 
+   /**
+   *
+   * beforeClass method
+   *
+   * @throws Exception in casae of file not found
+   */
    @BeforeClass
    public static void beforeClass() throws Exception
    {
       parser = new DsParser();
    }
 
-   @Test
+   /**
+    *
+    * shouldFailIfNoDriverHasBeenSpecified
+    *
+    * @throws Exception test passes if a {@link ValidateException} has been
+    * thrown
+    */
+   @Test(expected = ValidateException.class)
    public void shouldFailIfNoDriverHasBeenSpecified() throws Exception
    {
 

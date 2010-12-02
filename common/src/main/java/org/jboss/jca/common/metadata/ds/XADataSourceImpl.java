@@ -28,6 +28,7 @@ import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,12 +75,13 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param module module
     * @param newConnectionSql newConnectionSql
     * @param xaPool xaPool
+    * @throws ValidateException ValidateException
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, CommonSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
       boolean useJavaContext, String poolName, boolean enabled, String jndiName,
       Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String module, String newConnectionSql,
-      CommonXaPool xaPool)
+      CommonXaPool xaPool) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
             urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
@@ -96,6 +98,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       this.module = module;
       this.newConnectionSql = newConnectionSql;
       this.xaPool = xaPool;
+      this.validate();
    }
 
    /**
@@ -229,12 +232,11 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public String toString()
    {
       return "XADataSourceImpl [xaDataSourceProperty=" + xaDataSourceProperty + ", xaDataSourceClass=" +
-             xaDataSourceClass + ", module=" +
-             module + ", newConnectionSql=" + newConnectionSql + ", xaPool=" + xaPool +
-             ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut + ", security=" + security +
-             ", statement=" + statement + ", validation=" + validation + ", urlDelimiter=" + urlDelimiter +
-             ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName + ", useJavaContext=" +
-             useJavaContext + ", poolName=" + poolName + ", enabled=" + enabled + ", jndiName=" + jndiName + "]";
+             xaDataSourceClass + ", module=" + module + ", newConnectionSql=" + newConnectionSql + ", xaPool=" +
+             xaPool + ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut + ", security=" +
+             security + ", statement=" + statement + ", validation=" + validation + ", urlDelimiter=" + urlDelimiter +
+             ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName + ", useJavaContext=" + useJavaContext +
+             ", poolName=" + poolName + ", enabled=" + enabled + ", jndiName=" + jndiName + "]";
    }
 
    /**
@@ -248,7 +250,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       return Collections.unmodifiableMap(xaDataSourceProperty);
    }
 
-
    /**
     * Get the xaPool.
     *
@@ -258,5 +259,16 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public final CommonXaPool getXaPool()
    {
       return xaPool;
+   }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      if (this.xaDataSourceClass == null || this.xaDataSourceClass.trim().length() == 0)
+         throw new ValidateException("xaDataSourceClass is required in " + this.getClass().getCanonicalName());
+      if (this.xaDataSourceProperty.isEmpty())
+         throw new ValidateException("at least one xaDataSourceProperty is required in " +
+                                     this.getClass().getCanonicalName());
+
    }
 }

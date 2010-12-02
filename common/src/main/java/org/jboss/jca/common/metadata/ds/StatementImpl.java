@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.Statement;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
  *
@@ -48,14 +49,16 @@ public class StatementImpl implements Statement
     * @param sharePreparedStatements sharePreparedStatements
     * @param preparedStatementsCacheSize preparedStatementsCacheSize
     * @param trackStatements trackStatements
+    * @throws ValidateException ValidateException
     */
    public StatementImpl(Boolean sharePreparedStatements, Long preparedStatementsCacheSize,
-         TrackStatementsEnum trackStatements)
+      TrackStatementsEnum trackStatements) throws ValidateException
    {
       super();
       this.sharePreparedStatements = sharePreparedStatements;
       this.preparedStatementsCacheSize = preparedStatementsCacheSize;
       this.trackStatements = trackStatements;
+      this.validate();
    }
 
    /**
@@ -137,6 +140,13 @@ public class StatementImpl implements Statement
       return "StatementImpl [sharePreparedStatements=" + sharePreparedStatements +
             ", preparedStatementsCacheSize=" + preparedStatementsCacheSize +
             ", trackStatements=" + trackStatements + "]";
+   }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      if (this.preparedStatementsCacheSize != null && this.preparedStatementsCacheSize < 0)
+         throw new ValidateException("preparedStatementsCacheSize cannot be < 0");
    }
 }
 

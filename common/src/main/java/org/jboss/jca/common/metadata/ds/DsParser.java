@@ -34,6 +34,7 @@ import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute;
+import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
@@ -125,7 +126,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
    }
 
-   private DataSources parseDataSources(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private DataSources parseDataSources(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
       ArrayList<XaDataSource> xaDataSource = new ArrayList<XaDataSource>();
       ArrayList<DataSource> datasource = new ArrayList<DataSource>();
@@ -169,7 +171,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private XaDataSource parseXADataSource(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private XaDataSource parseXADataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();
@@ -302,7 +305,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
@@ -441,7 +445,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private Validation parseValidationSetting(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private Validation parseValidationSetting(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
       boolean validateOnMatch = false;
       boolean useFastFail = false;
@@ -521,7 +526,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    }
 
    private JdbcAdapterExtension parseJdbcAdapterExtension(XMLStreamReader reader, Validation.Tag enclosingTag)
-      throws XMLStreamException, ParserException
+      throws XMLStreamException, ParserException, ValidateException
    {
 
       String className = null;
@@ -582,7 +587,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
 
 
-   private TimeOut parseTimeOutSettings(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private TimeOut parseTimeOutSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
 
       Long blockingTimeoutMillis = null;
@@ -660,7 +666,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private Statement parseStatementSettings(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private Statement parseStatementSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
 
       Long preparedStatementsCacheSize = null;

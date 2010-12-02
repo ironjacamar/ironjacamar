@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.JdbcAdapterExtension;
 import org.jboss.jca.common.api.metadata.ds.Validation;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 
 /**
@@ -34,6 +35,125 @@ import org.jboss.jca.common.api.metadata.ds.Validation;
  */
 public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonValidationImpl implements Validation
 {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 7816717816552118419L;
+
+   private final JdbcAdapterExtension validConnectionChecker;
+
+   private final String checkValidConnectionSql;
+
+   private final Boolean validateOnMatch;
+
+   private final JdbcAdapterExtension staleConnectionChecker;
+
+   private final JdbcAdapterExtension exceptionSorter;
+
+   /**
+    * Create a new ValidationImpl.
+    *
+    * @param backgroundValidation backgroundValidation
+    * @param backgroundValidationMinutes backgroundValidationMinutes
+    * @param useFastFail useFastFail
+    * @param validConnectionChecker validConnectionChecker
+    * @param checkValidConnectionSql checkValidConnectionSql
+    * @param validateOnMatch validateOnMatch
+    * @param staleConnectionChecker staleConnectionChecker
+    * @param exceptionSorter exceptionSorter
+    * @throws ValidateException ValidateException
+    */
+   public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMinutes, Boolean useFastFail,
+      JdbcAdapterExtension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
+      JdbcAdapterExtension staleConnectionChecker, JdbcAdapterExtension exceptionSorter) throws ValidateException
+   {
+      super(backgroundValidation, backgroundValidationMinutes, useFastFail);
+      this.validConnectionChecker = validConnectionChecker;
+      this.checkValidConnectionSql = checkValidConnectionSql;
+      this.validateOnMatch = validateOnMatch;
+      this.staleConnectionChecker = staleConnectionChecker;
+      this.exceptionSorter = exceptionSorter;
+      this.validate();
+   }
+
+
+
+   /**
+    * Get the checkValidConnectionSql.
+    *
+    * @return the checkValidConnectionSql.
+    */
+   @Override
+   public final String getCheckValidConnectionSql()
+   {
+      return checkValidConnectionSql;
+   }
+
+   /**
+    * Get the validateOnMatch.
+    *
+    * @return the validateOnMatch.
+    */
+   @Override
+   public final Boolean isValidateOnMatch()
+   {
+      return validateOnMatch;
+   }
+
+
+
+   /**
+    * Get the validConnectionChecker.
+    *
+    * @return the validConnectionChecker.
+    */
+   public final JdbcAdapterExtension getValidConnectionChecker()
+   {
+      return validConnectionChecker;
+   }
+
+   /**
+    * Get the validateOnMatch.
+    *
+    * @return the validateOnMatch.
+    */
+   public final Boolean getValidateOnMatch()
+   {
+      return validateOnMatch;
+   }
+
+   /**
+    * Get the staleConnectionChecker.
+    *
+    * @return the staleConnectionChecker.
+    */
+   public final JdbcAdapterExtension getStaleConnectionChecker()
+   {
+      return staleConnectionChecker;
+   }
+
+   /**
+    * Get the exceptionSorter.
+    *
+    * @return the exceptionSorter.
+    */
+   public final JdbcAdapterExtension getExceptionSorter()
+   {
+      return exceptionSorter;
+   }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      if (this.backgroundValidationMinutes != null && this.backgroundValidationMinutes < 0)
+         throw new ValidateException("backgroundValidationMinutes cannot be < 0");
+      if (this.validConnectionChecker != null)
+         this.validConnectionChecker.validate();
+      if (this.exceptionSorter != null)
+         this.exceptionSorter.validate();
+      if (this.staleConnectionChecker != null)
+         this.staleConnectionChecker.validate();
+   }
+
    @Override
    public String toString()
    {
@@ -101,109 +221,6 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
       else if (!validateOnMatch.equals(other.validateOnMatch))
          return false;
       return true;
-   }
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 7816717816552118419L;
-
-   private final JdbcAdapterExtension validConnectionChecker;
-
-   private final String checkValidConnectionSql;
-
-   private final Boolean validateOnMatch;
-
-   private final JdbcAdapterExtension staleConnectionChecker;
-
-   private final JdbcAdapterExtension exceptionSorter;
-
-   /**
-    * Create a new ValidationImpl.
-    *
-    * @param backgroundValidation backgroundValidation
-    * @param backgroundValidationMinutes backgroundValidationMinutes
-    * @param useFastFail useFastFail
-    * @param validConnectionChecker validConnectionChecker
-    * @param checkValidConnectionSql checkValidConnectionSql
-    * @param validateOnMatch validateOnMatch
-    * @param staleConnectionChecker staleConnectionChecker
-    * @param exceptionSorter exceptionSorter
-    */
-   public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMinutes, Boolean useFastFail,
-      JdbcAdapterExtension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
-      JdbcAdapterExtension staleConnectionChecker, JdbcAdapterExtension exceptionSorter)
-   {
-      super(backgroundValidation, backgroundValidationMinutes, useFastFail);
-      this.validConnectionChecker = validConnectionChecker;
-      this.checkValidConnectionSql = checkValidConnectionSql;
-      this.validateOnMatch = validateOnMatch;
-      this.staleConnectionChecker = staleConnectionChecker;
-      this.exceptionSorter = exceptionSorter;
-   }
-
-
-
-   /**
-    * Get the checkValidConnectionSql.
-    *
-    * @return the checkValidConnectionSql.
-    */
-   @Override
-   public final String getCheckValidConnectionSql()
-   {
-      return checkValidConnectionSql;
-   }
-
-   /**
-    * Get the validateOnMatch.
-    *
-    * @return the validateOnMatch.
-    */
-   @Override
-   public final Boolean isValidateOnMatch()
-   {
-      return validateOnMatch;
-   }
-
-
-
-   /**
-    * Get the validConnectionChecker.
-    *
-    * @return the validConnectionChecker.
-    */
-   public final JdbcAdapterExtension getValidConnectionChecker()
-   {
-      return validConnectionChecker;
-   }
-
-   /**
-    * Get the validateOnMatch.
-    *
-    * @return the validateOnMatch.
-    */
-   public final Boolean getValidateOnMatch()
-   {
-      return validateOnMatch;
-   }
-
-   /**
-    * Get the staleConnectionChecker.
-    *
-    * @return the staleConnectionChecker.
-    */
-   public final JdbcAdapterExtension getStaleConnectionChecker()
-   {
-      return staleConnectionChecker;
-   }
-
-   /**
-    * Get the exceptionSorter.
-    *
-    * @return the exceptionSorter.
-    */
-   public final JdbcAdapterExtension getExceptionSorter()
-   {
-      return exceptionSorter;
    }
 
 }

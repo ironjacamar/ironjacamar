@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
  *
@@ -63,14 +64,17 @@ public class CommonPoolImpl implements CommonPool
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
     * @param useStrictMin useStrictMin
+    * @throws ValidateException ValidateException
     */
    public CommonPoolImpl(Integer minPoolSize, Integer maxPoolSize, Boolean prefill, Boolean useStrictMin)
+      throws ValidateException
    {
       super();
       this.minPoolSize = minPoolSize;
       this.maxPoolSize = maxPoolSize;
       this.prefill = prefill;
       this.useStrictMin = useStrictMin;
+      this.validate();
    }
 
    /**
@@ -115,6 +119,16 @@ public class CommonPoolImpl implements CommonPool
    public final Boolean isUseStrictMin()
    {
       return useStrictMin;
+   }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      if (this.maxPoolSize != null && this.maxPoolSize < 0)
+         throw new ValidateException("maxPoolSize cannot be < 0");
+      if (this.minPoolSize != null && this.minPoolSize < 0)
+         throw new ValidateException("minPoolSize cannot be < 0");
+
    }
 
 }

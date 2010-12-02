@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.common.CommonIronJacamarParser;
@@ -116,7 +117,8 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
    }
 
-   private ResourceAdapters parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private ResourceAdapters parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
       ArrayList<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>();
       while (reader.hasNext())
@@ -155,7 +157,8 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
-   private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException
+   private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
       ArrayList<CommonConnDef> connectionDefinitions = null;
       ArrayList<CommonAdminObject> adminObjects = null;

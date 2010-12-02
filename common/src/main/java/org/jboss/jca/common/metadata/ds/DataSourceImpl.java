@@ -28,6 +28,7 @@ import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -77,13 +78,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param enabled enabled
     * @param jndiName jndiName
     * @param pool pool
+    * @throws ValidateException ValidateException
     */
    public DataSourceImpl(String connectionUrl, String driverClass, String module,
-                         TransactionIsolation transactionIsolation,
-                         Map<String, String> connectionProperties, TimeOut timeOut, CommonSecurity security, 
-                         Statement statement, Validation validation, String urlDelimiter, 
-                         String urlSelectorStrategyClassName, String newConnectionSql,
-                         boolean useJavaContext, String poolName, boolean enabled, String jndiName, CommonPool pool)
+      TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, TimeOut timeOut,
+      CommonSecurity security, Statement statement, Validation validation, String urlDelimiter,
+      String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
+      boolean enabled, String jndiName, CommonPool pool) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
             urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
@@ -101,7 +102,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       }
       this.newConnectionSql = newConnectionSql;
       this.pool = pool;
-
+      this.validate();
    }
 
    /**
@@ -275,13 +276,22 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    @Override
    public String toString()
    {
-      return "DataSourceImpl [connectionUrl=" + connectionUrl + ", driverClass=" + driverClass +
-         ", module=" + module +
-         ", connectionProperties=" + connectionProperties + ", newConnectionSql=" + newConnectionSql +
-         ", pool=" + pool + ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut +
-         ", security=" + security + ", statement=" + statement + ", validation=" + validation +
-         ", urlDelimiter=" + urlDelimiter + ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName +
-         ", useJavaContext=" + useJavaContext + ", poolName=" + poolName + ", enabled=" + enabled +
-         ", jndiName=" + jndiName + "]";
+      return "DataSourceImpl [connectionUrl=" + connectionUrl + ", driverClass=" + driverClass + ", module=" +
+             module + ", connectionProperties=" + connectionProperties + ", newConnectionSql=" + newConnectionSql +
+             ", pool=" + pool + ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut +
+             ", security=" + security + ", statement=" + statement + ", validation=" + validation +
+             ", urlDelimiter=" + urlDelimiter + ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName +
+             ", useJavaContext=" + useJavaContext + ", poolName=" + poolName + ", enabled=" + enabled +
+             ", jndiName=" + jndiName + "]";
+   }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      if (this.connectionUrl == null || this.connectionUrl.trim().length() == 0)
+         throw new ValidateException("connectionUrl is require in " + this.getClass().getCanonicalName());
+      if (this.driverClass == null || this.driverClass.trim().length() == 0)
+         throw new ValidateException("driverClass is require in " + this.getClass().getCanonicalName());
+
    }
 }

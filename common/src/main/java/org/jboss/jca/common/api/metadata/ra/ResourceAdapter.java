@@ -22,6 +22,7 @@
 package org.jboss.jca.common.api.metadata.ra;
 
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
+import org.jboss.jca.common.api.metadata.ValidatableMetadata;
 
 import java.util.List;
 

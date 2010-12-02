@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
+import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
@@ -159,8 +160,10 @@ public abstract class AbstractParser
     * @return the parsed {@link CommonPool} object
     * @throws XMLStreamException XMLStreamException
     * @throws ParserException ParserException
+    * @throws ValidateException ValidateException
     */
-   protected CommonPool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected CommonPool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
@@ -225,8 +228,10 @@ public abstract class AbstractParser
     * @return a {@link CommonSecurity} object
     * @throws XMLStreamException XMLStreamException
     * @throws ParserException ParserException
+    * @throws ValidateException ValidateException
     */
-   protected CommonSecurity parseSecuritySettings(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected CommonSecurity parseSecuritySettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
 
       String userName = null;
@@ -280,8 +285,10 @@ public abstract class AbstractParser
    * @return the parsed {@link CommonXaPool} object
    * @throws XMLStreamException XMLStreamException
    * @throws ParserException ParserException
+    * @throws ValidateException ValidateException
    */
-   protected CommonXaPool parseXaPool(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected CommonXaPool parseXaPool(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;

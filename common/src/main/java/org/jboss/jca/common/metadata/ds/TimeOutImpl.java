@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
  *
@@ -52,16 +53,18 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
     * @param setTxQuertTimeout setTxQuertTimeout
     * @param queryTimeout queryTimeout
     * @param useTryLock useTryLock
+    * @throws ValidateException ValidateException
     */
    public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
       Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQuertTimeout, Long queryTimeout,
-      Long useTryLock)
+      Long useTryLock) throws ValidateException
    {
       super(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,
             xaResourceTimeout);
       this.setTxQuertTimeout = setTxQuertTimeout;
       this.queryTimeout = queryTimeout;
       this.useTryLock = useTryLock;
+      this.validate();
    }
 
    /**
@@ -147,6 +150,22 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    {
       return "TimeOutImpl [setTxQuertTimeout=" + setTxQuertTimeout + ", queryTimeout=" + queryTimeout +
              ", useTryLock=" + useTryLock + "]";
+   }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      if (this.allocationRetry != null && this.allocationRetry < 0)
+         throw new ValidateException("allocationRetry cannot be < 0");
+      if (this.blockingTimeoutMillis != null && this.blockingTimeoutMillis < 0)
+         throw new ValidateException("blockingTimeoutMillis cannot be < 0");
+      if (this.allocationRetryWaitMillis != null && this.allocationRetryWaitMillis < 0)
+         throw new ValidateException("allocationRetryWaitMillis cannot be < 0");
+      if (this.idleTimeoutMinutes != null && this.idleTimeoutMinutes < 0)
+         throw new ValidateException("idleTimeoutMinutes cannot be < 0");
+      if (this.xaResourceTimeout != null && this.xaResourceTimeout < 0)
+         throw new ValidateException("xaResourceTimeout cannot be < 0");
+
    }
 
 }

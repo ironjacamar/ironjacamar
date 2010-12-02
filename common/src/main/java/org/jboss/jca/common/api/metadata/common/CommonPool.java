@@ -22,6 +22,7 @@
 package org.jboss.jca.common.api.metadata.common;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
+import org.jboss.jca.common.api.metadata.ValidatableMetadata;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface CommonPool extends JCAMetadata
+public interface CommonPool extends JCAMetadata, ValidatableMetadata
 {
 
    /**

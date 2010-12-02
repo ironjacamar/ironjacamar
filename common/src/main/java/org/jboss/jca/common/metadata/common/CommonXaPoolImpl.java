@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
  *
@@ -45,8 +46,6 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
 
    private final Boolean noTxSeparatePool;
 
-
-
    /**
     * Create a new XaPoolImpl.
     *
@@ -59,10 +58,11 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @param padXid padXid
     * @param wrapXaDataSource wrapXaDataSource
     * @param noTxSeparatePool noTxSeparatePool
+    * @throws ValidateException ValidateException
     */
    public CommonXaPoolImpl(Integer minPoolSize, Integer maxPoolSize, Boolean prefill, Boolean useStrictMin,
       Boolean isSameRmOverride, Boolean interleaving, Boolean padXid, Boolean wrapXaDataSource,
-      Boolean noTxSeparatePool)
+      Boolean noTxSeparatePool) throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin);
       this.isSameRmOverride = isSameRmOverride;

@@ -24,6 +24,7 @@ package org.jboss.jca.common.metadata.ds;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,8 +52,9 @@ public class DatasourcesImpl implements DataSources
     *
     * @param datasource datasource
     * @param xaDataSource xaDataSource
+    * @throws ValidateException ValidateException
     */
-   public DatasourcesImpl(List<DataSource> datasource, List<XaDataSource> xaDataSource)
+   public DatasourcesImpl(List<DataSource> datasource, List<XaDataSource> xaDataSource) throws ValidateException
    {
       super();
       if (datasource != null)
@@ -73,6 +75,7 @@ public class DatasourcesImpl implements DataSources
       {
          this.xaDataSource = new ArrayList<XaDataSource>(0);
       }
+      this.validate();
    }
 
    /**
@@ -138,6 +141,20 @@ public class DatasourcesImpl implements DataSources
    public String toString()
    {
       return "DatasourcesImpl [datasource=" + datasource + ", xaDataSource=" + xaDataSource + "]";
+   }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      //always validate if all contetents are validating
+      for (DataSource ds : this.datasource)
+      {
+         ds.validate();
+      }
+      for (XaDataSource xads : this.xaDataSource)
+      {
+         xads.validate();
+      }
    }
 
 }
