@@ -564,10 +564,16 @@
       </fileset>
     </copy>
 
+    <copy todir="${build.dir}/instrumented">
+      <fileset dir="${build.dir}/adapters">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
+
     <cobertura-instrument todir="${build.dir}/instrumented"
                           datafile="${reports.dir}/cobertura/cobertura.ser">
       <fileset dir="${target.dir}">
-        <include name="*.jar" />
+        <include name="ironjacamar*.jar" />
       </fileset>
     </cobertura-instrument>
 
