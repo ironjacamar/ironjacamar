@@ -74,13 +74,13 @@ public class MergerTestCase
       try
       {
          //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("adapters/ra.xml")
+         File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("merger/adapters/ra.xml")
             .toURI());
          is = new FileInputStream(xmlFile);
          RaParser parser = new RaParser();
          Connector connector = parser.parse(is);
          is.close();
-         xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/postgres-ds.xml")
+         xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("merger/ds/postgres-ds.xml")
             .toURI());
          is = new FileInputStream(xmlFile);
          DsParser dsparser = new DsParser();
@@ -177,14 +177,14 @@ public class MergerTestCase
       try
       {
          //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("adapters/ra-xa.xml")
-            .toURI());
+         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("merger/adapters/ra-xa.xml").toURI());
          is = new FileInputStream(xmlFile);
          RaParser parser = new RaParser();
          Connector connector = parser.parse(is);
          is.close();
-         xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/postgres-xa-ds.xml")
-            .toURI());
+         xmlFile = new File(Thread.currentThread().getContextClassLoader()
+            .getResource("merger/ds/postgres-xa-ds.xml").toURI());
          is = new FileInputStream(xmlFile);
          DsParser dsparser = new DsParser();
          //when
@@ -229,11 +229,11 @@ public class MergerTestCase
 
          //then merged properties are presents
 
-         assertThat((List<ConfigProperty>) mergedProperties,
+         assertThat(
+            (List<ConfigProperty>) mergedProperties,
             hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.XADATASOURCEPROPERTIES,
-               "DatabaseName=database_name;User=user;ServerName=server_name;PortNumber=5432;"
-                  + "Password=password;")));
+               "DatabaseName=database_name;User=user;ServerName=server_name;PortNumber=5432;" + "Password=password;")));
 
          assertThat((List<ConfigProperty>) mergedProperties,
             hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
@@ -646,9 +646,8 @@ public class MergerTestCase
             is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged
-            .getResourceadapter()).getOutboundResourceadapter().getConnectionDefinitions().get(0)
-            .getConfigProperties();
+         List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
+            .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
          assertThat(conDefProps.size(), is(5));
          assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3, exConf4, exConf5));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
@@ -721,9 +720,8 @@ public class MergerTestCase
             is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged
-            .getResourceadapter()).getOutboundResourceadapter().getConnectionDefinitions().get(0)
-            .getConfigProperties();
+         List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
+            .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
          assertThat(conDefProps.size(), is(5));
          assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3, exConf4, exConf5));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
@@ -790,9 +788,8 @@ public class MergerTestCase
             is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged
-            .getResourceadapter()).getOutboundResourceadapter().getConnectionDefinitions().get(0)
-            .getConfigProperties();
+         List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
+            .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
          assertThat(conDefProps.size(), is(3));
          assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
@@ -859,9 +856,8 @@ public class MergerTestCase
             is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged
-            .getResourceadapter()).getOutboundResourceadapter().getConnectionDefinitions().get(0)
-            .getConfigProperties();
+         List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
+            .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
          assertThat(conDefProps.size(), is(3));
          assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
@@ -915,8 +911,9 @@ public class MergerTestCase
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(1));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
             .getConfigProperties().size(), is(1));
-         assertThat((List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects()
-            .get(0).getConfigProperties(), hasItem(expectedConfigProp));
+         assertThat(
+            (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+               .getConfigProperties(), hasItem(expectedConfigProp));
       }
       finally
       {
@@ -969,8 +966,9 @@ public class MergerTestCase
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(1));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
             .getConfigProperties().size(), is(2));
-         assertThat((List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects()
-            .get(0).getConfigProperties(), hasItems(expectedConfigProp, expectedConfigProp2));
+         assertThat(
+            (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+               .getConfigProperties(), hasItems(expectedConfigProp, expectedConfigProp2));
       }
       finally
       {
@@ -1020,8 +1018,9 @@ public class MergerTestCase
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(1));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
             .getConfigProperties().size(), is(1));
-         assertThat((List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects()
-            .get(0).getConfigProperties(), hasItem(expectedConfigProp));
+         assertThat(
+            (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+               .getConfigProperties(), hasItem(expectedConfigProp));
       }
       finally
       {
@@ -1071,8 +1070,9 @@ public class MergerTestCase
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(1));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
             .getConfigProperties().size(), is(1));
-         assertThat((List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects()
-            .get(0).getConfigProperties(), hasItem(expectedConfigProp));
+         assertThat(
+            (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+               .getConfigProperties(), hasItem(expectedConfigProp));
       }
       finally
       {
