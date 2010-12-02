@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
         "../../../tools/docbook/support/docbook-dtd/docbookx.dtd" [
-        <!ENTITY dedication SYSTEM "../../userguide/en/modules/dedication.xml">
-        <!ENTITY preface SYSTEM "../../userguide/en/modules/preface.xml">
-        <!ENTITY introduction SYSTEM "../../userguide/en/modules/introduction.xml">
+        <!ENTITY dedication SYSTEM "../../userguide/en-US/modules/dedication.xml">
+        <!ENTITY preface SYSTEM "../../userguide/en-US/modules/preface.xml">
+        <!ENTITY introduction SYSTEM "../../userguide/en-US/modules/introduction.xml">
         <!ENTITY building SYSTEM "modules/building.xml">
         <!ENTITY releases SYSTEM "modules/releases.xml">
         <!ENTITY issuetracking SYSTEM "modules/issuetracking.xml">

@@ -385,7 +385,7 @@
       </fileset>
     </move>
 
-    <delete dir="${build.dir}/en"/>
+    <delete dir="${build.dir}/en-US"/>
     
     <ant dir="api" inheritRefs="true" target="docs"/>
     <move todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec">
