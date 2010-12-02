@@ -54,14 +54,8 @@ class EmbeddedJCA implements Embedded
    /** ShrinkWrap deployments */
    private List<File> shrinkwrapDeployments;
 
-   /**
-    * Constructs an embedded JCA environment using
-    * the full JCA 1.6 profile
-    */
-   EmbeddedJCA()
-   {
-      this(true);
-   }
+   /** Started */
+   private boolean started;
 
    /**
     * Constructs an embedded JCA environment. If <code>fullProfile</code>
@@ -74,6 +68,7 @@ class EmbeddedJCA implements Embedded
    {
       this.fullProfile = fullProfile;
       this.shrinkwrapDeployments = null;
+      this.started = false;
    }
 
    /**
@@ -82,6 +77,9 @@ class EmbeddedJCA implements Embedded
     */
    public void startup() throws Throwable
    {
+      if (started)
+         throw new IllegalStateException("Container already started");
+
       List<String> order = new ArrayList<String>(3);
       order.add(".xml");
       order.add(".rar");
@@ -109,6 +107,8 @@ class EmbeddedJCA implements Embedded
          deploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
          deploy(EmbeddedJCA.class.getClassLoader(), "ds.xml");
       }
+
+      started = true;
    }
 
    /**
@@ -117,6 +117,9 @@ class EmbeddedJCA implements Embedded
     */
    public void shutdown() throws Throwable
    {
+      if (!started)
+         throw new IllegalStateException("Container not started");
+
       if (shrinkwrapDeployments != null && shrinkwrapDeployments.size() > 0)
       {
          List<File> copy = new ArrayList<File>(shrinkwrapDeployments);
@@ -136,6 +139,8 @@ class EmbeddedJCA implements Embedded
       }
 
       kernel.shutdown();
+
+      started = false;
    }
 
    /**
@@ -153,6 +158,9 @@ class EmbeddedJCA implements Embedded
       if (expectedType == null)
          throw new IllegalArgumentException("ExpectedType is null");
 
+      if (!started)
+         throw new IllegalStateException("Container not started");
+
       return kernel.getBean(name, expectedType);
    }
 
@@ -165,6 +173,9 @@ class EmbeddedJCA implements Embedded
    {
       if (url == null)
          throw new IllegalArgumentException("Url is null");      
+
+      if (!started)
+         throw new IllegalStateException("Container not started");
 
       kernel.getMainDeployer().deploy(url);
    }
@@ -181,6 +192,9 @@ class EmbeddedJCA implements Embedded
 
       if (!raa.getName().endsWith(".rar"))
          throw new IllegalArgumentException(raa.getName() + " doesn't end with .rar");      
+
+      if (!started)
+         throw new IllegalStateException("Container not started");
 
       InputStream is = raa.as(ZipExporter.class).exportZip();
 
@@ -256,6 +270,10 @@ class EmbeddedJCA implements Embedded
          throw new IllegalArgumentException("Name is null");
 
       URL url = cl.getResource(name);
+
+      if (url == null)
+         throw new IllegalArgumentException("Resource is null");
+
       kernel.getMainDeployer().deploy(url);
    }
 
@@ -269,6 +287,9 @@ class EmbeddedJCA implements Embedded
       if (url == null)
          throw new IllegalArgumentException("Url is null");      
 
+      if (!started)
+         throw new IllegalStateException("Container not started");
+
       kernel.getMainDeployer().undeploy(url);
    }
 
@@ -281,6 +302,9 @@ class EmbeddedJCA implements Embedded
    {
       if (raa == null)
          throw new IllegalArgumentException("Url is null");      
+
+      if (!started)
+         throw new IllegalStateException("Container not started");
 
       File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
       File raaFile = new File(parentDirectory, raa.getName());
