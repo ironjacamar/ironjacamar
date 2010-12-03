@@ -68,7 +68,8 @@ public class DsParserForValidatorExceptionTestCase
    {
 
       //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/unit/nodriver-ds.xml")
+      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+         .getResource("ds/unit/no-driver-class-ds.xml")
          .toURI());
       //when
       doParse(xmlFile);
@@ -88,7 +89,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/noconnectionurl-ds.xml").toURI());
+         .getResource("ds/unit/no-connection-url-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -106,7 +107,8 @@ public class DsParserForValidatorExceptionTestCase
    {
 
       //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/unit/nojndiname-ds.xml")
+      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+         .getResource("ds/unit/no-jndi-name-ds.xml")
          .toURI());
       //when
       doParse(xmlFile);
@@ -125,7 +127,8 @@ public class DsParserForValidatorExceptionTestCase
    {
 
       //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/unit/nopool-ds.xml")
+      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+         .getResource("ds/unit/no-pool-name-ds.xml")
          .toURI());
       //when
       doParse(xmlFile);
@@ -163,7 +166,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/allocationRetryNegative-ds.xml").toURI());
+         .getResource("ds/unit/allocation-retry-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -182,7 +185,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/allocationRetryWaitMillisNegative-ds.xml").toURI());
+         .getResource("ds/unit/allocation-retry-wait-millis-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -201,7 +204,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/BlockingTimeoutMillisNegative-ds.xml").toURI());
+         .getResource("ds/unit/blocking-timeout-millis-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -220,7 +223,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/IdleTimeoutMinutesNegative-ds.xml").toURI());
+         .getResource("ds/unit/idle-timeout-minutes-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -239,7 +242,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/noconnectionurl-ds.xml").toURI());
+         .getResource("ds/unit/no-connection-url-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -258,7 +261,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/queryTimeoutNegative-ds.xml").toURI());
+         .getResource("ds/unit/query-timeout-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -277,7 +280,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/useTryLockNegative-ds.xml").toURI());
+         .getResource("ds/unit/use-try-lock-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -296,7 +299,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/xaresourcetimeoutNegative-ds.xml").toURI());
+         .getResource("ds/unit/xa-resource-timeout-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -315,7 +318,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/preparedStatementCacheSizeNegative-ds.xml").toURI());
+         .getResource("ds/unit/prepared-statement-cache-size-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -334,7 +337,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/backgroundValidationMinutesNegative-ds.xml").toURI());
+         .getResource("ds/unit/background-validation-minutes-negative-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -353,7 +356,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/ExceptionSorterClassNameMissing-ds.xml").toURI());
+         .getResource("ds/unit/exception-sorter-class-name-missing-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -372,7 +375,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/StaleConnectionCheckerClassNameMissing-ds.xml").toURI());
+         .getResource("ds/unit/stale-connection-checker-class-name-missing-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
@@ -391,7 +394,7 @@ public class DsParserForValidatorExceptionTestCase
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/ValidationCheckerClassNameMissing-ds.xml").toURI());
+         .getResource("ds/unit/validation-checker-class-name-missing-ds.xml").toURI());
       //when
       doParse(xmlFile);
       //then throw ValidateException
