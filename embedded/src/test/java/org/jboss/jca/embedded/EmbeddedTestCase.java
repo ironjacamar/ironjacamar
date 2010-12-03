@@ -22,9 +22,6 @@
 
 package org.jboss.jca.embedded;
 
-import org.jboss.jca.embedded.Embedded;
-import org.jboss.jca.embedded.EmbeddedFactory;
-
 import java.net.URL;
 
 import org.jboss.logging.Logger;
