@@ -308,9 +308,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    private DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      Integer minPoolSize = null;
-      Integer maxPoolSize = null;
-      boolean prefill = true;
       String connectionUrl = null;
       String driverClass = null;
       String module = null;
