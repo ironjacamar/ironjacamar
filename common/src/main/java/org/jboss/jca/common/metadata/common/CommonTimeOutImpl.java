@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
+import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
  *
@@ -59,9 +60,10 @@ public class CommonTimeOutImpl implements CommonTimeOut
     * @param allocationRetry allocationRetry
     * @param allocationRetryWaitMillis allocationRetryWaitMillis
     * @param xaResourceTimeout xaResourceTimeout
+    * @throws ValidateException ValidateException
     */
    public CommonTimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
-      Long allocationRetryWaitMillis, Integer xaResourceTimeout)
+      Long allocationRetryWaitMillis, Integer xaResourceTimeout) throws ValidateException
    {
       super();
       this.blockingTimeoutMillis = blockingTimeoutMillis;
@@ -69,6 +71,7 @@ public class CommonTimeOutImpl implements CommonTimeOut
       this.allocationRetry = allocationRetry;
       this.allocationRetryWaitMillis = allocationRetryWaitMillis;
       this.xaResourceTimeout = xaResourceTimeout;
+      this.partialCommonValidate();
    }
 
    /**
@@ -193,6 +196,22 @@ public class CommonTimeOutImpl implements CommonTimeOut
       return "CommonTimeOutImpl [blockingTimeoutMillis=" + blockingTimeoutMillis + ", idleTimeoutMinutes=" +
              idleTimeoutMinutes + ", allocationRetry=" + allocationRetry + ", allocationRetryWaitMillis=" +
              allocationRetryWaitMillis + ", xaResourceTimeout=" + xaResourceTimeout + "]";
+   }
+
+
+   private void partialCommonValidate() throws ValidateException
+   {
+      if (this.allocationRetry != null && this.allocationRetry < 0)
+         throw new ValidateException("allocationRetry cannot be < 0");
+      if (this.blockingTimeoutMillis != null && this.blockingTimeoutMillis < 0)
+         throw new ValidateException("blockingTimeoutMillis cannot be < 0");
+      if (this.allocationRetryWaitMillis != null && this.allocationRetryWaitMillis < 0)
+         throw new ValidateException("allocationRetryWaitMillis cannot be < 0");
+      if (this.idleTimeoutMinutes != null && this.idleTimeoutMinutes < 0)
+         throw new ValidateException("idleTimeoutMinutes cannot be < 0");
+      if (this.xaResourceTimeout != null && this.xaResourceTimeout < 0)
+         throw new ValidateException("xaResourceTimeout cannot be < 0");
+
    }
 
 }

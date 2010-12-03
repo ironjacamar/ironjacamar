@@ -227,7 +227,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    }
 
    private CommonTimeOut parseTimeOut(XMLStreamReader reader, boolean isXa) throws XMLStreamException,
-      ParserException
+      ParserException, ValidateException
    {
       Long blockingTimeoutMillis = null;
       Long allocationRetryWaitMillis = null;

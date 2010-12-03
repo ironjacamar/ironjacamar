@@ -289,9 +289,9 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    public void validate() throws ValidateException
    {
       if (this.connectionUrl == null || this.connectionUrl.trim().length() == 0)
-         throw new ValidateException("connectionUrl is require in " + this.getClass().getCanonicalName());
+         throw new ValidateException("connectionUrl is required in " + this.getClass().getCanonicalName());
       if (this.driverClass == null || this.driverClass.trim().length() == 0)
-         throw new ValidateException("driverClass is require in " + this.getClass().getCanonicalName());
+         throw new ValidateException("driverClass is required in " + this.getClass().getCanonicalName());
 
    }
 }

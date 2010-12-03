@@ -155,16 +155,10 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    @Override
    public void validate() throws ValidateException
    {
-      if (this.allocationRetry != null && this.allocationRetry < 0)
-         throw new ValidateException("allocationRetry cannot be < 0");
-      if (this.blockingTimeoutMillis != null && this.blockingTimeoutMillis < 0)
-         throw new ValidateException("blockingTimeoutMillis cannot be < 0");
-      if (this.allocationRetryWaitMillis != null && this.allocationRetryWaitMillis < 0)
-         throw new ValidateException("allocationRetryWaitMillis cannot be < 0");
-      if (this.idleTimeoutMinutes != null && this.idleTimeoutMinutes < 0)
-         throw new ValidateException("idleTimeoutMinutes cannot be < 0");
-      if (this.xaResourceTimeout != null && this.xaResourceTimeout < 0)
-         throw new ValidateException("xaResourceTimeout cannot be < 0");
+      if (this.queryTimeout != null && this.queryTimeout < 0)
+         throw new ValidateException("queryTimeout cannot be < 0");
+      if (this.useTryLock != null && this.useTryLock < 0)
+         throw new ValidateException("useTryLock cannot be < 0");
 
    }
 

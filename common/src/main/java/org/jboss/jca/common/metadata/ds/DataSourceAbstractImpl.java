@@ -238,9 +238,9 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected void partialCommonValidation() throws ValidateException
    {
       if (this.jndiName == null)
-         throw new ValidateException("jndiName is require in " + this.getClass().getCanonicalName());
+         throw new ValidateException("jndiName is required in " + this.getClass().getCanonicalName());
       if (this.poolName == null)
-         throw new ValidateException("poolName is require in " + this.getClass().getCanonicalName());
+         throw new ValidateException("poolName is required in " + this.getClass().getCanonicalName());
 
       if (this.timeOut != null)
          this.timeOut.validate();
