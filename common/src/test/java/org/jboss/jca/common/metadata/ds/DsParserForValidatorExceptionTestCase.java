@@ -58,13 +58,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
     *
-    * shouldThrowalidateExceptionIfNoDriverHasBeenSpecified
+    * shouldThrowValidateExceptionIfNoDriverHasBeenSpecified
     *
     * @throws Exception test passes if a {@link ValidateException} has been
     * thrown
     */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfNoDriverHasBeenSpecified() throws Exception
+   public void shouldThrowValidateExceptionIfNoDriverHasBeenSpecified() throws Exception
    {
 
       //given
@@ -78,13 +78,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfNoConnectionUrlHasBeenSpecified
+   * shouldThrowValidateExceptionIfNoConnectionUrlHasBeenSpecified
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfNoConnectionUrlHasBeenSpecified() throws Exception
+   public void shouldThrowValidateExceptionIfNoConnectionUrlHasBeenSpecified() throws Exception
    {
 
       //given
@@ -97,13 +97,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfNoJndiNameHasBeenSpecified
+   * shouldThrowValidateExceptionIfNoJndiNameHasBeenSpecified
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfNoJndiNameHasBeenSpecified() throws Exception
+   public void shouldThrowValidateExceptionIfNoJndiNameHasBeenSpecified() throws Exception
    {
 
       //given
@@ -117,13 +117,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfNoPoolHasBeenSpecified
+   * shouldThrowValidateExceptionIfNoPoolHasBeenSpecified
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfNoPoolHasBeenSpecified() throws Exception
+   public void shouldThrowValidateExceptionIfNoPoolHasBeenSpecified() throws Exception
    {
 
       //given
@@ -155,13 +155,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfallocationRetryNegative
+   * shouldThrowValidateExceptionIfallocationRetryNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfallocationRetryNegative() throws Exception
+   public void shouldThrowValidateExceptionIfallocationRetryNegative() throws Exception
    {
 
       //given
@@ -174,13 +174,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfallocationRetryWaitMillisNegative
+   * shouldThrowValidateExceptionIfallocationRetryWaitMillisNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfallocationRetryWaitMillisNegative() throws Exception
+   public void shouldThrowValidateExceptionIfallocationRetryWaitMillisNegative() throws Exception
    {
 
       //given
@@ -193,13 +193,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfBlockingTimeoutMillisNegative
+   * shouldThrowValidateExceptionIfBlockingTimeoutMillisNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfBlockingTimeoutMillisNegative() throws Exception
+   public void shouldThrowValidateExceptionIfBlockingTimeoutMillisNegative() throws Exception
    {
 
       //given
@@ -212,13 +212,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfIdleTimeoutMinutesNegative
+   * shouldThrowValidateExceptionIfIdleTimeoutMinutesNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfIdleTimeoutMinutesNegative() throws Exception
+   public void shouldThrowValidateExceptionIfIdleTimeoutMinutesNegative() throws Exception
    {
 
       //given
@@ -231,13 +231,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfnoconnectionurl
+   * shouldThrowValidateExceptionIfnoconnectionurl
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfnoconnectionurl() throws Exception
+   public void shouldThrowValidateExceptionIfnoconnectionurl() throws Exception
    {
 
       //given
@@ -250,13 +250,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfqueryTimeoutNegative
+   * shouldThrowValidateExceptionIfqueryTimeoutNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfqueryTimeoutNegative() throws Exception
+   public void shouldThrowValidateExceptionIfqueryTimeoutNegative() throws Exception
    {
 
       //given
@@ -269,13 +269,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfuseTryLockNegative
+   * shouldThrowValidateExceptionIfuseTryLockNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfuseTryLockNegative() throws Exception
+   public void shouldThrowValidateExceptionIfuseTryLockNegative() throws Exception
    {
 
       //given
@@ -288,13 +288,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfxaresourcetimeoutNegative
+   * shouldThrowValidateExceptionIfxaresourcetimeoutNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfxaresourcetimeoutNegative() throws Exception
+   public void shouldThrowValidateExceptionIfxaresourcetimeoutNegative() throws Exception
    {
 
       //given
@@ -307,13 +307,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfpreparedStatementCacheSizeNegative
+   * shouldThrowValidateExceptionIfpreparedStatementCacheSizeNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfpreparedStatementCacheSizeNegative() throws Exception
+   public void shouldThrowValidateExceptionIfpreparedStatementCacheSizeNegative() throws Exception
    {
 
       //given
@@ -326,13 +326,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfbackgroundValidationMinutesNegative
+   * shouldThrowValidateExceptionIfbackgroundValidationMinutesNegative
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfbackgroundValidationMinutesNegative() throws Exception
+   public void shouldThrowValidateExceptionIfbackgroundValidationMinutesNegative() throws Exception
    {
 
       //given
@@ -345,13 +345,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfExceptionSorterClassNameMissing
+   * shouldThrowValidateExceptionIfExceptionSorterClassNameMissing
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfExceptionSorterClassNameMissing() throws Exception
+   public void shouldThrowValidateExceptionIfExceptionSorterClassNameMissing() throws Exception
    {
 
       //given
@@ -364,13 +364,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfStaleConnectionCheckerClassNameMissing
+   * shouldThrowValidateExceptionIfStaleConnectionCheckerClassNameMissing
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfStaleConnectionCheckerClassNameMissing() throws Exception
+   public void shouldThrowValidateExceptionIfStaleConnectionCheckerClassNameMissing() throws Exception
    {
 
       //given
@@ -383,13 +383,13 @@ public class DsParserForValidatorExceptionTestCase
 
    /**
    *
-   * shouldThrowalidateExceptionIfValidationCheckerClassNameMissing
+   * shouldThrowValidateExceptionIfValidationCheckerClassNameMissing
    *
    * @throws Exception test passes if a {@link ValidateException} has been
    * thrown
    */
    @Test(expected = ValidateException.class)
-   public void shouldThrowalidateExceptionIfValidationCheckerClassNameMissing() throws Exception
+   public void shouldThrowValidateExceptionIfValidationCheckerClassNameMissing() throws Exception
    {
 
       //given
