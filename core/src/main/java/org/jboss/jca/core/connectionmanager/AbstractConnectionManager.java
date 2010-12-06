@@ -69,13 +69,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    private static final String SECURITY_MGR_PATH = "java:/jaas/";
    
    /** The pool */
-   private Pool pool;
+   private transient Pool pool;
    
    /** Security domain jndi name */
    private String securityDomainJndiName;
    
    /** SubjectFactory */
-   private SubjectFactory subjectFactory;
+   private transient SubjectFactory subjectFactory;
    
    /** Number of retry to allocate connection */
    private int allocationRetry;
@@ -87,7 +87,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    private AtomicBoolean shutdown = new AtomicBoolean(false);
    
    /** Cached connection manager */
-   private CachedConnectionManager cachedConnectionManager;
+   private transient CachedConnectionManager cachedConnectionManager;
    
    /** Jndi name */
    private String jndiName;
