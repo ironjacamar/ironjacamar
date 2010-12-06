@@ -145,13 +145,35 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    public void validate() throws ValidateException
    {
       if (this.backgroundValidationMinutes != null && this.backgroundValidationMinutes < 0)
-         throw new ValidateException("backgroundValidationMinutes cannot be < 0");
+         throw new ValidateException("backgroundValidationMinutes (xml attribure " +
+                                     Validation.Tag.BACKGROUNDVALIDATIONMINUTES + ") cannot be < 0");
       if (this.validConnectionChecker != null)
-         this.validConnectionChecker.validate();
+         try {
+            this.validConnectionChecker.validate();
+         } catch (ValidateException ve) {
+            throw new ValidateException("validCoonnectionChecker (xml tag" + Validation.Tag.VALIDCONNECTIONCHECKER +
+                                        ") not valid. See the cause exception for more details", ve);
+         }
       if (this.exceptionSorter != null)
-         this.exceptionSorter.validate();
+         try
+         {
+            this.exceptionSorter.validate();
+         }
+         catch (ValidateException ve)
+         {
+            throw new ValidateException("exceptionSorter (xml tag" + Validation.Tag.EXCEPTIONSORTER +
+                                        ") not valid. See the cause exception for more details", ve);
+         }
       if (this.staleConnectionChecker != null)
-         this.staleConnectionChecker.validate();
+         try
+         {
+            this.staleConnectionChecker.validate();
+         }
+         catch (ValidateException ve)
+         {
+            throw new ValidateException("staleConnectionChecker (xml tag" + Validation.Tag.STALECONNECTIONCHECKER +
+                                        ") not valid. See the cause exception for more details", ve);
+         }
    }
 
    @Override

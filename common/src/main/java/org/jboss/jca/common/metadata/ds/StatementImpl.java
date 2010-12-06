@@ -146,7 +146,8 @@ public class StatementImpl implements Statement
    public void validate() throws ValidateException
    {
       if (this.preparedStatementsCacheSize != null && this.preparedStatementsCacheSize < 0)
-         throw new ValidateException("preparedStatementsCacheSize cannot be < 0");
+         throw new ValidateException("preparedStatementsCacheSize (xml attribure " + Tag.PREPAREDSTATEMENTCACHESIZE +
+                                     ") cannot be < 0");
    }
 }
 

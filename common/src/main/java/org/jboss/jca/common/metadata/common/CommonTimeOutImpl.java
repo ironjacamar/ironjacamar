@@ -202,15 +202,18 @@ public class CommonTimeOutImpl implements CommonTimeOut
    private void partialCommonValidate() throws ValidateException
    {
       if (this.allocationRetry != null && this.allocationRetry < 0)
-         throw new ValidateException("allocationRetry cannot be < 0");
+         throw new ValidateException("allocationRetry (xml attribure " + Tag.ALLOCATIONRETRY + ") cannot be < 0");
       if (this.blockingTimeoutMillis != null && this.blockingTimeoutMillis < 0)
-         throw new ValidateException("blockingTimeoutMillis cannot be < 0");
+         throw new ValidateException("blockingTimeoutMillis (xml attribure " + Tag.BLOCKINGTIMEOUTMILLIS +
+                                     ") cannot be < 0");
       if (this.allocationRetryWaitMillis != null && this.allocationRetryWaitMillis < 0)
-         throw new ValidateException("allocationRetryWaitMillis cannot be < 0");
+         throw new ValidateException("allocationRetryWaitMillis (xml attribure " + Tag.ALLOCATIONRETRYWAITMILLIS +
+                                     ") cannot be < 0");
       if (this.idleTimeoutMinutes != null && this.idleTimeoutMinutes < 0)
-         throw new ValidateException("idleTimeoutMinutes cannot be < 0");
+         throw new ValidateException("idleTimeoutMinutes (xml attribure " + Tag.IDLETIMEOUTMINUTES +
+                                     ") cannot be < 0");
       if (this.xaResourceTimeout != null && this.xaResourceTimeout < 0)
-         throw new ValidateException("xaResourceTimeout cannot be < 0");
+         throw new ValidateException("xaResourceTimeout (xml attribure " + Tag.XARESOURCETIMEOUT + ") cannot be < 0");
 
    }
 

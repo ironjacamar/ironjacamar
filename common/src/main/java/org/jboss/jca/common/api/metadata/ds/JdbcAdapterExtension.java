@@ -250,7 +250,8 @@ public final class JdbcAdapterExtension implements JCAMetadata, ValidatableMetad
    public void validate() throws ValidateException
    {
       if (this.className == null || className.trim().length() == 0)
-         throw new ValidateException("connectionUrl is required in " + this.getClass().getCanonicalName());
+         throw new ValidateException("className (xml attribute " + Attribute.CLASS_NAME + ") is required in " +
+                                     this.getClass().getCanonicalName());
    }
 
 }

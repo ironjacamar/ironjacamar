@@ -125,9 +125,9 @@ public class CommonPoolImpl implements CommonPool
    public void validate() throws ValidateException
    {
       if (this.maxPoolSize != null && this.maxPoolSize < 0)
-         throw new ValidateException("maxPoolSize cannot be < 0");
+         throw new ValidateException("maxPoolSize (xml tag " + Tag.MAXPOOLSIZE + ") cannot be < 0");
       if (this.minPoolSize != null && this.minPoolSize < 0)
-         throw new ValidateException("minPoolSize cannot be < 0");
+         throw new ValidateException("minPoolSize (xml tag " + Tag.MIN_POOL_SIZE + ") cannot be < 0");
 
    }
 

@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
+import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
@@ -238,9 +239,11 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected void partialCommonValidation() throws ValidateException
    {
       if (this.jndiName == null)
-         throw new ValidateException("jndiName is required in " + this.getClass().getCanonicalName());
+         throw new ValidateException("jndiName (xml attribure " + DataSource.Attribute.JNDINAME +
+                                     ") is required in " + this.getClass().getCanonicalName());
       if (this.poolName == null)
-         throw new ValidateException("poolName is required in " + this.getClass().getCanonicalName());
+         throw new ValidateException("poolName (xml attribure " + DataSource.Attribute.POOL_NAME +
+                                     ") is required in " + this.getClass().getCanonicalName());
 
       if (this.timeOut != null)
          this.timeOut.validate();

@@ -156,9 +156,9 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    public void validate() throws ValidateException
    {
       if (this.queryTimeout != null && this.queryTimeout < 0)
-         throw new ValidateException("queryTimeout cannot be < 0");
+         throw new ValidateException("queryTimeout (xml attribure " + TimeOut.Tag.QUERYTIMEOUT + ") cannot be < 0");
       if (this.useTryLock != null && this.useTryLock < 0)
-         throw new ValidateException("useTryLock cannot be < 0");
+         throw new ValidateException("useTryLock (xml attribure " + TimeOut.Tag.USETRYLOCK + ") cannot be < 0");
 
    }
 
