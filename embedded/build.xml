@@ -76,7 +76,7 @@
     <mkdir dir="${build.embedded.dir}/impl/META-INF"/>
     <mkdir dir="${build.embedded.dir}/impl/META-INF/services"/>
     <copy todir="${build.embedded.dir}/impl/META-INF/services">
-      <fileset dir="src/main/resources/services" includes="*"/>
+      <fileset dir="src/main/resources/META-INF/services" includes="*"/>
     </copy>
 
     <jar destfile="${target.dir}/${name}-embedded-arquillian.jar"

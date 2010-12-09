@@ -5,24 +5,23 @@
 	<classpathentry kind="src" output="eclipse-target/tests-classes" path="src/test/java"/>
 	<classpathentry excluding="**/*.java" kind="src" output="eclipse-target/tests-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-transaction-api.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-threads.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-integration.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-logging-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/validation-api.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-metadata-rar.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-common-core.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-jaspi-api.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jbosssx.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-security-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-security-spi-bare.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-mdr.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jnpserver.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/test/junit.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-embedded"/>
-	<classpathentry kind="var" path="JBJCA_LIB/embedded/shrinkwrap-api.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-integration.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-jaspi-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-security-spi-bare.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-security-spi.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-threads.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbosssx.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jnpserver.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/validation-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/mockito-all.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/h2.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

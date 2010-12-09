@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>jboss-jca-common</name>
+	<name>ironjacamar-common</name>
 	<comment>JBoss JCA Common</comment>
 	<projects>
 	</projects>

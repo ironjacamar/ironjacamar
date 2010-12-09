@@ -3,14 +3,10 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/papaki-core.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-metadata-common.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-metadata-rar.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-logging-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jbossxb.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-mdr.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/sjc/fungal.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-common-core.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/papaki-core.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

@@ -1,9 +1,11 @@
-.project
+#.project
 .settings
-.classpath
+#.classpath
 standalone/**
 build.debug.xml
 # /
+**/bin
+**/eclipse-target
 /build
 /target
 /reports

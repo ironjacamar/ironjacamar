@@ -3,8 +3,8 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
-	<classpathentry kind="var" path="JBJCA_LIB/sjc/fungal.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-common"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

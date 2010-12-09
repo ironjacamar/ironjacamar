@@ -5,16 +5,24 @@
 	<classpathentry kind="src" output="eclipse-target/tests-classes" path="src/test/java"/>
 	<classpathentry excluding="**/*.java" kind="src" output="eclipse-target/tests-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-common"/>
-	<classpathentry kind="var" path="JBJCA_LIB/sjc/fungal.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/embedded/shrinkwrap-api.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-api.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-junit.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-protocol-local.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/arquillian/arquillian-testenricher-resource.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/common/jboss-logging-spi.jar"/>
-	<classpathentry kind="var" path="JBJCA_LIB/test/junit.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-common"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-junit.jar" sourcepath="/dati/project/RH/arquillian/impl-base/src/main/java"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-protocol-local.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-spi.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-testenricher-resource.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-impl-base.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jnpserver.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjts-integration.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjts.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-integration.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-stdio.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/hibernate-validator.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
