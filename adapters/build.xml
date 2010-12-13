@@ -41,7 +41,7 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
-           excludes="**/jdk6/**">
+           excludes="**/jdk6/**,**/jdk7/**">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -70,7 +70,7 @@
     </javac> 
   </target>
 
-  <target name="compile" depends="compile-base,compile-jdk6">
+  <target name="compile" depends="compile-base,compile-jdk6,compile-jdk7">
   </target>
 
   <!-- ================================= 
