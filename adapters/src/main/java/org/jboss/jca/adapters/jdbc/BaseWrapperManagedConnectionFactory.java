@@ -29,6 +29,7 @@ import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
 import org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker;
 import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+import org.jboss.jca.adapters.jdbc.util.Injection;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -56,8 +57,6 @@ import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
-
-import com.github.fungal.api.util.Injection;
 
 /**
  * BaseWrapperManagedConnectionFactory
@@ -774,7 +773,7 @@ public abstract class BaseWrapperManagedConnectionFactory
                Injection injection = new Injection();
                for (Entry<Object, Object> prop : exceptionSorterProps.entrySet())
                {
-                  injection.inject(null, (String) prop.getKey(), (String) prop.getValue(), exceptionSorter);
+                  injection.inject(exceptionSorter, (String)prop.getKey(), (String)prop.getValue());
                }
                return exceptionSorter.isExceptionFatal(e);
             }
@@ -814,7 +813,7 @@ public abstract class BaseWrapperManagedConnectionFactory
             Injection injection = new Injection();
             for (Entry<Object, Object> prop : validConnectionCheckerProps.entrySet())
             {
-               injection.inject(null, (String) prop.getKey(), (String) prop.getValue(), connectionChecker);
+               injection.inject(connectionChecker, (String)prop.getKey(), (String)prop.getValue());
             }
             return connectionChecker.isValidConnection(c);
          }
@@ -857,7 +856,7 @@ public abstract class BaseWrapperManagedConnectionFactory
             Injection injection = new Injection();
             for (Entry<Object, Object> prop : staleConnectionCheckerProps.entrySet())
             {
-               injection.inject(null, (String) prop.getKey(), (String) prop.getValue(), staleConnectionChecker);
+               injection.inject(staleConnectionChecker, (String)prop.getKey(), (String)prop.getValue());
             }
             return staleConnectionChecker.isStaleConnection(e);
          }

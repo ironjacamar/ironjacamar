@@ -22,7 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc;
 
-import org.jboss.jca.adapters.util.LRUCachePolicy;
+import org.jboss.jca.adapters.jdbc.util.LRUCachePolicy;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

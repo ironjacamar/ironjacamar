@@ -143,8 +143,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   }
 
                   if (setValue)
-                     injector.inject(cpmd.getConfigPropertyType().getValue(), cpmd.getConfigPropertyName().getValue(),
-                                     cpmd.getConfigPropertyValue().getValue(), o);
+                     injector.inject(o, cpmd.getConfigPropertyName().getValue(),
+                                     cpmd.getConfigPropertyValue().getValue(), cpmd.getConfigPropertyType().getValue());
                }
             }
          }

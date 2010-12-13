@@ -232,8 +232,8 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
             for (ConfigProperty cpmd : configs)
             {
                if (cpmd.isValueSet())
-                  injector.inject(cpmd.getConfigPropertyType().getValue(), cpmd.getConfigPropertyName().getValue(),
-                     cpmd.getConfigPropertyValue().getValue(), o);
+                  injector.inject(o, cpmd.getConfigPropertyName().getValue(),
+                                  cpmd.getConfigPropertyValue().getValue(), cpmd.getConfigPropertyType().getValue());
             }
          }
 
