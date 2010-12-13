@@ -31,7 +31,7 @@
   <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile">
+  <target name="compile-base">
     <mkdir dir="${build.adapters.dir}" />
     <mkdir dir="${build.adapters.dir}/impl" />
 
@@ -40,9 +40,37 @@
            classpathref="sjc.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
+           optimize="${javac.optimize}"
+           excludes="**/jdk6/**">
       <compilerarg value="-Xlint"/>
     </javac> 
+  </target>
+
+  <target name="compile-jdk6" unless="HAVE_JDK_1.7">
+    <javac srcdir="src/main"
+           destdir="${build.adapters.dir}/impl"
+           classpathref="sjc.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includes="**/jdk6/**">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+  </target>
+
+  <target name="compile-jdk7" if="HAVE_JDK_1.7">
+    <javac srcdir="src/main"
+           destdir="${build.adapters.dir}/impl"
+           classpathref="sjc.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includes="**/jdk7/**">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+  </target>
+
+  <target name="compile" depends="compile-base,compile-jdk6">
   </target>
 
   <!-- ================================= 

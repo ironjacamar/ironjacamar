@@ -28,6 +28,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 
 import javax.naming.Reference;
 import javax.resource.Referenceable;
@@ -96,6 +97,14 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    public void setLoginTimeout(int param1) throws SQLException
    {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException
+   {
+      throw new SQLFeatureNotSupportedException();
    }
 
    /**
