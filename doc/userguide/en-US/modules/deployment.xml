@@ -58,7 +58,7 @@ copy example.rar ironjacamar-1.0.0\deploy
        file in the <code>deploy/</code> directory - f.ex. <code>deploy/example-ra.xml</code>. The format of the XML 
        document is defined by the <code>resource-adapters_1_0.xsd</code> - f.ex</para>
 
-     <programlisting>
+     <programlisting language="xml">
 <![CDATA[
 <resource-adapters>
   <resource-adapter>

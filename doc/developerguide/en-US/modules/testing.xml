@@ -213,7 +213,7 @@ org.jboss.jca.core.workmanager
         <ulink url="http://mockito.googlecode.com">Mockito</ulink> framework to verify class and method behaviors.
       </para>
       <para>An example:</para>
-      <programlisting>
+      <programlisting language="java">
 @Test
 public void printFailuresLogShouldReturnNotEmptyStringForWarning() throws Throwable
 {

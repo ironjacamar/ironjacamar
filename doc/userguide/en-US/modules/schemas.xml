@@ -5,7 +5,7 @@
   <section id="jca16">
     <title>Java EE Connector Architecture 1.6</title>
 
-    <programlisting>
+    <programlisting language="xml">
 <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
@@ -1253,7 +1253,7 @@
   <section id="jca15">
     <title>Java EE Connector Architecture 1.5</title>
 
-    <programlisting>
+    <programlisting language="xml">
 <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
@@ -2238,7 +2238,7 @@
   <section id="jca10">
     <title>Java EE Connector Architecture 1.0</title>
 
-    <programlisting>
+    <programlisting language="xml">
 <![CDATA[
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
@@ -2715,7 +2715,7 @@ standard information into the standard deployment descriptor.
   <section id="ironjacamar10">
     <title>IronJacamar 1.0</title>
 
-    <programlisting>
+    <programlisting language="xml">
 <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
@@ -3153,7 +3153,7 @@ standard information into the standard deployment descriptor.
   <section id="ra10">
     <title>Resource adapters 1.0</title>
 
-    <programlisting>
+    <programlisting language="xml">
 <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
@@ -3609,7 +3609,7 @@ standard information into the standard deployment descriptor.
   <section id="ds10">
     <title>Datasources 1.0</title>
 
-    <programlisting>
+    <programlisting language="xml">
 <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">

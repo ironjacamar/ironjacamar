@@ -59,7 +59,7 @@ config/bootstrap/jca.xml
           <para>The configuration of the resource adapter deployer chain is handled
             by a <code>org.jboss.jca.deployers.fungal.RAConfiguration</code> bean.</para>
 
-          <programlisting>
+          <programlisting language="xml">
 <![CDATA[
 <bean name="RAConfiguration"
       class="org.jboss.jca.deployers.fungal.RAConfiguration">
@@ -67,10 +67,16 @@ config/bootstrap/jca.xml
   <property name="ArchiveValidationFailOnWarn">false</property>
   <property name="ArchiveValidationFailOnError">true</property>
   <property name="BeanValidation">true</property>
-  <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
-  <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
+  <property name="PrintStream">
+    <inject bean="JBossStdioContext" property="Out"/>
+  </property>
+  <property name="DefaultBootstrapContext">
+    <inject bean="DefaultBootstrapContext"/>
+  </property>
   <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
-  <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
+  <property name="TransactionManager">
+    <inject bean="RealTransactionManager"/>
+  </property>
   <property name="MetadataRepository"><inject bean="MDR"/></property>
 </bean>
  ]]>
@@ -81,7 +87,7 @@ config/bootstrap/jca.xml
             <title>Resource adapter deployer configuration</title>
             <tgroup cols="3" align="left" colsep="1" rowsep="1">
               <colspec colname="c1" colwidth="2*"/>
-              <colspec colname="c2"/>
+              <colspec colname="c2" colwidth="2*"/>
               <colspec colname="c3" colwidth="3*"/>
               <thead>
                 <row>
@@ -100,7 +106,7 @@ config/bootstrap/jca.xml
                   </entry>
                 </row>
                 <row>
-                  <entry><code>ArchiveValidationFailOnWarn</code></entry>
+                  <entry><code>ArchiveValidation&#x200B;FailOnWarn</code></entry>
                   <entry><code>boolean</code></entry>
                   <entry>
                     Should an archive validation warning report fail the deployment.
@@ -108,7 +114,7 @@ config/bootstrap/jca.xml
                   </entry>
                 </row>
                 <row>
-                  <entry><code>ArchiveValidationFailOnError</code></entry>
+                  <entry><code>ArchiveValidation&#x200B;FailOnError</code></entry>
                   <entry><code>boolean</code></entry>
                   <entry>
                     Should an archive validation error report fail the deployment.
@@ -124,15 +130,15 @@ config/bootstrap/jca.xml
                   </entry>
                 </row>
                 <row>
-                  <entry><code>DefaultBootstrapContext</code></entry>
-                  <entry><code>org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext</code></entry>
+                  <entry><code>DefaultBootstrap&#x200B;Context</code></entry>
+                  <entry><code>org.jboss.jca.&#x200B;core.api.bootstrap.&#x200B;CloneableBootstrap&#x200B;Context</code></entry>
                   <entry>
                     Specifies the default bootstrap context for resource adapters
                   </entry>
                 </row>
                 <row>
                   <entry><code>BootstrapContexts</code></entry>
-                  <entry><code>Map&lt;String, org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext&gt;</code></entry>
+                  <entry><code>Map&lt;String, &#x200B;org.jboss.jca.&#x200B;core.api.bootstrap.&#x200B;CloneableBootstrap&#x200B;Context&gt;</code></entry>
                   <entry>
                     Bootstrap context map (unique name to a cloneable bootstrap context) which allows
                     developers to bind (through <code>jboss-ra.xml</code>) their resource adapter to
@@ -148,7 +154,7 @@ config/bootstrap/jca.xml
                 </row>
                 <row>
                   <entry><code>MetadataRepository</code></entry>
-                  <entry><code>org.jboss.jca.core.spi.mdr.MetadataRepository</code></entry>
+                  <entry><code>org.jboss.jca.&#x200B;core.spi.mdr.&#x200B;MetadataRepository</code></entry>
                   <entry>
                     The metadata repository
                   </entry>
@@ -164,7 +170,7 @@ config/bootstrap/jca.xml
                 </row>
                 <row>
                   <entry><code>JndiStrategy</code></entry>
-                  <entry><code>org.jboss.jca.core.spi.naming.JndiStrategy</code></entry>
+                  <entry><code>org.jboss.jca.&#x200B;core.spi.naming.&#x200B;JndiStrategy</code></entry>
                   <entry>
                     Specifies the JNDI strategy policy for binding the connection factories into
                     the naming environment
@@ -199,7 +205,7 @@ config/bootstrap/jca.xml
           <para>The initial deployer for resource adapter archives is handled
             by a <code>org.jboss.jca.deployers.fungal.RADeployer</code> bean.</para>
 
-          <programlisting>
+          <programlisting language="xml">
 <![CDATA[
 <bean name="RADeployer"
       interface="com.github.fungal.spi.deployers.Deployer" 
@@ -219,7 +225,7 @@ config/bootstrap/jca.xml
             <title>Resource adapter deployer</title>
             <tgroup cols="3" align="left" colsep="1" rowsep="1">
               <colspec colname="c1" colwidth="2*"/>
-              <colspec colname="c2"/>
+              <colspec colname="c2" colwidth="2*"/>
               <colspec colname="c3" colwidth="3*"/>
               <thead>
                 <row>
@@ -231,7 +237,7 @@ config/bootstrap/jca.xml
               <tbody>
                 <row>
                   <entry><code>Configuration</code></entry>
-                  <entry><code>org.jboss.jca.deployers.fungal.RAConfiguration</code></entry>
+                  <entry><code>org.jboss.jca.&#x200B;deployers.fungal.&#x200B;RAConfiguration</code></entry>
                   <entry>
                     The configuration for the deployer
                   </entry>
@@ -250,7 +256,7 @@ config/bootstrap/jca.xml
           
           <para>The deployment descriptor is defined by the <code>resource-adapters-1_0.xsd</code> schema.</para>
 
-          <programlisting>
+          <programlisting language="xml">
 <![CDATA[
 <bean name="RaXmlDeployer"
       interface="com.github.fungal.spi.deployers.Deployer" 
@@ -270,7 +276,7 @@ config/bootstrap/jca.xml
             <title>Resource adapter metadata deployer</title>
             <tgroup cols="3" align="left" colsep="1" rowsep="1">
               <colspec colname="c1" colwidth="2*"/>
-              <colspec colname="c2"/>
+              <colspec colname="c2" colwidth="2*"/>
               <colspec colname="c3" colwidth="3*"/>
               <thead>
                 <row>
@@ -282,7 +288,7 @@ config/bootstrap/jca.xml
               <tbody>
                 <row>
                   <entry><code>Configuration</code></entry>
-                  <entry><code>org.jboss.jca.deployers.fungal.RAConfiguration</code></entry>
+                  <entry><code>org.jboss.jca.&#x200B;deployers.fungal.&#x200B;RAConfiguration</code></entry>
                   <entry>
                     The configuration for the deployer
                   </entry>
@@ -299,7 +305,7 @@ config/bootstrap/jca.xml
           <para>The deployer chain features an activator for resource adapter archives is handled
             by the <code>org.jboss.jca.deployers.fungal.RAActivator</code> bean.</para>
 
-          <programlisting>
+          <programlisting language="xml">
 <![CDATA[
 <bean name="RAActivator" 
       class="org.jboss.jca.deployers.fungal.RAActivator">
@@ -325,7 +331,7 @@ config/bootstrap/jca.xml
             <title>Resource adapter activator</title>
             <tgroup cols="3" align="left" colsep="1" rowsep="1">
               <colspec colname="c1" colwidth="2*"/>
-              <colspec colname="c2"/>
+              <colspec colname="c2" colwidth="2*"/>
               <colspec colname="c3" colwidth="3*"/>
               <thead>
                 <row>
@@ -337,7 +343,7 @@ config/bootstrap/jca.xml
               <tbody>
                 <row>
                   <entry><code>Configuration</code></entry>
-                  <entry><code>org.jboss.jca.deployers.fungal.RAConfiguration</code></entry>
+                  <entry><code>org.jboss.jca.&#x200B;deployers.fungal.&#x200B;RAConfiguration</code></entry>
                   <entry>
                     The configuration for the deployer
                   </entry>
@@ -351,7 +357,7 @@ config/bootstrap/jca.xml
                 </row>
                 <row>
                   <entry><code>Kernel</code></entry>
-                  <entry><code>com.github.fungal.api.Kernel</code></entry>
+                  <entry><code>com.github.fungal.&#x200B;api.Kernel</code></entry>
                   <entry>
                     The kernel instance
                   </entry>
@@ -413,7 +419,7 @@ username2=role3,role4
         <para>The user/roles setup can be configured through the <code>UsersRoles</code> bean in the 
           <code>config/bootstrap/jca.xml</code> file.</para>
         
-        <programlisting>
+        <programlisting language="xml">
           <![CDATA[
 <!-- Users / roles -->
 <bean name="UsersRoles"
@@ -446,7 +452,7 @@ config/bootstrap/ds.xml
         <title>DsXmlDeployer</title>
         <tgroup cols="3" align="left" colsep="1" rowsep="1">
           <colspec colname="c1" colwidth="2*"/>
-          <colspec colname="c2"/>
+          <colspec colname="c2" colwidth="2*"/>
           <colspec colname="c3" colwidth="3*"/>
           <thead>
             <row>
@@ -472,21 +478,21 @@ config/bootstrap/ds.xml
             </row>
             <row>
               <entry><code>TransactionManager</code></entry>
-              <entry><code>javax.transaction.TransactionManager</code></entry>
+              <entry><code>javax.transaction.&#x200B;TransactionManager</code></entry>
               <entry>
                 The transaction manager
               </entry>
             </row>
             <row>
               <entry><code>MetadataRepository</code></entry>
-              <entry><code>org.jboss.jca.core.spi.mdr.MetadataRepository</code></entry>
+              <entry><code>org.jboss.jca.&#x200B;core.spi.mdr.&#x200B;MetadataRepository</code></entry>
               <entry>
                 The metadata repository
               </entry>
             </row>
             <row>
               <entry><code>Kernel</code></entry>
-              <entry><code>com.github.fungal.api.Kernel</code></entry>
+              <entry><code>com.github.fungal.&#x200B;api.Kernel</code></entry>
               <entry>
                 The kernel
               </entry>
@@ -521,7 +527,7 @@ system/web.xml
 
       <para>file.</para>
 
-      <programlisting>
+      <programlisting language="xml">
 <![CDATA[
 <bean name="WebServer" class="org.jboss.jca.web.WebServer">
   <property name="Host">${iron.jacamar.bindaddress:localhost}</property>
@@ -535,7 +541,7 @@ system/web.xml
         <title>Web server</title>
         <tgroup cols="3" align="left" colsep="1" rowsep="1">
           <colspec colname="c1" colwidth="2*"/>
-          <colspec colname="c2"/>
+          <colspec colname="c2" colwidth="2*"/>
           <colspec colname="c3" colwidth="3*"/>
           <thead>
             <row>
@@ -563,7 +569,7 @@ system/web.xml
             </row>
             <row>
               <entry><code>ExecutorService</code></entry>
-              <entry><code>java.util.concurrent.ExecutorService</code></entry>
+              <entry><code>java.util.concurrent.&#x200B;ExecutorService</code></entry>
               <entry>
                 The thread pool for the web server
                 <para>Default: The kernel thread pool</para>

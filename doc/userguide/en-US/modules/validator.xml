@@ -177,7 +177,7 @@ cd doc/validator
 
       <para>To be able to use the validator plugin in your Maven project, you will have to add the following plugin declaration
         in the pom.xml of your project:
-        <programlisting>
+        <programlisting language="xml">
           <![CDATA[
 <build>
   <plugins>

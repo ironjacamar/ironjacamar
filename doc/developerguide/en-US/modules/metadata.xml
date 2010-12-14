@@ -411,7 +411,7 @@ org.jboss.jca.core.spi.MetaDataRepository
     <section id="mdrbean">
       <title>Bean</title>
       <para>The implementation of the metadata repository can be defined as:</para>
-      <programlisting>
+      <programlisting language="xml">
 &lt;bean name="MetaDataRepository" 
       interface="org.jboss.jca.core.spi.MetaDataRepository" 
       class="org.jboss.jca.core.mdr.SimpleMetaDataRepository"&gt;

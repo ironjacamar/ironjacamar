@@ -172,7 +172,7 @@ public class MyTestCase
           
           <para>This done by using the following code snippet</para>
 
-          <programlisting>
+          <programlisting language="java">
 import org.jboss.jca.deployers.fungal.RAActivator;
 
 // Disable RAActivator
@@ -223,7 +223,7 @@ raa.setEnabled(true);
           <para>The code sample below shows an advanced usage of deploying a dynamic ShrinkWrap resource adapter archive
             into the IronJacamar Embedded environment.</para>
 
-          <programlisting>
+          <programlisting language="java">
 <![CDATA[
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
@@ -367,7 +367,7 @@ public class ShrinkWrapTestCase
           <para>This setup allows the developer to skip the entire IronJacamar Embedded container setup and handling of its
             lifecycle methods.</para>
 
-          <programlisting>
+          <programlisting language="java">
 <![CDATA[
 package org.jboss.jca.embedded.unit;
 
