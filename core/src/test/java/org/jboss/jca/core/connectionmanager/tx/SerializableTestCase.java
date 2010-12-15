@@ -32,6 +32,7 @@ import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 
@@ -59,7 +60,7 @@ public class SerializableTestCase
     * testSerializable.
     * @throws Throwable for exception
     */
-   @Test
+   @Test(expected = IOException.class)
    public void testSerializable() throws Throwable
    {
       TransactionManager tm = embedded.lookup("RealTransactionManager", TransactionManager.class);

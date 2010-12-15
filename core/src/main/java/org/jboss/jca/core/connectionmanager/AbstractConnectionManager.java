@@ -28,6 +28,11 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -69,13 +74,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    private static final String SECURITY_MGR_PATH = "java:/jaas/";
    
    /** The pool */
-   private transient Pool pool;
+   private Pool pool;
    
    /** Security domain jndi name */
    private String securityDomainJndiName;
    
    /** SubjectFactory */
-   private transient SubjectFactory subjectFactory;
+   private SubjectFactory subjectFactory;
    
    /** Number of retry to allocate connection */
    private int allocationRetry;
@@ -87,7 +92,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    private AtomicBoolean shutdown = new AtomicBoolean(false);
    
    /** Cached connection manager */
-   private transient CachedConnectionManager cachedConnectionManager;
+   private CachedConnectionManager cachedConnectionManager;
    
    /** Jndi name */
    private String jndiName;
@@ -671,5 +676,35 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       
       return subject;
+   }
+
+   /**
+    * Write the object to the stream -- THIS IS NOT SUPPORTED
+    * @param out The stream
+    * @exception IOException Thrown in case of an error
+    */
+   private void writeObject(ObjectOutputStream out) throws IOException
+   {
+      throw new IOException("This method is not supported");
+   }
+
+   /**
+    * Read the object from the stream -- THIS IS NOT SUPPORTED
+    * @param in The stream
+    * @exception IOException Thrown in case of an error
+    * @exception ClassNotFoundException Thrown if a class can't be resolved
+    */
+   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+   {
+      throw new IOException("This method is not supported");
+   }
+
+   /**
+    * Read the object -- THIS IS NOT SUPPORTED
+    * @exception ObjectStreamException Thrown in case of an error
+    */
+   private void readObjectNoData() throws ObjectStreamException
+   {
+      throw new NotSerializableException("This method is not supported");
    }
 }
