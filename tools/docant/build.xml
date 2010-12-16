@@ -202,6 +202,11 @@
                includes="*.zip"/>
     </copy>
 
+    <copy todir="${staging.dir}/ironjacamar-style">
+      <fileset dir="${basedir}/ironjacamar-style"/>
+    </copy>
+
+
     <unzip src="${down.dir}/docbook/batik-${version.batik}.zip" dest="${lib.dir}/batik">
       <patternset>
         <include name="batik-${version.batik}/lib/batik-*.jar"/>
