@@ -191,7 +191,7 @@
 	<xsl:attribute name="color">#4a5d75</xsl:attribute>
 	<xsl:attribute name="font-size">24pt</xsl:attribute>
 	<xsl:attribute name="font-weight">bold</xsl:attribute>
-        <xsl:attribute name="text-align">left</xsl:attribute>
+        <xsl:attribute name="text-align">right</xsl:attribute>
    </xsl:attribute-set>
 
    <!-- charter title -->
