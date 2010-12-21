@@ -49,7 +49,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 {
    private static Logger log = Logger.getLogger(WrappedConnection.class);
 
-   private BaseWrapperManagedConnection mc;
+   private volatile BaseWrapperManagedConnection mc;
+   private BaseWrapperManagedConnection lockedMC;
+   private int lockCount;
 
    private WrapperDataSource dataSource;
 
@@ -90,6 +92,10 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       if (mc != null)
       {
          mc.tryLock();
+         if (lockedMC == null)
+            lockedMC = mc;
+
+         lockCount++ ;
       }
       else
       {
@@ -102,12 +108,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    protected void unlock()
    {
-      BaseWrapperManagedConnection mc = this.mc;
+      BaseWrapperManagedConnection mc = this.lockedMC;
+      if (--lockCount == 0)
+         lockedMC = null;
+
       if (mc != null)
          mc.unlock();
-
-      // We recreate the lock when returned to the pool
-      // so missing the unlock after disassociation is not important
    }
 
    /**

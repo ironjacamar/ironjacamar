@@ -82,7 +82,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
 
    private final boolean readOnly;
 
-   private ReentrantLock lock = new ReentrantLock();
+   private ReentrantLock lock = new ReentrantLock(true);
 
    private final Collection<ConnectionEventListener> cels = new ArrayList<ConnectionEventListener>();
 
@@ -300,7 +300,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       // because it looks too nasty to expect the connection handle
       // to unlock properly in certain race conditions
       // where the dissociation of the managed connection is "random".
-      lock = new ReentrantLock();
+      lock = new ReentrantLock(true);
    }
 
    /**
@@ -340,7 +340,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
     */
    protected void unlock()
    {
-      lock.unlock();
+      if (lock.isHeldByCurrentThread())
+         lock.unlock();
    }
 
    /**
