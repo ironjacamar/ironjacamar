@@ -22,6 +22,8 @@
 
 package org.jboss.jca.test.deployers.spec;
 
+import org.jboss.jca.embedded.arquillian.ArquillianJCATestUtils;
+
 import javax.annotation.Resource;
 import javax.resource.cci.ConnectionFactory;
 
@@ -42,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-public class IronJacamarTestCase extends AbstractDeployerTest
+public class IronJacamarTestCase
 {
    //-------------------------------------------------------------------------------------||
    //---------------------- GIVEN --------------------------------------------------------||
@@ -57,7 +59,7 @@ public class IronJacamarTestCase extends AbstractDeployerTest
    {
       String archiveName = "ra15outironjacamar.rar";
       String packageName = "org.jboss.jca.test.deployers.spec.rars.ra15out";
-      ResourceAdapterArchive raa = buidShrinkwrapRa(archiveName, packageName);
+      ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName, packageName);
       raa.addManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
       raa.addManifestResource(archiveName + "/META-INF/ironjacamar.xml", "ironjacamar.xml");
 

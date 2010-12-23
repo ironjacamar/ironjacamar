@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.1
+Created-By: 1.6.0_18-b18 (Sun Microsystems Inc.)
+Implementation-Title: IronJacamar JDBC Resource Adapter
+Implementation-Version: 1.0.0.Beta4
+Implementation-Vendor: The IronJacamar project (http://www.jboss.org/i
+ ronjacamar)
+Implementation-Vendor-Id: org.jboss

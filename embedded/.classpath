@@ -24,5 +24,7 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-stdio.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/hibernate-validator.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-impl-base.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/validation-api.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

@@ -22,144 +22,74 @@
 
 package org.jboss.jca.test.deployers.spec;
 
-import org.jboss.jca.deployers.fungal.RAActivator;
-import org.jboss.jca.embedded.Embedded;
-import org.jboss.jca.embedded.EmbeddedFactory;
+import org.jboss.jca.embedded.arquillian.ArquillianJCATestUtils;
 
-import java.io.File;
-import java.net.URL;
+import javax.annotation.Resource;
+import javax.resource.cci.ConnectionFactory;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import org.jboss.logging.Logger;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test cases for deploying resource adapter archives (.RAR) using -ra.xml files
  * for activation
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
+@RunWith(Arquillian.class)
 public class RaXmlTestCase
 {
 
-   // --------------------------------------------------------------------------------||
-   // Class Members ------------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-
-   private static Logger log = Logger.getLogger(RaXmlTestCase.class);
-
-   private static final String JNDI_PREFIX = "java:/eis/";
-
-   /*
-    * Embedded
+   //-------------------------------------------------------------------------------------||
+   //---------------------- GIVEN --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
+   /**
+    * Define the deployment
+    * @return The deployment archive
+    * @throws Exception in case of errors
     */
-   private static Embedded embedded;
+   @Deployment
+   public static ResourceAdapterArchive createDeployment() throws Exception
+   {
+      String archiveName = "ra16out.rar";
+      String packageName = "org.jboss.jca.test.deployers.spec.rars.ra16out";
+      ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName, packageName);
+      raa.addManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
+      raa.addManifestResource("ra16out-ra.xml", "ra16out-ra.xml");
 
-   // --------------------------------------------------------------------------------||
-   // Tests --------------------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
+      ResourceAdapterArchive external = ShrinkWrap.create(ResourceAdapterArchive.class, "complex_" + archiveName);
+      external.add(raa, "/");
+      external.addResource("ra16out-ra.xml", "resource-adapters-ra.xml");
+      return external;
+   }
+
+   //-------------------------------------------------------------------------------------||
+   //---------------------- WHEN  --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
+   //
+   @Resource(mappedName = "java:/eis/ra16out-raxml")
+   private ConnectionFactory connectionFactory;
+
+   //-------------------------------------------------------------------------------------||
+   //---------------------- THEN  --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
 
    /**
-    * ra16out.rar
-    * @throws Throwable throwable exception 
+    * Basic
+    * @exception Throwable Thrown if case of an error
     */
    @Test
-   public void testRa16out() throws Throwable
+   public void testBasic() throws Throwable
    {
-      URL archive = getURL("ra16out.rar");
-      URL raXml = getURL("test" + File.separator + "ra16out-ra.xml");
-      Context context = null;
- 
-      try
-      {
-         embedded.deploy(archive);
-         embedded.deploy(raXml);
-
-         context = new InitialContext();
-         Object o = context.lookup(JNDI_PREFIX + "ra16out-raxml");
-         assertNotNull(o);
-      }
-      catch (Throwable t)
-      {
-         log.error(t.getMessage(), t);
-         fail(t.getMessage());
-      }
-      finally
-      {
-         if (context != null)
-         {
-            try
-            {
-               context.close();
-            }
-            catch (NamingException ne)
-            {
-               // Ignore
-            }
-         }
-
-         embedded.undeploy(raXml);
-         embedded.undeploy(archive);
-      }
+      assertNotNull(connectionFactory);
    }
 
-   // --------------------------------------------------------------------------------||
-   // Lifecycle Methods --------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-
-   /**
-    * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
-    */
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      // Create and set an embedded JCA instance
-      embedded = EmbeddedFactory.create();
-
-      // Startup
-      embedded.startup();
-
-      // Disable RAActivator
-      RAActivator raa = embedded.lookup("RAActivator", RAActivator.class);
-      
-      if (raa == null)
-         throw new IllegalStateException("RAActivator not defined");
-
-      raa.setEnabled(false);
-   }
-
-   /**
-    * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
-    */
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      // Shutdown embedded
-      embedded.shutdown();
-
-      // Set embedded to null
-      embedded = null;
-   }
-
-   /**
-    * Get the URL for a test archive
-    * @param archive The name of the test archive
-    * @return The URL to the archive
-    * @throws Throwable throwable exception
-    */
-   public URL getURL(String archive) throws Throwable
-   {
-      File f = new File(System.getProperty("archives.dir") + File.separator + archive);
-      return f.toURI().toURL();
-   }
 }

@@ -23,20 +23,22 @@ package org.jboss.jca.adapters.jdbc.spi;
 
 import org.jboss.jca.adapters.jdbc.spi.testimpl.TestStaleConnectionChecker;
 import org.jboss.jca.embedded.Embedded;
-import org.jboss.jca.embedded.EmbeddedFactory;
+import org.jboss.jca.embedded.arquillian.ArquillianJCATestUtils;
 
-import java.io.File;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -49,12 +51,40 @@ import static org.junit.Assert.assertThat;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
+@RunWith(Arquillian.class)
 public class StaleConnectionCheckerTestCase
 {
 
-   // --------------------------------------------------------------------------------||
-   // Tests --------------------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
+   //---------------------- GIVEN --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
+   /**
+    * Define the deployment
+    * @return The deployment archive
+    * @throws Exception in case of errors
+    */
+   @Deployment
+   public static ResourceAdapterArchive createDeployment() throws Exception
+   {
+      String archiveName = "jdbc-local.rar";
+      ResourceAdapterArchive raa = ArquillianJCATestUtils.buildShrinkwrapJdbcLocal(archiveName);
+      ResourceAdapterArchive external = ShrinkWrap.create(ResourceAdapterArchive.class, "complex_" + archiveName);
+      external.add(raa, "/");
+      external.addResource("h2-stale-connection-checker-ds.xml", "datasources-ds.xml");
+      return external;
+
+   }
+
+   //-------------------------------------------------------------------------------------||
+   //---------------------- WHEN  --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
+   //
+   @Resource(mappedName = "java:/H2DS")
+   private DataSource ds;
+
+   //-------------------------------------------------------------------------------------||
+   //---------------------- THEN  --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
 
    /**
     * shouldInjectCorrectStaleConnectionChecker
@@ -70,97 +100,30 @@ public class StaleConnectionCheckerTestCase
 
       try
       {
-         // Create and set an embedded JCA instance
-         embedded = EmbeddedFactory.create();
+         assertNotNull(ds);
 
-         // Startup
-         embedded.startup();
+         Connection c = ds.getConnection();
+         assertNotNull(c);
 
-         // Deploy jdbc-local.rar
-         embedded.deploy(getURL("jdbc-local.rar"));
-
-         // Deploy H2 datasource
-         URL url = getURL("test/h2-stale-connection-checker-ds.xml");
-
-         embedded.deploy(url);
-
-         Context context = null;
-
-         try
-         {
-            context = new InitialContext();
-
-            DataSource ds = (DataSource) context.lookup("java:/H2DS");
-            assertNotNull(ds);
-
-            Connection c = ds.getConnection();
-            assertNotNull(c);
-
-            Statement st = c.createStatement();
-            st.execute("dssd");
-
-         }
-         catch (SQLException e)
-         {
-            // nothing we need an exception ;)
-         }
-
-         finally
-         {
-            assertThat(TestStaleConnectionChecker.isConstructorInvoked(), is(true));
-
-            assertThat(TestStaleConnectionChecker.isMethodInvoked(), is(true));
-
-            assertThat(TestStaleConnectionChecker.getInjectedInteger(), is(100));
-
-            if (context != null)
-            {
-               try
-               {
-                  context.close();
-               }
-               catch (NamingException ne)
-               {
-                  // Ignore
-               }
-            }
-         }
+         Statement st = c.createStatement();
+         st.execute("dssd");
 
       }
+      catch (SQLException e)
+      {
+         // nothing we need an exception ;)
+      }
+
       finally
       {
-         if (embedded != null)
-         {
-            // Undeploy H2 datasource
-            embedded.undeploy(getURL("test/h2-stale-connection-checker-ds.xml"));
+         assertThat(TestStaleConnectionChecker.isConstructorInvoked(), is(true));
 
-            // Undeploy jdbc-local.rar
-            embedded.undeploy(getURL("jdbc-local.rar"));
+         assertThat(TestStaleConnectionChecker.isMethodInvoked(), is(true));
 
-            // Shutdown embedded
-            embedded.shutdown();
+         assertThat(TestStaleConnectionChecker.getInjectedInteger(), is(100));
 
-            // Set embedded to null
-            embedded = null;
-         }
       }
 
-   }
-
-   // --------------------------------------------------------------------------------||
-   // Helper Methods -----------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-
-   /**
-    * Get the URL for a test archive
-    * @param archive The name of the test archive
-    * @return The URL to the archive
-    * @throws Throwable throwable exception
-    */
-   private static URL getURL(String archive) throws Throwable
-   {
-      File f = new File(System.getProperty("archives.dir") + File.separator + archive);
-      return f.toURI().toURL();
    }
 
 }

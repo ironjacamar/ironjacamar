@@ -7,7 +7,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-jaspi-api.jar"/>
@@ -23,5 +22,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/mockito-all.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/h2.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

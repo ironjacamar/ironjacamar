@@ -19,10 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec;
-
-import org.jboss.jca.test.deployers.spec.rars.TestConnection;
-import org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface;
+package org.jboss.jca.embedded.arquillian;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +33,14 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-public abstract class AbstractDeployerTest
+/**
+ *
+ * A ArquillianJCATestUtils.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ *
+ */
+public final class ArquillianJCATestUtils
 {
 
    /**
@@ -47,17 +51,73 @@ public abstract class AbstractDeployerTest
     * @return the shrinkwrapped rar
     * @throws Exception in case of error creating the archive
     */
-   protected static ResourceAdapterArchive buidShrinkwrapRa(String archiveName, String packageName) throws Exception
+   public static ResourceAdapterArchive buidShrinkwrapRa(String archiveName, String packageName) throws Exception
    {
       ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, archiveName);
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
-      ja.addClasses(TestConnection.class, TestConnectionInterface.class);
       ja.addClasses(getClasses(packageName));
 
       raa.addLibrary(ja);
+
+
       return raa;
    }
+
+   /**
+    * Build a shrinkwrap rar for jdbc local
+    *
+    * @param archiveName the archhive name
+    * @return the shrinkwrapped rar
+    * @throws Exception in case of error creating the archive
+    */
+   public static ResourceAdapterArchive buildShrinkwrapJdbcLocal(String archiveName)
+      throws Exception
+   {
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, archiveName);
+      JavaArchive ja = buildShrinkwrapJdbcJar();
+      raa.addLibrary(ja);
+
+      raa.addManifestResource("jdbc/local/META-INF/ra.xml", "ra.xml");
+
+      return raa;
+   }
+
+   /**
+    * Build a shrinkwrap rar for jdbc xa
+    *
+    * @param archiveName the archhive name
+    * @return the shrinkwrapped rar
+    * @throws Exception in case of error creating the archive
+    */
+   public static ResourceAdapterArchive buildShrinkwrapJdbcXa(String archiveName) throws Exception
+   {
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, archiveName);
+      JavaArchive ja = buildShrinkwrapJdbcJar();
+      raa.addLibrary(ja);
+
+      raa.addManifestResource("jdbc/xa/META-INF/ra.xml", "ra.xml");
+
+      return raa;
+   }
+
+   /**
+    * FIXME Comment this
+    *
+    * @return
+    * @throws ClassNotFoundException
+    * @throws IOException
+    */
+   private static JavaArchive buildShrinkwrapJdbcJar() throws ClassNotFoundException, IOException
+   {
+      String packageName = "org.jboss.jca.adapters";
+
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, "ironjacamar-jdbc.jar");
+      ja.addClasses(getClasses(packageName));
+      ja.setManifest("jdbc/jar/META-INF/MANIFEST.MF");
+      return ja;
+   }
+
 
    /**
     * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
@@ -70,7 +130,6 @@ public abstract class AbstractDeployerTest
    private static Class[] getClasses(String packageName) throws ClassNotFoundException, IOException
    {
       ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-      assert classLoader != null;
       String path = packageName.replace('.', '/');
       Enumeration<URL> resources = classLoader.getResources(path);
       List<File> dirs = new ArrayList<File>();
@@ -118,9 +177,5 @@ public abstract class AbstractDeployerTest
       return classes;
    }
 
-   public AbstractDeployerTest()
-   {
-      super();
-   }
 
 }

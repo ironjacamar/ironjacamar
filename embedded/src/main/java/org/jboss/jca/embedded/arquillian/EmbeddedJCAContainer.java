@@ -24,6 +24,15 @@ package org.jboss.jca.embedded.arquillian;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 import org.jboss.arquillian.protocol.local.LocalMethodExecutor;
 import org.jboss.arquillian.spi.Configuration;
 import org.jboss.arquillian.spi.ContainerMethodExecutor;
@@ -32,11 +41,12 @@ import org.jboss.arquillian.spi.DeployableContainer;
 import org.jboss.arquillian.spi.DeploymentException;
 import org.jboss.arquillian.spi.LifecycleException;
 import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 /**
  * Arquillian {@link DeployableContainer} adaptor for EmbeddedJCA
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
@@ -68,19 +78,118 @@ public class EmbeddedJCAContainer implements DeployableContainer
 
       try
       {
-         embedded.deploy(ResourceAdapterArchive.class.cast(archive));
-      }
-      catch (Exception e)
-      {
-         throw new DeploymentException("Could not deploy the application", e);
+         ResourceAdapterArchive raa = ResourceAdapterArchive.class.cast(archive);
+         if (raa.getName() != null && raa.getName().startsWith("complex_"))
+         {
+            if (raa.get(raa.getName().substring(8)) != null)
+            {
+               Asset asset = raa.get(raa.getName().substring(8)).getAsset();
+               String name = raa.getName().substring(raa.getName().indexOf("complex_"));
+               deployinternalAsset(asset, name);
+
+            }
+            if (raa.get("resource-adapters-ra.xml") != null)
+            {
+
+               Asset asset = raa.get("resource-adapters-ra.xml").getAsset();
+               String name = "resource-adapters-ra.xml";
+               deployinternalAsset(asset, name);
+            }
+            if (raa.get("datasources-ds.xml") != null)
+            {
+
+               Asset asset = raa.get("datasources-ds.xml").getAsset();
+               String name = "datasources-ds.xml";
+               deployinternalAsset(asset, name);
+            }
+            if (raa.get("datasources-xa-ds.xml") != null)
+            {
+
+               Asset asset = raa.get("datasources-xa-ds.xml").getAsset();
+               String name = "datasources-xa-ds.xml";
+               deployinternalAsset(asset, name);
+            }
+
+         }
+         else
+         {
+            embedded.deploy(ResourceAdapterArchive.class.cast(archive));
+         }
+
       }
       catch (Throwable t)
       {
+         t.printStackTrace();
          throw new DeploymentException("Could not deploy the application: " + t.getMessage());
       }
 
       // Invoke locally
       return new LocalMethodExecutor();
+   }
+
+   /**
+    * deploy an internal asset
+    *
+    * @param asset asset
+    * @param name asset
+    * @throws FileNotFoundException IOException
+    * @throws IOException IOException
+    * @throws MalformedURLException MalformedURLException
+    * @throws Throwable Throwable
+    *
+    */
+   protected void deployinternalAsset(Asset asset, String name) throws IOException, FileNotFoundException, Throwable,
+      MalformedURLException
+   {
+      File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
+      File raaFile = new File(parentDirectory, name);
+
+      if (raaFile.exists())
+         recursiveDelete(raaFile);
+      InputStream is = null;
+      FileOutputStream os = null;
+
+      byte[] buffer = new byte[4096];
+      int read = 0;
+      try
+      {
+         is = asset.openStream();
+         os = new FileOutputStream(raaFile);
+         while ((read = is.read(buffer)) != -1)
+         {
+            os.write(buffer, 0, read);
+         }
+
+         os.flush();
+      }
+      finally
+      {
+         if (os != null)
+         {
+            try
+            {
+               os.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+
+         if (is != null)
+         {
+            try
+            {
+               is.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+      }
+      embedded.deploy(raaFile.toURI().toURL());
+
    }
 
    /**
@@ -102,11 +211,11 @@ public class EmbeddedJCAContainer implements DeployableContainer
       }
       catch (Exception e)
       {
-         throw new DeploymentException("Could not undeploy the application", e);
+         //throw new DeploymentException("Could not undeploy the application", e);
       }
       catch (Throwable t)
       {
-         throw new DeploymentException("Could not undeploy the application: " + t.getMessage());
+         //throw new DeploymentException("Could not undeploy the application: " + t.getMessage());
       }
    }
 
@@ -162,5 +271,86 @@ public class EmbeddedJCAContainer implements DeployableContainer
          throw new LifecycleException("Could not stop the EmbeddedJCA container: " + t.getMessage());
       }
       embedded = null;
+   }
+
+   /**
+    * Recursive delete
+    * @param f The file handler
+    * @exception IOException Thrown if a file could not be deleted
+    */
+   private void recursiveDelete(File f) throws IOException
+   {
+      if (f != null && f.exists())
+      {
+         File[] files = f.listFiles();
+         if (files != null)
+         {
+            for (int i = 0; i < files.length; i++)
+            {
+               if (files[i].isDirectory())
+               {
+                  recursiveDelete(files[i]);
+               }
+               else
+               {
+                  if (!files[i].delete())
+                     throw new IOException("Could not delete " + files[i]);
+               }
+            }
+         }
+         if (!f.delete())
+            throw new IOException("Could not delete " + f);
+      }
+   }
+
+   /**
+    *
+    * A SecurityActions.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public static class SecurityActions
+   {
+      /**
+       * Constructor
+       */
+      private SecurityActions()
+      {
+      }
+
+      /**
+       * Get a system property
+       * @param name The property name
+       * @return The property value
+       */
+      @SuppressWarnings("unchecked")
+      static String getSystemProperty(final String name)
+      {
+         return (String) AccessController.doPrivileged(new PrivilegedAction()
+         {
+            public Object run()
+            {
+               return System.getProperty(name);
+            }
+         });
+      }
+
+      /**
+       * Set a system property
+       * @param name The property name
+       * @param value The property value
+       */
+      static void setSystemProperty(final String name, final String value)
+      {
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
+         {
+            public Object run()
+            {
+               System.setProperty(name, value);
+               return null;
+            }
+         });
+      }
    }
 }

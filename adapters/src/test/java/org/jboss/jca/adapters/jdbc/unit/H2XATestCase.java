@@ -22,148 +22,74 @@
 
 package org.jboss.jca.adapters.jdbc.unit;
 
-import org.jboss.jca.embedded.Embedded;
-import org.jboss.jca.embedded.EmbeddedFactory;
+import org.jboss.jca.embedded.arquillian.ArquillianJCATestUtils;
 
-import java.io.File;
-import java.net.URL;
 import java.sql.Connection;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.jboss.logging.Logger;
+import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Test cases for getting a XA connection from the H2 database
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
+@RunWith(Arquillian.class)
 public class H2XATestCase
 {
 
-   // --------------------------------------------------------------------------------||
-   // Class Members ------------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-
-   private static Logger log = Logger.getLogger(H2XATestCase.class);
-
-   private static final String JNDI_NAME = "java:/H2XADS";
-
-   /*
-    * Embedded
+   //-------------------------------------------------------------------------------------||
+   //---------------------- GIVEN --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
+   /**
+    * Define the deployment
+    * @return The deployment archive
+    * @throws Exception in case of errors
     */
-   private static Embedded embedded;
+   @Deployment
+   public static ResourceAdapterArchive createDeployment() throws Exception
+   {
+      String archiveName = "jdbc-xa.rar";
+      ResourceAdapterArchive raa = ArquillianJCATestUtils.buildShrinkwrapJdbcXa(archiveName);
+      ResourceAdapterArchive external = ShrinkWrap.create(ResourceAdapterArchive.class, "complex_" + archiveName);
+      external.add(raa, "/");
+      external.addResource("h2-xa-ds.xml", "datasources-xa-ds.xml");
+      return external;
 
-   // --------------------------------------------------------------------------------||
-   // Tests --------------------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
+   }
+
+   //-------------------------------------------------------------------------------------||
+   //---------------------- WHEN  --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
+   //
+   @Resource(mappedName = "java:/H2XADS")
+   private DataSource ds;
+
+   //-------------------------------------------------------------------------------------||
+   //---------------------- THEN  --------------------------------------------------------||
+   //-------------------------------------------------------------------------------------||
 
    /**
-    * Get a connection from the database
+    * Basic
     * @exception Throwable Thrown if case of an error
     */
    @Test
-   public void testConnection() throws Throwable
+   public void testBasic() throws Throwable
    {
-      Context context = null;
-
-      try
-      {
-         context = new InitialContext();
-         
-         DataSource ds = (DataSource)context.lookup(JNDI_NAME);
-         assertNotNull(ds);
-
-         Connection c = ds.getConnection();
-         assertNotNull(c);
-      }
-      catch (Throwable t)
-      {
-         log.error(t.getMessage(), t);
-         fail(t.getMessage());
-      }
-      finally
-      {
-         if (context != null)
-         {
-            try
-            {
-               context.close();
-            }
-            catch (NamingException ne)
-            {
-               // Ignore
-            }
-         }
-      }
+      assertNotNull(ds);
+      Connection c = ds.getConnection();
+      assertNotNull(c);
    }
 
-   // --------------------------------------------------------------------------------||
-   // Helper Methods -----------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-
-   /**
-    * Get the URL for a test archive
-    * @param archive The name of the test archive
-    * @return The URL to the archive
-    * @throws Throwable throwable exception
-    */
-   private static URL getURL(String archive) throws Throwable
-   {
-      File f = new File(System.getProperty("archives.dir") + File.separator + archive);
-      return f.toURI().toURL();
-   }
-
-   // --------------------------------------------------------------------------------||
-   // Lifecycle Methods --------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-
-   /**
-    * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
-    */
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      // Create and set an embedded JCA instance
-      embedded = EmbeddedFactory.create();
-
-      // Startup
-      embedded.startup();
-
-      // Deploy jdbc-local.rar
-      embedded.deploy(getURL("jdbc-xa.rar"));
-
-      // Deploy H2 datasource
-      embedded.deploy(getURL("test/h2-xa-ds.xml"));
-   }
-
-   /**
-    * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
-    */
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      // Undeploy H2 datasource
-      embedded.undeploy(getURL("test/h2-xa-ds.xml"));
-
-      // Undeploy jdbc-local.rar
-      embedded.undeploy(getURL("jdbc-xa.rar"));
-
-      // Shutdown embedded
-      embedded.shutdown();
-
-      // Set embedded to null
-      embedded = null;
-   }
 }

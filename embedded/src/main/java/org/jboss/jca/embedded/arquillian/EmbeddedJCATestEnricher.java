@@ -28,8 +28,8 @@ import javax.naming.InitialContext;
 import org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher;
 
 /**
- * {@link TestEnricher} implementation specific to the EmbeddedJCA container
- * 
+ * TestEnricher implementation specific to the EmbeddedJCA container
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class EmbeddedJCATestEnricher extends ResourceInjectionEnricher
@@ -41,14 +41,15 @@ public class EmbeddedJCATestEnricher extends ResourceInjectionEnricher
    {
    }
 
-   /** 
+   /**
     * Lookup an object in JNDI
     * @param jndiName The JNDI name
     * @return The object
     * @see org.jboss.arquillian.testenricher.resource.ResourceInjectionEnricher#lookup(java.lang.String)
     * @exception Exception Thrown if the lookup can't be performed
     */
-   protected Object lookup(String jndiName) throws Exception 
+   @Override
+   protected Object lookup(String jndiName) throws Exception
    {
       return createContext().lookup(jndiName);
    }
