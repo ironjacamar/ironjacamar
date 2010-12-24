@@ -305,19 +305,17 @@
       </fileset>
     </move>
 
-    <ant dir="${doc.dir}/userguide" target="html"/>
-    <move todir="${build.dir}/sjc/war/userguide">
-      <fileset dir="${build.dir}/en-US/html">
+    <ant dir="${doc.dir}/.." target="manual" inheritRefs="false" inheritAll="false"/>
+    <copy todir="${build.dir}/sjc/war/userguide">
+      <fileset dir="${target.dir}/docbook/userguide/en-US/html">
         <include name="**/*"/>
       </fileset>
-    </move>
-
-    <ant dir="${doc.dir}/developerguide" target="html"/>
-    <move todir="${build.dir}/sjc/war/developerguide">
-      <fileset dir="${build.dir}/en-US/html">
+    </copy>
+    <copy todir="${build.dir}/sjc/war/developerguide">
+      <fileset dir="${target.dir}/docbook/developerguide/en-US/html">
         <include name="**/*"/>
       </fileset>
-    </move>
+    </copy>
 
     <copy todir="${build.dir}/sjc/war">
       <fileset dir="src/main/resources/root/">

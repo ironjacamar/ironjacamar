@@ -289,22 +289,34 @@
        Target: manual
 
        ================================= -->
-  <target name="manual"  depends="manual-support">
-    <ant antfile="doc/build.xml" inheritRefs="false" inheritAll="false">
+  <target name="manual" depends="manual-init">
+    <antcall target="manual-support"/>
+    <antcall target="manual-generate"/>
+  </target>
+
+  <target name="manual-init">
+    <available file="${tools.dir}/docant/target/docbook/staging" type="dir" property="docant.support" value="true"/>
+    <available file="${target.dir}/docbook" type="dir" property="docant.gen" value="true"/>
+  </target>
+
+  <target name="manual-support" unless="docant.support">
+    <ant antfile="${tools.dir}/docant/build.xml" target="clean" inheritRefs="false" inheritAll="false">
       <property name="docant.dir" value="${tools.dir}/docant"/>
-      <property name="docant.target.dir" value="${build.dir}"/>
-<!--
-      <property name="staging.dir" value="${build.dir}/docbook/staging"/>
--->
-      <property name="target.dir" value="${target.dir}"/>
+    </ant>
+
+    <ant antfile="${tools.dir}/docant/build.xml" inheritRefs="false" inheritAll="false">
+      <property name="docant.dir" value="${tools.dir}/docant"/>
     </ant>
   </target>
 
-  <target name="manual-support">
-    <ant antfile="tools/docant/build.xml" inheritRefs="false" inheritAll="false">
+  <target name="manual-generate" unless="docant.gen">
+    <copy todir="${build.dir}">
+      <fileset dir="${tools.dir}/docant/target"/>
+    </copy>
+    <ant antfile="${doc.dir}/build.xml" inheritRefs="false" inheritAll="false">
       <property name="docant.dir" value="${tools.dir}/docant"/>
       <property name="docant.target.dir" value="${build.dir}"/>
-      <property name="staging.dir" value="${build.dir}/docbook/staging"/>
+      <property name="target.dir" value="${target.dir}"/>
     </ant>
   </target>
 
@@ -387,20 +399,17 @@
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc" />
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec" />
 
-    <ant dir="sjc" inheritRefs="true" target="war"/>
-    <delete dir="${build.dir}/sjc"/>
-
-    <ant dir="doc/userguide" target="pdf"/>
-    <ant dir="doc/developerguide" target="pdf"/>
-
+    <antcall target="manual"/>
     <move flatten="true" todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc">
-      <fileset dir="${build.dir}">
+      <fileset dir="${target.dir}/docbook">
         <include name="**/*.pdf"/>
       </fileset>
     </move>
+    <delete dir="${build.dir}/docbook"/>
 
-    <delete dir="${build.dir}/en-US"/>
-    
+    <ant dir="sjc" inheritRefs="true" target="war"/>
+    <delete dir="${build.dir}/sjc"/>
+
     <ant dir="api" inheritRefs="true" target="docs"/>
     <move todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec">
       <fileset dir="${target.dir}/docs/spec">
