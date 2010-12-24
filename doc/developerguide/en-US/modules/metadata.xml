@@ -148,7 +148,7 @@ org.jboss.jca.common.metadata.ds
       <section id="datasourcedeploymentmetadatamapping">
         <title>Datasource mapping</title>
         
-        <para>The table below specifies how each atrbiute/element map to the resource adapter
+        <para>The table below specifies how each attribute/element map to the resource adapter
           or the container.</para>
 
         <table frame="all">
