@@ -287,7 +287,6 @@
   
   <!-- ================================= 
        Target: manual
-
        ================================= -->
   <target name="manual" depends="manual-init">
     <antcall target="manual-support"/>
@@ -400,11 +399,11 @@
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec" />
 
     <antcall target="manual"/>
-    <move flatten="true" todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc">
+    <copy flatten="true" todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc">
       <fileset dir="${target.dir}/docbook">
         <include name="**/*.pdf"/>
       </fileset>
-    </move>
+    </copy>
     <delete dir="${build.dir}/docbook"/>
 
     <ant dir="sjc" inheritRefs="true" target="war"/>

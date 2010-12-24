@@ -39,7 +39,9 @@
       <move file="${docant.target.dir}/docbook/publish" tofile="${target.dir}/docbook/@{srcDir}" failonerror="false"/>
 
       <delete>
-        <fileset dir="${docant.target.dir}/docbook/staging/images/images" excludes="community"/>
+        <fileset dir="${docant.target.dir}/docbook/staging/images/images">
+          <exclude name="community/**"/>
+        </fileset>
       </delete>
 
     </sequential>
