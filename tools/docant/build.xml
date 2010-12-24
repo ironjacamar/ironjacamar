@@ -53,20 +53,17 @@
   <!-- ================================= 
        Properties              
        ================================= -->
-  <property name="lib.dir" value="${basedir}/lib" />
-  <property name="build.dir" value="${basedir}/build" />
-  <property name="doc.dir" value="${basedir}/doc" />
-  <property name="target.dir" value="${basedir}/target" />
+  <property name="docant.dir" value="${basedir}" />
+  <property name="docant.lib.dir" value="${docant.dir}/lib" />
+  <property name="docant.target.dir" value="${docant.dir}/target" />
 
-  <property name="reports.dir" value="${basedir}/reports" />
-  <property name="test.dir" value="${reports.dir}" />
-  <property name="down.dir" value="${basedir}/down" />
+  <property name="docant.down.dir" value="${docant.dir}/down" />
 
   <path id="lib.path.id">
-    <fileset dir="${lib.dir}">
+    <fileset dir="${docant.lib.dir}">
       <include name="**/*.jar"/>
     </fileset>
-    <fileset dir="${target.dir}">
+    <fileset dir="${docant.target.dir}">
       <include name="*.jar"/>
     </fileset>
   </path>
@@ -115,18 +112,18 @@
        ================================= -->
   <target name="download-docbook-files">
 
-    <mkdir dir="${down.dir}/docbook"/>
+    <mkdir dir="${docant.down.dir}/docbook"/>
     <property name="docbook.url" value="http://www.docbook.org/xml"/>
-    <get src="${docbook.url}/4.3/docbook-xml-4.3.zip" dest="${down.dir}/docbook/docbook-xml-4.3.zip" skipexisting="true"/>
-    <get src="${docbook.url}/4.4/docbook-xml-4.4.zip" dest="${down.dir}/docbook/docbook-xml-4.4.zip" skipexisting="true"/>
-    <get src="${docbook.url}/4.5/docbook-xml-4.5.zip" dest="${down.dir}/docbook/docbook-xml-4.5.zip" skipexisting="true"/>
-    <get src="${docbook.url}/5.0/docbook-5.0.zip" dest="${down.dir}/docbook/docbook-5.0.zip" skipexisting="true"/>
+    <get src="${docbook.url}/4.3/docbook-xml-4.3.zip" dest="${docant.down.dir}/docbook/docbook-xml-4.3.zip" skipexisting="true"/>
+    <get src="${docbook.url}/4.4/docbook-xml-4.4.zip" dest="${docant.down.dir}/docbook/docbook-xml-4.4.zip" skipexisting="true"/>
+    <get src="${docbook.url}/4.5/docbook-xml-4.5.zip" dest="${docant.down.dir}/docbook/docbook-xml-4.5.zip" skipexisting="true"/>
+    <get src="${docbook.url}/5.0/docbook-5.0.zip" dest="${docant.down.dir}/docbook/docbook-5.0.zip" skipexisting="true"/>
 
     <get src="http://sourceforge.net/projects/docbook/files/docbook-xsl/${version.docbook-xsl}/docbook-xsl-${version.docbook-xsl}.zip/download"
-         dest="${down.dir}/docbook/docbook-xsl-${version.docbook-xsl}.zip" skipexisting="true"/>
+         dest="${docant.down.dir}/docbook/docbook-xsl-${version.docbook-xsl}.zip" skipexisting="true"/>
 
     <get src="http://archive.apache.org/dist/xmlgraphics/batik/batik-${version.batik}.zip"
-         dest="${down.dir}/docbook/batik-${version.batik}.zip" skipexisting="true"/>
+         dest="${docant.down.dir}/docbook/batik-${version.batik}.zip" skipexisting="true"/>
   </target>
 
   <!-- ================================= 
@@ -144,88 +141,87 @@
   <target name="init">
     <fail message="The performance test suite requires JDK5+" unless="HAVE_JDK_1.5"/>
 
-    <ivy:settings file="${basedir}/ivy.settings.xml"/>
+    <ivy:settings file="${docant.dir}/ivy.settings.xml"/>
 
-    <mkdir dir="${build.dir}" />
-    <mkdir dir="${target.dir}" />
-    <mkdir dir="${down.dir}"/>
+    <mkdir dir="${docant.target.dir}" />
+    <mkdir dir="${docant.down.dir}"/>
 
 <!-- temp using hacked file -->
     <get src="http://jeffzhang.github.com/docant/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar"
-         dest="${down.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar" skipexisting="true"/>
+         dest="${docant.down.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar" skipexisting="true"/>
 
     <get src="http://jeffzhang.github.com/docant/docant-${version.docant}.zip"
-         dest="${down.dir}/docant-${version.docant}.zip" skipexisting="true"/>
+         dest="${docant.down.dir}/docant-${version.docant}.zip" skipexisting="true"/>
   </target>
   
   <!-- ================================= 
        Target: resolve              
        ================================= -->
   <target name="resolve" depends="download-docbook-files, init">
-    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" sync="true"/>
-    <copy file="${down.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar" 
-          tofile="${lib.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar"/>
+    <ivy:retrieve pattern="${docant.lib.dir}/[conf]/[artifact]-[revision].[ext]" sync="true"/>
+    <copy file="${docant.down.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar" 
+          tofile="${docant.lib.dir}/jdocbook-core-${version.jdocbook-core}-${version.jdocbook-core-ext}.jar"/>
   </target>
   
   <!-- ================================= 
        Target: report              
        ================================= -->
   <target name="report" depends="resolve">
-    <ivy:report todir="${target.dir}"/>
+    <ivy:report todir="${docant.target.dir}"/>
   </target>
   
   <!-- ================================= 
        Target: compile
        ================================= -->
   <target name="support" depends="resolve">
-    <property name="staging.dir" value="${target.dir}/docbook/staging"/>
-    <unzip src="${down.dir}/docant-${version.docant}.zip" dest="${lib.dir}">
+    <property name="staging.dir" value="${docant.target.dir}/docbook/staging"/>
+    <unzip src="${docant.down.dir}/docant-${version.docant}.zip" dest="${docant.lib.dir}">
       <patternset>
         <include name="docant.jar"/>
       </patternset>
     </unzip>
 
-    <unzip src="${down.dir}/docant-${version.docant}.zip" dest="${basedir}">
+    <unzip src="${docant.down.dir}/docant-${version.docant}.zip" dest="${docant.dir}">
       <patternset>
         <include name="support.xml"/>
       </patternset>
     </unzip>
 
-    <unzip src="${down.dir}/docant-${version.docant}.zip" dest="${staging.dir}">
+    <unzip src="${docant.down.dir}/docant-${version.docant}.zip" dest="${staging.dir}">
       <patternset>
         <include name="catalog.xml"/>
       </patternset>
     </unzip>
 
-    <copy todir="${lib.dir}/docbook">
-      <fileset dir="${down.dir}/docbook"
+    <copy todir="${docant.lib.dir}/docbook">
+      <fileset dir="${docant.down.dir}/docbook"
                includes="*.zip"/>
     </copy>
 
     <copy todir="${staging.dir}/ironjacamar-style">
-      <fileset dir="${basedir}/ironjacamar-style"/>
+      <fileset dir="${docant.dir}/ironjacamar-style"/>
     </copy>
 
 
-    <unzip src="${down.dir}/docbook/batik-${version.batik}.zip" dest="${lib.dir}/batik">
+    <unzip src="${docant.down.dir}/docbook/batik-${version.batik}.zip" dest="${docant.lib.dir}/batik">
       <patternset>
         <include name="batik-${version.batik}/lib/batik-*.jar"/>
         <include name="batik-${version.batik}/lib/js.jar"/>
       </patternset>
       <mapper type="flatten"/>
     </unzip>
-    <unzip src="${down.dir}/docbook/docbook-xsl-${version.docbook-xsl}.zip" dest="${staging.dir}"/>
-    <unzip src="${lib.dir}/style/jbossorg-jdocbook-style-${version.jbossorg-jdocbook-style}.jdocbook-style" dest="${staging.dir}"/>
+
+    <unzip src="${docant.down.dir}/docbook/docbook-xsl-${version.docbook-xsl}.zip" dest="${staging.dir}"/>
+    <unzip src="${docant.lib.dir}/style/jbossorg-jdocbook-style-${version.jbossorg-jdocbook-style}.jdocbook-style" dest="${staging.dir}"/>
   </target>
 
   <!-- ================================= 
        Target: clean              
        ================================= -->
   <target name="clean">
-    <delete file="${basedir}/support.xml"/>
-    <delete dir="${build.dir}"/>
-    <delete dir="${lib.dir}"/>
-    <delete dir="${target.dir}"/>
+    <delete file="${docant.dir}/support.xml"/>
+    <delete dir="${docant.lib.dir}"/>
+    <delete dir="${docant.target.dir}"/>
   </target>
 
 
@@ -233,6 +229,7 @@
        Target: clean-cache              
        ================================= -->
   <target name="clean-cache">
+    <delete dir="${docant.down.dir}"/>
     <ivy:cleancache />
   </target>
 

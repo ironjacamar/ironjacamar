@@ -1,7 +1,9 @@
 <project name="Docbook-Ironjacamar" default="process" basedir=".">
 
-  <property name="build.dir" value="build"/>
   <property name="docant.dir" value="${basedir}/../tools/docant"/>
+  <property name="target.dir" value="${docant.dir}/target" />
+  <property name="docant.target.dir" value="${docant.dir}/target" />
+
   <import file="${docant.dir}/support.xml"/>
 
   <macrodef name="transformer">
@@ -9,11 +11,15 @@
     <attribute name="srcDocName"/>
     <attribute name="pdfName"/>
     <sequential>
-      <delete dir="${docant.dir}/target/docbook/publish"/>
+      <delete dir="${docant.target.dir}/docbook/publish"/>
+
+      <copy todir="${docant.target.dir}/docbook/staging/images/images">
+        <fileset dir="${basedir}/@{srcDir}/en-US/images/"/>
+      </copy>
 
       <docant sourceDirectory="@{srcDir}" 
               sourceDocumentName="@{srcDocName}"
-              baseOutputDirectory="${docant.dir}/target">
+              baseOutputDirectory="${docant.target.dir}">
 
 	<format name="html_single" 
 	stylesheetResource="classpath:/ironjacamar-style/xhtml-single.xsl"
@@ -22,14 +28,19 @@
 	<format name="html" 
 	stylesheetResource="classpath:/ironjacamar-style/xhtml.xsl"
 	targetFinalName="index.html"/>
+
 	<format name="pdf" 
 	stylesheetResource="classpath:/ironjacamar-style/pdf.xsl"
 	targetFinalName="@{pdfName}"/>
 
       </docant>
-      <mkdir dir="${basedir}/target/publish/@{srcDir}"/>
 
-      <move file="${docant.dir}/target/docbook/publish" tofile="${basedir}/target/publish/@{srcDir}" failonerror="false"/>
+      <mkdir dir="${target.dir}/docbook/@{srcDir}"/>
+      <move file="${docant.target.dir}/docbook/publish" tofile="${target.dir}/docbook/@{srcDir}" failonerror="false"/>
+
+      <delete>
+        <fileset dir="${docant.target.dir}/docbook/staging/images/images" excludes="community"/>
+      </delete>
 
     </sequential>
   </macrodef>

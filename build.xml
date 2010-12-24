@@ -287,12 +287,25 @@
   
   <!-- ================================= 
        Target: manual
+
        ================================= -->
-  <target name="manual" depends="manual-support">
-    <ant antfile="doc/build.xml" inheritrefs="false" inheritAll="false"/>
+  <target name="manual"  depends="manual-support">
+    <ant antfile="doc/build.xml" inheritRefs="false" inheritAll="false">
+      <property name="docant.dir" value="${tools.dir}/docant"/>
+      <property name="docant.target.dir" value="${build.dir}"/>
+<!--
+      <property name="staging.dir" value="${build.dir}/docbook/staging"/>
+-->
+      <property name="target.dir" value="${target.dir}"/>
+    </ant>
   </target>
+
   <target name="manual-support">
-    <ant antfile="tools/docant/build.xml" inheritrefs="false" inheritAll="false"/>
+    <ant antfile="tools/docant/build.xml" inheritRefs="false" inheritAll="false">
+      <property name="docant.dir" value="${tools.dir}/docant"/>
+      <property name="docant.target.dir" value="${build.dir}"/>
+      <property name="staging.dir" value="${build.dir}/docbook/staging"/>
+    </ant>
   </target>
 
   <!-- ================================= 
