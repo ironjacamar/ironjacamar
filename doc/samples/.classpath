@@ -5,6 +5,6 @@
 	<classpathentry kind="src" output="eclipse-target/tests-classes" path="helloworld/src/test/java"/>
 	<classpathentry excluding="**/*.java" kind="src" output="eclipse-target/tests-classes" path="helloworld/src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jboss-jca-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

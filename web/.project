@@ -1,5 +1,5 @@
 <projectDescription>
-  <name>jboss-jca-web</name>
+  <name>ironjacamar-web</name>
   <comment>JBoss JCA Web</comment>
   <projects/>
   <buildSpec>
