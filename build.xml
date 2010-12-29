@@ -420,6 +420,12 @@
     <copy todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}">
       <fileset dir="${target.dir}/sjc"/>
     </copy>
+    <chmod perm="755" type="file">
+      <fileset dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}">
+        <include name="**/*.sh"/>
+      </fileset>
+    </chmod>
+
 
     <zip destfile="${name}-${major}.${minor}.${patch}.${type}.zip"
          basedir="${build.dir}"/>
