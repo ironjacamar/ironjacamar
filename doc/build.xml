@@ -51,11 +51,11 @@
 
     <transformer srcDir="developerguide" 
             srcDocName="developerguide.xml"
-            pdfName="ironjacamar_developerguide.pdf"/>
+            pdfName="IronJacamarDeveloperGuide.pdf"/>
 
     <transformer srcDir="userguide" 
             srcDocName="userguide.xml"
-            pdfName="ironjacamar_userguide.pdf"/>
+            pdfName="IronJacamarUsersGuide.pdf"/>
 
   </target>
 
