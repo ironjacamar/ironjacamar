@@ -32,7 +32,7 @@ export PATH
 
     <section id="ant">
       <title>Apache Ant</title>
-      <para>You must have Apache Ant 1.8.1+ installed on your system.</para>
+      <para>You must have Apache Ant 1.8.2+ installed on your system.</para>
       <para>Remember to ensure that "ant" are in your path (or symlinked).</para>
 
       <programlisting>
@@ -43,6 +43,12 @@ PATH=$ANT_HOME/bin:$PATH
 export PATH
       </programlisting>
 
+      <para>You may need to set the memory settings for the Apache Ant process like</para>
+
+      <programlisting>
+ANT_OPTS="$ANT_OPTS -Xms128m -Xmx512m -XX:MaxPermSize=256m"
+export ANT_OPTS
+      </programlisting>
     </section>
 
     <section id="ivy">
