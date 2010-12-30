@@ -77,6 +77,7 @@ public class Main
          kernelConfiguration = kernelConfiguration.eventListener(new PostClassLoaderEventListener());
          kernelConfiguration = kernelConfiguration.command(new Shutdown());
          kernelConfiguration = kernelConfiguration.deploymentOrder(new DeploymentOrder(order));
+         kernelConfiguration = kernelConfiguration.remoteJmxAccess(true);
 
          String home = SecurityActions.getSystemProperty("iron.jacamar.home");
          if (home != null)
