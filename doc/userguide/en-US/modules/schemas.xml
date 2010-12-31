@@ -2743,7 +2743,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="ironjacamarType">
     <xs:sequence>
-      <xs:element name="bean-validation-groups" type="bean-validation-groupsType" minOccurs="0" maxOccurs="1">
+      <xs:element name="bean-validation-groups" type="bean-validation-groupsType" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             Specifies bean validation group that should be used
@@ -2757,7 +2758,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="config-property" type="config-propertyType" 
+                  minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             The config-property specifies resource adapter configuration properties.
@@ -2771,7 +2773,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="connection-definitions" type="connection-definitionsType" minOccurs="0" maxOccurs="1">
+      <xs:element name="connection-definitions" type="connection-definitionsType" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             Specifies the connection definitions
@@ -2843,7 +2846,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="admin-objectType">
     <xs:sequence>
-      <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="config-property" type="config-propertyType" 
+                  minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             The config-property specifies administration object configuration properties.
@@ -2877,7 +2881,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="allocation-retry" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+      <xs:element name="allocation-retry" type="xs:nonNegativeInteger" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             The allocation retry element indicates the number of times that allocating 
@@ -2886,7 +2891,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+      <xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             The allocation retry wait millis element indicates the time in milliseconds 
@@ -2894,11 +2900,12 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="xa-resource-timeout" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+      <xs:element name="xa-resource-timeout" type="xs:nonNegativeInteger" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
-            Passed to XAResource.setTransactionTimeout(). Default is zero which does not invoke the setter.              
-            Specified in seconds - e.g. 5 minutes
+            Passed to XAResource.setTransactionTimeout(). Default is zero which does 
+            not invoke the setter. Specified in seconds - e.g. 5 minutes
             <xa-resource-timeout>300</xa-resource-timeout>
           </xs:documentation>
         </xs:annotation>
@@ -2916,7 +2923,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="background-validation-minutes" type="xs:nonNegativeInteger" minOccurs="0">
+      <xs:element name="background-validation-minutes" 
+                  type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             The background-validation-minutes element specifies the amount of 
@@ -2938,7 +2946,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="connection-definitionsType">
     <xs:sequence>
-      <xs:element name="connection-definition" type="connection-defintionType" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="connection-definition" type="connection-defintionType" 
+                  minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             Specifies a connection definition
@@ -2950,7 +2959,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="connection-defintionType">
     <xs:sequence>
-      <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="config-property" type="config-propertyType" 
+                  minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             The config-property specifies managed connection factory configuration properties.
@@ -3061,8 +3071,9 @@ standard information into the standard deployment descriptor.
           <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0">
             <xs:annotation>
               <xs:documentation>
-                Oracle does not like XA connections getting used both inside and outside a JTA transaction. 
-                To workaround the problem you can create separate sub-pools for the different contexts
+                Oracle does not like XA connections getting used both inside and 
+                outside a JTA transaction. To workaround the problem you can create
+                separate sub-pools for the different contexts
                 using <no-tx-separate-pools/>
                 Ex: <no-tx-separate-pools/>
               </xs:documentation>
@@ -3113,7 +3124,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="admin-objectsType">
     <xs:sequence>
-      <xs:element name="admin-object" type="admin-objectType" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="admin-object" type="admin-objectType" 
+                  minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             Specifies the setup for an admin object
@@ -3125,7 +3137,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="bean-validation-groupsType">
     <xs:sequence>
-      <xs:element name="bean-validation-group" type="xs:token" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="bean-validation-group" type="xs:token" 
+                  minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             Specifies the fully qualified class name for a bean validation group that
@@ -3188,7 +3201,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="bean-validation-groups" type="bean-validation-groupsType" minOccurs="0" maxOccurs="1">
+      <xs:element name="bean-validation-groups" type="bean-validation-groupsType" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             Specifies bean validation group that should be used
@@ -3202,7 +3216,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="config-property" type="config-propertyType" 
+                  minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             The config-property specifies resource adapter configuration properties.
@@ -3216,7 +3231,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="connection-definitions" type="connection-definitionsType" minOccurs="0" maxOccurs="1">
+      <xs:element name="connection-definitions" type="connection-definitionsType" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             Specifies the connection definitions
@@ -3288,7 +3304,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="admin-objectType">
     <xs:sequence>
-      <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="config-property" type="config-propertyType" 
+                  minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             The config-property specifies administration object configuration properties.
@@ -3322,7 +3339,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="allocation-retry" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+      <xs:element name="allocation-retry" type="xs:nonNegativeInteger" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             The allocation retry element indicates the number of times that allocating 
@@ -3331,7 +3349,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+      <xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             The allocation retry wait millis element indicates the time in milliseconds 
@@ -3340,10 +3359,12 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="xa-resource-timeout" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1">
+      <xs:element name="xa-resource-timeout" type="xs:nonNegativeInteger" 
+                  minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
-            Passed to XAResource.setTransactionTimeout(). Default is zero which does not invoke the setter.              
+            Passed to XAResource.setTransactionTimeout(). Default is zero which 
+            does not invoke the setter.              
             Specified in seconds - e.g. 5 minutes
             <xa-resource-timeout>300</xa-resource-timeout>
           </xs:documentation>
@@ -3362,7 +3383,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="background-validation-minutes" type="xs:nonNegativeInteger" minOccurs="0">
+      <xs:element name="background-validation-minutes" 
+                  type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             The background-validation-minutes element specifies the amount of 
@@ -3392,7 +3414,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="resource-adaptersType">
     <xs:sequence>
-      <xs:element name="resource-adapter" type="resource-adapterType" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="resource-adapter" type="resource-adapterType" 
+                  minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             Specifies activation of a resource adapter
@@ -3404,7 +3427,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="connection-definitionsType">
     <xs:sequence>
-      <xs:element name="connection-definition" type="connection-defintionType" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="connection-definition" type="connection-defintionType" 
+                  minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             Specifies a connection definition
@@ -3416,7 +3440,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="connection-defintionType">
     <xs:sequence>
-      <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="config-property" type="config-propertyType" 
+                  minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             The config-property specifies managed connection factory configuration properties.
@@ -3526,8 +3551,9 @@ standard information into the standard deployment descriptor.
           <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0">
             <xs:annotation>
               <xs:documentation>
-                Oracle does not like XA connections getting used both inside and outside a JTA transaction. 
-                To workaround the problem you can create separate sub-pools for the different contexts
+                Oracle does not like XA connections getting used both inside and 
+                outside a JTA transaction. To workaround the problem you can create 
+                separate sub-pools for the different contexts
                 using <no-tx-separate-pools/>
                 Ex: <no-tx-separate-pools/>
               </xs:documentation>
@@ -3541,11 +3567,12 @@ standard information into the standard deployment descriptor.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="wrap-xa-resource" type="xs:boolean" default="false" minOccurs="0">
+          <xs:element name="wrap-xa-resource" type="xs:boolean" 
+                  default="false" minOccurs="0">
             <xs:annotation>
               <xs:documentation>
-                Should the XAResource instances be wrapped in a org.jboss.tm.XAResourceWrapper
-                instance
+                Should the XAResource instances be wrapped in a 
+                org.jboss.tm.XAResourceWrapper instance
                 Ex: <wrap-xa-resource>true</wrap-xa-resource>
               </xs:documentation>
             </xs:annotation>
@@ -3578,7 +3605,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="admin-objectsType">
     <xs:sequence>
-      <xs:element name="admin-object" type="admin-objectType" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="admin-object" type="admin-objectType" 
+                  minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             Specifies the setup for an admin object
@@ -3590,7 +3618,8 @@ standard information into the standard deployment descriptor.
 
   <xs:complexType name="bean-validation-groupsType">
     <xs:sequence>
-      <xs:element name="bean-validation-group" type="xs:token" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="bean-validation-group" type="xs:token" 
+                  minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             Specifies the fully qualified class name for a bean validation group that
@@ -3643,14 +3672,16 @@ standard information into the standard deployment descriptor.
       <xs:element name="connection-url" type="xs:token">
         <xs:annotation>
           <xs:documentation>
-            The JDBC driver connection URL Ex: <connection-url>jdbc:hsqldb:hsql://localhost:1701</connection-url>
+            The JDBC driver connection URL Ex: 
+            <connection-url>jdbc:hsqldb:hsql://localhost:1701</connection-url>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="driver-class" type="xs:token">
         <xs:annotation>
           <xs:documentation>
-            The fully qualifed name of the JDBC driver class Ex: <driver-class>org.hsqldb.jdbcDriver</driver-class>
+            The fully qualifed name of the JDBC driver class Ex: 
+            <driver-class>org.hsqldb.jdbcDriver</driver-class>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -3661,7 +3692,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="connection-property" type="connection-propertyType" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="connection-property" type="connection-propertyType" 
+                  minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             The connection-property element allows you to pass in arbitrary connection 
@@ -3744,7 +3776,8 @@ standard information into the standard deployment descriptor.
   </xs:complexType>
   <xs:complexType name="xa-datasourceType">
     <xs:sequence>
-      <xs:element name="xa-datasource-property" type="xa-datasource-propertyType" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="xa-datasource-property" type="xa-datasource-propertyType" 
+                  minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             Specifies a property to assign to the XADataSource implementation class. 
@@ -3766,7 +3799,8 @@ standard information into the standard deployment descriptor.
         <xs:annotation>
           <xs:documentation>
             The fully qualifed name of the javax.sql.XADataSource implementation 
-            class. Ex: <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+            class. Ex: <xa-datasource-class>
+            oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -3852,7 +3886,8 @@ standard information into the standard deployment descriptor.
                 </xs:documentation>
               </xs:annotation>
             </xs:element>
-            <xs:element name="prepared-statement-cache-size" type="xs:nonNegativeInteger" minOccurs="0">
+            <xs:element name="prepared-statement-cache-size" 
+                  type="xs:nonNegativeInteger" minOccurs="0">
               <xs:annotation>
                 <xs:documentation>
                   The number of prepared statements per connection in an LRU cache
@@ -3910,8 +3945,8 @@ standard information into the standard deployment descriptor.
     <xs:annotation>
       <xs:documentation>
         Define constants used as the possible transaction isolation levels in transaction-isolation
-        type. Include: TRANSACTION_READ_UNCOMMITTED, TRANSACTION_READ_COMMITTED, TRANSACTION_REPEATABLE_READ,
-        TRANSACTION_SERIALIZABLE, TRANSACTION_NONE
+        type. Include: TRANSACTION_READ_UNCOMMITTED, TRANSACTION_READ_COMMITTED, 
+        TRANSACTION_REPEATABLE_READ, TRANSACTION_SERIALIZABLE, TRANSACTION_NONE
       </xs:documentation>
     </xs:annotation>
     <xs:restriction base="xs:token">
@@ -3937,7 +3972,8 @@ standard information into the standard deployment descriptor.
             a SQLException isValidConnection(Connection e) method to validate is a connection 
             is valid. An exception means the connection is destroyed. This overrides 
             the check-valid-connection-sql when present. Ex:
-            <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.OracleValidConnectionChecker</exception-sorter-class-name>
+            <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.OracleValidConnectionChecker
+            </exception-sorter-class-name>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -3967,7 +4003,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="background-validation-minutes" type="xs:nonNegativeInteger" minOccurs="0">
+      <xs:element name="background-validation-minutes" 
+                  type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             The background-validation-minutes element specifies the amount of 
@@ -3991,7 +4028,9 @@ standard information into the standard deployment descriptor.
             a boolean isStaleConnection(SQLException e) method which if it it returns 
             true will wrap the exception in an org.jboss.jca.adapters.jdbc.StaleConnectionException 
             which is a subclass of SQLException. Ex: 
-            <stale-connection-checker-class-name>org.jboss.jca.adapters.jdbc.vendor.OracleStaleConnectionChecker</stale-connection-checker-class-name> 
+            <stale-connection-checker-class-name>
+                  org.jboss.jca.adapters.jdbc.vendor.OracleStaleConnectionChecker
+            </stale-connection-checker-class-name> 
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -4002,7 +4041,9 @@ standard information into the standard deployment descriptor.
             boolean isExceptionFatal(SQLException e) method to validate is an exception 
             should be broadcast to all javax.resource.spi.ConnectionEventListener as 
             a connectionErrorOccurred message. Ex: 
-            <exception-sorter-class-name>org.jboss.jca.adapters.jdbc.vendor.OracleExceptionSorter</exception-sorter-class-name>
+            <exception-sorter-class-name>
+                  org.jboss.jca.adapters.jdbc.vendor.OracleExceptionSorter
+            </exception-sorter-class-name>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -4010,7 +4051,8 @@ standard information into the standard deployment descriptor.
   </xs:complexType>
   <xs:complexType name="time-outType">
     <xs:sequence>
-      <xs:element name="blocking-timeout-millis" type="xs:nonNegativeInteger" minOccurs="0">
+      <xs:element name="blocking-timeout-millis" 
+                  type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             The blocking-timeout-millis element indicates the maximum time in 
@@ -4052,7 +4094,8 @@ standard information into the standard deployment descriptor.
         <xs:annotation>
           <xs:documentation>
             Any configured timeout for internal locks on the resource adapter 
-            objects in seconds The default is a 60 second timeout e.g. 5 minutes <use-try-lock>300</use-try-lock>
+            objects in seconds The default is a 60 second timeout e.g. 5 minutes 
+            <use-try-lock>300</use-try-lock>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -4064,7 +4107,8 @@ standard information into the standard deployment descriptor.
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="allocation-retry-wait-millis" type="xs:nonNegativeInteger" minOccurs="0">
+      <xs:element name="allocation-retry-wait-millis" 
+                  type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             The allocation retry wait millis element indicates the time in milliseconds 
@@ -4076,7 +4120,8 @@ standard information into the standard deployment descriptor.
         <xs:annotation>
           <xs:documentation>
             Passed to XAResource.setTransactionTimeout() Default is zero which 
-            does not invoke the setter. In seconds e.g. 5 minutes <xa-resource-timeout>300</xa-resource-timeout>
+            does not invoke the setter. In seconds e.g. 5 minutes 
+            <xa-resource-timeout>300</xa-resource-timeout>
           </xs:documentation>
         </xs:annotation>
       </xs:element>
@@ -4094,7 +4139,8 @@ standard information into the standard deployment descriptor.
       <xs:element name="track-statements" type="track-statementsType" minOccurs="0">
         <xs:annotation></xs:annotation>
       </xs:element>
-      <xs:element name="prepared-statement-cache-size" type="xs:nonNegativeInteger" minOccurs="0">
+      <xs:element name="prepared-statement-cache-size" 
+                  type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation></xs:annotation>
       </xs:element>
       <xs:element name="share-prepared-statements" type="boolean-presenceType" minOccurs="0">
@@ -4164,8 +4210,9 @@ standard information into the standard deployment descriptor.
           <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0">
             <xs:annotation>
               <xs:documentation>
-                Oracle does not like XA connections getting used both inside and outside a JTA transaction. 
-                To workaround the problem you can create separate sub-pools for the different contexts
+                Oracle does not like XA connections getting used both inside and 
+                outside a JTA transaction. To workaround the problem you can create 
+                separate sub-pools for the different contexts
                 using <no-tx-separate-pools/>
                 Ex: <no-tx-separate-pools/>
               </xs:documentation>
