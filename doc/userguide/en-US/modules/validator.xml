@@ -176,16 +176,16 @@ cd doc/validator
         your build environment before deploying the resoruce adapter into the IronJacamar container.</para>
 
       <para>To be able to use the validator plugin in your Maven project, you will have to add the following plugin declaration
-        in the pom.xml of your project:
+        in the pom.xml of your project:</para>
         <programlisting language="xml">
-          <![CDATA[
+<![CDATA[
 <build>
   <plugins>
     <plugin>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-validator-maven</artifactId>
       <!-- The version of the plugin you want to use -->
-      <version>1.0.0.Beta2</version>
+      <version>1.0.0.Beta4</version>
       <executions>
         <execution>
           <goals>
@@ -210,8 +210,9 @@ cd doc/validator
     </plugin>
   </plugins>
 </build>        
-        ]]>
+]]>
         </programlisting>
+      <para>
         <note>By default, the validator-maven plugin is attached to the "package" phase of Maven.</note>
       </para>
 
