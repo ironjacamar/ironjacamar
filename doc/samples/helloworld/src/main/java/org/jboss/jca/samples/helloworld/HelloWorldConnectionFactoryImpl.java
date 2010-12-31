@@ -44,8 +44,8 @@ public class HelloWorldConnectionFactoryImpl implements HelloWorldConnectionFact
 
    /**
     * default constructor
-    * @param   mcf       ManagedConnectionFactory
-    * @param   cxManager ConnectionManager
+    * @param mcf ManagedConnectionFactory
+    * @param cxManager ConnectionManager
     */
    public HelloWorldConnectionFactoryImpl(HelloWorldManagedConnectionFactory mcf,
                                           ConnectionManager cxManager)
@@ -81,7 +81,7 @@ public class HelloWorldConnectionFactoryImpl implements HelloWorldConnectionFact
    /**
     * Set the Reference instance.
     *
-    * @param   reference  A Reference instance
+    * @param reference A Reference instance
     */
    @Override
    public void setReference(Reference reference)

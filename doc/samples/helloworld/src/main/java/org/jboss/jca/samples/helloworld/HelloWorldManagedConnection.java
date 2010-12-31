@@ -75,10 +75,10 @@ public class HelloWorldManagedConnection implements ManagedConnection
     * Creates a new connection handle for the underlying physical connection 
     * represented by the ManagedConnection instance. 
     *
-    * @param        subject        security context as JAAS subject
-    * @param        cxRequestInfo  ConnectionRequestInfo instance
-    * @return       generic Object instance representing the connection handle. 
-    * @throws  ResourceException     generic exception if operation fails
+    * @param subject security context as JAAS subject
+    * @param cxRequestInfo ConnectionRequestInfo instance
+    * @return generic Object instance representing the connection handle. 
+    * @throws ResourceException generic exception if operation fails
     */
    public Object getConnection(Subject subject,
                                ConnectionRequestInfo cxRequestInfo) 
@@ -93,8 +93,8 @@ public class HelloWorldManagedConnection implements ManagedConnection
     * Used by the container to change the association of an 
     * application-level connection handle with a ManagedConneciton instance.
     *
-    * @param   connection  Application-level connection handle
-    * @throws  ResourceException     generic exception if operation fails
+    * @param connection Application-level connection handle
+    * @throws ResourceException generic exception if operation fails
     */
    public void associateConnection(Object connection) throws ResourceException
    {
@@ -102,9 +102,10 @@ public class HelloWorldManagedConnection implements ManagedConnection
    }
 
    /**
-    * Application server calls this method to force any cleanup on the ManagedConnection instance.
+    * Application server calls this method to force any cleanup on 
+    * the ManagedConnection instance.
     *
-    * @throws    ResourceException     generic exception if operation fails
+    * @throws ResourceException generic exception if operation fails
     */
    public void cleanup() throws ResourceException
    {
@@ -113,7 +114,7 @@ public class HelloWorldManagedConnection implements ManagedConnection
    /**
     * Destroys the physical connection to the underlying resource manager.
     *
-    * @throws    ResourceException     generic exception if operation fails
+    * @throws ResourceException generic exception if operation fails
     */
    public void destroy() throws ResourceException
    {
@@ -123,7 +124,7 @@ public class HelloWorldManagedConnection implements ManagedConnection
    /**
     * Adds a connection event listener to the ManagedConnection instance.
     *
-    * @param  listener   a new ConnectionEventListener to be registered
+    * @param listener a new ConnectionEventListener to be registered
     */
    public void addConnectionEventListener(ConnectionEventListener listener)
    {
@@ -134,9 +135,10 @@ public class HelloWorldManagedConnection implements ManagedConnection
    }
 
    /**
-    * Removes an already registered connection event listener from the ManagedConnection instance.
+    * Removes an already registered connection event listener 
+    * from the ManagedConnection instance.
     *
-    * @param  listener   already registered connection event listener to be removed
+    * @param listener already registered connection event listener to be removed
     */
    public void removeConnectionEventListener(ConnectionEventListener listener)
    {
@@ -149,8 +151,9 @@ public class HelloWorldManagedConnection implements ManagedConnection
    /**
     * Gets the log writer for this ManagedConnection instance.
     *
-    * @return  Character ourput stream associated with this Managed-Connection instance
-    * @throws ResourceException     generic exception if operation fails
+    * @return Character ourput stream associated with this 
+    *         Managed-Connection instance
+    * @throws ResourceException generic exception if operation fails
     */
    public PrintWriter getLogWriter() throws ResourceException
    {
@@ -160,8 +163,8 @@ public class HelloWorldManagedConnection implements ManagedConnection
    /**
     * Sets the log writer for this ManagedConnection instance.
     *
-    * @param      out        Character Output stream to be associated
-    * @throws     ResourceException  generic exception if operation fails
+    * @param out Character Output stream to be associated
+    * @throws ResourceException generic exception if operation fails
     */
    public void setLogWriter(PrintWriter out) throws ResourceException
    {
@@ -171,8 +174,8 @@ public class HelloWorldManagedConnection implements ManagedConnection
    /**
     * Returns an <code>javax.resource.spi.LocalTransaction</code> instance.
     *
-    * @return     LocalTransaction instance
-    * @throws ResourceException     generic exception if operation fails
+    * @return LocalTransaction instance
+    * @throws ResourceException generic exception if operation fails
     */
    public LocalTransaction getLocalTransaction() throws ResourceException
    {
@@ -182,8 +185,8 @@ public class HelloWorldManagedConnection implements ManagedConnection
    /**
     * Returns an <code>javax.transaction.xa.XAresource</code> instance. 
     *
-    * @return     XAResource instance
-    * @throws ResourceException     generic exception if operation fails
+    * @return XAResource instance
+    * @throws ResourceException generic exception if operation fails
     */
    public XAResource getXAResource() throws ResourceException
    {
@@ -191,10 +194,11 @@ public class HelloWorldManagedConnection implements ManagedConnection
    }
 
    /**
-    * Gets the metadata information for this connection's underlying EIS resource manager instance. 
+    * Gets the metadata information for this connection's underlying 
+    * EIS resource manager instance. 
     *
     * @return ManagedConnectionMetaData instance
-    * @throws ResourceException     generic exception if operation fails
+    * @throws ResourceException generic exception if operation fails
     */
    public ManagedConnectionMetaData getMetaData() throws ResourceException
    {
