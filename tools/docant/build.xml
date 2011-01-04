@@ -58,7 +58,7 @@
 <!--
   <property name="version.jdocbook-core" value="1.0.3"/>
 -->
-  <property name="version.docant" value="1.0.0.Alpha2-2010-12-30"/>
+  <property name="version.docant" value="1.0.0.Alpha2-2011-01-04"/>
 
   <property name="version.jdocbook-core" value="1.0.4"/>
   <property name="version.jdocbook-core-ext" value="2010-12-30"/>
