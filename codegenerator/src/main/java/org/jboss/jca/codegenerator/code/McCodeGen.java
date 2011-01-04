@@ -140,7 +140,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param subject security context as JAAS subject");
+      out.write(" * @param subject Security context as JAAS subject");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @param cxRequestInfo ConnectionRequestInfo instance");
@@ -278,7 +278,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param listener a new ConnectionEventListener to be registered");
+      out.write(" * @param listener A new ConnectionEventListener to be registered");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

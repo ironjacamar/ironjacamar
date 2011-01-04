@@ -98,7 +98,7 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
       out.write("/** ");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * get connection from factory");
+      out.write(" * Get connection from factory");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");

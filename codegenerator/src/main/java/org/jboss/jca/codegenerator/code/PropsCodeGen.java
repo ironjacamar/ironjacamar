@@ -79,7 +79,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
          out.write("/** ");
          writeEol(out);
          writeIndent(out, indent);
-         out.write(" * set " + name);
+         out.write(" * Set " + name);
          writeEol(out);
          writeIndent(out, indent);
          out.write(" * @param " + name + " The value");
@@ -107,7 +107,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
          out.write("/** ");
          writeEol(out);
          writeIndent(out, indent);
-         out.write(" * get " + name);
+         out.write(" * Get " + name);
          writeEol(out);
          writeIndent(out, indent);
          out.write(" * @return The value");
@@ -146,7 +146,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       out.write(" * Returns a hash code value for the object.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return a hash code value for this object.");
+      out.write(" * @return A hash code value for this object.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -201,10 +201,10 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       out.write(" * Indicates whether some other object is equal to this one.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   other   the reference object with which to compare.");
+      out.write(" * @param other The reference object with which to compare.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return true if this object is the same as the obj argument; false otherwise.");
+      out.write(" * @return true if this object is the same as the obj argument, false otherwise.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

@@ -75,7 +75,7 @@ public class HelloWorldManagedConnection implements ManagedConnection
     * Creates a new connection handle for the underlying physical connection 
     * represented by the ManagedConnection instance. 
     *
-    * @param subject security context as JAAS subject
+    * @param subject Security context as JAAS subject
     * @param cxRequestInfo ConnectionRequestInfo instance
     * @return generic Object instance representing the connection handle. 
     * @throws ResourceException generic exception if operation fails
@@ -124,7 +124,7 @@ public class HelloWorldManagedConnection implements ManagedConnection
    /**
     * Adds a connection event listener to the ManagedConnection instance.
     *
-    * @param listener a new ConnectionEventListener to be registered
+    * @param listener A new ConnectionEventListener to be registered
     */
    public void addConnectionEventListener(ConnectionEventListener listener)
    {
@@ -138,7 +138,7 @@ public class HelloWorldManagedConnection implements ManagedConnection
     * Removes an already registered connection event listener 
     * from the ManagedConnection instance.
     *
-    * @param listener already registered connection event listener to be removed
+    * @param listener Already registered connection event listener to be removed
     */
    public void removeConnectionEventListener(ConnectionEventListener listener)
    {

@@ -49,7 +49,7 @@ public class CfCodeGen extends AbstractCodeGen
       int indent = 1;
       
       writeIndent(out, indent);
-      out.write("/** reference */");
+      out.write("/** Reference */");
       writeEol(out);
       writeIndent(out, indent);
       out.write("private Reference reference;");
@@ -63,7 +63,7 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * default constructor");
+      out.write(" * Default constructor");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @param cxManager ConnectionManager");
@@ -131,7 +131,7 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("/** ");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * get connection from factory");
+      out.write(" * Get connection from factory");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" *");

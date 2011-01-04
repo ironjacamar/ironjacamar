@@ -103,7 +103,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   String representing version of the resource adapter");
+      out.write(" * @return String representing version of the resource adapter");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -130,7 +130,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   String representing name of the vendor ");
+      out.write(" * @return String representing name of the vendor ");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -157,7 +157,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   String representing the name of the resource adapter");
+      out.write(" * @return String representing the name of the resource adapter");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -184,7 +184,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   String describing the resource adapter");
+      out.write(" * @return String describing the resource adapter");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -211,7 +211,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   String representing the supported version of the connector architecture");
+      out.write(" * @return String representing the supported version of the connector architecture");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -275,7 +275,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   boolean depending on method support");
+      out.write(" * @return boolean Depending on method support");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -302,7 +302,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   boolean depending on method support");
+      out.write(" * @return boolean Depending on method support");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -329,7 +329,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   true if resource adapter supports resource manager local transaction demarcation ");
+      out.write(" * @return true If resource adapter supports resource manager local transaction demarcation ");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

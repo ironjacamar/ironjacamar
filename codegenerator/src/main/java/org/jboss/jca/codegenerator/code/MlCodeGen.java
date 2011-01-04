@@ -51,7 +51,7 @@ public class MlCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * receive message");
+      out.write(" * Receive message");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @param msg String.");

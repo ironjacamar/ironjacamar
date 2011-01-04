@@ -29,14 +29,14 @@ package org.jboss.jca.samples.helloworld;
 public interface HelloWorldConnection
 {
    /**
-    * helloWorld
+    * HelloWorld
     * @return String
     */
    public String helloWorld();
 
    /**
-    * helloWorld
-    * @param name name
+    * HelloWorld
+    * @param name A name
     * @return String
     */
    public String helloWorld(String name);

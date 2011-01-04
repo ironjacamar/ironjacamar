@@ -218,7 +218,7 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return  name of the user");
+      out.write(" * @return Name of the user");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @throws ResourceException Thrown if an error occurs");

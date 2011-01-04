@@ -37,7 +37,7 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
    private HelloWorldManagedConnectionFactory mcf;
 
    /**
-    * default constructor
+    * Default constructor
     * @param mcf HelloWorldManagedConnectionFactory
     */
    public HelloWorldConnectionImpl(HelloWorldManagedConnectionFactory mcf)
@@ -46,7 +46,7 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
    }
 
    /**
-    * call helloWorld
+    * Call helloWorld
     * @return String helloworld
     */
    public String helloWorld()
@@ -55,7 +55,7 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
    }
 
    /**
-    * call helloWorld
+    * Call helloWorld
     * @param name String name
     * @return String helloworld
     */

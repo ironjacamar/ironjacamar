@@ -219,7 +219,7 @@ public class TestCodeGen extends AbstractCodeGen
    private void writeResource(Definition def, Writer out, int indent) throws IOException
    {
       writeIndent(out, indent);
-      out.write("/** resource */");
+      out.write("/** Resource */");
       writeEol(out);
       writeIndent(out, indent);
       out.write("@Resource(mappedName = \"java:/eis/" + getClassName(def) + "\")");

@@ -62,7 +62,7 @@ public class HelloWorldManagedConnectionFactory implements ManagedConnectionFact
    private PrintWriter logwriter;
 
    /**
-    * default constructor
+    * Default constructor
     */
    public HelloWorldManagedConnectionFactory()
    {
@@ -113,7 +113,7 @@ public class HelloWorldManagedConnectionFactory implements ManagedConnectionFact
    /**
     * Returns a matched connection from the candidate set of connections. 
     *
-    * @param connectionSet candidate connection set
+    * @param connectionSet Candidate connection set
     * @param subject Caller's security information
     * @param cxRequestInfo Additional resource adapter specific connection request information
     * @throws ResourceException generic exception
@@ -183,7 +183,7 @@ public class HelloWorldManagedConnectionFactory implements ManagedConnectionFact
 
    /** 
     * Returns a hash code value for the object.
-    * @return a hash code value for this object.
+    * @return A hash code value for this object.
     */
    @Override
    public int hashCode()
@@ -194,8 +194,8 @@ public class HelloWorldManagedConnectionFactory implements ManagedConnectionFact
 
    /** 
     * Indicates whether some other object is equal to this one.
-    * @param other the reference object with which to compare.
-    * @return true if this object is the same as the obj argument; false otherwise.
+    * @param other The reference object with which to compare.
+    * @return true If this object is the same as the obj argument, false otherwise.
     */
    @Override
    public boolean equals(Object other)

@@ -185,7 +185,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
          out.write("/**");
          writeEol(out);
          writeIndent(out, indent);
-         out.write(" * call me");
+         out.write(" * Call me");
          writeEol(out);
          writeIndent(out, indent);
          out.write(" */");

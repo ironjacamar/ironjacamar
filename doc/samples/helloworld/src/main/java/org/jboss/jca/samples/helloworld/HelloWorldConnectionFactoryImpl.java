@@ -43,7 +43,7 @@ public class HelloWorldConnectionFactoryImpl implements HelloWorldConnectionFact
    private ConnectionManager connectionManager;
 
    /**
-    * default constructor
+    * Default constructor
     * @param mcf ManagedConnectionFactory
     * @param cxManager ConnectionManager
     */
@@ -55,7 +55,7 @@ public class HelloWorldConnectionFactoryImpl implements HelloWorldConnectionFact
    }
 
    /** 
-    * get connection from factory
+    * Get connection from factory
     *
     * @return HelloWorldConnection instance
     * @exception ResourceException Thrown if a connection can't be obtained

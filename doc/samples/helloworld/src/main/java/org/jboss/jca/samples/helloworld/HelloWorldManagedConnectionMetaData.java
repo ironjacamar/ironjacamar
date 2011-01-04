@@ -33,7 +33,7 @@ import javax.resource.spi.ManagedConnectionMetaData;
 public class HelloWorldManagedConnectionMetaData implements ManagedConnectionMetaData
 {
    /**
-    * default constructor
+    * Default constructor
     */
    public HelloWorldManagedConnectionMetaData()
    {
@@ -78,7 +78,7 @@ public class HelloWorldManagedConnectionMetaData implements ManagedConnectionMet
    /**
     * Returns name of the user associated with the ManagedConnection instance
     *
-    * @return  name of the user
+    * @return Name of the user
     * @throws ResourceException Thrown if an error occurs
     */
    @Override

@@ -180,7 +180,7 @@ public abstract class AbstractCodeGen extends BaseGen
       out.write(" * Returns a hash code value for the object.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return a hash code value for this object.");
+      out.write(" * @return A hash code value for this object.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -216,10 +216,10 @@ public abstract class AbstractCodeGen extends BaseGen
       out.write(" * Indicates whether some other object is equal to this one.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   other   the reference object with which to compare.");
+      out.write(" * @param other The reference object with which to compare.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return true if this object is the same as the obj argument; false otherwise.");
+      out.write(" * @return true If this object is the same as the obj argument, false otherwise.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

@@ -68,7 +68,7 @@ public class MbeanImplCodeGen extends AbstractCodeGen
                out.write("/**");
                writeEol(out);
                writeIndent(out, indent);
-               out.write(" * call " + method.getMethodName());
+               out.write(" * Call " + method.getMethodName());
                writeEol(out);
                for (MethodParam param : method.getParams())
                {
@@ -132,7 +132,7 @@ public class MbeanImplCodeGen extends AbstractCodeGen
          out.write("/**");
          writeEol(out);
          writeIndent(out, indent);
-         out.write(" * call me");
+         out.write(" * Call me");
          writeEol(out);
          writeIndent(out, indent);
          out.write(" */");
@@ -153,7 +153,7 @@ public class MbeanImplCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * getConnection");
+      out.write(" * GetConnection");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @return " + def.getConnInterfaceClass());

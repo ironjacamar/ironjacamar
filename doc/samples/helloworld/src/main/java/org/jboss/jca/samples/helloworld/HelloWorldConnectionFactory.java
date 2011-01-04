@@ -34,7 +34,7 @@ import javax.resource.ResourceException;
 public interface HelloWorldConnectionFactory extends Serializable, Referenceable
 {
    /** 
-    * get connection from factory
+    * Get connection from factory
     *
     * @return HelloWorldConnection instance
     * @exception ResourceException Thrown if a connection can't be obtained

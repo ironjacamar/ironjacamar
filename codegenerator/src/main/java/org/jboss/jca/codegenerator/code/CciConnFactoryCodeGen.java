@@ -60,10 +60,10 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * default constructor");
+      out.write(" * Default constructor");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   cxManager ConnectionManager");
+      out.write(" * @param cxManager ConnectionManager");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -149,7 +149,7 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write(" * @return Connection instance the EIS instance.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws ResourceException   Failed to get a connection to");
+      out.write(" * @throws ResourceException Failed to get a connection to");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -177,14 +177,14 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param  connSpec Connection parameters and security information specified as " +
+      out.write(" * @param connSpec Connection parameters and security information specified as " +
          "ConnectionSpec instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @return Connection instance the EIS instance.");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws ResourceException   Failed to get a connection to");
+      out.write(" * @throws ResourceException Failed to get a connection to");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -266,10 +266,10 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write(" * @return RecordFactory instance");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws   ResourceException   Failed to create a RecordFactory");
+      out.write(" * @throws ResourceException Failed to create a RecordFactory");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws   javax.resource.NotSupportedException Operation not supported");
+      out.write(" * @throws javax.resource.NotSupportedException Operation not supported");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -334,7 +334,7 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   reference  A Reference instance");
+      out.write(" * @param reference A Reference instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

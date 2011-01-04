@@ -230,15 +230,15 @@ public class McfCodeGen extends PropsCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param    cxManager    ConnectionManager to be " + 
+      out.write(" * @param cxManager ConnectionManager to be " + 
          "associated with created EIS connection factory instance");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   EIS-specific Connection Factory instance or " +
+      out.write(" * @return EIS-specific Connection Factory instance or " +
          "javax.resource.cci.ConnectionFactory instance");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws   ResourceException Generic exception");
+      out.write(" * @throws ResourceException Generic exception");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -273,11 +273,11 @@ public class McfCodeGen extends PropsCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return   EIS-specific Connection Factory instance or " +
+      out.write(" * @return EIS-specific Connection Factory instance or " +
          "javax.resource.cci.ConnectionFactory instance");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws   ResourceException Generic exception");
+      out.write(" * @throws ResourceException Generic exception");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -337,17 +337,17 @@ public class McfCodeGen extends PropsCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   subject        Caller's security information");
+      out.write(" * @param subject Caller's security information");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   cxRequestInfo  Additional resource adapter " +
+      out.write(" * @param cxRequestInfo Additional resource adapter " +
          "specific connection request information");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws  ResourceException     generic exception");
+      out.write(" * @throws ResourceException generic exception");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return  ManagedConnection instance ");
+      out.write(" * @return ManagedConnection instance ");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -381,20 +381,20 @@ public class McfCodeGen extends PropsCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   connectionSet   candidate connection set");
+      out.write(" * @param connectionSet Candidate connection set");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   subject        Caller's security information");
+      out.write(" * @param subject Caller's security information");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   cxRequestInfo  Additional resource adapter " +
+      out.write(" * @param cxRequestInfo Additional resource adapter " +
          "specific connection request information");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws  ResourceException     generic exception");
+      out.write(" * @throws ResourceException generic exception");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return  ManagedConnection if resource adapter finds an acceptable match otherwise null ");
+      out.write(" * @return ManagedConnection if resource adapter finds an acceptable match otherwise null ");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -437,10 +437,10 @@ public class McfCodeGen extends PropsCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return  PrintWriter");
+      out.write(" * @return PrintWriter");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws  ResourceException     generic exception");
+      out.write(" * @throws ResourceException generic exception");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -467,10 +467,10 @@ public class McfCodeGen extends PropsCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param   out PrintWriter - an out stream for error logging and tracing");
+      out.write(" * @param out PrintWriter - an out stream for error logging and tracing");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws  ResourceException     generic exception");
+      out.write(" * @throws ResourceException generic exception");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

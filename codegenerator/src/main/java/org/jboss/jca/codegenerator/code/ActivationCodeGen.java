@@ -59,7 +59,7 @@ public class ActivationCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("/** activation spec */");
+      out.write("/** Activation spec */");
       writeEol(out);
       writeIndent(out, indent);
       out.write("private " + def.getAsClass() + " spec;");
@@ -78,7 +78,7 @@ public class ActivationCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * default constructor");
+      out.write(" * Default constructor");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @exception ResourceException Thrown if an error occurs");
@@ -99,7 +99,7 @@ public class ActivationCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * constructor");
+      out.write(" * Constructor");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @param ra " + def.getRaClass());
@@ -192,10 +192,10 @@ public class ActivationCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * get activation spec class");
+      out.write(" * Get activation spec class");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return activation spec");
+      out.write(" * @return Activation spec");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -224,10 +224,10 @@ public class ActivationCodeGen extends AbstractCodeGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * get message endpoint factory");
+      out.write(" * Get message endpoint factory");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return message endpoint factory");
+      out.write(" * @return Message endpoint factory");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
