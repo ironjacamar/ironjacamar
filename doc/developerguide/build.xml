@@ -12,20 +12,17 @@
   <property name="pdfName" value="IronJacamarDeveloperGuide.pdf" />
 
   <target name="docant-init" >
-    <available file="${docant.dir}/target/docbook/staging" type="dir" property="docant.support" value="true"/>
+    <available file="${docant.target.dir}/docbook/staging" type="dir" property="docant.support" value="true"/>
   </target>
 
   <target name="docant-support" unless="docant.support">
     <ant antfile="${docant.dir}/build.xml" inheritRefs="false" inheritAll="false">
       <property name="docant.dir" value="${docant.dir}"/>
+      <property name="docant.target.dir" value="${docant.target.dir}"/>
     </ant>
   </target>
 
   <target name="docant-prepare" depends="docant-init, docant-support">
-    <copy todir="${docant.target.dir}">
-      <fileset dir="${docant.dir}/target"/>
-    </copy>
-
     <copy todir="${docant.target.dir}/docbook/staging/images/images">
         <fileset dir="${basedir}/${srcDir}/en-US/images/"/>
     </copy>
@@ -34,7 +31,9 @@
   <target name="docant-post">
     <mkdir dir="${target.dir}/docs/${srcDocName}"/>
     <move file="${docant.target.dir}/docbook/publish" tofile="${target.dir}/docs/${srcDocName}" failonerror="false"/>
-    <delete dir="${docant.target.dir}/docbook/"/>
+    <delete includeemptydirs="true">
+      <fileset dir="${docant.target.dir}/docbook/staging/images/images/" excludes="community/**"/>
+    </delete>
   </target>
 
   <target name="html">
