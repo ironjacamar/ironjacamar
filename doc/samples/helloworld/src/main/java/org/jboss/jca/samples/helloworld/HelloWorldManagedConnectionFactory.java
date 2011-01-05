@@ -46,7 +46,8 @@ import javax.security.auth.Subject;
    connectionFactoryImpl = HelloWorldConnectionFactoryImpl.class,
    connection = HelloWorldConnection.class,
    connectionImpl = HelloWorldConnectionImpl.class)
-public class HelloWorldManagedConnectionFactory implements ManagedConnectionFactory, ResourceAdapterAssociation
+public class HelloWorldManagedConnectionFactory 
+   implements ManagedConnectionFactory, ResourceAdapterAssociation
 {
 
    /** The serialVersionUID */

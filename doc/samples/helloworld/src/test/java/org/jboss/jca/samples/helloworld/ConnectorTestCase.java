@@ -60,11 +60,17 @@ public class ConnectorTestCase
    {
       ResourceAdapterArchive raa =
          ShrinkWrap.create(ResourceAdapterArchive.class, deploymentName + ".rar");
-      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
-      ja.addClasses(HelloWorldResourceAdapter.class, HelloWorldManagedConnectionFactory.class, 
-         HelloWorldManagedConnection.class, HelloWorldManagedConnectionMetaData.class, 
-         HelloWorldConnectionManager.class, HelloWorldConnectionFactory.class, 
-         HelloWorldConnectionFactoryImpl.class, HelloWorldConnection.class, HelloWorldConnectionImpl.class);
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, 
+         UUID.randomUUID().toString() + ".jar");
+      ja.addClasses(HelloWorldResourceAdapter.class, 
+         HelloWorldManagedConnectionFactory.class, 
+         HelloWorldManagedConnection.class, 
+         HelloWorldManagedConnectionMetaData.class, 
+         HelloWorldConnectionManager.class, 
+         HelloWorldConnectionFactory.class, 
+         HelloWorldConnectionFactoryImpl.class, 
+         HelloWorldConnection.class, 
+         HelloWorldConnectionImpl.class);
       raa.addLibrary(ja);
 
       return raa;

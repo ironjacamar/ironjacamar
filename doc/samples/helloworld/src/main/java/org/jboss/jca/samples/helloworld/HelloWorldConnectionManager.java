@@ -53,7 +53,8 @@ public class HelloWorldConnectionManager implements ConnectionManager
     * @exception ResourceException Thrown if an error occurs
     */
    @Override
-   public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
+   public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) 
+      throws ResourceException
    {
       return null;
    }

@@ -40,7 +40,8 @@ public class HelloWorldManagedConnectionMetaData implements ManagedConnectionMet
    }
 
    /**
-    * Returns Product name of the underlying EIS instance connected through the ManagedConnection.
+    * Returns Product name of the underlying EIS instance connected 
+    * through the ManagedConnection.
     *
     * @return Product name of the EIS instance
     * @throws ResourceException Thrown if an error occurs
@@ -52,7 +53,8 @@ public class HelloWorldManagedConnectionMetaData implements ManagedConnectionMet
    }
 
    /**
-    * Returns Product version of the underlying EIS instance connected through the ManagedConnection.
+    * Returns Product version of the underlying EIS instance connected 
+    * through the ManagedConnection.
     *
     * @return Product version of the EIS instance
     * @throws ResourceException Thrown if an error occurs
