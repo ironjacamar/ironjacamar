@@ -136,7 +136,7 @@ public abstract class AbstractCodeGen extends BaseGen
       out.write("/**");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * default constructor");
+      out.write(" * Default constructor");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

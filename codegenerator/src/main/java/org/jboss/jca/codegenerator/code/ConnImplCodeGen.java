@@ -111,7 +111,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
                out.write("/**");
                writeEol(out);
                writeIndent(out, indent);
-               out.write(" * call " + method.getMethodName());
+               out.write(" * Call " + method.getMethodName());
                writeEol(out);
                
                int paramSize = method.getParams().size();
