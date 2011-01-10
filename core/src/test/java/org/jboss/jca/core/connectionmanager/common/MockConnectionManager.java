@@ -22,14 +22,19 @@
 package org.jboss.jca.core.connectionmanager.common;
 
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+
+import java.util.Collection;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
 
 /**
  * Mock connection manager.
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @version $Rev$ $Date$
  *
  */
@@ -48,10 +53,28 @@ public class MockConnectionManager extends AbstractConnectionManager
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, 
+   public ConnectionListener createConnectionListener(ManagedConnection managedConnection,
          Object context) throws ResourceException
    {
       return null;
+   }
+
+   @Override
+   public void transactionStarted(Collection<ConnectionRecord> conns) throws SystemException
+   {
+      //doing nothing
+   }
+
+   @Override
+   public TransactionManager getTransactionManager()
+   {
+      return null;
+   }
+
+   @Override
+   public boolean isTransactional()
+   {
+      return false;
    }
 
 }

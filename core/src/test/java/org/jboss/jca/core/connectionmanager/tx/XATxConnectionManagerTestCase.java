@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.core.connectionmanager.tx;
 
-import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.TxConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
@@ -37,6 +36,7 @@ import org.jboss.jca.embedded.EmbeddedFactory;
 
 import java.net.URL;
 
+import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.RollbackException;
@@ -46,19 +46,26 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
-import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * XATxConnectionManagerTestCase.
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class XATxConnectionManagerTestCase
 {
    /**Embedded JCA*/
    private static Embedded embedded = null;
-   
+
+   private static TxConnectionManager txConnectionManager = null;
+
+   private static ManagedConnectionFactory mcf = null;
+
    /**
     * testTxAllocateConnection.
     * @throws Throwable for exception
@@ -66,42 +73,30 @@ public class XATxConnectionManagerTestCase
    @Test
    public void testAllocateConnection() throws Throwable
    {
-      TransactionManager tm = embedded.lookup("RealTransactionManager", TransactionManager.class);
-      assertNotNull(tm);
-      
-      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
-      PoolConfiguration pc = new PoolConfiguration();      
-      PoolFactory pf = new PoolFactory();      
-      
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-      
-      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
-                                                                    pool,
-                                                                    null, null,
-                                                                    tm, 
-                                                                    Boolean.FALSE, null, null, null, null);
-      assertNotNull(connectionManager);
-      
-      assertTrue(connectionManager instanceof TxConnectionManager);
-      
-      TxConnectionManager txConnectionManager = (TxConnectionManager)connectionManager;
-      
-      TransactionManager transactionManager = txConnectionManager.getTransactionManager();      
+
+      TransactionManager transactionManager = txConnectionManager.getTransactionManager();
       assertNotNull(transactionManager);
-      
+
       TransactionSynchronizer.setTransactionManager(transactionManager);
-      
-      transactionManager.begin();
-      
-      Object handle = connectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
-      assertNotNull(handle);
-      
-      assertTrue(handle instanceof MockHandle);
-      
-      transactionManager.commit();
+
+      try
+      {
+         transactionManager.begin();
+
+         Object handle = txConnectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
+         assertNotNull(handle);
+
+         assertTrue(handle instanceof MockHandle);
+
+         transactionManager.commit();
+      }
+      catch (Exception e)
+      {
+         transactionManager.rollback();
+         throw e;
+      }
    }
-   
+
    /**
     * testGetTimeLeftBeforeTrsTimeout.
     * @throws Throwable for exception
@@ -109,24 +104,6 @@ public class XATxConnectionManagerTestCase
    @Test
    public void testGetTimeLeftBeforeTrsTimeout() throws Throwable
    {
-      TransactionManager tm = embedded.lookup("RealTransactionManager", TransactionManager.class);
-      assertNotNull(tm);
-      
-      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
-      PoolConfiguration pc = new PoolConfiguration();      
-      PoolFactory pf = new PoolFactory();      
-      
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-      
-      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction, 
-                                                                    pool, null, null, tm, 
-                                                                    Boolean.FALSE, null, null, null, null);
-      assertNotNull(connectionManager);
-      
-      assertTrue(connectionManager instanceof TxConnectionManager);
-
-      TxConnectionManager txConnectionManager = (TxConnectionManager)connectionManager;
 
       try
       {
@@ -137,7 +114,7 @@ public class XATxConnectionManagerTestCase
          //No action
       }
    }
-   
+
    /**
     * testEnlistInExistingTx.
     * @throws Exception for exception
@@ -145,9 +122,9 @@ public class XATxConnectionManagerTestCase
    @Test
    public void testEnlistInExistingTx() throws Exception
    {
-      
+
    }
-   
+
    /**
     * testEnlistCheckedOutConnectionInNewTx.
     * @throws Exception for exception
@@ -155,9 +132,9 @@ public class XATxConnectionManagerTestCase
    @Test
    public void testEnlistCheckedOutConnectionInNewTx() throws Exception
    {
-      
+
    }
-   
+
    /**
     * testReconnectConnectionHandlesOnNotification.
     * @throws Exception for exception.
@@ -165,9 +142,9 @@ public class XATxConnectionManagerTestCase
    @Test
    public void testReconnectConnectionHandlesOnNotification() throws Exception
    {
-      
+
    }
-   
+
    /**
     * testEnlistAfterMarkRollback.
     * @throws Exception for exception
@@ -175,9 +152,9 @@ public class XATxConnectionManagerTestCase
    @Test
    public void testEnlistAfterMarkRollback() throws Exception
    {
-      
+
    }
-   
+
    /**
     * testBrokenConnectionAndTrackByTx.
     * @throws Exception for exception.
@@ -185,33 +162,75 @@ public class XATxConnectionManagerTestCase
    @Test
    public void testBrokenConnectionAndTrackByTx() throws Exception
    {
-      
+
    }
-   
+
    /**
     * testFailedStartTx.
     * @throws Exception for exception.
     */
-   @Test   
+   @Test
    public void testFailedStartTx() throws Exception
    {
-      
+
    }
-   
+
    /**
     * testFailedEndTx.
     * @throws Exception for exception.
     */
-   @Test   
+   @Test
    public void testFailedEndTx() throws Exception
    {
-      
+
    }
-   
-   
+
+   /**
+    * testIsTransactional.
+    * @throws Exception in case of error and test fail
+    */
+   @Test
+   public void isTransactionalShouldReturnTrueIfTxRunning() throws Exception
+   {
+      //given
+      TransactionManager transactionManager = txConnectionManager.getTransactionManager();
+      TransactionSynchronizer.setTransactionManager(transactionManager);
+      try
+      {
+         //when
+         transactionManager.begin();
+
+         //then
+         assertThat(txConnectionManager.isTransactional(), is(true));
+         transactionManager.commit();
+      }
+      catch (Exception e)
+      {
+         transactionManager.rollback();
+         throw e;
+      }
+   }
+
+   /**
+    * testIsTransactional.
+    * @throws Exception in case of error and test fail
+    */
+   @Test
+   public void isTransactionalShouldReturnFalseIfTxNotRunning() throws Exception
+   {
+      //given
+      TransactionManager transactionManager = txConnectionManager.getTransactionManager();
+      TransactionSynchronizer.setTransactionManager(transactionManager);
+
+      //when no transactionManager.begin() called
+
+      //then
+      assertThat(txConnectionManager.isTransactional(), is(false));
+   }
+
    /**
     * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -228,11 +247,30 @@ public class XATxConnectionManagerTestCase
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
+
+      TransactionManager tm = embedded.lookup("RealTransactionManager", TransactionManager.class);
+      assertNotNull(tm);
+
+      mcf = new MockManagedConnectionFactory();
+      PoolConfiguration pc = new PoolConfiguration();
+      PoolFactory pf = new PoolFactory();
+
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+
+      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+      ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
+         null, null, tm, Boolean.FALSE, null, null, null, null);
+      assertNotNull(connectionManager);
+
+      assertTrue(connectionManager instanceof TxConnectionManager);
+
+      txConnectionManager = (TxConnectionManager) connectionManager;
+
    }
-   
+
    /**
     * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @AfterClass
    public static void afterClass() throws Throwable
@@ -249,6 +287,6 @@ public class XATxConnectionManagerTestCase
 
       // Set embedded to null
       embedded = null;
-   }   
-   
+   }
+
 }

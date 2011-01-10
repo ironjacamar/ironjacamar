@@ -34,7 +34,6 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 
-import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.security.auth.Subject;
@@ -44,8 +43,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -83,51 +85,52 @@ public class NoTxConnectionManagerTestCase
 
    /**
     * Test allocate connection.
+    *  @throws Exception in case of error and test fail
     */
    @Test
-   public void allocateCOnnectionShouldReturnCorrectHandle()
+   public void allocateCOnnectionShouldReturnCorrectHandle() throws Exception
    {
       Object object = null;
-      try
-      {
-         object = connectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
-      }
-      catch (ResourceException e)
-      {
-         e.printStackTrace();
-      }
+      object = connectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
 
       assertNotNull(object);
-      assertTrue(object instanceof MockHandle);
+      assertThat(object, instanceOf(MockHandle.class));
    }
 
    /**
     * connectionListenerInjectedIntoManagedConnectionShouldBeNoTx
-    */
+    * @throws Exception in case of error and test fail
+   */
    @Test
-   public void connectionListenerInjectedIntoManagedConnectionShouldBeNoTx()
+   public void connectionListenerInjectedIntoManagedConnectionShouldBeNoTx() throws Exception
    {
-      ConnectionListener listener =  null;
-      try
+      ConnectionListener listener = null;
+
+      NoTxConnectionManagerImpl noTxCm = ((NoTxConnectionManagerImpl) connectionManager);
+
+      Subject subject = null;
+
+      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
       {
-         NoTxConnectionManagerImpl noTxCm = ((NoTxConnectionManagerImpl)connectionManager);
-
-         Subject subject = null;
-
-         if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
-         {
-            subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
-         }
-
-         listener =  noTxCm.getManagedConnection(subject,  new MockConnectionRequestInfo());
+         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
       }
-      catch (ResourceException e)
-      {
-         e.printStackTrace();
-      }
+
+      listener = noTxCm.getManagedConnection(subject, new MockConnectionRequestInfo());
 
       assertNotNull(listener);
-      assertTrue(listener instanceof NoTxConnectionListener);
+      assertThat(listener, instanceOf(NoTxConnectionListener.class));
+   }
+
+   /**
+    * testIsTransactional.
+    * @throws Exception in case of error and test fail
+   */
+   @Test
+   public void isTransactionalShouldReturnFalse() throws Exception
+   {
+      NoTxConnectionManagerImpl noTxCm = ((NoTxConnectionManagerImpl) connectionManager);
+
+      assertThat(noTxCm.isTransactional(), is(false));
    }
 
    /**
@@ -139,4 +142,5 @@ public class NoTxConnectionManagerTestCase
       connectionManager = null;
       mcf = null;
    }
+
 }

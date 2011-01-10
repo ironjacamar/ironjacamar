@@ -37,7 +37,9 @@ import org.jboss.security.SubjectFactory;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * AbstractConnectionManagerTestCase.
@@ -185,16 +187,6 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertNull(connectionManager.getTransactionManager());
-   }
-   
-   /**
-    * testIsTransactional.
-    */
-   @Test
-   public void testIsTransactional()
-   {
-      AbstractConnectionManager connectionManager = new MockConnectionManager();
-      assertFalse(connectionManager.isTransactional());
    }
    
    /**

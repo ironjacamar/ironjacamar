@@ -23,17 +23,20 @@
 package org.jboss.jca.core.connectionmanager.notx;
 
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.NoTxConnectionListener;
 
-
+import java.util.Collection;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
 
 /**
  * Non transactional connection manager implementation.
- * 
+ *
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
@@ -52,12 +55,31 @@ public class NoTxConnectionManagerImpl extends AbstractConnectionManager impleme
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, Object context) 
+   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, Object context)
       throws ResourceException
    {
       ConnectionListener cli = new NoTxConnectionListener(this, managedConnection, getPool(), context);
       managedConnection.addConnectionEventListener(cli);
-      
+
       return cli;
+   }
+
+   @Override
+   public void transactionStarted(Collection<ConnectionRecord> conns) throws SystemException
+   {
+      //doing nothing
+
+   }
+
+   @Override
+   public TransactionManager getTransactionManager()
+   {
+      return null;
+   }
+
+   @Override
+   public boolean isTransactional()
+   {
+      return false;
    }
 }

@@ -50,38 +50,37 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
-
 import org.jboss.security.SubjectFactory;
 
 /**
  * AbstractConnectionManager.
- * 
+ *
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public abstract class AbstractConnectionManager implements ConnectionManager
 {
    /** Log instance */
-   private Logger log = Logger.getLogger(getClass());
-   
+   private final Logger log = Logger.getLogger(getClass());
+
    /** Log trace */
-   private boolean trace;
-   
+   private final boolean trace;
+
    /**
     * Note that this copy has a trailing / unlike the original in
     * JaasSecurityManagerService.
     */
    private static final String SECURITY_MGR_PATH = "java:/jaas/";
-   
+
    /** The pool */
    private Pool pool;
-   
+
    /** Security domain jndi name */
    private String securityDomainJndiName;
-   
+
    /** SubjectFactory */
    private SubjectFactory subjectFactory;
-   
+
    /** Number of retry to allocate connection */
    private int allocationRetry;
 
@@ -89,22 +88,22 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    private long allocationRetryWaitMillis;
 
    /** Startup/ShutDown flag */
-   private AtomicBoolean shutdown = new AtomicBoolean(false);
-   
+   private final AtomicBoolean shutdown = new AtomicBoolean(false);
+
    /** Cached connection manager */
    private CachedConnectionManager cachedConnectionManager;
-   
+
    /** Jndi name */
    private String jndiName;
-   
+
    /**
-    * Creates a new instance of connection manager.   
+    * Creates a new instance of connection manager.
     */
    protected AbstractConnectionManager()
    {
       this.trace = log.isTraceEnabled();
    }
-   
+
    /**
     * Gets log.
     * @return log instance
@@ -113,7 +112,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       return log;
    }
-   
+
    /**
     * Set the pool.
     * @param pool the pool
@@ -122,7 +121,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.pool = pool;
    }
-   
+
    /**
     * Get the pool.
     * @return the pool
@@ -130,8 +129,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public Pool getPool()
    {
       return pool;
-   }   
-   
+   }
+
    /**
     * Sets cached connection manager.
     * @param cachedConnectionManager cached connection manager
@@ -140,7 +139,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.cachedConnectionManager = cachedConnectionManager;
    }
-   
+
    /**
     * Gets cached connection manager.
     * @return cached connection manager
@@ -149,7 +148,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       return cachedConnectionManager;
    }
-   
+
    /**
     * Sets shut down flag.
     * @param shutDown shut down flag
@@ -158,7 +157,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.shutdown.set(shutDown);
    }
-   
+
    /**
     * Gets jndi name.
     * @return jndi name
@@ -176,7 +175,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.jndiName = jndiName;
    }
-   
+
    /**
     * Sets security domain jndi name.
     * @param securityDomainJndiName security jndi name
@@ -188,7 +187,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          securityDomainJndiName = securityDomainJndiName.substring(SECURITY_MGR_PATH.length());
          log.warn("WARNING: UPDATE YOUR SecurityDomainJndiName! REMOVE " + SECURITY_MGR_PATH);
       }
-      
+
       this.securityDomainJndiName = securityDomainJndiName;
    }
 
@@ -200,7 +199,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       return securityDomainJndiName;
    }
- 
+
    /**
     * Gets subject factory instance.
     * @return subject factory
@@ -218,8 +217,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.subjectFactory = subjectFactory;
    }
-   
-   
+
+
    /**
     * Gets managed connection factory.
     * @return managed connection factory
@@ -236,12 +235,12 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       else
       {
-         return pool.getManagedConnectionFactory();   
+         return pool.getManagedConnectionFactory();
       }
-      
+
       return null;
    }
-   
+
    /**
     * Set the number of allocation retries
     * @param number retry number
@@ -279,11 +278,11 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       return allocationRetryWaitMillis;
    }
-   
+
    /**
     * Public for use in testing pooling functionality by itself.
     * called by both allocateConnection and reconnect.
-    * 
+    *
     * @param subject a <code>Subject</code> value
     * @param cri a <code>ConnectionRequestInfo</code> value
     * @return a <code>ManagedConnection</code> value
@@ -293,26 +292,26 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       return getManagedConnection(null, subject, cri);
    }
-   
+
    /**
     * Get the managed connection from the pool.
-    * 
+    *
     * @param transaction the transaction for track by transaction
     * @param subject the subject
     * @param cri the ConnectionRequestInfo
     * @return a managed connection
     * @exception ResourceException if an error occurs
     */
-   protected ConnectionListener getManagedConnection(Transaction transaction, Subject subject, 
+   protected ConnectionListener getManagedConnection(Transaction transaction, Subject subject,
          ConnectionRequestInfo cri) throws ResourceException
    {
       ResourceException failure = null;
 
       if (shutdown.get())
       {
-         throw new ResourceException("The connection manager is shutdown " + jndiName);  
+         throw new ResourceException("The connection manager is shutdown " + jndiName);
       }
-      
+
       // First attempt
       try
       {
@@ -321,7 +320,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       catch (ResourceException e)
       {
          failure = e;
-         
+
          // Retry?
          if (allocationRetry != 0)
          {
@@ -329,19 +328,19 @@ public abstract class AbstractConnectionManager implements ConnectionManager
             {
                if (shutdown.get())
                {
-                  throw new ResourceException("The connection manager is shutdown " + jndiName);  
+                  throw new ResourceException("The connection manager is shutdown " + jndiName);
                }
 
                if (trace)
                {
-                  log.trace("Attempting allocation retry for cri=" + cri);  
+                  log.trace("Attempting allocation retry for cri=" + cri);
                }
 
                try
                {
                   if (allocationRetryWaitMillis != 0)
                   {
-                     Thread.sleep(allocationRetryWaitMillis);  
+                     Thread.sleep(allocationRetryWaitMillis);
                   }
 
                   return pool.getConnection(transaction, subject, cri);
@@ -362,7 +361,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       // If we get here all retries failed, throw the lastest failure
       throw new ResourceException("Unable to get managed connection for " + jndiName, failure);
    }
-   
+
    /**
     * Kill given connection listener wrapped connection instance.
     * @param cl connection listener that wraps connection
@@ -373,14 +372,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       Pool localStrategy = cl.getPool();
       if (localStrategy != pool)
       {
-         kill = true;  
+         kill = true;
       }
 
       try
       {
          if (!kill && cl.getState().equals(ConnectionState.NORMAL))
          {
-            cl.tidyup();  
+            cl.tidyup();
          }
       }
       catch (Throwable t)
@@ -388,7 +387,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          log.warn("Error during tidy up connection" + cl, t);
          kill = true;
       }
-      
+
       try
       {
          localStrategy.returnConnection(cl, kill);
@@ -400,16 +399,16 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          // these errors
          if (kill)
          {
-            log.debug("resourceException killing connection (error retrieving from pool?)", re);  
+            log.debug("resourceException killing connection (error retrieving from pool?)", re);
          }
          else
          {
-            log.warn("resourceException returning connection: " + cl.getManagedConnection(), re);  
+            log.warn("resourceException returning connection: " + cl.getManagedConnection(), re);
          }
       }
    }
-   
-   
+
+
    /**
     * {@inheritDoc}
     */
@@ -419,13 +418,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       if (pool == null)
       {
          throw new ResourceException("You are trying to use a connection factory that has been shut down: " +
-               "ManagedConnectionFactory is null.");         
+               "ManagedConnectionFactory is null.");
       }
 
       //it is an explicit spec requirement that equals be used for matching rather than ==.
       if (!pool.getManagedConnectionFactory().equals(mcf))
       {
-         throw new ResourceException("Wrong ManagedConnectionFactory sent to allocateConnection!");  
+         throw new ResourceException("Wrong ManagedConnectionFactory sent to allocateConnection!");
       }
 
       // Pick a managed connection from the pool
@@ -443,13 +442,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       catch (Throwable t)
       {
-         try 
+         try
          {
             managedConnectionDisconnected(cl);
          }
          catch (ResourceException re)
          {
-            log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem" + re);            
+            log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem" + re);
             returnManagedConnection(cl, true);
          }
          JBossResourceException.rethrowAsResourceException(
@@ -458,19 +457,19 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       // Associate managed connection with the connection
       registerAssociation(cl, connection);
-      
+
       if (cachedConnectionManager != null)
       {
-         cachedConnectionManager.registerConnection(this, cl, connection, cri);  
+         cachedConnectionManager.registerConnection(this, cl, connection, cri);
       }
-      
+
       return connection;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void disconnect(Collection<ConnectionRecord> conRecords, Set<String> unsharableResources) 
+   public void disconnect(Collection<ConnectionRecord> conRecords, Set<String> unsharableResources)
       throws ResourceException
    {
       // if we have an unshareable connection do not remove the association
@@ -495,8 +494,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       for (Iterator<ConnectionListener> i = cls.iterator(); i.hasNext();)
       {
-         disconnectManagedConnection(i.next());  
-      }      
+         disconnectManagedConnection(i.next());
+      }
    }
 
    /**
@@ -512,9 +511,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          return;
       }
 
-      Map<ConnectionRequestInfo, ConnectionListener> criToCLMap = 
+      Map<ConnectionRequestInfo, ConnectionListener> criToCLMap =
          new HashMap<ConnectionRequestInfo, ConnectionListener>(conns.size());
-      
+
       for (Iterator<ConnectionRecord> i = conns.iterator(); i.hasNext();)
       {
          ConnectionRecord cr = i.next();
@@ -538,7 +537,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          cr.setConnectionListener(cl);
       }
    }
-   
+
    /**
     * Unregister association.
     * @param cl connection listener
@@ -551,10 +550,10 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       cl.unregisterConnection(c);
    }
-   
+
    /**
     * Invoked to reassociate a managed connection.
-    * 
+    *
     * @param cl the managed connection
     * @throws ResourceException for exception
     */
@@ -574,7 +573,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
    /**
     * Invoked when a managed connection is no longer associated
-    * 
+    *
     * @param cl the managed connection
     */
    protected void disconnectManagedConnection(ConnectionListener cl)
@@ -588,11 +587,11 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          log.warn("Unchecked throwable in managedConnectionDisconnected() cl=" + cl, t);
       }
    }
-   
+
    /**
     * For polymorphism.
     * <p>
-    * 
+    *
     * Do not invoke directly, use reconnectManagedConnection
     * which does the relevent exception handling
     * @param cl connection listener
@@ -606,7 +605,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * For polymorphism.
     * <p>
-    * 
+    *
     * Do not invoke directly, use disconnectManagedConnection
     * which does the relevent exception handling
     * @param cl connection listener
@@ -620,42 +619,28 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * Register connection with connection listener.
     * @param cl connection listener
-    * @param c connection 
+    * @param c connection
     * @throws ResourceException exception
     */
    private void registerAssociation(ConnectionListener cl, Object c) throws ResourceException
    {
       cl.registerConnection(c);
    }
-   
-   /**
-    * {@inheritDoc}
-    */
-   public void transactionStarted(Collection<ConnectionRecord> conns) throws SystemException
-   {
-      // Reimplement in subclasses
-      // This needs to go away - as non-tx and tx should be separate
-   }
 
    /**
     * {@inheritDoc}
     */
-   public TransactionManager getTransactionManager()
-   {
-      // Reimplement in subclasses
-      // This needs to go away - as non-tx and tx should be separate
-      return null;
-   }
- 
+   public abstract void transactionStarted(Collection<ConnectionRecord> conns) throws SystemException;
+
    /**
     * {@inheritDoc}
     */
-   public boolean isTransactional()
-   {
-      // Reimplement in subclasses
-      // This needs to go away - as non-tx and tx should be separate
-      return false;
-   }
+   public abstract TransactionManager getTransactionManager();
+
+   /**
+    * {@inheritDoc}
+    */
+   public abstract boolean isTransactional();
 
    /**
     * Gets subject.
@@ -664,17 +649,17 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    private Subject getSubject()
    {
       Subject subject = null;
-      
+
       if (subjectFactory != null && securityDomainJndiName != null)
       {
          subject = subjectFactory.createSubject(securityDomainJndiName);
-      } 
-      
+      }
+
       if (trace)
       {
-         log.trace("subject: " + subject);  
+         log.trace("subject: " + subject);
       }
-      
+
       return subject;
    }
 
