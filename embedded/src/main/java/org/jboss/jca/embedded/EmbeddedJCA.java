@@ -22,6 +22,8 @@
 
 package org.jboss.jca.embedded;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -45,6 +47,9 @@ import com.github.fungal.api.configuration.KernelConfiguration;
  */
 class EmbeddedJCA implements Embedded
 {
+   /** Buffer size */
+   private static final int BUFFER_SIZE = 4096;
+
    /** Enable full profile */
    private boolean fullProfile;
 
@@ -197,7 +202,8 @@ class EmbeddedJCA implements Embedded
          throw new IllegalStateException("Container not started");
 
       InputStream is = raa.as(ZipExporter.class).exportZip();
-
+      BufferedInputStream bis = new BufferedInputStream(is, BUFFER_SIZE);
+      
       File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
       File raaFile = new File(parentDirectory, raa.getName());
 
@@ -208,25 +214,26 @@ class EmbeddedJCA implements Embedded
          recursiveDelete(raaFile);
 
       FileOutputStream os = new FileOutputStream(raaFile);
+      BufferedOutputStream bos = new BufferedOutputStream(os, BUFFER_SIZE);
 
-      byte[] buffer = new byte[4096];
+      byte[] buffer = new byte[BUFFER_SIZE];
       int read = 0;
       try
       {
-         while ((read = is.read(buffer)) != -1)
+         while ((read = bis.read(buffer)) != -1)
          {
-            os.write(buffer, 0, read);
+            bos.write(buffer, 0, read);
          }
 
-         os.flush();
+         bos.flush();
       }
       finally
       {
-         if (os != null)
+         if (bos != null)
          {
             try
             {
-               os.close();
+               bos.close();
             }
             catch (IOException ignore)
             {
@@ -234,11 +241,11 @@ class EmbeddedJCA implements Embedded
             }
          }
 
-         if (is != null)
+         if (bis != null)
          {
             try
             {
-               is.close();
+               bis.close();
             }
             catch (IOException ignore)
             {
