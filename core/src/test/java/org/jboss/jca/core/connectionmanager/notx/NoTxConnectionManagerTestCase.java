@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.unit.nontx;
+package org.jboss.jca.core.connectionmanager.notx;
 
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -27,6 +27,8 @@ import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.connectionmanager.listener.NoTxConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
@@ -35,25 +37,28 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * NonTxConnectionManagerTestCase.
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class NonTxConnectionManagerTestCase
+public class NoTxConnectionManagerTestCase
 {
    private static ConnectionManager connectionManager = null;
-   
+
    private static ManagedConnectionFactory mcf = null;
-   
+
    /**
     * Initialize.
     */
@@ -62,25 +67,25 @@ public class NonTxConnectionManagerTestCase
    {
       TransactionManager tm = null;
       assertNull(tm);
-      
+
       mcf = new MockManagedConnectionFactory();
-      PoolConfiguration pc = new PoolConfiguration();      
-      PoolFactory pf = new PoolFactory();      
-      
+      PoolConfiguration pc = new PoolConfiguration();
+      PoolFactory pf = new PoolFactory();
+
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-      
+
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null);
       assertNotNull(connectionManager);
 
       assertTrue(connectionManager instanceof NoTxConnectionManager);
    }
-   
+
    /**
     * Test allocate connection.
     */
    @Test
-   public void testAllocateConnection()
+   public void allocateCOnnectionShouldReturnCorrectHandle()
    {
       Object object = null;
       try
@@ -91,11 +96,40 @@ public class NonTxConnectionManagerTestCase
       {
          e.printStackTrace();
       }
-      
+
       assertNotNull(object);
       assertTrue(object instanceof MockHandle);
    }
-   
+
+   /**
+    * connectionListenerInjectedIntoManagedConnectionShouldBeNoTx
+    */
+   @Test
+   public void connectionListenerInjectedIntoManagedConnectionShouldBeNoTx()
+   {
+      ConnectionListener listener =  null;
+      try
+      {
+         NoTxConnectionManagerImpl noTxCm = ((NoTxConnectionManagerImpl)connectionManager);
+
+         Subject subject = null;
+
+         if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
+         {
+            subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
+         }
+
+         listener =  noTxCm.getManagedConnection(subject,  new MockConnectionRequestInfo());
+      }
+      catch (ResourceException e)
+      {
+         e.printStackTrace();
+      }
+
+      assertNotNull(listener);
+      assertTrue(listener instanceof NoTxConnectionListener);
+   }
+
    /**
     * Destroy.
     */
