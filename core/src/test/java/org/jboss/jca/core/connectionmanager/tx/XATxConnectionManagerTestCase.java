@@ -26,6 +26,8 @@ import org.jboss.jca.core.connectionmanager.TxConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.common.MockHandle;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
@@ -39,6 +41,7 @@ import java.net.URL;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.security.auth.Subject;
 import javax.transaction.RollbackException;
 import javax.transaction.TransactionManager;
 
@@ -47,6 +50,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -226,6 +230,30 @@ public class XATxConnectionManagerTestCase
 
       //then
       assertThat(txConnectionManager.isTransactional(), is(false));
+   }
+
+   /**
+    * connectionListenerInjectedIntoManagedConnectionShouldBeNoTx
+    * @throws Exception in case of error and test fail
+   */
+   @Test
+   public void connectionListenerInjectedIntoManagedConnectionShouldBeTx() throws Exception
+   {
+      ConnectionListener listener = null;
+
+      TxConnectionManagerImpl txCm = ((TxConnectionManagerImpl) txConnectionManager);
+
+      Subject subject = null;
+
+      if (txCm.getSubjectFactory() != null && txCm.getSecurityDomainJndiName() != null)
+      {
+         subject = txCm.getSubjectFactory().createSubject(txCm.getSecurityDomainJndiName());
+      }
+
+      listener = txCm.getManagedConnection(subject, new MockConnectionRequestInfo());
+
+      assertNotNull(listener);
+      assertThat(listener, instanceOf(TxConnectionListener.class));
    }
 
    /**

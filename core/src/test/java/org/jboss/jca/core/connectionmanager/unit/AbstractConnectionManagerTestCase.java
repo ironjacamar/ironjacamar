@@ -44,13 +44,13 @@ import static org.junit.Assert.assertNull;
 /**
  * AbstractConnectionManagerTestCase.
  *
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class AbstractConnectionManagerTestCase
 {
    /**
-    * testPoolNotNull. 
+    * testPoolNotNull.
     */
    @Test
    public void testPoolNotNull()
@@ -58,16 +58,16 @@ public class AbstractConnectionManagerTestCase
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertNull(connectionManager.getPool());
 
-      PoolConfiguration pc = new PoolConfiguration();      
-      PoolFactory pf = new PoolFactory();      
-      
+      PoolConfiguration pc = new PoolConfiguration();
+      PoolFactory pf = new PoolFactory();
+
       Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false);
       pool.setConnectionListenerFactory(connectionManager);
       connectionManager.setPool(pool);
 
       assertNotNull(connectionManager.getPool());
    }
-   
+
    /**
     * testGetCachedConnectionManager.
     */
@@ -79,7 +79,7 @@ public class AbstractConnectionManagerTestCase
       connectionManager.setCachedConnectionManager(new CachedConnectionManager(null));
       assertNotNull(connectionManager.getCachedConnectionManager());
    }
-   
+
    /**
     * testJndiName.
     */
@@ -92,7 +92,7 @@ public class AbstractConnectionManagerTestCase
       assertNotNull(connectionManager.getJndiName());
       assertEquals("jndi_name", connectionManager.getJndiName());
    }
-   
+
    /**
     * testSecDomainJndiName.
     */
@@ -103,7 +103,7 @@ public class AbstractConnectionManagerTestCase
       assertNull(connectionManager.getSecurityDomainJndiName());
       connectionManager.setSecurityDomainJndiName("jndi_name");
       assertNotNull(connectionManager.getSecurityDomainJndiName());
-      assertEquals("jndi_name", connectionManager.getSecurityDomainJndiName());      
+      assertEquals("jndi_name", connectionManager.getSecurityDomainJndiName());
    }
 
    /**
@@ -126,13 +126,13 @@ public class AbstractConnectionManagerTestCase
          {
             return null;
          }
-         
+
       };
       connectionManager.setSubjectFactory(fact);
       assertNotNull(connectionManager.getSubjectFactory());
       assertEquals(fact, connectionManager.getSubjectFactory());
    }
-   
+
    /**
     * testGetManagedConnectionFactory.
     */
@@ -143,9 +143,9 @@ public class AbstractConnectionManagerTestCase
       assertNull(connectionManager.getManagedConnectionFactory());
       MockManagedConnectionFactory mcf = new MockManagedConnectionFactory();
 
-      PoolConfiguration pc = new PoolConfiguration();      
-      PoolFactory pf = new PoolFactory();      
-      
+      PoolConfiguration pc = new PoolConfiguration();
+      PoolFactory pf = new PoolFactory();
+
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, false);
       pool.setConnectionListenerFactory(connectionManager);
       connectionManager.setPool(pool);
@@ -153,7 +153,7 @@ public class AbstractConnectionManagerTestCase
       assertNotNull(connectionManager.getManagedConnectionFactory());
       assertEquals(mcf, connectionManager.getManagedConnectionFactory());
    }
-   
+
    /**
     * testAllocationRetry.
     */
@@ -165,7 +165,7 @@ public class AbstractConnectionManagerTestCase
       connectionManager.setAllocationRetry(5);
       assertEquals(5, connectionManager.getAllocationRetry());
    }
-   
+
    /**
     * setAllocationRetryInMilisec.
     */
@@ -177,8 +177,8 @@ public class AbstractConnectionManagerTestCase
       connectionManager.setAllocationRetryWaitMillis(5000L);
       assertEquals(5000L, connectionManager.getAllocationRetryWaitMillis());
    }
-      
-   
+
+
    /**
     * testGetTransactionManagerInstance.
     */
@@ -188,7 +188,7 @@ public class AbstractConnectionManagerTestCase
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertNull(connectionManager.getTransactionManager());
    }
-   
+
    /**
     * testGetManagedConnectionFactoryIsNull.
     */
@@ -199,7 +199,7 @@ public class AbstractConnectionManagerTestCase
       connectionManager.setPool(null);
       assertNull(connectionManager.getManagedConnectionFactory());
    }
-   
+
    /**
     * testGetManagedConnectionInShutdownedManager
     * @throws ResourceException for exception
@@ -211,7 +211,7 @@ public class AbstractConnectionManagerTestCase
       connectionManager.setShutDown(true);
       connectionManager.getManagedConnection(null, null);
    }
-   
+
    /**
     * testAllocateConnectionPoolNull.
     * @throws ResourceException for exception
@@ -223,7 +223,7 @@ public class AbstractConnectionManagerTestCase
       connectionManager.setPool(null);
       connectionManager.allocateConnection(null, null);
    }
-   
+
    /**
     * testAllocateConnectionWrongMCF.
     * @throws ResourceException for exception
@@ -233,26 +233,17 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
 
-      PoolConfiguration pc = new PoolConfiguration();      
-      PoolFactory pf = new PoolFactory();      
-      
+      PoolConfiguration pc = new PoolConfiguration();
+      PoolFactory pf = new PoolFactory();
+
       Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false);
       pool.setConnectionListenerFactory(connectionManager);
 
       connectionManager.setPool(pool);
       connectionManager.allocateConnection(new MockManagedConnectionFactory(), null);
    }
-   
-   /**
-    * testGetManagedConnections.
-    */
-   @Test
-   public void testGetManagedConnections()
-   {
-      AbstractConnectionManager connectionManager = new MockConnectionManager();
-      
-   }
-   
+
+
    /**
     * testIdleTimeout.
     * @throws Exception for exception
@@ -261,9 +252,9 @@ public class AbstractConnectionManagerTestCase
    public void testIdleTimeout() throws Exception
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      
+
    }
-   
+
    /**
     * testPartialIdleTimeout.
     * @throws Exception for exception.
@@ -272,9 +263,9 @@ public class AbstractConnectionManagerTestCase
    public void testPartialIdleTimeout() throws Exception
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      
+
    }
-   
+
    /**
     * testFillToMin.
     * @throws Exception for exception
@@ -284,7 +275,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
    }
-   
+
    /**
     * testPrefillPool.
     * @throws Exception for exception
@@ -294,7 +285,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
    }
-   
+
    /**
     * testNonStrictMinPool.
     * @throws Exception for exception
@@ -304,7 +295,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
    }
-   
+
    /**
     * testStrictMinPool.
     * @throws Exception for exception
@@ -314,7 +305,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
    }
-   
+
    /**
     * testMisConfiguredFillToMin.
     * @throws Exception for exception
@@ -323,7 +314,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
    }
-   
+
    /**
     * testChangedMaximum.
     * @throws Exception for exception.
@@ -333,7 +324,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
    }
-   
+
    /**
     * testAllocationRetry.
     * @throws Exception for exception.
@@ -343,9 +334,9 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
    }
-   
+
    /**
-    * testAllocationRetryMultiThread. 
+    * testAllocationRetryMultiThread.
     * @throws Exception for exception
     */
    public void testAllocationRetryMultiThread() throws Exception
