@@ -34,19 +34,22 @@ import javax.transaction.xa.XAResource;
 
 /**
  * Mocked managed connection.
- * 
- * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
+ *
+ * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @version $Rev$ $Date$
  *
  */
 public class MockManagedConnection implements ManagedConnection
 {
+
+   private int cleanUpCalled = 0;
+
    /**
     * Creates a new instance.
     */
    public MockManagedConnection()
    {
-      
+
    }
 
    /**
@@ -54,8 +57,8 @@ public class MockManagedConnection implements ManagedConnection
     */
    public void addConnectionEventListener(ConnectionEventListener listener)
    {
-      
-      
+
+
    }
 
    /**
@@ -64,8 +67,8 @@ public class MockManagedConnection implements ManagedConnection
 
    public void associateConnection(Object connection) throws ResourceException
    {
-      
-      
+
+
    }
 
    /**
@@ -74,8 +77,8 @@ public class MockManagedConnection implements ManagedConnection
 
    public void cleanup() throws ResourceException
    {
-      
-      
+      cleanUpCalled++;
+
    }
 
    /**
@@ -84,8 +87,8 @@ public class MockManagedConnection implements ManagedConnection
 
    public void destroy() throws ResourceException
    {
-      
-      
+
+
    }
 
    /**
@@ -93,7 +96,7 @@ public class MockManagedConnection implements ManagedConnection
     */
 
    public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
-   {      
+   {
       return new MockHandle();
    }
 
@@ -103,7 +106,7 @@ public class MockManagedConnection implements ManagedConnection
 
    public LocalTransaction getLocalTransaction() throws ResourceException
    {
-      
+
       return new MockLocalTransaction();
    }
 
@@ -113,7 +116,7 @@ public class MockManagedConnection implements ManagedConnection
 
    public PrintWriter getLogWriter() throws ResourceException
    {
-      
+
       return null;
    }
 
@@ -123,7 +126,7 @@ public class MockManagedConnection implements ManagedConnection
 
    public ManagedConnectionMetaData getMetaData() throws ResourceException
    {
-      
+
       return null;
    }
 
@@ -133,7 +136,7 @@ public class MockManagedConnection implements ManagedConnection
 
    public XAResource getXAResource() throws ResourceException
    {
-      
+
       return new MockXAResource();
    }
 
@@ -143,8 +146,8 @@ public class MockManagedConnection implements ManagedConnection
 
    public void removeConnectionEventListener(ConnectionEventListener listener)
    {
-      
-      
+
+
    }
 
    /**
@@ -153,8 +156,18 @@ public class MockManagedConnection implements ManagedConnection
 
    public void setLogWriter(PrintWriter out) throws ResourceException
    {
-      
-      
+
+
+   }
+
+   /**
+    * Get the cleanUpCalled.
+    *
+    * @return the cleanUpCalled.
+    */
+   public final int cleanUpCalled()
+   {
+      return cleanUpCalled;
    }
 
 }

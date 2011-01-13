@@ -150,15 +150,6 @@ public class TxConnectionManagerTestCase
 
    }
 
-   /**
-    * testGetManagedConnection.
-    * @throws Exception for exception
-    */
-   @Test
-   public void testGetManagedConnection() throws Exception
-   {
-
-   }
 
    /**
     * testGetManagedConnectionTimeout.
