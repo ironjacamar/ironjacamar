@@ -46,13 +46,13 @@ import org.jboss.logging.Logger;
  */
 public abstract class AbstractConnectionListener implements ConnectionListener
 {
-   private Logger log = Logger.getLogger(getClass());
+   private final Logger log = Logger.getLogger(getClass());
    
    /** Log trace */
    protected boolean trace;
    
    /** Connection Manager */
-   private ConnectionManager cm;
+   private final ConnectionManager cm;
       
    /** Managed connection */
    private final ManagedConnection managedConnection;
@@ -70,7 +70,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    private final CopyOnWriteArrayList<Object> connectionHandles = new CopyOnWriteArrayList<Object>();
       
    /** Track by transaction or not */
-   private AtomicBoolean trackByTx = new AtomicBoolean(false);
+   private final AtomicBoolean trackByTx = new AtomicBoolean(false);
    
    /** Connection last use */
    private long lastUse;
@@ -398,6 +398,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */
+   @Override
    public String toString()
    {
       StringBuffer buffer = new StringBuffer(100);

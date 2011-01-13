@@ -90,6 +90,80 @@ public class NoTxConnectionListenerTestCase
       assertThat(((MockManagedConnection) listener.getManagedConnection()).cleanUpCalled(), is(1));
    }
 
+   @Test
+   public void connectionErrorOccuredShouldFreeManagedCOnnection() throws Exception
+   {
+      ConnectionListener listener = null;
+
+      Subject subject = null;
+
+      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
+      {
+         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
+      }
+      MockConnectionRequestInfo cri = new MockConnectionRequestInfo();
+
+      Object connection = noTxCm.allocateConnection(mcf, cri);
+      listener = noTxCm.getManagedConnection(subject, cri);
+
+      assertNotNull(listener);
+      assertThat(listener, instanceOf(NoTxConnectionListener.class));
+      listener.registerConnection(connection);
+      ConnectionEvent event = new ConnectionEvent(listener.getManagedConnection(),
+                                                  ConnectionEvent.CONNECTION_ERROR_OCCURRED);
+
+      listener.connectionErrorOccurred(event);
+      assertThat(listener.isManagedConnectionFree(), is(true));
+   }
+
+   @Test
+   public void unregisterAssociationShouldFreeManagedCOnnection() throws Exception
+   {
+      ConnectionListener listener = null;
+
+      Subject subject = null;
+
+      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
+      {
+         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
+      }
+      MockConnectionRequestInfo cri = new MockConnectionRequestInfo();
+
+      Object connection = noTxCm.allocateConnection(mcf, cri);
+      listener = noTxCm.getManagedConnection(subject, cri);
+
+      assertNotNull(listener);
+      assertThat(listener, instanceOf(NoTxConnectionListener.class));
+      listener.registerConnection(connection);
+
+      noTxCm.unregisterAssociation(listener, connection);
+
+      assertThat(listener.isManagedConnectionFree(), is(true));
+   }
+
+   @Test
+   public void unregisterNotYetCreatedAssociationShouldNotThrowException() throws Exception
+   {
+      ConnectionListener listener = null;
+
+      Subject subject = null;
+
+      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
+      {
+         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
+      }
+      MockConnectionRequestInfo cri = new MockConnectionRequestInfo();
+
+      Object connection = noTxCm.allocateConnection(mcf, cri);
+      listener = noTxCm.getManagedConnection(subject, cri);
+
+      assertNotNull(listener);
+      assertThat(listener, instanceOf(NoTxConnectionListener.class));
+
+      noTxCm.unregisterAssociation(listener, connection);
+
+   }
+
    /**
     * Lifecycle start, before the suite is executed
     * @throws Throwable throwable exception
