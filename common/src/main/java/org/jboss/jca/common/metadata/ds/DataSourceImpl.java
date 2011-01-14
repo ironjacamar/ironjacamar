@@ -208,7 +208,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    public int hashCode()
    {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
       result = prime * result + ((connectionProperties == null) ? 0 : connectionProperties.hashCode());
       result = prime * result + ((connectionUrl == null) ? 0 : connectionUrl.hashCode());
       result = prime * result + ((driverClass == null) ? 0 : driverClass.hashCode());
@@ -223,7 +223,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (!(obj instanceof DataSourceImpl))
          return false;

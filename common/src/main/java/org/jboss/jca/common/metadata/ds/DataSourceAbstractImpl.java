@@ -255,4 +255,109 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
          this.validation.validate();
    }
 
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
+      result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
+      result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
+      result = prime * result + ((security == null) ? 0 : security.hashCode());
+      result = prime * result + ((statement == null) ? 0 : statement.hashCode());
+      result = prime * result + ((timeOut == null) ? 0 : timeOut.hashCode());
+      result = prime * result + ((transactionIsolation == null) ? 0 : transactionIsolation.hashCode());
+      result = prime * result + ((urlDelimiter == null) ? 0 : urlDelimiter.hashCode());
+      result = prime * result +
+               ((urlSelectorStrategyClassName == null) ? 0 : urlSelectorStrategyClassName.hashCode());
+      result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
+      result = prime * result + ((validation == null) ? 0 : validation.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (!(obj instanceof DataSourceAbstractImpl))
+         return false;
+      DataSourceAbstractImpl other = (DataSourceAbstractImpl) obj;
+      if (enabled == null)
+      {
+         if (other.enabled != null)
+            return false;
+      }
+      else if (!enabled.equals(other.enabled))
+         return false;
+      if (jndiName == null)
+      {
+         if (other.jndiName != null)
+            return false;
+      }
+      else if (!jndiName.equals(other.jndiName))
+         return false;
+      if (poolName == null)
+      {
+         if (other.poolName != null)
+            return false;
+      }
+      else if (!poolName.equals(other.poolName))
+         return false;
+      if (security == null)
+      {
+         if (other.security != null)
+            return false;
+      }
+      else if (!security.equals(other.security))
+         return false;
+      if (statement == null)
+      {
+         if (other.statement != null)
+            return false;
+      }
+      else if (!statement.equals(other.statement))
+         return false;
+      if (timeOut == null)
+      {
+         if (other.timeOut != null)
+            return false;
+      }
+      else if (!timeOut.equals(other.timeOut))
+         return false;
+      if (transactionIsolation != other.transactionIsolation)
+         return false;
+      if (urlDelimiter == null)
+      {
+         if (other.urlDelimiter != null)
+            return false;
+      }
+      else if (!urlDelimiter.equals(other.urlDelimiter))
+         return false;
+      if (urlSelectorStrategyClassName == null)
+      {
+         if (other.urlSelectorStrategyClassName != null)
+            return false;
+      }
+      else if (!urlSelectorStrategyClassName.equals(other.urlSelectorStrategyClassName))
+         return false;
+      if (useJavaContext == null)
+      {
+         if (other.useJavaContext != null)
+            return false;
+      }
+      else if (!useJavaContext.equals(other.useJavaContext))
+         return false;
+      if (validation == null)
+      {
+         if (other.validation != null)
+            return false;
+      }
+      else if (!validation.equals(other.validation))
+         return false;
+      return true;
+   }
+
 }

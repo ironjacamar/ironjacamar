@@ -171,10 +171,10 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public int hashCode()
    {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
+      result = prime * result + ((module == null) ? 0 : module.hashCode());
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
       result = prime * result + ((xaDataSourceClass == null) ? 0 : xaDataSourceClass.hashCode());
-      result = prime * result + ((module == null) ? 0 : module.hashCode());
       result = prime * result + ((xaDataSourceProperty == null) ? 0 : xaDataSourceProperty.hashCode());
       result = prime * result + ((xaPool == null) ? 0 : xaPool.hashCode());
       return result;
@@ -185,11 +185,18 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (!(obj instanceof XADataSourceImpl))
          return false;
       XADataSourceImpl other = (XADataSourceImpl) obj;
+      if (module == null)
+      {
+         if (other.module != null)
+            return false;
+      }
+      else if (!module.equals(other.module))
+         return false;
       if (newConnectionSql == null)
       {
          if (other.newConnectionSql != null)
@@ -203,13 +210,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
             return false;
       }
       else if (!xaDataSourceClass.equals(other.xaDataSourceClass))
-         return false;
-      if (module == null)
-      {
-         if (other.module != null)
-            return false;
-      }
-      else if (!module.equals(other.module))
          return false;
       if (xaDataSourceProperty == null)
       {
