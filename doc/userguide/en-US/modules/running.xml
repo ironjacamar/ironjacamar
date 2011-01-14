@@ -72,6 +72,9 @@ http://localhost:8080
 
       <para>The IronJacamar container can be controlled by a command line interface.</para>
 
+      <para>If you are accessing a remote container you can use the <code>-h</code> option to
+        specify the host name.</para>
+
       <section id="cli_deploy">
         <title>Deploy</title>
 
