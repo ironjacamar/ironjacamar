@@ -400,4 +400,23 @@ public class DsParserForValidatorExceptionTestCase
       //then throw ValidateException
    }
 
+   /**
+   *
+   * shouldThrowValidateExceptionIfValidationCheckerClassNameMissing
+   *
+   * @throws Exception test passes if a {@link ValidateException} has been
+   * thrown
+   */
+   @Test()
+   public void shouldNotThrowValidateExceptionWithJeremysFile() throws Exception
+   {
+
+      //given
+      File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/unit/jeremy-ds.xml")
+         .toURI());
+      //when
+      doParse(xmlFile);
+      //then don't throw ValidateException
+   }
+
 }
