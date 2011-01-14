@@ -404,7 +404,7 @@ public class DsParserForValidatorExceptionTestCase
    *
    * shouldThrowValidateExceptionIfValidationCheckerClassNameMissing
    *
-   * @throws Exception test passes if a {@link ValidateException} has been
+   * @throws Exception test passes if a {@link ValidateException} has not been
    * thrown
    */
    @Test()
