@@ -239,10 +239,10 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected void partialCommonValidation() throws ValidateException
    {
       if (this.jndiName == null)
-         throw new ValidateException("jndiName (xml attribure " + DataSource.Attribute.JNDINAME +
+         throw new ValidateException("jndiName (xml attribure " + DataSource.Attribute.JNDINAME.getLocalName() +
                                      ") is required in " + this.getClass().getCanonicalName());
       if (this.poolName == null)
-         throw new ValidateException("poolName (xml attribure " + DataSource.Attribute.POOL_NAME +
+         throw new ValidateException("poolName (xml attribure " + DataSource.Attribute.POOL_NAME.getLocalName() +
                                      ") is required in " + this.getClass().getCanonicalName());
 
       if (this.timeOut != null)
