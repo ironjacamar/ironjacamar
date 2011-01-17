@@ -114,8 +114,6 @@ public class MbeanImplCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import javax.management.MBeanServer;");
       writeEol(out);
-      out.write("import javax.management.NotCompliantMBeanException;");
-      writeEol(out);
       out.write("import javax.management.ObjectName;");
       writeEol(out);
       out.write("import javax.naming.InitialContext;");

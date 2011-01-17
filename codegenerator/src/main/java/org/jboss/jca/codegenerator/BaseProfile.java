@@ -27,6 +27,7 @@ import org.jboss.jca.codegenerator.xml.BuildXmlGen;
 import org.jboss.jca.codegenerator.xml.IronjacamarXmlGen;
 import org.jboss.jca.codegenerator.xml.IvySettingsXmlGen;
 import org.jboss.jca.codegenerator.xml.IvyXmlGen;
+import org.jboss.jca.codegenerator.xml.MbeanXmlGen;
 import org.jboss.jca.codegenerator.xml.PomXmlGen;
 import org.jboss.jca.codegenerator.xml.RaXmlGen;
 
@@ -62,8 +63,6 @@ public class BaseProfile implements Profile
       generateRaCode(def);
       generateOutboundCode(def);
       generateInboundCode(def);
-      if (def.isGenMbean() && !def.isUseCciConnection())
-         generateMBeanCode(def);
       
       generateTestCode(def);
 
@@ -76,6 +75,12 @@ public class BaseProfile implements Profile
 
       generateRaXml(def, def.getOutputDir());
       generateIronjacamarXml(def, def.getOutputDir());
+      
+      if (def.isGenMbean() && !def.isUseCciConnection())
+      {
+         generateMBeanCode(def);
+         generateMbeanXml(def, def.getOutputDir());
+      }
    }
 
    /**
@@ -322,6 +327,26 @@ public class BaseProfile implements Profile
          IronjacamarXmlGen ijxGen = new IronjacamarXmlGen();
          ijxGen.generate(def, ijfw);
          ijfw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+   }
+   
+   /**
+    * generate mbean deployment xml
+    * @param def Definition
+    * @param outputDir output directory
+    */
+   void generateMbeanXml(Definition def, String outputDir)
+   {
+      try
+      {
+         FileWriter mbfw = Utils.createFile(def.getDefaultValue() + ".xml", outputDir);
+         MbeanXmlGen mbGen = new MbeanXmlGen();
+         mbGen.generate(def, mbfw);
+         mbfw.close();
       }
       catch (IOException ioe)
       {
