@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.connectionmanager.pool.api;
+package org.jboss.jca.core.api.connectionmanager.pool;
 
 /**
  * The pool configuration. 

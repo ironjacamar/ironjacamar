@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.unit.pool;
 
-import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 
 import org.junit.Test;
 

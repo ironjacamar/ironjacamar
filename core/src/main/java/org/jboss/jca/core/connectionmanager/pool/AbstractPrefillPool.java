@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool;
 
-import org.jboss.jca.core.connectionmanager.pool.api.PoolConfiguration;
+import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;

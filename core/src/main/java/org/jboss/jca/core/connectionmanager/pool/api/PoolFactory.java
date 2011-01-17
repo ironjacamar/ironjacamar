@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.api;
 
+import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolByCri;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolBySubject;
