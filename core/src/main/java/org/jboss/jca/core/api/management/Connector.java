@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.management;
+package org.jboss.jca.core.api.management;
 
 import java.util.ArrayList;
 import java.util.List;

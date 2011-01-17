@@ -22,6 +22,8 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
@@ -78,6 +80,12 @@ public abstract class AbstractFungalDeployment implements Deployment
    /** The JNDI names of the admin objects */
    protected String[] aoJndis;
 
+   /** The management repository */
+   protected ManagementRepository managementRepository;
+
+   /** The management connector */
+   protected Connector connector;
+
    /** The MBeanServer */
    protected MBeanServer server;
 
@@ -99,6 +107,8 @@ public abstract class AbstractFungalDeployment implements Deployment
     * @param cfJndis The JNDI names of the connection factories
     * @param aos The admin objects
     * @param aoJndis The JNDI names of the admin objects
+    * @param managementRepository The management repository
+    * @param connector The management connector instance
     * @param server The MBeanServer
     * @param objectNames The ObjectNames
     * @param cl The classloader for the deployment
@@ -108,6 +118,7 @@ public abstract class AbstractFungalDeployment implements Deployment
                                    JndiStrategy jndiStrategy, MetadataRepository metadataRepository, 
                                    Object[] cfs, String[] cfJndis,
                                    Object[] aos, String[] aoJndis,
+                                   ManagementRepository managementRepository, Connector connector,
                                    MBeanServer server, List<ObjectName> objectNames,
                                    ClassLoader cl, Logger log)
    {
@@ -121,6 +132,8 @@ public abstract class AbstractFungalDeployment implements Deployment
       this.cfJndis = cfJndis;
       this.aos = aos;
       this.aoJndis = aoJndis;
+      this.managementRepository = managementRepository;
+      this.connector = connector;
       this.server = server;
       this.objectNames = objectNames;
       this.cl = cl;
@@ -170,6 +183,9 @@ public abstract class AbstractFungalDeployment implements Deployment
                }
             }
          }
+
+         if (managementRepository != null && connector != null)
+            managementRepository.getConnectors().remove(connector);
 
          if (mdr != null && cfs != null && cfJndis != null)
          {

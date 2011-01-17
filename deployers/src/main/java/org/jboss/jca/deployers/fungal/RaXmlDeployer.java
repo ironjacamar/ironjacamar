@@ -278,7 +278,9 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
          return new RaXmlDeployment(c.getURL(), deployment, c.getDeploymentName(), c.getResourceAdapter(),
                                     jndiStrategy, metadataRepository, c.getCfs(), c.getCfJndiNames(),
-                                    c.getAos(), c.getAoJndiNames(), kernel.getMBeanServer(), ons, 
+                                    c.getAos(), c.getAoJndiNames(), 
+                                    ((RAConfiguration)getConfiguration()).getManagementRepository(), c.getConnector(),
+                                    kernel.getMBeanServer(), ons, 
                                     c.getCl(), c.getLog());
       }
       catch (DeployException de)

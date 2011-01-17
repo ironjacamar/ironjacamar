@@ -268,7 +268,9 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          return new RAActivatorDeployment(c.getURL(), c.getDeploymentName(), c.getResourceAdapter(), jndiStrategy,
                                           metadataRepository, c.getCfs(), c.getCfJndiNames(), 
-                                          c.getAos(), c.getAoJndiNames(), 
+                                          c.getAos(), c.getAoJndiNames(),
+                                          ((RAConfiguration)getConfiguration()).getManagementRepository(), 
+                                          c.getConnector(),
                                           kernel.getMBeanServer(), ons,
                                           c.getCl(), c.getLog());
       }

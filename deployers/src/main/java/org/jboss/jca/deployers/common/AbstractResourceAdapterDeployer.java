@@ -588,7 +588,7 @@ public abstract class AbstractResourceAdapterDeployer
          List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
          List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
          Object[] aos, String[] aoJndiNames,
-         org.jboss.jca.core.management.Connector mgtConnector)
+         org.jboss.jca.core.api.management.Connector mgtConnector)
       throws DeployException
    {
       // AdminObject
@@ -674,8 +674,8 @@ public abstract class AbstractResourceAdapterDeployer
                                  aos[i] = ao;
                                  aoJndiNames[i] = jndiName;
 
-                                 org.jboss.jca.core.management.AdminObject mgtAo =
-                                    new org.jboss.jca.core.management.AdminObject(ao);
+                                 org.jboss.jca.core.api.management.AdminObject mgtAo =
+                                    new org.jboss.jca.core.api.management.AdminObject(ao);
 
                                  mgtAo.getConfigProperties().
                                     addAll(createManagementView(aoMeta.getConfigProperties()));
@@ -759,8 +759,8 @@ public abstract class AbstractResourceAdapterDeployer
          if (mgtUniqueId.indexOf("/") != -1)
             mgtUniqueId = mgtUniqueId.substring(mgtUniqueId.lastIndexOf("/") + 1);
 
-         org.jboss.jca.core.management.Connector mgtConnector = 
-            new org.jboss.jca.core.management.Connector(mgtUniqueId);
+         org.jboss.jca.core.api.management.Connector mgtConnector = 
+            new org.jboss.jca.core.api.management.Connector(mgtUniqueId);
 
          ResourceAdapter resourceAdapter = null;
          List<Validate> archiveValidationObjects = new ArrayList<Validate>();
@@ -805,8 +805,8 @@ public abstract class AbstractResourceAdapterDeployer
                            .getConfigProperties()));
                         beanValidationObjects.add(resourceAdapter);
 
-                        org.jboss.jca.core.management.ResourceAdapter mgtRa =
-                           new org.jboss.jca.core.management.ResourceAdapter(resourceAdapter);
+                        org.jboss.jca.core.api.management.ResourceAdapter mgtRa =
+                           new org.jboss.jca.core.api.management.ResourceAdapter(resourceAdapter);
 
                         mgtRa.getConfigProperties().addAll(createManagementView(ra1516.getConfigProperties()));
                         mgtConnector.setResourceAdapter(mgtRa);
@@ -1081,8 +1081,8 @@ public abstract class AbstractResourceAdapterDeployer
                            pool.setName(poolName);
                         }
 
-                        org.jboss.jca.core.management.ManagedConnectionFactory mgtMcf =
-                           new org.jboss.jca.core.management.ManagedConnectionFactory(mcf);
+                        org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
+                           new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
 
                         mgtMcf.getConfigProperties().addAll(createManagementView(ra10.getConfigProperties()));
                         mgtMcf.setPoolConfiguration(pc);
@@ -1385,8 +1385,8 @@ public abstract class AbstractResourceAdapterDeployer
                                        pool.setName(poolName);
                                     }
 
-                                    org.jboss.jca.core.management.ManagedConnectionFactory mgtMcf =
-                                       new org.jboss.jca.core.management.ManagedConnectionFactory(mcf);
+                                    org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
+                                       new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
 
                                     mgtMcf.getConfigProperties().
                                        addAll(createManagementView(cdMeta.getConfigProperties()));
@@ -1526,16 +1526,17 @@ public abstract class AbstractResourceAdapterDeployer
     * @param cps The config property's
     * @return The management view of these
     */
-   private List<org.jboss.jca.core.management.ConfigProperty> createManagementView(List<? extends ConfigProperty> cps)
+   private List<org.jboss.jca.core.api.management.ConfigProperty> 
+      createManagementView(List<? extends ConfigProperty> cps)
    {
-      List<org.jboss.jca.core.management.ConfigProperty> result =
-         new ArrayList<org.jboss.jca.core.management.ConfigProperty>();
+      List<org.jboss.jca.core.api.management.ConfigProperty> result =
+         new ArrayList<org.jboss.jca.core.api.management.ConfigProperty>();
 
       if (cps != null)
       {
          for (ConfigProperty cp : cps)
          {
-            org.jboss.jca.core.management.ConfigProperty mgtCp = null;
+            org.jboss.jca.core.api.management.ConfigProperty mgtCp = null;
 
             if (cp instanceof org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)
             {
@@ -1551,14 +1552,14 @@ public abstract class AbstractResourceAdapterDeployer
                   confidential = Boolean.FALSE;
 
                mgtCp = 
-                  new org.jboss.jca.core.management.ConfigProperty(
+                  new org.jboss.jca.core.api.management.ConfigProperty(
                      cp.getConfigPropertyName().getValue(),
                      dynamic.booleanValue(), confidential.booleanValue());
             }
             else
             {
                mgtCp = 
-                  new org.jboss.jca.core.management.ConfigProperty(
+                  new org.jboss.jca.core.api.management.ConfigProperty(
                      cp.getConfigPropertyName().getValue());
             }
 

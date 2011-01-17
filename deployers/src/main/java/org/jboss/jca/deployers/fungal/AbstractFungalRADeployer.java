@@ -286,12 +286,14 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
     * @return The ObjectName's generated for this connector
     * @exception JMException Thrown in case of an error
     */
-   protected List<ObjectName> registerManagementView(org.jboss.jca.core.management.Connector mgtConnector,
+   protected List<ObjectName> registerManagementView(org.jboss.jca.core.api.management.Connector mgtConnector,
                                                      MBeanServer server)
       throws JMException
    {
       if (server == null)
          throw new IllegalArgumentException("MBeanServer is null");
+
+      ((RAConfiguration)getConfiguration()).getManagementRepository().getConnectors().add(mgtConnector);
 
       List<ObjectName> ons = new ArrayList<ObjectName>();
 
@@ -301,14 +303,14 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
          if (mgtConnector.getResourceAdapter() != null)
          {
-            org.jboss.jca.core.management.ResourceAdapter mgtRa = mgtConnector.getResourceAdapter();
+            org.jboss.jca.core.api.management.ResourceAdapter mgtRa = mgtConnector.getResourceAdapter();
 
             if (mgtRa.getResourceAdapter() != null)
             {
                Set<String> writeable = new HashSet<String>();
                Set<String> excludeAttributes = new HashSet<String>();
 
-               for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtRa.getConfigProperties())
+               for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtRa.getConfigProperties())
                {
                   String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
                   if (mgtCp.getName().length() > 1)
@@ -338,7 +340,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             }
          }
 
-         for (org.jboss.jca.core.management.ManagedConnectionFactory mgtMcf : 
+         for (org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf : 
                  mgtConnector.getManagedConnectionFactories())
          {
             if (mgtMcf.getManagedConnectionFactory() != null)
@@ -346,7 +348,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                Set<String> writeable = new HashSet<String>();
                Set<String> excludeAttributes = new HashSet<String>();
 
-               for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtMcf.getConfigProperties())
+               for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtMcf.getConfigProperties())
                {
                   String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
                   if (mgtCp.getName().length() > 1)
@@ -403,14 +405,14 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             }
          }
 
-         for (org.jboss.jca.core.management.AdminObject mgtAo : mgtConnector.getAdminObjects())
+         for (org.jboss.jca.core.api.management.AdminObject mgtAo : mgtConnector.getAdminObjects())
          {
             if (mgtAo.getAdminObject() != null)
             {
                Set<String> writeable = new HashSet<String>();
                Set<String> excludeAttributes = new HashSet<String>();
 
-               for (org.jboss.jca.core.management.ConfigProperty mgtCp : mgtAo.getConfigProperties())
+               for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtAo.getConfigProperties())
                {
                   String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
                   if (mgtCp.getName().length() > 1)

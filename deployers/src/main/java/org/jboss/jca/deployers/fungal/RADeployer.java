@@ -164,7 +164,9 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
          return new RADeployment(c.getURL(), c.getDeploymentName(), c.isActivateDeployment(), c.getResourceAdapter(),
                                  jndiStrategy, metadataRepository, c.getCfs(), c.getCfJndiNames(), 
-                                 c.getAos(), c.getAoJndiNames(), destination, kernel.getMBeanServer(), ons,
+                                 c.getAos(), c.getAoJndiNames(), destination, 
+                                 ((RAConfiguration)getConfiguration()).getManagementRepository(), c.getConnector(),
+                                 kernel.getMBeanServer(), ons,
                                  c.getCl(), c.getLog());
 
       }

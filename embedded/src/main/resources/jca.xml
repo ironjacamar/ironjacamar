@@ -139,6 +139,10 @@
         interface="org.jboss.jca.core.spi.mdr.MetadataRepository"
         class="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
 
+  <!-- Management repository -->
+  <bean name="ManagementRepository"
+        class="org.jboss.jca.core.api.management.ManagementRepository"/>
+
   <!-- Deployer configuration -->
   <bean name="DeployerConfiguration"
         class="org.jboss.jca.deployers.fungal.RAConfiguration">
@@ -151,6 +155,7 @@
     <property name="JndiStrategy"><inject bean="ExplicitJndiStrategy"/></property>
     <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
+    <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
   </bean>
 
   <!-- Activator configuration -->
@@ -165,6 +170,7 @@
     <property name="JndiStrategy"><inject bean="SimpleJndiStrategy"/></property>
     <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
+    <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
   </bean>
 
   <!-- RA deployer -->

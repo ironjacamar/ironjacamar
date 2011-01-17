@@ -22,6 +22,8 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 
@@ -60,6 +62,8 @@ public class RADeployment extends AbstractFungalDeployment
     * @param aos The admin objects
     * @param aoJndis The JNDI names of the admin objects
     * @param tmpDirectory The temporary directory
+    * @param managementRepository The management repository
+    * @param connector The management connector instance
     * @param server The MBeanServer
     * @param objectNames The ObjectNames
     * @param cl The classloader for the deployment
@@ -70,11 +74,12 @@ public class RADeployment extends AbstractFungalDeployment
                        Object[] cfs, String[] cfJndis,
                        Object[] aos, String[] aoJndis,
                        File tmpDirectory, 
+                       ManagementRepository managementRepository, Connector connector,
                        MBeanServer server, List<ObjectName> objectNames,
                        ClassLoader cl, Logger log)
    {
       super(deployment, deploymentName, activator, ra, jndiStrategy, mdr, 
-            cfs, cfJndis, aos, aoJndis, server, objectNames, cl, log);
+            cfs, cfJndis, aos, aoJndis, managementRepository, connector, server, objectNames, cl, log);
 
       this.tmpDirectory = tmpDirectory;
    }

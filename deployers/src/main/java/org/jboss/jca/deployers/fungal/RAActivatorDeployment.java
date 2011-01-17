@@ -22,6 +22,8 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 
@@ -51,6 +53,8 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
     * @param cfJndis The JNDI names for the connection factories
     * @param aos The admin objects
     * @param aoJndis The JNDI names for the admin objects
+    * @param managementRepository The management repository
+    * @param connector The management connector instance
     * @param server The MBeanServer
     * @param objectNames The ObjectNames
     * @param cl The classloader for the deployment
@@ -60,10 +64,11 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
                                 MetadataRepository mdr, 
                                 Object[] cfs, String[] cfJndis, 
                                 Object[] aos, String[] aoJndis, 
+                                ManagementRepository managementRepository, Connector connector,
                                 MBeanServer server, List<ObjectName> objectNames,
                                 ClassLoader cl, Logger log)
    {
       super(deployment, deploymentName, true, ra, jndiStrategy, mdr, 
-            cfs, cfJndis, aos, aoJndis, server, objectNames, cl, log);
+            cfs, cfJndis, aos, aoJndis, managementRepository, connector, server, objectNames, cl, log);
    }
 }

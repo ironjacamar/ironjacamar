@@ -20,51 +20,56 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.management;
+package org.jboss.jca.core.api.management;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * The management repository
+ * Represents a resource adapter instance
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class ManagementRepository
+public class ResourceAdapter
 {
-   /** The instance */
-   private static final ManagementRepository INSTANCE = new ManagementRepository();
+   /** The object instance */
+   private WeakReference<javax.resource.spi.ResourceAdapter> instance;
 
-   /** Resource adapter archives */
-   private List<Connector> connectors;
+   /** The config property's */
+   private List<ConfigProperty> configProperties;
 
    /**
     * Constructor
+    * @param ra The resource adapter instance
     */
-   private ManagementRepository()
+   public ResourceAdapter(javax.resource.spi.ResourceAdapter ra)
    {
-      this.connectors = Collections.synchronizedList(new ArrayList<Connector>(1));
+      this.instance = new WeakReference<javax.resource.spi.ResourceAdapter>(ra);
+      this.configProperties = null;
    }
 
    /**
-    * Get the instance
+    * Get the resource adapter instance.
+    * 
+    * Note, that the value may be <code>null</code> if the resource adapter was
+    * undeployed and this object wasn't cleared up correctly.
     * @return The instance
     */
-   public ManagementRepository getInstance()
+   public javax.resource.spi.ResourceAdapter getResourceAdapter()
    {
-      return INSTANCE;
+      return instance.get();
    }
 
    /**
-    * Get the list of connectors
+    * Get the list of config property's
     * @return The value
     */
-   public List<Connector> getConnectors()
+   public List<ConfigProperty> getConfigProperties()
    {
-      if (connectors == null)
-         connectors = new ArrayList<Connector>(1);
+      if (configProperties == null)
+         configProperties = new ArrayList<ConfigProperty>(1);
 
-      return connectors;
+      return configProperties;
    }
 }

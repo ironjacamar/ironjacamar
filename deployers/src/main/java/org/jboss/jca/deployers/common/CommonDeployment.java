@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.deployers.common;
 
-import org.jboss.jca.core.management.Connector;
+import org.jboss.jca.core.api.management.Connector;
 
 import java.net.URL;
 import java.util.Arrays;

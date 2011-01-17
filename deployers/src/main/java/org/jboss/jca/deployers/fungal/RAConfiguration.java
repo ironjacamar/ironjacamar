@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
+import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.deployers.common.Configuration;
@@ -77,6 +78,9 @@ public class RAConfiguration implements Configuration
 
    /** Metadata repository */
    private MetadataRepository mdr = null;
+
+   /** The management repository */
+   private ManagementRepository managementRepository;
 
    /**
     * Constructor
@@ -296,6 +300,24 @@ public class RAConfiguration implements Configuration
    }
 
    /**
+    * Set the management repository
+    * @param value The value
+    */
+   public void setManagementRepository(ManagementRepository value)
+   {
+      managementRepository = value;
+   }
+
+   /**
+    * Get the management repository
+    * @return The handle
+    */
+   public ManagementRepository getManagementRepository()
+   {
+      return managementRepository;
+   }
+
+   /**
     * Start
     */
    public void start()
@@ -311,5 +333,8 @@ public class RAConfiguration implements Configuration
 
       if (mdr == null)
          throw new IllegalStateException("MetadataRepository not defined");
+
+      if (managementRepository == null)
+         throw new IllegalStateException("ManagementRepository not defined");
    }
 }

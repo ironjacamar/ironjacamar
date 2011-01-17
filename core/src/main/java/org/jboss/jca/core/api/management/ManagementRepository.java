@@ -20,56 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.management;
+package org.jboss.jca.core.api.management;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
- * Represents an admin object instance
+ * The management repository
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class AdminObject
+public class ManagementRepository
 {
-   /** The object instance */
-   private WeakReference<Object> instance;
-
-   /** The config property's */
-   private List<ConfigProperty> configProperties;
+   /** Resource adapter archives */
+   private List<Connector> connectors;
 
    /**
     * Constructor
-    * @param ao The admin object instance
     */
-   public AdminObject(Object ao)
+   public ManagementRepository()
    {
-      this.instance = new WeakReference<Object>(ao);
-      this.configProperties = null;
+      this.connectors = Collections.synchronizedList(new ArrayList<Connector>(1));
    }
 
    /**
-    * Get the admin object instance.
-    * 
-    * Note, that the value may be <code>null</code> if the admin object was
-    * undeployed and this object wasn't cleared up correctly.
-    * @return The instance
-    */
-   public Object getAdminObject()
-   {
-      return instance.get();
-   }
-
-   /**
-    * Get the list of config property's
+    * Get the list of connectors
     * @return The value
     */
-   public List<ConfigProperty> getConfigProperties()
+   public List<Connector> getConnectors()
    {
-      if (configProperties == null)
-         configProperties = new ArrayList<ConfigProperty>(1);
-
-      return configProperties;
+      return connectors;
    }
 }
