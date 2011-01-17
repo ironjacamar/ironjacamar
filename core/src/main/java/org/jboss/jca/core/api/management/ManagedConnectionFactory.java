@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.api.management;
 
+import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
-import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

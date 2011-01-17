@@ -38,14 +38,8 @@ import javax.transaction.Transaction;
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface Pool
+public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
 {
-   /**
-    * Gets pool name.
-    * @return pool name
-    */
-   public String getName();
-
    /**
     * Sets pool name.
     * @param poolName pool name
