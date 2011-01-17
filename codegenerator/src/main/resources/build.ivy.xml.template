@@ -116,12 +116,21 @@
   <target name="rar" depends="compile">
     <mkdir dir="${target.dir}" />
     <mkdir dir="${basedir}/src/main/resources" />
-    <jar destfile="${build.dir}/jca-ra.jar"
+    <jar destfile="${build.dir}/${def.name}.jar"
          basedir="${build.dir}"
-         includes="**/*.class"/>
-    <jar destfile="${target.dir}/jca-test.rar">
+         includes="**/*.class"
+         excludes="**/mbean/*.class"/>
+    <jar destfile="${build.dir}/${def.name}.rar">
       <fileset dir="${basedir}/src/main/resources" includes="META-INF/*"/>
-      <fileset dir="${build.dir}" includes="**/*.jar"/>
+      <fileset dir="${build.dir}" includes="${def.name}.jar"/>
+    </jar>
+    <jar destfile="${build.dir}/${def.name}-mbean.jar"
+         basedir="${build.dir}"
+         includes="**/mbean/*.class"/>
+    <jar destfile="${target.dir}/jca-test.rar">
+      <fileset dir="${basedir}/src/main/resources" includes="*.xml"/>
+      <fileset dir="${build.dir}" includes="*.rar"/>
+      <fileset dir="${build.dir}" includes="*-mbean.jar"/>
     </jar>
   </target>
   

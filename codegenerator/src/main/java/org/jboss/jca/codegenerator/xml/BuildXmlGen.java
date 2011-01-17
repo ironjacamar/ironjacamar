@@ -22,11 +22,15 @@
 package org.jboss.jca.codegenerator.xml;
 
 import org.jboss.jca.codegenerator.Definition;
+import org.jboss.jca.codegenerator.SimpleTemplate;
+import org.jboss.jca.codegenerator.Template;
 import org.jboss.jca.codegenerator.Utils;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A BuildXmlGen.
@@ -48,6 +52,11 @@ public class BuildXmlGen extends AbstractXmlGen
       
       URL buildFile = BuildXmlGen.class.getResource("/build.xml.template");
       String buildString = Utils.readFileIntoString(buildFile);
-      out.write(buildString);
+      
+      Map<String, String> map = new HashMap<String, String>();
+      map.put("def.name", def.getDefaultValue().toLowerCase());
+      
+      Template template = new SimpleTemplate(buildString);
+      template.process(map, out);
    }
 }

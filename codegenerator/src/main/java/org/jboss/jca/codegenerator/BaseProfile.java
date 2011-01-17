@@ -343,7 +343,9 @@ public class BaseProfile implements Profile
    {
       try
       {
-         FileWriter mbfw = Utils.createFile(def.getDefaultValue() + ".xml", outputDir);
+         outputDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
+            "main" + File.separatorChar + "resources";
+         FileWriter mbfw = Utils.createFile(def.getDefaultValue().toLowerCase() + ".xml", outputDir);
          MbeanXmlGen mbGen = new MbeanXmlGen();
          mbGen.generate(def, mbfw);
          mbfw.close();

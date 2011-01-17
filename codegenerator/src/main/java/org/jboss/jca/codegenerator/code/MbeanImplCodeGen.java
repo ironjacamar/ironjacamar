@@ -368,6 +368,7 @@ public class MbeanImplCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("mbeanServer = v;");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
       
       //Start
       writeIndent(out, indent);
@@ -401,6 +402,7 @@ public class MbeanImplCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("registered = true;");
       writeRightCurlyBracket(out, indent);
+      writeEol(out);
 
       //stop
       writeIndent(out, indent);
