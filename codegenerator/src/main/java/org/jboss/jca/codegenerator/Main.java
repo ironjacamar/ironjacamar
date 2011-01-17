@@ -419,6 +419,22 @@ public class Main
             def.setActivationClass(actiClassName);
       }
       
+      if (!def.isUseCciConnection())
+      {
+         //generate mbean classes
+         System.out.print(rb.getString("gen.mbean") + "[Y]: ");
+         String genMbean = in.readLine();
+         if (genMbean == null)
+            def.setGenMbean(true);
+         else
+         {
+            if (genMbean.equals("N") || genMbean.equals("n") || genMbean.equals("No"))
+               def.setGenMbean(false);
+            else
+               def.setGenMbean(true);
+         }
+      }
+      
       //build environment
       System.out.print(rb.getString("build.env"));
       System.out.print("[" + def.getBuild() + "]: ");

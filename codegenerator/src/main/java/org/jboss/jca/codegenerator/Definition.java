@@ -155,10 +155,13 @@ public class Definition
 
    /** MBean test interface  */
    @XmlElement(name = "MBeanInterface")
-   private String mbeanInterfaceClass = "TestMBean";
+   private String mbeanInterfaceClass;
    /** MBean test impl  */
    @XmlElement(name = "MBeanImpl")
-   private String mbeanImplClass = "Test";
+   private String mbeanImplClass;
+   /** generate MBean or not  */
+   @XmlElement(name = "GenMBean")
+   private boolean genMbean = true;
 
    /**
     * Set the version.
@@ -961,8 +964,13 @@ public class Definition
     */
    public String getMbeanInterfaceClass()
    {
+      if (mbeanInterfaceClass == null || mbeanInterfaceClass.equals(""))
+      {
+         mbeanInterfaceClass =  getDefaultValue() + "MBean";
+      }
       return mbeanInterfaceClass;
-   }   
+   } 
+   
    /**
     * Get the mbeanImplClass.
     * 
@@ -970,6 +978,30 @@ public class Definition
     */
    public String getMbeanImplClass()
    {
+      if (mbeanImplClass == null || mbeanImplClass.equals(""))
+      {
+         mbeanImplClass =  getDefaultValue() + "MBeanImpl";
+      }
       return mbeanImplClass;
+   }
+   
+   /**
+    * Get the genMbean.
+    * 
+    * @return the genMbean.
+    */
+   public boolean isGenMbean()
+   {
+      return genMbean;
+   }
+
+   /**
+    * Set the genMbean.
+    * 
+    * @param genMbean The genMbean to set.
+    */
+   public void setGenMbean(boolean genMbean)
+   {
+      this.genMbean = genMbean;
    }
 }

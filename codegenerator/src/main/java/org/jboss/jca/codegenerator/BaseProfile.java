@@ -62,7 +62,8 @@ public class BaseProfile implements Profile
       generateRaCode(def);
       generateOutboundCode(def);
       generateInboundCode(def);
-      generateMBeanCode(def);
+      if (def.isGenMbean() && !def.isUseCciConnection())
+         generateMBeanCode(def);
       
       generateTestCode(def);
 
