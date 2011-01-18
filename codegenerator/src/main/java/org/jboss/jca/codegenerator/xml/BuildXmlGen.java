@@ -53,8 +53,19 @@ public class BuildXmlGen extends AbstractXmlGen
       URL buildFile = BuildXmlGen.class.getResource("/build.xml.template");
       String buildString = Utils.readFileIntoString(buildFile);
       
+      String defName = "jca-test";
+      if (def.getRaPackage() != null && !def.getRaPackage().equals(""))
+      {
+         if (def.getRaPackage().indexOf('.') >= 0)
+         {
+            defName = def.getRaPackage().substring(def.getRaPackage().lastIndexOf('.') + 1);
+         }
+         else
+            defName = def.getRaPackage();
+      }
+      
       Map<String, String> map = new HashMap<String, String>();
-      map.put("def.name", def.getDefaultValue().toLowerCase());
+      map.put("def.name", defName.toLowerCase());
       
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);

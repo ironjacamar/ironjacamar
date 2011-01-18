@@ -120,18 +120,15 @@
          basedir="${build.dir}"
          includes="**/*.class"
          excludes="**/mbean/*.class"/>
-    <jar destfile="${build.dir}/${def.name}.rar">
+    <jar destfile="${target.dir}/${def.name}.rar">
       <fileset dir="${basedir}/src/main/resources" includes="META-INF/*"/>
       <fileset dir="${build.dir}" includes="${def.name}.jar"/>
     </jar>
-    <jar destfile="${build.dir}/${def.name}-mbean.jar"
+    <jar destfile="${target.dir}/${def.name}-mbean.jar"
          basedir="${build.dir}"
          includes="**/mbean/*.class"/>
-    <jar destfile="${target.dir}/jca-test.rar">
+    <copy todir="${target.dir}">
       <fileset dir="${basedir}/src/main/resources" includes="*.xml"/>
-      <fileset dir="${build.dir}" includes="*.rar"/>
-      <fileset dir="${build.dir}" includes="*-mbean.jar"/>
-    </jar>
   </target>
   
       
