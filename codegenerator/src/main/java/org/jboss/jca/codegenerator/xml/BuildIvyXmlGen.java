@@ -66,6 +66,7 @@ public class BuildIvyXmlGen extends AbstractXmlGen
       
       Map<String, String> map = new HashMap<String, String>();
       map.put("def.name", defName.toLowerCase());
+      map.put("mbean.class", def.getRaPackage() + ".mbean." + def.getMbeanInterfaceClass());
       
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);

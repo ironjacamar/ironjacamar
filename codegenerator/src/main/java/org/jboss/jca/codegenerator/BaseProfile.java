@@ -341,11 +341,22 @@ public class BaseProfile implements Profile
     */
    void generateMbeanXml(Definition def, String outputDir)
    {
+      String mbeanName = def.getDefaultValue().toLowerCase();
+      if (def.getRaPackage() != null && !def.getRaPackage().equals(""))
+      {
+         if (def.getRaPackage().indexOf('.') >= 0)
+         {
+            mbeanName = def.getRaPackage().substring(def.getRaPackage().lastIndexOf('.') + 1);
+         }
+         else
+            mbeanName = def.getRaPackage();
+      }
+      
       try
       {
          outputDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
             "main" + File.separatorChar + "resources";
-         FileWriter mbfw = Utils.createFile(def.getDefaultValue().toLowerCase() + ".xml", outputDir);
+         FileWriter mbfw = Utils.createFile(mbeanName + ".xml", outputDir);
          MbeanXmlGen mbGen = new MbeanXmlGen();
          mbGen.generate(def, mbfw);
          mbfw.close();

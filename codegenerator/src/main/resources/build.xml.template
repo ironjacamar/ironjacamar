@@ -63,6 +63,13 @@
       <fileset dir="${basedir}/src/main/resources" includes="META-INF/*"/>
       <fileset dir="${build.dir}" includes="${def.name}.jar"/>
     </jar>
+
+    <available property="mbean.gen" classpath="${build.dir}"
+      classname="${mbean.class}"/>
+    <antcall target="mbean-pack"/>
+  </target>
+  
+  <target name="mbean-pack" if="mbean.gen">
     <jar destfile="${target.dir}/${def.name}-mbean.jar"
          basedir="${build.dir}"
          includes="**/mbean/*.class"/>
@@ -70,7 +77,6 @@
       <fileset dir="${basedir}/src/main/resources" includes="*.xml"/>
     </copy>
   </target>
-  
       
   <!-- ================================= 
        Target: prepare-test
