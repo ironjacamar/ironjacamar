@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.codegenerator.xml;
 
+import org.jboss.jca.codegenerator.ConfigPropType;
 import org.jboss.jca.codegenerator.Definition;
 import org.jboss.jca.codegenerator.SimpleTemplate;
 import org.jboss.jca.codegenerator.Template;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,13 +55,44 @@ public class IronjacamarXmlGen extends AbstractXmlGen
       URL buildFile = IronjacamarXmlGen.class.getResource("/ironjacamar.xml.template");
       String buildString = Utils.readFileIntoString(buildFile);
       
-
+      StringBuilder strRaProps = new StringBuilder();
+      List<ConfigPropType> raPropsList = def.getRaConfigProps();
+      getPropsString(strRaProps, raPropsList, 2);
+      
+      StringBuilder strMcfProps = new StringBuilder();
+      List<ConfigPropType> mcfPropsList = def.getMcfConfigProps();
+      getPropsString(strMcfProps, mcfPropsList, 6);
+      
       Map<String, String> map = new HashMap<String, String>();
+      map.put("ra.props", strRaProps.toString());
       map.put("transaction", def.getSupportTransaction());
-      map.put("mcf.class", def.getMcfClass());
+      map.put("mcf.class", def.getRaPackage() + "." + def.getMcfClass());
       map.put("jndi.name", "java:/eis/" + def.getDefaultValue());
       map.put("pool.name", def.getDefaultValue());
+      map.put("mcf.props", strMcfProps.toString());
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);
+   }
+
+   /**
+    * generate properties String
+    * 
+    * @param strProps
+    * @param propsList
+    * @param indent
+    */
+   private void getPropsString(StringBuilder strProps, List<ConfigPropType> propsList, int indent)
+   {
+      for (ConfigPropType raProps : propsList)
+      {
+         for (int i = 0; i < indent; i++)
+            strProps.append(" ");
+         strProps.append("<config-property name=\"");
+         strProps.append(raProps.getName());
+         strProps.append("\">");
+         strProps.append(raProps.getValue());
+         strProps.append("</config-property>");
+         strProps.append("\n");
+      }
    }
 }
