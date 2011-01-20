@@ -2,6 +2,8 @@
 <appendix id="schemas">
   <title>Schemas</title>
 
+  <para>All the IronJacamar schemas are deployed under <ulink url="http://www.jboss.org/ironjacamar/schema/">http://www.jboss.org/ironjacamar/schema/</ulink>.</para>
+
   <section id="jca16">
     <title>Java EE Connector Architecture 1.6</title>
 
