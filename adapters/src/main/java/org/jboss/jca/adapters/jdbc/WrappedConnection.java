@@ -95,7 +95,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          if (lockedMC == null)
             lockedMC = mc;
 
-         lockCount++ ;
+         lockCount++;
       }
       else
       {
