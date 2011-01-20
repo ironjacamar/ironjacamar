@@ -1,21 +1,4 @@
 <ironjacamar>
-
-  <!--
-    Specifies bean validation group that should be used
-    <bean-validation-groups>
-      <bean-validation-group></bean-validation-group>
-    </bean-validation-groups>
-    -->
-    
-  <!--
-    Specifies the unique name of the bootstrap context that should be used
-    <bootstrap-context></bootstrap-context>
-  -->
-    
-  <!--
-    Resource adapter properties
-    <config-property name="ra_prop">ra_value</config-property>
-  -->
 ${ra.props}
   <transaction-support>${transaction}</transaction-support>
   
@@ -23,37 +6,8 @@ ${ra.props}
     <connection-definition class-name="${mcf.class}" 
       enabled="true" jndi-name="${jndi.name}" 
       use-java-context="true" pool-name="${pool.name}">
-      
-      <!--
-        Managed connection faction properties
-        <config-property name="mcf_prop">mcf_value</config-property>
-      -->
 ${mcf.props}
-      <pool>
-        <min-pool-size>5</min-pool-size>
-        <max-pool-size>20</max-pool-size>
-        <prefill>true</prefill>
-        <use-strict-min>false</use-strict-min>
-      </pool>
-      
-      <security>
-        <user-name></user-name>
-        <password></password>
-      </security>
-      
-      <timeout>
-        <blocking-timeout-millis>30000</blocking-timeout-millis>
-        <idle-timeout-minutes>15</idle-timeout-minutes>
-        <allocation-retry>0</allocation-retry>
-        <allocation-retry-wait-millis>5000</allocation-retry-wait-millis>
-      </timeout>
-      
-      <validation>
-        <background-validation>false</background-validation>
-        <background-validation-minutes>5</background-validation-minutes>
-        <use-fast-fail>false</use-fast-fail>
-      </validation>
-      
     </connection-definition>
   </connection-definitions>
+
 </ironjacamar>
