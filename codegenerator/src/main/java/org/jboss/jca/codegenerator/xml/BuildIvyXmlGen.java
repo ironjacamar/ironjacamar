@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -65,7 +66,7 @@ public class BuildIvyXmlGen extends AbstractXmlGen
       }
       
       Map<String, String> map = new HashMap<String, String>();
-      map.put("def.name", defName.toLowerCase());
+      map.put("def.name", defName.toLowerCase(Locale.US));
       map.put("mbean.class", def.getRaPackage() + ".mbean." + def.getMbeanInterfaceClass());
       
       Template template = new SimpleTemplate(buildString);

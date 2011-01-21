@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
 
 /**
  * A BaseProfile.
@@ -341,7 +342,7 @@ public class BaseProfile implements Profile
     */
    void generateMbeanXml(Definition def, String outputDir)
    {
-      String mbeanName = def.getDefaultValue().toLowerCase();
+      String mbeanName = def.getDefaultValue().toLowerCase(Locale.US);
       if (def.getRaPackage() != null && !def.getRaPackage().equals(""))
       {
          if (def.getRaPackage().indexOf('.') >= 0)
