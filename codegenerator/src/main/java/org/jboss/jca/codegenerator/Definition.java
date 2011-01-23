@@ -120,7 +120,7 @@ public class Definition
    private String connMetaClass;
    /** connection spec class name */
    private String connSpecClass;
-   /** resource adapater metadata class name */
+   /** resource adapter metadata class name */
    private String raMetaClass;
 
    /** support outbound  */
@@ -163,6 +163,13 @@ public class Definition
    @XmlElement(name = "GenMBean")
    private boolean genMbean = true;
 
+   /** generate admin object or not  */
+   @XmlElement(name = "GenAdminObject")
+   private boolean genAdminObject = false;
+   /** list of admin object  */
+   @XmlElement(name = "AdminObject")
+   private List<AdminObjectType> adminObjects;
+   
    /**
     * Set the version.
     * 
@@ -1003,5 +1010,45 @@ public class Definition
    public void setGenMbean(boolean genMbean)
    {
       this.genMbean = genMbean;
+   }
+
+   /**
+    * Set the adminObjects.
+    * 
+    * @param adminObjects The adminObjects to set.
+    */
+   public void setAdminObjects(List<AdminObjectType> adminObjects)
+   {
+      this.adminObjects = adminObjects;
+   }
+
+   /**
+    * Get the adminObjects.
+    * 
+    * @return the adminObjects.
+    */
+   public List<AdminObjectType> getAdminObjects()
+   {
+      return adminObjects;
+   }
+
+   /**
+    * Set the genAdminObject.
+    * 
+    * @param genAdminObject The genAdminObject to set.
+    */
+   public void setGenAdminObject(boolean genAdminObject)
+   {
+      this.genAdminObject = genAdminObject;
+   }
+
+   /**
+    * Get the genAdminObject.
+    * 
+    * @return the genAdminObject.
+    */
+   public boolean isGenAdminObject()
+   {
+      return genAdminObject;
    }
 }

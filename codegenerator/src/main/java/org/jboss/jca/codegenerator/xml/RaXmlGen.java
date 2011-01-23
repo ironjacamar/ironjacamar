@@ -79,6 +79,28 @@ public abstract class RaXmlGen extends AbstractXmlGen
          writeInbound(def, out, indent + 1);
       }
 
+      if (def.isGenAdminObject() && def.getAdminObjects().size() > 0)
+      {
+         for (int i = 0; i < def.getAdminObjects().size(); i++)
+         {
+            writeIndent(out, indent + 1);
+            out.write("<adminobject>");
+            writeEol(out);
+            writeIndent(out, indent + 2);
+            out.write("<adminobject-interface>" + def.getRaPackage() + "." + 
+               def.getAdminObjects().get(i).getAdminObjectInterface() + "</adminobject-interface>");
+            writeEol(out);
+            writeIndent(out, indent + 2);
+            out.write("<adminobject-class>" + def.getRaPackage() + "." + 
+               def.getAdminObjects().get(i).getAdminObjectClass() + "</adminobject-class>");
+            writeEol(out);
+            writeConfigPropsXml(def.getAdminObjects().get(i).getAoConfigProps(), out, indent + 2, false);
+            writeIndent(out, indent + 1);
+            out.write("</adminobject>");
+            writeEol(out);
+         }
+      }
+      
       if (def.getSecurityPermissions() != null && def.getSecurityPermissions().size() > 0)
       {
          for (int i = 0; i < def.getSecurityPermissions().size(); i++)

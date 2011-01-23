@@ -12,5 +12,5 @@ ${ra.props}
 ${mcf.props}
     </connection-definition>
   </connection-definitions>
-
+${adminobjects}
 </ironjacamar>

@@ -22,6 +22,8 @@
 package org.jboss.jca.codegenerator;
 
 import org.jboss.jca.codegenerator.code.AbstractCodeGen;
+import org.jboss.jca.codegenerator.code.AoImplCodeGen;
+import org.jboss.jca.codegenerator.code.AoInterfaceCodeGen;
 import org.jboss.jca.codegenerator.xml.BuildIvyXmlGen;
 import org.jboss.jca.codegenerator.xml.BuildXmlGen;
 import org.jboss.jca.codegenerator.xml.IronjacamarXmlGen;
@@ -94,6 +96,14 @@ public class BaseProfile implements Profile
       if (def.isUseRa())
       {
          generateClassCode(def, "Ra");
+      }
+      if (def.isGenAdminObject())
+      {
+         for (int i = 0; i < def.getAdminObjects().size(); i++)
+         {
+            generateMultiAdminObjectClassCode(def, "AoImpl", i);
+            generateMultiAdminObjectClassCode(def, "AoInterface", i);
+         }
       }
    }
 
@@ -195,6 +205,52 @@ public class BaseProfile implements Profile
          
          codeGen.generate(def, fw);
          
+         fw.flush();
+         fw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+   }
+   
+   /**
+    * generate multi admin object class code
+    * @param def Definition 
+    * @param className class name 
+    * @param num number of order
+    */
+   void generateMultiAdminObjectClassCode(Definition def, String className, int num)
+   {
+      if (className == null || className.equals(""))
+         return;
+      
+      try
+      {
+         String clazzName = this.getClass().getPackage().getName() + ".code." + className + "CodeGen";
+
+         Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+         AbstractCodeGen codeGen = (AbstractCodeGen)clazz.newInstance();
+         
+         String javaFile = "";
+         if (codeGen instanceof AoImplCodeGen)
+         {
+            ((AoImplCodeGen)codeGen).setNumOfAo(num);
+            javaFile = def.getAdminObjects().get(num).getAdminObjectClass() + ".java";
+         }
+         else if (codeGen instanceof AoInterfaceCodeGen)
+         {
+            ((AoInterfaceCodeGen)codeGen).setNumOfAo(num);
+            javaFile = def.getAdminObjects().get(num).getAdminObjectInterface() + ".java";
+         }
+         
+         FileWriter fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
+         codeGen.generate(def, fw);
+
          fw.flush();
          fw.close();
       }

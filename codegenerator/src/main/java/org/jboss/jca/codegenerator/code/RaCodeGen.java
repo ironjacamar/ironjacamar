@@ -98,6 +98,21 @@ public class RaCodeGen extends PropsCodeGen
                def.getSupportTransaction() + ")");
          }
          writeEol(out);
+         if (def.isGenAdminObject() && def.getAdminObjects().size() > 0)
+         {
+            out.write("@AdministeredObject(adminObjectInterfaces = { ");
+            writeEol(out);
+            for (int i = 0; i < def.getAdminObjects().size(); i++)
+            {
+               writeIndent(out, 1);
+               out.write(def.getAdminObjects().get(i).getAdminObjectClass() + ".class");
+               if (i < def.getAdminObjects().size() - 1)
+                  out.write(",");
+               writeEol(out);
+            }
+            out.write("})");
+            writeEol(out);
+         }
       }
       out.write("public class " + getClassName(def) + " implements ResourceAdapter");
       writeLeftCurlyBracket(out, 0);
@@ -212,6 +227,12 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       out.write("import javax.resource.spi.ActivationSpec;");
       writeEol(out);
+      if (def.isUseAnnotation() && 
+         def.isGenAdminObject() && def.getAdminObjects().size() > 0)
+      {
+         out.write("import javax.resource.spi.AdministeredObject;");
+         writeEol(out);
+      }
       if (def.isUseAnnotation() && 
          def.getAuthenMechanisms() != null && def.getAuthenMechanisms().size() > 0)
       {

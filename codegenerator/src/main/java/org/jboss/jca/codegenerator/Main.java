@@ -419,6 +419,68 @@ public class Main
             def.setActivationClass(actiClassName);
       }
       
+      //admin object
+      System.out.print(rb.getString("gen.adminobject") + "[N]: ");
+      String genAo = in.readLine();
+      if (genAo == null)
+         def.setGenAdminObject(false);
+      else
+      {
+         if (genAo.equals("Y") || genAo.equals("y") || genAo.equals("Yes"))
+            def.setGenAdminObject(true);
+         else
+            def.setGenAdminObject(false);
+      }
+      
+      int numOfAo = 0;
+      while (numOfAo >= 0 && def.isGenAdminObject())
+      {
+         String strOrder = numOfAo > 0 ? new Integer(numOfAo).toString() : "";
+         AdminObjectType aoType = new AdminObjectType();
+         System.out.print(rb.getString("adminobject.interface.name"));
+         System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectInterface]: ");
+         String aoInterfaceName = in.readLine();
+         if (aoInterfaceName != null && !aoInterfaceName.equals(""))
+         {
+            aoType.setAdminObjectInterface(aoInterfaceName);
+         }
+         else
+         {
+            aoType.setAdminObjectInterface(def.getDefaultValue() + strOrder + "AdminObjectInterface");
+         }
+         
+         System.out.print(rb.getString("adminobject.class.name"));
+         System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectImpl]: ");
+         String aoClassName = in.readLine();
+         if (aoClassName != null && !aoClassName.equals(""))
+         {
+            aoType.setAdminObjectClass(aoClassName);
+         }
+         else
+         {
+            aoType.setAdminObjectClass(def.getDefaultValue() + strOrder + "AdminObjectImpl");
+         }
+   
+         List<ConfigPropType> aoProps = inputProperties("adminobject", in, false);
+         aoType.setAoConfigProps(aoProps);
+         
+         if (def.getAdminObjects() == null)
+            def.setAdminObjects(new ArrayList<AdminObjectType>());
+         def.getAdminObjects().add(aoType);
+         
+         System.out.print(rb.getString("gen.adminobject.other") + "[N]: ");
+         String genAoAgain = in.readLine();
+         if (genAoAgain == null)
+            numOfAo = -1;
+         else
+         {
+            if (genAoAgain.equals("Y") || genAoAgain.equals("y") || genAoAgain.equals("Yes"))
+               numOfAo++;
+            else
+               numOfAo = -1;
+         }
+      }
+      
       if (!def.isUseCciConnection())
       {
          //generate mbean classes

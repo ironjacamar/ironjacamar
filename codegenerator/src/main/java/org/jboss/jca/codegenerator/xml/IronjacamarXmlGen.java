@@ -63,6 +63,25 @@ public class IronjacamarXmlGen extends AbstractXmlGen
       List<ConfigPropType> mcfPropsList = def.getMcfConfigProps();
       getPropsString(strMcfProps, mcfPropsList, 6);
       
+      StringBuilder strAo = new StringBuilder();
+      if (def.isGenAdminObject())
+      {
+         strAo.append("  <admin-objects>\n");
+         for (int i = 0; i < def.getAdminObjects().size(); i++)
+         {
+            strAo.append("    <admin-object class-name=\"");
+            strAo.append(def.getRaPackage());
+            strAo.append(".");
+            strAo.append(def.getAdminObjects().get(i).getAdminObjectClass());
+            strAo.append("\" jndi-name=\"java:/");
+            strAo.append(def.getAdminObjects().get(i).getAdminObjectClass());
+            strAo.append("\">\n");
+            getPropsString(strAo, def.getAdminObjects().get(i).getAoConfigProps(), 6);
+            strAo.append("    </admin-object>\n");
+         }
+         strAo.append("  </admin-objects>\n");
+      }
+      
       Map<String, String> map = new HashMap<String, String>();
       map.put("ra.props", strRaProps.toString());
       map.put("transaction", def.getSupportTransaction());
@@ -70,6 +89,7 @@ public class IronjacamarXmlGen extends AbstractXmlGen
       map.put("jndi.name", "java:/eis/" + def.getDefaultValue());
       map.put("pool.name", def.getDefaultValue());
       map.put("mcf.props", strMcfProps.toString());
+      map.put("adminobjects", strAo.toString());
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);
    }
@@ -83,14 +103,14 @@ public class IronjacamarXmlGen extends AbstractXmlGen
     */
    private void getPropsString(StringBuilder strProps, List<ConfigPropType> propsList, int indent)
    {
-      for (ConfigPropType raProps : propsList)
+      for (ConfigPropType props : propsList)
       {
          for (int i = 0; i < indent; i++)
             strProps.append(" ");
          strProps.append("<config-property name=\"");
-         strProps.append(raProps.getName());
+         strProps.append(props.getName());
          strProps.append("\">");
-         strProps.append(raProps.getValue());
+         strProps.append(props.getValue());
          strProps.append("</config-property>");
          strProps.append("\n");
       }
