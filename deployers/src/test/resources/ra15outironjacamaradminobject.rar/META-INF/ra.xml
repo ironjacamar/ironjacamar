@@ -28,8 +28,8 @@
          <reauthentication-support>false</reauthentication-support>
       </outbound-resourceadapter>
       <adminobject>
-         <adminobject-class>org.jboss.jca.test.deployers.spec.rars.ra15out.TestAdminObject</adminobject-class>
          <adminobject-interface>org.jboss.jca.test.deployers.spec.rars.ra15out.TestAdminObject</adminobject-interface>
+         <adminobject-class>org.jboss.jca.test.deployers.spec.rars.ra15out.TestAdminObject</adminobject-class>
          <config-property>
             <config-property-name>myStringProperty</config-property-name>
             <config-property-type>java.lang.String</config-property-type>
