@@ -74,6 +74,7 @@ public interface Embedded
 
    /**
     * Lookup a bean
+    * @param <T> the generics type
     * @param name The bean name
     * @param expectedType The expected type for the bean
     * @return The bean instance

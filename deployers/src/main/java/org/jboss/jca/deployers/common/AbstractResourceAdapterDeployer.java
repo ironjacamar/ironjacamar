@@ -583,7 +583,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws DeployException DeployException in case of errors
     */
    protected Set<Failure> initAdminObject(Connector cmd, ClassLoader cl, List<Validate> archiveValidationObjects,
-         List<Object> beanValidationObjects, Set<Failure> failures, 
+      List<Object> beanValidationObjects, Set<Failure> failures,
          URL url, String deploymentName, boolean activateDeployment,
          List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
          List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
@@ -644,7 +644,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     {
                                        jndiName = aoRaXml.getJndiName();
 
-                                       if (aoRaXml.isUseJavaContext() != null && 
+                                       if (aoRaXml.isUseJavaContext() != null &&
                                            aoRaXml.isUseJavaContext().booleanValue() &&
                                            !jndiName.startsWith("java:/"))
                                        {
@@ -655,14 +655,14 @@ public abstract class AbstractResourceAdapterDeployer
                                     {
                                        jndiName = ijAO.getJndiName();
 
-                                       if (ijAO.isUseJavaContext() != null && 
+                                       if (ijAO.isUseJavaContext() != null &&
                                            ijAO.isUseJavaContext().booleanValue() &&
                                            !jndiName.startsWith("java:/"))
                                        {
                                           jndiName = "java:/" + jndiName;
                                        }
                                     }
-                                 
+
                                     bindAdminObject(url, deploymentName, ao, jndiName);
                                  }
                                  else
@@ -670,7 +670,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     String[] names = bindAdminObject(url, deploymentName, ao);
                                     jndiName = names[0];
                                  }
-                           
+
                                  aos[i] = ao;
                                  aoJndiNames[i] = jndiName;
 
@@ -759,7 +759,7 @@ public abstract class AbstractResourceAdapterDeployer
          if (mgtUniqueId.indexOf("/") != -1)
             mgtUniqueId = mgtUniqueId.substring(mgtUniqueId.lastIndexOf("/") + 1);
 
-         org.jboss.jca.core.api.management.Connector mgtConnector = 
+         org.jboss.jca.core.api.management.Connector mgtConnector =
             new org.jboss.jca.core.api.management.Connector(mgtUniqueId);
 
          ResourceAdapter resourceAdapter = null;
@@ -1018,7 +1018,7 @@ public abstract class AbstractResourceAdapterDeployer
                            {
                               jndiName = cdRaXml.getJndiName();
 
-                              if (cdRaXml.isUseJavaContext() != null && 
+                              if (cdRaXml.isUseJavaContext() != null &&
                                   cdRaXml.isUseJavaContext().booleanValue() &&
                                   !jndiName.startsWith("java:/"))
                               {
@@ -1029,7 +1029,7 @@ public abstract class AbstractResourceAdapterDeployer
                            {
                               jndiName = ijCD.getJndiName();
 
-                              if (ijCD.isUseJavaContext() != null && 
+                              if (ijCD.isUseJavaContext() != null &&
                                   ijCD.isUseJavaContext().booleanValue() &&
                                   !jndiName.startsWith("java:/"))
                               {
@@ -1052,7 +1052,7 @@ public abstract class AbstractResourceAdapterDeployer
                            {
                               poolName = ijCD.getPoolName();
                            }
- 
+
                            if (poolName == null)
                               poolName = jndiName;
 
@@ -1074,7 +1074,7 @@ public abstract class AbstractResourceAdapterDeployer
                            {
                               poolName = ijCD.getPoolName();
                            }
- 
+
                            if (poolName == null)
                               poolName = cfJndiNames[0];
 
@@ -1322,7 +1322,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        {
                                           jndiName = cdRaXml.getJndiName();
 
-                                          if (cdRaXml.isUseJavaContext() != null && 
+                                          if (cdRaXml.isUseJavaContext() != null &&
                                               cdRaXml.isUseJavaContext().booleanValue() &&
                                               !jndiName.startsWith("java:/"))
                                           {
@@ -1333,7 +1333,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        {
                                           jndiName = ijCD.getJndiName();
 
-                                          if (ijCD.isUseJavaContext() != null && 
+                                          if (ijCD.isUseJavaContext() != null &&
                                               ijCD.isUseJavaContext().booleanValue() &&
                                               !jndiName.startsWith("java:/"))
                                           {
@@ -1356,7 +1356,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        {
                                           poolName = ijCD.getPoolName();
                                        }
-                                       
+
                                        if (poolName == null)
                                           poolName = jndiName;
 
@@ -1378,7 +1378,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        {
                                           poolName = ijCD.getPoolName();
                                        }
-                                       
+
                                        if (poolName == null)
                                           poolName = cfJndiNames[0];
 
@@ -1407,10 +1407,8 @@ public abstract class AbstractResourceAdapterDeployer
                                           failures, url, activateDeployment);
 
             failures = initAdminObject(cmd, cl, archiveValidationObjects, beanValidationObjects, failures, url,
-                                       deploymentName, activateDeployment, 
-                                       raxml != null ? raxml.getAdminObjects() : null,
-                                       ijmd != null ? ijmd.getAdminObjects() : null, 
-                                       aos, aoJndiNames, mgtConnector);
+               deploymentName, activateDeployment, raxml != null ? raxml.getAdminObjects() : null, ijmd != null
+                  ? ijmd.getAdminObjects() : null, aos, aoJndiNames, mgtConnector);
          }
 
          // Archive validation
@@ -1526,8 +1524,8 @@ public abstract class AbstractResourceAdapterDeployer
     * @param cps The config property's
     * @return The management view of these
     */
-   private List<org.jboss.jca.core.api.management.ConfigProperty> 
-      createManagementView(List<? extends ConfigProperty> cps)
+   private List<org.jboss.jca.core.api.management.ConfigProperty> createManagementView(
+      List<? extends ConfigProperty> cps)
    {
       List<org.jboss.jca.core.api.management.ConfigProperty> result =
          new ArrayList<org.jboss.jca.core.api.management.ConfigProperty>();
@@ -1551,14 +1549,14 @@ public abstract class AbstractResourceAdapterDeployer
                if (confidential == null)
                   confidential = Boolean.FALSE;
 
-               mgtCp = 
+               mgtCp =
                   new org.jboss.jca.core.api.management.ConfigProperty(
                      cp.getConfigPropertyName().getValue(),
                      dynamic.booleanValue(), confidential.booleanValue());
             }
             else
             {
-               mgtCp = 
+               mgtCp =
                   new org.jboss.jca.core.api.management.ConfigProperty(
                      cp.getConfigPropertyName().getValue());
             }

@@ -34,13 +34,12 @@ import javax.resource.spi.work.WorkRejectedException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * WorkManagerRejectingStartWorkTestCase.
- * 
+ *
  * Tests for rejecting work instance to the WorkManager startWork() methods
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
@@ -50,10 +49,10 @@ public class WorkManagerRejectingStartWorkTestCase
     * Embedded
     */
    private static Embedded embedded;
-   
+
    /**
     * startWork method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test(expected = WorkRejectedException.class)
    public void testStartWork() throws Throwable
@@ -64,10 +63,10 @@ public class WorkManagerRejectingStartWorkTestCase
 
       workManager.startWork(work);
    }
-   
+
    /**
     * startWork method (full signature)
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test(expected = WorkRejectedException.class)
    public void testStartWorkFullSignature() throws Throwable
@@ -76,16 +75,16 @@ public class WorkManagerRejectingStartWorkTestCase
 
       ShortRunningWork work = new ShortRunningWork();
       MyWorkAdapter wa = new MyWorkAdapter();
-      
+
       workManager.startWork(work, WorkManager.INDEFINITE, null, wa);
    }
-   
+
    // --------------------------------------------------------------------------------||
    // Lifecycle Methods --------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
    /**
     * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -97,13 +96,9 @@ public class WorkManagerRejectingStartWorkTestCase
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      URL naming =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("naming.xml");
-      URL transaction =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("transaction.xml");
-      URL wm =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().
-         getResource("rejecting-workmanager.xml");
+      URL naming = WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("transaction.xml");
+      URL wm = WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("rejecting-workmanager.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -112,19 +107,15 @@ public class WorkManagerRejectingStartWorkTestCase
 
    /**
     * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @AfterClass
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      URL naming =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("naming.xml");
-      URL transaction =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("transaction.xml");
-      URL wm =
-         WorkManagerRejectingStartWorkTestCase.class.getClassLoader().
-         getResource("rejecting-workmanager.xml");
+      URL naming = WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("transaction.xml");
+      URL wm = WorkManagerRejectingStartWorkTestCase.class.getClassLoader().getResource("rejecting-workmanager.xml");
 
       embedded.undeploy(wm);
       embedded.undeploy(transaction);

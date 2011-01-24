@@ -2720,7 +2720,7 @@ standard information into the standard deployment descriptor.
     <programlisting language="xml">
 <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
 
   <xs:complexType name="boolean-presenceType"></xs:complexType>
 

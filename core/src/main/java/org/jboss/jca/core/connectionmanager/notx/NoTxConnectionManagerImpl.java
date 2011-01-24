@@ -29,6 +29,7 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.NoTxConnectionListener;
 
 import java.util.Collection;
+
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;

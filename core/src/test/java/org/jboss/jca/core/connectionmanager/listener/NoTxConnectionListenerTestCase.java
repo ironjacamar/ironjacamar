@@ -52,6 +52,13 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+/**
+ *
+ * A NoTxConnectionListenerTestCase.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ *
+ */
 public class NoTxConnectionListenerTestCase
 {
 
@@ -64,6 +71,12 @@ public class NoTxConnectionListenerTestCase
 
    private static Pool pool = null;
 
+   /**
+    *
+    * testConnectionClosed
+    *
+    * @throws Exception in case of unexpected errors
+    */
    @Test
    public void testConnectionClosed() throws Exception
    {
@@ -85,11 +98,17 @@ public class NoTxConnectionListenerTestCase
 
       ConnectionEvent event = new ConnectionEvent(listener.getManagedConnection(), ConnectionEvent.CONNECTION_CLOSED);
 
-       ((NoTxConnectionListener) listener).connectionClosed(event);
+      ((NoTxConnectionListener) listener).connectionClosed(event);
 
       assertThat(((MockManagedConnection) listener.getManagedConnection()).cleanUpCalled(), is(1));
    }
 
+   /**
+    *
+    * connectionErrorOccuredShouldFreeManagedCOnnection
+    *
+    * @throws Exception in case of unexpected errors
+    */
    @Test
    public void connectionErrorOccuredShouldFreeManagedCOnnection() throws Exception
    {
@@ -116,6 +135,12 @@ public class NoTxConnectionListenerTestCase
       assertThat(listener.isManagedConnectionFree(), is(true));
    }
 
+   /**
+    *
+    * unregisterAssociationShouldFreeManagedCOnnection
+    *
+    * @throws Exception in case of unexpected errors
+    */
    @Test
    public void unregisterAssociationShouldFreeManagedCOnnection() throws Exception
    {
@@ -141,6 +166,12 @@ public class NoTxConnectionListenerTestCase
       assertThat(listener.isManagedConnectionFree(), is(true));
    }
 
+   /**
+    *
+    * unregisterNotYetCreatedAssociationShouldNotThrowException
+    *
+    * @throws Exception in case of unexpected errors
+    */
    @Test
    public void unregisterNotYetCreatedAssociationShouldNotThrowException() throws Exception
    {
@@ -196,7 +227,7 @@ public class NoTxConnectionListenerTestCase
       ConnectionManager connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
          null, null);
 
-       noTxCm = ((NoTxConnectionManagerImpl) connectionManager);
+      noTxCm = ((NoTxConnectionManagerImpl) connectionManager);
 
    }
 
@@ -222,4 +253,3 @@ public class NoTxConnectionListenerTestCase
    }
 
 }
-

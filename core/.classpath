@@ -23,5 +23,7 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/mockito-all.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/h2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjts-integration.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjts.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

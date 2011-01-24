@@ -132,8 +132,9 @@ public class EmbeddedJCAContainer implements DeployableContainer
     *
     * @param asset asset
     * @param name asset
-    * @throws FileNotFoundException IOException
+    *
     * @throws IOException IOException
+    * @throws FileNotFoundException FileNotFoundException
     * @throws MalformedURLException MalformedURLException
     * @throws Throwable Throwable
     *

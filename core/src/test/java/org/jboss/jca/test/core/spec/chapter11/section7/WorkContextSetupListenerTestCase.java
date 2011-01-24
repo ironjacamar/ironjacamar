@@ -27,7 +27,6 @@ import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.jca.test.core.spec.chapter11.common.DuplicateTransactionContextWork;
 import org.jboss.jca.test.core.spec.chapter11.common.TransactionContextCustom;
 import org.jboss.jca.test.core.spec.chapter11.common.TransactionContextWork;
-import org.jboss.jca.test.core.spec.chapter11.section4.subsection3.WorkContextHandlingAssignmentTestCase;
 
 import java.net.URL;
 
@@ -42,7 +41,7 @@ import org.junit.Test;
 
 /**
  * WorkContextSetupListenerTest
- * 
+ *
  * @version $Rev$ $Date$
  * @author gurkanerdogdu
  */
@@ -54,8 +53,8 @@ public class WorkContextSetupListenerTestCase
    private static Embedded embedded;
 
    /**
-    * Test {@link WorkContextLifecycleListener} for transaction context.
-    * 
+    * Test WorkContextLifecycleListener for transaction context.
+    *
     * @throws Throwable throws any error
     */
    @Test
@@ -63,17 +62,17 @@ public class WorkContextSetupListenerTestCase
    {
       WorkManager manager = embedded.lookup("WorkManager", WorkManager.class);
       manager.doWork(new TransactionContextWork(), WorkManager.INDEFINITE, null, null);
-      
+
       String errorCode = TransactionContextCustom.getContextSetupFailedErrorCode();
       boolean complete = TransactionContextCustom.isContextSetupComplete();
-      
+
       Assert.assertEquals("", errorCode);
-      Assert.assertTrue(complete);      
+      Assert.assertTrue(complete);
    }
-   
+
    /**
-    * Test {@link WorkContextLifecycleListener} for transaction context.
-    * 
+    * Test WorkContextLifecycleListener for transaction context.
+    *
     * @throws Throwable throws any error
     */
    @Test
@@ -82,24 +81,24 @@ public class WorkContextSetupListenerTestCase
       WorkManager manager = embedded.lookup("WorkManager", WorkManager.class);
       try
       {
-         manager.doWork(new DuplicateTransactionContextWork(), WorkManager.INDEFINITE, null, null);  
+         manager.doWork(new DuplicateTransactionContextWork(), WorkManager.INDEFINITE, null, null);
       }
       catch (Throwable e)
       {
          //Swallow
       }
-      
+
       String errorCode = TransactionContextCustom.getContextSetupFailedErrorCode();
       boolean complete = TransactionContextCustom.isContextSetupComplete();
-      
+
       Assert.assertEquals(WorkContextErrorCodes.DUPLICATE_CONTEXTS, errorCode);
-      Assert.assertFalse(complete);      
+      Assert.assertFalse(complete);
    }
-   
+
 
    /**
     * Before class.
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -112,7 +111,7 @@ public class WorkContextSetupListenerTestCase
 
       // Deploy Naming, Transaction and WorkManager
       URL naming = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("naming.xml");
-      URL transaction = 
+      URL transaction =
          WorkContextSetupListenerTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("workmanager.xml");
 
@@ -124,13 +123,13 @@ public class WorkContextSetupListenerTestCase
 
    /**
     * After class.
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @AfterClass
    public static void afterClass() throws Throwable
    {
       URL naming = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("naming.xml");
-      URL transaction = 
+      URL transaction =
          WorkContextSetupListenerTestCase.class.getClassLoader().getResource("transaction.xml");
       URL wm = WorkContextSetupListenerTestCase.class.getClassLoader().getResource("workmanager.xml");
 

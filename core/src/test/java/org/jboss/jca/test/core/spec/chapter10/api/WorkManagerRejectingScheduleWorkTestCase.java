@@ -34,13 +34,12 @@ import javax.resource.spi.work.WorkRejectedException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  * WorkManagerRejectingScheduleWorkTestCase.
- * 
+ *
  * Tests for rejecting work instance to the WorkManager scheduleWork() methods
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
@@ -50,10 +49,10 @@ public class WorkManagerRejectingScheduleWorkTestCase
     * Embedded
     */
    private static Embedded embedded;
-   
+
    /**
     * scheduleWork method
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test(expected = WorkRejectedException.class)
    public void testScheduleWork() throws Throwable
@@ -64,10 +63,10 @@ public class WorkManagerRejectingScheduleWorkTestCase
 
       workManager.scheduleWork(work);
    }
-   
+
    /**
     * scheduleWork method (full signature)
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @Test(expected = WorkRejectedException.class)
    public void testScheduleWorkFullSignature() throws Throwable
@@ -76,16 +75,16 @@ public class WorkManagerRejectingScheduleWorkTestCase
 
       ShortRunningWork work = new ShortRunningWork();
       MyWorkAdapter wa = new MyWorkAdapter();
-      
+
       workManager.scheduleWork(work, WorkManager.INDEFINITE, null, wa);
    }
-   
+
    // --------------------------------------------------------------------------------||
    // Lifecycle Methods --------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
    /**
     * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -97,13 +96,11 @@ public class WorkManagerRejectingScheduleWorkTestCase
       embedded.startup();
 
       // Deploy Naming, Transaction and WorkManager
-      URL naming =
-         WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().getResource("naming.xml");
-      URL transaction =
-         WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().getResource("transaction.xml");
-      URL wm =
-         WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().
-         getResource("rejecting-workmanager.xml");
+      URL naming = WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader()
+         .getResource("transaction.xml");
+      URL wm = WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().getResource(
+         "rejecting-workmanager.xml");
 
       embedded.deploy(naming);
       embedded.deploy(transaction);
@@ -112,19 +109,17 @@ public class WorkManagerRejectingScheduleWorkTestCase
 
    /**
     * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @AfterClass
    public static void afterClass() throws Throwable
    {
       // Undeploy WorkManager, Transaction and Naming
-      URL naming =
-         WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().getResource("naming.xml");
-      URL transaction =
-         WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().getResource("transaction.xml");
-      URL wm =
-         WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().
-         getResource("rejecting-workmanager.xml");
+      URL naming = WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().getResource("naming.xml");
+      URL transaction = WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader()
+         .getResource("transaction.xml");
+      URL wm = WorkManagerRejectingScheduleWorkTestCase.class.getClassLoader().getResource(
+         "rejecting-workmanager.xml");
 
       embedded.undeploy(wm);
       embedded.undeploy(transaction);

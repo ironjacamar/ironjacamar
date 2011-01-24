@@ -51,7 +51,7 @@ class EmbeddedJCA implements Embedded
    private static final int BUFFER_SIZE = 4096;
 
    /** Enable full profile */
-   private boolean fullProfile;
+   private final boolean fullProfile;
 
    /** Kernel */
    private Kernel kernel;
@@ -150,6 +150,7 @@ class EmbeddedJCA implements Embedded
 
    /**
     * Lookup a bean
+    * @param <T> the generic type
     * @param name The bean name
     * @param expectedType The expected type for the bean
     * @return The bean instance
@@ -177,7 +178,7 @@ class EmbeddedJCA implements Embedded
    public void deploy(URL url) throws Throwable
    {
       if (url == null)
-         throw new IllegalArgumentException("Url is null");      
+         throw new IllegalArgumentException("Url is null");
 
       if (!started)
          throw new IllegalStateException("Container not started");
@@ -193,17 +194,17 @@ class EmbeddedJCA implements Embedded
    public void deploy(ResourceAdapterArchive raa) throws Throwable
    {
       if (raa == null)
-         throw new IllegalArgumentException("Url is null");      
+         throw new IllegalArgumentException("Url is null");
 
       if (!raa.getName().endsWith(".rar"))
-         throw new IllegalArgumentException(raa.getName() + " doesn't end with .rar");      
+         throw new IllegalArgumentException(raa.getName() + " doesn't end with .rar");
 
       if (!started)
          throw new IllegalStateException("Container not started");
 
       InputStream is = raa.as(ZipExporter.class).exportZip();
       BufferedInputStream bis = new BufferedInputStream(is, BUFFER_SIZE);
-      
+
       File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
       File raaFile = new File(parentDirectory, raa.getName());
 
@@ -258,7 +259,7 @@ class EmbeddedJCA implements Embedded
          shrinkwrapDeployments = new ArrayList<File>(1);
 
       shrinkwrapDeployments.add(raaFile);
-     
+
       kernel.getMainDeployer().deploy(raaFile.toURI().toURL());
    }
 
@@ -292,7 +293,7 @@ class EmbeddedJCA implements Embedded
    public void undeploy(URL url) throws Throwable
    {
       if (url == null)
-         throw new IllegalArgumentException("Url is null");      
+         throw new IllegalArgumentException("Url is null");
 
       if (!started)
          throw new IllegalStateException("Container not started");
@@ -308,7 +309,7 @@ class EmbeddedJCA implements Embedded
    public void undeploy(ResourceAdapterArchive raa) throws Throwable
    {
       if (raa == null)
-         throw new IllegalArgumentException("Url is null");      
+         throw new IllegalArgumentException("Url is null");
 
       if (!started)
          throw new IllegalStateException("Container not started");
@@ -350,7 +351,7 @@ class EmbeddedJCA implements Embedded
    private void removeDeployment(File deployment) throws IOException
    {
       if (deployment == null)
-         throw new IllegalArgumentException("Deployment is null");      
+         throw new IllegalArgumentException("Deployment is null");
 
       if (deployment.exists())
       {
@@ -380,7 +381,7 @@ class EmbeddedJCA implements Embedded
                if (files[i].isDirectory())
                {
                   recursiveDelete(files[i]);
-               } 
+               }
                else
                {
                   if (!files[i].delete())

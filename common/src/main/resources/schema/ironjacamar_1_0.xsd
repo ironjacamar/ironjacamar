@@ -2,7 +2,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            elementFormDefault="qualified"
            targetNamespace="http://www.jboss.org/ironjacamar/schema"
-           xmlns="http://www.jboss.org/ironjacamar/schema">
+           xmlns="http://www.jboss.org/ironjacamar/schema"
+           version="1.0">
 
   <xs:complexType name="boolean-presenceType"></xs:complexType>
 

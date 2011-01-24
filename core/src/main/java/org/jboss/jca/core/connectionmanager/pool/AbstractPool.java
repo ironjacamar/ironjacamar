@@ -63,13 +63,13 @@ public abstract class AbstractPool implements Pool
 
    /** Is trace enabled */
    private boolean trace = false;
-   
+
    /** The subpools, maps key --> pool */
    private final ConcurrentMap<Object, SubPoolContext> subPools = new ConcurrentHashMap<Object, SubPoolContext>();
 
    /** The managed connection factory for this pool */
    private final ManagedConnectionFactory mcf;
-   
+
    /** The connection listener factory for this pool*/
    private ConnectionListenerFactory clf;
 
@@ -77,14 +77,14 @@ public abstract class AbstractPool implements Pool
    private final PoolConfiguration poolConfiguration;
 
    /** Whether to use separate pools for transactional and non-transaction use */
-   private boolean noTxSeparatePools;
+   private final boolean noTxSeparatePools;
 
    /** The poolName */
    private String poolName;
 
    /**
     * Create a new base pool.
-    * 
+    *
     * @param mcf the managed connection factory
     * @param pc the pool configuration
     * @param noTxSeparatePools noTxSeparatePool
@@ -112,7 +112,7 @@ public abstract class AbstractPool implements Pool
    {
       this.poolName = poolName;
    }
-   
+
    /**
     * Gets pool name.
     * @return pool name
@@ -121,23 +121,23 @@ public abstract class AbstractPool implements Pool
    {
       return poolName;
    }
-   
+
    /**
     * Retrieve the key for this request.
-    * 
-    * @param subject the subject 
+    *
+    * @param subject the subject
     * @param cri the connection request information
     * @param separateNoTx separateNoTx
     * @return the key
     * @throws ResourceException for any error
     */
-   protected abstract Object getKey(Subject subject, ConnectionRequestInfo cri, 
+   protected abstract Object getKey(Subject subject, ConnectionRequestInfo cri,
          boolean separateNoTx) throws ResourceException;
 
    /**
     * Determine the correct pool for this request,
     * creates a new one when necessary.
-    * 
+    *
     * @param key the key to the pool
     * @param subject the subject of the pool
     * @param cri the connection request info
@@ -149,7 +149,7 @@ public abstract class AbstractPool implements Pool
       SubPoolContext subPoolContext = subPools.get(key);
       if (subPoolContext == null)
       {
-         SubPoolContext newSubPoolContext = new SubPoolContext(getTransactionManager(), mcf, clf, subject, 
+         SubPoolContext newSubPoolContext = new SubPoolContext(getTransactionManager(), mcf, clf, subject,
                                                                cri, poolConfiguration, this, log);
          subPoolContext = subPools.putIfAbsent(key, newSubPoolContext);
          if (subPoolContext == null)
@@ -163,22 +163,22 @@ public abstract class AbstractPool implements Pool
 
    /**
     * Get any transaction manager associated with the pool.
-    * 
+    *
     * @return the transaction manager
     */
    protected TransactionManager getTransactionManager()
    {
       if (clf != null)
       {
-         return clf.getTransactionManager();  
+         return clf.getTransactionManager();
       }
       else
       {
-         return null;  
+         return null;
       }
    }
-   
-   
+
+
    /**
     * {@inheritDoc}
     */
@@ -219,74 +219,74 @@ public abstract class AbstractPool implements Pool
 
    /**
     * {@inheritDoc}
-    */   
-   public ConnectionListener getConnection(Transaction trackByTransaction, Subject subject, ConnectionRequestInfo cri) 
+    */
+   public ConnectionListener getConnection(Transaction trackByTransaction, Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
       ConnectionListener cl = null;
-      
+
       boolean separateNoTx = false;
-      
+
       if (noTxSeparatePools)
       {
          separateNoTx = clf.isTransactional();
       }
-      
+
       //Get specific sub-pool key
       Object key = getKey(subject, cri, separateNoTx);
-      
+
       //Find sub-pool related with key
       SubPoolContext subPoolContext = getSubPool(key, subject, cri);
-      
+
       //Sub-pool internal managed connection pool
       ManagedConnectionPool imcp = subPoolContext.getSubPool();
 
       // Are we doing track by transaction?
       TransactionLocal trackByTx = subPoolContext.getTrackByTx();
-      
+
       if (trackByTransaction == null || trackByTx == null)
       {
          cl = getSimpleConnection(subject, cri, subPoolContext);
-      } //end of if trackByTransaction   
-      
+      } //end of if trackByTransaction
+
       //Transaction old connections
       if (cl == null)
       {
          cl = getTransactionOldConnection(trackByTx, trackByTransaction);
       }
-      
+
       if (cl == null)
       {
          //Creats a new connection with given transaction
          cl = getTransactionNewConnection(trackByTx, trackByTransaction, imcp, subject, cri);
       }
-      
+
       return cl;
    }
-   
+
    /**
     * Gets simple connection listener that wraps connection.
     * @param subject subject instance
     * @param cri connection request info
     * @param separateNoTx seperate pool for tx
     * @return connection listener
-    * @throws ResourceException
+    * @throws ResourceException ResourceException
     */
-   private ConnectionListener getSimpleConnection(final Subject subject, final ConnectionRequestInfo cri, 
+   private ConnectionListener getSimpleConnection(final Subject subject, final ConnectionRequestInfo cri,
          final SubPoolContext subPoolContext)
       throws ResourceException
    {
       ConnectionListener cl = null;
       ManagedConnectionPool imcp = null;
-      
+
       try
-      {  
+      {
          //Find internal managed pool
          imcp = subPoolContext.getSubPool();
-         
+
          //Get connection from imcp
          cl = imcp.getConnection(subject, cri);
-         
+
          if (trace)
          {
             dump("Got connection from pool : " + cl);
@@ -300,19 +300,19 @@ public abstract class AbstractPool implements Pool
          if (re instanceof RetryableException)
          {
             if (log.isDebugEnabled())
-               log.debug("Got a RetryableException - trying to reinitialize the pool");  
+               log.debug("Got a RetryableException - trying to reinitialize the pool");
 
             // The IMCP is down - retry
             imcp = subPoolContext.getSubPool();
 
             // Make sure that IMCP is running
             if (!imcp.isRunning())
-               imcp.reenable();  
-         
+               imcp.reenable();
+
             //Getting connection from pool
             cl = imcp.getConnection(subject, cri);
             if (trace)
-               dump("Got connection from pool (retried) " + cl);  
+               dump("Got connection from pool (retried) " + cl);
 
             return cl;
          }
@@ -321,21 +321,23 @@ public abstract class AbstractPool implements Pool
             throw re;
          }
       }
-      
+
    }
-   
+
    /**
     * Gets connection listener instance associated with transaction.
+    * This method is package protected beacause it is intended only for test case use.
+    * Please don't use it in your production code.
     * @param trackByTx trnasaction local
     * @param trackByTransaction transaction instance
     * @return connection listener instance
     * @throws ResourceException
     */
-   private ConnectionListener getTransactionOldConnection(TransactionLocal trackByTx, Transaction trackByTransaction)
+   ConnectionListener getTransactionOldConnection(TransactionLocal trackByTx, Transaction trackByTransaction)
       throws ResourceException
    {
       ConnectionListener cl = null;
-      
+
       // Track by transaction
       try
       {
@@ -343,7 +345,7 @@ public abstract class AbstractPool implements Pool
       }
       catch (Throwable t)
       {
-         JBossResourceException.rethrowAsResourceException("Unable to get connection from the pool for tx=" 
+         JBossResourceException.rethrowAsResourceException("Unable to get connection from the pool for tx="
                + trackByTransaction, t);
       }
       try
@@ -354,9 +356,9 @@ public abstract class AbstractPool implements Pool
          {
             if (trace)
             {
-               dump("Previous connection tracked by transaction " + cl + " tx=" + trackByTransaction);  
+               dump("Previous connection tracked by transaction " + cl + " tx=" + trackByTransaction);
             }
-            
+
             return cl;
          }
       }
@@ -364,26 +366,28 @@ public abstract class AbstractPool implements Pool
       {
          trackByTx.unlock(trackByTransaction);
       }
-      
+
       return cl;
    }
 
    /**
     * Gets new connection listener if necessary instance with transaction.
+    * This method is package protected beacause it is intended only for test case use.
+    * Please don't use it in your production code.
     * @param trackByTx trnasaction local
     * @param trackByTransaction transaction instance
     * @param mcp pool instance
     * @param subject subject instance
     * @param cri connection request info
     * @return connection listener instance
-    * @throws ResourceException
+    * @throws ResourceException ResourceException
     */
-   private ConnectionListener getTransactionNewConnection(TransactionLocal trackByTx, Transaction trackByTransaction, 
+   ConnectionListener getTransactionNewConnection(TransactionLocal trackByTx, Transaction trackByTransaction,
          ManagedConnectionPool mcp, Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
       ConnectionListener cl = null;
-      
+
       // Need a new one for this transaction
       // This must be done outside the tx local lock, otherwise
       // the tx timeout won't work and get connection can do a lot of other work
@@ -393,9 +397,9 @@ public abstract class AbstractPool implements Pool
       cl = mcp.getConnection(subject, cri);
       if (trace)
       {
-         dump("Got connection from pool tracked by transaction " + cl + " tx=" + trackByTransaction);  
+         dump("Got connection from pool tracked by transaction " + cl + " tx=" + trackByTransaction);
       }
-      
+
       // Relock and check/set status
       try
       {
@@ -406,11 +410,11 @@ public abstract class AbstractPool implements Pool
          mcp.returnConnection(cl, false);
          if (trace)
          {
-            dump("Had to return connection tracked by transaction " + cl + " tx=" + 
-                  trackByTransaction + " error=" + t.getMessage());  
+            dump("Had to return connection tracked by transaction " + cl + " tx=" +
+                  trackByTransaction + " error=" + t.getMessage());
          }
-         
-         JBossResourceException.rethrowAsResourceException("Unable to get connection from the pool for tx=" 
+
+         JBossResourceException.rethrowAsResourceException("Unable to get connection from the pool for tx="
                + trackByTransaction, t);
       }
       try
@@ -422,28 +426,28 @@ public abstract class AbstractPool implements Pool
             mcp.returnConnection(cl, false);
             if (trace)
             {
-               dump("Another thread already got a connection tracked by transaction " + 
-                     other + " tx=" + trackByTransaction);  
+               dump("Another thread already got a connection tracked by transaction " +
+                     other + " tx=" + trackByTransaction);
             }
-            
+
             cl = other;
          }
-         
+
          // This is the connection for this transaction
          cl.setTrackByTx(true);
          trackByTx.set(cl);
-         
+
          if (trace)
          {
-            dump("Using connection from pool tracked by transaction " + cl + " tx=" + trackByTransaction);  
+            dump("Using connection from pool tracked by transaction " + cl + " tx=" + trackByTransaction);
          }
-         
+
       }
       finally
       {
          trackByTx.unlock(trackByTransaction);
       }
-      
+
       return cl;
    }
 
@@ -457,27 +461,27 @@ public abstract class AbstractPool implements Pool
 
    /**
     * {@inheritDoc}
-    */   
+    */
    public void returnConnection(ConnectionListener cl, boolean kill) throws ResourceException
    {
       cl.setTrackByTx(false);
       //Get connection listener pool
       ManagedConnectionPool mcp = (ManagedConnectionPool) cl.getContext();
-      
+
       //Return connection to the pool
       mcp.returnConnection(cl, kill);
-      
+
       if (trace)
       {
          dump("Returning connection to pool " + cl);
-      }            
+      }
    }
 
    /**
     * {@inheritDoc}
-    */   
+    */
    public void setConnectionListenerFactory(ConnectionListenerFactory clf)
-   {      
+   {
       this.clf = clf;
    }
 
@@ -486,17 +490,9 @@ public abstract class AbstractPool implements Pool
     */
    public void shutdown()
    {
-      Iterator<SubPoolContext> itSubPoolContexts = subPools.values().iterator();
-      SubPoolContext subPoolContext = null;
-      while (itSubPoolContexts.hasNext())
-      {
-         subPoolContext = itSubPoolContexts.next();
-         subPoolContext.getSubPool().shutdown();
-      }
-
-      subPools.clear();
+      flush();
    }
-   
+
    /**
     * Dump the stats to the trace log
     * @param info some context
@@ -516,5 +512,16 @@ public abstract class AbstractPool implements Pool
          */
          log.trace(toLog);
       }
+   }
+
+   /**
+    * Get the subPools. This method is package protected beacause it is intended only for test case use.
+    * Please don't use it in your production code.
+    *
+    * @return the subPools.
+    */
+   final ConcurrentMap<Object, SubPoolContext> getSubPools()
+   {
+      return subPools;
    }
 }
