@@ -312,7 +312,7 @@ public class RaCodeGen extends PropsCodeGen
       out.write("throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.info(\"call getXAResources\");");
+      out.write("log.finest(\"call getXAResources\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null;");
@@ -355,7 +355,7 @@ public class RaCodeGen extends PropsCodeGen
       out.write("throws ResourceAdapterInternalException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.info(\"call start\");");
+      out.write("log.finest(\"call start\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -376,7 +376,7 @@ public class RaCodeGen extends PropsCodeGen
       out.write("public void stop()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.info(\"call stop\");");
+      out.write("log.finest(\"call stop\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -435,7 +435,7 @@ public class RaCodeGen extends PropsCodeGen
       }
       
       writeIndent(out, indent + 1);
-      out.write("log.info(\"call endpointActivation\");");
+      out.write("log.finest(\"call endpointActivation\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -480,7 +480,7 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
       }
       writeIndent(out, indent + 1);
-      out.write("log.info(\"call endpointDeactivation\");");
+      out.write("log.finest(\"call endpointDeactivation\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
