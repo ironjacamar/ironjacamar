@@ -73,9 +73,12 @@ public class AsCodeGen extends PropsCodeGen
       writeEol(out);
       writeEol(out);
 
+      writeConfigPropsDeclare(def, out, indent);
+      
       writeDefaultConstructor(def, out, indent);
       
       writeConfigProps(def, out, indent);
+      
       writeValidate(def, out, indent);
       writeResourceAdapter(def, out, indent);
       

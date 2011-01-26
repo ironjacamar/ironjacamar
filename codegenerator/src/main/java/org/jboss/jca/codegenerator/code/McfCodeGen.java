@@ -114,6 +114,7 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       writeEol(out);
       
+      writeConfigPropsDeclare(def, out, indent);
       
       writeDefaultConstructor(def, out, indent);
       

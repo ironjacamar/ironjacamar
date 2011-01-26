@@ -95,6 +95,8 @@ public class AoImplCodeGen extends PropsCodeGen
 
       int indent = 1;
 
+      writeConfigPropsDeclare(def, out, indent);
+      
       writeDefaultConstructor(def, out, indent);
       
       writeConfigProps(def, out, indent);

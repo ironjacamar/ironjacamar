@@ -143,6 +143,8 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
       }
       
+      writeConfigPropsDeclare(def, out, indent);
+      
       writeIndent(out, indent);
       out.write("/**");
       writeEol(out);

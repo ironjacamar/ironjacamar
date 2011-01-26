@@ -37,13 +37,13 @@ import java.util.List;
 public abstract class PropsCodeGen extends AbstractCodeGen
 {
    /**
-    * Output Configuration Properties
+    * Output Configuration Properties Declare
     * @param def definition
     * @param out Writer
     * @param indent space number
     * @throws IOException ioException
     */
-   void writeConfigProps(Definition def, Writer out, int indent) throws IOException
+   void writeConfigPropsDeclare(Definition def, Writer out, int indent) throws IOException
    {
       if (getConfigProps(def) == null)
          return;
@@ -69,6 +69,19 @@ public abstract class PropsCodeGen extends AbstractCodeGen
          writeEol(out);
          writeEol(out);
       }
+   }
+   
+   /**
+    * Output Configuration Properties
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   void writeConfigProps(Definition def, Writer out, int indent) throws IOException
+   {
+      if (getConfigProps(def) == null)
+         return;
 
       for (int i = 0; i < getConfigProps(def).size(); i++)
       {
