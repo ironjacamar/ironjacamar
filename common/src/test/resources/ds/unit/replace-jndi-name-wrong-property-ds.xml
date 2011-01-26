@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+  <datasource jndi-name="${jndi.name.wrong}" pool-name="H2DS">
+    <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1</connection-url>
+    <driver-class>org.h2.Driver</driver-class>
+    <pool>
+      <!-- The minimum connections in a pool/sub-pool. Pools are lazily constructed on first use -->
+      <min-pool-size>5</min-pool-size>
+      <!-- The maximum connections in a pool/sub-pool -->
+      <max-pool-size>10</max-pool-size>
+    </pool>
+    <security>
+      <user-name>sa</user-name>
+      <password>sa</password>
+    </security>
+  </datasource>
+
+</datasources>

@@ -54,6 +54,9 @@ public class DsParserForValidatorExceptionTestCase
    public static void beforeClass() throws Exception
    {
       parser = new DsParser();
+      //this property is set just to make possible property substitution defined in test resources.
+      //but property substitution is not the goal of this test case see DsParserForTemplateReplaceTestCase for that
+      System.setProperty("jboss.server.data.dir", "/tmp");
    }
 
    /**

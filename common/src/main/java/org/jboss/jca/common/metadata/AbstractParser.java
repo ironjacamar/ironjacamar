@@ -31,11 +31,19 @@ import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 
+import java.io.File;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Logger;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+
+
 
 /**
  *
@@ -46,6 +54,8 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  */
 public abstract class AbstractParser
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(AbstractParser.class);
 
    /**
     * convert an xml element in boolean value. Empty elements results with true (tag presence is sufficient condition)
@@ -53,11 +63,23 @@ public abstract class AbstractParser
     * @param reader the StAX reader
     * @return the boolean representing element
     * @throws XMLStreamException StAX exception
+    * @throws ParserException in case of non valid boolean for given element value
     */
-   protected boolean elementAsBoolean(XMLStreamReader reader) throws XMLStreamException
+   protected boolean elementAsBoolean(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      String elementtext = reader.getElementText();
-      return elementtext == null || elementtext.length() == 0 ? true : Boolean.valueOf(elementtext.trim());
+      String elementtext = rawElementText(reader);
+      String stringValue = getSubstitutionValue(elementtext);
+      if (stringValue == null || stringValue.length() == 0 || stringValue.trim().equalsIgnoreCase("true") ||
+          stringValue.trim().equalsIgnoreCase("false"))
+      {
+
+         return stringValue == null || stringValue.length() == 0 ? true : Boolean.valueOf(stringValue.trim());
+      }
+      else
+      {
+         throw new ParserException(elementtext + " isn't a valid boolean for element " + reader.getLocalName() +
+                                   ". We accept only \"true\" or \"false\" as boolean value");
+      }
    }
 
    /**
@@ -68,14 +90,28 @@ public abstract class AbstractParser
     * @param defaultValue  defaultValue
     * @return the boolean representing element
     * @throws XMLStreamException StAX exception
+    * @throws ParserException in case of not valid boolena for given attribute
     */
    protected boolean attributeAsBoolean(XMLStreamReader reader, String attributeName, boolean defaultValue)
-      throws XMLStreamException
+      throws XMLStreamException, ParserException
    {
-      return reader.getAttributeValue("", attributeName) == null
-            || reader.getAttributeValue("", attributeName).length() == 0
+      String attributeString = rawAttributeText(reader, attributeName);
+      String stringValue = getSubstitutionValue(attributeString);
+      if (stringValue == null || stringValue.length() == 0 || stringValue.trim().equalsIgnoreCase("true") ||
+          stringValue.trim().equalsIgnoreCase("false"))
+      {
+
+         return attributeString == null
             ? defaultValue :
             Boolean.valueOf(reader.getAttributeValue("", attributeName).trim());
+      }
+      else
+      {
+         throw new ParserException(attributeString + " isn't a valid boolean for attribute " + attributeName +
+                                   " of element " + reader.getLocalName() +
+                                   ". We accept only \"true\" or \"false\" as boolean value");
+      }
+
    }
 
    /**
@@ -87,8 +123,23 @@ public abstract class AbstractParser
     */
    protected String elementAsString(XMLStreamReader reader) throws XMLStreamException
    {
+      String elementtext = rawElementText(reader);
+      //return elementtext;
+      return getSubstitutionValue(elementtext);
+   }
+
+   /**
+    * FIXME Comment this
+    *
+    * @param reader
+    * @return
+    * @throws XMLStreamException
+    */
+   private String rawElementText(XMLStreamReader reader) throws XMLStreamException
+   {
       String elementtext = reader.getElementText();
-      return elementtext == null ? null : elementtext.trim();
+      elementtext = elementtext == null ? null : elementtext.trim();
+      return elementtext;
    }
 
    /**
@@ -101,8 +152,23 @@ public abstract class AbstractParser
     */
    protected String attributeAsString(XMLStreamReader reader, String attributeName) throws XMLStreamException
    {
-      return reader.getAttributeValue("", attributeName) == null ? null : reader.getAttributeValue("", attributeName)
+      String attributeString = rawAttributeText(reader, attributeName);
+      return getSubstitutionValue(attributeString);
+   }
+
+   /**
+    * FIXME Comment this
+    *
+    * @param reader
+    * @param attributeName
+    * @return
+    */
+   private String rawAttributeText(XMLStreamReader reader, String attributeName)
+   {
+      String attributeString = reader.getAttributeValue("", attributeName) == null ? null : reader.getAttributeValue(
+         "", attributeName)
             .trim();
+      return attributeString;
    }
 
    /**
@@ -117,14 +183,14 @@ public abstract class AbstractParser
    {
       Integer integerValue;
       integerValue = null;
+      String elementtext = rawElementText(reader);
       try
       {
-
-         integerValue = Integer.valueOf(elementAsString(reader));
+         integerValue = Integer.valueOf(getSubstitutionValue(elementtext));
       }
       catch (NumberFormatException nfe)
       {
-         throw new ParserException(reader.getLocalName() + "isn't a valid number");
+         throw new ParserException(elementtext + " isn't a valid number for element " + reader.getLocalName());
       }
       return integerValue;
    }
@@ -141,14 +207,17 @@ public abstract class AbstractParser
    {
       Long longValue;
       longValue = null;
+      String elementtext = rawElementText(reader);
+
       try
       {
-         longValue = Long.valueOf(elementAsString(reader));
+         longValue = Long.valueOf(getSubstitutionValue(elementtext));
       }
       catch (NumberFormatException nfe)
       {
-         throw new ParserException(reader.getLocalName() + "isn't a valid number");
+         throw new ParserException(elementtext + " isn't a valid number for element " + reader.getLocalName());
       }
+
       return longValue;
    }
 
@@ -309,7 +378,7 @@ public abstract class AbstractParser
                {
 
                   return new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, isSameRmOverrideValue,
-                                        interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
+                                              interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
 
                }
                else
@@ -370,4 +439,111 @@ public abstract class AbstractParser
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
+   /**
+    * System property substitution
+    * @param input The input string
+    * @return The output
+    */
+   private String getSubstitutionValue(String input) throws XMLStreamException
+   {
+      if (input == null || input.trim().equals(""))
+         return input;
+      while ((input.indexOf("${")) != -1)
+      {
+         int from = input.indexOf("${");
+         int to = input.indexOf("}");
+         int dv = input.indexOf(":", from + 2);
+
+         if (dv != -1)
+         {
+            if (dv > to)
+               dv = -1;
+         }
+
+         String systemProperty = "";
+         String defaultValue = "";
+         String s = input.substring(from + 2, to);
+         if (dv == -1)
+         {
+            if ("/".equals(s))
+            {
+               systemProperty = File.separator;
+            }
+            else if (":".equals(s))
+            {
+               systemProperty = File.pathSeparator;
+            }
+            else
+            {
+               systemProperty = SecurityActions.getSystemProperty(s);
+            }
+         }
+         else
+         {
+            s = input.substring(from + 2, dv);
+            systemProperty = SecurityActions.getSystemProperty(s);
+            defaultValue = input.substring(dv + 1, to);
+         }
+         String prefix = "";
+         String postfix = "";
+
+         if (from != 0)
+         {
+            prefix = input.substring(0, from);
+         }
+
+         if (to + 1 < input.length() - 1)
+         {
+            postfix = input.substring(to + 1);
+         }
+
+         if (systemProperty != null && !systemProperty.trim().equals(""))
+         {
+            input = prefix + systemProperty + postfix;
+         }
+         else if (defaultValue != null && !defaultValue.trim().equals(""))
+         {
+            input = prefix + defaultValue + postfix;
+         }
+         else
+         {
+            input = prefix + postfix;
+            log.debugf("System property %s not set", s);
+         }
+      }
+      return input;
+   }
+
+   private static class SecurityActions
+   {
+      /**
+       * Constructor
+       */
+      private SecurityActions()
+      {
+      }
+
+      /**
+       * Get a system property
+       * @param name The property name
+       * @return The property value
+       */
+      static String getSystemProperty(final String name)
+      {
+         if (System.getSecurityManager() == null)
+         {
+            return System.getProperty(name);
+         }
+         else
+         {
+            return (String) AccessController.doPrivileged(new PrivilegedAction<Object>()
+            {
+               public Object run()
+               {
+                  return System.getProperty(name);
+               }
+            });
+         }
+      }
+   }
 }

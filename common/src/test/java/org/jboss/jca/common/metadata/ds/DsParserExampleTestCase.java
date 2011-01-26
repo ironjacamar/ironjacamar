@@ -67,6 +67,9 @@ public class DsParserExampleTestCase
       File directory = new File(DsParserExampleTestCase.class.getClassLoader().getResource("ds/example").toURI());
       xmlFiles = directory.listFiles(new FileSuffixFilter("-ds.xml"));
       parser = new DsParser();
+      //this property is set just to make possible property substitution defined in test resources.
+      //but property substitution is not the goal of this test case see DsParserForTemplateReplaceTestCase for that
+      System.setProperty("jboss.server.data.dir", "/tmp");
 
    }
 
