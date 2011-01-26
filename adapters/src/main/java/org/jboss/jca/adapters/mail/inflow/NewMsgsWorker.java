@@ -92,7 +92,7 @@ public class NewMsgsWorker implements Work, WorkListener
       {
          try
          {
-            MailActivation ma = (MailActivation) pollQueue.take();
+            MailActivation ma = pollQueue.take();
 
             // Wait until its time to check for new msgs
             long now = System.currentTimeMillis();
