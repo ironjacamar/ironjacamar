@@ -222,7 +222,7 @@ public class MbeanImplCodeGen extends AbstractCodeGen
                   writeEol(out);
                }
                writeIndent(out, indent);
-               out.write(" * @throws Exception");
+               out.write(" * @throws Exception exception");
                writeEol(out);
 
                writeIndent(out, indent);
@@ -272,6 +272,9 @@ public class MbeanImplCodeGen extends AbstractCodeGen
          writeEol(out);
          writeIndent(out, indent);
          out.write(" * Call me");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" * @throws Exception exception");
          writeEol(out);
          writeIndent(out, indent);
          out.write(" */");

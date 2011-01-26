@@ -122,8 +122,6 @@ public class AoImplCodeGen extends PropsCodeGen
          writeEol(out);
          out.write("import javax.resource.spi.ConfigProperty;");
          writeEol(out);
-         out.write("import javax.resource.spi.Connector;");
-         writeEol(out);
       }
       writeEol(out);
    }

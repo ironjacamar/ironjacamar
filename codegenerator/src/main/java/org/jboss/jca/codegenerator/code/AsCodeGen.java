@@ -110,8 +110,6 @@ public class AsCodeGen extends PropsCodeGen
       {
          out.write("import javax.resource.spi.ConfigProperty;");
          writeEol(out);
-         out.write("import javax.resource.spi.Connector;");
-         writeEol(out);
       }
       out.write("import javax.resource.spi.InvalidPropertyException;");
       writeEol(out);
