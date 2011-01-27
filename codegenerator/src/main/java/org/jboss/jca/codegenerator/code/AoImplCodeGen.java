@@ -90,16 +90,48 @@ public class AoImplCodeGen extends PropsCodeGen
       }
       out.write("public class " + getClassName(def) + " implements " + 
          def.getAdminObjects().get(numOfAo).getAdminObjectInterface());
+      if (def.isImplRaAssociation())
+      {
+         out.write(",");
+         writeEol(out);
+         writeIndent(out, 1);
+         out.write("ResourceAdapterAssociation, Referenceable, Serializable");
+      }
       writeLeftCurlyBracket(out, 0);
-      writeEol(out);
-
       int indent = 1;
-
+      
+      if (def.isImplRaAssociation())
+      {
+         writeIndent(out, indent);
+         out.write("/** The resource adapter */");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("private ResourceAdapter ra;");
+         writeEol(out);
+         writeEol(out);
+         
+         writeIndent(out, indent);
+         out.write("/** Reference */");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("private Reference reference;");
+         writeEol(out);
+         writeEol(out);
+      }
       writeConfigPropsDeclare(def, out, indent);
       
       writeDefaultConstructor(def, out, indent);
       
       writeConfigProps(def, out, indent);
+
+      if (def.isImplRaAssociation())
+      {
+         writeResourceAdapter(def, out, indent);
+         writeReference(def, out, indent);
+         writeHashCode(def, out, indent);
+         writeEquals(def, out, indent);
+      }
+      
 
       writeRightCurlyBracket(out, 0);
    }
@@ -116,11 +148,31 @@ public class AoImplCodeGen extends PropsCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
+      if (def.isImplRaAssociation())
+      {
+         out.write("import java.io.Serializable;");
+         writeEol(out);
+         writeEol(out);
+         out.write("import javax.naming.NamingException;");
+         writeEol(out);
+         out.write("import javax.naming.Reference;");
+         writeEol(out);
+         writeEol(out);
+         out.write("import javax.resource.Referenceable;");
+         writeEol(out);
+      }
       if (def.isUseAnnotation())
       {
          out.write("import javax.resource.spi.AdministeredObject;");
          writeEol(out);
          out.write("import javax.resource.spi.ConfigProperty;");
+         writeEol(out);
+      }
+      if (def.isImplRaAssociation())
+      {
+         out.write("import javax.resource.spi.ResourceAdapter;");
+         writeEol(out);
+         out.write("import javax.resource.spi.ResourceAdapterAssociation;");
          writeEol(out);
       }
       writeEol(out);
@@ -148,4 +200,128 @@ public class AoImplCodeGen extends PropsCodeGen
       return def.getAdminObjects().get(numOfAo).getAoConfigProps();
    }
 
+   /**
+    * Output ResourceAdapter method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeResourceAdapter(Definition def, Writer out, int indent) throws IOException
+   {      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Get the resource adapter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return The handle");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("public ResourceAdapter getResourceAdapter()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return ra;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Set the resource adapter");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param ra The handle");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("public void setResourceAdapter(ResourceAdapter ra)");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this.ra = ra;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+   }
+   
+   /**
+    * Output Reference method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeReference(Definition def, Writer out, int indent) throws IOException
+   {
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Get the Reference instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return Reference instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @exception NamingException Thrown if a reference can't be obtained");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public Reference getReference() throws NamingException");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("return reference;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Set the Reference instance.");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param reference A Reference instance");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("@Override");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public void setReference(Reference reference)");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this.reference = reference;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+   }
 }
