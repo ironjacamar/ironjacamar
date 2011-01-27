@@ -1,89 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<appendix id="sample">
-  <title>Sample</title>
+<appendix id="samples">
+  <title>Samples</title>
 
   <section id="sample_helloworld">
-    <title>Helloworld Sample</title>
+    <title>HelloWorld example</title>
 
-    <section id="sample_resourceadpater">
-      <title>Helloworld Resource Adapter</title>
+    <section id="sample_helloworld_introduction">
+      <title>Introduction</title>
+
+      <para>The HelloWorld resource adapter example shows a simple example of how to use and
+      implement the interfaces in the Java EE Connector Architecture specification.</para>
+
+      <para>The HelloWorld examples exposes the HelloWorldConnection interface where developers
+      can invoke the exposed methods.</para>
+
+      <para>The example shows how to build and test a resource adapter.</para>
+
+      <section id="sample_helloworld_introduction_setup">
+        <title>Setup</title>
+        <para>The build environment needs various libraries in order to being able to build and
+        test the resource adapter. The setup is done by</para>
+        <programlisting>
+cd doc/samples/helloworld
+cp -R ../../../lib .
+cp ../../../bin/ironjacamar-sjc.jar lib/
+        </programlisting>
+      </section>
+
+      <section id="sample_helloworld_introduction_building">
+        <title>Building</title>
+        <para>Building the resource adapter is done by</para>
+        <programlisting>
+ant
+        </programlisting>
+      </section>
+
+      <section id="sample_helloworld_introduction_testing">
+        <title>Testing</title>
+        <para>Testing the resource adapter is done by</para>
+        <programlisting>
+ant test
+        </programlisting>
+      </section>
+
+    </section>
+
+    <section id="sample_helloworld_resourceadpater">
+      <title>HelloWorld Resource Adapter</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldResourceAdapter.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_mcf">
-      <title>Helloworld Managed Connection Factory</title>
+    <section id="sample_helloworld_mcf">
+      <title>HelloWorld Managed Connection Factory</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_mc">
-      <title>Helloworld Managed Connection</title>
+    <section id="sample_helloworld_mc">
+      <title>HelloWorld Managed Connection</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_cf">
-      <title>Helloworld Connection Factory</title>
+    <section id="sample_helloworld_cf">
+      <title>HelloWorld Connection Factory</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_cfimpl">
-      <title>Helloworld Connection Factory Impl</title>
+    <section id="sample_helloworld_cfimpl">
+      <title>HelloWorld Connection Factory Impl</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_connection">
-      <title>Helloworld Connection</title>
+    <section id="sample_helloworld_connection">
+      <title>HelloWorld Connection</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_connectionimpl">
-      <title>Helloworld Connection Impl</title>
+    <section id="sample_helloworld_connectionimpl">
+      <title>HelloWorld Connection Impl</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_cm">
-      <title>Helloworld Connection Manager</title>
+    <section id="sample_helloworld_cm">
+      <title>HelloWorld Connection Manager</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionManager.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_metadata">
-      <title>Helloworld Managed Connection MetaData</title>
+    <section id="sample_helloworld_metadata">
+      <title>HelloWorld Managed Connection MetaData</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionMetaData.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_ironjacamarxml">
-      <title>Helloworld ironjacamar.xml</title>
+    <section id="sample_helloworld_ironjacamarxml">
+      <title>HelloWorld ironjacamar.xml</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/resources/META-INF/ironjacamar.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_testcase">
-      <title>Helloworld Connection Testcase</title>
+    <section id="sample_helloworld_testcase">
+      <title>HelloWorld Connection Testcase</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
-    <section id="sample_buildxml">
-      <title>Helloworld Ant build.xml</title>
+    <section id="sample_helloworld_buildxml">
+      <title>HelloWorld Ant build.xml</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
