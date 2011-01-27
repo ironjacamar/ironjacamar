@@ -128,10 +128,9 @@ public class AoImplCodeGen extends PropsCodeGen
       {
          writeResourceAdapter(def, out, indent);
          writeReference(def, out, indent);
-         writeHashCode(def, out, indent);
-         writeEquals(def, out, indent);
       }
-      
+      writeHashCode(def, out, indent);
+      writeEquals(def, out, indent);
 
       writeRightCurlyBracket(out, 0);
    }
