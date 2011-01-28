@@ -22,6 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc.jdk7;
 
+import org.jboss.jca.adapters.jdbc.Constants;
 import org.jboss.jca.adapters.jdbc.WrappedResultSet;
 import org.jboss.jca.adapters.jdbc.WrappedStatement;
 
@@ -42,91 +43,24 @@ public class WrappedStatementJDK7 extends WrappedStatement
     * Constructor
     * @param lc The connection
     * @param s The statement
+    * @param spy The spy value
+    * @param jndiName The jndi name
     */
-   public WrappedStatementJDK7(WrappedConnectionJDK7 lc, Statement s)
+   public WrappedStatementJDK7(WrappedConnectionJDK7 lc, Statement s, boolean spy, String jndiName)
    {
-      super(lc, s);
+      super(lc, s, spy, jndiName);
    }
 
    /**
     * Wrap ResultSet
     * @param resultSet The ResultSet
+    * @param spy The spy value
+    * @param jndiName The jndi name
     * @return The result
     */
-   protected WrappedResultSet wrapResultSet(ResultSet resultSet)
+   protected WrappedResultSet wrapResultSet(ResultSet resultSet, boolean spy, String jndiName)
    {
-      return new WrappedResultSetJDK7(this, resultSet);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isClosed() throws SQLException
-   {
-      lock();
-      try
-      {
-         Statement wrapped = getWrappedObject();
-         if (wrapped == null)
-            return true;
-         return wrapped.isClosed();
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isPoolable() throws SQLException
-   {
-      lock();
-      try
-      {
-         Statement statement = getUnderlyingStatement();
-         try
-         {
-            return statement.isPoolable();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setPoolable(boolean poolable) throws SQLException
-   {
-      lock();
-      try
-      {
-         Statement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setPoolable(poolable);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
+      return new WrappedResultSetJDK7(this, resultSet, spy, jndiName);
    }
 
    /**
@@ -140,6 +74,10 @@ public class WrappedStatementJDK7 extends WrappedStatement
          Statement statement = getUnderlyingStatement();
          try
          {
+            if (isSpy())
+               spyLogger.debugf("%s [%s] closeOnCompletion()",
+                                getJndiName(), Constants.SPY_LOGGER_PREFIX_STATEMENT);
+
             statement.closeOnCompletion();
          }
          catch (Throwable t)
@@ -164,6 +102,10 @@ public class WrappedStatementJDK7 extends WrappedStatement
          Statement statement = getUnderlyingStatement();
          try
          {
+            if (isSpy())
+               spyLogger.debugf("%s [%s] isCloseOnCompletion()",
+                                getJndiName(), Constants.SPY_LOGGER_PREFIX_STATEMENT);
+
             return statement.isCloseOnCompletion();
          }
          catch (Throwable t)

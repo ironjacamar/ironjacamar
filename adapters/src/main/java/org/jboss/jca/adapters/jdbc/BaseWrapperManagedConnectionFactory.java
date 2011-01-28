@@ -64,6 +64,7 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @author <a href="mailto:weston.price@jboss.com">Weston Price</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  *
  * @version $Revision: 105426 $
  */
@@ -94,6 +95,9 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** The logger */
    protected final Logger log = Logger.getLogger(getClass());
+
+   /** The print writer */
+   private PrintWriter printWriter;
 
    /** The user name */
    protected String userName;
@@ -199,6 +203,12 @@ public abstract class BaseWrapperManagedConnectionFactory
    /** Whether to use a try lock */
    private Integer useTryLock = Integer.valueOf(60);
 
+   /** Spy functionality */
+   private Boolean spy = Boolean.FALSE;
+
+   /** JNDI name */
+   private String jndiName;
+
    /**
     * Constructor
     */
@@ -211,14 +221,15 @@ public abstract class BaseWrapperManagedConnectionFactory
     */
    public PrintWriter getLogWriter() throws ResourceException
    {
-      return null;
+      return printWriter;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setLogWriter(PrintWriter param1) throws ResourceException
+   public void setLogWriter(PrintWriter v) throws ResourceException
    {
+      this.printWriter = v;
    }
 
    /**
@@ -588,11 +599,49 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /**
     * Get the url delimiter
-    * @return The vlaue
+    * @return The value
     */
    public String getURLDelimiter()
    {
       return urlDelimiter;
+   }
+
+   /**
+    * Set the spy value
+    * @param v The value
+    */
+   public void setSpy(Boolean v)
+   {
+      if (v != null)
+         this.spy = v;
+   }
+
+   /**
+    * Get the spy value
+    * @return The value
+    */
+   public Boolean getSpy()
+   {
+      return spy;
+   }
+
+   /**
+    * Set the jndi name value
+    * @param v The value
+    */
+   public void setJndiName(String v)
+   {
+      if (v != null)
+         this.jndiName = v;
+   }
+
+   /**
+    * Get the jndi name value
+    * @return The value
+    */
+   public String getJndiName()
+   {
+      return jndiName;
    }
 
    /**

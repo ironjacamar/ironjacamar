@@ -22,17 +22,13 @@
 
 package org.jboss.jca.adapters.jdbc.jdk7;
 
+import org.jboss.jca.adapters.jdbc.Constants;
 import org.jboss.jca.adapters.jdbc.WrappedPreparedStatement;
 import org.jboss.jca.adapters.jdbc.WrappedResultSet;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.RowId;
 import java.sql.SQLException;
-import java.sql.SQLXML;
 
 /**
  * WrappedPreparedStatementJDK7.
@@ -47,523 +43,24 @@ public class WrappedPreparedStatementJDK7 extends WrappedPreparedStatement
     * Constructor
     * @param lc The connection
     * @param s The prepared statement
+    * @param spy The spy value
+    * @param jndiName The jndi name
     */
-   public WrappedPreparedStatementJDK7(WrappedConnectionJDK7 lc, PreparedStatement s)
+   public WrappedPreparedStatementJDK7(WrappedConnectionJDK7 lc, PreparedStatement s, boolean spy, String jndiName)
    {
-      super(lc, s);
+      super(lc, s, spy, jndiName);
    }
    
    /**
     * Wrap the result set
     * @param resultSet The result set
+    * @param spy The spy value
+    * @param jndiName The jndi name
     * @return The result
     */
-   protected WrappedResultSet wrapResultSet(ResultSet resultSet)
+   protected WrappedResultSet wrapResultSet(ResultSet resultSet, boolean spy, String jndiName)
    {
-      return new WrappedResultSetJDK7(this, resultSet);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isClosed() throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement wrapped = getWrappedObject();
-         if (wrapped == null)
-            return true;
-         return wrapped.isClosed();
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isPoolable() throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            return statement.isPoolable();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setPoolable(boolean poolable) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setPoolable(poolable);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setAsciiStream(parameterIndex, x, length);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setAsciiStream(parameterIndex, x);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setBinaryStream(parameterIndex, x, length);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setBinaryStream(parameterIndex, x);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setBlob(parameterIndex, inputStream, length);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setBlob(parameterIndex, inputStream);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setCharacterStream(parameterIndex, reader, length);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setCharacterStream(parameterIndex, reader);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setClob(int parameterIndex, Reader reader, long length) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setClob(parameterIndex, reader, length);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setClob(int parameterIndex, Reader reader) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setClob(parameterIndex, reader);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setNCharacterStream(parameterIndex, value, length);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setNCharacterStream(parameterIndex, value);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(int parameterIndex, NClob value) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setNClob(parameterIndex, value);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setNClob(parameterIndex, reader, length);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(int parameterIndex, Reader reader) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setNClob(parameterIndex, reader);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNString(int parameterIndex, String value) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setNString(parameterIndex, value);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setRowId(int parameterIndex, RowId x) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setRowId(parameterIndex, x);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            statement.setSQLXML(parameterIndex, xmlObject);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
+      return new WrappedResultSetJDK7(this, resultSet, spy, jndiName);
    }
 
    /**
@@ -577,6 +74,10 @@ public class WrappedPreparedStatementJDK7 extends WrappedPreparedStatement
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
+            if (isSpy())
+               spyLogger.debugf("%s [%s] closeOnCompletion()",
+                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+
             statement.closeOnCompletion();
          }
          catch (Throwable t)
@@ -601,6 +102,10 @@ public class WrappedPreparedStatementJDK7 extends WrappedPreparedStatement
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
+            if (isSpy())
+               spyLogger.debugf("%s [%s] isCloseOnCompletion()",
+                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+
             return statement.isCloseOnCompletion();
          }
          catch (Throwable t)

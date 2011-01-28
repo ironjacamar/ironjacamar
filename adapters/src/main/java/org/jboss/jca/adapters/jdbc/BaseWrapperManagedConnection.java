@@ -354,7 +354,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
    public Object getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
       checkIdentity(subject, cri);
-      WrappedConnection lc = WRAPPED_CONNECTION_FACTORY.createWrappedConnection(this);
+      WrappedConnection lc = WRAPPED_CONNECTION_FACTORY.createWrappedConnection(this,
+                                                                                mcf.getSpy().booleanValue(),
+                                                                                mcf.getJndiName());
       synchronized (handles)
       {
          handles.add(lc);

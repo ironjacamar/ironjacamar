@@ -30,6 +30,7 @@ import java.sql.SQLException;
  * WrappedConnectionFactory.
  * 
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: 85945 $
  */
 public interface WrappedConnectionFactory
@@ -37,9 +38,11 @@ public interface WrappedConnectionFactory
    /**
     * Create a wrapped connection
     * @param mc The managed connection
+    * @param spy The spy value
+    * @param jndiName The jndi name
     * @return The wrapped connection
     */
-   WrappedConnection createWrappedConnection(BaseWrapperManagedConnection mc);
+   WrappedConnection createWrappedConnection(BaseWrapperManagedConnection mc, boolean spy, String jndiName);
 
    /**
     * Create a cached prepared statement

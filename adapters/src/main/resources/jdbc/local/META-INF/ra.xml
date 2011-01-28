@@ -157,6 +157,16 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
           <config-property-name>UseTryLock</config-property-name>
           <config-property-type>java.lang.Integer</config-property-type>
         </config-property>
+        <config-property>
+          <description>Enable spy functionality</description>
+          <config-property-name>Spy</config-property-name>
+          <config-property-type>java.lang.Boolean</config-property-type>
+        </config-property>
+        <config-property>
+          <description>The JNDI name of the datasource</description>
+          <config-property-name>JndiName</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+        </config-property>
         <connectionfactory-interface>javax.sql.DataSource</connectionfactory-interface>
         <connectionfactory-impl-class>org.jboss.jca.adapters.jdbc.WrapperDataSource</connectionfactory-impl-class>
         <connection-interface>java.sql.Connection</connection-interface>

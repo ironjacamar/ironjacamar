@@ -30,26 +30,36 @@ import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
+import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.jboss.logging.Logger;
 
 /**
  * A wrapper for a result set
  * 
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="mailto:jesper.pedersne@jboss.org">Jesper Pedersen</a>
  * @version $Revision: 74335 $
  */
 public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
 {
+   /** The spy logger */
+   protected static Logger spyLogger = Logger.getLogger(Constants.SPY_LOGGER_CATEGORY);
+
    /** The wrapped statement */
    private WrappedStatement statement;
 
@@ -58,21 +68,52 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
 
    /** Whether we are closed */
    private AtomicBoolean closed = new AtomicBoolean(false);
+
+   /** Spy functionality */
+   private boolean spy;
+
+   /** The jndi name */
+   private String jndiName;
    
    /** 
     * Create a new wrapped result set
     * 
     * @param statement the wrapped statement
     * @param resultSet the real result set
+    * @param spy The spy value
+    * @param jndiName The jndi name
     */
-   public WrappedResultSet(WrappedStatement statement, ResultSet resultSet)
+   public WrappedResultSet(WrappedStatement statement, ResultSet resultSet,
+                           boolean spy, String jndiName)
    {
       if (statement == null)
          throw new IllegalArgumentException("Null statement!");
+
       if (resultSet == null)
          throw new IllegalArgumentException("Null result set!");
+
       this.statement = statement;
       this.resultSet = resultSet;
+      this.spy = spy;
+      this.jndiName = jndiName;
+   }
+
+   /**
+    * Get the spy value
+    * @return The value
+    */
+   public boolean isSpy()
+   {
+      return spy;
+   }
+
+   /**
+    * Get the jndi name value
+    * @return The value
+    */
+   public String getJndiName()
+   {
+      return jndiName;
    }
 
    /**
@@ -100,6 +141,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] absolute(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             row);
+
          return resultSet.absolute(row);
       }
       catch (Throwable t)
@@ -116,6 +162,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] afterLast()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          resultSet.afterLast();
       }
       catch (Throwable t)
@@ -132,6 +182,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] beforeFirst()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          resultSet.beforeFirst();
       }
       catch (Throwable t)
@@ -148,6 +202,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] cancelRowUpdates()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          resultSet.cancelRowUpdates();
       }
       catch (Throwable t)
@@ -164,6 +222,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] clearWarnings()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          resultSet.clearWarnings();
       }
       catch (Throwable t)
@@ -180,6 +242,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       if (closed.get())
          return;
  
+      if (isSpy())
+         spyLogger.debugf("%s [%s] close()",
+                          getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
       closed.set(true);
       statement.unregisterResultSet(this);
       internalClose();
@@ -196,6 +262,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
          checkTransaction();
          try
          {
+            if (isSpy())
+               spyLogger.debugf("%s [%s] deleteRow()",
+                                getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
             resultSet.deleteRow();
          }
          catch (Throwable t)
@@ -217,6 +287,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] findColumn(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.findColumn(columnName);
       }
       catch (Throwable t)
@@ -233,6 +308,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] first()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.first();
       }
       catch (Throwable t)
@@ -249,6 +328,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getArray(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             i);
+
          return resultSet.getArray(i);
       }
       catch (Throwable t)
@@ -265,6 +349,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getArray(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             colName);
+
          return resultSet.getArray(colName);
       }
       catch (Throwable t)
@@ -281,6 +370,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getAsciiStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getAsciiStream(columnIndex);
       }
       catch (Throwable t)
@@ -297,6 +391,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getAsciiStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getAsciiStream(columnName);
       }
       catch (Throwable t)
@@ -313,6 +412,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBigDecimal(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getBigDecimal(columnIndex);
       }
       catch (Throwable t)
@@ -330,6 +434,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBigDecimal(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, scale);
+
          return resultSet.getBigDecimal(columnIndex, scale);
       }
       catch (Throwable t)
@@ -346,6 +455,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBigDecimal(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getBigDecimal(columnName);
       }
       catch (Throwable t)
@@ -363,6 +477,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBigDecimal(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, scale);
+
          return resultSet.getBigDecimal(columnName, scale);
       }
       catch (Throwable t)
@@ -379,6 +498,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBinaryStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getBinaryStream(columnIndex);
       }
       catch (Throwable t)
@@ -395,6 +519,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBinaryStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getBinaryStream(columnName);
       }
       catch (Throwable t)
@@ -411,6 +540,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBlob(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             i);
+
          return resultSet.getBlob(i);
       }
       catch (Throwable t)
@@ -427,6 +561,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBlob(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             colName);
+
          return resultSet.getBlob(colName);
       }
       catch (Throwable t)
@@ -443,6 +582,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBoolean(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getBoolean(columnIndex);
       }
       catch (Throwable t)
@@ -459,6 +603,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBoolean(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getBoolean(columnName);
       }
       catch (Throwable t)
@@ -475,6 +624,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getByte(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getByte(columnIndex);
       }
       catch (Throwable t)
@@ -491,6 +645,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getByte(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getByte(columnName);
       }
       catch (Throwable t)
@@ -507,6 +666,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBytes(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getBytes(columnIndex);
       }
       catch (Throwable t)
@@ -523,6 +687,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getBytes(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getBytes(columnName);
       }
       catch (Throwable t)
@@ -539,6 +708,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getCharacterStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getCharacterStream(columnIndex);
       }
       catch (Throwable t)
@@ -555,6 +729,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getCharacterStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getCharacterStream(columnName);
       }
       catch (Throwable t)
@@ -571,6 +750,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getClob(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             i);
+
          return resultSet.getClob(i);
       }
       catch (Throwable t)
@@ -587,6 +771,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getClob(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             colName);
+
          return resultSet.getClob(colName);
       }
       catch (Throwable t)
@@ -603,6 +792,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getConcurrency()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.getConcurrency();
       }
       catch (Throwable t)
@@ -619,6 +812,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getCursorName()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.getCursorName();
       }
       catch (Throwable t)
@@ -635,6 +832,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getDate(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getDate(columnIndex);
       }
       catch (Throwable t)
@@ -651,6 +853,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getDate(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, cal);
+
          return resultSet.getDate(columnIndex, cal);
       }
       catch (Throwable t)
@@ -667,6 +874,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getDate(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getDate(columnName);
       }
       catch (Throwable t)
@@ -683,6 +895,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getDate(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, cal);
+
          return resultSet.getDate(columnName, cal);
       }
       catch (Throwable t)
@@ -699,6 +916,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getDouble(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getDouble(columnIndex);
       }
       catch (Throwable t)
@@ -715,6 +937,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getDouble(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getDouble(columnName);
       }
       catch (Throwable t)
@@ -731,6 +958,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getFetchDirection()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.getFetchDirection();
       }
       catch (Throwable t)
@@ -747,6 +978,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getFetchSize()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.getFetchSize();
       }
       catch (Throwable t)
@@ -763,6 +998,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getFloat(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getFloat(columnIndex);
       }
       catch (Throwable t)
@@ -779,6 +1019,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getFloat(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getFloat(columnName);
       }
       catch (Throwable t)
@@ -795,6 +1040,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getInt(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getInt(columnIndex);
       }
       catch (Throwable t)
@@ -811,6 +1061,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getInt(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getInt(columnName);
       }
       catch (Throwable t)
@@ -827,6 +1082,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getLong(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getLong(columnIndex);
       }
       catch (Throwable t)
@@ -843,6 +1103,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getLong(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getLong(columnName);
       }
       catch (Throwable t)
@@ -859,6 +1124,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getMetaData()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.getMetaData();
       }
       catch (Throwable t)
@@ -875,6 +1144,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getObject(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getObject(columnIndex);
       }
       catch (Throwable t)
@@ -892,6 +1166,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getObject(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             i, map);
+
          return resultSet.getObject(i, map);
       }
       catch (Throwable t)
@@ -908,6 +1187,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getObject(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getObject(columnName);
       }
       catch (Throwable t)
@@ -925,6 +1209,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getObject(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             colName, map);
+
          return resultSet.getObject(colName, map);
       }
       catch (Throwable t)
@@ -941,6 +1230,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getRef(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             i);
+
          return resultSet.getRef(i);
       }
       catch (Throwable t)
@@ -957,6 +1251,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getRef(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             colName);
+
          return resultSet.getRef(colName);
       }
       catch (Throwable t)
@@ -973,6 +1272,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getRow()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.getRow();
       }
       catch (Throwable t)
@@ -989,6 +1292,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getShort(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getShort(columnIndex);
       }
       catch (Throwable t)
@@ -1005,6 +1313,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getShort(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getShort(columnName);
       }
       catch (Throwable t)
@@ -1019,6 +1332,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    public Statement getStatement() throws SQLException
    {
       checkState();
+
+      if (isSpy())
+         spyLogger.debugf("%s [%s] getStatement()",
+                          getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
       return statement;
    }
 
@@ -1030,6 +1348,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getString(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getString(columnIndex);
       }
       catch (Throwable t)
@@ -1046,6 +1369,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getString(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getString(columnName);
       }
       catch (Throwable t)
@@ -1062,6 +1390,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getTime(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getTime(columnIndex);
       }
       catch (Throwable t)
@@ -1078,6 +1411,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getTime(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, cal);
+
          return resultSet.getTime(columnIndex, cal);
       }
       catch (Throwable t)
@@ -1094,6 +1432,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getTime(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getTime(columnName);
       }
       catch (Throwable t)
@@ -1110,6 +1453,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getTime(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, cal);
+
          return resultSet.getTime(columnName, cal);
       }
       catch (Throwable t)
@@ -1126,6 +1474,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getTimestamp(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getTimestamp(columnIndex);
       }
       catch (Throwable t)
@@ -1142,6 +1495,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getTimestamp(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, cal);
+
          return resultSet.getTimestamp(columnIndex, cal);
       }
       catch (Throwable t)
@@ -1158,6 +1516,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getTimestamp(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getTimestamp(columnName);
       }
       catch (Throwable t)
@@ -1174,6 +1537,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getTimestamp(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, cal);
+
          return resultSet.getTimestamp(columnName, cal);
       }
       catch (Throwable t)
@@ -1190,6 +1558,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getType()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.getType();
       }
       catch (Throwable t)
@@ -1207,6 +1579,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getUnicodeStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getUnicodeStream(columnIndex);
       }
       catch (Throwable t)
@@ -1223,6 +1600,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    {
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getUnicodeStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getUnicodeStream(columnName);
       }
       catch (Throwable t)
@@ -1239,6 +1621,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getURL(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          return resultSet.getURL(columnIndex);
       }
       catch (Throwable t)
@@ -1255,6 +1642,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getURL(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          return resultSet.getURL(columnName);
       }
       catch (Throwable t)
@@ -1271,6 +1663,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getWarnings()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.getWarnings();
       }
       catch (Throwable t)
@@ -1290,6 +1686,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
          checkTransaction();
          try
          {
+            if (isSpy())
+               spyLogger.debugf("%s [%s] insertRow()",
+                                getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
             resultSet.insertRow();
          }
          catch (Throwable t)
@@ -1311,6 +1711,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] isAfterLast()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.isAfterLast();
       }
       catch (Throwable t)
@@ -1327,6 +1731,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] isBeforeFirst()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.isBeforeFirst();
       }
       catch (Throwable t)
@@ -1343,6 +1751,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] isFirst()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.isFirst();
       }
       catch (Throwable t)
@@ -1359,6 +1771,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] isLast()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.isLast();
       }
       catch (Throwable t)
@@ -1375,6 +1791,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] last()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.last();
       }
       catch (Throwable t)
@@ -1391,6 +1811,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] moveToCurrentRow()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          resultSet.moveToCurrentRow();
       }
       catch (Throwable t)
@@ -1407,6 +1831,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] moveToInsertRow()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          resultSet.moveToInsertRow();
       }
       catch (Throwable t)
@@ -1423,6 +1851,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] next()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.next();
       }
       catch (Throwable t)
@@ -1439,6 +1871,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] previous()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.previous();
       }
       catch (Throwable t)
@@ -1455,6 +1891,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] refreshRow()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          resultSet.refreshRow();
       }
       catch (Throwable t)
@@ -1471,6 +1911,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] relative(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             rows);
+
          return resultSet.relative(rows);
       }
       catch (Throwable t)
@@ -1487,6 +1932,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] rowDeleted()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.rowDeleted();
       }
       catch (Throwable t)
@@ -1503,6 +1952,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] rowInserted()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.rowInserted();
       }
       catch (Throwable t)
@@ -1519,6 +1972,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] rowUpdated()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.rowUpdated();
       }
       catch (Throwable t)
@@ -1535,6 +1992,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] setFetchDirection(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             direction);
+
          resultSet.setFetchDirection(direction);
       }
       catch (Throwable t)
@@ -1551,6 +2013,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] setFetchSize(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             rows);
+
          resultSet.setFetchSize(rows);
       }
       catch (Throwable t)
@@ -1567,6 +2034,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateArray(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateArray(columnIndex, x);
       }
       catch (Throwable t)
@@ -1583,6 +2055,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateArray(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateArray(columnName, x);
       }
       catch (Throwable t)
@@ -1599,6 +2076,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x, length);
+
          resultSet.updateAsciiStream(columnIndex, x, length);
       }
       catch (Throwable t)
@@ -1615,6 +2097,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x, length);
+
          resultSet.updateAsciiStream(columnName, x, length);
       }
       catch (Throwable t)
@@ -1631,6 +2118,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBigDecimal(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateBigDecimal(columnIndex, x);
       }
       catch (Throwable t)
@@ -1647,6 +2139,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBigDecimal(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateBigDecimal(columnName, x);
       }
       catch (Throwable t)
@@ -1663,6 +2160,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x, length);
+
          resultSet.updateBinaryStream(columnIndex, x, length);
       }
       catch (Throwable t)
@@ -1679,6 +2181,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x, length);
+
          resultSet.updateBinaryStream(columnName, x, length);
       }
       catch (Throwable t)
@@ -1695,6 +2202,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateBlob(columnIndex, x);
       }
       catch (Throwable t)
@@ -1711,6 +2223,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateBlob(columnName, x);
       }
       catch (Throwable t)
@@ -1727,6 +2244,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBoolean(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateBoolean(columnIndex, x);
       }
       catch (Throwable t)
@@ -1743,6 +2265,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBoolean(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateBoolean(columnName, x);
       }
       catch (Throwable t)
@@ -1759,6 +2286,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateByte(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateByte(columnIndex, x);
       }
       catch (Throwable t)
@@ -1775,6 +2307,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateByte(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateByte(columnName, x);
       }
       catch (Throwable t)
@@ -1791,6 +2328,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBytes(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, Arrays.toString(x));
+
          resultSet.updateBytes(columnIndex, x);
       }
       catch (Throwable t)
@@ -1807,6 +2349,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBytes(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, Arrays.toString(x));
+
          resultSet.updateBytes(columnName, x);
       }
       catch (Throwable t)
@@ -1823,6 +2370,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x, length);
+
          resultSet.updateCharacterStream(columnIndex, x, length);
       }
       catch (Throwable t)
@@ -1839,6 +2391,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, reader, length);
+
          resultSet.updateCharacterStream(columnName, reader, length);
       }
       catch (Throwable t)
@@ -1855,6 +2412,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateClob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateClob(columnIndex, x);
       }
       catch (Throwable t)
@@ -1871,6 +2433,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateClob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateClob(columnName, x);
       }
       catch (Throwable t)
@@ -1887,6 +2454,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateDate(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateDate(columnIndex, x);
       }
       catch (Throwable t)
@@ -1903,6 +2475,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateDate(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateDate(columnName, x);
       }
       catch (Throwable t)
@@ -1919,6 +2496,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateDouble(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateDouble(columnIndex, x);
       }
       catch (Throwable t)
@@ -1935,6 +2517,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateDouble(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateDouble(columnName, x);
       }
       catch (Throwable t)
@@ -1951,6 +2538,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateFloat(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateFloat(columnIndex, x);
       }
       catch (Throwable t)
@@ -1967,6 +2559,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateFloat(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateFloat(columnName, x);
       }
       catch (Throwable t)
@@ -1983,6 +2580,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateInt(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateInt(columnIndex, x);
       }
       catch (Throwable t)
@@ -1999,6 +2601,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateInt(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateInt(columnName, x);
       }
       catch (Throwable t)
@@ -2015,6 +2622,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateLong(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateLong(columnIndex, x);
       }
       catch (Throwable t)
@@ -2031,6 +2643,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateLong(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateLong(columnName, x);
       }
       catch (Throwable t)
@@ -2047,6 +2664,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNull(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
          resultSet.updateNull(columnIndex);
       }
       catch (Throwable t)
@@ -2063,6 +2685,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNull(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName);
+
          resultSet.updateNull(columnName);
       }
       catch (Throwable t)
@@ -2079,6 +2706,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateObject(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateObject(columnIndex, x);
       }
       catch (Throwable t)
@@ -2095,6 +2727,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x, scale);
+
          resultSet.updateObject(columnIndex, x, scale);
       }
       catch (Throwable t)
@@ -2111,6 +2748,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateObject(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateObject(columnName, x);
       }
       catch (Throwable t)
@@ -2127,6 +2769,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x, scale);
+
          resultSet.updateObject(columnName, x, scale);
       }
       catch (Throwable t)
@@ -2143,6 +2790,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateRef(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateRef(columnIndex, x);
       }
       catch (Throwable t)
@@ -2159,6 +2811,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateRef(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateRef(columnName, x);
       }
       catch (Throwable t)
@@ -2178,6 +2835,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
          checkTransaction();
          try
          {
+            if (isSpy())
+               spyLogger.debugf("%s [%s] updateRow()",
+                                getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
             resultSet.updateRow();
          }
          catch (Throwable t)
@@ -2215,6 +2876,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateShort(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateShort(columnName, x);
       }
       catch (Throwable t)
@@ -2231,6 +2897,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateString(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateString(columnIndex, x);
       }
       catch (Throwable t)
@@ -2247,6 +2918,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateString(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateString(columnName, x);
       }
       catch (Throwable t)
@@ -2263,6 +2939,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateTime(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateTime(columnIndex, x);
       }
       catch (Throwable t)
@@ -2279,6 +2960,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateTime(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateTime(columnName, x);
       }
       catch (Throwable t)
@@ -2295,6 +2981,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateTimestamp(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
          resultSet.updateTimestamp(columnIndex, x);
       }
       catch (Throwable t)
@@ -2311,6 +3002,11 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateTimestamp(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnName, x);
+
          resultSet.updateTimestamp(columnName, x);
       }
       catch (Throwable t)
@@ -2327,7 +3023,1019 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] wasNull()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
          return resultSet.wasNull();
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getHoldability() throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getHoldability()",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+
+         return resultSet.getHoldability();
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Reader getNCharacterStream(int columnIndex) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getNCharacterStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
+         return resultSet.getNCharacterStream(columnIndex);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Reader getNCharacterStream(String columnLabel) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getNCharacterStream(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel);
+
+         return resultSet.getNCharacterStream(columnLabel);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public NClob getNClob(int columnIndex) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getNClob(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
+         return resultSet.getNClob(columnIndex);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public NClob getNClob(String columnLabel) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getNClob(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel);
+
+         return resultSet.getNClob(columnLabel);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getNString(int columnIndex) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getNString(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
+         return resultSet.getNString(columnIndex);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getNString(String columnLabel) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getNString(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel);
+
+         return resultSet.getNString(columnLabel);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public RowId getRowId(int columnIndex) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getRowId(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
+         return resultSet.getRowId(columnIndex);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public RowId getRowId(String columnLabel) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getRowId(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel);
+
+         return resultSet.getRowId(columnLabel);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public SQLXML getSQLXML(int columnIndex) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getSQLXML(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex);
+
+         return resultSet.getSQLXML(columnIndex);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public SQLXML getSQLXML(String columnLabel) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] getSQLXML(%s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel);
+
+         return resultSet.getSQLXML(columnLabel);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isClosed() throws SQLException
+   {
+      if (isSpy())
+         spyLogger.debugf("%s [%s] isClosed()",
+                          getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+      
+      ResultSet resultSet = getWrappedObject();
+      if (resultSet == null)
+         return true;
+      try
+      {
+         return resultSet.isClosed();
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateAsciiStream(int columnIndex, InputStream x, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x, length);
+
+         resultSet.updateAsciiStream(columnIndex, x, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateAsciiStream(int columnIndex, InputStream x) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
+         resultSet.updateAsciiStream(columnIndex, x);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateAsciiStream(String columnLabel, InputStream x, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, x, length);
+
+         resultSet.updateAsciiStream(columnLabel, x, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateAsciiStream(String columnLabel, InputStream x) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, x);
+
+         resultSet.updateAsciiStream(columnLabel, x);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateBinaryStream(int columnIndex, InputStream x, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x, length);
+
+         resultSet.updateBinaryStream(columnIndex, x, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateBinaryStream(int columnIndex, InputStream x) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
+         resultSet.updateBinaryStream(columnIndex, x);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateBinaryStream(String columnLabel, InputStream x, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, x, length);
+
+         resultSet.updateBinaryStream(columnLabel, x, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateBinaryStream(String columnLabel, InputStream x) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, x);
+
+         resultSet.updateBinaryStream(columnLabel, x);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateBlob(int columnIndex, InputStream inputStream, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBlob(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, inputStream, length);
+
+         resultSet.updateBlob(columnIndex, inputStream, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateBlob(int columnIndex, InputStream inputStream) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, inputStream);
+
+         resultSet.updateBlob(columnIndex, inputStream);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateBlob(String columnLabel, InputStream inputStream, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBlob(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, inputStream, length);
+
+         resultSet.updateBlob(columnLabel, inputStream, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateBlob(String columnLabel, InputStream inputStream) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, inputStream);
+
+         resultSet.updateBlob(columnLabel, inputStream);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateCharacterStream(int columnIndex, Reader x, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x, length);
+
+         resultSet.updateCharacterStream(columnIndex, x, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateCharacterStream(int columnIndex, Reader x) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
+         resultSet.updateCharacterStream(columnIndex, x);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, reader, length);
+
+         resultSet.updateCharacterStream(columnLabel, reader, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateCharacterStream(String columnLabel, Reader reader) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, reader);
+
+         resultSet.updateCharacterStream(columnLabel, reader);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateClob(int columnIndex, Reader reader, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateClob(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, reader, length);
+
+         resultSet.updateClob(columnIndex, reader, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateClob(int columnIndex, Reader reader) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateClob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, reader);
+
+         resultSet.updateClob(columnIndex, reader);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateClob(String columnLabel, Reader reader, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateClob(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, reader, length);
+
+         resultSet.updateClob(columnLabel, reader, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateClob(String columnLabel, Reader reader) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateClob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, reader);
+
+         resultSet.updateClob(columnLabel, reader);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x, length);
+
+         resultSet.updateNCharacterStream(columnIndex, x, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
+         resultSet.updateNCharacterStream(columnIndex, x);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, reader, length);
+
+         resultSet.updateNCharacterStream(columnLabel, reader, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNCharacterStream(String columnLabel, Reader reader) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, reader);
+
+         resultSet.updateNCharacterStream(columnLabel, reader);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNClob(int columnIndex, NClob clob) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, clob);
+
+         resultSet.updateNClob(columnIndex, clob);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNClob(int columnIndex, Reader reader, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNClob(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, reader, length);
+
+         resultSet.updateNClob(columnIndex, reader, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNClob(int columnIndex, Reader reader) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, reader);
+
+         resultSet.updateNClob(columnIndex, reader);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNClob(String columnLabel, NClob clob) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, clob);
+
+         resultSet.updateNClob(columnLabel, clob);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNClob(String columnLabel, Reader reader, long length) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNClob(%s, %s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, reader, length);
+
+         resultSet.updateNClob(columnLabel, reader, length);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNClob(String columnLabel, Reader reader) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, reader);
+
+         resultSet.updateNClob(columnLabel, reader);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNString(int columnIndex, String string) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNString(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, string);
+
+         resultSet.updateNString(columnIndex, string);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateNString(String columnLabel, String string) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateNString(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, string);
+
+         resultSet.updateNString(columnLabel, string);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateRowId(int columnIndex, RowId x) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateRowId(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, x);
+
+         resultSet.updateRowId(columnIndex, x);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateRowId(String columnLabel, RowId x) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateRowId(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, x);
+
+         resultSet.updateRowId(columnLabel, x);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateSQLXML(int columnIndex, SQLXML xmlObject) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateSQLXML(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnIndex, xmlObject);
+
+         resultSet.updateSQLXML(columnIndex, xmlObject);
+      }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void updateSQLXML(String columnLabel, SQLXML xmlObject) throws SQLException
+   {
+      ResultSet resultSet = getUnderlyingResultSet();
+      try
+      {
+         if (isSpy())
+            spyLogger.debugf("%s [%s] updateSQLXML(%s, %s)",
+                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             columnLabel, xmlObject);
+
+         resultSet.updateSQLXML(columnLabel, xmlObject);
       }
       catch (Throwable t)
       {

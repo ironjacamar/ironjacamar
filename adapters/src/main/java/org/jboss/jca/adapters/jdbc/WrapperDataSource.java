@@ -38,6 +38,7 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.sql.DataSource;
 import javax.transaction.RollbackException;
 
+import org.jboss.logging.Logger;
 import org.jboss.tm.TransactionTimeoutConfiguration;
 
 /**
@@ -50,6 +51,8 @@ import org.jboss.tm.TransactionTimeoutConfiguration;
 public class WrapperDataSource extends JBossWrapper implements Referenceable, DataSource, Serializable
 {
    private static final long serialVersionUID = 3570285419164793501L;
+
+   private static Logger spyLogger = Logger.getLogger(Constants.SPY_LOGGER_CATEGORY);
 
    private final BaseWrapperManagedConnectionFactory mcf;
    private final ConnectionManager cm;
@@ -116,6 +119,8 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       {
          WrappedConnection wc = (WrappedConnection) cm.allocateConnection(mcf, null);
          wc.setDataSource(this);
+         wc.setSpy(mcf.getSpy().booleanValue());
+         wc.setJndiName(mcf.getJndiName());
          return wc;
       }
       catch (ResourceException re)
@@ -134,6 +139,8 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       {
          WrappedConnection wc = (WrappedConnection) cm.allocateConnection(mcf, cri);
          wc.setDataSource(this);
+         wc.setSpy(mcf.getSpy().booleanValue());
+         wc.setJndiName(mcf.getJndiName());
          return wc;
       }
       catch (ResourceException re)
