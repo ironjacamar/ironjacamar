@@ -84,7 +84,7 @@ public class AoInterfaceCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
       out.write("public interface " + getClassName(def));
-      if (def.isImplRaAssociation())
+      if (def.isAdminObjectImplRaAssociation())
       {
          out.write(" extends Referenceable, Serializable");
       }
@@ -108,7 +108,7 @@ public class AoInterfaceCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      if (def.isImplRaAssociation())
+      if (def.isAdminObjectImplRaAssociation())
       {
          out.write("import java.io.Serializable;");
          writeEol(out);

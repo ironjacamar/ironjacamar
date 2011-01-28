@@ -166,6 +166,9 @@ public class Definition
    /** generate admin object or not  */
    @XmlElement(name = "GenAdminObject")
    private boolean genAdminObject = false;
+   /** Admin object implement ResourceAdapterAssociation  */
+   @XmlElement(name = "adminObjectImplRaAssociation")
+   private boolean adminObjectImplRaAssociation;
    /** list of admin object  */
    @XmlElement(name = "AdminObject")
    private List<AdminObjectType> adminObjects;
@@ -1050,5 +1053,25 @@ public class Definition
    public boolean isGenAdminObject()
    {
       return genAdminObject;
+   }
+
+   /**
+    * Set the adminObjectImplRaAssociation.
+    * 
+    * @param adminObjectImplRaAssociation The adminObjectImplRaAssociation to set.
+    */
+   public void setAdminObjectImplRaAssociation(boolean adminObjectImplRaAssociation)
+   {
+      this.adminObjectImplRaAssociation = adminObjectImplRaAssociation;
+   }
+
+   /**
+    * Get the adminObjectImplRaAssociation.
+    * 
+    * @return the adminObjectImplRaAssociation.
+    */
+   public boolean isAdminObjectImplRaAssociation()
+   {
+      return adminObjectImplRaAssociation;
    }
 }

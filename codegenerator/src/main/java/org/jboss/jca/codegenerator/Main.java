@@ -432,6 +432,20 @@ public class Main
             def.setGenAdminObject(false);
       }
       
+      if (def.isGenAdminObject())
+      {
+         System.out.print(rb.getString("adminobject.raa") + "[Y]: ");
+         String aoRaAssociation = in.readLine();
+         if (aoRaAssociation == null || aoRaAssociation.equals(""))
+            def.setAdminObjectImplRaAssociation(true);
+         else
+         {
+            if (aoRaAssociation.equals("Y") || aoRaAssociation.equals("y") || aoRaAssociation.equals("Yes"))
+               def.setAdminObjectImplRaAssociation(true);
+            else
+               def.setAdminObjectImplRaAssociation(false);
+         }
+      }
       int numOfAo = 0;
       while (numOfAo >= 0 && def.isGenAdminObject())
       {

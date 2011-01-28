@@ -90,7 +90,7 @@ public class AoImplCodeGen extends PropsCodeGen
       }
       out.write("public class " + getClassName(def) + " implements " + 
          def.getAdminObjects().get(numOfAo).getAdminObjectInterface());
-      if (def.isImplRaAssociation())
+      if (def.isAdminObjectImplRaAssociation())
       {
          out.write(",");
          writeEol(out);
@@ -100,7 +100,7 @@ public class AoImplCodeGen extends PropsCodeGen
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
-      if (def.isImplRaAssociation())
+      if (def.isAdminObjectImplRaAssociation())
       {
          writeIndent(out, indent);
          out.write("/** The resource adapter */");
@@ -124,7 +124,7 @@ public class AoImplCodeGen extends PropsCodeGen
       
       writeConfigProps(def, out, indent);
 
-      if (def.isImplRaAssociation())
+      if (def.isAdminObjectImplRaAssociation())
       {
          writeResourceAdapter(def, out, indent);
          writeReference(def, out, indent);
@@ -147,7 +147,7 @@ public class AoImplCodeGen extends PropsCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      if (def.isImplRaAssociation())
+      if (def.isAdminObjectImplRaAssociation())
       {
          out.write("import java.io.Serializable;");
          writeEol(out);
@@ -167,7 +167,7 @@ public class AoImplCodeGen extends PropsCodeGen
          out.write("import javax.resource.spi.ConfigProperty;");
          writeEol(out);
       }
-      if (def.isImplRaAssociation())
+      if (def.isAdminObjectImplRaAssociation())
       {
          out.write("import javax.resource.spi.ResourceAdapter;");
          writeEol(out);
