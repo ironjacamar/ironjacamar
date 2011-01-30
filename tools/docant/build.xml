@@ -30,10 +30,6 @@
        Project              
        ================================= -->
   <property name="name" value="docant"/>
-  <property name="major" value="1"/>
-  <property name="minor" value="0"/>
-  <property name="patch" value="0"/>
-  <property name="type" value="Alpha2"/>
 
   <!-- ================================= 
        Properties              
@@ -55,13 +51,10 @@
   <!-- ================================= 
        Versions              
        ================================= -->
-<!--
-  <property name="version.jdocbook-core" value="1.0.3"/>
--->
-  <property name="version.docant" value="1.0.0.Alpha2-2011-01-04"/>
+
+  <property name="version.docant" value="1.0.0.Final"/>
 
   <property name="version.jdocbook-core" value="1.0.4"/>
-  <property name="version.jdocbook-core-ext" value="2010-12-30"/>
 
   <property name="version.docbook-xsl" value="1.76.1"/>
   <property name="version.docbook-xsl-old" value="1.72.0"/>
