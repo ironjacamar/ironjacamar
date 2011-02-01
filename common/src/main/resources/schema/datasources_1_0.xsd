@@ -364,6 +364,17 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute default="false" name="spy" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Enable spy functionality on the JDBC layer - e.g. log all JDBC traffic to the datasource.
+            Remember to enable the logging category (org.jboss.jdbc) too.
+            Ex: spy="true"
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:attributeGroup>
   <xs:simpleType name="transaction-isolationType">
     <xs:annotation>

@@ -105,9 +105,9 @@ public class WrappedConnectionJDK7 extends WrappedConnection
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setSchema(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 schema);
 
             c.setSchema(schema);
@@ -134,9 +134,9 @@ public class WrappedConnectionJDK7 extends WrappedConnection
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] getSchema()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return c.getSchema();
          }
@@ -162,9 +162,9 @@ public class WrappedConnectionJDK7 extends WrappedConnection
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] abort(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 executor);
 
             c.abort(executor);
@@ -191,9 +191,9 @@ public class WrappedConnectionJDK7 extends WrappedConnection
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNetworkTimeout(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 executor, milliseconds);
 
             c.setNetworkTimeout(executor, milliseconds);
@@ -220,9 +220,9 @@ public class WrappedConnectionJDK7 extends WrappedConnection
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] getNetworkTimeout()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return c.getNetworkTimeout();
          }

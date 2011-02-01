@@ -70,10 +70,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    private AtomicBoolean closed = new AtomicBoolean(false);
 
    /** Spy functionality */
-   private boolean spy;
+   protected final boolean spy;
 
    /** The jndi name */
-   private String jndiName;
+   protected final String jndiName;
    
    /** 
     * Create a new wrapped result set
@@ -84,7 +84,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     * @param jndiName The jndi name
     */
    public WrappedResultSet(WrappedStatement statement, ResultSet resultSet,
-                           boolean spy, String jndiName)
+                           final boolean spy, final String jndiName)
    {
       if (statement == null)
          throw new IllegalArgumentException("Null statement!");
@@ -96,24 +96,6 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       this.resultSet = resultSet;
       this.spy = spy;
       this.jndiName = jndiName;
-   }
-
-   /**
-    * Get the spy value
-    * @return The value
-    */
-   public boolean isSpy()
-   {
-      return spy;
-   }
-
-   /**
-    * Get the jndi name value
-    * @return The value
-    */
-   public String getJndiName()
-   {
-      return jndiName;
    }
 
    /**
@@ -141,9 +123,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] absolute(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              row);
 
          return resultSet.absolute(row);
@@ -162,9 +144,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] afterLast()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          resultSet.afterLast();
       }
@@ -182,9 +164,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] beforeFirst()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          resultSet.beforeFirst();
       }
@@ -202,9 +184,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] cancelRowUpdates()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          resultSet.cancelRowUpdates();
       }
@@ -222,9 +204,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] clearWarnings()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          resultSet.clearWarnings();
       }
@@ -242,9 +224,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       if (closed.get())
          return;
  
-      if (isSpy())
+      if (spy)
          spyLogger.debugf("%s [%s] close()",
-                          getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                          jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
       closed.set(true);
       statement.unregisterResultSet(this);
@@ -262,9 +244,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] deleteRow()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
             resultSet.deleteRow();
          }
@@ -287,9 +269,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] findColumn(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.findColumn(columnName);
@@ -308,9 +290,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] first()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.first();
       }
@@ -328,9 +310,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getArray(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              i);
 
          return resultSet.getArray(i);
@@ -349,9 +331,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getArray(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              colName);
 
          return resultSet.getArray(colName);
@@ -370,9 +352,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getAsciiStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getAsciiStream(columnIndex);
@@ -391,9 +373,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getAsciiStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getAsciiStream(columnName);
@@ -412,9 +394,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBigDecimal(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getBigDecimal(columnIndex);
@@ -434,9 +416,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBigDecimal(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, scale);
 
          return resultSet.getBigDecimal(columnIndex, scale);
@@ -455,9 +437,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBigDecimal(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getBigDecimal(columnName);
@@ -477,9 +459,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBigDecimal(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, scale);
 
          return resultSet.getBigDecimal(columnName, scale);
@@ -498,9 +480,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBinaryStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getBinaryStream(columnIndex);
@@ -519,9 +501,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBinaryStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getBinaryStream(columnName);
@@ -540,9 +522,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBlob(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              i);
 
          return resultSet.getBlob(i);
@@ -561,9 +543,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBlob(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              colName);
 
          return resultSet.getBlob(colName);
@@ -582,9 +564,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBoolean(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getBoolean(columnIndex);
@@ -603,9 +585,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBoolean(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getBoolean(columnName);
@@ -624,9 +606,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getByte(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getByte(columnIndex);
@@ -645,9 +627,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getByte(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getByte(columnName);
@@ -666,9 +648,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBytes(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getBytes(columnIndex);
@@ -687,9 +669,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getBytes(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getBytes(columnName);
@@ -708,9 +690,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getCharacterStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getCharacterStream(columnIndex);
@@ -729,9 +711,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getCharacterStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getCharacterStream(columnName);
@@ -750,9 +732,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getClob(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              i);
 
          return resultSet.getClob(i);
@@ -771,9 +753,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getClob(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              colName);
 
          return resultSet.getClob(colName);
@@ -792,9 +774,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getConcurrency()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getConcurrency();
       }
@@ -812,9 +794,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getCursorName()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getCursorName();
       }
@@ -832,9 +814,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getDate(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getDate(columnIndex);
@@ -853,9 +835,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getDate(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, cal);
 
          return resultSet.getDate(columnIndex, cal);
@@ -874,9 +856,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getDate(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getDate(columnName);
@@ -895,9 +877,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getDate(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, cal);
 
          return resultSet.getDate(columnName, cal);
@@ -916,9 +898,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getDouble(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getDouble(columnIndex);
@@ -937,9 +919,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getDouble(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getDouble(columnName);
@@ -958,9 +940,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getFetchDirection()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getFetchDirection();
       }
@@ -978,9 +960,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getFetchSize()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getFetchSize();
       }
@@ -998,9 +980,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getFloat(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getFloat(columnIndex);
@@ -1019,9 +1001,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getFloat(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getFloat(columnName);
@@ -1040,9 +1022,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getInt(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getInt(columnIndex);
@@ -1061,9 +1043,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getInt(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getInt(columnName);
@@ -1082,9 +1064,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getLong(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getLong(columnIndex);
@@ -1103,9 +1085,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getLong(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getLong(columnName);
@@ -1124,9 +1106,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getMetaData()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getMetaData();
       }
@@ -1144,9 +1126,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getObject(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getObject(columnIndex);
@@ -1166,9 +1148,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              i, map);
 
          return resultSet.getObject(i, map);
@@ -1187,9 +1169,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getObject(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getObject(columnName);
@@ -1209,9 +1191,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              colName, map);
 
          return resultSet.getObject(colName, map);
@@ -1230,9 +1212,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getRef(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              i);
 
          return resultSet.getRef(i);
@@ -1251,9 +1233,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getRef(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              colName);
 
          return resultSet.getRef(colName);
@@ -1272,9 +1254,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getRow()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getRow();
       }
@@ -1292,9 +1274,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getShort(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getShort(columnIndex);
@@ -1313,9 +1295,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getShort(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getShort(columnName);
@@ -1333,9 +1315,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    {
       checkState();
 
-      if (isSpy())
+      if (spy)
          spyLogger.debugf("%s [%s] getStatement()",
-                          getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                          jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
       return statement;
    }
@@ -1348,9 +1330,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getString(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getString(columnIndex);
@@ -1369,9 +1351,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getString(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getString(columnName);
@@ -1390,9 +1372,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTime(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getTime(columnIndex);
@@ -1411,9 +1393,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTime(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, cal);
 
          return resultSet.getTime(columnIndex, cal);
@@ -1432,9 +1414,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTime(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getTime(columnName);
@@ -1453,9 +1435,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTime(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, cal);
 
          return resultSet.getTime(columnName, cal);
@@ -1474,9 +1456,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTimestamp(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getTimestamp(columnIndex);
@@ -1495,9 +1477,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTimestamp(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, cal);
 
          return resultSet.getTimestamp(columnIndex, cal);
@@ -1516,9 +1498,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTimestamp(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getTimestamp(columnName);
@@ -1537,9 +1519,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTimestamp(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, cal);
 
          return resultSet.getTimestamp(columnName, cal);
@@ -1558,9 +1540,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getType()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getType();
       }
@@ -1579,9 +1561,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getUnicodeStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getUnicodeStream(columnIndex);
@@ -1600,9 +1582,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    {
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getUnicodeStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getUnicodeStream(columnName);
@@ -1621,9 +1603,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getURL(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getURL(columnIndex);
@@ -1642,9 +1624,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getURL(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          return resultSet.getURL(columnName);
@@ -1663,9 +1645,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getWarnings()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getWarnings();
       }
@@ -1686,9 +1668,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] insertRow()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
             resultSet.insertRow();
          }
@@ -1711,9 +1693,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] isAfterLast()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.isAfterLast();
       }
@@ -1731,9 +1713,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] isBeforeFirst()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.isBeforeFirst();
       }
@@ -1751,9 +1733,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] isFirst()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.isFirst();
       }
@@ -1771,9 +1753,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] isLast()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.isLast();
       }
@@ -1791,9 +1773,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] last()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.last();
       }
@@ -1811,9 +1793,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] moveToCurrentRow()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          resultSet.moveToCurrentRow();
       }
@@ -1831,9 +1813,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] moveToInsertRow()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          resultSet.moveToInsertRow();
       }
@@ -1851,9 +1833,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] next()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.next();
       }
@@ -1871,9 +1853,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] previous()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.previous();
       }
@@ -1891,9 +1873,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] refreshRow()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          resultSet.refreshRow();
       }
@@ -1911,9 +1893,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] relative(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              rows);
 
          return resultSet.relative(rows);
@@ -1932,9 +1914,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] rowDeleted()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.rowDeleted();
       }
@@ -1952,9 +1934,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] rowInserted()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.rowInserted();
       }
@@ -1972,9 +1954,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] rowUpdated()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.rowUpdated();
       }
@@ -1992,9 +1974,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] setFetchDirection(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              direction);
 
          resultSet.setFetchDirection(direction);
@@ -2013,9 +1995,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] setFetchSize(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              rows);
 
          resultSet.setFetchSize(rows);
@@ -2034,9 +2016,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateArray(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateArray(columnIndex, x);
@@ -2055,9 +2037,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateArray(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateArray(columnName, x);
@@ -2076,9 +2058,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x, length);
 
          resultSet.updateAsciiStream(columnIndex, x, length);
@@ -2097,9 +2079,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x, length);
 
          resultSet.updateAsciiStream(columnName, x, length);
@@ -2118,9 +2100,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBigDecimal(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateBigDecimal(columnIndex, x);
@@ -2139,9 +2121,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBigDecimal(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateBigDecimal(columnName, x);
@@ -2160,9 +2142,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x, length);
 
          resultSet.updateBinaryStream(columnIndex, x, length);
@@ -2181,9 +2163,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x, length);
 
          resultSet.updateBinaryStream(columnName, x, length);
@@ -2202,9 +2184,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateBlob(columnIndex, x);
@@ -2223,9 +2205,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateBlob(columnName, x);
@@ -2244,9 +2226,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBoolean(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateBoolean(columnIndex, x);
@@ -2265,9 +2247,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBoolean(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateBoolean(columnName, x);
@@ -2286,9 +2268,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateByte(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateByte(columnIndex, x);
@@ -2307,9 +2289,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateByte(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateByte(columnName, x);
@@ -2328,9 +2310,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBytes(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, Arrays.toString(x));
 
          resultSet.updateBytes(columnIndex, x);
@@ -2349,9 +2331,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBytes(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, Arrays.toString(x));
 
          resultSet.updateBytes(columnName, x);
@@ -2370,9 +2352,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x, length);
 
          resultSet.updateCharacterStream(columnIndex, x, length);
@@ -2391,9 +2373,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, reader, length);
 
          resultSet.updateCharacterStream(columnName, reader, length);
@@ -2412,9 +2394,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateClob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateClob(columnIndex, x);
@@ -2433,9 +2415,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateClob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateClob(columnName, x);
@@ -2454,9 +2436,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateDate(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateDate(columnIndex, x);
@@ -2475,9 +2457,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateDate(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateDate(columnName, x);
@@ -2496,9 +2478,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateDouble(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateDouble(columnIndex, x);
@@ -2517,9 +2499,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateDouble(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateDouble(columnName, x);
@@ -2538,9 +2520,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateFloat(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateFloat(columnIndex, x);
@@ -2559,9 +2541,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateFloat(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateFloat(columnName, x);
@@ -2580,9 +2562,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateInt(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateInt(columnIndex, x);
@@ -2601,9 +2583,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateInt(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateInt(columnName, x);
@@ -2622,9 +2604,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateLong(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateLong(columnIndex, x);
@@ -2643,9 +2625,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateLong(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateLong(columnName, x);
@@ -2664,9 +2646,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNull(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          resultSet.updateNull(columnIndex);
@@ -2685,9 +2667,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNull(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName);
 
          resultSet.updateNull(columnName);
@@ -2706,9 +2688,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateObject(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateObject(columnIndex, x);
@@ -2727,9 +2709,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x, scale);
 
          resultSet.updateObject(columnIndex, x, scale);
@@ -2748,9 +2730,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateObject(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateObject(columnName, x);
@@ -2769,9 +2751,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x, scale);
 
          resultSet.updateObject(columnName, x, scale);
@@ -2790,9 +2772,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateRef(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateRef(columnIndex, x);
@@ -2811,9 +2793,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateRef(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateRef(columnName, x);
@@ -2835,9 +2817,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] updateRow()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
             resultSet.updateRow();
          }
@@ -2876,9 +2858,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateShort(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateShort(columnName, x);
@@ -2897,9 +2879,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateString(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateString(columnIndex, x);
@@ -2918,9 +2900,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateString(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateString(columnName, x);
@@ -2939,9 +2921,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateTime(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateTime(columnIndex, x);
@@ -2960,9 +2942,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateTime(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateTime(columnName, x);
@@ -2981,9 +2963,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateTimestamp(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateTimestamp(columnIndex, x);
@@ -3002,9 +2984,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateTimestamp(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnName, x);
 
          resultSet.updateTimestamp(columnName, x);
@@ -3023,9 +3005,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       checkState();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] wasNull()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.wasNull();
       }
@@ -3043,9 +3025,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getHoldability()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
          return resultSet.getHoldability();
       }
@@ -3063,9 +3045,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getNCharacterStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getNCharacterStream(columnIndex);
@@ -3084,9 +3066,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getNCharacterStream(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel);
 
          return resultSet.getNCharacterStream(columnLabel);
@@ -3105,9 +3087,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getNClob(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getNClob(columnIndex);
@@ -3126,9 +3108,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getNClob(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel);
 
          return resultSet.getNClob(columnLabel);
@@ -3147,9 +3129,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getNString(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getNString(columnIndex);
@@ -3168,9 +3150,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getNString(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel);
 
          return resultSet.getNString(columnLabel);
@@ -3189,9 +3171,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getRowId(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getRowId(columnIndex);
@@ -3210,9 +3192,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getRowId(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel);
 
          return resultSet.getRowId(columnLabel);
@@ -3231,9 +3213,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getSQLXML(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex);
 
          return resultSet.getSQLXML(columnIndex);
@@ -3252,9 +3234,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getSQLXML(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel);
 
          return resultSet.getSQLXML(columnLabel);
@@ -3270,9 +3252,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isClosed() throws SQLException
    {
-      if (isSpy())
+      if (spy)
          spyLogger.debugf("%s [%s] isClosed()",
-                          getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET);
+                          jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
       
       ResultSet resultSet = getWrappedObject();
       if (resultSet == null)
@@ -3295,9 +3277,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x, length);
 
          resultSet.updateAsciiStream(columnIndex, x, length);
@@ -3316,9 +3298,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateAsciiStream(columnIndex, x);
@@ -3337,9 +3319,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, x, length);
 
          resultSet.updateAsciiStream(columnLabel, x, length);
@@ -3358,9 +3340,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, x);
 
          resultSet.updateAsciiStream(columnLabel, x);
@@ -3379,9 +3361,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x, length);
 
          resultSet.updateBinaryStream(columnIndex, x, length);
@@ -3400,9 +3382,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateBinaryStream(columnIndex, x);
@@ -3421,9 +3403,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, x, length);
 
          resultSet.updateBinaryStream(columnLabel, x, length);
@@ -3442,9 +3424,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, x);
 
          resultSet.updateBinaryStream(columnLabel, x);
@@ -3463,9 +3445,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBlob(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, inputStream, length);
 
          resultSet.updateBlob(columnIndex, inputStream, length);
@@ -3484,9 +3466,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, inputStream);
 
          resultSet.updateBlob(columnIndex, inputStream);
@@ -3505,9 +3487,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBlob(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, inputStream, length);
 
          resultSet.updateBlob(columnLabel, inputStream, length);
@@ -3526,9 +3508,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, inputStream);
 
          resultSet.updateBlob(columnLabel, inputStream);
@@ -3547,9 +3529,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x, length);
 
          resultSet.updateCharacterStream(columnIndex, x, length);
@@ -3568,9 +3550,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateCharacterStream(columnIndex, x);
@@ -3589,9 +3571,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, reader, length);
 
          resultSet.updateCharacterStream(columnLabel, reader, length);
@@ -3610,9 +3592,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, reader);
 
          resultSet.updateCharacterStream(columnLabel, reader);
@@ -3631,9 +3613,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateClob(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, reader, length);
 
          resultSet.updateClob(columnIndex, reader, length);
@@ -3652,9 +3634,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateClob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, reader);
 
          resultSet.updateClob(columnIndex, reader);
@@ -3673,9 +3655,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateClob(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, reader, length);
 
          resultSet.updateClob(columnLabel, reader, length);
@@ -3694,9 +3676,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateClob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, reader);
 
          resultSet.updateClob(columnLabel, reader);
@@ -3715,9 +3697,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x, length);
 
          resultSet.updateNCharacterStream(columnIndex, x, length);
@@ -3736,9 +3718,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateNCharacterStream(columnIndex, x);
@@ -3757,9 +3739,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, reader, length);
 
          resultSet.updateNCharacterStream(columnLabel, reader, length);
@@ -3778,9 +3760,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, reader);
 
          resultSet.updateNCharacterStream(columnLabel, reader);
@@ -3799,9 +3781,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, clob);
 
          resultSet.updateNClob(columnIndex, clob);
@@ -3820,9 +3802,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNClob(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, reader, length);
 
          resultSet.updateNClob(columnIndex, reader, length);
@@ -3841,9 +3823,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, reader);
 
          resultSet.updateNClob(columnIndex, reader);
@@ -3862,9 +3844,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, clob);
 
          resultSet.updateNClob(columnLabel, clob);
@@ -3883,9 +3865,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNClob(%s, %s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, reader, length);
 
          resultSet.updateNClob(columnLabel, reader, length);
@@ -3904,9 +3886,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, reader);
 
          resultSet.updateNClob(columnLabel, reader);
@@ -3925,9 +3907,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNString(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, string);
 
          resultSet.updateNString(columnIndex, string);
@@ -3946,9 +3928,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateNString(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, string);
 
          resultSet.updateNString(columnLabel, string);
@@ -3967,9 +3949,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateRowId(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, x);
 
          resultSet.updateRowId(columnIndex, x);
@@ -3988,9 +3970,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateRowId(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, x);
 
          resultSet.updateRowId(columnLabel, x);
@@ -4009,9 +3991,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateSQLXML(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnIndex, xmlObject);
 
          resultSet.updateSQLXML(columnIndex, xmlObject);
@@ -4030,9 +4012,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] updateSQLXML(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              columnLabel, xmlObject);
 
          resultSet.updateSQLXML(columnLabel, xmlObject);

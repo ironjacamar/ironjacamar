@@ -70,6 +70,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
+    * @param spy spy
     * @param xaDataSourceProperty xaDataSourceProperty
     * @param xaDataSourceClass xaDataSourceClass
     * @param module module
@@ -79,12 +80,12 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, CommonSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
-      boolean useJavaContext, String poolName, boolean enabled, String jndiName,
+      boolean useJavaContext, String poolName, boolean enabled, String jndiName, boolean spy,
       Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String module, String newConnectionSql,
       CommonXaPool xaPool) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
-            urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
+            urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName, spy);
       if (xaDataSourceProperty != null)
       {
          this.xaDataSourceProperty = new HashMap<String, String>(xaDataSourceProperty.size());

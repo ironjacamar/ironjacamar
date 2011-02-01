@@ -105,9 +105,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBoolean(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setBoolean(parameterIndex, value);         
@@ -134,9 +134,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setByte(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setByte(parameterIndex, value);         
@@ -163,9 +163,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setShort(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setShort(parameterIndex, value);         
@@ -192,9 +192,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setInt(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setInt(parameterIndex, value);         
@@ -221,9 +221,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setLong(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setLong(parameterIndex, value);         
@@ -250,9 +250,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setFloat(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setFloat(parameterIndex, value);         
@@ -279,9 +279,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setDouble(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setDouble(parameterIndex, value);         
@@ -308,9 +308,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setURL(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setURL(parameterIndex, value);         
@@ -337,9 +337,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setTime(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setTime(parameterIndex, value);         
@@ -366,9 +366,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setTime(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value, calendar);
 
             ps.setTime(parameterIndex, value, calendar);         
@@ -397,9 +397,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          {
             checkConfiguredQueryTimeout();
 
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] execute()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
             return ps.execute();         
          }
@@ -425,9 +425,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] getMetaData()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
             return ps.getMetaData();         
          }
@@ -455,9 +455,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          {
             checkConfiguredQueryTimeout();
 
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] executeQuery()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
             ResultSet resultSet = ps.executeQuery();
             return registerResultSet(resultSet);
@@ -486,9 +486,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          {
             checkConfiguredQueryTimeout();
 
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] executeUpdate()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
             return ps.executeUpdate();         
          }
@@ -514,9 +514,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] addBatch()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
             ps.addBatch();         
          }
@@ -542,9 +542,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNull(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, sqlType);
 
             ps.setNull(parameterIndex, sqlType);         
@@ -571,9 +571,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNull(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, sqlType, typeName);
 
             ps.setNull(parameterIndex, sqlType, typeName);         
@@ -600,9 +600,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBigDecimal(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setBigDecimal(parameterIndex, value);         
@@ -629,9 +629,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setString(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setString(parameterIndex, value);         
@@ -658,9 +658,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBytes(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, Arrays.toString(value));
 
             ps.setBytes(parameterIndex, value);         
@@ -687,9 +687,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setDate(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setDate(parameterIndex, value);         
@@ -716,9 +716,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setDate(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value, calendar);
 
             ps.setDate(parameterIndex, value, calendar);         
@@ -745,9 +745,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setTimestamp(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setTimestamp(parameterIndex, value);         
@@ -774,9 +774,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setTimestamp(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value, calendar);
 
             ps.setTimestamp(parameterIndex, value, calendar);         
@@ -804,9 +804,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setAsciiStream(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, stream, length);
 
             ps.setAsciiStream(parameterIndex, stream, length);         
@@ -834,9 +834,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setUnicodeStream(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, stream, length);
 
             ps.setUnicodeStream(parameterIndex, stream, length);         
@@ -863,9 +863,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBinaryStream(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, stream, length);
 
             ps.setBinaryStream(parameterIndex, stream, length);         
@@ -892,9 +892,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] clearParameters()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
             ps.clearParameters();         
          }
@@ -920,9 +920,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setObject(%s, %s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value, sqlType, scale);
 
             ps.setObject(parameterIndex, value, sqlType, scale);         
@@ -949,9 +949,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setObject(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value, sqlType);
 
             ps.setObject(parameterIndex, value, sqlType);         
@@ -978,9 +978,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setObject(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setObject(parameterIndex, value);         
@@ -1007,9 +1007,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setCharacterStream(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, reader, length);
 
             ps.setCharacterStream(parameterIndex, reader, length);         
@@ -1036,9 +1036,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setRef(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setRef(parameterIndex, value);         
@@ -1065,9 +1065,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBlob(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setBlob(parameterIndex, value);         
@@ -1094,9 +1094,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setClob(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setClob(parameterIndex, value);         
@@ -1123,9 +1123,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setArray(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             ps.setArray(parameterIndex, value);         
@@ -1152,9 +1152,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          checkState();
          try 
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] getParameterMetaData()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
             return ps.getParameterMetaData();         
          }
@@ -1178,9 +1178,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       lock();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] isClosed()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
          PreparedStatement wrapped = getWrappedObject();
          if (wrapped == null)
@@ -1208,9 +1208,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] isPoolable()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
 
             return statement.isPoolable();
          }
@@ -1236,9 +1236,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setPoolable(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 poolable);
 
             statement.setPoolable(poolable);
@@ -1265,9 +1265,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setAsciiStream(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, x, length);
 
             statement.setAsciiStream(parameterIndex, x, length);
@@ -1294,9 +1294,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setAsciiStream(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, x);
 
             statement.setAsciiStream(parameterIndex, x);
@@ -1323,9 +1323,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBinaryStream(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, x, length);
 
             statement.setBinaryStream(parameterIndex, x, length);
@@ -1352,9 +1352,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBinaryStream(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, x);
 
             statement.setBinaryStream(parameterIndex, x);
@@ -1381,9 +1381,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBlob(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, inputStream, length);
 
             statement.setBlob(parameterIndex, inputStream, length);
@@ -1410,9 +1410,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setBlob(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, inputStream);
 
             statement.setBlob(parameterIndex, inputStream);
@@ -1439,9 +1439,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setCharacterStream(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, reader, length);
 
             statement.setCharacterStream(parameterIndex, reader, length);
@@ -1468,9 +1468,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setCharacterStream(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, reader);
 
             statement.setCharacterStream(parameterIndex, reader);
@@ -1497,9 +1497,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setClob(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, reader, length);
 
             statement.setClob(parameterIndex, reader, length);
@@ -1526,9 +1526,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setClob(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, reader);
 
             statement.setClob(parameterIndex, reader);
@@ -1555,9 +1555,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNCharacterStream(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value, length);
 
             statement.setNCharacterStream(parameterIndex, value, length);
@@ -1584,9 +1584,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNCharacterStream(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             statement.setNCharacterStream(parameterIndex, value);
@@ -1613,9 +1613,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNClob(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             statement.setNClob(parameterIndex, value);
@@ -1642,9 +1642,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNClob(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, reader, length);
 
             statement.setNClob(parameterIndex, reader, length);
@@ -1671,9 +1671,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNClob(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, reader);
 
             statement.setNClob(parameterIndex, reader);
@@ -1700,9 +1700,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setNString(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, value);
 
             statement.setNString(parameterIndex, value);
@@ -1729,9 +1729,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setRowId(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, x);
 
             statement.setRowId(parameterIndex, x);
@@ -1758,9 +1758,9 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
          PreparedStatement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setSQLXML(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT,
                                 parameterIndex, xmlObject);
 
             statement.setSQLXML(parameterIndex, xmlObject);

@@ -74,9 +74,11 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
    private int trackStatements;
 
-   private boolean spy = false;
+   /** Spy functionality */
+   protected boolean spy = false;
 
-   private String jndiName = null;
+   /** The jndi name */
+   protected String jndiName = null;
 
    /**
     * Constructor
@@ -101,6 +103,24 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
       if (mc != null)
          trackStatements = mc.getTrackStatements();
+   }
+
+   /**
+    * Set the spy value
+    * @param v The value
+    */
+   void setSpy(boolean v)
+   {
+      this.spy = v;
+   }
+
+   /**
+    * Set the jndi name value
+    * @param v The value
+    */
+   void setJndiName(String v)
+   {
+      this.jndiName = v;
    }
 
    /**
@@ -156,42 +176,6 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    }
 
    /**
-    * Get the spy value
-    * @return The value
-    */
-   public boolean isSpy()
-   {
-      return spy;
-   }
-
-   /**
-    * Set the spy value
-    * @param v The value
-    */
-   protected void setSpy(boolean v)
-   {
-      this.spy = v;
-   }
-
-   /**
-    * Get the jndi name value
-    * @return The value
-    */
-   public String getJndiName()
-   {
-      return jndiName;
-   }
-
-   /**
-    * Set the jndi name value
-    * @param v The value
-    */
-   protected void setJndiName(String v)
-   {
-      this.jndiName = v;
-   }
-
-   /**
     * {@inheritDoc}
     */
    public void setReadOnly(boolean readOnly) throws SQLException
@@ -201,9 +185,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          checkStatus();
 
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] setReadOnly(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, readOnly);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, readOnly);
 
          mc.setJdbcReadOnly(readOnly);
       }
@@ -220,8 +204,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       checkStatus();
 
-      if (isSpy())
-         spyLogger.debugf("%s [%s] isReadOnly()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+      if (spy)
+         spyLogger.debugf("%s [%s] isReadOnly()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
       return mc.isJdbcReadOnly();
    }
@@ -233,8 +217,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       closed = true;
 
-      if (isSpy())
-         spyLogger.debugf("%s [%s] close()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+      if (spy)
+         spyLogger.debugf("%s [%s] close()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
       if (mc != null)
       {
@@ -277,8 +261,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public boolean isClosed() throws SQLException
    {
-      if (isSpy())
-         spyLogger.debugf("%s [%s] isClosed()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+      if (spy)
+         spyLogger.debugf("%s [%s] isClosed()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
       return closed;
    }
@@ -303,10 +287,10 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
-               spyLogger.debugf("%s [%s] createStatement()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+            if (spy)
+               spyLogger.debugf("%s [%s] createStatement()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return wrapStatement(mc.getConnection().createStatement(), isSpy(), getJndiName());
+            return wrapStatement(mc.getConnection().createStatement(), spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -330,13 +314,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] createStatement(%s, %s)", 
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 resultSetType, resultSetConcurrency);
 
             return wrapStatement(mc.getConnection().createStatement(resultSetType, resultSetConcurrency),
-                                 isSpy(), getJndiName());
+                                 spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -361,14 +345,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] createStatement(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 resultSetType, resultSetConcurrency, resultSetHoldability);
 
             return wrapStatement(mc.getConnection()
                                  .createStatement(resultSetType, resultSetConcurrency, resultSetHoldability),
-                                 isSpy(), getJndiName());
+                                 spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -402,13 +386,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] prepareStatement(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
 
             return wrapPreparedStatement(mc.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY,
                                                              ResultSet.CONCUR_READ_ONLY),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -433,13 +417,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] prepareStatement(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, resultSetType, resultSetConcurrency);
 
             return wrapPreparedStatement(mc.prepareStatement(sql, resultSetType, resultSetConcurrency),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -464,15 +448,15 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] prepareStatement(%s, %s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 
             return wrapPreparedStatement(mc.getConnection()
                                          .prepareStatement(sql, resultSetType,
                                                            resultSetConcurrency, resultSetHoldability),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -496,13 +480,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] prepareStatement(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, autoGeneratedKeys);
 
             return wrapPreparedStatement(mc.getConnection().prepareStatement(sql, autoGeneratedKeys),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -526,13 +510,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] prepareStatement(%s, %s)"
-                                , getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                , jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, Arrays.toString(columnIndexes));
 
             return wrapPreparedStatement(mc.getConnection().prepareStatement(sql, columnIndexes),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -556,13 +540,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] prepareStatement(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, Arrays.toString(columnNames));
 
             return wrapPreparedStatement(mc.getConnection().prepareStatement(sql, columnNames),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -596,11 +580,11 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
-               spyLogger.debugf("%s [%s] prepareCall(%s)", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
+            if (spy)
+               spyLogger.debugf("%s [%s] prepareCall(%s)", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
 
             return wrapCallableStatement(mc.prepareCall(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -624,13 +608,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] prepareCall(%s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, resultSetType, resultSetConcurrency);
 
             return wrapCallableStatement(mc.prepareCall(sql, resultSetType, resultSetConcurrency),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -655,14 +639,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] prepareCall(%s, %s, %s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 
             return wrapCallableStatement(mc.getConnection()
                                          .prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability),
-                                         isSpy(), getJndiName());
+                                         spy, jndiName);
          }
          catch (Throwable t)
          {
@@ -686,9 +670,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] nativeSQL(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
 
             return mc.getConnection().nativeSQL(sql);
          }
@@ -713,9 +697,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          checkStatus();
 
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] setAutoCommit(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, autocommit);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, autocommit);
 
          mc.setJdbcAutoCommit(autocommit);
       }
@@ -735,8 +719,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          checkStatus();
 
-         if (isSpy())
-            spyLogger.debugf("%s [%s] getAutoCommit()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+         if (spy)
+            spyLogger.debugf("%s [%s] getAutoCommit()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
          return mc.isJdbcAutoCommit();
       }
@@ -756,8 +740,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          checkTransaction();
 
-         if (isSpy())
-            spyLogger.debugf("%s [%s] commit()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+         if (spy)
+            spyLogger.debugf("%s [%s] commit()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
          mc.jdbcCommit();
       }
@@ -777,8 +761,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          checkTransaction();
 
-         if (isSpy())
-            spyLogger.debugf("%s [%s] rollback()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+         if (spy)
+            spyLogger.debugf("%s [%s] rollback()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
          mc.jdbcRollback();
       }
@@ -798,9 +782,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          checkTransaction();
 
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] rollback(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, savepoint);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, savepoint);
 
          mc.jdbcRollback(savepoint);
       }
@@ -821,8 +805,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
-               spyLogger.debugf("%s [%s] getMetaData()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+            if (spy)
+               spyLogger.debugf("%s [%s] getMetaData()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return mc.getConnection().getMetaData();
          }
@@ -848,9 +832,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setCatalog(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, catalog);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, catalog);
 
             mc.getConnection().setCatalog(catalog);
          }
@@ -876,9 +860,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] getCatalog()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return mc.getConnection().getCatalog();
          }
@@ -903,9 +887,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          checkStatus();
 
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] setTransactionIsolation(%s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, isolationLevel);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, isolationLevel);
 
          mc.setJdbcTransactionIsolation(isolationLevel);
       }
@@ -925,9 +909,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          checkStatus();
 
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getTransactionIsolation()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
          return mc.getJdbcTransactionIsolation();
       }
@@ -948,9 +932,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] getWarnings()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return mc.getConnection().getWarnings();
          }
@@ -976,8 +960,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
-               spyLogger.debugf("%s [%s] clearWarnings()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+            if (spy)
+               spyLogger.debugf("%s [%s] clearWarnings()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             mc.getConnection().clearWarnings();
          }
@@ -1004,8 +988,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
-               spyLogger.debugf("%s [%s] getTypeMap()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+            if (spy)
+               spyLogger.debugf("%s [%s] getTypeMap()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return mc.getConnection().getTypeMap();
          }
@@ -1032,9 +1016,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setTypeMap(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, typeMap);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, typeMap);
 
             mc.getConnection().setTypeMap(typeMap);
          }
@@ -1060,9 +1044,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setHoldability(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, holdability);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, holdability);
 
             mc.getConnection().setHoldability(holdability);
          }
@@ -1088,8 +1072,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
-               spyLogger.debugf("%s [%s] getHoldability()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+            if (spy)
+               spyLogger.debugf("%s [%s] getHoldability()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return mc.getConnection().getHoldability();
          }
@@ -1115,8 +1099,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
-               spyLogger.debugf("%s [%s] setSavepoint()", getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+            if (spy)
+               spyLogger.debugf("%s [%s] setSavepoint()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return mc.getConnection().setSavepoint();
          }
@@ -1142,9 +1126,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] setSavepoint(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, name);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, name);
 
             return mc.getConnection().setSavepoint(name);
          }
@@ -1170,9 +1154,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] releaseSavepoint(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION, savepoint);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, savepoint);
 
             mc.getConnection().releaseSavepoint(savepoint);
          }
@@ -1199,9 +1183,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] createArrayOf(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 typeName, Arrays.toString(elements));
 
             return c.createArrayOf(typeName, elements);
@@ -1228,9 +1212,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] createBlob()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return c.createBlob();
          }
@@ -1256,9 +1240,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] createClob()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return c.createClob();
          }
@@ -1284,9 +1268,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] createNClob()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return c.createNClob();
          }
@@ -1312,9 +1296,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] createSQLXML()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return c.createSQLXML();
          }
@@ -1340,9 +1324,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] createStruct(%s, %s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 typeName, Arrays.toString(attributes));
 
             return c.createStruct(typeName, attributes);
@@ -1369,9 +1353,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] getClientInfo()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
             return c.getClientInfo();
          }
@@ -1397,9 +1381,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] getClientInfo(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 name);
 
             return c.getClientInfo(name);
@@ -1426,9 +1410,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          Connection c = getUnderlyingConnection();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] isValid(%s)",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 timeout);
 
             return c.isValid(timeout);
@@ -1457,9 +1441,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             Connection c = getUnderlyingConnection();
             try
             {
-               if (isSpy())
+               if (spy)
                   spyLogger.debugf("%s [%s] setClientInfo(%s)",
-                                   getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                   jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                    properties);
 
                c.setClientInfo(properties);
@@ -1505,9 +1489,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             Connection c = getUnderlyingConnection();
             try
             {
-               if (isSpy())
+               if (spy)
                   spyLogger.debugf("%s [%s] setClientInfo(%s, %s)",
-                                   getJndiName(), Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                   jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                    name, value);
 
                c.setClientInfo(name, value);

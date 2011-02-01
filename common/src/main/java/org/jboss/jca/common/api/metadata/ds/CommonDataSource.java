@@ -99,4 +99,11 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
 
    public String getJndiName();
 
+   /**
+    * Get the spy.
+    *
+    * @return the spy.
+    */
+
+   public boolean isSpy();
 }

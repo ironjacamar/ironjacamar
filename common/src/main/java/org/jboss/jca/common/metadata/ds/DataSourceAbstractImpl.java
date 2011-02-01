@@ -99,6 +99,11 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected final String jndiName;
 
    /**
+   * spy
+   */
+   protected final boolean spy;
+
+   /**
     * Create a new DataSourceAbstractImpl.
     *
     * @param transactionIsolation transactionIsolation
@@ -112,11 +117,13 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
+    * @param spy spy
     * @throws ValidateException ValidateException
     */
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
       CommonSecurity security, Statement statement, Validation validation, String urlDelimiter,
-      String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled, String jndiName)
+      String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
+      boolean spy)
       throws ValidateException
    {
       super();
@@ -131,6 +138,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.poolName = poolName;
       this.enabled = enabled;
       this.jndiName = jndiName;
+      this.spy = spy;
       partialCommonValidation();
    }
 
@@ -228,6 +236,18 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    public final String getJndiName()
    {
       return jndiName;
+   }
+
+   /**
+    * Get the spy
+    *
+    * @return the spy.
+    */
+
+   @Override
+   public final boolean isSpy()
+   {
+      return spy;
    }
 
    /**

@@ -74,9 +74,9 @@ public class WrappedStatementJDK7 extends WrappedStatement
          Statement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] closeOnCompletion()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_STATEMENT);
 
             statement.closeOnCompletion();
          }
@@ -102,9 +102,9 @@ public class WrappedStatementJDK7 extends WrappedStatement
          Statement statement = getUnderlyingStatement();
          try
          {
-            if (isSpy())
+            if (spy)
                spyLogger.debugf("%s [%s] isCloseOnCompletion()",
-                                getJndiName(), Constants.SPY_LOGGER_PREFIX_STATEMENT);
+                                jndiName, Constants.SPY_LOGGER_PREFIX_STATEMENT);
 
             return statement.isCloseOnCompletion();
          }

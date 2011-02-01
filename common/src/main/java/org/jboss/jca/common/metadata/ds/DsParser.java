@@ -194,6 +194,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String poolName = null;
       boolean enabled = true;
       String jndiName = null;
+      boolean spy = false;
 
       for (Attribute attribute : XaDataSource.Attribute.values())
       {
@@ -215,6 +216,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
+            case SPY : {
+               spy = attributeAsBoolean(reader, attribute.getLocalName(), false);
+               break;
+            }
             default :
                break;
          }
@@ -232,7 +237,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
-                                              jndiName, xaDataSourceProperty, xaDataSourceClass, module,
+                                              jndiName, spy, xaDataSourceProperty, xaDataSourceClass, module,
                                               newConnectionSql, xaPool);
                }
                else
@@ -327,6 +332,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String poolName = null;
       boolean enabled = true;
       String jndiName = null;
+      boolean spy = false;
 
       for (Attribute attribute : XaDataSource.Attribute.values())
       {
@@ -348,6 +354,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
+            case SPY : {
+               spy = attributeAsBoolean(reader, attribute.getLocalName(), false);
+               break;
+            }
             default :
                break;
          }
@@ -366,7 +376,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                             connectionProperties, timeOutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                            enabled, jndiName, pool);
+                                            enabled, jndiName, spy, pool);
                }
                else
                {

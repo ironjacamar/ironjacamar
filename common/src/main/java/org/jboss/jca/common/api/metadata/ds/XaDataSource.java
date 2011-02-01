@@ -232,10 +232,15 @@ public interface XaDataSource extends CommonDataSource
       *
       */
       ENABLED("enabled"),
-      /** jndiName attribute
+      /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context");
+      USEJAVACONTEXT("use-java-context"),
+
+      /** spy attribute
+      *
+      */
+      SPY("spy");
 
       private final String name;
 

@@ -59,9 +59,9 @@ public class WrappedResultSetJDK7 extends WrappedResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              parameterIndex, type);
 
          return resultSet.getObject(parameterIndex, type);
@@ -80,9 +80,9 @@ public class WrappedResultSetJDK7 extends WrappedResultSet
       ResultSet resultSet = getUnderlyingResultSet();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
                              parameterName, type);
 
          return resultSet.getObject(parameterName, type);

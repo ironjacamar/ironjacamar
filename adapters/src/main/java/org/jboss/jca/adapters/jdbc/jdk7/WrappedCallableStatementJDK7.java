@@ -72,9 +72,9 @@ public class WrappedCallableStatementJDK7 extends WrappedCallableStatement
       CallableStatement statement = getUnderlyingStatement();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] closeOnCompletion()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT);
 
          statement.closeOnCompletion();
       }
@@ -92,9 +92,9 @@ public class WrappedCallableStatementJDK7 extends WrappedCallableStatement
       CallableStatement statement = getUnderlyingStatement();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] isCloseOnCompletion()",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT);
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT);
 
          return statement.isCloseOnCompletion();
       }
@@ -112,9 +112,9 @@ public class WrappedCallableStatementJDK7 extends WrappedCallableStatement
       CallableStatement statement = getUnderlyingStatement();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT,
                              parameterIndex, type);
 
          return statement.getObject(parameterIndex, type);
@@ -133,9 +133,9 @@ public class WrappedCallableStatementJDK7 extends WrappedCallableStatement
       CallableStatement statement = getUnderlyingStatement();
       try
       {
-         if (isSpy())
+         if (spy)
             spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             getJndiName(), Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT,
+                             jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT,
                              parameterName, type);
 
          return statement.getObject(parameterName, type);

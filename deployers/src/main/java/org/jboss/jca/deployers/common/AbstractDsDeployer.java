@@ -40,6 +40,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -290,6 +291,13 @@ public abstract class AbstractDsDeployer
 
       pool.setName(poolName);
 
+      // Spy
+      if (ds.isSpy())
+      {
+         injectValue(mcf, "setSpy", Boolean.TRUE);
+         injectValue(mcf, "setJndiName", jndiName);
+      }
+
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }
@@ -374,6 +382,13 @@ public abstract class AbstractDsDeployer
 
       pool.setName(poolName);
 
+      // Spy
+      if (ds.isSpy())
+      {
+         injectValue(mcf, "setSpy", Boolean.TRUE);
+         injectValue(mcf, "setJndiName", jndiName);
+      }
+
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }
@@ -426,6 +441,33 @@ public abstract class AbstractDsDeployer
       }
 
       return pc;
+   }
+
+   /**
+    * Inject value
+    * @param o The object
+    * @param methodName The method name
+    * @param value The value
+    * @exception Exception Thrown in case of an error
+    */
+   private void injectValue(Object o, String methodName, Object value) throws Exception
+   {
+      // Method has to be public
+      Method[] methods = o.getClass().getMethods();
+      if (methods != null)
+      {
+         boolean found = false;
+         for (int i = 0; !found && i < methods.length; i++)
+         {
+            Method m = methods[i];
+
+            if (m.getName().equals(methodName) && m.getParameterTypes().length == 1)
+            {
+               m.invoke(o, value);
+               found = true;
+            }
+         }
+      }
    }
 
    /**

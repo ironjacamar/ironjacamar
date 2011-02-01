@@ -77,6 +77,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
+    * @param spy spy
     * @param pool pool
     * @throws ValidateException ValidateException
     */
@@ -84,10 +85,10 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, TimeOut timeOut,
       CommonSecurity security, Statement statement, Validation validation, String urlDelimiter,
       String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
-      boolean enabled, String jndiName, CommonPool pool) throws ValidateException
+      boolean enabled, String jndiName, boolean spy, CommonPool pool) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
-            urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName);
+            urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName, spy);
       this.connectionUrl = connectionUrl;
       this.driverClass = driverClass;
       this.module = module;
