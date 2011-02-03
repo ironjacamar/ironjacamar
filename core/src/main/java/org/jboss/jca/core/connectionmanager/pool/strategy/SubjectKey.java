@@ -62,7 +62,8 @@ class SubjectKey
    public int hashCode()
    {
       if (hashCode == Integer.MAX_VALUE)
-         hashCode = SubjectActions.hashCode(subject);
+         hashCode = SecurityActions.hashCode(subject);
+
       return hashCode;
    }
 
@@ -82,7 +83,7 @@ class SubjectKey
       }
       SubjectKey other = (SubjectKey) obj;
       
-      return SubjectActions.equals(subject, other.subject)
+      return SecurityActions.equals(subject, other.subject)
          && separateNoTx == other.separateNoTx;
    }
    

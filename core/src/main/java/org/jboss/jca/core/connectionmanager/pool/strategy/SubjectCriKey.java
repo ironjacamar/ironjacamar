@@ -76,7 +76,7 @@ class SubjectCriKey
    {
       if (hashCode == Integer.MAX_VALUE)
       {
-         hashCode = SubjectActions.hashCode(subject) ^ cri.hashCode();  
+         hashCode = SecurityActions.hashCode(subject) ^ cri.hashCode();  
       }
       
       return hashCode;
@@ -100,7 +100,7 @@ class SubjectCriKey
       
       SubjectCriKey other = (SubjectCriKey) obj;
       
-      return SubjectActions.equals(subject, other.subject) 
+      return SecurityActions.equals(subject, other.subject) 
          && cri.equals(other.cri)
          && separateNoTx == other.separateNoTx;
    }
