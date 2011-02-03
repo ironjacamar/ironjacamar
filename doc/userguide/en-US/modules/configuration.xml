@@ -568,6 +568,14 @@ system/web.xml
               </entry>
             </row>
             <row>
+              <entry><code>AcceptQueueSize</code></entry>
+              <entry><code>int</code></entry>
+              <entry>
+                Set the accept queue size for the Jetty connector
+                <para>Default: <code>64</code></para>
+              </entry>
+            </row>
+            <row>
               <entry><code>ExecutorService</code></entry>
               <entry><code>java.util.concurrent.&#x200B;ExecutorService</code></entry>
               <entry>

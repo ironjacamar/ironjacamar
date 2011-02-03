@@ -52,6 +52,9 @@ public class WebServer implements DeployerPhases
    /** The port */
    private int port;
 
+   /** The AcceptQueueSize */
+   private int acceptQueueSize;
+
    /** Executor service */
    private ExecutorService executorService;
 
@@ -66,6 +69,7 @@ public class WebServer implements DeployerPhases
       this.server = null;
       this.host = "localhost";
       this.port = 8080;
+      this.acceptQueueSize = 64;
       this.executorService = null;
       this.handlers = new HandlerList();
    }
@@ -98,6 +102,24 @@ public class WebServer implements DeployerPhases
    }
 
    /**
+    * Get the accept queue size
+    * @return The value
+    */
+   public int getAcceptQueueSize()
+   {
+      return acceptQueueSize;
+   }
+
+   /**
+    * Set the accept queue size
+    * @param v The value
+    */
+   public void setAcceptQueueSize(int v)
+   {
+      this.acceptQueueSize = v;
+   }
+
+   /**
     * Set the executor service
     * @param service The service
     */
@@ -116,9 +138,11 @@ public class WebServer implements DeployerPhases
 
       server = new Server();
 
-      Connector connector = new SocketConnector();
+      SocketConnector connector = new SocketConnector();
       connector.setHost(host);
       connector.setPort(port);
+      connector.setAcceptors(2 * Runtime.getRuntime().availableProcessors());
+      connector.setAcceptQueueSize(acceptQueueSize);
 
       server.setConnectors(new Connector[]{connector});
 
