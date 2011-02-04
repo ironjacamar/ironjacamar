@@ -181,15 +181,19 @@ public class WebServer implements DeployerPhases
     */
    public void postDeploy() throws Throwable
    {
-      try
+      if (server != null &&
+          handlers != null && handlers.getHandlers() != null && handlers.getHandlers().length > 0)
       {
-         server.setHandler(handlers);
+         try
+         {
+            server.setHandler(handlers);
       
-         server.start();
-      }
-      catch (Exception e)
-      {
-         log.error("Could not start Jetty webserver");
+            server.start();
+         }
+         catch (Exception e)
+         {
+            log.error("Could not start Jetty webserver", e);
+         }
       }
    }
 
