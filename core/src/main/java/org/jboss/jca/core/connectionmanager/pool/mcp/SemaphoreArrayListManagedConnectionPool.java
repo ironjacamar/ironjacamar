@@ -184,6 +184,19 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    }
 
    /**
+    * Check if the pool has reached a certain size
+    * @param size The size
+    * @return True if reached; otherwise false
+    */
+   private boolean isSize(int size)
+   {
+      synchronized (cls)
+      {
+         return (cls.size() + checkedOut.size()) >= size;
+      }
+   }
+
+   /**
     * {@inheritDoc}
     */
    public void reenable()
@@ -402,7 +415,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          checkedOut.remove(cl);
 
          // This is really an error
-         if (!kill && cls.size() >= poolConfiguration.getMaxSize())
+         if (!kill && isSize(poolConfiguration.getMaxSize() + 1))
          {
             log.warn("Destroying returned connection, maximum pool size exceeded " + cl);
             kill = true;
@@ -591,7 +604,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      return;
 
                   // We already have enough connections
-                  if (poolConfiguration.getMinSize() - (cls.size() + checkedOut.size()) <= 0)
+                  if (isSize(poolConfiguration.getMinSize()))
                      return;
 
                   // Create a connection to fill the pool
@@ -687,7 +700,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       
       if (poolConfiguration.isStrictMin())
       {
-         remove = cls.size() > poolConfiguration.getMinSize();
+         // Add 1 to min-pool-size since it is strict
+         remove = isSize(poolConfiguration.getMinSize() + 1);
 
          if (trace)
             log.trace("StrictMin is active. Current connection will be removed is " + remove);
