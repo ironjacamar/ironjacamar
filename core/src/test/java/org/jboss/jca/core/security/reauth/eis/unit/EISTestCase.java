@@ -22,10 +22,7 @@
 
 package org.jboss.jca.core.security.reauth.eis.unit;
 
-import org.jboss.jca.core.security.reauth.eis.Auth;
-import org.jboss.jca.core.security.reauth.eis.Close;
-import org.jboss.jca.core.security.reauth.eis.Connect;
-import org.jboss.jca.core.security.reauth.eis.Echo;
+import org.jboss.jca.core.security.reauth.eis.Commands;
 import org.jboss.jca.core.security.reauth.eis.ReauthServer;
 import org.jboss.jca.core.security.reauth.eis.SimpleCRI;
 
@@ -82,7 +79,7 @@ public class EISTestCase
          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 
          // Connect
-         oos.writeByte(Connect.KEY);
+         oos.writeByte(Commands.CONNECT);
          oos.flush();
 
          ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
@@ -92,7 +89,7 @@ public class EISTestCase
 
          // Write
          Integer payload = new Integer(0);
-         oos.writeByte(Echo.KEY);
+         oos.writeByte(Commands.ECHO);
          oos.writeObject(payload);
          oos.flush();
 
@@ -103,7 +100,7 @@ public class EISTestCase
          assertEquals(payload, result);
 
          // Close
-         oos.writeByte(Close.KEY);
+         oos.writeByte(Commands.CLOSE);
          oos.flush();
       }
       finally
@@ -141,7 +138,7 @@ public class EISTestCase
          ObjectOutputStream oos1 = new ObjectOutputStream(socket1.getOutputStream());
 
          // Connect
-         oos1.writeByte(Connect.KEY);
+         oos1.writeByte(Commands.CONNECT);
          oos1.flush();
 
          ObjectInputStream ois1 = new ObjectInputStream(socket1.getInputStream());
@@ -153,7 +150,7 @@ public class EISTestCase
          Integer payload = new Integer(0);
 
          // Write
-         oos1.writeByte(Echo.KEY);
+         oos1.writeByte(Commands.ECHO);
          oos1.writeObject(payload);
          oos1.flush();
 
@@ -170,7 +167,7 @@ public class EISTestCase
          ObjectOutputStream oos2 = new ObjectOutputStream(socket2.getOutputStream());
 
          // Connect
-         oos2.writeByte(Connect.KEY);
+         oos2.writeByte(Commands.CONNECT);
          oos2.flush();
 
          ObjectInputStream ois2 = new ObjectInputStream(socket2.getInputStream());
@@ -179,9 +176,9 @@ public class EISTestCase
          assertTrue(!granted2.booleanValue());
 
          // Close
-         oos1.writeByte(Close.KEY);
+         oos1.writeByte(Commands.CLOSE);
          oos1.flush();
-         oos2.writeByte(Close.KEY);
+         oos2.writeByte(Commands.CLOSE);
          oos2.flush();
       }
       finally
@@ -232,7 +229,7 @@ public class EISTestCase
 
          // Connect
          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-         oos.writeByte(Connect.KEY);
+         oos.writeByte(Commands.CONNECT);
          oos.flush();
 
          ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
@@ -244,7 +241,7 @@ public class EISTestCase
          SimpleCRI payload = new SimpleCRI(userName, password);
 
          // Write
-         oos.writeByte(Auth.KEY);
+         oos.writeByte(Commands.AUTH);
          oos.writeUTF(payload.getUserName());
          oos.writeUTF(payload.getPassword());
          oos.flush();
@@ -256,7 +253,7 @@ public class EISTestCase
          assertEquals(userName, result);
 
          // Close
-         oos.writeByte(Close.KEY);
+         oos.writeByte(Commands.CLOSE);
          oos.flush();
       }
       finally
@@ -297,7 +294,7 @@ public class EISTestCase
 
          // Connect
          ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-         oos.writeByte(Connect.KEY);
+         oos.writeByte(Commands.CONNECT);
          oos.flush();
 
          ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
@@ -309,7 +306,7 @@ public class EISTestCase
          SimpleCRI payload1 = new SimpleCRI(userName1, password1);
 
          // Write
-         oos.writeByte(Auth.KEY);
+         oos.writeByte(Commands.AUTH);
          oos.writeUTF(payload1.getUserName());
          oos.writeUTF(payload1.getPassword());
          oos.flush();
@@ -324,7 +321,7 @@ public class EISTestCase
          SimpleCRI payload2 = new SimpleCRI(userName2, password2);
 
          // Write
-         oos.writeByte(Auth.KEY);
+         oos.writeByte(Commands.AUTH);
          oos.writeUTF(payload2.getUserName());
          oos.writeUTF(payload2.getPassword());
          oos.flush();
@@ -336,7 +333,7 @@ public class EISTestCase
          assertEquals(userName2, result);
 
          // Close
-         oos.writeByte(Close.KEY);
+         oos.writeByte(Commands.CLOSE);
          oos.flush();
       }
       finally

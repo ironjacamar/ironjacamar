@@ -57,6 +57,9 @@ public class Interaction implements Runnable
    /** Output */
    private ObjectOutputStream oos;
 
+   /** The user name */
+   private String userName;
+
    /**
     * Constructor
     * @param socket The socket
@@ -70,6 +73,7 @@ public class Interaction implements Runnable
       this.callback = callback;
       this.ois = null;
       this.oos = null;
+      this.userName = null;
    }
 
    /**
@@ -92,31 +96,35 @@ public class Interaction implements Runnable
 
             log.debugf("Command: %d for %s", command, socket);
 
-            if (command == Connect.KEY)
+            if (command == Commands.CONNECT)
             {
                invoker = new Connect();
 
                arguments = new Serializable[1];
                arguments[0] = granted ? Boolean.TRUE : Boolean.FALSE;
             }
-            else if (command == Close.KEY)
+            else if (command == Commands.CLOSE)
             {
                close = true;
             }
-            else if (granted && command == Echo.KEY)
+            else if (granted && command == Commands.ECHO)
             {
-               invoker = new Echo();
+               invoker = new Echo(this);
 
                arguments = new Serializable[1];
                arguments[0] = (Serializable)ois.readObject();
             }
-            else if (granted && command == Auth.KEY)
+            else if (granted && command == Commands.AUTH)
             {
-               invoker = new Auth();
+               invoker = new Auth(this);
 
                arguments = new Serializable[2];
                arguments[0] = (Serializable)ois.readUTF();
                arguments[1] = (Serializable)ois.readUTF();
+            }
+            else if (granted && command == Commands.UNAUTH)
+            {
+               invoker = new Unauth(this);
             }
             else
             {
@@ -157,6 +165,24 @@ public class Interaction implements Runnable
 
          callback.decrementAndGet();
       }
+   }
+
+   /**
+    * Get the user name
+    * @return The value
+    */
+   String getUserName()
+   {
+      return userName;
+   }
+
+   /**
+    * Set the user name
+    * @param v The value
+    */
+   void setUserName(String v)
+   {
+      userName = v;
    }
 
    /**

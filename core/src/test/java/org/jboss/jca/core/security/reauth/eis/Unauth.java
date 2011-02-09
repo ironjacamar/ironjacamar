@@ -28,13 +28,13 @@ import java.util.Arrays;
 import org.jboss.logging.Logger;
 
 /**
- * Represents an echo command
+ * Represents an unauth command
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class Echo implements Invoker
+public class Unauth implements Invoker
 {
    /** The logger */
-   private Logger log = Logger.getLogger(Echo.class);
+   private Logger log = Logger.getLogger(Unauth.class);
 
    /** The interaction */
    private Interaction interaction;
@@ -43,7 +43,7 @@ public class Echo implements Invoker
     * Constructor
     * @param interaction The interaction
     */
-   public Echo(Interaction interaction)
+   public Unauth(Interaction interaction)
    {
       this.interaction = interaction;
    }
@@ -55,13 +55,17 @@ public class Echo implements Invoker
     */
    public Serializable invoke(Serializable[] args)
    {
-      if (args == null || args.length != 1)
+      if (args != null)
          return new IllegalArgumentException("Unsupported argument list: " + Arrays.toString(args));
 
-      Serializable s = args[0];
+      log.infof("Unauth: %s", interaction.getUserName() != null ? interaction.getUserName() : "Anonymous");
 
-      log.infof("%s sent %s", interaction.getUserName() != null ? interaction.getUserName() : "Anonymous", s);
+      if (interaction.getUserName() != null)
+      {
+         interaction.setUserName(null);
+         return Boolean.TRUE;
+      }
 
-      return s;
+      return Boolean.FALSE;
    }
 }

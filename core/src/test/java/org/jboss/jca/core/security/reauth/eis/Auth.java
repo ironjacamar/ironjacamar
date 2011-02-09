@@ -33,17 +33,19 @@ import org.jboss.logging.Logger;
  */
 public class Auth implements Invoker
 {
-   /** The key */
-   public static final byte KEY = 3;
-
    /** The logger */
    private Logger log = Logger.getLogger(Auth.class);
 
+   /** The interaction */
+   private Interaction interaction;
+
    /**
     * Auth
+    * @param interaction The interaction
     */
-   public Auth()
+   public Auth(Interaction interaction)
    {
+      this.interaction = interaction;
    }
 
    /**
@@ -60,6 +62,8 @@ public class Auth implements Invoker
       String password = (String)args[1];
 
       log.infof("UserName=%s Password=%s", userName, password);
+
+      interaction.setUserName(userName);
 
       return userName;
    }

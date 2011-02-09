@@ -33,9 +33,6 @@ import org.jboss.logging.Logger;
  */
 public class Connect implements Invoker
 {
-   /** The key */
-   public static final byte KEY = 0;
-
    /** The logger */
    private Logger log = Logger.getLogger(Connect.class);
 
@@ -58,7 +55,7 @@ public class Connect implements Invoker
 
       Serializable s = args[0];
 
-      log.infof("S=%s", s);
+      log.infof("Connected=%s", s);
 
       return s;
    }
