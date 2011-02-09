@@ -99,6 +99,26 @@ public class EISTestCase
          // Assert
          assertEquals(payload, result);
 
+         // Write
+         oos.writeByte(Commands.GETAUTH);
+         oos.flush();
+
+         // Read
+         result = ois.readObject();
+
+         // Assert
+         assertEquals("Anonymous", result);
+
+         // Write
+         oos.writeByte(Commands.UNAUTH);
+         oos.flush();
+
+         // Read
+         result = ois.readObject();
+
+         // Assert
+         assertTrue(!((Boolean)result).booleanValue());
+
          // Close
          oos.writeByte(Commands.CLOSE);
          oos.flush();
@@ -251,6 +271,26 @@ public class EISTestCase
 
          // Assert
          assertEquals(userName, result);
+
+         // Write
+         oos.writeByte(Commands.GETAUTH);
+         oos.flush();
+
+         // Read
+         result = ois.readObject();
+
+         // Assert
+         assertEquals(userName, result);
+
+         // Write
+         oos.writeByte(Commands.UNAUTH);
+         oos.flush();
+
+         // Read
+         result = ois.readObject();
+
+         // Assert
+         assertTrue(((Boolean)result).booleanValue());
 
          // Close
          oos.writeByte(Commands.CLOSE);
