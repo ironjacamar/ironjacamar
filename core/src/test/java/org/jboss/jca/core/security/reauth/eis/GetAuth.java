@@ -22,27 +22,46 @@
 
 package org.jboss.jca.core.security.reauth.eis;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
+import org.jboss.logging.Logger;
+
 /**
- * Represents the available commands
+ * Represents a getauth command
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface Commands
+public class GetAuth implements Invoker
 {
-   /** CONNECT */
-   public static final byte CONNECT = 0;
+   /** The logger */
+   private Logger log = Logger.getLogger(GetAuth.class);
 
-   /** CLOSE */
-   public static final byte CLOSE = 1;
+   /** The interaction */
+   private Interaction interaction;
 
-   /** ECHO */
-   public static final byte ECHO = 2;
+   /**
+    * Constructor
+    * @param interaction The interaction
+    */
+   public GetAuth(Interaction interaction)
+   {
+      this.interaction = interaction;
+   }
 
-   /** AUTH */
-   public static final byte AUTH = 3;
+   /**
+    * Invoke
+    * @param args The arguments
+    * @return The return value
+    */
+   public Serializable invoke(Serializable[] args)
+   {
+      if (args != null)
+         return new IllegalArgumentException("Unsupported argument list: " + Arrays.toString(args));
 
-   /** UNAUTH */
-   public static final byte UNAUTH = 4;
+      String result = interaction.getUserName() != null ? interaction.getUserName() : "Anonymous";
 
-   /** GETAUTH */
-   public static final byte GETAUTH = 5;
+      log.infof("GetAuth: %s", result);
+
+      return result;
+   }
 }

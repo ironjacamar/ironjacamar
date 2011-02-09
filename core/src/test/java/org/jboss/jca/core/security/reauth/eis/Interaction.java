@@ -126,6 +126,10 @@ public class Interaction implements Runnable
             {
                invoker = new Unauth(this);
             }
+            else if (granted && command == Commands.GETAUTH)
+            {
+               invoker = new GetAuth(this);
+            }
             else
             {
                log.warnf("Unknown command: %d for %s", command, socket);
