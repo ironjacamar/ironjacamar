@@ -67,6 +67,8 @@ public class HelloWorldManagedConnectionFactory
     */
    public HelloWorldManagedConnectionFactory()
    {
+      this.ra = null;
+      this.logwriter = null;
    }
 
    /**
@@ -78,7 +80,7 @@ public class HelloWorldManagedConnectionFactory
     */
    public Object createConnectionFactory() throws ResourceException
    {
-      return createConnectionFactory(new HelloWorldConnectionManager());
+      throw new ResourceException("This resource adapter doesn't support non-managed environments");
    }
 
    /**

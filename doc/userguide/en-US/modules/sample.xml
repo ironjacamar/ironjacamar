@@ -94,13 +94,6 @@ ant test
       </programlisting>
     </section>
 
-    <section id="sample_helloworld_cm">
-      <title>HelloWorld Connection Manager</title>
-      <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionManager.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-      </programlisting>
-    </section>
-
     <section id="sample_helloworld_metadata">
       <title>HelloWorld Managed Connection MetaData</title>
       <programlisting language="java">

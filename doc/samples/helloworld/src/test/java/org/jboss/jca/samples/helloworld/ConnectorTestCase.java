@@ -66,7 +66,6 @@ public class ConnectorTestCase
          HelloWorldManagedConnectionFactory.class, 
          HelloWorldManagedConnection.class, 
          HelloWorldManagedConnectionMetaData.class, 
-         HelloWorldConnectionManager.class, 
          HelloWorldConnectionFactory.class, 
          HelloWorldConnectionFactoryImpl.class, 
          HelloWorldConnection.class, 
