@@ -49,6 +49,14 @@ public class CfCodeGen extends AbstractCodeGen
       int indent = 1;
       
       writeIndent(out, indent);
+      out.write("/** The serial version UID */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private static final long serialVersionUID = 1L;");
+      writeEol(out);
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("/** Reference */");
       writeEol(out);
       writeIndent(out, indent);
