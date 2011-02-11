@@ -44,6 +44,12 @@ public class Ra16XmlGen extends RaXmlGen
       out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
       writeEol(out);
       writeEol(out);
+      out.write("<!--");
+      writeEol(out);
+      writeheader(null, out);
+      out.write("-->");
+      writeEol(out);
+      writeEol(out);
       out.write("<connector xmlns=\"http://java.sun.com/xml/ns/javaee\"");
       writeEol(out);
       out.write("           xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");

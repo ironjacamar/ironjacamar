@@ -87,6 +87,12 @@ public class Ra10XmlGen extends RaXmlGen
       out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
       writeEol(out);
       writeEol(out);
+      out.write("<!--");
+      writeEol(out);
+      writeheader(null, out);
+      out.write("-->");
+      writeEol(out);
+      writeEol(out);
       out.write("<!DOCTYPE connector PUBLIC");
       writeEol(out);
       out.write(" \"-//Sun Microsystems, Inc.//DTD Connector 1.0//EN\"");
