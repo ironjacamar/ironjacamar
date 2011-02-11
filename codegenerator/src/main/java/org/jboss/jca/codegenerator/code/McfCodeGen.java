@@ -261,7 +261,7 @@ public class McfCodeGen extends PropsCodeGen
          writeIfRaNull(out, indent);
       }
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call createConnectionFactory\");");
+      out.write("log.finest(\"createConnectionFactory()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       if (def.isUseCciConnection())
@@ -373,7 +373,7 @@ public class McfCodeGen extends PropsCodeGen
          writeIfRaNull(out, indent);
       }
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call createManagedConnection\");");
+      out.write("log.finest(\"createManagedConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null;");
@@ -420,7 +420,7 @@ public class McfCodeGen extends PropsCodeGen
          writeIfRaNull(out, indent);
       }
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call matchManagedConnections\");");
+      out.write("log.finest(\"matchManagedConnections()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null;");
@@ -459,7 +459,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("public PrintWriter getLogWriter() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call getLogWriter\");");
+      out.write("log.finest(\"getLogWriter()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return logwriter;");
@@ -489,7 +489,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("public void setLogWriter(PrintWriter out) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call setLogWriter\");");
+      out.write("log.finest(\"setLogWriter()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("logwriter = out;");
@@ -526,7 +526,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("public ResourceAdapter getResourceAdapter()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call getResourceAdapter\");");
+      out.write("log.finest(\"getResourceAdapter()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return ra;");
@@ -553,7 +553,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("public void setResourceAdapter(ResourceAdapter ra)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call setResourceAdapter\");");
+      out.write("log.finest(\"setResourceAdapter()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("this.ra = ra;");

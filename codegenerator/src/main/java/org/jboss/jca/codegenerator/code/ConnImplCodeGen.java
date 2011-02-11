@@ -166,7 +166,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
                }
                writeLeftCurlyBracket(out, indent);
                writeIndent(out, indent + 1);
-               out.write("log.finest(\"call " + method.getMethodName() + "\");");
+               out.write("log.finest(\"" + method.getMethodName() + "()\");");
                writeEol(out);
                if (!method.getReturnType().equals("void"))
                {
@@ -195,7 +195,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
          out.write("public void callMe()");
          writeLeftCurlyBracket(out, indent);
          writeIndent(out, indent + 1);
-         out.write("log.finest(\"call callMe\");");
+         out.write("log.finest(\"callMe()\");");
 
          writeRightCurlyBracket(out, indent);
       }

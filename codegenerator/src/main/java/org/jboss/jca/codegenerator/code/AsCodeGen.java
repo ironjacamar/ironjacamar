@@ -172,7 +172,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("public void validate() throws InvalidPropertyException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call validate\");");
+      out.write("log.finest(\"validate()\");");
 
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -207,7 +207,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("public ResourceAdapter getResourceAdapter()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call getResourceAdapter\");");
+      out.write("log.finest(\"getResourceAdapter()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return ra;");
@@ -234,7 +234,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("public void setResourceAdapter(ResourceAdapter ra)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call setResourceAdapter\");");
+      out.write("log.finest(\"setResourceAdapter()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("this.ra = ra;");

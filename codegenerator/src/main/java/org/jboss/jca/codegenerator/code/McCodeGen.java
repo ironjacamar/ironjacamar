@@ -162,7 +162,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call getConnection\");");
+      out.write("log.finest(\"getConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null;");
@@ -195,7 +195,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public void associateConnection(Object connection) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call associateConnection\");");
+      out.write("log.finest(\"associateConnection()\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -230,7 +230,7 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call cleanup\");");
+      out.write("log.finest(\"cleanup()\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -254,7 +254,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public void destroy() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call destroy\");");
+      out.write("log.finest(\"destroy()\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -288,7 +288,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public void addConnectionEventListener(ConnectionEventListener listener)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call addConnectionEventListener\");");
+      out.write("log.finest(\"addConnectionEventListener()\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -312,7 +312,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public void removeConnectionEventListener(ConnectionEventListener listener)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call removeConnectionEventListener\");");
+      out.write("log.finest(\"removeConnectionEventListener()\");");
 
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -349,7 +349,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public PrintWriter getLogWriter() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call getLogWriter\");");
+      out.write("log.finest(\"getLogWriter()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null;");
@@ -379,7 +379,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public void setLogWriter(PrintWriter out) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call setLogWriter\");");
+      out.write("log.finest(\"setLogWriter()\");");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -416,7 +416,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public LocalTransaction getLocalTransaction() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call getLocalTransaction\");");
+      out.write("log.finest(\"getLocalTransaction()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null;");
@@ -446,7 +446,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public XAResource getXAResource() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call getXAResource\");");
+      out.write("log.finest(\"getXAResource()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null;");
@@ -486,7 +486,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public ManagedConnectionMetaData getMetaData() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
-      out.write("log.finest(\"call getMetaData\");");
+      out.write("log.finest(\"getMetaData()\");");
       writeEol(out);
       
       writeIndent(out, indent + 1);
