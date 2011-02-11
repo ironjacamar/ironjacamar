@@ -30,6 +30,7 @@ import org.jboss.jca.codegenerator.xml.IronjacamarXmlGen;
 import org.jboss.jca.codegenerator.xml.IvySettingsXmlGen;
 import org.jboss.jca.codegenerator.xml.IvyXmlGen;
 import org.jboss.jca.codegenerator.xml.MbeanXmlGen;
+import org.jboss.jca.codegenerator.xml.PackageHtmlGen;
 import org.jboss.jca.codegenerator.xml.PomXmlGen;
 import org.jboss.jca.codegenerator.xml.RaXmlGen;
 
@@ -63,6 +64,8 @@ public class BaseProfile implements Profile
    @Override
    public void generate(Definition def)
    {
+      generatePackageHtml(def, def.getOutputDir(), null);
+      
       generateRaCode(def);
       generateOutboundCode(def);
       generateInboundCode(def);
@@ -151,6 +154,7 @@ public class BaseProfile implements Profile
          generateClassCode(def, "Ml", "inflow");
          generateClassCode(def, "As", "inflow");
          generateClassCode(def, "Activation", "inflow");
+         generatePackageHtml(def, def.getOutputDir(), "inflow");
       }
    }
 
@@ -165,6 +169,7 @@ public class BaseProfile implements Profile
       {
          generateClassCode(def, "MbeanInterface", "mbean");
          generateClassCode(def, "MbeanImpl", "mbean");
+         generatePackageHtml(def, def.getOutputDir(), "mbean");
       }
    }
    
@@ -417,6 +422,31 @@ public class BaseProfile implements Profile
          MbeanXmlGen mbGen = new MbeanXmlGen();
          mbGen.generate(def, mbfw);
          mbfw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+   }
+   
+   /**
+    * generate package.html
+    * @param def Definition
+    * @param outputDir output directory
+    * @param subDir sub-directory
+    */
+   void generatePackageHtml(Definition def, String outputDir, String subDir)
+   {
+      try
+      {
+         FileWriter fw = null;
+         if (subDir == null)
+            fw = Utils.createSrcFile("package.html", def.getRaPackage(), def.getOutputDir());
+         else
+            fw = Utils.createSrcFile("package.html", def.getRaPackage() + "." + subDir, def.getOutputDir());
+         PackageHtmlGen phGen = new PackageHtmlGen();
+         phGen.generate(def, fw);
+         fw.close();
       }
       catch (IOException ioe)
       {
