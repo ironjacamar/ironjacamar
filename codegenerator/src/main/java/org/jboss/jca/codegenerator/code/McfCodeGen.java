@@ -301,12 +301,8 @@ public class McfCodeGen extends PropsCodeGen
       }
 
       writeIndent(out, indent + 1);
-      if (def.isUseCciConnection())
-         out.write("return new " + def.getCciConnFactoryClass() + "(new " + def.getCmClass() + "());");
-      else
-      {
-         out.write("return new " + def.getCfClass() + "(new " + def.getCmClass() + "());");
-      }
+      out.write("throw new ResourceException(\"This resource adapter doesn't support non-managed environments\");");
+
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

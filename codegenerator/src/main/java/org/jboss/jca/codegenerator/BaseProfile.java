@@ -122,7 +122,6 @@ public class BaseProfile implements Profile
          generateClassCode(def, "Mcf");
          generateClassCode(def, "Mc");
          generateClassCode(def, "McMeta");
-         generateClassCode(def, "Cm");
    
          if (!def.isUseCciConnection())
          {

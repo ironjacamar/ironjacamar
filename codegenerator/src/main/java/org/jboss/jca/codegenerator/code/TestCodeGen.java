@@ -175,8 +175,7 @@ public class TestCodeGen extends AbstractCodeGen
       {
          out.write(def.getRaClass() + ".class, ");
       }
-      out.write(def.getMcfClass() + ".class, " + def.getMcClass() + ".class, " + 
-         def.getMcMetaClass() + ".class, " + def.getCmClass() + ".class, ");
+      out.write(def.getMcfClass() + ".class, " + def.getMcClass() + ".class, ");
       if (def.isUseCciConnection())
       {
          out.write(def.getCciConnFactoryClass() + ".class, " + def.getCciConnFactoryClass() + ".class, " + 
