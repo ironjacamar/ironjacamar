@@ -24,7 +24,7 @@
         <max-pool-size>64</max-pool-size>
       </pool>
       <security>
-        <password>bbb</password>
+         <application />
       </security>
       <timeout>
         <blocking-timeout-millis>5000</blocking-timeout-millis>
@@ -36,8 +36,8 @@
       <config-property name="LogConfigFile">ASAP_SAP_1_0.xml</config-property>
       <config-property name="RootLogContext">ASAP_SAP_1_0</config-property>
       <security>
-        <user-name>aaa</user-name>
-        </security>
+        <application />
+      </security>
       <timeout>
         <blocking-timeout-millis>5000</blocking-timeout-millis>
         <idle-timeout-minutes>15</idle-timeout-minutes>

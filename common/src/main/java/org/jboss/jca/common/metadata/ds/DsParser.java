@@ -22,10 +22,10 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.JdbcAdapterExtension;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
@@ -177,7 +177,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
-      CommonSecurity securitySettings = null;
+      DsSecurity securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
@@ -285,7 +285,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case SECURITY : {
-                     securitySettings = parseSecuritySettings(reader);
+                     securitySettings = parseDsSecuritySettings(reader);
                      break;
                   }
                   case STATEMENT : {
@@ -319,7 +319,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       TransactionIsolation transactionIsolation = null;
       Map<String, String> connectionProperties = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
-      CommonSecurity securitySettings = null;
+      DsSecurity securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
@@ -427,7 +427,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case SECURITY : {
-                     securitySettings = parseSecuritySettings(reader);
+                     securitySettings = parseDsSecuritySettings(reader);
                      break;
                   }
                   case STATEMENT : {
@@ -440,6 +440,58 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case VALIDATION : {
                      validationSettings = parseValidationSetting(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   private DsSecurity parseDsSecuritySettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+
+      String userName = null;
+      String password = null;
+      String securityDomain = null;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
+               {
+
+                  return new DsSecurityImpl(userName, password, securityDomain);
+               }
+               else
+               {
+                  if (DsSecurity.Tag.forName(reader.getLocalName()) == DsSecurity.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (DsSecurity.Tag.forName(reader.getLocalName()))
+               {
+                  case PASSWORD : {
+                     password = elementAsString(reader);
+                     break;
+                  }
+                  case USERNAME : {
+                     userName = elementAsString(reader);
+                     break;
+                  }
+                  case SECURITY_DOMAIN : {
+                     securityDomain = elementAsString(reader);
                      break;
                   }
                   default :

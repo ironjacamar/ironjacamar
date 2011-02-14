@@ -38,54 +38,40 @@ public class CommonSecurityImpl implements CommonSecurity
    /** The serialVersionUID */
    private static final long serialVersionUID = -5842402120520191086L;
 
-   private final String userName;
+   private final String securityDomainManaged;
 
-   private final String password;
+   private final String securityDomainAndApplicationManaged;
+
+   private final boolean applicationManaged;
 
    /**
     * Create a new SecurityImpl.
     *
-    * @param userName userName
-    * @param password password
+    * @param securityDomainManaged securityDomainManaged
+    * @param securityDomainAndApplicationManaged securityDomainAndApplicationManaged
+    * @param applicationManaged applicationManagedS
     * @throws ValidateException ValidateException
     */
-   public CommonSecurityImpl(String userName, String password) throws ValidateException
+   public CommonSecurityImpl(String securityDomainManaged,
+      String securityDomainAndApplicationManaged, boolean applicationManaged) throws ValidateException
    {
       super();
-      this.userName = userName;
-      this.password = password;
+      this.securityDomainManaged = securityDomainManaged;
+      this.securityDomainAndApplicationManaged = securityDomainAndApplicationManaged;
+      this.applicationManaged = applicationManaged;
       this.validate();
    }
 
-   /**
-    * Get the userName.
-    *
-    * @return the userName.
-    */
-   @Override
-   public final String getUserName()
-   {
-      return userName;
-   }
-
-   /**
-    * Get the password.
-    *
-    * @return the password.
-    */
-   @Override
-   public final String getPassword()
-   {
-      return password;
-   }
 
    @Override
    public int hashCode()
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((password == null) ? 0 : password.hashCode());
-      result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+      result = prime * result + (applicationManaged ? 1231 : 1237);
+      result = prime * result +
+               ((securityDomainAndApplicationManaged == null) ? 0 : securityDomainAndApplicationManaged.hashCode());
+      result = prime * result + ((securityDomainManaged == null) ? 0 : securityDomainManaged.hashCode());
       return result;
    }
 
@@ -99,19 +85,21 @@ public class CommonSecurityImpl implements CommonSecurity
       if (!(obj instanceof CommonSecurityImpl))
          return false;
       CommonSecurityImpl other = (CommonSecurityImpl) obj;
-      if (password == null)
-      {
-         if (other.password != null)
-            return false;
-      }
-      else if (!password.equals(other.password))
+      if (applicationManaged != other.applicationManaged)
          return false;
-      if (userName == null)
+      if (securityDomainAndApplicationManaged == null)
       {
-         if (other.userName != null)
+         if (other.securityDomainAndApplicationManaged != null)
             return false;
       }
-      else if (!userName.equals(other.userName))
+      else if (!securityDomainAndApplicationManaged.equals(other.securityDomainAndApplicationManaged))
+         return false;
+      if (securityDomainManaged == null)
+      {
+         if (other.securityDomainManaged != null)
+            return false;
+      }
+      else if (!securityDomainManaged.equals(other.securityDomainManaged))
          return false;
       return true;
    }
@@ -119,13 +107,84 @@ public class CommonSecurityImpl implements CommonSecurity
    @Override
    public String toString()
    {
-      return "SecurityImpl [userName=" + userName + ", password=" + password + "]";
+      return "CommonSecurityImpl [securityDomainManaged=" + securityDomainManaged +
+             ", securityDomainAndApplicationManaged=" + securityDomainAndApplicationManaged +
+             ", applicationManaged=" + applicationManaged + "]";
+   }
+
+   /**
+    * Get the securityDomainManaged.
+    *
+    * @return the securityDomainManaged.
+    */
+   @Override
+   public final String getSecurityDomain()
+   {
+      return securityDomainManaged;
+   }
+
+   /**
+    * Get the securityDomainAndApplicationManaged.
+    *
+    * @return the securityDomainAndApplicationManaged.
+    */
+   @Override
+   public final String getSecurityDomainAndApplication()
+   {
+      return securityDomainAndApplicationManaged;
+   }
+
+   /**
+    * Get the applicationManaged.
+    *
+    * @return the applicationManaged.
+    */
+   @Override
+   public final boolean isApplication()
+   {
+      return applicationManaged;
    }
 
    @Override
    public void validate() throws ValidateException
    {
-      //always validate, nothing is mandatory
+      if (securityDomainManaged != null && !securityDomainManaged.trim().equals(""))
+      {
+         if (securityDomainAndApplicationManaged != null && !securityDomainAndApplicationManaged.trim().equals(""))
+         {
+            throw new ValidateException(
+                                        "cannot construct a CommonSecurity having set both security-domain-managed "
+                                           + "and security-domain-and-application-managed ");
+         }
+         if (applicationManaged)
+         {
+            throw new ValidateException(
+                                        "cannot construct a CommonSecurity having set both security-domain-managed "
+                                           + "and appliction-managed ");
+         }
+      }
+      else
+      {
+         if (securityDomainAndApplicationManaged != null && !securityDomainAndApplicationManaged.trim().equals(""))
+         {
+            if (applicationManaged)
+            {
+               throw new ValidateException(
+                                           "cannot construct a CommonSecurity having set "
+                                              + "both security-domain-and-application-managed "
+                                              + "and appliction-managed ");
+            }
+         }
+         else
+         {
+            if (!applicationManaged)
+            {
+               throw new ValidateException(
+                                           "cannot construct a CommonSecurity object with security-domain-managed "
+                                              + "and security-domain-and-application-managed not set and "
+                                              + "appliction-managed not set or false");
+            }
+         }
+      }
    }
-
 }

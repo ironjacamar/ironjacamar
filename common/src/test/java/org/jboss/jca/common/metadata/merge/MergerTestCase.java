@@ -629,12 +629,12 @@ public class MergerTestCase
          ConfigProperty exConf3 = new ConfigPropertyImpl(null, new XsdString("LogLevel", null),
                                                          new XsdString("java.lang.String", null),
                                                          new XsdString("WARN", null), null);
-         ConfigProperty exConf4 = new ConfigPropertyImpl(null, new XsdString("UserName", null),
-                                                         new XsdString("java.lang.String", null),
-                                                         new XsdString("aaa", null), null);
-         ConfigProperty exConf5 = new ConfigPropertyImpl(null, new XsdString("Password", null),
-                                                         new XsdString("java.lang.String", null),
-                                                         new XsdString("bbb", null), null);
+         //         ConfigProperty exConf4 = new ConfigPropertyImpl(null, new XsdString("UserName", null),
+         //                                                         new XsdString("java.lang.String", null),
+         //                                                         new XsdString("aaa", null), null);
+         //         ConfigProperty exConf5 = new ConfigPropertyImpl(null, new XsdString("Password", null),
+         //                                                         new XsdString("java.lang.String", null),
+         //                                                         new XsdString("bbb", null), null);
 
          assertThat(merged, notNullValue());
          assertThat(connector.getResourceadapter().getConfigProperties().size(), is(1));
@@ -648,8 +648,8 @@ public class MergerTestCase
             .getConnectionDefinitions().size(), is(1));
          List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
             .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
-         assertThat(conDefProps.size(), is(5));
-         assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3, exConf4, exConf5));
+         assertThat(conDefProps.size(), is(3));
+         assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3)); //, exConf4, exConf5));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
             equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
       }
@@ -703,12 +703,12 @@ public class MergerTestCase
          ConfigProperty exConf3 = new ConfigPropertyImpl(null, new XsdString("LogLevel", null),
                                                          new XsdString("java.lang.String", null),
                                                          new XsdString("WARN", null), null);
-         ConfigProperty exConf4 = new ConfigPropertyImpl(null, new XsdString("UserName", null),
-                                                         new XsdString("java.lang.String", null),
-                                                         new XsdString("aaa", null), null);
-         ConfigProperty exConf5 = new ConfigPropertyImpl(null, new XsdString("Password", null),
-                                                         new XsdString("java.lang.String", null),
-                                                         new XsdString("bbb", null), null);
+         //         ConfigProperty exConf4 = new ConfigPropertyImpl(null, new XsdString("UserName", null),
+         //                                                         new XsdString("java.lang.String", null),
+         //                                                         new XsdString("aaa", null), null);
+         //         ConfigProperty exConf5 = new ConfigPropertyImpl(null, new XsdString("Password", null),
+         //                                                         new XsdString("java.lang.String", null),
+         //                                                         new XsdString("bbb", null), null);
 
          assertThat(merged, notNullValue());
          assertThat(connector.getResourceadapter().getConfigProperties().size(), is(1));
@@ -722,8 +722,8 @@ public class MergerTestCase
             .getConnectionDefinitions().size(), is(1));
          List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
             .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
-         assertThat(conDefProps.size(), is(5));
-         assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3, exConf4, exConf5));
+         assertThat(conDefProps.size(), is(3));
+         assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3));//, exConf4, exConf5));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
             equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
       }

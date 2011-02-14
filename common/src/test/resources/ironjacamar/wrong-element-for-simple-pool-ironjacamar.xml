@@ -9,7 +9,8 @@
         <pool>
         </pool>
         <security>
-        </security>
+        <application />
+</security>
         <timeout>
          <xa-resource-timeout>100</xa-resource-timeout>
         </timeout>

@@ -18,7 +18,8 @@
     <security>
       <user-name>sa</user-name>
       <password></password>
-    </security> 
+    
+</security> 
     <!-- For server mode db, allowing other processes to use hsqldb over tcp. This requires the org.jboss.jdbc.HypersonicDatabase 
       mbean. <connection-url>jdbc:hsqldb:hsql://${jboss.bind.address}:1701</connection-url> -->
     <!-- For totally in-memory db, not saved when jboss stops. The org.jboss.jdbc.HypersonicDatabase mbean is required for 

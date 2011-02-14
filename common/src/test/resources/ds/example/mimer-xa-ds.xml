@@ -13,7 +13,8 @@
     <security>
       <user-name>changeme</user-name>
       <password>changeme</password>
-    </security> 
+    
+</security> 
     <time-out>
       <blocking-timeout-millis>5000</blocking-timeout-millis>
       <idle-timeout-minutes>15</idle-timeout-minutes>

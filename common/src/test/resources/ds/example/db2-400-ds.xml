@@ -10,7 +10,8 @@
         <security>
          <user-name>[username]</user-name>
          <password>[password]</password>
-        </security> 
+        
+</security> 
         
     </datasource>
 </datasources>

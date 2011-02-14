@@ -10,7 +10,8 @@
     <security>
       <user-name>x</user-name>
       <password>y</password>
-    </security>
+    
+</security>
     <validation>
       <exception-sorter class-name="org.jboss.jca.adapters.jdbc.vendor.SybaseExceptionSorter"></exception-sorter>
     </validation>

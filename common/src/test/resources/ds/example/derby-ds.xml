@@ -20,7 +20,8 @@
       <!-- The login and password -->
       <user-name>sa</user-name>
       <password></password>
-    </security> 
+    
+</security> 
     <time-out>
       <!-- The time before an unused connection is destroyed -->
       <idle-timeout-minutes>5</idle-timeout-minutes>

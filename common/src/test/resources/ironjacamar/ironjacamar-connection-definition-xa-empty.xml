@@ -8,7 +8,8 @@
         <xa-pool>
         </xa-pool>
         <security>
-        </security>
+        <application />
+</security>
         <timeout>
         </timeout>
         <validation>

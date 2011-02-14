@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.common;
+package org.jboss.jca.common.api.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ValidatableMetadata;
@@ -34,8 +34,22 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface CommonSecurity extends JCAMetadata, ValidatableMetadata
+public interface DsSecurity extends JCAMetadata, ValidatableMetadata
 {
+   /**
+    * Get the userName.
+    *
+    * @return the userName.
+    */
+   public String getUserName();
+
+   /**
+    * Get the password.
+    *
+    * @return the password.
+    */
+   public String getPassword();
+
    /**
     *
     * get the security domain for pure security-domain security management
@@ -43,24 +57,6 @@ public interface CommonSecurity extends JCAMetadata, ValidatableMetadata
     * @return the security-domain to use
     */
    public String getSecurityDomain();
-
-   /**
-    *
-    * get the security domain for security-domain/application hybrid security management
-    *
-    * @return the security-domain to use
-    */
-
-   public String getSecurityDomainAndApplication();
-
-   /**
-    *
-    * Indicates that app supplied parameters (such as from getConnection(user, pw))
-    * are used to distinguish connections in the pool.
-    *
-    * @return the boolean indicating the appl supplier is considered or not. Default false.
-    */
-   public boolean isApplication();
 
    /**
    *
@@ -77,19 +73,18 @@ public interface CommonSecurity extends JCAMetadata, ValidatableMetadata
       UNKNOWN(null),
 
       /**
+       * userName tag
+       */
+      USERNAME("user-name"),
+      /**
+      * password tag
+      */
+      PASSWORD("password"),
+
+      /**
        * security-domain tag
        */
-      SECURITY_DOMAIN("security-domain"),
-
-      /**
-       * security-domain-and-application TAG
-       */
-      SECURITY_DOMAIN_AND_APPLICATION("security-domain-and-application"),
-
-      /**
-       * application
-       */
-      APPLICATION("application");
+      SECURITY_DOMAIN("security-domain");
 
       private final String name;
 

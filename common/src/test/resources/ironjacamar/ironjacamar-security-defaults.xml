@@ -27,6 +27,7 @@
           <max-pool-size>64</max-pool-size>
         </pool>
         <security>
+          <application />
         </security>
         <timeout>
           <blocking-timeout-millis>5000</blocking-timeout-millis>

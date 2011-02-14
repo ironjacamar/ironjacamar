@@ -23,7 +23,6 @@ package org.jboss.jca.common.api.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ValidatableMetadata;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 
 /**
  *
@@ -57,7 +56,7 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
     * @return the security.
     */
 
-   public CommonSecurity getSecurity();
+   public DsSecurity getSecurity();
 
    /**
     * Get the validation.

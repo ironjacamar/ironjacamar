@@ -11,7 +11,8 @@
         <security>
          <user-name>x</user-name>
          <password>y</password>
-        </security> 
+        
+</security> 
           
         <!-- DB2 Universal Driver Note connection URL is in form of
             jdbc:db2://host:port:dbname

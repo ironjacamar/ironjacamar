@@ -25,7 +25,6 @@ import org.jboss.jca.common.api.metadata.ds.JdbcAdapterExtension;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.validator.ValidateException;
 
-
 /**
  *
  * A ValidationImpl.
@@ -75,8 +74,6 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
       this.validate();
    }
 
-
-
    /**
     * Get the checkValidConnectionSql.
     *
@@ -98,8 +95,6 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    {
       return validateOnMatch;
    }
-
-
 
    /**
     * Get the validConnectionChecker.
@@ -148,9 +143,12 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          throw new ValidateException("backgroundValidationMinutes (xml attribure " +
                                      Validation.Tag.BACKGROUNDVALIDATIONMINUTES + ") cannot be < 0");
       if (this.validConnectionChecker != null)
-         try {
+         try
+         {
             this.validConnectionChecker.validate();
-         } catch (ValidateException ve) {
+         }
+         catch (ValidateException ve)
+         {
             throw new ValidateException("validCoonnectionChecker (xml tag" + Validation.Tag.VALIDCONNECTIONCHECKER +
                                         ") not valid. See the cause exception for more details", ve);
          }
@@ -246,4 +244,3 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    }
 
 }
-

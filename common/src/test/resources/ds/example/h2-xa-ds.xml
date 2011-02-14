@@ -10,7 +10,8 @@
       <user-name>sa</user-name>
       <!-- Have to defined as a primary property - otherwise it won't work -->
       <password>sa</password>
-    </security>
+    
+</security>
   </xa-datasource>
 
 </datasources>

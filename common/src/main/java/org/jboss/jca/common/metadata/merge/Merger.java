@@ -24,10 +24,10 @@ package org.jboss.jca.common.metadata.merge;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
+import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
@@ -45,7 +45,6 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
-import org.jboss.jca.common.metadata.merge.Merger.ConfigPropertyFactory.Prototype;
 import org.jboss.jca.common.metadata.ra.common.AbstractResourceAdapetrImpl;
 import org.jboss.jca.common.metadata.ra.common.AdminObjectImpl;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
@@ -234,16 +233,6 @@ public class Merger
       List<? extends ConfigProperty> original = conDef.getConfigProperties();
       List<ConfigProperty> newProperties = this.mergeConfigProperties(commonConDef.getConfigProperties(), original);
 
-      CommonSecurity security = commonConDef.getSecurity();
-      if (security != null && security.getUserName() != null && !security.getUserName().trim().equals(""))
-      {
-         newProperties.add(ConfigPropertyFactory.createConfigProperty(Prototype.USERNAME, security.getUserName()));
-      }
-
-      if (security != null && security.getPassword() != null && !security.getPassword().trim().equals(""))
-      {
-         newProperties.add(ConfigPropertyFactory.createConfigProperty(Prototype.PASSWORD, security.getPassword()));
-      }
 
       ((ConnectionDefinitionImpl) conDef).forceNewConfigPropertiesContent(newProperties);
 
@@ -459,7 +448,7 @@ public class Merger
                case USERNAME : {
                   if (ds != null)
                   {
-                     CommonSecurity security = ds.getSecurity();
+                     DsSecurity security = ds.getSecurity();
                      if (security != null && security.getUserName() != null &&
                          !security.getUserName().trim().equals(""))
                      {
@@ -473,7 +462,7 @@ public class Merger
                case PASSWORD : {
                   if (ds != null)
                   {
-                     CommonSecurity security = ds.getSecurity();
+                     DsSecurity security = ds.getSecurity();
                      if (security != null && security.getPassword() != null &&
                          !security.getPassword().trim().equals(""))
                      {

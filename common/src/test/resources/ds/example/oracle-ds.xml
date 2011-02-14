@@ -13,7 +13,8 @@
     <security>
       <user-name>x</user-name>
       <password>y</password>
-    </security> 
+    
+</security> 
     <!-- Uses the pingDatabase method to check a connection is still valid before handing it out from the pool -->
     <validation>
       <!--valid-connection-checker-class-name>org.jboss.jca.adapters.jdbc.vendor.OracleValidConnectionChecker</valid-connection-checker-class-name -->

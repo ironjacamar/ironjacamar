@@ -132,7 +132,7 @@ public abstract class AbstractParser
     * FIXME Comment this
     *
     * @param reader
-    * @return
+    * @return the string representing the raw eleemnt text
     * @throws XMLStreamException
     */
    private String rawElementText(XMLStreamReader reader) throws XMLStreamException
@@ -161,7 +161,7 @@ public abstract class AbstractParser
     *
     * @param reader
     * @param attributeName
-    * @return
+    * @return the string representing raw attribute textx
     */
    private String rawAttributeText(XMLStreamReader reader, String attributeName)
    {
@@ -303,8 +303,9 @@ public abstract class AbstractParser
       ValidateException
    {
 
-      String userName = null;
-      String password = null;
+      String securityDomain = null;
+      String securityDomainAndApplication = null;
+      boolean application = false;
 
       while (reader.hasNext())
       {
@@ -314,7 +315,8 @@ public abstract class AbstractParser
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
                {
 
-                  return new CommonSecurityImpl(userName, password);
+                  return new CommonSecurityImpl(securityDomain, securityDomainAndApplication,
+                                                application);
                }
                else
                {
@@ -328,12 +330,17 @@ public abstract class AbstractParser
             case START_ELEMENT : {
                switch (CommonSecurity.Tag.forName(reader.getLocalName()))
                {
-                  case PASSWORD : {
-                     password = elementAsString(reader);
+
+                  case SECURITY_DOMAIN : {
+                     securityDomain = elementAsString(reader);
                      break;
                   }
-                  case USERNAME : {
-                     userName = elementAsString(reader);
+                  case SECURITY_DOMAIN_AND_APPLICATION : {
+                     securityDomainAndApplication = elementAsString(reader);
+                     break;
+                  }
+                  case APPLICATION : {
+                     application = elementAsBoolean(reader);
                      break;
                   }
                   default :

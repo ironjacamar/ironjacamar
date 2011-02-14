@@ -453,30 +453,56 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="securityType">
+   <xs:complexType name="securityType">
     <xs:sequence>
-      <xs:element name="user-name" type="xs:token" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Specifies the username used when creating a new connection. 
-              Ex: <user-name>sa</user-name>
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="password" type="xs:token" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Specifies the password used when creating a new connection. 
-              Ex: <password>sa-pass</password>
-             ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
+        <xs:choice>
+           <xs:element name="application" type="boolean-presenceType" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                   <![CDATA[[
+                    Indicates that app supplied parameters (such as from getConnection(user, pw))
+                    are used to distinguish connections in the pool.
+                    Ex:
+                     <application-managed-security/>
+                   ]]>
+                    </xs:documentation>
+                 </xs:annotation>
+              </xs:element>
+              <xs:element name="security-domain" type="xs:token" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    <![CDATA[[
+                    Indicates Subject (from security domain) are used to distinguish connections in the pool. 
+                    The content of the security-domain is the name of the JAAS security manager that will handle
+                    authentication. This name correlates to the JAAS login-config.xml descriptor
+                    application-policy/name attribute.
+                    Ex:
+                      <security-domain>HsqlDbRealm</security-domain>
+                    ]]>
+                  </xs:documentation>
+                </xs:annotation>
+               </xs:element>
+               <xs:element name="security-domain-and-application" type="xs:token" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation>
+                    <![CDATA[[
+                    Indicates that either app supplied parameters (such as from
+                    getConnection(user, pw)) or Subject (from security domain) are used to
+                    distinguish connections in the pool. The content of the
+                    security-domain is the name of the JAAS security manager that will handle
+                    authentication. This name correlates to the JAAS login-config.xml descriptor
+                    application-policy/name attribute.
+                     
+                    Ex:
+                      <security-domain-and-application>HsqlDbRealm</security-domain-and-application>
+                    ]]>
+                  </xs:documentation>
+                </xs:annotation>
+           </xs:element>
+        </xs:choice>
+      </xs:sequence>
+   </xs:complexType>
+
 
   <xs:complexType name="admin-objectsType">
     <xs:sequence>

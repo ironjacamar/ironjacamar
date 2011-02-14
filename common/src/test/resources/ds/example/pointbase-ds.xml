@@ -8,6 +8,7 @@
     <security>
       <user-name>@pointbase.user@</user-name>
       <password>@pointbase.passwd@</password>
-    </security>
+    
+</security>
   </datasource>
 </datasources>

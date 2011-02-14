@@ -9,6 +9,7 @@
     <security>
       <user-name>x</user-name>
       <password>y</password>
-    </security>
+    
+</security>
   </datasource>
 </datasources>

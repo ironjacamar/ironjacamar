@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
@@ -78,7 +78,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param xaPool xaPool
     * @throws ValidateException ValidateException
     */
-   public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, CommonSecurity security,
+   public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
       boolean useJavaContext, String poolName, boolean enabled, String jndiName, boolean spy,
       Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String module, String newConnectionSql,

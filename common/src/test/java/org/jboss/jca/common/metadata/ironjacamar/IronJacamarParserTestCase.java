@@ -335,8 +335,10 @@ public class IronJacamarParserTestCase
             IronJacamar ij = parser.parse(is);
             //then
             CommonSecurity sec = ij.getConnectionDefinitions().get(0).getSecurity();
-            assertThat(sec.getPassword(), new IsNull<String>());
-            assertThat(sec.getUserName(), new IsNull<String>());
+            assertThat(sec.getSecurityDomainAndApplication(), new IsNull<String>());
+            assertThat(sec.getSecurityDomain(), new IsNull<String>());
+            assertThat(sec.isApplication(), is(true));
+
          }
          finally
          {
@@ -415,8 +417,9 @@ public class IronJacamarParserTestCase
 
             //security defaults
             CommonSecurity sec = connDef.getSecurity();
-            assertThat(sec.getPassword(), new IsNull<String>());
-            assertThat(sec.getUserName(), new IsNull<String>());
+            assertThat(sec.getSecurityDomainAndApplication(), new IsNull<String>());
+            assertThat(sec.getSecurityDomain(), new IsNull<String>());
+            assertThat(sec.isApplication(), is(true));
 
             //timeout defaults
             CommonTimeOut t = connDef.getTimeOut();
@@ -477,8 +480,9 @@ public class IronJacamarParserTestCase
 
             //security defaults
             CommonSecurity sec = connDef.getSecurity();
-            assertThat(sec.getPassword(), new IsNull<String>());
-            assertThat(sec.getUserName(), new IsNull<String>());
+            assertThat(sec.getSecurityDomainAndApplication(), new IsNull<String>());
+            assertThat(sec.getSecurityDomain(), new IsNull<String>());
+            assertThat(sec.isApplication(), is(true));
 
             //timeout defaults
             CommonTimeOut t = connDef.getTimeOut();

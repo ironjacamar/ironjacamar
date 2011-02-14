@@ -9,7 +9,8 @@
     <security>
       <user-name>x</user-name>
       <password>y</password>
-    </security> 
+    
+</security> 
     <validation>
       <!-- example of how to specify a class that determines a connection is valid before it is handed out from the pool -->
       <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.vendor.DummyValidConnectionChecker"></valid-connection-checker>

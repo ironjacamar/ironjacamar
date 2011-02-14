@@ -36,7 +36,8 @@
     <security>
       <user-name>sa</user-name>
       <password></password>
-    </security>
+    
+</security>
     <validation>
        <!--valid-connection-checker-class-name>org.jboss.jca.adapters.jdbc.ValidConnectionChecker</valid-connection-checker-class-name-->
     </validation>
