@@ -57,6 +57,14 @@ public class CfCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
+      out.write("/** The logger */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
+      writeEol(out);
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("/** Reference */");
       writeEol(out);
       writeIndent(out, indent);
@@ -101,6 +109,9 @@ public class CfCodeGen extends AbstractCodeGen
    public void writeImport(Definition def, Writer out) throws IOException
    {
       out.write("package " + def.getRaPackage() + ";");
+      writeEol(out);
+      writeEol(out);
+      out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
       out.write("import javax.naming.NamingException;");
@@ -160,7 +171,9 @@ public class CfCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-
+      writeIndent(out, indent + 1);
+      out.write("log.finest(\"getConnection()\");");
+      writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return new " + def.getConnImplClass() + "();");
       writeRightCurlyBracket(out, indent);
@@ -202,6 +215,9 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("public Reference getReference() throws NamingException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
+      out.write("log.finest(\"getReference()\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
       out.write("return reference;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -228,6 +244,9 @@ public class CfCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void setReference(Reference reference)");
       writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("log.finest(\"setReference()\");");
+      writeEol(out);
       writeIndent(out, indent + 1);
       out.write("this.reference = reference;");
       writeRightCurlyBracket(out, indent);

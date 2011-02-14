@@ -48,6 +48,14 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
+      writeIndent(out, indent);
+      out.write("/** The logger */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
+      writeEol(out);
+      writeEol(out);
+      
       writeDefaultConstructor(def, out, indent);
 
       writeEIS(def, out, indent);
@@ -67,6 +75,9 @@ public class McMetaCodeGen extends AbstractCodeGen
    public void writeImport(Definition def, Writer out) throws IOException
    {
       out.write("package " + def.getRaPackage() + ";");
+      writeEol(out);
+      writeEol(out);
+      out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
@@ -123,6 +134,9 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write("public String getEISProductName() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
+      out.write("log.finest(\"getEISProductName()\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -152,6 +166,9 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public String getEISProductVersion() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("log.finest(\"getEISProductVersion()\");");
+      writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
@@ -192,7 +209,9 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public int getMaxConnections() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-
+      writeIndent(out, indent + 1);
+      out.write("log.finest(\"getMaxConnections()\");");
+      writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return 0; //TODO");
       writeRightCurlyBracket(out, indent);
@@ -233,7 +252,9 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public String getUserName() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-
+      writeIndent(out, indent + 1);
+      out.write("log.finest(\"getUserName()\");");
+      writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
