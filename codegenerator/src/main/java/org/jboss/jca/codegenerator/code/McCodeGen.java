@@ -57,6 +57,14 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
 
+      writeIndent(out, indent);
+      out.write("/** The logwriter */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private PrintWriter logwriter;");
+      writeEol(out);
+      writeEol(out);
+      
       writeDefaultConstructor(def, out, indent);
       
       writeConnection(def, out, indent);
@@ -352,7 +360,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("log.finest(\"getLogWriter()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return logwriter;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -380,6 +388,9 @@ public class McCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.finest(\"setLogWriter()\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("logwriter = out;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
