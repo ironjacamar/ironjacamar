@@ -63,7 +63,7 @@ public class HelloWorldConnectionFactoryImpl implements HelloWorldConnectionFact
    @Override
    public HelloWorldConnection getConnection() throws ResourceException
    {
-      return new HelloWorldConnectionImpl(mcf);
+      return (HelloWorldConnection)connectionManager.allocateConnection(mcf, null);
    }
 
    /**

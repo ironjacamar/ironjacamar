@@ -74,7 +74,7 @@ ant test
     </section>
 
     <section id="sample_helloworld_cfimpl">
-      <title>HelloWorld Connection Factory Impl</title>
+      <title>HelloWorld Connection Factory Implementation</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
@@ -88,7 +88,7 @@ ant test
     </section>
 
     <section id="sample_helloworld_connectionimpl">
-      <title>HelloWorld Connection Impl</title>
+      <title>HelloWorld Connection Implementation</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
@@ -109,7 +109,7 @@ ant test
     </section>
 
     <section id="sample_helloworld_testcase">
-      <title>HelloWorld Connection Testcase</title>
+      <title>HelloWorld Connection Test Case</title>
       <programlisting language="java">
 <xi:include parse="text" href="../../samples/helloworld/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
