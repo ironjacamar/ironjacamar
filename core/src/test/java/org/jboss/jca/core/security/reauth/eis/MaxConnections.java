@@ -22,30 +22,49 @@
 
 package org.jboss.jca.core.security.reauth.eis;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
+import org.jboss.logging.Logger;
+
 /**
- * Represents the available commands
+ * Represents a max connections command
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface Commands
+public class MaxConnections implements Invoker
 {
-   /** CONNECT */
-   public static final byte CONNECT = 0;
+   /** The logger */
+   private Logger log = Logger.getLogger(MaxConnections.class);
 
-   /** CLOSE */
-   public static final byte CLOSE = 1;
+   /** The interaction */
+   private Interaction interaction;
 
-   /** ECHO */
-   public static final byte ECHO = 2;
+   /** Max connections */
+   private Integer maxConnections;
 
-   /** AUTH */
-   public static final byte AUTH = 3;
+   /**
+    * Constructor
+    * @param interaction The interaction
+    * @param maxConnections The max connections
+    */
+   public MaxConnections(Interaction interaction, Integer maxConnections)
+   {
+      this.interaction = interaction;
+      this.maxConnections = maxConnections;
+   }
 
-   /** UNAUTH */
-   public static final byte UNAUTH = 4;
+   /**
+    * Invoke
+    * @param args The arguments
+    * @return The return value
+    */
+   public Serializable invoke(Serializable[] args)
+   {
+      if (args != null)
+         return new IllegalArgumentException("Unsupported argument list: " + Arrays.toString(args));
 
-   /** GETAUTH */
-   public static final byte GETAUTH = 5;
+      log.infof("MaxConnections: %s", maxConnections);
 
-   /** MAXCONNECTIONS */
-   public static final byte MAXCONNECTIONS = 6;
+      return maxConnections;
+   }
 }

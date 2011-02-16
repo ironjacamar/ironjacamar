@@ -51,6 +51,9 @@ public class Interaction implements Runnable
    /** Callback */
    private AtomicInteger callback;
 
+   /** Max connections */
+   private int maxConnections;
+
    /** Input */
    private ObjectInputStream ois;
 
@@ -65,12 +68,14 @@ public class Interaction implements Runnable
     * @param socket The socket
     * @param granted Was full access granted
     * @param callback The close callback
+    * @param maxConnections The maximum number of connections
     */
-   public Interaction(Socket socket, boolean granted, AtomicInteger callback)
+   public Interaction(Socket socket, boolean granted, AtomicInteger callback, int maxConnections)
    {
       this.socket = socket;
       this.granted = granted;
       this.callback = callback;
+      this.maxConnections = maxConnections;
       this.ois = null;
       this.oos = null;
       this.userName = null;
@@ -129,6 +134,10 @@ public class Interaction implements Runnable
             else if (granted && command == Commands.GETAUTH)
             {
                invoker = new GetAuth(this);
+            }
+            else if (granted && command == Commands.MAXCONNECTIONS)
+            {
+               invoker = new MaxConnections(this, Integer.valueOf(maxConnections));
             }
             else
             {

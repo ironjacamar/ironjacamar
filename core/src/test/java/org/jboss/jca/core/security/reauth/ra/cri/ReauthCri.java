@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.security.reauth.eis;
+package org.jboss.jca.core.security.reauth.ra.cri;
 
 import java.io.Serializable;
 
@@ -34,11 +34,11 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
-public class SimpleCRI implements ConnectionRequestInfo, Serializable
+public class ReauthCri implements ConnectionRequestInfo, Serializable
 {
    private static final long serialVersionUID = 1L;
    
-   private static Logger log = Logger.getLogger(SimpleCRI.class);
+   private static Logger log = Logger.getLogger(ReauthCri.class);
 
    private final String userName;
    private final String password;
@@ -48,7 +48,7 @@ public class SimpleCRI implements ConnectionRequestInfo, Serializable
     * @param userName The user name
     * @param password The password
     */
-   public SimpleCRI(final String userName, final String password)
+   public ReauthCri(final String userName, final String password)
    {
       if (userName == null)
          throw new IllegalArgumentException("UserName is null");
@@ -86,8 +86,11 @@ public class SimpleCRI implements ConnectionRequestInfo, Serializable
    {
       int hashCode = 7;
 
-      hashCode += 7 * userName.hashCode();
-      hashCode += 7 * password.hashCode();
+      if (userName != null)
+         hashCode += 7 * userName.hashCode();
+
+      if (password != null)      
+         hashCode += 7 * password.hashCode();
 
       return hashCode;
    }
@@ -102,13 +105,37 @@ public class SimpleCRI implements ConnectionRequestInfo, Serializable
       if (this == obj)
          return true;
 
-      if (obj == null || !(obj instanceof SimpleCRI))
+      if (obj == null || !(obj instanceof ReauthCri))
          return false;
 
-      SimpleCRI s = (SimpleCRI)obj;
+      ReauthCri rCri = (ReauthCri)obj;
 
-      return userName.equals(s.getUserName()) &&
-         password.equals(s.getPassword());
+      boolean result = true;
+      if (result)
+      {
+         if (userName == null)
+         {
+            result = rCri.getUserName() == null;
+         }
+         else
+         {
+            result = userName.equals(rCri.getUserName());
+         }
+      }
+
+      if (result)
+      {
+         if (password == null)
+         {
+            result = rCri.getPassword() == null;
+         }
+         else
+         {
+            result = password.equals(rCri.getPassword());
+         }
+      }
+
+      return result;
    }
 
    /**
@@ -119,7 +146,7 @@ public class SimpleCRI implements ConnectionRequestInfo, Serializable
    {
       StringBuilder sb = new StringBuilder();
 
-      sb.append("SimpleCRI@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("ReauthCri@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[userName=").append(userName);
       sb.append(" password=").append(password);
       sb.append("]");

@@ -19,33 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.jca.core.security.reauth.ra.cri;
 
-package org.jboss.jca.core.security.reauth.eis;
+import javax.resource.ResourceException;
 
 /**
- * Represents the available commands
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * ReauthConnection
+ *
+ * @version $Revision: $
  */
-public interface Commands
+public interface ReauthConnection
 {
-   /** CONNECT */
-   public static final byte CONNECT = 0;
+   /**
+    * login
+    * @param username username
+    * @param password password
+    * @return String
+    * @throws ResourceException Thrown if an error occurs
+    */
+   public String login(String username, String password) throws ResourceException;
 
-   /** CLOSE */
-   public static final byte CLOSE = 1;
+   /**
+    * logout
+    * @return boolean
+    * @throws ResourceException Thrown if an error occurs
+    */
+   public boolean logout() throws ResourceException;
 
-   /** ECHO */
-   public static final byte ECHO = 2;
-
-   /** AUTH */
-   public static final byte AUTH = 3;
-
-   /** UNAUTH */
-   public static final byte UNAUTH = 4;
-
-   /** GETAUTH */
-   public static final byte GETAUTH = 5;
-
-   /** MAXCONNECTIONS */
-   public static final byte MAXCONNECTIONS = 6;
+   /**
+    * get auth
+    * @return String
+    * @throws ResourceException Thrown if an error occurs
+    */
+   public String getAuth() throws ResourceException;
 }

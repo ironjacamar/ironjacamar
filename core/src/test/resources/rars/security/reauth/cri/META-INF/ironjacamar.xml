@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
 /*
  * JBoss, Home of Professional Open Source.
  * Copyright 2011, Red Hat Middleware LLC, and individual contributors
@@ -19,33 +22,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+-->
 
-package org.jboss.jca.core.security.reauth.eis;
+<ironjacamar xmlns="http://www.jboss.org/ironjacamar/schema"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
+             http://www.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">
+  <config-property name="Server">localhost</config-property>
+  <config-property name="Port">19000</config-property>
 
-/**
- * Represents the available commands
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- */
-public interface Commands
-{
-   /** CONNECT */
-   public static final byte CONNECT = 0;
+  <transaction-support>NoTransaction</transaction-support>
+  
+  <connection-definitions>
+    <connection-definition class-name="org.jboss.jca.core.security.reauth.ra.cri.ReauthManagedConnectionFactory" 
+                           enabled="true" jndi-name="java:/eis/Reauth" 
+                           use-java-context="true" pool-name="Reauth">
+      <pool>
+        <min-pool-size>0</min-pool-size>
+        <max-pool-size>1</max-pool-size>
+      </pool>
+    </connection-definition>
+  </connection-definitions>
 
-   /** CLOSE */
-   public static final byte CLOSE = 1;
-
-   /** ECHO */
-   public static final byte ECHO = 2;
-
-   /** AUTH */
-   public static final byte AUTH = 3;
-
-   /** UNAUTH */
-   public static final byte UNAUTH = 4;
-
-   /** GETAUTH */
-   public static final byte GETAUTH = 5;
-
-   /** MAXCONNECTIONS */
-   public static final byte MAXCONNECTIONS = 6;
-}
+</ironjacamar>

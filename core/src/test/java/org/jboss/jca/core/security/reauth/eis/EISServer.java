@@ -171,7 +171,7 @@ public class EISServer implements Runnable
 
             log.debugf("Granted: %s", granted);
 
-            Runnable r = new Interaction(socket, granted, validConnections);
+            Runnable r = new Interaction(socket, granted, validConnections, maxConnections);
             tpe.submit(r);
          }
          catch (IOException ioe)

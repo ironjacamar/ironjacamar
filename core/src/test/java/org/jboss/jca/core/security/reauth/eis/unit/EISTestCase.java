@@ -24,7 +24,6 @@ package org.jboss.jca.core.security.reauth.eis.unit;
 
 import org.jboss.jca.core.security.reauth.eis.Commands;
 import org.jboss.jca.core.security.reauth.eis.ReauthServer;
-import org.jboss.jca.core.security.reauth.eis.SimpleCRI;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -257,13 +256,10 @@ public class EISTestCase
          Boolean granted = (Boolean)ois.readObject();
          assertTrue(granted.booleanValue());
 
-         // Payload
-         SimpleCRI payload = new SimpleCRI(userName, password);
-
          // Write
          oos.writeByte(Commands.AUTH);
-         oos.writeUTF(payload.getUserName());
-         oos.writeUTF(payload.getPassword());
+         oos.writeUTF(userName);
+         oos.writeUTF(password);
          oos.flush();
 
          // Read
@@ -342,13 +338,10 @@ public class EISTestCase
          Boolean granted = (Boolean)ois.readObject();
          assertTrue(granted.booleanValue());
 
-         // Payload
-         SimpleCRI payload1 = new SimpleCRI(userName1, password1);
-
          // Write
          oos.writeByte(Commands.AUTH);
-         oos.writeUTF(payload1.getUserName());
-         oos.writeUTF(payload1.getPassword());
+         oos.writeUTF(userName1);
+         oos.writeUTF(password1);
          oos.flush();
 
          // Read
@@ -357,13 +350,10 @@ public class EISTestCase
          // Assert
          assertEquals(userName1, result);
 
-         // Payload
-         SimpleCRI payload2 = new SimpleCRI(userName2, password2);
-
          // Write
          oos.writeByte(Commands.AUTH);
-         oos.writeUTF(payload2.getUserName());
-         oos.writeUTF(payload2.getPassword());
+         oos.writeUTF(userName2);
+         oos.writeUTF(password2);
          oos.flush();
 
          // Read
