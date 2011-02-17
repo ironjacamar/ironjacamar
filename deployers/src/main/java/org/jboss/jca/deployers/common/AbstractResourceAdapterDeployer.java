@@ -890,10 +890,11 @@ public abstract class AbstractResourceAdapterDeployer
                            noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
                      }
 
-                     PoolStrategy strategy= PoolStrategy.ONE_POOL;
+                     PoolStrategy strategy = PoolStrategy.ONE_POOL;
 
                      String securityDomain = null;
-                     if (security != null) {
+                     if (security != null)
+                     {
                         if (security.isApplication())
                         {
                            strategy = PoolStrategy.POOL_BY_CRI;
@@ -1226,7 +1227,8 @@ public abstract class AbstractResourceAdapterDeployer
                                  PoolStrategy strategy = PoolStrategy.ONE_POOL;
 
                                  String securityDomain = null;
-                                 if (security != null) {
+                                 if (security != null)
+                                 {
                                     if (security.isApplication())
                                     {
                                        strategy = PoolStrategy.POOL_BY_CRI;
@@ -1594,7 +1596,7 @@ public abstract class AbstractResourceAdapterDeployer
             if (cp instanceof org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)
             {
                org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16 cp16 =
-                  (org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)cp;
+                  (org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16) cp;
 
                Boolean dynamic = cp16.getConfigPropertySupportsDynamicUpdates();
                if (dynamic == null)
@@ -1606,14 +1608,15 @@ public abstract class AbstractResourceAdapterDeployer
 
                mgtCp =
                   new org.jboss.jca.core.api.management.ConfigProperty(
-                     cp.getConfigPropertyName().getValue(),
-                     dynamic.booleanValue(), confidential.booleanValue());
+                                                                       cp.getConfigPropertyName().getValue(),
+                                                                       dynamic.booleanValue(),
+                                                                       confidential.booleanValue());
             }
             else
             {
                mgtCp =
                   new org.jboss.jca.core.api.management.ConfigProperty(
-                     cp.getConfigPropertyName().getValue());
+                                                                       cp.getConfigPropertyName().getValue());
             }
 
             result.add(mgtCp);
