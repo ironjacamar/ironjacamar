@@ -33,5 +33,6 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logmanager.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-impl-base.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-spi.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/picketbox.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

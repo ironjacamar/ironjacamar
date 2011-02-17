@@ -25,6 +25,7 @@ package org.jboss.jca.deployers.common;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
@@ -83,6 +84,7 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
+import org.jboss.security.SubjectFactory;
 
 /**
  * An abstract resource adapter deployer which contains common functionality
@@ -872,22 +874,46 @@ public abstract class AbstractResourceAdapterDeployer
                      PoolFactory pf = new PoolFactory();
 
                      Boolean noTxSeparatePool = Boolean.FALSE;
+                     CommonSecurity security = null;
                      if (cdRaXml != null && cdRaXml.getPool() != null && cdRaXml.isXa())
                      {
                         CommonXaPool ijXaPool = (CommonXaPool) cdRaXml.getPool();
-
+                        security = cdRaXml.getSecurity();
                         if (ijXaPool != null)
                            noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
                      }
                      else if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
                      {
                         CommonXaPool ijXaPool = (CommonXaPool) ijCD.getPool();
-
+                        security = ijCD.getSecurity();
                         if (ijXaPool != null)
                            noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
                      }
 
-                     Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
+                     PoolStrategy strategy= PoolStrategy.ONE_POOL;
+
+                     String securityDomain = null;
+                     if (security != null) {
+                        if (security.isApplication())
+                        {
+                           strategy = PoolStrategy.POOL_BY_CRI;
+                        }
+                        else if (security.getSecurityDomain() != null &&
+                                 security.getSecurityDomain().trim().length() != 0)
+                        {
+                           strategy = PoolStrategy.POOL_BY_SUBJECT;
+                           securityDomain = security.getSecurityDomain();
+                        }
+                        else if (security.getSecurityDomainAndApplication() != null &&
+                                 security.getSecurityDomainAndApplication().trim().length() != 0)
+                        {
+                           strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
+                           securityDomain = security.getSecurityDomainAndApplication();
+                        }
+
+                     }
+
+                     Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue());
 
                      // Add a connection manager
                      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -947,7 +973,9 @@ public abstract class AbstractResourceAdapterDeployer
                      // Select the correct connection manager
                      if (tsl == TransactionSupportLevel.NoTransaction)
                      {
-                        cm = cmf.createNonTransactional(tsl, pool, allocationRetry, allocationRetryWaitMillis);
+                        cm = cmf.createNonTransactional(tsl, pool, getSubjectFactory(securityDomain),
+                           allocationRetry,
+                           allocationRetryWaitMillis);
                      }
                      else
                      {
@@ -986,7 +1014,8 @@ public abstract class AbstractResourceAdapterDeployer
                            }
                         }
 
-                        cm = cmf.createTransactional(tsl, pool, allocationRetry, allocationRetryWaitMillis,
+                        cm = cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), allocationRetry,
+                           allocationRetryWaitMillis,
                            getTransactionManager(), interleaving, xaResourceTimeout, isSameRMOverride,
                            wrapXAResource, padXid);
                      }
@@ -1178,23 +1207,45 @@ public abstract class AbstractResourceAdapterDeployer
                                  PoolFactory pf = new PoolFactory();
 
                                  Boolean noTxSeparatePool = Boolean.FALSE;
+                                 CommonSecurity security = null;
                                  if (cdRaXml != null && cdRaXml.getPool() != null && cdRaXml.isXa())
                                  {
                                     CommonXaPool ijXaPool = (CommonXaPool) cdRaXml.getPool();
-
+                                    security = cdRaXml.getSecurity();
                                     if (ijXaPool != null)
                                        noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
                                  }
                                  else if (ijCD != null && ijCD.getPool() != null && ijCD.isXa())
                                  {
                                     CommonXaPool ijXaPool = (CommonXaPool) ijCD.getPool();
-
+                                    security = ijCD.getSecurity();
                                     if (ijXaPool != null)
                                        noTxSeparatePool = ijXaPool.isNoTxSeparatePool();
                                  }
 
-                                 Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc,
-                                    noTxSeparatePool.booleanValue());
+                                 PoolStrategy strategy = PoolStrategy.ONE_POOL;
+
+                                 String securityDomain = null;
+                                 if (security != null) {
+                                    if (security.isApplication())
+                                    {
+                                       strategy = PoolStrategy.POOL_BY_CRI;
+                                    }
+                                    else if (security.getSecurityDomain() != null &&
+                                             security.getSecurityDomain().trim().length() != 0)
+                                    {
+                                       strategy = PoolStrategy.POOL_BY_SUBJECT;
+                                       securityDomain = security.getSecurityDomain();
+                                    }
+                                    else if (security.getSecurityDomainAndApplication() != null &&
+                                             security.getSecurityDomainAndApplication().trim().length() != 0)
+                                    {
+                                       strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
+                                       securityDomain = security.getSecurityDomainAndApplication();
+                                    }
+
+                                 }
+                                 Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue());
 
                                  // Add a connection manager
                                  ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -1252,7 +1303,8 @@ public abstract class AbstractResourceAdapterDeployer
                                  // Select the correct connection manager
                                  if (tsl == TransactionSupportLevel.NoTransaction)
                                  {
-                                    cm = cmf.createNonTransactional(tsl, pool, allocationRetry,
+                                    cm = cmf.createNonTransactional(tsl, pool, getSubjectFactory(securityDomain),
+                                       allocationRetry,
                                        allocationRetryWaitMillis);
                                  }
                                  else
@@ -1289,7 +1341,8 @@ public abstract class AbstractResourceAdapterDeployer
                                           padXid = ijXaPool.isPadXid();
                                     }
 
-                                    cm = cmf.createTransactional(tsl, pool, allocationRetry,
+                                    cm = cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain),
+                                       allocationRetry,
                                        allocationRetryWaitMillis, getTransactionManager(), interleaving,
                                        xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
                                  }
@@ -1518,6 +1571,8 @@ public abstract class AbstractResourceAdapterDeployer
          }
       }
    }
+
+   protected abstract SubjectFactory getSubjectFactory(String securityDomain);
 
    /**
     * Get management views for config property's

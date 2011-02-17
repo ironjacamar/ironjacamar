@@ -31,6 +31,8 @@ import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
 
+import org.jboss.security.SubjectFactory;
+
 /**
  * The connection manager factory.
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
@@ -48,13 +50,15 @@ public class ConnectionManagerFactory
     * Create a connection manager
     * @param tsl The transaction support level
     * @param pool The pool for the connection manager
+    * @param subjectFactory the subjectFactory for connection manager
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @return The connection manager instance
     */
    public NoTxConnectionManager createNonTransactional(final TransactionSupportLevel tsl,
                                                        final Pool pool,
-                                                       final Integer allocationRetry, 
+                                                       final SubjectFactory subjectFactory,
+                                                       final Integer allocationRetry,
                                                        final Long allocationRetryWaitMillis)
    {
       if (tsl == null)
@@ -81,6 +85,8 @@ public class ConnectionManagerFactory
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
+      cm.setSubjectFactory(subjectFactory);
+
       setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, null);
       setNoTxProperties(cm);
 
@@ -91,6 +97,7 @@ public class ConnectionManagerFactory
     * Create a transactional connection manager
     * @param tsl The transaction support level
     * @param pool The pool for the connection manager
+    * @param subjectFactory the subjectFactory for connection manager
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
@@ -103,6 +110,7 @@ public class ConnectionManagerFactory
     */
    public TxConnectionManager createTransactional(final TransactionSupportLevel tsl,
                                                   final Pool pool,
+                                                  final SubjectFactory subjectFactory,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
                                                   final TransactionManager tm,
@@ -139,6 +147,8 @@ public class ConnectionManagerFactory
          default:
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
+
+      cm.setSubjectFactory(subjectFactory);
 
       setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, tm);
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
@@ -213,11 +223,11 @@ public class ConnectionManagerFactory
       if (padXid != null)
          cm.setPadXid(padXid.booleanValue());
    }
-   
+
    /**
     * Associate the transaction synchronizer with the transaction
     * manager.
-    * 
+    *
     * @param tm TransactionManager
     */
    public void handleTxIntegration(final TransactionManager tm)

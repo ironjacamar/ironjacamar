@@ -49,6 +49,7 @@ import javax.management.ObjectName;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
+import org.jboss.security.SubjectFactory;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;
@@ -323,10 +324,10 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                      excludeAttributes.add(mgtCpName);
                }
 
-               String raName = baseName + ",type=ResourceAdapter,class=" + 
+               String raName = baseName + ",type=ResourceAdapter,class=" +
                   getClassName(mgtRa.getResourceAdapter().getClass().getName());
 
-               DynamicMBean raDMB = JMX.createMBean(mgtRa.getResourceAdapter(), 
+               DynamicMBean raDMB = JMX.createMBean(mgtRa.getResourceAdapter(),
                                                     "Resource adapter",
                                                     writeable,
                                                     null,
@@ -340,7 +341,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             }
          }
 
-         for (org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf : 
+         for (org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf :
                  mgtConnector.getManagedConnectionFactories())
          {
             if (mgtMcf.getManagedConnectionFactory() != null)
@@ -361,10 +362,10 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                      excludeAttributes.add(mgtCpName);
                }
 
-               String mcfName = baseName + ",type=ManagedConnectionFactory,class=" + 
+               String mcfName = baseName + ",type=ManagedConnectionFactory,class=" +
                   getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName());
 
-               DynamicMBean mcfDMB = JMX.createMBean(mgtMcf.getManagedConnectionFactory(), 
+               DynamicMBean mcfDMB = JMX.createMBean(mgtMcf.getManagedConnectionFactory(),
                                                      "Managed connection factory",
                                                      writeable,
                                                      null,
@@ -373,34 +374,34 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                ObjectName mcfON = new ObjectName(mcfName);
 
                server.registerMBean(mcfDMB, mcfON);
-         
+
                ons.add(mcfON);
             }
 
             if (mgtMcf.getPoolConfiguration() != null)
             {
-               String mcfPCName = baseName + ",type=ManagedConnectionFactory,class=" + 
+               String mcfPCName = baseName + ",type=ManagedConnectionFactory,class=" +
                   getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName()) +
                   ",subcategory=PoolConfiguration";
 
                DynamicMBean mcfPCDMB = JMX.createMBean(mgtMcf.getPoolConfiguration(), "Pool configuration");
                ObjectName mcfPCON = new ObjectName(mcfPCName);
-            
+
                server.registerMBean(mcfPCDMB, mcfPCON);
-         
+
                ons.add(mcfPCON);
             }
 
             if (mgtMcf.getPool() != null)
             {
-               String mcfPName = baseName + ",type=ManagedConnectionFactory,class=" + 
+               String mcfPName = baseName + ",type=ManagedConnectionFactory,class=" +
                   getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName()) + ",subcategory=Pool";
-               
+
                DynamicMBean mcfPDMB = JMX.createMBean(mgtMcf.getPool(), "Pool");
                ObjectName mcfPON = new ObjectName(mcfPName);
-               
+
                server.registerMBean(mcfPDMB, mcfPON);
-               
+
                ons.add(mcfPON);
             }
          }
@@ -424,20 +425,20 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   if (mgtCp.isConfidential())
                      excludeAttributes.add(mgtCpName);
                }
-               
-               String aoName = baseName + ",type=AdminObject,class=" + 
+
+               String aoName = baseName + ",type=AdminObject,class=" +
                   getClassName(mgtAo.getAdminObject().getClass().getName());
-               
-               DynamicMBean aoDMB = JMX.createMBean(mgtAo.getAdminObject(), 
+
+               DynamicMBean aoDMB = JMX.createMBean(mgtAo.getAdminObject(),
                                                     "Admin object",
                                                     writeable,
                                                     null,
                                                     excludeAttributes,
                                                     null);
                ObjectName aoON = new ObjectName(aoName);
-               
+
                server.registerMBean(aoDMB, aoON);
-               
+
                ons.add(aoON);
             }
          }
@@ -460,5 +461,20 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
       }
 
       return clz;
+   }
+
+   @Override
+   protected SubjectFactory getSubjectFactory(String securityDomain)
+   {
+      try
+      {
+         return kernel.getBean(securityDomain, SubjectFactory.class);
+      }
+      catch (Throwable e)
+      {
+         log.error("Kernel loookup of securityDomain " + securityDomain + "got an error", e);
+         return null;
+      }
+
    }
 }

@@ -10,11 +10,8 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-jaspi-api.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-security-spi-bare.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-security-spi.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-threads.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbosssx.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jnpserver.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/validation-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
@@ -25,5 +22,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjts-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjts.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/picketbox.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
