@@ -468,7 +468,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    {
       try
       {
-         return kernel.getBean(securityDomain, SubjectFactory.class);
+         return kernel.getBean(securityDomain + "-subjectfactory", SubjectFactory.class);
       }
       catch (Throwable e)
       {

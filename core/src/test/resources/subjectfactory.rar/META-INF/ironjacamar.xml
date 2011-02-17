@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id $ -->
+
+<ironjacamar>
+
+  <connection-definitions>
+    <connection-definition jndi-name="java:/eis/SubjectFactoryInjection"
+                           class-name="org.jboss.jca.core.security.subjectfactory.TestManagedConnectionFactory">
+  <security>
+   <security-domain>default-domain</security-domain>
+  </security>
+  </connection-definition>
+  </connection-definitions>
+
+</ironjacamar>
