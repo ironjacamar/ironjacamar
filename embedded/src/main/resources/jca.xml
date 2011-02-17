@@ -208,5 +208,16 @@
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
   </bean>
+  
+  <!-- SubjectFactory -->
+  <bean name="default-domain-subjectfactory"
+        interface="org.jboss.security.SubjectFactory"
+        class="org.jboss.jca.core.security.DefaultSubjectFactory">
+    <constructor>
+      <parameter>default-context</parameter>
+      <parameter>user-name</parameter>
+      <parameter>password</parameter>
+    </constructor>
+  </bean>
 
 </deployment>
