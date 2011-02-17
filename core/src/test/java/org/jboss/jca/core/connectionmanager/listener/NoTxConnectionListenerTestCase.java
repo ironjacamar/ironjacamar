@@ -225,7 +225,7 @@ public class NoTxConnectionListenerTestCase
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
-         null, null);
+         null, null, null);
 
       noTxCm = ((NoTxConnectionManagerImpl) connectionManager);
 

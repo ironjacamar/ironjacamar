@@ -77,7 +77,7 @@ public class NoTxConnectionManagerTestCase
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null);
+      connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, null);
       assertNotNull(connectionManager);
 
       assertTrue(connectionManager instanceof NoTxConnectionManager);

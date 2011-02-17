@@ -319,7 +319,7 @@ public class TxConnectionManagerTestCase
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-         null, null, tm, null, null, null, null, null);
+         null, null, null, tm, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;
    }

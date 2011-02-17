@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 
 /**
  * Serializable test of the transaction connection manager
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class SerializableTestCase
 {
@@ -57,39 +57,38 @@ public class SerializableTestCase
    public void testSerializable() throws Throwable
    {
       ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
-      PoolConfiguration pc = new PoolConfiguration();      
-      PoolFactory pf = new PoolFactory();      
-      
+      PoolConfiguration pc = new PoolConfiguration();
+      PoolFactory pf = new PoolFactory();
+
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-      
+
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
 
       ConnectionManager connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction,
-                                                                       pool,
-                                                                       null, null);
+                                                                       pool, null, null, null);
       assertNotNull(connectionManager);
-      
+
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       ObjectOutputStream oos = new ObjectOutputStream(baos);
 
       oos.writeObject(connectionManager);
    }
-   
+
    /**
     * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
    {
    }
-   
+
    /**
     * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
+    * @throws Throwable throwable exception
     */
    @AfterClass
    public static void afterClass() throws Throwable
    {
-   }   
+   }
 }
