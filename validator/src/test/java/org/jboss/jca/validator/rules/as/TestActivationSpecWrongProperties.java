@@ -43,11 +43,12 @@ public class TestActivationSpecWrongProperties extends BaseActivationSpec
    }
 
    /**
-    *
+    * wrong getter
+    * @return int zero
     */
-   public void getStringRAR()
+   public int getStringRAR()
    {
-      //return stringRar;
+      return 0;
    }
 
 }

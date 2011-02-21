@@ -390,7 +390,7 @@ public class RATestCase extends TestCaseAbstract
          assertThat(input.readLine(), is("Description: Invalid config-property-type for ResourceAdapter."));
          assertThat(input.readLine(), is("Code: Class: "
                + "org.jboss.jca.validator.rules.ra.TestResourceAdapterPropertyWrong "
-               + "Property: StringRAR Type: void"));
+               + "Property: StringRAR Type: int"));
 
          assertThat(input.readLine(), is((String) null));
       }

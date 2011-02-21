@@ -233,7 +233,7 @@ public class AOTestCase extends TestCaseAbstract
          assertThat(input.readLine(), is("Description: Invalid config-property-type for AdminObject."));
          assertThat(input.readLine(), is("Code: Class: "
                + "org.jboss.jca.validator.rules.ao.TestAdminObjectPropertyWrong "
-               + "Property: myStringProperty Type: void"));
+               + "Property: myStringProperty Type: int"));
 
          assertThat(input.readLine(), is((String) null));
       }

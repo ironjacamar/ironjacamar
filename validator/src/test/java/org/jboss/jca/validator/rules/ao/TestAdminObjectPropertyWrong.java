@@ -42,9 +42,10 @@ public class TestAdminObjectPropertyWrong
 
    /**
     * wrong getter
+    * @return int zero
     */
-   public void getMyStringProperty()
+   public int getMyStringProperty()
    {
-
+      return 0;
    }
 }

@@ -22,21 +22,15 @@
 
 package org.jboss.jca.validator.rules.mcf;
 
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.Key;
 import org.jboss.jca.validator.Rule;
-import org.jboss.jca.validator.Severity;
 import org.jboss.jca.validator.Validate;
 import org.jboss.jca.validator.ValidateClass;
+import org.jboss.jca.validator.rules.ConfigPropertiesHelper;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import javax.resource.spi.ManagedConnectionFactory;
 
@@ -47,31 +41,6 @@ public class MCFConfigProperties implements Rule
 {
    /** Section */
    private static final String SECTION = "20.7";
-
-   /** Valid types */
-   private static final Set<Class> VALID_TYPES;
-
-   static
-   {
-      VALID_TYPES = new HashSet<Class>(9);
-
-      VALID_TYPES.add(Boolean.class);
-      VALID_TYPES.add(Byte.class);
-      VALID_TYPES.add(Character.class);
-      VALID_TYPES.add(Double.class);
-      VALID_TYPES.add(Float.class);
-      VALID_TYPES.add(Integer.class);
-      VALID_TYPES.add(Long.class);
-      VALID_TYPES.add(Short.class);
-      VALID_TYPES.add(String.class);
-   }
-
-   /**
-    * Constructor
-    */
-   public MCFConfigProperties()
-   {
-   }
 
    /**
     * Validate
@@ -90,72 +59,8 @@ public class MCFConfigProperties implements Rule
          ValidateClass vo = (ValidateClass)v;
          if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
          {
-            Class clz = vo.getClazz();
-            List<Failure> failures = new ArrayList<Failure>(1);
-
-            for (ConfigProperty cpmd : vo.getConfigProperties())
-            {
-               try
-               {
-                  String methodName = "get"
-                        + cpmd.getConfigPropertyName().getValue().substring(0, 1).toUpperCase(Locale.US);
-                  if (cpmd.getConfigPropertyName().getValue().length() > 1)
-                  {
-                     methodName += cpmd.getConfigPropertyName().getValue().substring(1);
-                  }
-
-                  Method method = clz.getMethod(methodName, (Class[])null);
-
-                  if (!VALID_TYPES.contains(method.getReturnType()))
-                  {
-                     StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
-                     sb = sb.append(" Property: " + cpmd.getConfigPropertyName().getValue());
-                     sb = sb.append(" Type: " + method.getReturnType().getName());
-
-                     Failure failure = new Failure(Severity.WARNING,
-                                                   SECTION,
-                                                   rb.getString("mcf.MCFConfigProperties"),
-                                                   sb.toString());
-                     failures.add(failure);
-                  }
-               }
-               catch (Throwable t)
-               {
-                  try
-                  {
-                     String methodName = "is"
-                           + cpmd.getConfigPropertyName().getValue().substring(0, 1).toUpperCase(Locale.US);
-                     if (cpmd.getConfigPropertyName().getValue().length() > 1)
-                     {
-                        methodName += cpmd.getConfigPropertyName().getValue().substring(1);
-                     }
-
-                     Method method = clz.getMethod(methodName, (Class[])null);
-
-                     if (!VALID_TYPES.contains(method.getReturnType()))
-                     {
-                        StringBuilder sb = new StringBuilder("Class: " + vo.getClazz().getName());
-                        sb = sb.append(" Property: " + cpmd.getConfigPropertyName().getValue());
-                        sb = sb.append(" Type: " + method.getReturnType().getName());
-
-                        Failure failure = new Failure(Severity.WARNING,
-                                                      SECTION,
-                                                      rb.getString("mcf.MCFConfigProperties"),
-                                                      sb.toString());
-                        failures.add(failure);
-                     }
-                  }
-                  catch (Throwable it)
-                  {
-                     // Ignore
-                  }
-               }
-            }
-
-            if (failures.size() == 0)
-               return null;
-
-            return failures;
+            return ConfigPropertiesHelper.validateConfigPropertiesType(vo, SECTION, 
+               rb.getString("mcf.MCFConfigProperties"));
          }
       }
 

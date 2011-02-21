@@ -101,7 +101,7 @@ public class ASTestCase extends TestCaseAbstract
    }
 
    /**
-    * stress the ASConfigProperties rule.
+    * stress the ASConfigProperties warning rule.
     *
     * @throws Throwable and expect a DeployValidatorException
     *
@@ -128,7 +128,7 @@ public class ASTestCase extends TestCaseAbstract
          assertThat(input.readLine(), is("Description: Invalid config-property-type for ActivationSpec."));
          assertThat(input.readLine(), is("Code: Class: "
                + "org.jboss.jca.validator.rules.as.TestActivationSpecWrongProperties "
-               + "Property: StringRAR Type: void"));
+               + "Property: StringRAR Type: int"));
 
          assertThat(input.readLine(), is((String) null));
       }
@@ -141,6 +141,56 @@ public class ASTestCase extends TestCaseAbstract
          deleteDirectory(directory);
       }
       embedded.undeploy(archive);
+   }
+   
+   /**
+    * stress the ASConfigProperties failing rule.
+    *
+    * @throws Throwable and expect a DeployValidatorException
+    *
+    */
+   @Test(expected = ValidatorException.class)
+   public void deployerShouldThrowDeployExceptionWithWrongWrongPropertyType() throws Throwable
+   {
+      //given
+      ResourceAdapterArchive archive = getArchive("as_property_fail.rar");
+
+      try
+      {
+         //when
+         embedded.deploy(archive);
+      }
+      catch (DeployException de)
+      {
+         //then
+         ValidatorException dve = null;
+         if (de.getCause() != null && de.getCause() instanceof ValidatorException)
+         {
+            dve = (ValidatorException) de.getCause();
+         }
+         else
+         {
+            //fail
+            de.printStackTrace();
+            throw de;
+         }
+
+         final Failure failureRA =
+            new Failure(Severity.ERROR, "20.7", "Invalid config-property-type for ActivationSpec.",
+               "Class: org.jboss.jca.validator.rules.as.TestActivationSpecFailProperties " + 
+               "Property: StringRAR Type: java.net.URL");
+         assertThat(dve.getFailures(), notNullValue());
+         assertThat(dve.getFailures(), hasItem(equalTo(failureRA)));
+         assertThat(dve.getFailures().size(), is(1));
+         //success
+         throw dve;
+      }
+      finally
+      {
+         embedded.undeploy(archive);
+      }
+      //no exception = fail!
+      fail();
    }
 
    /**

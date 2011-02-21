@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,21 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.validator.rules.ra;
+package org.jboss.jca.validator.rules.as;
 
-import org.jboss.jca.validator.rules.base.BaseResourceAdapter;
+import org.jboss.jca.validator.rules.base.BaseActivationSpec;
+
+import java.net.URL;
 
 /**
- * TestResourceAdapter
- * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
- * @version $Revision: $
+ * TestActivationSpecFailProperties
+ * @author Jeff Zhang
+ *
  */
-public class TestResourceAdapterPropertyWrong extends BaseResourceAdapter
+
+public class TestActivationSpecFailProperties extends BaseActivationSpec
 {
    private String stringRar;
 
    /**
-    * 
+    *
     * @param s The value
     */
    public void setStringRAR(String s)
@@ -45,8 +48,9 @@ public class TestResourceAdapterPropertyWrong extends BaseResourceAdapter
     * wrong getter
     * @return int zero
     */
-   public int getStringRAR()
+   public URL getStringRAR()
    {
-      return 0;
+      return null;
    }
+
 }
