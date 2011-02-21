@@ -39,13 +39,19 @@ public class ValidateClass implements Validate
    /** Clazz */
    private Class<?> clazz;
 
+   /** The class name */
+   private String className;
+
+   /** The class loader */
+   private ClassLoader cl;
+
    /**
     * Constructor
     * @param key The key
     * @param clazz The class
     */
    public ValidateClass(Key key,
-                         Class<?> clazz)
+                        Class<?> clazz)
    {
       this(key, clazz, null);
    }
@@ -57,12 +63,14 @@ public class ValidateClass implements Validate
     * @param configProperties The list of config property metadata
     */
    public ValidateClass(Key key,
-                         Class<?> clazz,
-                         List<? extends ConfigProperty> configProperties)
+                        Class<?> clazz,
+                        List<? extends ConfigProperty> configProperties)
    {
       this.key = key;
       this.clazz = clazz;
       this.configProperties = configProperties;
+      this.className = null;
+      this.cl = null;
    }
 
    /**
@@ -78,10 +86,14 @@ public class ValidateClass implements Validate
       try
       {
          this.clazz = Class.forName(className, true, cl);
+         this.className = null;
+         this.cl = null;
       }
       catch (Exception cne)
       {
          this.clazz = null;
+         this.className = className;
+         this.cl = cl;
       }
       this.configProperties = configProperties;
    }
@@ -111,5 +123,27 @@ public class ValidateClass implements Validate
    public List<? extends ConfigProperty> getConfigProperties()
    {
       return configProperties;
+   }
+
+   /**
+    * Get the class name.
+    *
+    * This property is set if a class can't be resolved
+    * @return The value
+    */
+   public String getClassName()
+   {
+      return className;
+   }
+
+   /**
+    * Get the class loader.
+    *
+    * This property is set if a class can't be resolved
+    * @return The value
+    */
+   public ClassLoader getClassLoader()
+   {
+      return cl;
    }
 }

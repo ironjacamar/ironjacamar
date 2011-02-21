@@ -62,8 +62,9 @@ public class AORAA implements Rule
    public List<Failure> validate(Validate vo, ResourceBundle rb)
    {
       if (vo != null && 
-         Key.ADMIN_OBJECT == vo.getKey() &&
-         ResourceAdapterAssociation.class.isAssignableFrom(vo.getClazz()))
+          Key.ADMIN_OBJECT == vo.getKey() &&
+          vo.getClazz() != null &&
+          ResourceAdapterAssociation.class.isAssignableFrom(vo.getClazz()))
       {
          if (!Referenceable.class.isAssignableFrom(vo.getClazz()) ||
             !Serializable.class.isAssignableFrom(vo.getClazz()))

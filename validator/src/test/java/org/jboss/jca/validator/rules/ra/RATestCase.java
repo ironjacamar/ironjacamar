@@ -39,6 +39,7 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.hasItem;
@@ -187,11 +188,17 @@ public class RATestCase extends TestCaseAbstract
             throw de;
          }
 
-         final Failure failureRA =
-               new Failure(Severity.ERROR, "5.3.1", "A ResourceAdapter must be a non-null instance.", null);
          assertThat(dve.getFailures(), notNullValue());
-         assertThat(dve.getFailures(), hasItem(equalTo(failureRA)));
          assertThat(dve.getFailures().size(), is(1));
+
+         final Failure checkRA =
+               new Failure(Severity.ERROR, "5.3.1", "A ResourceAdapter must be a non-null instance.", null);
+
+         Failure failureRA = dve.getFailures().iterator().next();
+
+         assertEquals(checkRA.getSeverity(), failureRA.getSeverity());
+         assertEquals(checkRA.getSection(), failureRA.getSection());
+         assertEquals(checkRA.getDescription(), failureRA.getDescription());
          //success
          throw dve;
       }

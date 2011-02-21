@@ -40,6 +40,7 @@ public class Validator
     * properties file
     */
    private static final String[] CLASS_RULES = {
+      "org.jboss.jca.validator.rules.mcf.MCFNull",
       "org.jboss.jca.validator.rules.mcf.MCF",
       "org.jboss.jca.validator.rules.mcf.MCFConstructor",
       "org.jboss.jca.validator.rules.mcf.MCFHashCode",
@@ -57,9 +58,11 @@ public class Validator
       "org.jboss.jca.validator.rules.cf.CFNull",
       "org.jboss.jca.validator.rules.cf.CFSerializable",
       "org.jboss.jca.validator.rules.cf.CFReferenceable",
+      "org.jboss.jca.validator.rules.as.ASNull",
       "org.jboss.jca.validator.rules.as.AS",
       "org.jboss.jca.validator.rules.as.ASConstructor",
       "org.jboss.jca.validator.rules.as.ASConfigProperties",
+      "org.jboss.jca.validator.rules.ao.AONull",
       "org.jboss.jca.validator.rules.ao.AOConstructor",
       "org.jboss.jca.validator.rules.ao.AOConfigProperties",
       "org.jboss.jca.validator.rules.ao.AORAA"

@@ -27,6 +27,7 @@ import org.jboss.jca.validator.Key;
 import org.jboss.jca.validator.Rule;
 import org.jboss.jca.validator.Severity;
 import org.jboss.jca.validator.Validate;
+import org.jboss.jca.validator.ValidateClass;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,11 +61,32 @@ public class CFNull implements Rule
       {
          if (vo.getClazz() == null)
          {
-            List<Failure> failures = new ArrayList<Failure>(1);
+            ValidateClass vc = (ValidateClass)vo;
 
-            Failure failure = new Failure(Severity.ERROR,
-                                          SECTION,
-                                          rb.getString("cf.CFNull"));
+            List<Failure> failures = new ArrayList<Failure>(1);
+            Failure failure = null;
+
+            String code = null;
+            if (vc.getClassName() != null)
+            {
+               code = vc.getClassName().equals("") ? "<empty>" : vc.getClassName() +
+                  " (" + vc.getClassLoader().toString() + ")";
+            }
+
+            if (code != null)
+            {
+               failure = new Failure(Severity.ERROR,
+                                     SECTION,
+                                     rb.getString("cf.CFNull"),
+                                     code);
+            }
+            else
+            {
+               failure = new Failure(Severity.ERROR,
+                                     SECTION,
+                                     rb.getString("cf.CFNull"));
+            }
+
             failures.add(failure);
 
             return failures;

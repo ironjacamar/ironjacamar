@@ -27,17 +27,16 @@ import org.jboss.jca.validator.Key;
 import org.jboss.jca.validator.Rule;
 import org.jboss.jca.validator.Severity;
 import org.jboss.jca.validator.Validate;
+import org.jboss.jca.validator.ValidateClass;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.resource.spi.ManagedConnectionFactory;
-
 /**
- * ManagedConnectionFactory must be implemented
+ * ManagedConnectionFactory must be implemented if present
  */
-public class MCF implements Rule
+public class MCFNull implements Rule
 {
    /** Section */
    private static final String SECTION = "6.5.3.2";
@@ -45,14 +44,14 @@ public class MCF implements Rule
    /**
     * Constructor
     */
-   public MCF()
+   public MCFNull()
    {
    }
 
    /**
     * Validate
     * @param vo The validate object
-    * @param rb The resource bundle
+    * @param rb The resource bundle 
     * @return The list of failures found; <code>null</code> if none
     */
    @SuppressWarnings("unchecked")
@@ -60,20 +59,37 @@ public class MCF implements Rule
    {
       if (vo != null && Key.MANAGED_CONNECTION_FACTORY == vo.getKey())
       {
-         if (vo.getClazz() != null)
+         if (vo.getClazz() == null)
          {
-            if (!ManagedConnectionFactory.class.isAssignableFrom(vo.getClazz()))
+            ValidateClass vc = (ValidateClass)vo;
+
+            List<Failure> failures = new ArrayList<Failure>(1);
+            Failure failure = null;
+
+            String code = null;
+            if (vc.getClassName() != null)
             {
-               List<Failure> failures = new ArrayList<Failure>(1);
-
-               Failure failure = new Failure(Severity.ERROR,
-                                             SECTION,
-                                             rb.getString("mcf.MCF"),
-                                             vo.getClazz().getName());
-               failures.add(failure);
-
-               return failures;
+               code = vc.getClassName().equals("") ? "<empty>" : vc.getClassName() +
+                  " (" + vc.getClassLoader().toString() + ")";
             }
+
+            if (code != null)
+            {
+               failure = new Failure(Severity.ERROR,
+                                     SECTION,
+                                     rb.getString("mcf.MCFNull"),
+                                     code);
+            }
+            else
+            {
+               failure = new Failure(Severity.ERROR,
+                                     SECTION,
+                                     rb.getString("mcf.MCFNull"));
+            }
+
+            failures.add(failure);
+
+            return failures;
          }
       }
 
