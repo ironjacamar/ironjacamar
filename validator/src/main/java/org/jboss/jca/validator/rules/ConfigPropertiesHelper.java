@@ -67,6 +67,7 @@ public class ConfigPropertiesHelper
       WARNING_TYPES.add(double.class);
       WARNING_TYPES.add(float.class);
       WARNING_TYPES.add(int.class);
+      WARNING_TYPES.add(long.class);
       WARNING_TYPES.add(short.class);
    }
    
