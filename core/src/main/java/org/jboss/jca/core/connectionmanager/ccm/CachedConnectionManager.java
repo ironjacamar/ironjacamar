@@ -25,7 +25,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
-import org.jboss.jca.spi.ComponentStack;
+import org.jboss.jca.core.spi.connectionmanager.ComponentStack;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
