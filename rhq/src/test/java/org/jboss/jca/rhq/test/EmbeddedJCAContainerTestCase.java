@@ -31,12 +31,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * EmbeddedJCAContainerTest
+ * EmbeddedJCAContainerTestCase
  * 
  * @author Jeff Zhang
  *
  */
-public class EmbeddedJCAContainerTest
+public class EmbeddedJCAContainerTestCase
 {
    /** Embedded */
    private static Embedded embedded;
