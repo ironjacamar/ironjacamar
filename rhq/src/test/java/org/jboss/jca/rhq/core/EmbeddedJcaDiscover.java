@@ -21,11 +21,16 @@
  */
 package org.jboss.jca.rhq.core;
 
-import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagementRepository;
 
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import org.jboss.logging.Logger;
 
@@ -83,10 +88,12 @@ public class EmbeddedJcaDiscover implements Discover
       {
          embedJCA = EmbeddedFactory.create(true);
          embedJCA.startup();
-         logger.debug("embedded JCA container started");
+         logger.info("embedded JCA container started");
          
          //embedJCA.deploy(EmbeddedJcaDiscover.class.getResource("h2-ds.xml"));
-         //embedJCA.deploy(EmbeddedJcaDiscover.class.getResource("xa.rar"));
+         
+         deployFile("/xa.rar");
+         logger.debug("xa.rar deployed");
          
          stopped = false;
       }
@@ -96,7 +103,73 @@ public class EmbeddedJcaDiscover implements Discover
       }
 
    }
+   
+   /** 
+    * deploy file into container
+    * 
+    * @param fileName file name
+    */
+   private void deployFile(String fileName)
+   {
+      URL url = EmbeddedJcaDiscover.class.getResource(fileName);
+      try
+      {
+         String tmpPath = System.getProperty("java.io.tmpdir");
+         File outputFile = new File(tmpPath, fileName);
+         copyURLToFile(url, outputFile);
+         URL finalURL = outputFile.toURI().toURL();
+         embedJCA.deploy(finalURL);
+         outputFile.deleteOnExit();
+      }
+      catch (Throwable e)
+      {
+         throw new IllegalStateException("Can not deploy resource: " + url, e);
+      }
+   }
+   
+   /** 
+    * copyURLToFile
+    * @param url URL
+    * @param outputFile File
+    * @throws Exception
+    */
+   private void copyURLToFile(URL url, File outputFile) throws Exception
+   {
+      InputStream from = null;
+      FileOutputStream to = null;
+      try
+      {
+         from = url.openStream();
+         to = new FileOutputStream(outputFile);
+         byte[] buffer = new byte[4096];
+         int bytesRead;
 
+         while ((bytesRead = from.read(buffer)) != -1)
+            to.write(buffer, 0, bytesRead);
+      }
+      finally
+      {
+         if (from != null)
+            try
+            {
+               from.close();
+            }
+            catch (IOException e)
+            {
+               ;
+            }
+         if (to != null)
+            try
+            {
+               to.close();
+            }
+            catch (IOException e)
+            {
+               ;
+            }
+      }
+   }
+   
    /** 
     * getManagementRepository
     * 
@@ -139,28 +212,5 @@ public class EmbeddedJcaDiscover implements Discover
       {
          throw new IllegalStateException("Can not shutdown the Embedded JCA container", e);
       }
-   }
-   
-   /**
-    * getConnectorByUniqueId
-    * 
-    * @param rarUniqueId The RAR unique ID
-    * @return the Connector associated with the RAR resource with the unique id.
-    */
-   public Connector getConnectorByUniqueId(String rarUniqueId)
-   {
-      if (null == rarUniqueId)
-      {
-         throw new IllegalArgumentException("rar unique id can not be null.");
-      }
-      ManagementRepository manRepo = getManagementRepository();
-      for (Connector connector : manRepo.getConnectors())
-      {
-         if (rarUniqueId.equals(connector.getUniqueId()))
-         {
-            return connector;
-         }
-      }
-      return null;
    }
 }

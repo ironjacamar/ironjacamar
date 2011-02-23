@@ -28,6 +28,8 @@ import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jboss.logging.Logger;
+
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
@@ -42,6 +44,9 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 public class ResourceAdapterResourceDiscoveryComponent 
    implements ResourceDiscoveryComponent<ResourceAdapterResourceComponent>
 {
+   /** log */
+   private static final Logger logger = Logger.getLogger(ResourceAdapterResourceDiscoveryComponent.class);
+   
    /**
     * discoverResources
     * 
@@ -55,7 +60,6 @@ public class ResourceAdapterResourceDiscoveryComponent
       ResourceDiscoveryContext<ResourceAdapterResourceComponent> jcaRarResourceComponentResourceDiscoveryContext)
       throws InvalidPluginConfigurationException, Exception
    {
-
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
 
       ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
