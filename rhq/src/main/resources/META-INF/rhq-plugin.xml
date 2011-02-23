@@ -1,0 +1,122 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE plugin [
+
+<!ENTITY advancedResourceConfigProps '
+    <c:list-property required="false" name="config-property" readOnly="true">
+        <c:description>
+            Properties to supply to the ManagedConnectionFactory (MCF) MBean service configuration.
+        </c:description>
+        <c:map-property name="config-property">
+            <c:simple-property name="name" readOnly="true" description="The name of the configuration property." />
+            <c:simple-property name="type" readOnly="true" description="The type of the configuration property.">
+                <c:property-options>
+                    <c:option value="java.lang.String"/>
+                    <c:option value="java.lang.Boolean"/>
+                    <c:option value="java.lang.Integer"/>
+                    <c:option value="java.lang.Double"/>
+                    <c:option value="java.lang.Byte"/>
+                    <c:option value="java.lang.Short"/>
+                    <c:option value="java.lang.Long"/>
+                    <c:option value="java.lang.Float"/>
+                    <c:option value="java.lang.Character"/>
+                </c:property-options>
+            </c:simple-property>
+            <c:simple-property name="value" required="false" description="The value of the configuration property." />
+        </c:map-property>
+    </c:list-property>
+'>
+
+<!-- Metrics -->
+
+
+<!-- Operations  -->
+
+]>
+
+<plugin name="IronJacamar" displayName="IronJacamar Plugin"
+	description="Supports management and monitoring of IronJacamar"
+	version="1.0.0"
+	pluginLifecycleListener="org.jboss.jca.rhq.core.IronJacamarPluginLifecyleListener"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:xmlns:rhq-plugin"
+	xmlns:c="urn:xmlns:rhq-configuration">
+
+	<server name="IronJacamar_AS7" singleton="true"
+		discovery="org.jboss.jca.rhq.core.IronJacamarResourceDiscoveryComponent" 
+		class="org.jboss.jca.rhq.core.IronJacamarResourceComponent">
+
+		<!-- <runs-inside> <parent-resource-type name="JBossAS Server" plugin="JBossAS"/> 
+			</runs-inside> -->
+
+		<!-- Resource Adapter Archive (RAR) --> 
+		<service name="Resource Adapter Archive (RAR)" discovery="org.jboss.jca.rhq.ra.ResourceAdapterResourceDiscoveryComponent" 
+		    class="org.jboss.jca.rhq.ra.ResourceAdapterResourceComponent" supportsManualAdd="true">
+			
+			<plugin-configuration>
+                <c:group name="general" displayName="General">
+                    <c:simple-property name="deploymentName" description="the name of this RAR" readOnly="true"/>
+                    <c:simple-property name="filename" readOnly="true"/>
+                </c:group>
+                <c:group name="advanced" displayName="Advanced" hiddenByDefault="true">
+                    <c:simple-property name="extension" default="rar" readOnly="true"/>
+                    <c:simple-property name="descriptionTemplate" default="a standalone resource adapter" readOnly="true"/>
+                    <c:simple-property name="deploymentTypeName" default="JavaEEResourceAdaptor" readOnly="true">
+                        <c:description>
+                            The name of the item from the org.jboss.deployers.spi.management.KnownDeploymentTypes enum
+                            corresponding to this deployment's type.
+                        </c:description>
+                    </c:simple-property>
+                </c:group>
+            </plugin-configuration>
+            
+            <resource-configuration>
+	             <c:group name="ConfigProperties" displayName="All Config Properties">
+					&advancedResourceConfigProps;						
+                </c:group>
+			</resource-configuration>
+				
+            
+            <!-- here are some resource configurations on the connector -->
+			
+			<!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
+			<service name="Managed Connection Factories" discovery="org.jboss.jca.rhq.ra.ManagedConnectionFactoryResourceDiscoveryComponent"
+				class="org.jboss.jca.rhq.ra.ManagedConnectionFactoryResourceComponent" supportsManualAdd="true">
+            
+				<resource-configuration>
+		             <c:group name="ConfigProperties" displayName="All Config Properties">
+						&advancedResourceConfigProps;						
+	                </c:group>
+				</resource-configuration>
+				
+			</service>
+			
+			<!-- Admin Objects -->
+			<service name="Admin Object" discovery="org.jboss.jca.rhq.ra.AdminObjectResourceDiscoveryComponent" 
+			    class="org.jboss.jca.rhq.ra.AdminObjectResourceComponent" supportsManualAdd="true">
+				
+				<resource-configuration>
+		             <c:group name="ConfigProperties" displayName="All Config Properties">
+						&advancedResourceConfigProps;						
+	                </c:group>
+				</resource-configuration>
+				
+			</service>
+	
+			<!-- Connection Factories -->
+			<service name="Connection Factories" discovery="org.jboss.jca.rhq.ds.ConnectionFactoryResourceDiscoveryComponent"
+				class="org.jboss.jca.rhq.ds.ConnectionFactoryResourceComponent" supportsManualAdd="true">
+				<!-- Not Implemented yet. -->
+			</service>
+
+			<!-- XA Datasource 
+			<service name="XA Datasources" subCategory="Datasources"
+				discovery="org.jboss.jca.rhq.ds.XADatasourceResourceDiscoveryComponent" 
+				class="org.jboss.jca.rhq.ds.XADatasourceResourceComponent" supportsManualAdd="true">
+	
+			</service>
+			-->
+			
+		</service>
+		
+	</server>
+</plugin>
