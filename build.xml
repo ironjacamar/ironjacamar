@@ -163,10 +163,8 @@
   </path>
 
   <path id="rhq.lib.path.id">
+    <path refid="sjc.lib.path.id"/>
     <fileset dir="${lib.dir}/rhq">
-      <include name="**/*.jar"/>
-    </fileset>
-    <fileset dir="${target.dir}">
       <include name="**/*.jar"/>
     </fileset>
   </path>
@@ -303,7 +301,7 @@
   <!-- ================================= 
        Target: rhq
        ================================= -->
-  <target name="rhq" depends="jars">
+  <target name="rhq" depends="jars, prepare-test">
     <ant dir="rhq" inheritRefs="true" target="jars"/>
     <ant dir="rhq" inheritRefs="true" target="prepare-test"/>
     <ant dir="rhq" inheritRefs="true" target="test-jars"/>

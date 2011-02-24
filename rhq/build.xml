@@ -205,7 +205,7 @@
 
     <javac srcdir="src/test"
            destdir="${build.rhq.dir}/test"
-           classpathref="rhq.lib.path.id"
+           classpathref="test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}">
