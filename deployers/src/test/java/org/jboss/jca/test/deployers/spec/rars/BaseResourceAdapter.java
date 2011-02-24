@@ -112,7 +112,7 @@ public class BaseResourceAdapter implements ResourceAdapter
    @Override
    public int hashCode()
    {
-      return 42;
+      return super.hashCode();
    }
 
    /**
@@ -122,9 +122,6 @@ public class BaseResourceAdapter implements ResourceAdapter
     */
    public boolean equals(Object other)
    {
-      if (other == null)
-         return false;
-
-      return getClass().equals(other.getClass());
+      return super.equals(other);
    }
 }
