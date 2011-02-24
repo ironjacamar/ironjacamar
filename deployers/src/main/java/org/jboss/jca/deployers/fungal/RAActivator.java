@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.deployers.common.CommonDeployment;
 
 import java.io.File;
@@ -266,8 +267,12 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          List<ObjectName> ons = registerManagementView(c.getConnector(), kernel.getMBeanServer());
 
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
+         ResourceAdapterRepository resourceAdapterRepository =
+            ((RAConfiguration) getConfiguration()).getResourceAdapterRepository();
+
          return new RAActivatorDeployment(c.getURL(), c.getDeploymentName(), c.getResourceAdapter(), jndiStrategy,
-                                          metadataRepository, c.getCfs(), c.getCfJndiNames(), 
+                                          metadataRepository, resourceAdapterRepository,
+                                          c.getCfs(), c.getCfJndiNames(), 
                                           c.getAos(), c.getAoJndiNames(),
                                           ((RAConfiguration)getConfiguration()).getManagementRepository(), 
                                           c.getConnector(),

@@ -29,6 +29,7 @@ import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.deployers.common.CommonDeployment;
 
 import java.io.File;
@@ -276,8 +277,12 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
 
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
+         ResourceAdapterRepository resourceAdapterRepository =
+            ((RAConfiguration) getConfiguration()).getResourceAdapterRepository();
+
          return new RaXmlDeployment(c.getURL(), deployment, c.getDeploymentName(), c.getResourceAdapter(),
-                                    jndiStrategy, metadataRepository, c.getCfs(), c.getCfJndiNames(),
+                                    jndiStrategy, metadataRepository, resourceAdapterRepository,
+                                    c.getCfs(), c.getCfJndiNames(),
                                     c.getAos(), c.getAoJndiNames(), 
                                     ((RAConfiguration)getConfiguration()).getManagementRepository(), c.getConnector(),
                                     kernel.getMBeanServer(), ons, 

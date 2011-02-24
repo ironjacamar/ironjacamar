@@ -26,6 +26,7 @@ import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 
 import java.net.URL;
 import java.util.List;
@@ -49,6 +50,7 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
     * @param ra The resource adapter instance if present
     * @param jndiStrategy The JNDI strategy
     * @param mdr The metadata repository
+    * @param resourceAdapterRepository The resource adapter repository
     * @param cfs The connection factories
     * @param cfJndis The JNDI names for the connection factories
     * @param aos The admin objects
@@ -61,14 +63,14 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
     * @param log The logger
     */
    public RAActivatorDeployment(URL deployment, String deploymentName, ResourceAdapter ra, JndiStrategy jndiStrategy,
-                                MetadataRepository mdr, 
+                                MetadataRepository mdr, ResourceAdapterRepository resourceAdapterRepository,
                                 Object[] cfs, String[] cfJndis, 
                                 Object[] aos, String[] aoJndis, 
                                 ManagementRepository managementRepository, Connector connector,
                                 MBeanServer server, List<ObjectName> objectNames,
                                 ClassLoader cl, Logger log)
    {
-      super(deployment, deploymentName, true, ra, jndiStrategy, mdr, 
+      super(deployment, deploymentName, true, ra, jndiStrategy, mdr, resourceAdapterRepository,
             cfs, cfJndis, aos, aoJndis, managementRepository, connector, server, objectNames, cl, log);
    }
 }

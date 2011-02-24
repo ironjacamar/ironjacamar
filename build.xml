@@ -100,13 +100,16 @@
   <property name="version.h2" value="1.2.145"/>
   <property name="version.hibernate-annotations" value="3.5.1-Final"/>
   <property name="version.hibernate-validator" value="4.1.0.Final"/>
+  <property name="version.hornetq" value="2.2.0.QA-10129"/>
   <property name="version.javassist" value="3.14.0-GA"/>
   <property name="version.jboss.common" value="2.2.17.GA"/>
   <property name="version.jboss.integration" value="5.1.0.CR1"/>
   <property name="version.jboss.jaspi.api" value="1.0.0.GA"/>
+  <property name="version.jboss.jms.api" value="1.0.0.Beta1"/>
   <property name="version.jboss.logging" value="3.0.0.Beta3"/>
   <property name="version.jboss.logmanager" value="1.2.0.CR8"/>
   <property name="version.jboss.naming" value="5.0.3.GA"/>
+  <property name="version.jboss.netty" value="3.2.1.Final"/>
   <property name="version.jboss.papaki" value="1.0.0.Beta3"/>
   <property name="version.jboss.picketbox" value="4.0.0.Alpha3"/>
   <property name="version.jboss.security" value="2.1.0.20090318"/>
@@ -148,6 +151,9 @@
     <fileset dir="${lib.dir}/jetty">
       <include name="**/*.jar"/>
     </fileset>
+    <fileset dir="${lib.dir}/hornetq">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${lib.dir}/sjc">
       <include name="**/*.jar"/>
     </fileset>
@@ -185,6 +191,9 @@
     <fileset dir="${lib.dir}/mail">
       <include name="**/*.jar"/>
     </fileset>
+    <fileset dir="${lib.dir}/hornetq">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${lib.dir}/test">
       <include name="**/*.jar"/>
     </fileset>
@@ -211,6 +220,9 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/jetty">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/hornetq">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/sjc">
@@ -271,7 +283,7 @@
        ================================= -->
   <target name="resolve" depends="init">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="common,sjc,embedded,arquillian,jetty,mail,test,tools,rhq"
+                  conf="common,sjc,embedded,arquillian,jetty,hornetq,mail,rhq,test,tools"
                   sync="true"/>
   </target>
   
@@ -503,6 +515,9 @@
         <fileset dir="${lib.dir}/jetty">
           <include name="*.jar"/>
         </fileset>
+        <fileset dir="${lib.dir}/hornetq">
+          <include name="*.jar"/>
+        </fileset>
         <fileset dir="${lib.dir}/sjc">
           <include name="*.jar"/>
         </fileset>
@@ -554,6 +569,9 @@
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${lib.dir}/jetty">
+          <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${lib.dir}/hornetq">
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${lib.dir}/sjc">
@@ -655,6 +673,7 @@
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -694,6 +713,7 @@
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -733,6 +753,7 @@
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -772,6 +793,7 @@
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -811,6 +833,7 @@
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -850,6 +873,7 @@
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
@@ -890,6 +914,7 @@
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />

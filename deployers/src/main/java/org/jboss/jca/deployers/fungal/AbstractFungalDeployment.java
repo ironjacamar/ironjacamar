@@ -25,8 +25,8 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
-import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -68,6 +68,9 @@ public abstract class AbstractFungalDeployment implements Deployment
    /** The MDR */
    protected MetadataRepository mdr;
 
+   /** The resource adapter repository */
+   protected ResourceAdapterRepository rar;
+
    /** The connection factories */
    protected Object[] cfs;
 
@@ -103,6 +106,7 @@ public abstract class AbstractFungalDeployment implements Deployment
     * @param ra The resource adapter instance if present
     * @param jndiStrategy The JNDI strategy
     * @param metadataRepository The metadata repository
+    * @param resourceAdapterRepository The resource adapter repository
     * @param cfs The connection factories
     * @param cfJndis The JNDI names of the connection factories
     * @param aos The admin objects
@@ -116,6 +120,7 @@ public abstract class AbstractFungalDeployment implements Deployment
     */
    public AbstractFungalDeployment(URL deployment, String deploymentName, boolean activator, ResourceAdapter ra,
                                    JndiStrategy jndiStrategy, MetadataRepository metadataRepository, 
+                                   ResourceAdapterRepository resourceAdapterRepository,
                                    Object[] cfs, String[] cfJndis,
                                    Object[] aos, String[] aoJndis,
                                    ManagementRepository managementRepository, Connector connector,
@@ -128,6 +133,7 @@ public abstract class AbstractFungalDeployment implements Deployment
       this.ra = ra;
       this.jndiStrategy = jndiStrategy;
       this.mdr = metadataRepository;
+      this.rar = resourceAdapterRepository;
       this.cfs = cfs;
       this.cfJndis = cfJndis;
       this.aos = aos;
@@ -198,7 +204,7 @@ public abstract class AbstractFungalDeployment implements Deployment
 
                   mdr.unregisterJndiMapping(deployment.toExternalForm(), cf, jndi);
                }
-               catch (NotFoundException nfe)
+               catch (org.jboss.jca.core.spi.mdr.NotFoundException nfe)
                {
                   log.warn("Exception during unregistering deployment", nfe);
                }
@@ -216,7 +222,7 @@ public abstract class AbstractFungalDeployment implements Deployment
 
                   mdr.unregisterJndiMapping(deployment.toExternalForm(), ao, jndi);
                }
-               catch (NotFoundException nfe)
+               catch (org.jboss.jca.core.spi.mdr.NotFoundException nfe)
                {
                   log.warn("Exception during unregistering deployment", nfe);
                }
@@ -259,6 +265,18 @@ public abstract class AbstractFungalDeployment implements Deployment
 
          if (ra != null)
          {
+            if (rar != null)
+            {
+               try
+               {
+                  rar.unregisterResourceAdapter(ra);
+               }
+               catch (org.jboss.jca.core.spi.rar.NotFoundException nfe)
+               {
+                  log.warn("Exception during unregistering deployment", nfe);
+               }
+            }
+
             ra.stop();
             ra = null;
          }

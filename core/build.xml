@@ -167,6 +167,7 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
@@ -217,6 +218,7 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
@@ -265,6 +267,12 @@
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
+
+    <copy todir="${build.core.dir}/test" flatten="true">
+      <fileset dir="${lib.dir}/hornetq">
+        <include name="**/*.rar"/>
+      </fileset>
+    </copy>
 
   </target>
 

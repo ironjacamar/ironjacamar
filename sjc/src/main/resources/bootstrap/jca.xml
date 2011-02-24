@@ -142,6 +142,13 @@
         interface="org.jboss.jca.core.spi.mdr.MetadataRepository"
         class="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
 
+  <!-- Resource adapter repository -->
+  <bean name="ResourceAdapterRepository"
+        interface="org.jboss.jca.core.spi.rar.ResourceAdapterRepository"
+        class="org.jboss.jca.core.rar.SimpleResourceAdapterRepository">
+    <property name="MetadataRepository"><inject bean="MDR"/></property>
+  </bean>
+
   <!-- Management repository -->
   <bean name="ManagementRepository"
         class="org.jboss.jca.core.api.management.ManagementRepository"/>
@@ -159,6 +166,7 @@
     <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
+    <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
   </bean>
 
   <!-- Activator configuration -->
@@ -174,6 +182,7 @@
     <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
+    <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
   </bean>
 
   <!-- RA deployer -->

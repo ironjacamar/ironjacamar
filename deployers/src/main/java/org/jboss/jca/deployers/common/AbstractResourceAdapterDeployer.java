@@ -46,7 +46,6 @@ import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
-import org.jboss.jca.core.spi.mdr.AlreadyExistsException;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;
@@ -714,13 +713,13 @@ public abstract class AbstractResourceAdapterDeployer
    * @throws DeployException DeployException
    * @throws ResourceException ResourceException
    * @throws ValidatorException ValidatorException
-   * @throws AlreadyExistsException AlreadyExistsException
+   * @throws org.jboss.jca.core.spi.mdr.AlreadyExistsException AlreadyExistsException
    * @throws ClassNotFoundException ClassNotFoundException
    * @throws Throwable Throwable
    */
    protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root, ClassLoader cl,
       Connector cmd, IronJacamar ijmd) throws DeployException, ResourceException, ValidatorException,
-      AlreadyExistsException, ClassNotFoundException, Throwable
+      org.jboss.jca.core.spi.mdr.AlreadyExistsException, ClassNotFoundException, Throwable
    {
       return createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd, null);
    }
@@ -741,14 +740,14 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws DeployException DeployException
     * @throws ResourceException ResourceException
     * @throws ValidatorException ValidatorException
-    * @throws AlreadyExistsException AlreadyExistsException
+    * @throws org.jboss.jca.core.spi.mdr.AlreadyExistsException AlreadyExistsException
     * @throws ClassNotFoundException ClassNotFoundException
     * @throws Throwable Throwable
     */
    protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root, ClassLoader cl,
       Connector cmd, IronJacamar ijmd, org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml)
-      throws DeployException, ResourceException, ValidatorException, AlreadyExistsException, ClassNotFoundException,
-      Throwable
+      throws DeployException, ResourceException, ValidatorException, org.jboss.jca.core.spi.mdr.AlreadyExistsException,
+             ClassNotFoundException, Throwable
    {
       Set<Failure> failures = null;
       try
@@ -1486,7 +1485,7 @@ public abstract class AbstractResourceAdapterDeployer
                // Register with MDR
                registerResourceAdapterToMDR(url, root, cmd, ijmd);
             }
-            catch (AlreadyExistsException e)
+            catch (org.jboss.jca.core.spi.mdr.AlreadyExistsException e)
             {
                //ignore it, RA already registered
             }
@@ -1536,6 +1535,9 @@ public abstract class AbstractResourceAdapterDeployer
                }
 
                startContext(resourceAdapter, bootstrapIdentifier);
+
+               // Register with ResourceAdapterRepository
+               registerResourceAdapterToResourceAdapterRepository(resourceAdapter);
             }
          }
 
@@ -1643,10 +1645,19 @@ public abstract class AbstractResourceAdapterDeployer
     * @param root root
     * @param cmd cmd
     * @param ijmd ijmd
-    * @throws AlreadyExistsException AlreadyExistsException
+    * @throws org.jboss.jca.core.spi.mdr.AlreadyExistsException AlreadyExistsException
     */
    protected abstract void registerResourceAdapterToMDR(URL url, File root, Connector cmd, IronJacamar ijmd)
-      throws AlreadyExistsException;
+      throws org.jboss.jca.core.spi.mdr.AlreadyExistsException;
+
+   /**
+    * Register the ResourceAdapter to the ResourceAdapterRepository. Implementer should provide the implementation
+    * to get repository and do the registration
+    * @param instance the instance
+    * @throws org.jboss.jca.core.spi.rar.AlreadyExistsException AlreadyExistsException
+    */
+   protected abstract void registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance)
+      throws org.jboss.jca.core.spi.rar.AlreadyExistsException;
 
    /**
     *

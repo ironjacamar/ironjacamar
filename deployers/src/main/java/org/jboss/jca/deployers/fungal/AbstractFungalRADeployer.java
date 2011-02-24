@@ -25,7 +25,6 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.core.spi.mdr.AlreadyExistsException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer;
 import org.jboss.jca.deployers.common.DeployException;
@@ -46,6 +45,7 @@ import javax.management.DynamicMBean;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
@@ -274,10 +274,18 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
    @Override
    protected void registerResourceAdapterToMDR(URL url, File root, Connector cmd, IronJacamar ijmd)
-      throws AlreadyExistsException
+      throws org.jboss.jca.core.spi.mdr.AlreadyExistsException
    {
       ((RAConfiguration) getConfiguration()).getMetadataRepository().
          registerResourceAdapter(url.toExternalForm(), root, cmd, ijmd);
+   }
+
+   @Override
+   protected void registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance)
+      throws org.jboss.jca.core.spi.rar.AlreadyExistsException
+   {
+      ((RAConfiguration) getConfiguration()).getResourceAdapterRepository().
+         registerResourceAdapter(instance);
    }
 
    /**

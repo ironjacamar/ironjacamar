@@ -36,6 +36,7 @@ import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.deployers.common.CommonDeployment;
 
 import java.io.File;
@@ -162,8 +163,12 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
 
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();
+         ResourceAdapterRepository resourceAdapterRepository = 
+            ((RAConfiguration) getConfiguration()).getResourceAdapterRepository();
+
          return new RADeployment(c.getURL(), c.getDeploymentName(), c.isActivateDeployment(), c.getResourceAdapter(),
-                                 jndiStrategy, metadataRepository, c.getCfs(), c.getCfJndiNames(), 
+                                 jndiStrategy, metadataRepository, resourceAdapterRepository,
+                                 c.getCfs(), c.getCfJndiNames(), 
                                  c.getAos(), c.getAoJndiNames(), destination, 
                                  ((RAConfiguration)getConfiguration()).getManagementRepository(), c.getConnector(),
                                  kernel.getMBeanServer(), ons,

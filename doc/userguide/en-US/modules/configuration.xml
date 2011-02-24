@@ -160,6 +160,13 @@ config/bootstrap/jca.xml
                   </entry>
                 </row>
                 <row>
+                  <entry><code>ResourceAdapterRepository</code></entry>
+                  <entry><code>org.jboss.jca.&#x200B;core.spi.rar.&#x200B;ResourceAdapterRepository</code></entry>
+                  <entry>
+                    The metadata repository
+                  </entry>
+                </row>
+                <row>
                   <entry><code>ScopeDeployment</code></entry>
                   <entry><code>boolean</code></entry>
                   <entry>
@@ -517,7 +524,10 @@ config/bootstrap/
    <section id="webserver">
       <title>Web server</title>
 
-      <para>The IronJacamar project features a web server which is used to serve web archive deployments.</para>
+      <para>The IronJacamar project features a web server which is used to serve web archive deployments.
+        More information about Jetty can be found at the <ulink url="http://www.eclipse.org/jetty/">
+        homepage</ulink>.
+      </para>
 
       <para>The configuration is done in the</para>
 
@@ -605,6 +615,5 @@ lib/jetty
       <para>directory.</para>
 
    </section>
-
 
 </chapter>

@@ -26,6 +26,7 @@ import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.deployers.common.Configuration;
 
 import java.io.PrintStream;
@@ -81,6 +82,9 @@ public class RAConfiguration implements Configuration
 
    /** The management repository */
    private ManagementRepository managementRepository;
+
+   /** The resource adapter repository */
+   private ResourceAdapterRepository resourceAdapterRepository;
 
    /**
     * Constructor
@@ -318,6 +322,24 @@ public class RAConfiguration implements Configuration
    }
 
    /**
+    * Set the resource adapter repository
+    * @param value The value
+    */
+   public void setResourceAdapterRepository(ResourceAdapterRepository value)
+   {
+      resourceAdapterRepository = value;
+   }
+
+   /**
+    * Get the resource adapter repository
+    * @return The handle
+    */
+   public ResourceAdapterRepository getResourceAdapterRepository()
+   {
+      return resourceAdapterRepository;
+   }
+
+   /**
     * Start
     */
    public void start()
@@ -336,5 +358,8 @@ public class RAConfiguration implements Configuration
 
       if (managementRepository == null)
          throw new IllegalStateException("ManagementRepository not defined");
+
+      if (resourceAdapterRepository == null)
+         throw new IllegalStateException("ResourceAdapterRepository not defined");
    }
 }
