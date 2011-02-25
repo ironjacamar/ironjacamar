@@ -438,6 +438,28 @@ username2=role3,role4
            ]]>
         </programlisting>
 
+        <para>There is support for creating a basic security domain which can provide
+          a <code>javax.security.auth.Subject</code> instance to deployments that
+          are using <code>&lt;security-domain&gt;</code> or
+          <code>&lt;security-domain-and-application&gt;</code> in their setup.</para>
+
+        <para>A security domain can be configured through</para>
+
+        <programlisting language="xml">
+          <![CDATA[
+<!-- SubjectFactory -->
+<bean name="DefaultSecurityDomain"
+      interface="org.jboss.security.SubjectFactory"
+      class="org.jboss.jca.core.security.DefaultSubjectFactory">
+  <property name="SecurityDomain">DefaultSecurityDomain</property>
+  <property name="UserName">user</property>
+  <property name="Password">password</property>
+</bean>
+           ]]>
+        </programlisting>
+
+        <para>beans.</para>
+
       </section>
 
    </section>

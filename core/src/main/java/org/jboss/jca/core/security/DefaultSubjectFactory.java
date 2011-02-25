@@ -26,15 +26,27 @@ import javax.security.auth.Subject;
 
 import org.jboss.security.SubjectFactory;
 
+/**
+ * Implements a basic subject factory
+ */
 public class DefaultSubjectFactory implements SubjectFactory
 {
+   /** The security domain name */
+   private String securityDomain;
 
-   private final String securityDomain;
+   /** The user name */
+   private String userName;
 
-   private final String userName;
+   /** The password */
+   private String password;
 
-   private final String password;
-
+   /**
+    * Create a new DefaultSubjectFactory.
+    */
+   public DefaultSubjectFactory()
+   {
+      this(null, null, null);
+   }
 
    /**
     * Create a new DefaultSubjectFactory.
@@ -45,21 +57,52 @@ public class DefaultSubjectFactory implements SubjectFactory
     */
    public DefaultSubjectFactory(String securityDomain, String userName, String password)
    {
-      super();
       this.securityDomain = securityDomain;
       this.userName = userName;
       this.password = password;
    }
 
+   /**
+    * Set the security domain
+    * @param v The value
+    */
+   public void setSecurityDomain(String v)
+   {
+      this.securityDomain = v;
+   }
+
+   /**
+    * Set the user name
+    * @param v The value
+    */
+   public void setUserName(String v)
+   {
+      this.userName = v;
+   }
+
+   /**
+    * Set the password
+    * @param v The value
+    */
+   public void setPassword(String v)
+   {
+      this.password = v;
+   }
+
    @Override
    public Subject createSubject()
    {
+      if (userName == null)
+         throw new IllegalStateException("UserName is null");
+
+      if (password == null)
+         throw new IllegalStateException("Password is null");
+
       Subject subject = new Subject();
       PasswordCredential credential = new PasswordCredential(userName, password.toCharArray());
       subject.getPrivateCredentials().add(credential);
       return subject;
    }
-
 
    @Override
    public Subject createSubject(String securityDomain)
@@ -119,6 +162,5 @@ public class DefaultSubjectFactory implements SubjectFactory
       return "DefaultSubjectFactory [securityDomain=" + securityDomain + ", userName=" + userName + ", password=" +
              password + "]";
    }
-
 }
 
