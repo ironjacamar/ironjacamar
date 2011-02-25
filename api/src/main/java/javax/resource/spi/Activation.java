@@ -30,15 +30,15 @@ import static java.lang.annotation.RetentionPolicy.*;
 
 /**
  * Designates a JavaBean as an <code>ActivationSpec</code>. This annotation may
- * be placed on a JavaBean. A JavaBean annotated with the Activation annotation
- * is not required to implement the {@link ActivationSpec ActivationSpec}
+ * be placed on a JavaBean. Eventhough the JavaBean is annotated with the Activation annotation
+ * it is still required to implement the {@link ActivationSpec ActivationSpec}
  * interface.
  * 
  * <p>The ActivationSpec JavaBean contains the configuration information pertaining
  * to inbound connectivity from an EIS instance. A resource adapter capable of
- * message delivery to message endpoints must provide an JavaBean class
- * implementing the {@link ActivationSpec ActivationSpec} interface or annotate
- * a JavaBean with the <code>Activation</code> annotation for each supported
+ * message delivery to message endpoints must provide a JavaBean class
+ * implementing the {@link ActivationSpec ActivationSpec} interface which may be annotated
+ * with the <code>Activation</code> annotation for each supported
  * endpoint message listener type.
  * 
  * <p>The ActivationSpec JavaBean has a set of configurable properties specific to
