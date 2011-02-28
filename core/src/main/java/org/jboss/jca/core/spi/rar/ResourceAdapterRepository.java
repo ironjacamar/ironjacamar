@@ -55,6 +55,14 @@ public interface ResourceAdapterRepository
    public Set<String> getResourceAdapters();
 
    /**
+    * Get the resource adapters unique ids registered which has the specified
+    * message listener type
+    * @param messageListenerType The message listener type
+    * @return The unique ids
+    */
+   public Set<String> getResourceAdapters(Class<?> messageListenerType);
+
+   /**
     * Get an endpoint representation for a resource adapter
     * @param uniqueId An unique id that represents the deployment
     * @return The endpoint

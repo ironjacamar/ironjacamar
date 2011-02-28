@@ -25,6 +25,7 @@ package org.jboss.jca.core.spi.rar;
 import java.util.Map;
 import java.util.Set;
 
+import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 
 /**
@@ -47,11 +48,13 @@ public interface Activation
    public Set<String> getRequiredConfigProperties();
 
    /**
-    * Get an instance of the associated activation spec.
-    * 
-    * Note, that there is only one instance associated with
-    * implementations of this interface
+    * Create an instance of the associated activation spec.
     * @return The value
+    * @exception NotFoundException Thrown if the class is no longer available
+    * @exception InstantiationException Thrown if an object couldn't created
+    * @exception IllegalAccessException Thrown if object access is inaccessible
+    * @exception ResourceException Thrown if the activation spec can't be associated with the resource adapter
     */
-   public ActivationSpec getInstance();
+   public ActivationSpec createInstance()
+      throws NotFoundException, InstantiationException, IllegalAccessException, ResourceException;
 }

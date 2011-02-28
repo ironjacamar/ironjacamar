@@ -44,9 +44,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
+
+import org.jboss.logging.Logger;
 
 /**
  * A simple implementation of the resource adapter repository
@@ -55,6 +55,9 @@ import javax.resource.spi.ResourceAdapter;
  */
 public class SimpleResourceAdapterRepository implements ResourceAdapterRepository
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(SimpleResourceAdapterRepository.class);
+
    /** Resource adapters */
    private Map<String, WeakReference<ResourceAdapter>> rars;
 
@@ -152,6 +155,93 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    public synchronized Set<String> getResourceAdapters()
    {
       return Collections.unmodifiableSet(rars.keySet());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Set<String> getResourceAdapters(Class<?> messageListenerType)
+   {
+      if (messageListenerType == null)
+         throw new IllegalArgumentException("MessageListenerType is null");
+      
+      if (mdr == null)
+         throw new IllegalStateException("MDR is null");
+      
+      Set<String> result = new HashSet<String>();
+
+      Iterator<Map.Entry<String, WeakReference<ResourceAdapter>>> it = rars.entrySet().iterator();
+      while (it.hasNext())
+      {
+         Map.Entry<String, WeakReference<ResourceAdapter>> entry = it.next();
+
+         String raKey = entry.getKey();
+         WeakReference<ResourceAdapter> ra = entry.getValue();
+
+         if (ra.get() != null)
+         {
+            ResourceAdapter rar = ra.get();
+            Connector md = null;
+
+            Set<String> mdrKeys = mdr.getResourceAdapters();
+            Iterator<String> mdrIt = mdrKeys.iterator();
+
+            while (md == null && mdrIt.hasNext())
+            {
+               String mdrId = mdrIt.next();
+               try
+               {
+                  Connector c = mdr.getResourceAdapter(mdrId);
+            
+                  if (c.getResourceadapter() != null && c.getResourceadapter() instanceof ResourceAdapter1516)
+                  {
+                     ResourceAdapter1516 ra1516 = (ResourceAdapter1516)c.getResourceadapter();
+                     String clz = ra1516.getResourceadapterClass();
+
+                     if (rar.getClass().getName().equals(clz))
+                        md = c;
+                  }
+               }
+               catch (Throwable t)
+               {
+                  // We will ignore
+                  log.debugf("Resource adapter %s is ignored", rar.getClass().getName()); 
+               }
+            }
+
+            if (md != null && md.getResourceadapter() != null && md.getResourceadapter() instanceof ResourceAdapter1516)
+            {
+               ResourceAdapter1516 ra1516 = (ResourceAdapter1516)md.getResourceadapter();
+
+               if (ra1516.getInboundResourceadapter() != null &&
+                   ra1516.getInboundResourceadapter().getMessageadapter() != null &&
+                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
+                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
+               {
+                  List<org.jboss.jca.common.api.metadata.ra.MessageListener> listeners =
+                     ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners();
+
+                  for (org.jboss.jca.common.api.metadata.ra.MessageListener ml : listeners)
+                  {
+                     try
+                     {
+                        ClassLoader cl = rar.getClass().getClassLoader();
+                        Class<?> mlType = Class.forName(ml.getMessagelistenerType().getValue(), true, cl);
+
+                        if (mlType.isAssignableFrom(messageListenerType))
+                           result.add(raKey);
+                     }
+                     catch (Throwable t)
+                     {
+                        // We will ignore
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      return Collections.unmodifiableSet(result);
    }
 
    /**
@@ -304,20 +394,13 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          }
 
          Class<?> asClz = Class.forName(as.getActivationspecClass().getValue(), true, cl);
-         ActivationSpec instance = (ActivationSpec)asClz.newInstance();
-         instance.setResourceAdapter(rar);
 
-         ActivationImpl a = new ActivationImpl(Collections.unmodifiableMap(configProperties),
-                                               Collections.unmodifiableSet(requiredConfigProperties),
-                                               instance);
+         ActivationImpl a = new ActivationImpl(rar,
+                                               asClz,
+                                               Collections.unmodifiableMap(configProperties),
+                                               Collections.unmodifiableSet(requiredConfigProperties));
 
          return new MessageListenerImpl(type, a);
-      }
-      catch (ResourceException re)
-      {
-         InstantiationException ie = new InstantiationException("Unable to create representation");
-         ie.initCause(re);
-         throw ie;
       }
       catch (ClassNotFoundException cnfe)
       {

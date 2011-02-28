@@ -152,7 +152,7 @@ public class HornetQTestCase
 
          assertNotNull(raRepository);
 
-         Set<String> ids = raRepository.getResourceAdapters();
+         Set<String> ids = raRepository.getResourceAdapters(javax.jms.MessageListener.class);
 
          assertNotNull(ids);
          assertEquals(1, ids.size());
@@ -169,7 +169,7 @@ public class HornetQTestCase
 
          MessageListener listener = listeners.get(0);
 
-         ActivationSpec as = listener.getActivation().getInstance();
+         ActivationSpec as = listener.getActivation().createInstance();
          assertNotNull(as);
          assertNotNull(as.getResourceAdapter());
 
