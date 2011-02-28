@@ -187,7 +187,7 @@ public class EmbeddedJcaDiscover implements Discover
          {
             start();
             if (stopped)
-               return null;
+               throw new IllegalStateException("Container is stopped");
          }
          mr = embedJCA.lookup("ManagementRepository", ManagementRepository.class);
          return mr;
