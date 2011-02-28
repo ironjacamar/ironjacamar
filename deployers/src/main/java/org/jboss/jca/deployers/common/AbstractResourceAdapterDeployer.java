@@ -1576,7 +1576,13 @@ public abstract class AbstractResourceAdapterDeployer
       }
    }
 
-   protected abstract SubjectFactory getSubjectFactory(String securityDomain);
+   /**
+    * Get a subject factory
+    * @param securityDomain The security domain
+    * @return The subject factory
+    * @exception DeployException Thrown if the security domain can't be resolved
+    */
+   protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
 
    /**
     * Get management views for config property's

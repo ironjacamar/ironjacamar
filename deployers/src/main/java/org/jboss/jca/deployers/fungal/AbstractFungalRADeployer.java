@@ -472,17 +472,21 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    }
 
    @Override
-   protected SubjectFactory getSubjectFactory(String securityDomain)
+   protected SubjectFactory getSubjectFactory(String securityDomain) throws DeployException
    {
+      if (securityDomain == null)
+         throw new IllegalArgumentException("SecurityDomain is null");
+
+      if (securityDomain.trim().equals(""))
+         throw new IllegalArgumentException("SecurityDomain is empty");
+
       try
       {
-         return kernel.getBean(securityDomain + "-subjectfactory", SubjectFactory.class);
+         return kernel.getBean(securityDomain, SubjectFactory.class);
       }
-      catch (Throwable e)
+      catch (Throwable t)
       {
-         log.error("Kernel loookup of securityDomain " + securityDomain + "got an error", e);
-         return null;
+         throw new DeployException("Error during loookup of security domain: " + securityDomain, t);
       }
-
    }
 }
