@@ -45,23 +45,25 @@ public class XAConnectionFactoryImpl implements XAConnectionFactory
    /** Reference */
    private Reference reference;
 
+   /** ManagedConnectionFactory */
+   private XAManagedConnectionFactory mcf;
+   
+   /** ConnectionManager */
+   private ConnectionManager connectionManager;
+
+
    /**
     * Default constructor
-    */
-   public XAConnectionFactoryImpl()
-   {
-
-   }
-
-   /**
-    * Default constructor
+    * @param mcf ManagedConnectionFactory
     * @param cxManager ConnectionManager
     */
-   public XAConnectionFactoryImpl(ConnectionManager cxManager)
+   public XAConnectionFactoryImpl(XAManagedConnectionFactory mcf,
+                                          ConnectionManager cxManager)
    {
-
+      this.mcf = mcf;
+      this.connectionManager = cxManager;
    }
-
+   
    /** 
     * Get connection from factory
     *
@@ -72,7 +74,7 @@ public class XAConnectionFactoryImpl implements XAConnectionFactory
    public XAConnection getConnection() throws ResourceException
    {
       log.finest("getConnection()");
-      return new XAConnectionImpl();
+      return (XAConnection)connectionManager.allocateConnection(mcf, null);
    }
 
    /**
@@ -99,6 +101,5 @@ public class XAConnectionFactoryImpl implements XAConnectionFactory
       log.finest("setReference()");
       this.reference = reference;
    }
-
 
 }
