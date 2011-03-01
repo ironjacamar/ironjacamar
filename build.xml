@@ -308,16 +308,7 @@
     <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="codegenerator" inheritRefs="true" target="jars"/>
     <ant dir="adapters" inheritRefs="true" target="jars"/>
-  </target>
-  
-  <!-- ================================= 
-       Target: rhq
-       ================================= -->
-  <target name="rhq" depends="jars, prepare-test">
     <ant dir="rhq" inheritRefs="true" target="jars"/>
-    <ant dir="rhq" inheritRefs="true" target="prepare-test"/>
-    <ant dir="rhq" inheritRefs="true" target="test-jars"/>
-    <ant dir="rhq" inheritRefs="true" target="plugin"/>
   </target>
   
   <!-- ================================= 
@@ -334,6 +325,7 @@
     <ant dir="sjc" inheritRefs="true" target="docs"/>
     <ant dir="codegenerator" inheritRefs="true" target="docs"/>
     <ant dir="adapters" inheritRefs="true" target="docs"/>
+    <ant dir="rhq" inheritRefs="true" target="docs"/>
   </target>
   
   <!-- ================================= 
@@ -355,6 +347,7 @@
     <ant dir="validator" inheritRefs="true" target="prepare-test"/>
     <ant dir="codegenerator" inheritRefs="true" target="prepare-test"/>
     <ant dir="adapters" inheritRefs="true" target="prepare-test"/>
+    <ant dir="rhq" inheritRefs="true" target="prepare-test"/>
   </target>
   
   <!-- ================================= 
@@ -367,6 +360,7 @@
     <ant dir="deployers" inheritRefs="true" target="test"/>
     <ant dir="validator" inheritRefs="true" target="test"/>
     <ant dir="adapters" inheritRefs="true" target="test"/>
+    <ant dir="rhq" inheritRefs="true" target="test"/>
   </target>
   
   <!-- ================================= 

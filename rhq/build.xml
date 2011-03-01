@@ -49,18 +49,7 @@
        Target: jars 
        ================================= -->
   <target name="jars" depends="compile">
-    <mkdir dir="${build.rhq.dir}/jars" />
-
-    <!-- rhq -->
-    <mkdir dir="${build.rhq.dir}/jars/rhq" />
-
-    <copy todir="${build.rhq.dir}/jars/rhq">
-      <fileset dir="${build.rhq.dir}/impl"
-               includes="**"/>
-    </copy>
-
     <jar destfile="${target.dir}/${name}-rhq.jar"
-         basedir="${build.rhq.dir}/jars/rhq"
          index="true"
          indexMetaInf="true"
          update="true"
@@ -71,6 +60,8 @@
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
+      <fileset dir="${build.rhq.dir}/impl"/>
+      <fileset dir="src/main/resources"/>
     </jar>
   </target>
 
@@ -129,6 +120,7 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
@@ -180,6 +172,7 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
       </classpath>
@@ -200,8 +193,6 @@
   <target name="prepare-test">
     <mkdir dir="${build.rhq.dir}" />
     <mkdir dir="${build.rhq.dir}/test" />
-    <mkdir dir="${build.rhq.dir}/test/lib" />
-    <property name="rhq.lib.plugin.dir" value="${build.rhq.dir}/test/lib" />
 
     <javac srcdir="src/test"
            destdir="${build.rhq.dir}/test"
@@ -213,80 +204,30 @@
     </javac> 
 
     <copy todir="${build.rhq.dir}/test">
-      <fileset dir="src/test/resources"/>
+      <fileset dir="src/test/resources"
+               includes="*.properties"/>
     </copy>
 
-    <jar destfile="${target.dir}/${name}-rhq-test.jar"
+    <jar destfile="${build.rhq.dir}/test/${name}-rhq-test.jar"
          basedir="${build.rhq.dir}/test"
          index="true"
          indexMetaInf="true"
          update="true"
-         level="9">
+         level="9"
+         includes="org/**">
       <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar RHQ"/>
+        <attribute name="Implementation-Title" value="IronJacamar RHQ Test"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
 
-  </target>
-
-  <!-- ================================= 
-       Target: test-jars 
-       ================================= -->
-  <target name="test-jars">
-    <jar destfile="${build.rhq.dir}/xa.rar">
+    <!-- xa.rar -->
+    <jar destfile="${build.rhq.dir}/test/xa.rar">
        <fileset dir="${build.rhq.dir}/test"
-          includes="org/jboss/jca/rhq/rar/xa/**/*.class"/>
+                includes="org/jboss/jca/rhq/rar/xa/**"/>
        <fileset dir="src/test/resources/xa.rar"/>
-    </jar>
-  </target>
-
-  <!-- ================================= 
-       Target: plugin
-       ================================= -->
-  <target name="plugin">
-    <mkdir dir="${build.rhq.dir}" />
-    <mkdir dir="${build.rhq.dir}/plugin" />
-    <mkdir dir="${build.rhq.dir}/plugin/lib" />
-    <property name="rhq.lib.plugin.dir" value="${build.rhq.dir}/plugin/lib" />
-
-    <copy todir="${build.rhq.dir}/plugin">
-      <fileset dir="src/test/resources" includes="*.properties *.xml"/>
-      <fileset dir="src/main/resources/"
-               includes="**/*"/>
-      <fileset dir="${build.rhq.dir}/"
-               includes="*.rar"/>
-    </copy>
-
-
-    <copy todir="${rhq.lib.plugin.dir}">
-      <fileset dir="${lib.dir}/common/" includes="**"/>
-      <fileset dir="${lib.dir}/arquillian/" includes="**"/>
-      <fileset dir="${lib.dir}/embedded/" includes="**"/>
-      <fileset dir="${lib.dir}/sjc/" includes="**"/>
-      <fileset dir="${lib.dir}/test/" includes="h2.jar"/>
-      <fileset dir="${lib.dir}/tools/" includes="apiviz.jar jdepend.jar"/>
-      <fileset dir="${lib.dir}/rhq/" excludes="rhq*"/>
-
-      <fileset dir="${target.dir}"
-         includes="ironjacamar*"
-         excludes="ironjacamar-rhq-plugin* ironjacamar-codegen* ironjacamar-web*"/>
-    </copy>
-
-    <jar destfile="${target.dir}/${name}-rhq-plugin.jar"
-         basedir="${build.rhq.dir}/plugin"
-         index="true"
-         indexMetaInf="true"
-         update="true"
-         level="9">
-      <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar RHQ"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
-        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-      </manifest>
     </jar>
 
   </target>
@@ -324,7 +265,7 @@
              additionalparam="-author -version"
              classpath="${build.rhq.dir}"
              classpathref="sjc.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             bottom="Copyright &#169; 2011 Red Hat Middleware LLC (http://www.jboss.com/)">
       <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.rhq.dir}/docs" overwrite="true">
