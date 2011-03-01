@@ -474,11 +474,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    @Override
    protected SubjectFactory getSubjectFactory(String securityDomain) throws DeployException
    {
-      if (securityDomain == null)
-         throw new IllegalArgumentException("SecurityDomain is null");
-
-      if (securityDomain.trim().equals(""))
-         throw new IllegalArgumentException("SecurityDomain is empty");
+      if (securityDomain == null || securityDomain.trim().equals(""))
+         return null;
 
       try
       {

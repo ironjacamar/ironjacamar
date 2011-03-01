@@ -1579,7 +1579,7 @@ public abstract class AbstractResourceAdapterDeployer
    /**
     * Get a subject factory
     * @param securityDomain The security domain
-    * @return The subject factory
+    * @return The subject factory; must return <code>null</code> if security domain isn't defined
     * @exception DeployException Thrown if the security domain can't be resolved
     */
    protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
