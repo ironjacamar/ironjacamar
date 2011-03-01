@@ -72,4 +72,21 @@ public class AdminObject
 
       return configProperties;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("AdminObject@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[instance=").append(getAdminObject());
+      sb.append(" configProperties=").append(configProperties);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

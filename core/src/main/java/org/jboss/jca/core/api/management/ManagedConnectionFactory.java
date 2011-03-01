@@ -131,4 +131,23 @@ public class ManagedConnectionFactory
    {
       this.poolConfiguration = new WeakReference<PoolConfiguration>(pc);
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("ManagedConnectionFactory@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[instance=").append(getManagedConnectionFactory());
+      sb.append(" configProperties=").append(configProperties);
+      sb.append(" pool=").append(getPool());
+      sb.append(" poolconfiguration=").append(getPoolConfiguration());
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

@@ -806,11 +806,14 @@ public abstract class AbstractResourceAdapterDeployer
                            .getConfigProperties()));
                         beanValidationObjects.add(resourceAdapter);
 
-                        org.jboss.jca.core.api.management.ResourceAdapter mgtRa =
-                           new org.jboss.jca.core.api.management.ResourceAdapter(resourceAdapter);
+                        if (activateDeployment)
+                        {
+                           org.jboss.jca.core.api.management.ResourceAdapter mgtRa =
+                              new org.jboss.jca.core.api.management.ResourceAdapter(resourceAdapter);
 
-                        mgtRa.getConfigProperties().addAll(createManagementView(ra1516.getConfigProperties()));
-                        mgtConnector.setResourceAdapter(mgtRa);
+                           mgtRa.getConfigProperties().addAll(createManagementView(ra1516.getConfigProperties()));
+                           mgtConnector.setResourceAdapter(mgtRa);
+                        }
                      }
                   }
                }
@@ -1110,14 +1113,17 @@ public abstract class AbstractResourceAdapterDeployer
                            pool.setName(poolName);
                         }
 
-                        org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
-                           new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
+                        if (activateDeployment)
+                        {
+                           org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
+                              new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
 
-                        mgtMcf.getConfigProperties().addAll(createManagementView(ra10.getConfigProperties()));
-                        mgtMcf.setPoolConfiguration(pc);
-                        mgtMcf.setPool(pool);
+                           mgtMcf.getConfigProperties().addAll(createManagementView(ra10.getConfigProperties()));
+                           mgtMcf.setPoolConfiguration(pc);
+                           mgtMcf.setPool(pool);
 
-                        mgtConnector.getManagedConnectionFactories().add(mgtMcf);
+                           mgtConnector.getManagedConnectionFactories().add(mgtMcf);
+                        }
                      }
                   }
                }
@@ -1439,15 +1445,18 @@ public abstract class AbstractResourceAdapterDeployer
                                        pool.setName(poolName);
                                     }
 
-                                    org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
-                                       new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
+                                    if (activateDeployment)
+                                    {
+                                       org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
+                                          new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
+                                       
+                                       mgtMcf.getConfigProperties().
+                                          addAll(createManagementView(cdMeta.getConfigProperties()));
+                                       mgtMcf.setPoolConfiguration(pc);
+                                       mgtMcf.setPool(pool);
 
-                                    mgtMcf.getConfigProperties().
-                                       addAll(createManagementView(cdMeta.getConfigProperties()));
-                                    mgtMcf.setPoolConfiguration(pc);
-                                    mgtMcf.setPool(pool);
-
-                                    mgtConnector.getManagedConnectionFactories().add(mgtMcf);
+                                       mgtConnector.getManagedConnectionFactories().add(mgtMcf);
+                                    }
                                  }
                               }
                            }
@@ -1462,7 +1471,7 @@ public abstract class AbstractResourceAdapterDeployer
 
             failures = initAdminObject(cmd, cl, archiveValidationObjects, beanValidationObjects, failures, url,
                deploymentName, activateDeployment, raxml != null ? raxml.getAdminObjects() : null, ijmd != null
-                  ? ijmd.getAdminObjects() : null, aos, aoJndiNames, mgtConnector);
+               ? ijmd.getAdminObjects() : null, aos, aoJndiNames, activateDeployment ? mgtConnector : null);
          }
 
          // Archive validation

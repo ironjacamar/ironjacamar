@@ -106,4 +106,23 @@ public class Connector
 
       return adminObjects;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("Connector@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[uniqueId=").append(uniqueId);
+      sb.append(" resourceAdapter=").append(resourceAdapter);
+      sb.append(" managedConnectionFactories=").append(managedConnectionFactories);
+      sb.append(" adminObjects=").append(adminObjects);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

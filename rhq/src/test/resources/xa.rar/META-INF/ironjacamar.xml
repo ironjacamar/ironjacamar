@@ -31,15 +31,15 @@
   <transaction-support>XATransaction</transaction-support>
   
   <connection-definitions>
-    <connection-definition class-name="org.jboss.jca.rhq.test.xa.XAManagedConnectionFactory" 
-      enabled="true" jndi-name="java:/eis/XA" 
-      use-java-context="true" pool-name="XA">
+    <connection-definition class-name="org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory" 
+                           enabled="true" jndi-name="java:/eis/XA" 
+                           use-java-context="true" pool-name="XA">
       <config-property name="management">rhq</config-property>
 
     </connection-definition>
   </connection-definitions>
   <admin-objects>
-    <admin-object class-name="org.jboss.jca.rhq.test.xa.XAAdminObjectImpl" jndi-name="java:/XAAdminObjectImpl">
+    <admin-object class-name="org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl" jndi-name="java:/XAAdminObjectImpl">
       <config-property name="aoConfig">ao-config</config-property>
     </admin-object>
   </admin-objects>

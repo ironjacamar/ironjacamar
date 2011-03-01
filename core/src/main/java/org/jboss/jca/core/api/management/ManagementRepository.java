@@ -52,4 +52,20 @@ public class ManagementRepository
    {
       return connectors;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("ManagementRepository@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[connectors=").append(connectors);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

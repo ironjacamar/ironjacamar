@@ -302,8 +302,6 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
       if (server == null)
          throw new IllegalArgumentException("MBeanServer is null");
 
-      ((RAConfiguration)getConfiguration()).getManagementRepository().getConnectors().add(mgtConnector);
-
       List<ObjectName> ons = new ArrayList<ObjectName>();
 
       if (mgtConnector != null)
@@ -450,6 +448,10 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                ons.add(aoON);
             }
          }
+
+         log.debugf("Adding management connector: %s", mgtConnector);
+         
+         ((RAConfiguration)getConfiguration()).getManagementRepository().getConnectors().add(mgtConnector);
       }
 
       return ons;
