@@ -79,7 +79,8 @@ public class AONull implements Rule
             {
                failure = new Failure(Severity.ERROR,
                                      SECTION,
-                                     rb.getString("ao.AONull"));
+                                     rb.getString("ao.AONull"),
+                                     code);
             }
             else
             {

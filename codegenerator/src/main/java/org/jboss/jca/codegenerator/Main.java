@@ -449,7 +449,7 @@ public class Main
       int numOfAo = 0;
       while (numOfAo >= 0 && def.isGenAdminObject())
       {
-         String strOrder = numOfAo > 0 ? new Integer(numOfAo).toString() : "";
+         String strOrder = numOfAo > 0 ? Integer.valueOf(numOfAo).toString() : "";
          AdminObjectType aoType = new AdminObjectType();
          System.out.print(rb.getString("adminobject.interface.name"));
          System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectInterface]: ");
