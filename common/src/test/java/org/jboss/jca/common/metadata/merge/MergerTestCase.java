@@ -723,7 +723,7 @@ public class MergerTestCase
          List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
             .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
          assertThat(conDefProps.size(), is(3));
-         assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3));//, exConf4, exConf5));
+         assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3)); //, exConf4, exConf5));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
             equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
       }

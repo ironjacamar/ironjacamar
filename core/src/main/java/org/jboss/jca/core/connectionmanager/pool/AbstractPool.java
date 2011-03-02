@@ -331,7 +331,7 @@ public abstract class AbstractPool implements Pool
     * @param trackByTx trnasaction local
     * @param trackByTransaction transaction instance
     * @return connection listener instance
-    * @throws ResourceException
+    * @throws ResourceException Thrown if an error occurs
     */
    ConnectionListener getTransactionOldConnection(TransactionLocal trackByTx, Transaction trackByTransaction)
       throws ResourceException

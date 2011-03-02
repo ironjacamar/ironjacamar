@@ -508,7 +508,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       /**
        * Get the result of the enlistment.
        *
-       * @throws SystemExeption for any error
+       * @throws SystemException for any error
        */
       public void checkEnlisted() throws SystemException
       {

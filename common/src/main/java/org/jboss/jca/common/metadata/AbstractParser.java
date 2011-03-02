@@ -38,12 +38,10 @@ import java.security.PrivilegedAction;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.jboss.logging.Logger;
-
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
-
+import org.jboss.logging.Logger;
 
 /**
  *
