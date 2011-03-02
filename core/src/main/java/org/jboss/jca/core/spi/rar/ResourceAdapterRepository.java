@@ -37,16 +37,16 @@ public interface ResourceAdapterRepository
    /**
     * Register a resource adapter
     * @param ra The resource adapter instance
-    * @exception AlreadyExistsException Thrown if the unique id is already registered
+    * @return The unique id for the resource adapter
     */
-   public void registerResourceAdapter(ResourceAdapter ra) throws AlreadyExistsException;
+   public String registerResourceAdapter(ResourceAdapter ra);
 
    /**
     * Unregister a resource adapter
-    * @param ra The resource adapter instance
+    * @param key The key for the resource adapter instance
     * @exception NotFoundException Thrown if the unique id isn't registered
     */
-   public void unregisterResourceAdapter(ResourceAdapter ra) throws NotFoundException;
+   public void unregisterResourceAdapter(String key) throws NotFoundException;
 
    /**
     * Get the resource adapters unique ids registered

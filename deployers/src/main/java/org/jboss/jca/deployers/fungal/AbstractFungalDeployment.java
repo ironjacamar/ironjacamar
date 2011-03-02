@@ -62,6 +62,9 @@ public abstract class AbstractFungalDeployment implements Deployment
    /** The resource adapter instance */
    protected ResourceAdapter ra;
 
+   /** The resource adapter instance key */
+   protected String raKey;
+
    /** The JNDI strategy */
    protected JndiStrategy jndiStrategy;
 
@@ -104,6 +107,7 @@ public abstract class AbstractFungalDeployment implements Deployment
     * @param deploymentName The deployment name
     * @param activator Is this the activator of the deployment
     * @param ra The resource adapter instance if present
+    * @param raKey The resource adapter instance key if present
     * @param jndiStrategy The JNDI strategy
     * @param metadataRepository The metadata repository
     * @param resourceAdapterRepository The resource adapter repository
@@ -119,6 +123,7 @@ public abstract class AbstractFungalDeployment implements Deployment
     * @param log The logger
     */
    public AbstractFungalDeployment(URL deployment, String deploymentName, boolean activator, ResourceAdapter ra,
+                                   String raKey,
                                    JndiStrategy jndiStrategy, MetadataRepository metadataRepository, 
                                    ResourceAdapterRepository resourceAdapterRepository,
                                    Object[] cfs, String[] cfJndis,
@@ -131,6 +136,7 @@ public abstract class AbstractFungalDeployment implements Deployment
       this.deploymentName = deploymentName;
       this.activator = activator;
       this.ra = ra;
+      this.raKey = raKey;
       this.jndiStrategy = jndiStrategy;
       this.mdr = metadataRepository;
       this.rar = resourceAdapterRepository;
@@ -263,20 +269,20 @@ public abstract class AbstractFungalDeployment implements Deployment
             }
          }
 
+         if (raKey != null && rar != null)
+         {
+            try
+            {
+               rar.unregisterResourceAdapter(raKey);
+            }
+            catch (org.jboss.jca.core.spi.rar.NotFoundException nfe)
+            {
+               log.warn("Exception during unregistering deployment", nfe);
+            }
+         }
+
          if (ra != null)
          {
-            if (rar != null)
-            {
-               try
-               {
-                  rar.unregisterResourceAdapter(ra);
-               }
-               catch (org.jboss.jca.core.spi.rar.NotFoundException nfe)
-               {
-                  log.warn("Exception during unregistering deployment", nfe);
-               }
-            }
-
             ra.stop();
             ra = null;
          }

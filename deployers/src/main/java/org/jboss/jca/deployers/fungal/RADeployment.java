@@ -56,6 +56,7 @@ public class RADeployment extends AbstractFungalDeployment
     * @param deploymentName The deployment name
     * @param activator Is this the activator of the deployment
     * @param ra The resource adapter instance if present
+    * @param raKey The resource adapter instance key if present
     * @param jndiStrategy The JNDI strategy
     * @param mdr The metadata repository
     * @param resourceAdapterRepository The resource adapter repository
@@ -72,6 +73,7 @@ public class RADeployment extends AbstractFungalDeployment
     * @param log The logger
     */
    public RADeployment(URL deployment, String deploymentName, boolean activator, ResourceAdapter ra,
+                       String raKey,
                        JndiStrategy jndiStrategy, MetadataRepository mdr, 
                        ResourceAdapterRepository resourceAdapterRepository,
                        Object[] cfs, String[] cfJndis,
@@ -81,7 +83,7 @@ public class RADeployment extends AbstractFungalDeployment
                        MBeanServer server, List<ObjectName> objectNames,
                        ClassLoader cl, Logger log)
    {
-      super(deployment, deploymentName, activator, ra, jndiStrategy, mdr, resourceAdapterRepository,
+      super(deployment, deploymentName, activator, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
             cfs, cfJndis, aos, aoJndis, managementRepository, connector, server, objectNames, cl, log);
 
       this.tmpDirectory = tmpDirectory;

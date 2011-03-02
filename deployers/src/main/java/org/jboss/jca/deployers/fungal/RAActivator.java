@@ -270,8 +270,9 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          ResourceAdapterRepository resourceAdapterRepository =
             ((RAConfiguration) getConfiguration()).getResourceAdapterRepository();
 
-         return new RAActivatorDeployment(c.getURL(), c.getDeploymentName(), c.getResourceAdapter(), jndiStrategy,
-                                          metadataRepository, resourceAdapterRepository,
+         return new RAActivatorDeployment(c.getURL(), c.getDeploymentName(), c.getResourceAdapter(), 
+                                          c.getResourceAdapterKey(),
+                                          jndiStrategy, metadataRepository, resourceAdapterRepository,
                                           c.getCfs(), c.getCfJndiNames(), 
                                           c.getAos(), c.getAoJndiNames(),
                                           ((RAConfiguration)getConfiguration()).getManagementRepository(), 

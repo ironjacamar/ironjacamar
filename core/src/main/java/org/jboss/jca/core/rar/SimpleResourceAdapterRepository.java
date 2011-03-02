@@ -28,7 +28,6 @@ import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
-import org.jboss.jca.core.spi.rar.AlreadyExistsException;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.NotFoundException;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
@@ -89,20 +88,10 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /**
     * {@inheritDoc}
     */
-   public synchronized void registerResourceAdapter(ResourceAdapter ra) 
-      throws AlreadyExistsException
+   public synchronized String registerResourceAdapter(ResourceAdapter ra) 
    {
       if (ra == null)
          throw new IllegalArgumentException("ResourceAdapter is null");
-
-      for (WeakReference<ResourceAdapter> wr : rars.values())
-      {
-         if (wr.get() != null)
-         {
-            if (wr.get().equals(ra))
-               throw new AlreadyExistsException(ra + " already registered");
-         }
-      }
 
       String clzName = ra.getClass().getName();
 
@@ -116,35 +105,20 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       String key = clzName + "#" + id.incrementAndGet();
 
       rars.put(key, new WeakReference<ResourceAdapter>(ra));
+
+      return key;
    }
 
    /**
     * {@inheritDoc}
     */
-   public synchronized void unregisterResourceAdapter(ResourceAdapter ra) throws NotFoundException
+   public synchronized void unregisterResourceAdapter(String key) throws NotFoundException
    {
-      if (ra == null)
-         throw new IllegalArgumentException("ResourceAdapter is null");
-
-      String key = null;
-
-      Iterator<Map.Entry<String, WeakReference<ResourceAdapter>>> it = rars.entrySet().iterator();
-      while (key == null && it.hasNext())
-      {
-         Map.Entry<String, WeakReference<ResourceAdapter>> entry = it.next();
-
-         String k = entry.getKey();
-         WeakReference<ResourceAdapter> wr = entry.getValue();
-
-         if (wr.get() != null)
-         {
-            if (wr.get().equals(ra))
-               key = k;
-         }
-      }
-      
       if (key == null)
-         throw new NotFoundException(ra + " isn't registered");
+         throw new IllegalArgumentException("Key is null");
+
+      if (!rars.keySet().contains(key))
+         throw new NotFoundException(key + " isn't registered");
 
       rars.remove(key);
    }

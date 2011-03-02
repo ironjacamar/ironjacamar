@@ -48,6 +48,8 @@ public class CommonDeployment
 
    private final ResourceAdapter resourceAdapter;
 
+   private final String resourceAdapterKey;
+
    private final Object[] cfs;
 
    private final String[] cfJndiNames;
@@ -69,6 +71,7 @@ public class CommonDeployment
     * @param deploymentName deploymentName
     * @param activateDeployment activateDeployment
     * @param resourceAdapter resourceAdapter
+    * @param resourceAdapterKey resourceAdapter key
     * @param cfs The connection factories
     * @param cfJndiNames The JNDI names for the connection factories
     * @param aos The admin objects
@@ -78,7 +81,8 @@ public class CommonDeployment
     * @param log log
     */
    public CommonDeployment(URL url, String deploymentName, boolean activateDeployment,
-                           ResourceAdapter resourceAdapter, Object[] cfs, String[] cfJndiNames, 
+                           ResourceAdapter resourceAdapter, String resourceAdapterKey,
+                           Object[] cfs, String[] cfJndiNames, 
                            Object[] aos, String[] aoJndiNames,
                            Connector connector,
                            ClassLoader cl, Logger log)
@@ -88,6 +92,7 @@ public class CommonDeployment
       this.deploymentName = deploymentName;
       this.activateDeployment = activateDeployment;
       this.resourceAdapter = resourceAdapter;
+      this.resourceAdapterKey = resourceAdapterKey;
       this.cfs = cfs != null ? Arrays.copyOf(cfs, cfs.length) : null;
       this.cfJndiNames = cfJndiNames != null ? Arrays.copyOf(cfJndiNames, cfJndiNames.length) : null;
       this.aos = aos != null ? Arrays.copyOf(aos, aos.length) : null;
@@ -135,6 +140,15 @@ public class CommonDeployment
    public final ResourceAdapter getResourceAdapter()
    {
       return resourceAdapter;
+   }
+
+   /**
+    * Get the resource adapter key
+    * @return The value
+    */
+   public final String getResourceAdapterKey()
+   {
+      return resourceAdapterKey;
    }
 
    /**

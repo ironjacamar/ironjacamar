@@ -764,6 +764,7 @@ public abstract class AbstractResourceAdapterDeployer
             new org.jboss.jca.core.api.management.Connector(mgtUniqueId);
 
          ResourceAdapter resourceAdapter = null;
+         String resourceAdapterKey = null;
          List<Validate> archiveValidationObjects = new ArrayList<Validate>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
          Object[] cfs = null;
@@ -1546,7 +1547,7 @@ public abstract class AbstractResourceAdapterDeployer
                startContext(resourceAdapter, bootstrapIdentifier);
 
                // Register with ResourceAdapterRepository
-               registerResourceAdapterToResourceAdapterRepository(resourceAdapter);
+               resourceAdapterKey = registerResourceAdapterToResourceAdapterRepository(resourceAdapter);
             }
          }
 
@@ -1559,7 +1560,9 @@ public abstract class AbstractResourceAdapterDeployer
             log.debug("Activated: " + url.toExternalForm());
          }
 
-         return new CommonDeployment(url, deploymentName, activateDeployment, resourceAdapter, cfs, cfJndiNames,
+         return new CommonDeployment(url, deploymentName, activateDeployment,
+                                     resourceAdapter, resourceAdapterKey,
+                                     cfs, cfJndiNames,
                                      aos, aoJndiNames, mgtConnector, cl, log);
 
       }
@@ -1669,10 +1672,9 @@ public abstract class AbstractResourceAdapterDeployer
     * Register the ResourceAdapter to the ResourceAdapterRepository. Implementer should provide the implementation
     * to get repository and do the registration
     * @param instance the instance
-    * @throws org.jboss.jca.core.spi.rar.AlreadyExistsException AlreadyExistsException
+    * @return The key
     */
-   protected abstract void registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance)
-      throws org.jboss.jca.core.spi.rar.AlreadyExistsException;
+   protected abstract String registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance);
 
    /**
     *

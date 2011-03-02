@@ -220,7 +220,7 @@ public abstract class AbstractDsDeployer
                log.error("Deployment of XA datasources disabled since jdbc-xa.rar couldn't be found");
          }
 
-         return new CommonDeployment(url, deploymentName, true, null, cfs.toArray(new Object[cfs.size()]),
+         return new CommonDeployment(url, deploymentName, true, null, null, cfs.toArray(new Object[cfs.size()]),
                                      jndis.toArray(new String[jndis.size()]), null, null, null, parentClassLoader,
                                      log);
       }

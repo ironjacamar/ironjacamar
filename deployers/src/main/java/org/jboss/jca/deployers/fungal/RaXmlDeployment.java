@@ -53,6 +53,7 @@ public class RaXmlDeployment extends AbstractFungalDeployment
     * @param raDeployment The resource adapter deployment
     * @param deploymentName The deployment name
     * @param ra The resource adapter instance if present
+    * @param raKey The resource adapter instance key if present
     * @param jndiStrategy The JNDI strategy
     * @param mdr The metadata repository
     * @param resourceAdapterRepository The resource adapter repository
@@ -68,6 +69,7 @@ public class RaXmlDeployment extends AbstractFungalDeployment
     * @param log The logger
     */
    public RaXmlDeployment(URL deployment, URL raDeployment, String deploymentName, ResourceAdapter ra,
+                          String raKey,
                           JndiStrategy jndiStrategy, MetadataRepository mdr, 
                           ResourceAdapterRepository resourceAdapterRepository,
                           Object[] cfs, String[] cfJndis, 
@@ -76,7 +78,7 @@ public class RaXmlDeployment extends AbstractFungalDeployment
                           MBeanServer server, List<ObjectName> objectNames,
                           ClassLoader cl, Logger log)
    {
-      super(deployment, deploymentName, true, ra, jndiStrategy, mdr, resourceAdapterRepository,
+      super(deployment, deploymentName, true, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
             cfs, cfJndis, aos, aoJndis, managementRepository, connector, server, objectNames, cl, log);
 
       this.raDeployment = raDeployment;

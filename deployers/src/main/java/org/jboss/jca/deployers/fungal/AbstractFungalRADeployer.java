@@ -281,10 +281,9 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    }
 
    @Override
-   protected void registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance)
-      throws org.jboss.jca.core.spi.rar.AlreadyExistsException
+   protected String registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance)
    {
-      ((RAConfiguration) getConfiguration()).getResourceAdapterRepository().
+      return ((RAConfiguration) getConfiguration()).getResourceAdapterRepository().
          registerResourceAdapter(instance);
    }
 
