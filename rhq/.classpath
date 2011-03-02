@@ -16,5 +16,8 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/rhq/persistence-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/rhq/hibernate-annotations.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/rhq/rhq-core-native-system.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/rhq/rhq-core-client-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/rhq/rhq-core-plugin-container.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

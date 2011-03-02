@@ -11,7 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-validator"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/papaki-core.jar"/>
@@ -34,5 +33,6 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-impl-base.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-spi.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/picketbox.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-spi.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

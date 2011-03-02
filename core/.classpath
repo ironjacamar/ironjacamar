@@ -8,7 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-common"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-jaspi-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-threads.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api.jar"/>
@@ -41,5 +40,7 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-testenricher-resource.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/target/ironjacamar-deployers-common.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/target/ironjacamar-deployers-fungal.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-spi.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/hornetq/jboss-jms-api_1.1_spec.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
