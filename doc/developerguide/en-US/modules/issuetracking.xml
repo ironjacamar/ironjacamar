@@ -46,24 +46,12 @@
             <entry>The documentation (Users Guide / Developers Guide) for the project.</entry>
           </row>
           <row>
-            <entry>Fungal</entry>
-            <entry>The Fungal kernel (Deprecated).</entry>
-          </row>
-          <row>
             <entry>JDBC</entry>
             <entry>A JDBC resource adapter.</entry>
           </row>
           <row>
-            <entry>JMS</entry>
-            <entry>A generic JMS resource adapter.</entry>
-          </row>
-          <row>
             <entry>Performance</entry>
             <entry>Performance related work.</entry>
-          </row>
-          <row>
-            <entry>Timer</entry>
-            <entry>A timer resource adapter.</entry>
           </row>
         </tbody>
       </tgroup>

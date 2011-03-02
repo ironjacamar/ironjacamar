@@ -121,6 +121,16 @@ ant &lt;target&gt;
         <para>Builds the JAR archives in the distribution and runs all the test cases.</para>
       </listitem>
       <listitem>
+        <para>module-test</para>
+        <para>Builds the JAR archives in the distribution and runs all the test cases for the specified
+        module (<code>-Dmodule=&lt;modulename&gt;</code>).</para>
+      </listitem>
+      <listitem>
+        <para>one-test</para>
+        <para>Builds the JAR archives in the distribution and runs the specified test case
+        (<code>-Dmodule=&lt;modulename&gt; -Dtest=&lt;classname&gt;</code>).</para>
+      </listitem>
+      <listitem>
         <para>docs</para>
         <para>Builds the API documentation for the project.</para>
       </listitem>
