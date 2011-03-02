@@ -22,7 +22,7 @@
  */
 -->
 
-<project name="jca-test" basedir="." default="rar">
+<project name="helloworld" basedir="." default="rar">
 
   <!-- ================================= 
        Properties              
@@ -173,8 +173,18 @@
        Target: clean              
        ================================= -->
   <target name="clean">
+    <delete>
+      <fileset dir="${basedir}" defaultexcludes="no">
+        <include name="**/*~"/>
+        <include name="**/*.bak"/>
+      </fileset>
+    </delete>
+    <delete includeemptydirs="true">
+      <fileset dir="${lib.dir}" includes="**/*"/>
+    </delete>
     <delete dir="${build.dir}"/>
     <delete dir="${target.dir}"/>
+    <delete dir="${basedir}/reports"/>
   </target>
 
 </project>

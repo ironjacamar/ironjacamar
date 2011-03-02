@@ -409,13 +409,15 @@
   <!-- ================================= 
        Target: release
        ================================= -->
-  <target name="release" depends="sjc">
+  <target name="release" depends="clean,sjc">
     <delete dir="${build.dir}"/>
 
     <mkdir dir="${build.dir}" />
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}" />
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc" />
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec" />
+
+    <ant dir="${doc.dir}/samples/helloworld" target="clean" inheritRefs="false" inheritAll="false"/>
 
     <ant dir="${doc.dir}/developerguide" target="pdf" inheritRefs="false" inheritAll="false"/>
     <ant dir="${doc.dir}/userguide" target="pdf" inheritRefs="false" inheritAll="false"/>
@@ -446,6 +448,7 @@
       </fileset>
     </chmod>
 
+    <delete dir="${build.dir}/docbook"/>
 
     <zip destfile="${name}-${major}.${minor}.${patch}.${type}.zip"
          basedir="${build.dir}"/>
