@@ -172,6 +172,24 @@ ironjacamar-1.0.0.tar.gz
                 The command line interface for the validator module
               </entry>
             </row>
+            <row>
+              <entry><code>jdbc-local</code></entry>
+              <entry>
+                A JDBC resource adapter backing standard datasources
+              </entry>
+            </row>
+            <row>
+              <entry><code>jdbc-xa</code></entry>
+              <entry>
+                A JDBC resource adapter backing XA datasources
+              </entry>
+            </row>
+            <row>
+              <entry><code>mail</code></entry>
+              <entry>
+                An inflow mail resource adapter
+              </entry>
+            </row>
           </tbody>
         </tgroup>
       </table>

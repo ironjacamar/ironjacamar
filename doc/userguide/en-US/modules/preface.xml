@@ -34,25 +34,28 @@
 
     <para>Gurkan Erdogdu is a core developer on the IronJacamar project. He can be reached at gurkanerdogdu (at) yahoo (dot) com.</para>
 
+    <para>Yang Yong is a core developer on the IronJacamar project. He can be reached at yyang (at) redhat (dot) com.</para>
+
+    <para>Lin Gao is a core developer on the IronJacamar project. He can be reached at lgao (at) redhat (dot) com.</para>
+
   </section>
 
   <section id="thanksto">
     <title>Thanks to</title>
 
     <para>
-      Dimitris Andreadis, Carlo de Wolf, Jason Green, Jonathan Halliday, Søren Hilmer, Ales Justin, Vicky Kak,  
-      Aslak Knutsen, Sacha Labourey, Alexey Loubyansky, Patrick MacDonald, Andrig Miller,
-      Andrew Lee Rubinger, Anil Saldhana, Scott Stark and Jeremy Whiting.
+      Dimitris Andreadis, Adrian Brock, Carlo de Wolf, Bruno Georges, Jason Green, Jonathan Halliday,
+      Søren Hilmer, Ales Justin, Vicky Kak,  Aslak Knutsen, Sacha Labourey, Mark Little, Alexey Loubyansky, 
+      Patrick MacDonald, Andrig Miller, Andrew Lee Rubinger, Heiko Rupp, Anil Saldhana,  
+      Scott Stark, Clebert Suconic, Andy Taylor and Jeremy Whiting.
     </para>
-    
-    <para>And a special thanks goes to Adrian Brock for his continuous support of this project.</para>
 
   </section>
 
   <section id="license">
     <title>License</title>
 
-    <para>Copyright © 2010 Red Hat, Inc. and others.</para>
+    <para>Copyright © 2011 Red Hat, Inc. and others.</para>
     <para>The text of and illustrations in this document are licensed by Red Hat under
       a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA").</para>
     <para>An explanation of CC-BY-SA is available at 
