@@ -29,10 +29,20 @@ import org.jboss.jca.rhq.core.AbstractResourceComponent;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
+import java.io.InputStream;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertyList;
+import org.rhq.core.domain.content.PackageType;
+import org.rhq.core.domain.content.transfer.DeployPackageStep;
+import org.rhq.core.domain.content.transfer.DeployPackagesResponse;
+import org.rhq.core.domain.content.transfer.RemovePackagesResponse;
+import org.rhq.core.domain.content.transfer.ResourcePackageDetails;
+import org.rhq.core.pluginapi.content.ContentFacet;
+import org.rhq.core.pluginapi.content.ContentServices;
 
 /**
  * ResourceAdapterResourceComponent
@@ -40,7 +50,7 @@ import org.rhq.core.domain.configuration.PropertyList;
  * @author <a href="mailto:yyang@gmail.com">Young Yang</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class ResourceAdapterResourceComponent extends AbstractResourceComponent
+public class ResourceAdapterResourceComponent extends AbstractResourceComponent implements ContentFacet
 {
    /**
     * loadResourceConfiguration
@@ -61,5 +71,41 @@ public class ResourceAdapterResourceComponent extends AbstractResourceComponent
       PropertyList configList = getConfigPropertiesList(manResAdapter.getResourceAdapter(), manResConfigProps);
       config.put(configList);
       return config;
+   }
+
+   @Override
+   public DeployPackagesResponse deployPackages(Set<ResourcePackageDetails> arg0, ContentServices arg1)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public Set<ResourcePackageDetails> discoverDeployedPackages(PackageType arg0)
+   {
+      Set<ResourcePackageDetails> details = new HashSet<ResourcePackageDetails>();
+      // TODO Auto-generated method stub
+      return details;
+   }
+
+   @Override
+   public List<DeployPackageStep> generateInstallationSteps(ResourcePackageDetails arg0)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public RemovePackagesResponse removePackages(Set<ResourcePackageDetails> arg0)
+   {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public InputStream retrievePackageBits(ResourcePackageDetails arg0)
+   {
+      // TODO Auto-generated method stub
+      return null;
    }
 }

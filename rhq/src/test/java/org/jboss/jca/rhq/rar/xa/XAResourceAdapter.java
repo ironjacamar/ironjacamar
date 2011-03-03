@@ -62,7 +62,14 @@ public class XAResourceAdapter implements ResourceAdapter
    /** name */
    @ConfigProperty(defaultValue = "Jeff")
    private String name;
+   
+   /** password */
+   @ConfigProperty(defaultValue = "Confidential", confidential = true)
+   private String password;
 
+   /** score */
+   @ConfigProperty(defaultValue = "100", supportsDynamicUpdates = true, type = Integer.class)
+   private Integer score;
    /**
     * Default constructor
     */
@@ -88,6 +95,44 @@ public class XAResourceAdapter implements ResourceAdapter
    public String getName()
    {
       return name;
+   }
+   
+   
+
+   /**
+    * Get password
+    * @return The password
+    */
+   public String getPassword()
+   {
+      return password;
+   }
+
+   /**
+    * Set password
+    * @param password the value to set
+    */
+   public void setPassword(String password)
+   {
+      this.password = password;
+   }
+
+   /**
+    * Get score
+    * @return The score
+    */
+   public Integer getScore()
+   {
+      return score;
+   }
+
+   /**
+    * Set score
+    * @param score the value to set
+    */
+   public void setScore(Integer score)
+   {
+      this.score = score;
    }
 
    /**

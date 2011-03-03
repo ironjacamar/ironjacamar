@@ -27,6 +27,12 @@
              xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
              http://www.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">
   <config-property name="name">Jeff</config-property>
+  
+  <!-- This is Confidential type config property -->
+  <config-property name="password">Confidential</config-property>
+  
+  <!-- This config property supports dynamic update -->
+  <config-property name="score">100</config-property>
 
   <transaction-support>XATransaction</transaction-support>
   

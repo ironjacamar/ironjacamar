@@ -70,12 +70,14 @@ public class XATestCase
          assertNotNull(manRepo.getConnectors());
          assertEquals(0, manRepo.getConnectors().size());
 
-         deployment = XATestCase.class.getClassLoader().getResource("xa.rar");
+         File pluginDir = new File(System.getProperty("archives.dir"));
+         
+         File rarFile = new File(pluginDir, "test/xa.rar");
+         deployment = rarFile.toURI().toURL();
          embedded.deploy(deployment);
 
          assertEquals(1, manRepo.getConnectors().size());
-
-         File pluginDir = new File(System.getProperty("archives.dir"));
+         
 
          PluginContainerConfiguration pcConfig = new PluginContainerConfiguration();
          pcConfig.setPluginFinder(new FileSystemPluginFinder(pluginDir));
