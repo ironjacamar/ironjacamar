@@ -41,12 +41,12 @@
     <validation>
        <!--valid-connection-checker-class-name>org.jboss.jca.adapters.jdbc.ValidConnectionChecker</valid-connection-checker-class-name-->
     </validation>
-    <time-out>
+    <timeout>
       <!-- The time before an unused connection is destroyed -->
       <!-- NOTE: This is the check period. It will be destroyed somewhere between 1x and 2x this timeout after last use -->
       <!-- TEMPORARY FIX! - Disable idle connection removal, HSQLDB has a problem with not reaping threads on closed connections -->
       <idle-timeout-minutes>0</idle-timeout-minutes>
-    </time-out>
+    </timeout>
     
     <statement>
       <!-- Whether to check all statements are closed when the connection is returned to the pool, this is a debugging feature 

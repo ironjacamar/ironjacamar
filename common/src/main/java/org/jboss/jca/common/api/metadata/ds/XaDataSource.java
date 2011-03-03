@@ -125,7 +125,7 @@ public interface XaDataSource extends CommonDataSource
       /**
       * timeOut tag
       */
-      TIMEOUT("time-out"),
+      TIMEOUT("timeout"),
       /**
       * security tag
       */

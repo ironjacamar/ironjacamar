@@ -143,7 +143,7 @@ public interface DataSource extends CommonDataSource
       /**
       * timeOut tag
       */
-      TIMEOUT("time-out"),
+      TIMEOUT("timeout"),
       /**
       * security tag
       */

@@ -15,10 +15,10 @@
       <user-name>changeme</user-name>
       <password>changeme</password>
     </security> 
-    <time-out>
+    <timeout>
       <blocking-timeout-millis>5000</blocking-timeout-millis>
       <idle-timeout-minutes>15</idle-timeout-minutes>
-    </time-out>
+    </timeout>
   </xa-datasource>
 
 </datasources>

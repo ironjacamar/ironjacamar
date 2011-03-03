@@ -9,11 +9,11 @@
     <xa-datasource-property name="User">scott</xa-datasource-property>
     <xa-datasource-property name="Password">tiger</xa-datasource-property>
     <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
-    <time-out>
+    <timeout>
       <!-- ********************************************** -->
       <!-- THIS FIELD IS CAUSING THE FAIL OF RELATED TEST -->
       <!-- ********************************************** -->
       <xa-resource-timeout>-1</xa-resource-timeout>
-    </time-out>
+    </timeout>
   </xa-datasource>
 </datasources>

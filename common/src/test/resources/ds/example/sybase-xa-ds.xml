@@ -15,9 +15,9 @@
       <max-pool-size>20</max-pool-size>
       <!-- Uncomment to enable interleaving <interleaving/> -->
     </xa-pool>
-    <time-out>
+    <timeout>
       <idle-timeout-minutes>15</idle-timeout-minutes>
-    </time-out>
+    </timeout>
     <validation>
       <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseValidConnectionChecker"></valid-connection-checker>
       <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseExceptionSorter"></exception-sorter>

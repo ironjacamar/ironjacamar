@@ -14,9 +14,9 @@
       <user-name>sa</user-name>
       <password></password>
     </security> 
-    <time-out>
+    <timeout>
       <idle-timeout-minutes>5</idle-timeout-minutes>
-    </time-out>
+    </timeout>
     <statement>
       <track-statements>true</track-statements>
     </statement>

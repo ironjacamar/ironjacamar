@@ -15,13 +15,13 @@
       <user-name>sa</user-name>
       <password></password>
     </security> 
-    <time-out>
+    <timeout>
       <!-- 
         TEMPORARY FIX! - Disable idle connection removal, HSQLDB has a problem
         with not reaping threads on closed connections 
        -->
       <idle-timeout-minutes>0</idle-timeout-minutes>
-    </time-out>
+    </timeout>
     <statement>
       <track-statements>true</track-statements>
       <prepared-statement-cache-size>32</prepared-statement-cache-size>
