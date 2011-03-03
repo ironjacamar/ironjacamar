@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
-   <xa-datasource jndi-name="XADerbyDS" pool-name="XADerbyDS">
-      <!-- path to the database. (${jboss.server.data.dir}${/}derby${/}default didn't work on win) -->
-      <xa-datasource-property name="DatabaseName">derby/default</xa-datasource-property>
-      <xa-datasource-property name="User">sa</xa-datasource-property>
-      <xa-datasource-property name="Password"></xa-datasource-property>
-      <xa-datasource-property name="CreateDatabase">create</xa-datasource-property>
-      <xa-datasource-class>org.apache.derby.jdbc.EmbeddedXADataSource</xa-datasource-class>
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+
+  <xa-datasource jndi-name="XADerbyDS" pool-name="XADerbyDS">
+    <xa-datasource-property name="DatabaseName">derby/default</xa-datasource-property>
+    <xa-datasource-property name="User">sa</xa-datasource-property>
+    <xa-datasource-property name="Password"></xa-datasource-property>
+    <xa-datasource-property name="CreateDatabase">create</xa-datasource-property>
+    <xa-datasource-class>org.apache.derby.jdbc.EmbeddedXADataSource</xa-datasource-class>
      
-      <xa-pool>
-         <!-- uncomment to enable interleaving <interleaving/> -->
-         <is-same-rm-override>false</is-same-rm-override>
-      </xa-pool>
-   </xa-datasource>
+    <xa-pool>
+      <is-same-rm-override>false</is-same-rm-override>
+      <!-- Uncomment to enable interleaving <interleaving/> -->
+    </xa-pool>
+  </xa-datasource>
+
 </datasources>

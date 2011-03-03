@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ==================================================================== -->
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
-<!-- ==================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+
   <datasource jndi-name="MimerDS" pool-name="MimerDS">
     <connection-url>jdbc:mimer:multi1</connection-url>
     <driver-class>com.mimer.jdbc.Driver</driver-class>
@@ -14,11 +13,11 @@
     <security>
       <user-name>changeme</user-name>
       <password>changeme</password>
-    
-</security> 
+    </security> 
     <time-out>
       <blocking-timeout-millis>5000</blocking-timeout-millis>
       <idle-timeout-minutes>15</idle-timeout-minutes>
     </time-out>
   </datasource>
+
 </datasources>

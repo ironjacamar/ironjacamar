@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ===================================================================== -->
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
-<!-- ====)================================================================ -->
-<!-- Copy these jar's from your JBuilder6/lib to your jboss's lib -->
-<!-- dx.jar,jdsserver.jar,jds.jar -->
-<!-- Originally from Brent Thompson www.protegra.com/javagroup.html -->
-<!-- ==================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+
   <datasource jndi-name="JDataStoreDS" pool-name="JDataStoreDS">
-     <connection-url>jdbc:borland:dslocal:/home/brent/JBuilder6/samples/JDataStore/datastores/employee.jds</connection-url>
+    <connection-url>jdbc:borland:dslocal:/home/brent/JBuilder6/samples/JDataStore/datastores/employee.jds</connection-url>
     <driver-class>com.borland.datastore.jdbc.DataStoreDriver</driver-class>
     <security>
       <user-name>x</user-name>
       <password>y</password>
-    
-</security> 
+    </security> 
   </datasource>
+
 </datasources>

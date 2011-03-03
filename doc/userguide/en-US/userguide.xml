@@ -16,6 +16,7 @@
         <!ENTITY troubleshooting SYSTEM "modules/troubleshooting.xml">
         <!ENTITY schemas SYSTEM "modules/schemas.xml">
         <!ENTITY sample SYSTEM "modules/sample.xml">
+        <!ENTITY datasources SYSTEM "modules/datasources.xml">
         ]>
 <book lang="en">
    <bookinfo>
@@ -62,5 +63,7 @@
    &schemas;
 
    &sample;
+
+   &datasources;
 
 </book>

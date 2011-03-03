@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+
   <xa-datasource jndi-name="MSSQLXADS" pool-name="MSSQLXADS">
     <xa-datasource-property name="ServerName">myserver</xa-datasource-property>
     <xa-datasource-property name="DatabaseName">mydatabase</xa-datasource-property>
@@ -9,8 +11,12 @@
     <xa-datasource-property name="Password">mypassword</xa-datasource-property>
     <xa-datasource-class>com.microsoft.sqlserver.jdbc.SQLServerXADataSource</xa-datasource-class>
     <xa-pool>
-      <!-- uncomment to enable interleaving <interleaving/> -->
       <is-same-rm-override>false</is-same-rm-override>
+      <!-- Uncomment to enable interleaving <interleaving/> -->
     </xa-pool>
+    <validation>
+      <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker"></valid-connection-checker>
+    </validation>
   </xa-datasource>
+
 </datasources>

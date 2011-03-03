@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+
   <xa-datasource jndi-name="SybaseXADS" pool-name="SybaseXADS">
     <xa-datasource-property name="NetworkProtocol">Tds</xa-datasource-property>
     <xa-datasource-property name="ServerName">myserver</xa-datasource-property>
@@ -12,14 +13,14 @@
     <xa-pool>
       <min-pool-size>1</min-pool-size>
       <max-pool-size>20</max-pool-size>
-      <!-- uncomment to enable interleaving <interleaving/> -->
+      <!-- Uncomment to enable interleaving <interleaving/> -->
     </xa-pool>
     <time-out>
       <idle-timeout-minutes>15</idle-timeout-minutes>
     </time-out>
     <validation>
-      <check-valid-connection-sql>select 1 from mytable</check-valid-connection-sql>
-      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.vendor.SybaseExceptionSorter"></exception-sorter>
+      <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseValidConnectionChecker"></valid-connection-checker>
+      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseExceptionSorter"></exception-sorter>
     </validation>
   </xa-datasource>
 </datasources>

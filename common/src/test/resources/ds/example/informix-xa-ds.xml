@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+
   <xa-datasource jndi-name="InformixXADS" pool-name="InformixXADS">
     <xa-datasource-property name="IfxWAITTIME">10</xa-datasource-property>
     <xa-datasource-property name="Description">Something Descriptive</xa-datasource-property>
@@ -10,12 +11,8 @@
     <xa-datasource-property name="DatabaseName">mydb</xa-datasource-property>
     <xa-datasource-property name="ServerName">myserver</xa-datasource-property>
     <xa-datasource-class>com.informix.jdbcx.IfxXADataSource</xa-datasource-class>
-    <!-- sql to call when connection is created -->
-    <new-connection-sql>some arbitrary sql</new-connection-sql>
     <validation>
-      <!-- sql to call on an existing pooled connection when it is obtained from pool -->
-      <check-valid-connection-sql>some arbitrary sql</check-valid-connection-sql>
-      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.vendor.InformixExceptionSorter"></exception-sorter>
+      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.informix.InformixExceptionSorter"></exception-sorter>
     </validation>
   </xa-datasource>
 </datasources>

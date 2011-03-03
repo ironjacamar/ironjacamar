@@ -742,7 +742,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                 </entry>
               </row>
               <row>
-                <entry><code>time-out</code></entry>
+                <entry><code>timeout</code></entry>
                 <entry>
                   Specifies the time out settings
                 </entry>
@@ -841,7 +841,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                 </entry>
               </row>
               <row>
-                <entry><code>time-out</code></entry>
+                <entry><code>timeout</code></entry>
                 <entry>
                   Specifies the time out settings
                 </entry>
