@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
   targetNamespace="http://www.jboss.org/ironjacamar/schema" xmlns="http://www.jboss.org/ironjacamar/schema">
+
   <xs:complexType name="boolean-presenceType"></xs:complexType>
+
   <xs:complexType name="config-propertyType" mixed="true">
     <xs:annotation>
       <xs:documentation>
@@ -24,6 +26,7 @@
       </xs:extension>
     </xs:simpleContent>
   </xs:complexType>
+
   <xs:complexType name="resource-adapterType">
     <xs:sequence>
       <xs:element name="archive" type="xs:token" minOccurs="1" maxOccurs="1">
@@ -92,6 +95,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
   <xs:simpleType name="transaction-supportType">
     <xs:annotation>
       <xs:documentation>
@@ -107,6 +111,7 @@
       <xs:enumeration value="XATransaction" />
     </xs:restriction>
   </xs:simpleType>
+
   <xs:attributeGroup name="common-attribute">
     <xs:attribute name="class-name" type="xs:token" use="optional">
       <xs:annotation>
@@ -155,6 +160,7 @@
       </xs:annotation>
     </xs:attribute>
   </xs:attributeGroup>
+
   <xs:complexType name="admin-objectType">
     <xs:sequence>
       <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
@@ -169,6 +175,7 @@
     </xs:sequence>
     <xs:attributeGroup ref="common-attribute"></xs:attributeGroup>
   </xs:complexType>
+
   <xs:complexType name="time-outType">
     <xs:sequence>
       <xs:element name="blocking-timeout-millis" type="xs:nonNegativeInteger" minOccurs="0">
@@ -231,6 +238,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
   <xs:complexType name="validationType">
     <xs:sequence>
       <xs:element name="background-validation" type="xs:boolean" minOccurs="0">
@@ -266,6 +274,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
   <xs:element name="resource-adapters" type="resource-adaptersType">
     <xs:annotation>
       <xs:documentation>
@@ -275,6 +284,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:element>
+
   <xs:complexType name="resource-adaptersType">
     <xs:sequence>
       <xs:element name="resource-adapter" type="resource-adapterType" minOccurs="1" maxOccurs="unbounded">
@@ -288,6 +298,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
   <xs:complexType name="connection-definitionsType">
     <xs:sequence>
       <xs:element name="connection-definition" type="connection-defintionType" minOccurs="1" maxOccurs="unbounded">
@@ -301,6 +312,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
   <xs:complexType name="connection-defintionType">
     <xs:sequence>
       <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
@@ -362,6 +374,7 @@
     </xs:sequence>
     <xs:attributeGroup ref="common-attribute"></xs:attributeGroup>
   </xs:complexType>
+
   <xs:complexType name="poolType">
     <xs:sequence>
       <xs:element name="min-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
@@ -408,6 +421,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
   <xs:complexType name="xa-poolType">
     <xs:complexContent>
       <xs:extension base="poolType">
@@ -470,55 +484,56 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
   <xs:complexType name="securityType">
     <xs:sequence>
-        <xs:choice>
-           <xs:element name="application" type="boolean-presenceType" minOccurs="0" maxOccurs="1">
-              <xs:annotation>
-                <xs:documentation>
-                   <![CDATA[[
-            	     Indicates that app supplied parameters (such as from getConnection(user, pw))
-            	     are used to distinguish connections in the pool.
-            	     Ex:
-                     <application-managed-security/>
-                   ]]>
-                    </xs:documentation>
-                 </xs:annotation>
-              </xs:element>
-              <xs:element name="security-domain" type="xs:token" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                  <xs:documentation>
-                    <![CDATA[[
-              	     Indicates Subject (from security domain) are used to distinguish connections in the pool. 
-              	     The content of the security-domain is the name of the JAAS security manager that will handle
-              	     authentication. This name correlates to the JAAS login-config.xml descriptor
-              	     application-policy/name attribute.
-              	     Ex:
-              		    <security-domain>HsqlDbRealm</security-domain>
-                    ]]>
-                  </xs:documentation>
-                </xs:annotation>
-               </xs:element>
-               <xs:element name="security-domain-and-application" type="xs:token" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                  <xs:documentation>
-                    <![CDATA[[
-              	     Indicates that either app supplied parameters (such as from
-              	     getConnection(user, pw)) or Subject (from security domain) are used to
-              	     distinguish connections in the pool. The content of the
-              	     security-domain is the name of the JAAS security manager that will handle
-              	     authentication. This name correlates to the JAAS login-config.xml descriptor
-              	     application-policy/name attribute.
-                     
-              	     Ex:
-              		    <security-domain-and-application>HsqlDbRealm</security-domain-and-application>
-                    ]]>
-                  </xs:documentation>
-                </xs:annotation>
-           </xs:element>
-        </xs:choice>
-      </xs:sequence>
-   </xs:complexType>
+      <xs:choice>
+        <xs:element name="application" type="boolean-presenceType" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+                Indicates that app supplied parameters (such as from getConnection(user, pw))
+                are used to distinguish connections in the pool.
+                Ex:
+                <application/>
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="security-domain" type="xs:token" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+                Indicates Subject (from security domain) are used to distinguish connections in the pool. 
+                The content of the security-domain is the name of the JAAS security manager that will handle
+                authentication. This name correlates to the JAAS login-config.xml descriptor
+                application-policy/name attribute.
+                Ex:
+                <security-domain>HsqlDbRealm</security-domain>
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="security-domain-and-application" type="xs:token" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+                Indicates that either app supplied parameters (such as from
+                getConnection(user, pw)) or Subject (from security domain) are used to
+                distinguish connections in the pool. The content of the
+                security-domain is the name of the JAAS security manager that will handle
+                authentication. This name correlates to the JAAS login-config.xml descriptor
+                application-policy/name attribute.
+                
+                Ex:
+                <security-domain-and-application>HsqlDbRealm</security-domain-and-application>
+              ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:complexType name="admin-objectsType">
     <xs:sequence>
@@ -548,4 +563,5 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
 </xs:schema>

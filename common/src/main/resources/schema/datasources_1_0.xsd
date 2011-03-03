@@ -201,7 +201,7 @@
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              A unique reference to the classloader module which contains the JDBC driver
+              An unique reference to the classloader module which contains the JDBC driver
              ]]>
           </xs:documentation>
         </xs:annotation>
@@ -210,7 +210,7 @@
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-               Specifies the delimeter for URLs in connection-url for HA datasources
+               Specifies the delimeter for URLs in the connection url for HA datasources
               ]]>
           </xs:documentation>
         </xs:annotation>
@@ -282,45 +282,14 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="statement" minOccurs="0">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="track-statements" type="track-statementsType" minOccurs="0">
-              <xs:annotation>
-                <xs:documentation>
-                  <![CDATA[[
-                    Whether to check for unclosed statements when a connection is returned 
-                    to the pool and result sets are closed when a statement is closed/return 
-                    to the prepared statement cache. valid values are: false - do not track statements 
-                    and results true - track statements and result sets and warn when they are 
-                    not closed nowarn - track statements but do no warn about them being unclosed 
-                    (the default) e.g. <track-statements>nowarn</track-statements>
-                   ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-            <xs:element name="prepared-statement-cache-size" type="xs:nonNegativeInteger" minOccurs="0">
-              <xs:annotation>
-                <xs:documentation>
-                  <![CDATA[[
-                    The number of prepared statements per connection in an LRU cache
-                   ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-            <xs:element name="share-prepared-statements" type="boolean-presenceType" minOccurs="0">
-              <xs:annotation>
-                <xs:documentation>
-                  <![CDATA[[
-                    Whether to share prepare statements, i.e. whether asking for same 
-                    statement twice without closing uses the same underlying prepared statement. 
-                    The default is false. e.g. <share-prepared-statements/>
-                   ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
+      <xs:element name="statement" type="statementType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Specifies the statement settings
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
       </xs:element>
     </xs:sequence>
     <xs:attributeGroup ref="common-datasourceAttributes" />
@@ -416,7 +385,7 @@
         </xs:annotation>
       </xs:element>
       
-      <xs:element name="check-valid-connection-sql " type="xs:string" minOccurs="0">
+      <xs:element name="check-valid-connection-sql" type="xs:string" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -426,7 +395,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="validate-on-match " type="xs:boolean" minOccurs="0">
+      <xs:element name="validate-on-match" type="xs:boolean" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -597,13 +566,38 @@
   <xs:complexType name="statementType">
     <xs:sequence>
       <xs:element name="track-statements" type="track-statementsType" minOccurs="0">
-        <xs:annotation></xs:annotation>
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Whether to check for unclosed statements when a connection is returned 
+              to the pool and result sets are closed when a statement is closed/return 
+              to the prepared statement cache. valid values are: false - do not track statements 
+              and results true - track statements and result sets and warn when they are 
+              not closed nowarn - track statements but do no warn about them being unclosed 
+              (the default) e.g. <track-statements>nowarn</track-statements>
+            ]]>
+          </xs:documentation>
+        </xs:annotation>
       </xs:element>
       <xs:element name="prepared-statement-cache-size" type="xs:nonNegativeInteger" minOccurs="0">
-        <xs:annotation></xs:annotation>
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              The number of prepared statements per connection in an LRU cache
+            ]]>
+          </xs:documentation>
+        </xs:annotation>
       </xs:element>
       <xs:element name="share-prepared-statements" type="boolean-presenceType" minOccurs="0">
-        <xs:annotation></xs:annotation>
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Whether to share prepare statements, i.e. whether asking for same 
+              statement twice without closing uses the same underlying prepared statement. 
+              The default is false. e.g. <share-prepared-statements/>
+            ]]>
+          </xs:documentation>
+        </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:complexType>
@@ -625,7 +619,7 @@
           <xs:documentation>
             <![CDATA[[
               The max-pool-size element indicates the maximum number of connections 
-              for a pool. No more than MaxSize connections will be created in each sub-pool. 
+              for a pool. No more connections will be created in each sub-pool. 
               This defaults to 20. 
              ]]>
           </xs:documentation>
@@ -737,21 +731,21 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-            <xs:element name="security-domain" type="xs:token" minOccurs="0" maxOccurs="1">
-                <xs:annotation>
-                  <xs:documentation>
-                    <![CDATA[[
-                    Indicates Subject (from security domain) are used to distinguish connections in the pool. 
-                    The content of the security-domain is the name of the JAAS security manager that will handle
-                    authentication. This name correlates to the JAAS login-config.xml descriptor
-                    application-policy/name attribute.
-                    Ex:
-                      <security-domain>HsqlDbRealm</security-domain>
-                    ]]>
-                  </xs:documentation>
-                </xs:annotation>
-               </xs:element>
-      </xs:sequence>
+      <xs:element name="security-domain" type="xs:token" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Indicates Subject (from security domain) are used to distinguish connections in the pool. 
+              The content of the security-domain is the name of the JAAS security manager that will handle
+              authentication. This name correlates to the JAAS login-config.xml descriptor
+              application-policy/name attribute.
+              Ex:
+              <security-domain>HsqlDbRealm</security-domain>
+            ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
    </xs:complexType>
 
   <xs:complexType name="jdbc-adapter-extensionType">
@@ -765,7 +759,7 @@
     <xs:annotation>
       <xs:documentation>
         <![CDATA[[
-          Specifies an override for a config-property element in ra.xml or a @ConfigProperty
+          Specifies a Java bean property value
          ]]>
       </xs:documentation>
     </xs:annotation>

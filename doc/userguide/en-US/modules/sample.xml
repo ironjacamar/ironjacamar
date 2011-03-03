@@ -117,7 +117,7 @@ ant test
 
     <section id="sample_helloworld_buildxml">
       <title>HelloWorld Ant build.xml</title>
-      <programlisting language="java">
+      <programlisting language="xml">
 <xi:include parse="text" href="../../samples/helloworld/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
