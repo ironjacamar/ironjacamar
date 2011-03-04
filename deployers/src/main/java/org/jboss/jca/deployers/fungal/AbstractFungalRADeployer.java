@@ -144,8 +144,32 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   }
 
                   if (setValue)
-                     injector.inject(o, cpmd.getConfigPropertyName().getValue(),
-                                     cpmd.getConfigPropertyValue().getValue(), cpmd.getConfigPropertyType().getValue());
+                  {
+                     try
+                     {
+                        injector.inject(o,
+                                        cpmd.getConfigPropertyName().getValue(),
+                                        cpmd.getConfigPropertyValue().getValue(),
+                                        cpmd.getConfigPropertyType().getValue());
+                     }
+                     catch (NoSuchMethodException nsme)
+                     {
+                        String newPropertyType = convertType(cpmd.getConfigPropertyType().getValue());
+
+                        if (newPropertyType != null)
+                        {
+                           injector.inject(o,
+                                           cpmd.getConfigPropertyName().getValue(),
+                                           cpmd.getConfigPropertyValue().getValue(),
+                                           newPropertyType);
+
+                        }
+                        else
+                        {
+                           throw nsme;
+                        }
+                     }
+                  }
                }
             }
          }
@@ -156,6 +180,81 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
       {
          throw new DeployException("Deployment " + className + " failed", t);
       }
+   }
+
+   /**
+    * Convert type if possible
+    * @param old The old type
+    * @return The new type; otherwise <code>null</code>
+    */
+   private String convertType(String old)
+   {
+      if (Boolean.class.getName().equals(old))
+      {
+         return boolean.class.getName();
+      }
+      else if (boolean.class.getName().equals(old))
+      {
+         return Boolean.class.getName();
+      }
+      else if (Byte.class.getName().equals(old))
+      {
+         return byte.class.getName();
+      }
+      else if (byte.class.getName().equals(old))
+      {
+         return Byte.class.getName();
+      }
+      else if (Short.class.getName().equals(old))
+      {
+         return short.class.getName();
+      }
+      else if (short.class.getName().equals(old))
+      {
+         return Short.class.getName();
+      }
+      else if (Integer.class.getName().equals(old))
+      {
+         return int.class.getName();
+      }
+      else if (int.class.getName().equals(old))
+      {
+         return Integer.class.getName();
+      }
+      else if (Long.class.getName().equals(old))
+      {
+         return long.class.getName();
+      }
+      else if (long.class.getName().equals(old))
+      {
+         return Long.class.getName();
+      }
+      else if (Float.class.getName().equals(old))
+      {
+         return float.class.getName();
+      }
+      else if (float.class.getName().equals(old))
+      {
+         return Float.class.getName();
+      }
+      else if (Double.class.getName().equals(old))
+      {
+         return double.class.getName();
+      }
+      else if (double.class.getName().equals(old))
+      {
+         return Double.class.getName();
+      }
+      else if (Character.class.getName().equals(old))
+      {
+         return char.class.getName();
+      }
+      else if (char.class.getName().equals(old))
+      {
+         return Character.class.getName();
+      }
+
+      return null;
    }
 
    /**
