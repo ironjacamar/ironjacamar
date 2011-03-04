@@ -269,8 +269,7 @@
       <fileset dir="${build.rhq.dir}/test" includes="*rar"/>
     </copy>
 
-    <mkdir dir="${build.rhq.dir}/test/plugins" />
-    <jar destfile="${build.rhq.dir}/test/plugins/${name}-rhq-test-all.jar"
+    <jar destfile="${build.rhq.dir}/${name}-rhq-test-all.jar"
          basedir="${build.rhq.dir}/plugin"
          index="true"
          indexMetaInf="true"
