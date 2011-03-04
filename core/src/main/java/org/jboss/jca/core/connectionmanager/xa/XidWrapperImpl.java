@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.xa;
 
-import org.jboss.jca.core.connectionmanager.xa.api.XidWrapper;
+import org.jboss.jca.core.spi.connectionmanager.xa.XidWrapper;
 
 import java.util.Arrays;
 
@@ -36,7 +36,7 @@ import javax.transaction.xa.Xid;
 public class XidWrapperImpl implements XidWrapper
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = 396520266833097662L;
+   private static final long serialVersionUID = 3223859423961011795L;
 
    /** The formatId */
    private int formatId;
@@ -46,6 +46,9 @@ public class XidWrapperImpl implements XidWrapper
    
    /** The branchQualifier */
    private byte[] branchQualifier;
+
+   /** The jndi name */
+   private String jndiName;
    
    /** Cached toString() */
    private transient String cachedToString;
@@ -55,25 +58,18 @@ public class XidWrapperImpl implements XidWrapper
    
    /**
     * Creates a new XidWrapperImpl instance.
-    * @param xid xid
-    */
-   public XidWrapperImpl(Xid xid)
-   {
-      this(xid, false);
-   }
-   
-   /**
-    * Creates a new XidWrapperImpl instance.
     * @param xid The Xid instances
     * @param pad Should the branch qualifier be padded
+    * @param jndiName The JNDI name
     */
-   public XidWrapperImpl(Xid xid, boolean pad)
+   public XidWrapperImpl(Xid xid, boolean pad, String jndiName)
    {
       this.branchQualifier = pad ? new byte[Xid.MAXBQUALSIZE] : new byte[xid.getBranchQualifier().length];      
       System.arraycopy(xid.getBranchQualifier(), 0, branchQualifier, 0, xid.getBranchQualifier().length);      
 
       this.globalTransactionId = xid.getGlobalTransactionId();
       this.formatId = xid.getFormatId();
+      this.jndiName = jndiName;
    }
 
    /**
@@ -98,6 +94,14 @@ public class XidWrapperImpl implements XidWrapper
    public byte[] getGlobalTransactionId()
    {
       return globalTransactionId.clone();
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public String getJndiName()
+   {
+      return jndiName;
    }
    
    /**
@@ -141,14 +145,16 @@ public class XidWrapperImpl implements XidWrapper
    {
       if (cachedToString == null)
       {
-         StringBuffer buffer = new StringBuffer();
-         buffer.append("XidWrapper[FormatId=").append(getFormatId());
-         buffer.append(" GlobalId=").append(new String(getGlobalTransactionId()).trim());
-         buffer.append(" BranchQual=");
-         buffer.append(new String(getBranchQualifier()).trim());
-         buffer.append(']');
-         cachedToString = buffer.toString();
+         StringBuilder sb = new StringBuilder();
+         sb.append("XidWrapperImpl@").append(Integer.toHexString(System.identityHashCode(this)));
+         sb.append("[formatId=").append(getFormatId());
+         sb.append(" globalTransactionId=").append(new String(getGlobalTransactionId()).trim());
+         sb.append(" branchQualifier=").append(new String(getBranchQualifier()).trim());
+         sb.append(" jndiName=").append(jndiName);
+         sb.append("]");
+         cachedToString = sb.toString();
       }
+
       return cachedToString;
    }
 }

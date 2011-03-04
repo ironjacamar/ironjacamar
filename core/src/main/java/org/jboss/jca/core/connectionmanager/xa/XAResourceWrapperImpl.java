@@ -20,14 +20,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 package org.jboss.jca.core.connectionmanager.xa;
-import org.jboss.jca.core.connectionmanager.xa.api.XidWrapper;
+
+import org.jboss.jca.core.spi.connectionmanager.xa.XAResourceWrapper;
+import org.jboss.jca.core.spi.connectionmanager.xa.XidWrapper;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.XAResourceWrapper;
 
 /**
  * A XAResourceWrapper.
@@ -38,58 +39,30 @@ import org.jboss.tm.XAResourceWrapper;
  */
 public class XAResourceWrapperImpl implements XAResourceWrapper
 {
-   /**Serial version UID*/
-   private static final long serialVersionUID = -7463658256795280905L;
+   /** Serial version UID */
+   private static final long serialVersionUID = 2147435420748633848L;
 
-   /**Log instance*/
+   /** Log instance */
    private static Logger log = Logger.getLogger(XAResourceWrapperImpl.class);
    
-   /** The xaResource */
+   /** The XA resource */
    private XAResource xaResource;
    
-   /**Pad*/
+   /** Pad */
    private boolean pad;
 
-   /**Override Rm Value*/
+   /** Override Rm Value */
    private Boolean overrideRmValue;
 
-   /**Product name*/
+   /** Product name */
    private String productName;
 
-   /**Product version*/
+   /** Product version */
    private String productVersion;
    
-   /**
-    * Creates a new wrapper instance.
-    * @param resource xaresource
-    */
-   public XAResourceWrapperImpl(XAResource resource)
-   {
-      this(resource, false, Boolean.FALSE, null, null);
-   }
-
-   /**
-    * Creates a new wrapper instance.
-    * @param resource xaresource
-    * @param pad pad
-    */   
-   public XAResourceWrapperImpl(XAResource resource, boolean pad)
-   {
-      this(resource, pad, Boolean.FALSE, null, null);
-   }
-
-   /**
-    * Creates a new wrapper instance.
-    * @param resource xaresource
-    * @param pad pad
-    * @param override override
-    */   
-   public XAResourceWrapperImpl(XAResource resource, boolean pad, Boolean override)
-   {
-      this(resource, pad, override, null, null);
-   }
-
-
+   /** Product version */
+   private String jndiName;
+   
    /**
     * Creates a new wrapper instance.
     * @param resource xaresource
@@ -97,15 +70,18 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     * @param override override
     * @param productName product name
     * @param productVersion product version
+    * @param jndiName jndi name
     */   
    public XAResourceWrapperImpl(XAResource resource, boolean pad, Boolean override, 
-         String productName, String productVersion)
+                                String productName, String productVersion,
+                                String jndiName)
    {
       this.overrideRmValue = override;
       this.pad = pad;
       this.xaResource = resource;
       this.productName = productName;
       this.productVersion = productVersion;
+      this.jndiName = jndiName;
    }
 
    /**
@@ -242,6 +218,14 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public String getJndiName()
+   {
+      return jndiName;
+   }
+   
+   /**
     * Return wrapper for given xid.
     * @param xid xid
     * @return return wrapper
@@ -251,7 +235,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
       if (xid instanceof XidWrapper)
          return xid;
       else
-         return new XidWrapperImpl(xid, pad);
+         return new XidWrapperImpl(xid, pad, jndiName);
    }
 
    /**
@@ -259,6 +243,15 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public String toString()
    {
-      return super.toString();
+      StringBuilder sb = new StringBuilder();
+      sb.append("XAResourceWrapperImpl@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[xaResource=").append(xaResource);
+      sb.append(" pad=").append(pad);
+      sb.append(" overrideRmValue=").append(overrideRmValue);
+      sb.append(" productName=").append(productName);
+      sb.append(" productVersion=").append(productVersion);
+      sb.append(" jndiName=").append(jndiName);
+      sb.append("]");
+      return sb.toString();
    }
 }

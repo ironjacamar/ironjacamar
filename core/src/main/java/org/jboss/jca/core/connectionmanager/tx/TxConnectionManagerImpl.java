@@ -516,7 +516,9 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                getLog().trace("Generating XAResourceWrapper for TxConnectionManager" + this);
 
             xaResource = new XAResourceWrapperImpl(mc.getXAResource(), padXid, 
-                                                   isSameRMOverride, eisProductName, eisProductVersion);
+                                                   isSameRMOverride, 
+                                                   eisProductName, eisProductVersion,
+                                                   getJndiName());
          }
          else
          {

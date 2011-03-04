@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.xa.api;
+package org.jboss.jca.core.spi.connectionmanager.xa;
 
 import java.io.Serializable;
 
@@ -33,4 +33,9 @@ import javax.transaction.xa.Xid;
  */
 public interface XidWrapper extends Serializable, Xid
 {
+   /**
+    * Get the JNDI name
+    * @return The value
+    */
+   public String getJndiName();
 }
