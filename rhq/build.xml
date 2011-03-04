@@ -231,6 +231,59 @@
        <fileset dir="src/test/resources/xa.rar"/>
     </jar>
 
+    <antcall target="plugin"/>
+  </target>
+
+  <!-- ================================= 
+       Target: plugin
+       ================================= -->
+  <target name="plugin">
+    <mkdir dir="${build.rhq.dir}/plugin" />
+    <mkdir dir="${build.rhq.dir}/plugin/lib" />
+    <property name="rhq.lib.plugin.dir" value="${build.rhq.dir}/plugin/lib" />
+
+    <copy todir="${build.rhq.dir}/plugin">
+      <fileset dir="src/test/resources" includes="*.properties *.xml"/>
+      <fileset dir="src/main/resources/"
+               includes="**/*"/>
+      <fileset dir="${build.rhq.dir}/"
+               includes="*.rar"/>
+    </copy>
+
+    <copy todir="${rhq.lib.plugin.dir}">
+      <fileset dir="${lib.dir}/common/" includes="**"/>
+      <fileset dir="${lib.dir}/arquillian/" includes="**"/>
+      <fileset dir="${lib.dir}/embedded/" includes="**"/>
+      <fileset dir="${lib.dir}/sjc/" includes="**"/>
+      <fileset dir="${lib.dir}/test/" includes="h2.jar"/>
+      <fileset dir="${lib.dir}/tools/" includes="apiviz.jar jdepend.jar"/>
+      <fileset dir="${lib.dir}/rhq/" excludes="rhq*"/>
+
+      <fileset dir="${target.dir}"
+         includes="ironjacamar*"
+         excludes="ironjacamar-rhq-plugin* ironjacamar-codegen* ironjacamar-web*"/>
+      <fileset dir="${build.rhq.dir}/test" includes="*test.jar"/>
+    </copy>
+
+    <copy todir="${build.rhq.dir}/plugin">
+      <fileset dir="${build.rhq.dir}/test" includes="*rar"/>
+    </copy>
+
+    <mkdir dir="${build.rhq.dir}/test/plugins" />
+    <jar destfile="${build.rhq.dir}/test/plugins/${name}-rhq-test-all.jar"
+         basedir="${build.rhq.dir}/plugin"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar RHQ"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
   </target>
 
   <!-- ================================= 
