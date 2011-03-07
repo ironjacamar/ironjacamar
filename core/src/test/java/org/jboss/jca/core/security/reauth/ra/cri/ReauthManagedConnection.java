@@ -21,13 +21,7 @@
  */
 package org.jboss.jca.core.security.reauth.ra.cri;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,13 +60,7 @@ public class ReauthManagedConnection implements ManagedConnection
    private ReauthConnectionImpl connection;
 
    /** The socket */
-   private Socket socket;
-
-   /** Input */
-   private ObjectInputStream ois;
-
-   /** Output */
-   private ObjectOutputStream oos;
+   private ReauthSocket socket;
 
    /**
     * Constructor
@@ -81,32 +69,13 @@ public class ReauthManagedConnection implements ManagedConnection
     */
    public ReauthManagedConnection(ReauthManagedConnectionFactory mcf) throws ResourceException
    {
-      try
-      {
-         this.mcf = mcf;
-         this.listeners = new HashSet<ConnectionEventListener>(1);
-         this.logwriter = null;
+      this.mcf = mcf;
+      this.listeners = new HashSet<ConnectionEventListener>(1);
+      this.logwriter = null;
 
-         ReauthResourceAdapter rra = (ReauthResourceAdapter)mcf.getResourceAdapter();
+      ReauthResourceAdapter rra = (ReauthResourceAdapter)mcf.getResourceAdapter();
 
-         // Note, that this socket instance *should really* be guarded against concurrent access
-         this.socket = new Socket(rra.getServer(), rra.getPort());
-         this.ois = null;
-         this.oos = null;
-
-         // Connect
-         getOutput().writeByte(0);
-         getOutput().flush();
-
-         Boolean granted = (Boolean)getInput().readObject();
-         
-         if (!granted.booleanValue())
-            throw new ResourceException("Connection not granted");
-      }
-      catch (Throwable t)
-      {
-         throw new ResourceException("Unable to establish a connection", t);
-      }
+      this.socket = new ReauthSocket(rra.getServer(), rra.getPort());
    }
 
    /**
@@ -179,18 +148,7 @@ public class ReauthManagedConnection implements ManagedConnection
 
       // TODO - connection listeners
 
-      try
-      {
-         // Unauth the interaction
-         getOutput().writeByte(4);
-         getOutput().flush();
-
-         socket.close();
-      }
-      catch (Throwable t)
-      {
-         throw new ResourceException("Error during cleanup", t);
-      }
+      socket.cleanup();
    }
 
    /**
@@ -202,18 +160,8 @@ public class ReauthManagedConnection implements ManagedConnection
    {
       log.tracef("destroy");
 
-      try
-      {
-         // Close the interaction
-         getOutput().writeByte(1);
-         getOutput().flush();
-
-         socket.close();
-      }
-      catch (Throwable t)
-      {
-         throw new ResourceException("Error during destroy", t);
-      }
+      socket.destroy();
+      socket = null;
    }
 
    /**
@@ -299,31 +247,5 @@ public class ReauthManagedConnection implements ManagedConnection
       log.tracef("getMetaData()");
 
       return new ReauthManagedConnectionMetaData(socket);
-   }
-
-   /**
-    * Get input stream
-    * @return The value
-    * @exception IOException Thrown in case of an error
-    */
-   private ObjectInputStream getInput() throws IOException
-   {
-      if (ois == null)
-         ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream(), 8192));
-      
-      return ois;
-   }
-
-   /**
-    * Get output stream
-    * @return The value
-    * @exception IOException Thrown in case of an error
-    */
-   private ObjectOutputStream getOutput() throws IOException
-   {
-      if (oos == null)
-         oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream(), 8192));
-      
-      return oos;
    }
 }

@@ -274,6 +274,38 @@
       </fileset>
     </copy>
 
+    <!-- Reauth CRI resource adapter -->
+    <jar destfile="${build.core.dir}/test/reauth-cri.jar"
+         basedir="${build.core.dir}/test"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/reauth/ra/cri/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test - Reauth CRI"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+    <jar destfile="${build.core.dir}/test/reauth-cri.rar"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test - Reauth CRI RAR"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+      <fileset dir="${build.core.dir}/test">
+        <include name="reauth-cri.jar"/>
+      </fileset>
+      <fileset dir="${build.core.dir}/test/rars/security/reauth/cri"/>
+    </jar>
+
   </target>
 
   <!-- ================================= 

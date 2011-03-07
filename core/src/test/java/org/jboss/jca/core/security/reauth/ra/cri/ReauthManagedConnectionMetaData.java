@@ -21,13 +21,6 @@
  */
 package org.jboss.jca.core.security.reauth.ra.cri;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionMetaData;
 
@@ -44,23 +37,15 @@ public class ReauthManagedConnectionMetaData implements ManagedConnectionMetaDat
    private static Logger log = Logger.getLogger(ReauthManagedConnectionMetaData.class);
 
    /** The socket */
-   private Socket socket;
-
-   /** Input */
-   private ObjectInputStream ois;
-
-   /** Output */
-   private ObjectOutputStream oos;
+   private ReauthSocket socket;
 
    /**
     * Constructor
     * @param socket The socket
     */
-   public ReauthManagedConnectionMetaData(Socket socket)
+   public ReauthManagedConnectionMetaData(ReauthSocket socket)
    {
       this.socket = socket;
-      this.ois = null;
-      this.oos = null;
    }
 
    /**
@@ -101,20 +86,8 @@ public class ReauthManagedConnectionMetaData implements ManagedConnectionMetaDat
    public int getMaxConnections() throws ResourceException
    {
       log.tracef("getMaxConnections()");
-
-      try
-      {
-         getOutput().writeByte(6);
-         getOutput().flush();
-
-         Integer result = (Integer)getInput().readObject();
-
-         return result.intValue();
-      }
-      catch (Throwable t)
-      {
-         throw new ResourceException("Error during getUserName()", t);
-      }
+      
+      return socket.getMaxConnections();
    }
 
    /**
@@ -128,42 +101,6 @@ public class ReauthManagedConnectionMetaData implements ManagedConnectionMetaDat
    {
       log.tracef("getUserName()");
 
-      try
-      {
-         getOutput().writeByte(5);
-         getOutput().flush();
-
-         return (String)getInput().readObject();
-      }
-      catch (Throwable t)
-      {
-         throw new ResourceException("Error during getUserName()", t);
-      }
-   }
-
-   /**
-    * Get input stream
-    * @return The value
-    * @exception IOException Thrown in case of an error
-    */
-   private ObjectInputStream getInput() throws IOException
-   {
-      if (ois == null)
-         ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream(), 8192));
-      
-      return ois;
-   }
-
-   /**
-    * Get output stream
-    * @return The value
-    * @exception IOException Thrown in case of an error
-    */
-   private ObjectOutputStream getOutput() throws IOException
-   {
-      if (oos == null)
-         oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream(), 8192));
-      
-      return oos;
+      return socket.getAuth();
    }
 }

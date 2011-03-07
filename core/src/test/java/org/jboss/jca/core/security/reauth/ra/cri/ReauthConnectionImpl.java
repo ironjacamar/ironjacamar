@@ -21,13 +21,6 @@
  */
 package org.jboss.jca.core.security.reauth.ra.cri;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-
 import javax.resource.ResourceException;
 
 import org.jboss.logging.Logger;
@@ -42,14 +35,8 @@ public class ReauthConnectionImpl implements ReauthConnection
    /** The logger */
    private static Logger log = Logger.getLogger(ReauthConnectionImpl.class);
 
-   /** The socket */
-   private Socket socket;
-
-   /** Input */
-   private ObjectInputStream ois;
-
-   /** Output */
-   private ObjectOutputStream oos;
+   /** The reauth socket */
+   private ReauthSocket socket;
 
    /** The CRI */
    private ReauthCri cri;
@@ -60,7 +47,7 @@ public class ReauthConnectionImpl implements ReauthConnection
     * @param cri ConnectionRequestInfo instance
     * @exception ResourceException Thrown if an error occurs
     */
-   public ReauthConnectionImpl(Socket socket, ReauthCri cri) throws ResourceException
+   public ReauthConnectionImpl(ReauthSocket socket, ReauthCri cri) throws ResourceException
    {
       log.tracef("constructor(%s, %s)", socket, cri);
 
@@ -79,19 +66,7 @@ public class ReauthConnectionImpl implements ReauthConnection
    {
       log.tracef("login(%s, %s)", username, password);
 
-      try
-      {
-         getOutput().writeByte(3);
-         getOutput().writeUTF(username);
-         getOutput().writeUTF(password);
-         getOutput().flush();
-
-         return (String)getInput().readObject();
-      }
-      catch (Throwable t)
-      {
-         throw new ResourceException("Error during login", t);
-      }
+      return socket.login(username, password);
    }
 
    /**
@@ -103,19 +78,7 @@ public class ReauthConnectionImpl implements ReauthConnection
    {
       log.tracef("logout()");
 
-      try
-      {
-         getOutput().writeByte(4);
-         getOutput().flush();
-
-         Boolean result = (Boolean)getInput().readObject();
-
-         return result.booleanValue();
-      }
-      catch (Throwable t)
-      {
-         throw new ResourceException("Error during logout", t);
-      }
+      return socket.logout();
    }
 
    /**
@@ -127,17 +90,7 @@ public class ReauthConnectionImpl implements ReauthConnection
    {
       log.tracef("getAuth()");
 
-      try
-      {
-         getOutput().writeByte(5);
-         getOutput().flush();
-
-         return (String)getInput().readObject();
-      }
-      catch (Throwable t)
-      {
-         throw new ResourceException("Error during getAuth", t);
-      }
+      return socket.getAuth();
    }
 
    /**
@@ -147,31 +100,5 @@ public class ReauthConnectionImpl implements ReauthConnection
    ReauthCri getCri()
    {
       return cri;
-   }
-
-   /**
-    * Get input stream
-    * @return The value
-    * @exception IOException Thrown in case of an error
-    */
-   private ObjectInputStream getInput() throws IOException
-   {
-      if (ois == null)
-         ois = new ObjectInputStream(new BufferedInputStream(socket.getInputStream(), 8192));
-      
-      return ois;
-   }
-
-   /**
-    * Get output stream
-    * @return The value
-    * @exception IOException Thrown in case of an error
-    */
-   private ObjectOutputStream getOutput() throws IOException
-   {
-      if (oos == null)
-         oos = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream(), 8192));
-      
-      return oos;
    }
 }
