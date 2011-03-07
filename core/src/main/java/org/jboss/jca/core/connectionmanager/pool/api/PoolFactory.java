@@ -27,6 +27,7 @@ import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolByCri;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolBySubject;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolBySubjectAndCri;
+import org.jboss.jca.core.connectionmanager.pool.strategy.ReauthPool;
 
 import javax.resource.spi.ManagedConnectionFactory;
 
@@ -78,6 +79,9 @@ public class PoolFactory
 
          case ONE_POOL:
             return new OnePool(mcf, pc, noTxSeparatePools);
+
+         case REAUTH:
+            return new ReauthPool(mcf, pc, noTxSeparatePools);
       }
 
       throw new IllegalArgumentException("Unknown strategy " + strategy);

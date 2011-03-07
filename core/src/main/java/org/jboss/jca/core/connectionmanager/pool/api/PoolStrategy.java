@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -38,5 +38,8 @@ public enum PoolStrategy
    POOL_BY_SUBJECT_AND_CRI,
 
    /** ONE_POOL */
-   ONE_POOL
+   ONE_POOL,
+
+   /** REAUTH */
+   REAUTH
 }

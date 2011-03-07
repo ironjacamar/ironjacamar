@@ -839,8 +839,7 @@ public abstract class AbstractResourceAdapterDeployer
                      ijCD = findConnectionDefinition(ra10.getManagedConnectionFactoryClass().getValue(),
                         ijmd.getConnectionDefinitions());
                   }
-                  //
-                  //                  if (ijmd == null || ijCD == null || ijCD.isEnabled())
+
                   if (ijCD == null || ijCD.isEnabled() || (cdRaXml != null && cdRaXml.isEnabled()))
                   {
                      ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(ra10
@@ -915,6 +914,12 @@ public abstract class AbstractResourceAdapterDeployer
                            securityDomain = security.getSecurityDomainAndApplication();
                         }
 
+                     }
+
+                     if (ra10 != null && ra10.getReauthenticationSupport() != null &&
+                         ra10.getReauthenticationSupport().booleanValue())
+                     {
+                        strategy = PoolStrategy.REAUTH;
                      }
 
                      Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue());
@@ -1138,9 +1143,6 @@ public abstract class AbstractResourceAdapterDeployer
                   List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
                   if (cdMetas.size() > 0)
                   {
-                     //                     if (cdMetas.size() == 1)
-                     //                     {
-                     //                        ConnectionDefinition cdMeta = cdMetas.get(0);
                      cfs = new Object[cdMetas.size()];
                      cfJndiNames = new String[cdMetas.size()];
 
@@ -1173,8 +1175,6 @@ public abstract class AbstractResourceAdapterDeployer
                                     ijmd.getConnectionDefinitions());
                               }
 
-                              //                              if (ijmd == null || ijCD == null || ijCD.isEnabled())
-                              //                              {
                               if (ijCD == null || ijCD.isEnabled() || (cdRaXml != null && cdRaXml.isEnabled()))
                               {
                                  ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cdMeta
@@ -1253,6 +1253,12 @@ public abstract class AbstractResourceAdapterDeployer
                                     }
 
                                  }
+
+                                 if (ra.getOutboundResourceadapter().getReauthenticationSupport())
+                                 {
+                                    strategy = PoolStrategy.REAUTH;
+                                 }
+
                                  Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue());
 
                                  // Add a connection manager
