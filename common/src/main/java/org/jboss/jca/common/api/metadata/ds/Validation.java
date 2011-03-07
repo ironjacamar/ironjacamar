@@ -42,7 +42,7 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
     *
     * @return the validConnectionChecker
     */
-   public JdbcAdapterExtension getValidConnectionChecker();
+   public Extension getValidConnectionChecker();
 
    /**
     * Get the checkValidConnectionSql.
@@ -63,14 +63,14 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
     *
     * @return the staleConnectionChecker
     */
-   public JdbcAdapterExtension getStaleConnectionChecker();
+   public Extension getStaleConnectionChecker();
 
    /**
     * Get the exceptionSorter
     *
     * @return the exceptionSorter
     */
-   public JdbcAdapterExtension getExceptionSorter();
+   public Extension getExceptionSorter();
 
 
    /**

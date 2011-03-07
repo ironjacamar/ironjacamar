@@ -21,83 +21,116 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.JCAMetadata;
+import org.jboss.jca.common.api.metadata.ValidatableMetadata;
+import org.jboss.jca.common.api.validator.ValidateException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A XaDataSource.
+ * A JdbcAdapterExtension.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface XaDataSource extends CommonDataSource
+public final class Extension implements JCAMetadata, ValidatableMetadata
 {
 
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -6275984008991105644L;
+
+   private final String className;
+
+   private final Map<String, String> configPropertiesMap;
+
    /**
-    * Get the xaDataSourceClass.
+    * Create a new JdbcAdapterExtension.
     *
-    * @return the xaDataSourceClass.
+    * @param className the className
+    * @param configPropertiesMap configPropertiesMap
+    * @throws ValidateException ValidateException
     */
-   public String getXaDataSourceClass();
+   public Extension(String className, Map<String, String> configPropertiesMap) throws ValidateException
+   {
+      super();
+      this.className = className;
+      if (configPropertiesMap != null)
+      {
+         this.configPropertiesMap = new HashMap<String, String>(configPropertiesMap.size());
+         this.configPropertiesMap.putAll(configPropertiesMap);
+      }
+      else
+      {
+         this.configPropertiesMap = Collections.emptyMap();
+      }
+      this.validate();
+   }
 
    /**
-    * Get the module
-    * @return The value
-    */
-   public String getModule();
-
-   /**
-    * Get the statement.
+    * Get the className.
     *
-    * @return the statement.
+    * @return the className.
     */
-   public Statement getStatement();
-
-
-   /**
-    * Get the urlDelimiter.
-    *
-    * @return the urlDelimiter.
-    */
-   public String getUrlDelimiter();
+   public final String getClassName()
+   {
+      return className;
+   }
 
    /**
-    * Get the urlSelectorStrategyClassName.
+    * Get the configPropertiesMap.
     *
-    * @return the urlSelectorStrategyClassName.
+    * @return the configPropertiesMap.
     */
-   public String getUrlSelectorStrategyClassName();
+   public final Map<String, String> getConfigPropertiesMap()
+   {
+      return Collections.unmodifiableMap(configPropertiesMap);
+   }
 
-   /**
-    * Get the newConnectionSql.
-    *
-    * @return the newConnectionSql.
-    */
-   public String getNewConnectionSql();
+   @Override
+   public String toString()
+   {
+      return "JdbcAdapterExtension [className=" + className + ", configPropertiesMap=" + configPropertiesMap + "]";
+   }
 
-   /**
-    * Get the xaDataSourceProperty.
-    *
-    * @return the xaDataSourceProperty.
-    */
-   public Map<String, String> getXaDataSourceProperty();
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((className == null) ? 0 : className.hashCode());
+      result = prime * result + ((configPropertiesMap == null) ? 0 : configPropertiesMap.hashCode());
+      return result;
+   }
 
-   /**
-    * Get the xaPool.
-    *
-    * @return the xaPool.
-    */
-   public CommonXaPool getXaPool();
-
-   /**
-    * Get the xaPool.
-    *
-    * @return the xaPool.
-    */
-   public Recovery getRecovery();
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (!(obj instanceof Extension))
+         return false;
+      Extension other = (Extension) obj;
+      if (className == null)
+      {
+         if (other.className != null)
+            return false;
+      }
+      else if (!className.equals(other.className))
+         return false;
+      if (configPropertiesMap == null)
+      {
+         if (other.configPropertiesMap != null)
+            return false;
+      }
+      else if (!configPropertiesMap.equals(other.configPropertiesMap))
+         return false;
+      return true;
+   }
 
    /**
    *
@@ -114,57 +147,12 @@ public interface XaDataSource extends CommonDataSource
       UNKNOWN(null),
 
       /**
-      * xaDatasourceProperty tag
-      */
-      XADATASOURCEPROPERTY("xa-datasource-property"),
-      /**
-      * xaDatasourceClass tag
-      */
-      XADATASOURCECLASS("xa-datasource-class"),
-      /**
-      * module tag
-      */
-      MODULE("module"),
-      /**
-      * transactionIsolation tag
-      */
-      TRANSACTIONISOLATION("transaction-isolation"),
-      /**
-      * timeOut tag
-      */
-      TIMEOUT("timeout"),
-      /**
-      * security tag
-      */
-      SECURITY("security"),
-      /**
-      * statement tag
-      */
-      STATEMENT("statement"),
-      /**
-      * validation tag
-      */
-      VALIDATION("validation"),
-      /**
-      * urlDelimiter tag
-      */
-      URLDELIMITER("url-delimiter"),
-      /**
-      * urlSelectorStrategyClassName tag
-      */
-      URLSELECTORSTRATEGYCLASSNAME("url-selector-strategy-class-name"),
-      /**
-      * newConnectionSql tag
-      */
-      NEWCONNECTIONSQL("new-connection-sql"),
+       * pool tag
 
       /**
-       * xa-pool tag
-       */
-      XA_POOL("xa-pool"),
-
-      /** recovery tag */
-      RECOVERY("recovery");
+      * config-property tag
+      */
+      CONFIG_PROPERTY("config-property");
 
       private final String name;
 
@@ -228,29 +216,10 @@ public interface XaDataSource extends CommonDataSource
    public enum Attribute
    {
 
-      /** jndiName attribute
-       *
-       */
-      JNDINAME("jndi-name"),
-
-      /** jndiName attribute
+      /** class-name attribute
       *
       */
-      POOL_NAME("pool-name"),
-
-      /** jndiName attribute
-      *
-      */
-      ENABLED("enabled"),
-      /** use-java-context attribute
-      *
-      */
-      USEJAVACONTEXT("use-java-context"),
-
-      /** spy attribute
-      *
-      */
-      SPY("spy");
+      CLASS_NAME("class-name");
 
       private final String name;
 
@@ -276,4 +245,14 @@ public interface XaDataSource extends CommonDataSource
       }
 
    }
+
+   @Override
+   public void validate() throws ValidateException
+   {
+      if (this.className == null || className.trim().length() == 0)
+         throw new ValidateException("className (xml attribute " + Attribute.CLASS_NAME + ") is required in " +
+                                     this.getClass().getCanonicalName());
+   }
+
 }
+

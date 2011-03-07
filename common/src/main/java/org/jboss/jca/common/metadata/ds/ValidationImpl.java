@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.JdbcAdapterExtension;
+import org.jboss.jca.common.api.metadata.ds.Extension;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.validator.ValidateException;
 
@@ -38,15 +38,15 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    /** The serialVersionUID */
    private static final long serialVersionUID = 7816717816552118419L;
 
-   private final JdbcAdapterExtension validConnectionChecker;
+   private final Extension validConnectionChecker;
 
    private final String checkValidConnectionSql;
 
    private final Boolean validateOnMatch;
 
-   private final JdbcAdapterExtension staleConnectionChecker;
+   private final Extension staleConnectionChecker;
 
-   private final JdbcAdapterExtension exceptionSorter;
+   private final Extension exceptionSorter;
 
    /**
     * Create a new ValidationImpl.
@@ -62,8 +62,8 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     * @throws ValidateException ValidateException
     */
    public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMinutes, Boolean useFastFail,
-      JdbcAdapterExtension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
-      JdbcAdapterExtension staleConnectionChecker, JdbcAdapterExtension exceptionSorter) throws ValidateException
+      Extension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
+      Extension staleConnectionChecker, Extension exceptionSorter) throws ValidateException
    {
       super(backgroundValidation, backgroundValidationMinutes, useFastFail);
       this.validConnectionChecker = validConnectionChecker;
@@ -101,7 +101,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     *
     * @return the validConnectionChecker.
     */
-   public final JdbcAdapterExtension getValidConnectionChecker()
+   public final Extension getValidConnectionChecker()
    {
       return validConnectionChecker;
    }
@@ -121,7 +121,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     *
     * @return the staleConnectionChecker.
     */
-   public final JdbcAdapterExtension getStaleConnectionChecker()
+   public final Extension getStaleConnectionChecker()
    {
       return staleConnectionChecker;
    }
@@ -131,7 +131,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     *
     * @return the exceptionSorter.
     */
-   public final JdbcAdapterExtension getExceptionSorter()
+   public final Extension getExceptionSorter()
    {
       return exceptionSorter;
    }

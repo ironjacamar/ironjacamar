@@ -25,74 +25,78 @@ import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ValidatableMetadata;
 import org.jboss.jca.common.api.validator.ValidateException;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  *
- * A JdbcAdapterExtension.
+ * A Recovery.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public final class JdbcAdapterExtension implements JCAMetadata, ValidatableMetadata
+public class Recovery implements JCAMetadata, ValidatableMetadata
 {
-
    /** The serialVersionUID */
-   private static final long serialVersionUID = -6275984008991105644L;
+   private static final long serialVersionUID = -7425365995463321893L;
 
-   private final String className;
+   private final DsSecurity security;
 
-   private final Map<String, String> configPropertiesMap;
+   private final Extension plugin;
+
+   private final Boolean noRecovery;
 
    /**
-    * Create a new JdbcAdapterExtension.
+    * Create a new Recovery.
     *
-    * @param className the className
-    * @param configPropertiesMap configPropertiesMap
-    * @throws ValidateException ValidateException
+    * @param security security
+    * @param plugin plugin
+    * @param noRecovery niRecovery
+    * @throws ValidateException in case of not valid metadata creation
     */
-   public JdbcAdapterExtension(String className, Map<String, String> configPropertiesMap) throws ValidateException
+   public Recovery(DsSecurity security, Extension plugin, Boolean noRecovery) throws ValidateException
    {
       super();
-      this.className = className;
-      if (configPropertiesMap != null)
-      {
-         this.configPropertiesMap = new HashMap<String, String>(configPropertiesMap.size());
-         this.configPropertiesMap.putAll(configPropertiesMap);
-      }
-      else
-      {
-         this.configPropertiesMap = Collections.emptyMap();
-      }
+      this.security = security;
+      this.plugin = plugin;
+      this.noRecovery = noRecovery;
       this.validate();
    }
 
    /**
-    * Get the className.
+    * Get the security.
     *
-    * @return the className.
+    * @return the security.
     */
-   public final String getClassName()
+   public final DsSecurity getSecurity()
    {
-      return className;
+      return security;
    }
 
    /**
-    * Get the configPropertiesMap.
+    * Get the plugin.
     *
-    * @return the configPropertiesMap.
+    * @return the plugin.
     */
-   public final Map<String, String> getConfigPropertiesMap()
+   public final Extension getPlugin()
    {
-      return Collections.unmodifiableMap(configPropertiesMap);
+      return plugin;
+   }
+
+   /**
+    * Get the noRecovery.
+    *
+    * @return the noRecovery.
+    */
+   public final Boolean getNoRecovery()
+   {
+      return noRecovery;
    }
 
    @Override
-   public String toString()
+   public void validate() throws ValidateException
    {
-      return "JdbcAdapterExtension [className=" + className + ", configPropertiesMap=" + configPropertiesMap + "]";
+      // the only field not yet validated is a Boolean and all value are fine
    }
 
    @Override
@@ -100,8 +104,9 @@ public final class JdbcAdapterExtension implements JCAMetadata, ValidatableMetad
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((className == null) ? 0 : className.hashCode());
-      result = prime * result + ((configPropertiesMap == null) ? 0 : configPropertiesMap.hashCode());
+      result = prime * result + ((noRecovery == null) ? 0 : noRecovery.hashCode());
+      result = prime * result + ((plugin == null) ? 0 : plugin.hashCode());
+      result = prime * result + ((security == null) ? 0 : security.hashCode());
       return result;
    }
 
@@ -112,24 +117,37 @@ public final class JdbcAdapterExtension implements JCAMetadata, ValidatableMetad
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof JdbcAdapterExtension))
+      if (!(obj instanceof Recovery))
          return false;
-      JdbcAdapterExtension other = (JdbcAdapterExtension) obj;
-      if (className == null)
+      Recovery other = (Recovery) obj;
+      if (noRecovery == null)
       {
-         if (other.className != null)
+         if (other.noRecovery != null)
             return false;
       }
-      else if (!className.equals(other.className))
+      else if (!noRecovery.equals(other.noRecovery))
          return false;
-      if (configPropertiesMap == null)
+      if (plugin == null)
       {
-         if (other.configPropertiesMap != null)
+         if (other.plugin != null)
             return false;
       }
-      else if (!configPropertiesMap.equals(other.configPropertiesMap))
+      else if (!plugin.equals(other.plugin))
+         return false;
+      if (security == null)
+      {
+         if (other.security != null)
+            return false;
+      }
+      else if (!security.equals(other.security))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString()
+   {
+      return "Recovery [security=" + security + ", plugin=" + plugin + ", noRecovery=" + noRecovery + "]";
    }
 
    /**
@@ -152,7 +170,10 @@ public final class JdbcAdapterExtension implements JCAMetadata, ValidatableMetad
       /**
       * config-property tag
       */
-      CONFIG_PROPERTY("config-property");
+      SECURITY("security"),
+      /** plugin tag */
+
+      PLUGIN("plugin");
 
       private final String name;
 
@@ -219,7 +240,7 @@ public final class JdbcAdapterExtension implements JCAMetadata, ValidatableMetad
       /** class-name attribute
       *
       */
-      CLASS_NAME("class-name");
+      NO_RECOVERY("no-recovery");
 
       private final String name;
 
@@ -244,14 +265,6 @@ public final class JdbcAdapterExtension implements JCAMetadata, ValidatableMetad
          return name;
       }
 
-   }
-
-   @Override
-   public void validate() throws ValidateException
-   {
-      if (this.className == null || className.trim().length() == 0)
-         throw new ValidateException("className (xml attribute " + Attribute.CLASS_NAME + ") is required in " +
-                                     this.getClass().getCanonicalName());
    }
 
 }

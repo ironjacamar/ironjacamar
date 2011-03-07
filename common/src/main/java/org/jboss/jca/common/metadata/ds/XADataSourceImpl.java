@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
+import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
@@ -56,6 +57,8 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final CommonXaPool xaPool;
 
+   private final Recovery recovery;
+
    /**
     * Create a new XADataSourceImpl.
     *
@@ -76,13 +79,14 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param module module
     * @param newConnectionSql newConnectionSql
     * @param xaPool xaPool
+    * @param recovery recovery
     * @throws ValidateException ValidateException
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
       boolean useJavaContext, String poolName, boolean enabled, String jndiName, boolean spy,
       Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String module, String newConnectionSql,
-      CommonXaPool xaPool) throws ValidateException
+      CommonXaPool xaPool, Recovery recovery) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
             urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName, spy);
@@ -99,6 +103,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       this.module = module;
       this.newConnectionSql = newConnectionSql;
       this.xaPool = xaPool;
+      this.recovery = recovery;
       this.validate();
    }
 
@@ -271,5 +276,11 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          throw new ValidateException("at least one xaDataSourceProperty (xml tag " + Tag.XADATASOURCEPROPERTY +
                                      ") is required ");
 
+   }
+
+   @Override
+   public Recovery getRecovery()
+   {
+      return recovery;
    }
 }
