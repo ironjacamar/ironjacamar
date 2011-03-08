@@ -78,8 +78,8 @@ public class XATestCase
       
       Set<Resource> subRarServiceRes = rarServiceRes.getChildResources();
       
-      // Only ManagedConnectionFactory for now.
-      assertEquals(1, subRarServiceRes.size());
+      // one ManagedConnectionFactory and one adminObject
+      assertEquals(2, subRarServiceRes.size());
       
    }
 
