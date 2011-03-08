@@ -675,8 +675,9 @@ public class TxConnectionListenerTestCase
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-         null, null, null, tm, null, null, null, null, null);
+      ConnectionManager connectionManager =
+         cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
+                                 null, null, null, null, tm, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;
    }

@@ -94,16 +94,16 @@ public class AbstractConnectionManagerTestCase
    }
 
    /**
-    * testSecDomainJndiName.
+    * testSecDomain.
     */
    @Test
-   public void testSecDomainJndiName()
+   public void testSecDomain()
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      assertNull(connectionManager.getSecurityDomainJndiName());
-      connectionManager.setSecurityDomainJndiName("jndi_name");
-      assertNotNull(connectionManager.getSecurityDomainJndiName());
-      assertEquals("jndi_name", connectionManager.getSecurityDomainJndiName());
+      assertNull(connectionManager.getSecurityDomain());
+      connectionManager.setSecurityDomain("my_domain");
+      assertNotNull(connectionManager.getSecurityDomain());
+      assertEquals("my_domain", connectionManager.getSecurityDomain());
    }
 
    /**

@@ -275,8 +275,9 @@ public abstract class AbstractDsDeployer
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm = cmf.createTransactional(tsl, pool, null, allocationRetry, allocationRetryWaitMillis,
-         getTransactionManager(), null, null, null, null, null);
+      ConnectionManager cm = 
+         cmf.createTransactional(tsl, pool, null, null, allocationRetry, allocationRetryWaitMillis,
+                                 getTransactionManager(), null, null, null, null, null);
 
       cm.setJndiName(jndiName);
 
@@ -366,8 +367,11 @@ public abstract class AbstractDsDeployer
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm = cmf.createTransactional(tsl, pool, null, allocationRetry, allocationRetryWaitMillis,
-         getTransactionManager(), interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
+      ConnectionManager cm =
+         cmf.createTransactional(tsl, pool, null, null,
+                                 allocationRetry, allocationRetryWaitMillis,
+                                 getTransactionManager(), interleaving, 
+                                 xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
 
       cm.setJndiName(jndiName);
 

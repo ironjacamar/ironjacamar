@@ -278,9 +278,9 @@ public class TxConnectionManagerTestCase
 
       Subject subject = null;
 
-      if (txCm.getSubjectFactory() != null && txCm.getSecurityDomainJndiName() != null)
+      if (txCm.getSubjectFactory() != null && txCm.getSecurityDomain() != null)
       {
-         subject = txCm.getSubjectFactory().createSubject(txCm.getSecurityDomainJndiName());
+         subject = txCm.getSubjectFactory().createSubject(txCm.getSecurityDomain());
       }
 
       listener = txCm.getManagedConnection(subject, new MockConnectionRequestInfo());
@@ -318,8 +318,9 @@ public class TxConnectionManagerTestCase
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-         null, null, null, tm, null, null, null, null, null);
+      ConnectionManager connectionManager = 
+         cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
+                                 null, null, null, null, tm, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;
    }

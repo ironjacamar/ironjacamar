@@ -34,7 +34,7 @@
   <transaction-support>NoTransaction</transaction-support>
   
   <connection-definitions>
-    <connection-definition class-name="org.jboss.jca.core.security.reauth.ra.cri.ReauthManagedConnectionFactory" 
+    <connection-definition class-name="org.jboss.jca.core.security.reauth.ra.subject.ReauthManagedConnectionFactory" 
                            enabled="true" jndi-name="java:/eis/Reauth" 
                            use-java-context="true" pool-name="Reauth">
       <pool>
@@ -42,7 +42,7 @@
         <max-pool-size>1</max-pool-size>
       </pool>
       <security>
-        <application/>
+        <security-domain>DefaultSecurityDomain</security-domain>
       </security>
     </connection-definition>
   </connection-definitions>

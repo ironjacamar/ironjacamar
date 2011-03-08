@@ -84,9 +84,9 @@ public class NoTxConnectionListenerTestCase
 
       Subject subject = null;
 
-      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
+      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomain() != null)
       {
-         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
+         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomain());
       }
       MockConnectionRequestInfo cri = new MockConnectionRequestInfo();
 
@@ -116,9 +116,9 @@ public class NoTxConnectionListenerTestCase
 
       Subject subject = null;
 
-      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
+      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomain() != null)
       {
-         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
+         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomain());
       }
       MockConnectionRequestInfo cri = new MockConnectionRequestInfo();
 
@@ -148,9 +148,9 @@ public class NoTxConnectionListenerTestCase
 
       Subject subject = null;
 
-      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
+      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomain() != null)
       {
-         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
+         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomain());
       }
       MockConnectionRequestInfo cri = new MockConnectionRequestInfo();
 
@@ -179,9 +179,9 @@ public class NoTxConnectionListenerTestCase
 
       Subject subject = null;
 
-      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomainJndiName() != null)
+      if (noTxCm.getSubjectFactory() != null && noTxCm.getSecurityDomain() != null)
       {
-         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomainJndiName());
+         subject = noTxCm.getSubjectFactory().createSubject(noTxCm.getSecurityDomain());
       }
       MockConnectionRequestInfo cri = new MockConnectionRequestInfo();
 
@@ -224,8 +224,9 @@ public class NoTxConnectionListenerTestCase
       pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
-         null, null, null);
+      ConnectionManager connectionManager = 
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
+                                    null, null, null, null);
 
       noTxCm = ((NoTxConnectionManagerImpl) connectionManager);
 

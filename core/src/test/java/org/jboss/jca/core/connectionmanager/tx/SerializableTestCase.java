@@ -73,9 +73,8 @@ public class SerializableTestCase
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
-                                                                    pool,
-                                                                    null, null, null, tm, Boolean.FALSE, null, null,
-         null, null);
+                                                                    pool, null, null, null, null, tm, 
+                                                                    Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();

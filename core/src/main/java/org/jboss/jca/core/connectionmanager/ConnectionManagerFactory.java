@@ -50,7 +50,8 @@ public class ConnectionManagerFactory
     * Create a connection manager
     * @param tsl The transaction support level
     * @param pool The pool for the connection manager
-    * @param subjectFactory the subjectFactory for connection manager
+    * @param subjectFactory The subject factory
+    * @param securityDomain The security domain 
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @return The connection manager instance
@@ -58,6 +59,7 @@ public class ConnectionManagerFactory
    public NoTxConnectionManager createNonTransactional(final TransactionSupportLevel tsl,
                                                        final Pool pool,
                                                        final SubjectFactory subjectFactory,
+                                                       final String securityDomain,
                                                        final Integer allocationRetry,
                                                        final Long allocationRetryWaitMillis)
    {
@@ -85,9 +87,7 @@ public class ConnectionManagerFactory
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
-      cm.setSubjectFactory(subjectFactory);
-
-      setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, null);
+      setProperties(cm, pool, subjectFactory, securityDomain, allocationRetry, allocationRetryWaitMillis, null);
       setNoTxProperties(cm);
 
       return cm;
@@ -97,7 +97,8 @@ public class ConnectionManagerFactory
     * Create a transactional connection manager
     * @param tsl The transaction support level
     * @param pool The pool for the connection manager
-    * @param subjectFactory the subjectFactory for connection manager
+    * @param subjectFactory The subject factory
+    * @param securityDomain The security domain 
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
@@ -111,6 +112,7 @@ public class ConnectionManagerFactory
    public TxConnectionManager createTransactional(final TransactionSupportLevel tsl,
                                                   final Pool pool,
                                                   final SubjectFactory subjectFactory,
+                                                  final String securityDomain,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
                                                   final TransactionManager tm,
@@ -148,9 +150,7 @@ public class ConnectionManagerFactory
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
-      cm.setSubjectFactory(subjectFactory);
-
-      setProperties(cm, pool, allocationRetry, allocationRetryWaitMillis, tm);
+      setProperties(cm, pool, subjectFactory, securityDomain, allocationRetry, allocationRetryWaitMillis, tm);
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
       handleTxIntegration(tm);
 
@@ -161,18 +161,25 @@ public class ConnectionManagerFactory
     * Common properties
     * @param cm The connection manager
     * @param pool The pool
+    * @param subjectFactory The subject factory
+    * @param securityDomain The security domain
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
     */
    private void setProperties(AbstractConnectionManager cm,
                               Pool pool,
+                              SubjectFactory subjectFactory,
+                              String securityDomain,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
                               TransactionManager tm)
    {
       pool.setConnectionListenerFactory(cm);
       cm.setPool(pool);
+
+      cm.setSubjectFactory(subjectFactory);
+      cm.setSecurityDomain(securityDomain);
 
       if (allocationRetry != null)
          cm.setAllocationRetry(allocationRetry.intValue());

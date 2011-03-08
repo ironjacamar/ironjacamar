@@ -1,6 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
 /*
  * JBoss, Home of Professional Open Source.
  * Copyright 2011, Red Hat Middleware LLC, and individual contributors
@@ -22,29 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
--->
+package org.jboss.jca.core.security.reauth.ra.subject;
 
-<ironjacamar xmlns="http://www.jboss.org/ironjacamar/schema"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
-             http://www.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">
-  <config-property name="Server">localhost</config-property>
-  <config-property name="Port">19000</config-property>
+import javax.resource.ResourceException;
 
-  <transaction-support>NoTransaction</transaction-support>
-  
-  <connection-definitions>
-    <connection-definition class-name="org.jboss.jca.core.security.reauth.ra.cri.ReauthManagedConnectionFactory" 
-                           enabled="true" jndi-name="java:/eis/Reauth" 
-                           use-java-context="true" pool-name="Reauth">
-      <pool>
-        <min-pool-size>0</min-pool-size>
-        <max-pool-size>1</max-pool-size>
-      </pool>
-      <security>
-        <application/>
-      </security>
-    </connection-definition>
-  </connection-definitions>
+/**
+ * ReauthConnection
+ *
+ * @version $Revision: $
+ */
+public interface ReauthConnection
+{
+   /**
+    * login
+    * @param username username
+    * @param password password
+    * @return String
+    * @throws ResourceException Thrown if an error occurs
+    */
+   public String login(String username, String password) throws ResourceException;
 
-</ironjacamar>
+   /**
+    * logout
+    * @return boolean
+    * @throws ResourceException Thrown if an error occurs
+    */
+   public boolean logout() throws ResourceException;
+
+   /**
+    * get auth
+    * @return String
+    * @throws ResourceException Thrown if an error occurs
+    */
+   public String getAuth() throws ResourceException;
+}

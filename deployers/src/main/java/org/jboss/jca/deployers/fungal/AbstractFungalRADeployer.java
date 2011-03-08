@@ -574,6 +574,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    @Override
    protected SubjectFactory getSubjectFactory(String securityDomain) throws DeployException
    {
+      log.tracef("getSubjectFactory(%s)", securityDomain);
+
       if (securityDomain == null || securityDomain.trim().equals(""))
          return null;
 

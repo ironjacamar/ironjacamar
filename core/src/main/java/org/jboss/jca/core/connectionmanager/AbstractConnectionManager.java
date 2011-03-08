@@ -75,8 +75,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** The pool */
    private Pool pool;
 
-   /** Security domain jndi name */
-   private String securityDomainJndiName;
+   /** Security domain */
+   private String securityDomain;
 
    /** SubjectFactory */
    private SubjectFactory subjectFactory;
@@ -177,27 +177,27 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
 
    /**
-    * Sets security domain jndi name.
-    * @param securityDomainJndiName security jndi name
+    * Sets security domain
+    * @param securityDomain security domain
     */
-   public void setSecurityDomainJndiName(String securityDomainJndiName)
+   public void setSecurityDomain(String securityDomain)
    {
-      if (securityDomainJndiName != null && securityDomainJndiName.startsWith(SECURITY_MGR_PATH))
+      if (securityDomain != null && securityDomain.startsWith(SECURITY_MGR_PATH))
       {
-         securityDomainJndiName = securityDomainJndiName.substring(SECURITY_MGR_PATH.length());
-         log.warn("WARNING: UPDATE YOUR SecurityDomainJndiName! REMOVE " + SECURITY_MGR_PATH);
+         securityDomain = securityDomain.substring(SECURITY_MGR_PATH.length());
+         log.warn("WARNING: UPDATE YOUR SecurityDomain! REMOVE " + SECURITY_MGR_PATH);
       }
 
-      this.securityDomainJndiName = securityDomainJndiName;
+      this.securityDomain = securityDomain;
    }
 
    /**
-    * Gets security domain jndi name.
-    * @return security domain jndi name
+    * Gets security domain.
+    * @return security domain
     */
-   public String getSecurityDomainJndiName()
+   public String getSecurityDomain()
    {
-      return securityDomainJndiName;
+      return securityDomain;
    }
 
    /**
@@ -650,15 +650,10 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       Subject subject = null;
 
-      if (subjectFactory != null && securityDomainJndiName != null)
-      {
-         subject = subjectFactory.createSubject(securityDomainJndiName);
-      }
+      if (subjectFactory != null && securityDomain != null)
+         subject = subjectFactory.createSubject(securityDomain);
 
-      if (trace)
-      {
-         log.trace("subject: " + subject);
-      }
+      log.tracef("Subject: %s", subject);
 
       return subject;
    }

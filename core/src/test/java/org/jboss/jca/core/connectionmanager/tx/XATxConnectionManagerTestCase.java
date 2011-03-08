@@ -245,9 +245,9 @@ public class XATxConnectionManagerTestCase
 
       Subject subject = null;
 
-      if (txCm.getSubjectFactory() != null && txCm.getSecurityDomainJndiName() != null)
+      if (txCm.getSubjectFactory() != null && txCm.getSecurityDomain() != null)
       {
-         subject = txCm.getSubjectFactory().createSubject(txCm.getSecurityDomainJndiName());
+         subject = txCm.getSubjectFactory().createSubject(txCm.getSecurityDomain());
       }
 
       listener = txCm.getManagedConnection(subject, new MockConnectionRequestInfo());
@@ -286,8 +286,9 @@ public class XATxConnectionManagerTestCase
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
-         null, null, null, tm, Boolean.FALSE, null, null, null, null);
+      ConnectionManager connectionManager =
+         cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
+                                 null, null, null, null, tm, Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);
 
       assertTrue(connectionManager instanceof TxConnectionManager);
