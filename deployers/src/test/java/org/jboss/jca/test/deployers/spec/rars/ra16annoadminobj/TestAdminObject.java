@@ -21,17 +21,25 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16annoadminobj;
 
+import java.io.Serializable;
+
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.resource.Referenceable;
 import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.ConfigProperty;
 
 /**
- * 
+ *
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
 @AdministeredObject
-public class TestAdminObject
+public class TestAdminObject implements Serializable, Referenceable
 {
+
+   Reference reference;
+
    @ConfigProperty(type = String.class, defaultValue = "InAO")
    private String myStringProperty;
 
@@ -49,5 +57,18 @@ public class TestAdminObject
    public String getMyStringProperty()
    {
       return myStringProperty;
+   }
+
+   @Override
+   public Reference getReference() throws NamingException
+   {
+      return reference;
+   }
+
+   @Override
+   public void setReference(Reference reference)
+   {
+      this.reference = reference;
+
    }
 }

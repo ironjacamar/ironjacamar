@@ -10,7 +10,7 @@
   <bean name="JBossStdioSystemErrStream" class="org.jboss.stdio.LoggingOutputStream">
     <constructor>
       <parameter>STDERR</parameter>
-      <parameter>ERROR</parameter>
+      <parameter>INFO</parameter>
     </constructor>
   </bean>
 

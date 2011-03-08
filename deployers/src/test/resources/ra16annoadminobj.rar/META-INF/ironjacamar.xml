@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Id $ -->
+
+<ironjacamar>
+
+  <admin-objects>
+   <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.ra16annoadminobj.TestAdminObject" jndi-name="java:/TestAdminObject">
+   </admin-object>
+  </admin-objects>
+</ironjacamar>

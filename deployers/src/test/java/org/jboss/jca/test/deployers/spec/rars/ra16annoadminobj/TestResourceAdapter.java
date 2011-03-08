@@ -23,7 +23,6 @@ package org.jboss.jca.test.deployers.spec.rars.ra16annoadminobj;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
 
-import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.AuthenticationMechanism;
 import javax.resource.spi.AuthenticationMechanism.CredentialInterface;
 import javax.resource.spi.ConfigProperty;
@@ -51,8 +50,7 @@ import javax.resource.spi.TransactionSupport;
       securityPermissions = { @SecurityPermission(permissionSpec = "permissionSpec") },
       transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction,
       requiredWorkContexts = { TestWorkContext.class })
-@AdministeredObject(
-      adminObjectInterfaces = TestAdminObject.class)
+
 public class TestResourceAdapter extends BaseResourceAdapter
 {
    @ConfigProperty(type = String.class, defaultValue = "JCA")

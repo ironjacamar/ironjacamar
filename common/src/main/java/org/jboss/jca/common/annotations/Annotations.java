@@ -165,7 +165,7 @@ public class Annotations
       */
 
       // @ConfigProperty handle at last
-      Map<Metadatas, ArrayList<ConfigProperty16>> configPropertiesMap = 
+      Map<Metadatas, ArrayList<ConfigProperty16>> configPropertiesMap =
          processConfigProperty(annotationRepository, classLoader);
 
       // @ConnectionDefinitions
@@ -743,12 +743,16 @@ public class Annotations
             if (trace)
                log.trace("Processing: " + a);
             String aoName = null;
+            String aoClassName = null;
             if (a.adminObjectInterfaces().length > 0)
             {
                aoName = ((Class) Array.get(a.adminObjectInterfaces(), 0)).getName();
             }
+            aoClassName = annotation.getClassName();
             XsdString adminobjectInterface = new XsdString(aoName, null);
-            adminObjs.add(new AdminObjectImpl(adminobjectInterface, null, null, null));
+            XsdString adminobjectClass = new XsdString(aoClassName, null);
+
+            adminObjs.add(new AdminObjectImpl(adminobjectInterface, adminobjectClass, null, null));
          }
       }
 
