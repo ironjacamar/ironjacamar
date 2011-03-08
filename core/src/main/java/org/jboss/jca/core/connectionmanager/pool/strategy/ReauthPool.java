@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool.strategy;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -32,7 +33,12 @@ import javax.security.auth.Subject;
 
 /**
  * Pool implementation that supports reauthentication
- * 
+ *
+ * Initial implementation is based on OnePool with no prefill support, since
+ * each managed connection will likely have different credentials. Note, that
+ * using a simple key (ReauthKey) will result in a higher reauthentication
+ * numbers than optimal.
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class ReauthPool extends AbstractPool
@@ -58,5 +64,17 @@ public class ReauthPool extends AbstractPool
       throws ResourceException
    {
       return new ReauthKey(subject, cri, separateNoTx);
+   }
+
+   /**
+    * There is no reason to empty the subpool for reauth enabled
+    * resource adapters, since all managed connections can change
+    * its credentials
+    * 
+    * @param pool the internal managed connection pool
+    */
+   public void emptySubPool(ManagedConnectionPool pool)
+   {
+      // No-operation
    }
 }
