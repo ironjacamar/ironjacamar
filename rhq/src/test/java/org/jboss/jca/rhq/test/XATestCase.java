@@ -21,23 +21,18 @@
  */
 package org.jboss.jca.rhq.test;
 
-import org.jboss.jca.core.api.management.ManagementRepository;
-import org.jboss.jca.embedded.Embedded;
-import org.jboss.jca.embedded.EmbeddedFactory;
-
 import java.io.File;
-import java.net.URL;
+import java.util.Set;
 
-import org.jboss.logging.Logger;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import org.rhq.core.clientapi.server.discovery.InventoryReport;
+import org.rhq.core.domain.resource.Resource;
 import org.rhq.core.pc.PluginContainer;
 import org.rhq.core.pc.PluginContainerConfiguration;
 import org.rhq.core.pc.inventory.InventoryManager;
+import org.rhq.core.pc.inventory.RuntimeDiscoveryExecutor;
 import org.rhq.core.pc.plugin.FileSystemPluginFinder;
 
 import static org.junit.Assert.*;
@@ -49,11 +44,8 @@ import static org.junit.Assert.*;
  */
 public class XATestCase
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(XATestCase.class);
 
-   /** Embedded */
-   private static Embedded embedded;
+   private PluginContainerConfiguration pcConfig;
    
    /**
     * Basic
@@ -62,68 +54,62 @@ public class XATestCase
    @Test
    public void testBasic() throws Throwable
    {
-      URL deployment = null;
-      try
-      {
-         ManagementRepository manRepo = embedded.lookup("ManagementRepository", ManagementRepository.class);
-         assertNotNull(manRepo);
-         assertNotNull(manRepo.getConnectors());
-         assertEquals(0, manRepo.getConnectors().size());
+      PluginContainer pc = PluginContainer.getInstance();
+      
+      InventoryManager im = pc.getInventoryManager();
 
-         File pluginDir = new File(System.getProperty("archives.dir"));
-         
-         File rarFile = new File(pluginDir, "test/xa.rar");
-         deployment = rarFile.toURI().toURL();
-         embedded.deploy(deployment);
-
-         assertEquals(1, manRepo.getConnectors().size());
-         
-
-         PluginContainerConfiguration pcConfig = new PluginContainerConfiguration();
-         pcConfig.setPluginFinder(new FileSystemPluginFinder(pluginDir));
-         pcConfig.setPluginDirectory(pluginDir);
-         pcConfig.setInsideAgent(false);
-
-         PluginContainer pc = PluginContainer.getInstance();
-
-         pc.setConfiguration(pcConfig);
-         pc.initialize();
-
-         InventoryManager im = pc.getInventoryManager();
-
-         InventoryReport report = im.executeServerScanImmediately();
-      }
-      finally
-      {
-         if (deployment != null)
-            embedded.undeploy(deployment);
-      }
+      im.executeServerScanImmediately();
+      
+      Resource platformRes = im.getPlatform();
+      assertNotNull(platformRes);
+      
+      assertEquals(1, platformRes.getChildResources().size());
+      
+      Resource serverRes = platformRes.getChildResources().iterator().next();
+      
+      RuntimeDiscoveryExecutor discoverExecutor = new RuntimeDiscoveryExecutor(im, pcConfig, serverRes);
+      discoverExecutor.run();
+      
+      assertEquals(1, serverRes.getChildResources().size());
+      Resource rarServiceRes = serverRes.getChildResources().iterator().next();
+      
+      // only xa.rar is deployed
+      assertEquals("xa.rar", rarServiceRes.getName());
+      
+      Set<Resource> subRarServiceRes = rarServiceRes.getChildResources();
+      
+      // Only ManagedConnectionFactory for now.
+      assertEquals(1, subRarServiceRes.size());
+      
    }
 
    /**
     * Lifecycle start, before the suite is executed
     * @throws Throwable throwable exception 
     */
-   @BeforeClass
-   public static void beforeClass() throws Throwable
+   @Before
+   public void setUp() throws Throwable
    {
-      // Create and set an embedded JCA instance
-      embedded = EmbeddedFactory.create();
-      // Startup
-      embedded.startup();
+      File pluginDir = new File(System.getProperty("archives.dir"));
+      pcConfig = new PluginContainerConfiguration();
+      pcConfig.setPluginFinder(new FileSystemPluginFinder(pluginDir));
+      pcConfig.setPluginDirectory(pluginDir);
+      pcConfig.setInsideAgent(false);
+
+      PluginContainer pc = PluginContainer.getInstance();
+
+      pc.setConfiguration(pcConfig);
+      pc.initialize();
    }
 
    /**
     * Lifecycle stop, after the suite is executed
     * @throws Throwable throwable exception 
     */
-   @AfterClass
-   public static void afterClass() throws Throwable
+   @After
+   public void tearDown() throws Throwable
    {
-      // Shutdown embedded
-      embedded.shutdown();
-
-      // Set embedded to null
-      embedded = null;
+      PluginContainer pc = PluginContainer.getInstance();
+      pc.shutdown();
    }
 }
