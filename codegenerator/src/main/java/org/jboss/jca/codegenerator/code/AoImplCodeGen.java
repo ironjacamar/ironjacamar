@@ -85,7 +85,9 @@ public class AoImplCodeGen extends PropsCodeGen
    {
       if (def.isUseAnnotation())
       {
-         out.write("@AdministeredObject");
+         out.write("@AdministeredObject(adminObjectInterfaces = { ");
+         out.write(def.getAdminObjects().get(numOfAo).getAdminObjectInterface());
+         out.write(".class })");
          writeEol(out);
       }
       out.write("public class " + getClassName(def) + " implements " + 
