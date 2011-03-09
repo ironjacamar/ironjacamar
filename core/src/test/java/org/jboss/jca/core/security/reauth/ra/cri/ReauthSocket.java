@@ -192,7 +192,16 @@ public class ReauthSocket
          getOutput().writeByte(4);
          getOutput().flush();
 
-         socket.close();
+         Boolean result = (Boolean)getInput().readObject();
+
+         if (result.booleanValue())
+         {
+            log.debugf("Unauth successful");
+         }
+         else
+         {
+            log.debugf("Unauth unsuccessful");
+         }
       }
       catch (Throwable t)
       {

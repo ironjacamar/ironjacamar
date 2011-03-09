@@ -68,13 +68,11 @@ public class ReauthConnectionFactoryImpl implements ReauthConnectionFactory
    /** 
     * Get connection from factory
     *
-    * @param userName The user name
-    * @param password The password
     * @return ReauthConnection instance
     * @exception ResourceException Thrown if a connection can't be obtained
     */
    @Override
-   public ReauthConnection getConnection(String userName, String password) throws ResourceException
+   public ReauthConnection getConnection() throws ResourceException
    {
       log.tracef("getConnection()");
 

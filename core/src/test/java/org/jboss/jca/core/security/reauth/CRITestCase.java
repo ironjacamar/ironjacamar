@@ -78,12 +78,6 @@ public class CRITestCase
       URL deployment = null;
       try
       {
-         reauthServer = new ReauthServer();
-         reauthServer.setHostName(host);
-         reauthServer.setPort(port);
-         reauthServer.setMaxConnections(1);
-         reauthServer.start();
-
          deployment = CRITestCase.class.getClassLoader().getResource("reauth-cri.rar");
 
          embedded.deploy(deployment);
@@ -104,6 +98,8 @@ public class CRITestCase
          assertEquals(user, rc.getAuth());
 
          assertTrue(rc.logout());
+
+         rc.close();
       }
       finally
       {
@@ -112,10 +108,65 @@ public class CRITestCase
             embedded.undeploy(deployment);
          }
 
-         if (reauthServer != null)
+         if (context != null)
          {
-            reauthServer.stop();
-            reauthServer = null;
+            context.close();
+         }
+      }
+   }
+
+   /**
+    * Two users using the same managed connection in turn
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testTwoUsers() throws Throwable
+   {
+      Context context = null;
+      URL deployment = null;
+      try
+      {
+         deployment = CRITestCase.class.getClassLoader().getResource("reauth-cri.rar");
+
+         embedded.deploy(deployment);
+
+         context = new InitialContext();
+
+         ReauthConnectionFactory rcf = (ReauthConnectionFactory)context.lookup("java:/eis/Reauth");
+
+         assertNotNull(rcf);
+
+         String user1 = "user1";
+         String password1 = "password1";
+
+         ReauthConnection rc1 = rcf.getConnection(user1, password1);
+
+         assertNotNull(rc1);
+
+         assertEquals(user1, rc1.getAuth());
+
+         assertTrue(rc1.logout());
+         
+         rc1.close();
+
+         String user2 = "user2";
+         String password2 = "password2";
+
+         ReauthConnection rc2 = rcf.getConnection(user2, password2);
+
+         assertNotNull(rc2);
+
+         assertEquals(user2, rc2.getAuth());
+
+         assertTrue(rc2.logout());
+
+         rc2.close();
+      }
+      finally
+      {
+         if (deployment != null)
+         {
+            embedded.undeploy(deployment);
          }
 
          if (context != null)
@@ -136,6 +187,12 @@ public class CRITestCase
    @Before
    public void before() throws Throwable
    {
+      reauthServer = new ReauthServer();
+      reauthServer.setHostName(host);
+      reauthServer.setPort(port);
+      reauthServer.setMaxConnections(1);
+      reauthServer.start();
+
       embedded = EmbeddedFactory.create(true);
       embedded.startup();
    }
@@ -147,7 +204,16 @@ public class CRITestCase
    @After
    public void after() throws Throwable
    {
-      embedded.shutdown();
-      embedded = null;
+      if (embedded != null)
+      {
+         embedded.shutdown();
+         embedded = null;
+      }
+
+      if (reauthServer != null)
+      {
+         reauthServer.stop();
+         reauthServer = null;
+      }
    }
 }

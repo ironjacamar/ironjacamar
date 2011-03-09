@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.security.reauth;
 
+import org.jboss.jca.core.security.DefaultSubjectFactory;
 import org.jboss.jca.core.security.reauth.eis.ReauthServer;
 import org.jboss.jca.core.security.reauth.ra.subject.ReauthConnection;
 import org.jboss.jca.core.security.reauth.ra.subject.ReauthConnectionFactory;
@@ -56,6 +57,7 @@ public class SubjectTestCase
    private static Logger log = Logger.getLogger(SubjectTestCase.class);
 
    private static Embedded embedded;
+   private static DefaultSubjectFactory subjectFactory;
 
    // EIS server
    private static String host = "localhost";
@@ -78,12 +80,6 @@ public class SubjectTestCase
       URL deployment = null;
       try
       {
-         reauthServer = new ReauthServer();
-         reauthServer.setHostName(host);
-         reauthServer.setPort(port);
-         reauthServer.setMaxConnections(1);
-         reauthServer.start();
-
          deployment = SubjectTestCase.class.getClassLoader().getResource("reauth-subject.rar");
 
          embedded.deploy(deployment);
@@ -93,17 +89,22 @@ public class SubjectTestCase
          String user = "user";
          String password = "password";
 
+         subjectFactory.setUserName(user);
+         subjectFactory.setPassword(password);
+
          ReauthConnectionFactory rcf = (ReauthConnectionFactory)context.lookup("java:/eis/Reauth");
 
          assertNotNull(rcf);
 
-         ReauthConnection rc = rcf.getConnection(user, password);
+         ReauthConnection rc = rcf.getConnection();
 
          assertNotNull(rc);
 
          assertEquals(user, rc.getAuth());
 
          assertTrue(rc.logout());
+
+         rc.close();
       }
       finally
       {
@@ -112,10 +113,71 @@ public class SubjectTestCase
             embedded.undeploy(deployment);
          }
 
-         if (reauthServer != null)
+         if (context != null)
          {
-            reauthServer.stop();
-            reauthServer = null;
+            context.close();
+         }
+      }
+   }
+
+   /**
+    * Two users using the same managed connection in turn
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testTwoUsers() throws Throwable
+   {
+      Context context = null;
+      URL deployment = null;
+      try
+      {
+         deployment = SubjectTestCase.class.getClassLoader().getResource("reauth-subject.rar");
+
+         embedded.deploy(deployment);
+
+         context = new InitialContext();
+
+         ReauthConnectionFactory rcf = (ReauthConnectionFactory)context.lookup("java:/eis/Reauth");
+
+         assertNotNull(rcf);
+
+         String user1 = "user1";
+         String password1 = "password1";
+
+         subjectFactory.setUserName(user1);
+         subjectFactory.setPassword(password1);
+
+         ReauthConnection rc1 = rcf.getConnection();
+
+         assertNotNull(rc1);
+
+         assertEquals(user1, rc1.getAuth());
+
+         assertTrue(rc1.logout());
+         
+         rc1.close();
+
+         String user2 = "user2";
+         String password2 = "password2";
+
+         subjectFactory.setUserName(user2);
+         subjectFactory.setPassword(password2);
+
+         ReauthConnection rc2 = rcf.getConnection();
+
+         assertNotNull(rc2);
+
+         assertEquals(user2, rc2.getAuth());
+
+         assertTrue(rc2.logout());
+
+         rc2.close();
+      }
+      finally
+      {
+         if (deployment != null)
+         {
+            embedded.undeploy(deployment);
          }
 
          if (context != null)
@@ -136,8 +198,17 @@ public class SubjectTestCase
    @Before
    public void before() throws Throwable
    {
+      reauthServer = new ReauthServer();
+      reauthServer.setHostName(host);
+      reauthServer.setPort(port);
+      reauthServer.setMaxConnections(1);
+      reauthServer.start();
+      
       embedded = EmbeddedFactory.create(true);
       embedded.startup();
+
+      subjectFactory = embedded.lookup("DefaultSecurityDomain", DefaultSubjectFactory.class);
+      assertNotNull(subjectFactory);
    }
 
    /**
@@ -147,7 +218,16 @@ public class SubjectTestCase
    @After
    public void after() throws Throwable
    {
-      embedded.shutdown();
-      embedded = null;
+      if (embedded != null)
+      {
+         embedded.shutdown();
+         embedded = null;
+      }
+
+      if (reauthServer != null)
+      {
+         reauthServer.stop();
+         reauthServer = null;
+      }
    }
 }

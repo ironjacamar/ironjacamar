@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.LocalTransaction;
@@ -69,6 +70,8 @@ public class ReauthManagedConnection implements ManagedConnection
     */
    public ReauthManagedConnection(ReauthManagedConnectionFactory mcf) throws ResourceException
    {
+      log.tracef("constructor(%s)", mcf);
+
       this.mcf = mcf;
       this.listeners = new HashSet<ConnectionEventListener>(1);
       this.logwriter = null;
@@ -104,16 +107,21 @@ public class ReauthManagedConnection implements ManagedConnection
 
       if (connection == null)
       {
-         connection = new ReauthConnectionImpl(socket, cri);
+         connection = new ReauthConnectionImpl(this, cri);
+         log.debugf("Creating a new connection: %s", connection);
       }
       else
       {
          if (connection.getCri().getUserName().equals(cri.getUserName()))
+         {
+            log.debugf("Existing connection has same credentials: %s", cri.getUserName());
             auth = false;
+         }
       }
 
       if (auth)
       {
+         log.debugf("Auth connection: %s", cri.getUserName());
          connection.login(cri.getUserName(), cri.getPassword());
       }
 
@@ -146,8 +154,6 @@ public class ReauthManagedConnection implements ManagedConnection
    {
       log.tracef("cleanup");
 
-      // TODO - connection listeners
-
       socket.cleanup();
    }
 
@@ -171,7 +177,8 @@ public class ReauthManagedConnection implements ManagedConnection
     */
    public void addConnectionEventListener(ConnectionEventListener listener)
    {
-      log.tracef("addConnectionEventListener");
+      log.tracef("addConnectionEventListener(%s)", listener);
+
       listeners.add(listener);
    }
 
@@ -182,7 +189,8 @@ public class ReauthManagedConnection implements ManagedConnection
     */
    public void removeConnectionEventListener(ConnectionEventListener listener)
    {
-      log.tracef("removeConnectionEventListener");
+      log.tracef("removeConnectionEventListener(%s)", listener);
+
       listeners.remove(listener);
    }
 
@@ -247,5 +255,31 @@ public class ReauthManagedConnection implements ManagedConnection
       log.tracef("getMetaData()");
 
       return new ReauthManagedConnectionMetaData(socket);
+   }
+
+   /**
+    * Get the socket
+    * @return The value
+    */
+   ReauthSocket getSocket()
+   {
+      return socket;
+   }
+
+   /**
+    * Close handle
+    * @param handle The handle
+    */
+   void closeHandle(ReauthConnection handle)
+   {
+      log.tracef("closeHandle(%s)", handle);      
+
+      ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+      event.setConnectionHandle(handle);
+
+      for (ConnectionEventListener cel : listeners)
+      {
+         cel.connectionClosed(event);
+      }
    }
 }

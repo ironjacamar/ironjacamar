@@ -52,4 +52,9 @@ public interface ReauthConnection
     * @throws ResourceException Thrown if an error occurs
     */
    public String getAuth() throws ResourceException;
+
+   /**
+    * Close
+    */
+   public void close();
 }

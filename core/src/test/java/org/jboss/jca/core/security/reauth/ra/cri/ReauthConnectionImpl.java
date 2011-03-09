@@ -35,23 +35,23 @@ public class ReauthConnectionImpl implements ReauthConnection
    /** The logger */
    private static Logger log = Logger.getLogger(ReauthConnectionImpl.class);
 
-   /** The reauth socket */
-   private ReauthSocket socket;
+   /** The reauth managed connection */
+   private ReauthManagedConnection mc;
 
    /** The CRI */
    private ReauthCri cri;
 
    /**
     * Constructor
-    * @param socket The socket
+    * @param mc The managed connection
     * @param cri ConnectionRequestInfo instance
     * @exception ResourceException Thrown if an error occurs
     */
-   public ReauthConnectionImpl(ReauthSocket socket, ReauthCri cri) throws ResourceException
+   public ReauthConnectionImpl(ReauthManagedConnection mc, ReauthCri cri) throws ResourceException
    {
-      log.tracef("constructor(%s, %s)", socket, cri);
+      log.tracef("constructor(%s, %s)", mc, cri);
 
-      this.socket = socket;
+      this.mc = mc;
       this.cri = cri;
    }
 
@@ -66,7 +66,7 @@ public class ReauthConnectionImpl implements ReauthConnection
    {
       log.tracef("login(%s, %s)", username, password);
 
-      return socket.login(username, password);
+      return mc.getSocket().login(username, password);
    }
 
    /**
@@ -78,7 +78,7 @@ public class ReauthConnectionImpl implements ReauthConnection
    {
       log.tracef("logout()");
 
-      return socket.logout();
+      return mc.getSocket().logout();
    }
 
    /**
@@ -90,7 +90,15 @@ public class ReauthConnectionImpl implements ReauthConnection
    {
       log.tracef("getAuth()");
 
-      return socket.getAuth();
+      return mc.getSocket().getAuth();
+   }
+
+   /**
+    * Close
+    */
+   public void close()
+   {
+      mc.closeHandle(this);
    }
 
    /**

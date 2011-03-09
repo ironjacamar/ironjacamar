@@ -31,15 +31,6 @@ import javax.resource.ResourceException;
 public interface ReauthConnection
 {
    /**
-    * login
-    * @param username username
-    * @param password password
-    * @return String
-    * @throws ResourceException Thrown if an error occurs
-    */
-   public String login(String username, String password) throws ResourceException;
-
-   /**
     * logout
     * @return boolean
     * @throws ResourceException Thrown if an error occurs
@@ -52,4 +43,9 @@ public interface ReauthConnection
     * @throws ResourceException Thrown if an error occurs
     */
    public String getAuth() throws ResourceException;
+
+   /**
+    * Close
+    */
+   public void close();
 }
