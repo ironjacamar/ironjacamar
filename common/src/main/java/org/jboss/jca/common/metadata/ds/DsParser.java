@@ -23,10 +23,10 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.common.Credential;
+import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
-import org.jboss.jca.common.api.metadata.ds.DsSecurity;
-import org.jboss.jca.common.api.metadata.ds.Extension;
 import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
@@ -178,7 +178,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
-      DsSecurity securitySettings = null;
+      Credential securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
@@ -287,7 +287,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case SECURITY : {
-                     securitySettings = parseDsSecuritySettings(reader);
+                     securitySettings = parseCredential(reader);
                      break;
                   }
                   case STATEMENT : {
@@ -325,7 +325,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       TransactionIsolation transactionIsolation = null;
       Map<String, String> connectionProperties = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
-      DsSecurity securitySettings = null;
+      Credential securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
@@ -433,7 +433,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case SECURITY : {
-                     securitySettings = parseDsSecuritySettings(reader);
+                     securitySettings = parseCredential(reader);
                      break;
                   }
                   case STATEMENT : {
@@ -446,58 +446,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case VALIDATION : {
                      validationSettings = parseValidationSetting(reader);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
-   private DsSecurity parseDsSecuritySettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
-      ValidateException
-   {
-
-      String userName = null;
-      String password = null;
-      String securityDomain = null;
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
-               {
-
-                  return new DsSecurityImpl(userName, password, securityDomain);
-               }
-               else
-               {
-                  if (DsSecurity.Tag.forName(reader.getLocalName()) == DsSecurity.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (DsSecurity.Tag.forName(reader.getLocalName()))
-               {
-                  case PASSWORD : {
-                     password = elementAsString(reader);
-                     break;
-                  }
-                  case USERNAME : {
-                     userName = elementAsString(reader);
-                     break;
-                  }
-                  case SECURITY_DOMAIN : {
-                     securityDomain = elementAsString(reader);
                      break;
                   }
                   default :
@@ -578,193 +526,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case VALIDCONNECTIONCHECKER : {
                      validConnectionChecker = parseExtension(reader, currTag);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
-   private Recovery parseRecovery(XMLStreamReader reader)
-      throws XMLStreamException, ParserException, ValidateException
-   {
-
-      Boolean noRecovery = null;
-      DsSecurity security = null;
-      Extension plugin = null;
-
-      for (Recovery.Attribute attribute : Recovery.Attribute.values())
-      {
-         switch (attribute)
-         {
-            case NO_RECOVERY : {
-               noRecovery = attributeAsBoolean(reader, attribute.getLocalName(), false);
-               break;
-            }
-            default :
-               break;
-         }
-      }
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (XaDataSource.Tag.forName(reader.getLocalName()) == XaDataSource.Tag.RECOVERY)
-               {
-                  return new Recovery(security, plugin, noRecovery);
-               }
-               else
-               {
-                  if (Recovery.Tag.forName(reader.getLocalName()) == Recovery.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               Recovery.Tag tag = Recovery.Tag.forName(reader.getLocalName());
-               switch (tag)
-               {
-                  case SECURITY : {
-                     security = parseDsSecuritySettings(reader);
-                     break;
-                  }
-                  case PLUGIN : {
-                     plugin = parseExtension(reader, tag);
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
-   private Extension parseExtension(XMLStreamReader reader, Validation.Tag enclosingTag)
-      throws XMLStreamException, ParserException, ValidateException
-   {
-
-      String className = null;
-      Map<String, String> properties = null;
-
-      for (Extension.Attribute attribute : Extension.Attribute.values())
-      {
-         switch (attribute)
-         {
-            case CLASS_NAME : {
-               className = attributeAsString(reader, attribute.getLocalName());
-               break;
-            }
-            default :
-               break;
-         }
-      }
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (Validation.Tag.forName(reader.getLocalName()) == enclosingTag)
-               {
-                  if (className == null)
-                  {
-                     throw new ParserException("mandatory class-name attribute missing in " +
-                                               enclosingTag.getLocalName());
-                  }
-
-                  return new Extension(className, properties);
-               }
-               else
-               {
-                  if (Extension.Tag.forName(reader.getLocalName()) == Extension.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (Extension.Tag.forName(reader.getLocalName()))
-               {
-                  case CONFIG_PROPERTY : {
-                     if (properties == null) properties = new HashMap<String, String>();
-                     properties.put(attributeAsString(reader, "name"), elementAsString(reader));
-                     break;
-                  }
-                  default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
-               }
-               break;
-            }
-         }
-      }
-      throw new ParserException("Reached end of xml document unexpectedly");
-   }
-
-
-   private Extension parseExtension(XMLStreamReader reader, Recovery.Tag enclosingTag)
-      throws XMLStreamException, ParserException, ValidateException
-   {
-
-      String className = null;
-      Map<String, String> properties = null;
-
-      for (Extension.Attribute attribute : Extension.Attribute.values())
-      {
-         switch (attribute)
-         {
-            case CLASS_NAME : {
-               className = attributeAsString(reader, attribute.getLocalName());
-               break;
-            }
-            default :
-               break;
-         }
-      }
-
-      while (reader.hasNext())
-      {
-         switch (reader.nextTag())
-         {
-            case END_ELEMENT : {
-               if (Recovery.Tag.forName(reader.getLocalName()) == enclosingTag)
-               {
-                  if (className == null)
-                  {
-                     throw new ParserException("mandatory class-name attribute missing in " +
-                                               enclosingTag.getLocalName());
-                  }
-
-                  return new Extension(className, properties);
-               }
-               else
-               {
-                  if (Extension.Tag.forName(reader.getLocalName()) == Extension.Tag.UNKNOWN)
-                  {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
-                  }
-               }
-               break;
-            }
-            case START_ELEMENT : {
-               switch (Extension.Tag.forName(reader.getLocalName()))
-               {
-                  case CONFIG_PROPERTY : {
-                     if (properties == null)
-                        properties = new HashMap<String, String>();
-                     properties.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
                   }
                   default :

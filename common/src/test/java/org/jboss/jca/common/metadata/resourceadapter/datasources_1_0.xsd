@@ -126,7 +126,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="security" type="securityType" minOccurs="0">
+      <xs:element name="security" type="credentialType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -255,7 +255,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="security" type="securityType" minOccurs="0">
+      <xs:element name="security" type="credentialType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -710,7 +710,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="securityType">
+  <xs:complexType name="credentialType">
     <xs:sequence>
       <xs:element name="user-name" type="xs:token" minOccurs="0">
         <xs:annotation>
@@ -780,11 +780,12 @@
   </xs:complexType>
   <xs:complexType name="recoverType">
     <xs:sequence>
-      <xs:element name="security" type="securityType">
+      <xs:element name="recover-credential" type="credentialType">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
               Specifies the security options used when creating a connection during recovery.
+              Note: if this credential are not specified the security credential are used for recover too
              ]]>
           </xs:documentation>
         </xs:annotation>

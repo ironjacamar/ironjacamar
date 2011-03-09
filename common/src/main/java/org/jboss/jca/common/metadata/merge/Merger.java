@@ -24,10 +24,10 @@ package org.jboss.jca.common.metadata.merge;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
+import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
-import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
@@ -448,7 +448,7 @@ public class Merger
                case USERNAME : {
                   if (ds != null)
                   {
-                     DsSecurity security = ds.getSecurity();
+                     Credential security = ds.getSecurity();
                      if (security != null && security.getUserName() != null &&
                          !security.getUserName().trim().equals(""))
                      {
@@ -462,7 +462,7 @@ public class Merger
                case PASSWORD : {
                   if (ds != null)
                   {
-                     DsSecurity security = ds.getSecurity();
+                     Credential security = ds.getSecurity();
                      if (security != null && security.getPassword() != null &&
                          !security.getPassword().trim().equals(""))
                      {

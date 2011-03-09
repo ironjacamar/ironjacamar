@@ -16,11 +16,11 @@
       <xa-resource-timeout>1</xa-resource-timeout>
     </timeout>
     <recovery>
-      <security>
+      <recover-credential>
          <user-name>myUserName</user-name>
          <password>myPassword</password>
          <security-domain>mySecurityDomain</security-domain>
-      </security>
+      </recover-credential>
       <plugin class-name="myClassName">
          <config-property name="MyProperty">MyPropertyValue</config-property>
       </plugin>

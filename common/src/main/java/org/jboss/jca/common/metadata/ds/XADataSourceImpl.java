@@ -22,7 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
-import org.jboss.jca.common.api.metadata.ds.DsSecurity;
+import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
@@ -82,7 +82,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param recovery recovery
     * @throws ValidateException ValidateException
     */
-   public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
+   public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, Credential security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
       boolean useJavaContext, String poolName, boolean enabled, String jndiName, boolean spy,
       Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String module, String newConnectionSql,

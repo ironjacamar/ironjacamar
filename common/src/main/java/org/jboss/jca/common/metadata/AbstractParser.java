@@ -24,24 +24,32 @@ package org.jboss.jca.common.metadata;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.common.Credential;
+import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
+import org.jboss.jca.common.api.metadata.ds.Recovery;
+import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
+import org.jboss.jca.common.metadata.common.CredentialImpl;
 
 import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Logger;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
-import org.jboss.logging.Logger;
 
 /**
  *
@@ -373,6 +381,7 @@ public abstract class AbstractParser
       boolean noTxSeparatePool = false;
       boolean wrapXaDataSource = false;
       boolean useStrictMin = false;
+      Recovery recovery = null;
 
       while (reader.hasNext())
       {
@@ -383,7 +392,7 @@ public abstract class AbstractParser
                {
 
                   return new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, isSameRmOverrideValue,
-                                              interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
+                                              interleaving, padXid, wrapXaDataSource, noTxSeparatePool, recovery);
 
                }
                else
@@ -432,6 +441,10 @@ public abstract class AbstractParser
                   }
                   case USE_STRICT_MIN : {
                      useStrictMin = elementAsBoolean(reader);
+                     break;
+                  }
+                  case RECOVERY : {
+                     recovery = parseRecovery(reader);
                      break;
                   }
                   default :
@@ -517,6 +530,290 @@ public abstract class AbstractParser
          }
       }
       return input;
+   }
+
+   /**
+    *
+    * parse credential tag
+    *
+    * @param reader reader
+    * @return the parse Object
+    * @throws XMLStreamException in case of error
+    * @throws ParserException in case of error
+    * @throws ValidateException in case of error
+    */
+   protected Credential parseCredential(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+
+      String userName = null;
+      String password = null;
+      String securityDomain = null;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY ||
+                   Recovery.Tag.forName(reader.getLocalName()) == Recovery.Tag.RECOVER_CREDENTIAL)
+               {
+
+                  return new CredentialImpl(userName, password, securityDomain);
+               }
+               else
+               {
+                  if (Credential.Tag.forName(reader.getLocalName()) == Credential.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (Credential.Tag.forName(reader.getLocalName()))
+               {
+                  case PASSWORD : {
+                     password = elementAsString(reader);
+                     break;
+                  }
+                  case USERNAME : {
+                     userName = elementAsString(reader);
+                     break;
+                  }
+                  case SECURITY_DOMAIN : {
+                     securityDomain = elementAsString(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   /**
+    *
+    * Parse recovery tag
+    *
+    * @param reader reader
+    * @return the parsed recovery object
+    * @throws XMLStreamException in case of error
+    * @throws ParserException in case of error
+    * @throws ValidateException in case of error
+    */
+   protected Recovery parseRecovery(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+
+      Boolean noRecovery = null;
+      Credential security = null;
+      Extension plugin = null;
+
+      for (Recovery.Attribute attribute : Recovery.Attribute.values())
+      {
+         switch (attribute)
+         {
+            case NO_RECOVERY : {
+               noRecovery = attributeAsBoolean(reader, attribute.getLocalName(), false);
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (XaDataSource.Tag.forName(reader.getLocalName()) == XaDataSource.Tag.RECOVERY)
+               {
+                  return new Recovery(security, plugin, noRecovery);
+               }
+               else
+               {
+                  if (Recovery.Tag.forName(reader.getLocalName()) == Recovery.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               Recovery.Tag tag = Recovery.Tag.forName(reader.getLocalName());
+               switch (tag)
+               {
+                  case RECOVER_CREDENTIAL : {
+                     security = parseCredential(reader);
+                     break;
+                  }
+                  case PLUGIN : {
+                     plugin = parseExtension(reader, tag);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   /**
+    *
+    * parse the Extension tag
+    *
+    * @param reader reader
+    * @param enclosingTag enclosingTag
+    * @return the parsed extension object
+    * @throws XMLStreamException in case of error
+    * @throws ParserException in case of error
+    * @throws ValidateException in case of error
+    */
+   protected Extension parseExtension(XMLStreamReader reader, Validation.Tag enclosingTag) throws XMLStreamException,
+      ParserException,
+      ValidateException
+   {
+
+      String className = null;
+      Map<String, String> properties = null;
+
+      for (Extension.Attribute attribute : Extension.Attribute.values())
+      {
+         switch (attribute)
+         {
+            case CLASS_NAME : {
+               className = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (Validation.Tag.forName(reader.getLocalName()) == enclosingTag)
+               {
+                  if (className == null)
+                  {
+                     throw new ParserException("mandatory class-name attribute missing in " +
+                                               enclosingTag.getLocalName());
+                  }
+
+                  return new Extension(className, properties);
+               }
+               else
+               {
+                  if (Extension.Tag.forName(reader.getLocalName()) == Extension.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (Extension.Tag.forName(reader.getLocalName()))
+               {
+                  case CONFIG_PROPERTY : {
+                     if (properties == null)
+                        properties = new HashMap<String, String>();
+                     properties.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   /**
+   *
+   * parse the Extension tag
+   *
+   * @param reader reader
+   * @param enclosingTag enclosingTag
+   * @return the parsed extension object
+   * @throws XMLStreamException in case of error
+   * @throws ParserException in case of error
+   * @throws ValidateException in case of error
+   */
+   protected Extension parseExtension(XMLStreamReader reader, Recovery.Tag enclosingTag) throws XMLStreamException,
+      ParserException,
+      ValidateException
+   {
+
+      String className = null;
+      Map<String, String> properties = null;
+
+      for (Extension.Attribute attribute : Extension.Attribute.values())
+      {
+         switch (attribute)
+         {
+            case CLASS_NAME : {
+               className = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (Recovery.Tag.forName(reader.getLocalName()) == enclosingTag)
+               {
+                  if (className == null)
+                  {
+                     throw new ParserException("mandatory class-name attribute missing in " +
+                                               enclosingTag.getLocalName());
+                  }
+
+                  return new Extension(className, properties);
+               }
+               else
+               {
+                  if (Extension.Tag.forName(reader.getLocalName()) == Extension.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (Extension.Tag.forName(reader.getLocalName()))
+               {
+                  case CONFIG_PROPERTY : {
+                     if (properties == null)
+                        properties = new HashMap<String, String>();
+                     properties.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
    }
 
    private static class SecurityActions

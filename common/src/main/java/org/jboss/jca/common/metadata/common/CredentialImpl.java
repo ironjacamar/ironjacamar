@@ -19,9 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds;
+package org.jboss.jca.common.metadata.common;
 
-import org.jboss.jca.common.api.metadata.ds.DsSecurity;
+import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 
@@ -32,7 +32,7 @@ import org.jboss.jca.common.api.validator.ValidateException;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class DsSecurityImpl implements DsSecurity
+public class CredentialImpl implements Credential
 {
 
    /** The serialVersionUID */
@@ -52,7 +52,7 @@ public class DsSecurityImpl implements DsSecurity
     * @param securityDomain securityDomain
     * @throws ValidateException ValidateException
     */
-   public DsSecurityImpl(String userName, String password, String securityDomain) throws ValidateException
+   public CredentialImpl(String userName, String password, String securityDomain) throws ValidateException
    {
       super();
       this.userName = userName;
@@ -101,9 +101,9 @@ public class DsSecurityImpl implements DsSecurity
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof DsSecurityImpl))
+      if (!(obj instanceof CredentialImpl))
          return false;
-      DsSecurityImpl other = (DsSecurityImpl) obj;
+      CredentialImpl other = (CredentialImpl) obj;
       if (password == null)
       {
          if (other.password != null)

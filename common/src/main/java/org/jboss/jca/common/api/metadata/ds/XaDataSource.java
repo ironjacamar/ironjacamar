@@ -93,9 +93,9 @@ public interface XaDataSource extends CommonDataSource
    public CommonXaPool getXaPool();
 
    /**
-    * Get the xaPool.
+    * Get the recovery settings.
     *
-    * @return the xaPool.
+    * @return the recovery settings.
     */
    public Recovery getRecovery();
 

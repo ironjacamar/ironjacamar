@@ -448,6 +448,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="recovery" type="recoverType" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -532,6 +533,85 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+  <xs:complexType name="recoverType">
+    <xs:sequence>
+      <xs:element name="recover-credential" type="credentialType">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Specifies the security options used when creating a connection during recovery.
+              Note: if this credential are not specified the security credential are used for recover too
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="plugin" type="extensionType">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Specifies the extension plugin used in spi (core.spi.xa) 
+              which can be implemented by various plugins to provide better feedback to the XA recovery system.
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="no-recovery" type="xs:boolean" default="false" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Specify if the xa-datasource should be excluded from recovery.
+            Default false.
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="extensionType">
+    <xs:sequence>
+      <xs:element name="config-property" type="config-propertyType"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="class-name" type="xs:token" use="required"></xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="credentialType">
+    <xs:sequence>
+      <xs:element name="user-name" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                Specify the username used when creating a new connection. 
+                Ex: <user-name>sa</user-name>
+               ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="password" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+              <![CDATA[[
+                Specify the password used when creating a new connection. 
+                Ex: <password>sa-pass</password>
+               ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="security-domain" type="xs:token" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Indicates Subject (from security domain) are used to distinguish connections in the pool. 
+              The content of the security-domain is the name of the JAAS security manager that will handle
+              authentication. This name correlates to the JAAS login-config.xml descriptor
+              application-policy/name attribute.
+              Ex:
+              <security-domain>HsqlDbRealm</security-domain>
+            ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+   </xs:complexType>
+  
 
   <xs:element name="ironjacamar" type="ironjacamarType">
     <xs:annotation>

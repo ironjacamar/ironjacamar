@@ -23,6 +23,8 @@ package org.jboss.jca.common.api.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ValidatableMetadata;
+import org.jboss.jca.common.api.metadata.common.Credential;
+import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.HashMap;
@@ -40,7 +42,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
    /** The serialVersionUID */
    private static final long serialVersionUID = -7425365995463321893L;
 
-   private final DsSecurity security;
+   private final Credential security;
 
    private final Extension plugin;
 
@@ -54,7 +56,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
     * @param noRecovery niRecovery
     * @throws ValidateException in case of not valid metadata creation
     */
-   public Recovery(DsSecurity security, Extension plugin, Boolean noRecovery) throws ValidateException
+   public Recovery(Credential security, Extension plugin, Boolean noRecovery) throws ValidateException
    {
       super();
       this.security = security;
@@ -68,7 +70,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
     *
     * @return the security.
     */
-   public final DsSecurity getSecurity()
+   public final Credential getSecurity()
    {
       return security;
    }
@@ -170,7 +172,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       /**
       * config-property tag
       */
-      SECURITY("security"),
+      RECOVER_CREDENTIAL("recover-credential"),
       /** plugin tag */
 
       PLUGIN("plugin");

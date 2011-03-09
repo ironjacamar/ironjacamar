@@ -26,7 +26,11 @@ import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
+import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.common.Credential;
+import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.metadata.ParserException;
 
@@ -43,6 +47,7 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.isNull;
 
 /**
  *
@@ -565,6 +570,53 @@ public class IronJacamarParserTestCase
             //timeout
             CommonTimeOut t = connDef.getTimeOut();
             assertThat(t.getXaResourceTimeout(), is(100));
+
+         }
+         finally
+         {
+            if (is != null)
+               is.close();
+         }
+      }
+   }
+
+   /** shouldParseXalPoolWithRecovery
+    * @throws Exception in case of error
+    */
+   @Test
+   public void shouldParseXalPoolWithRecovery() throws Exception
+   {
+      FileInputStream is = null;
+
+      //given
+      File directory = new File(Thread.currentThread().getContextClassLoader().getResource("ironjacamar").toURI());
+      for (File xmlFile : directory
+         .listFiles(new FilenamePrefixFilter("xa-pool--recovery-ironjacamar.xml")))
+      {
+         try
+         {
+            is = new FileInputStream(xmlFile);
+            IronJacamarParser parser = new IronJacamarParser();
+            //when
+            IronJacamar ij = parser.parse(is);
+            //then
+            CommonConnDef connDef = ij.getConnectionDefinitions().get(0);
+
+            //pool default
+            assertThat(connDef.isXa(), is(true));
+
+            CommonXaPool xaPool = (CommonXaPool) connDef.getPool();
+            Recovery recovery = xaPool.getRecovery();
+            assertThat(recovery, not(isNull()));
+            assertThat(recovery.getNoRecovery(), is(false));
+            Credential security = recovery.getSecurity();
+            Extension plugin = recovery.getPlugin();
+            assertThat(security.getUserName(), is("myUserName"));
+            assertThat(security.getPassword(), is("myPassword"));
+            assertThat(security.getSecurityDomain(), is("mySecurityDomain"));
+            assertThat(plugin.getClassName(), is("myClassName"));
+            assertThat(plugin.getConfigPropertiesMap().size(), is(1));
+            assertThat(plugin.getConfigPropertiesMap().get("MyProperty"), is("MyPropertyValue"));
 
          }
          finally

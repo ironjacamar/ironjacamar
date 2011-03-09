@@ -23,6 +23,7 @@ package org.jboss.jca.common.api.metadata.ds;
 
 
 import org.jboss.jca.common.api.metadata.ValidatableMetadata;
+import org.jboss.jca.common.api.metadata.common.Extension;
 
 import java.util.HashMap;
 import java.util.Map;

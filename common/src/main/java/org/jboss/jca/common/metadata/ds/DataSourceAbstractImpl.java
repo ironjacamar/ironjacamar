@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
-import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
@@ -56,7 +56,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
    * security
    */
-   protected final DsSecurity security;
+   protected final Credential security;
 
    /**
    * statement
@@ -121,7 +121,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @throws ValidateException ValidateException
     */
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
-      DsSecurity security, Statement statement, Validation validation, String urlDelimiter,
+      Credential security, Statement statement, Validation validation, String urlDelimiter,
       String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
       boolean spy)
       throws ValidateException
@@ -173,7 +173,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     */
 
    @Override
-   public final DsSecurity getSecurity()
+   public final Credential getSecurity()
    {
       return security;
    }

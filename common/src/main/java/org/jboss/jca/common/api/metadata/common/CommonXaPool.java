@@ -22,6 +22,8 @@
 package org.jboss.jca.common.api.metadata.common;
 
 
+import org.jboss.jca.common.api.metadata.ds.Recovery;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,6 +71,13 @@ public interface CommonXaPool extends CommonPool
     * @return the noTxSeparatePool.
     */
    public Boolean isNoTxSeparatePool();
+
+   /**
+    * Get the recovery settings.
+    *
+    * @return the recovery settings.
+    */
+   public Recovery getRecovery();
 
    /**
    *
@@ -123,7 +132,10 @@ public interface CommonXaPool extends CommonPool
       /**
        * no-tx-separate-pools tag
        */
-      NO_TX_SEPARATE_POOLS("no-tx-separate-pools");
+      NO_TX_SEPARATE_POOLS("no-tx-separate-pools"),
+
+      /** recovery tag */
+      RECOVERY("recovery");
 
       private final String name;
 
