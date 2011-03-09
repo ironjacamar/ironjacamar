@@ -65,7 +65,46 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
       
-      writeDefaultConstructor(def, out, indent);
+      writeIndent(out, indent);
+      out.write("/** ManagedConnectionFactory */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private " + def.getMcfClass() + " mcf;");
+      writeEol(out);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/** Connection */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private Object connection;");
+      writeEol(out);
+      writeEol(out);
+      
+      //constructor
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param mcf mcf");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "(" + def.getMcfClass() + " mcf)");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this.mcf = mcf;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("this.connection = null;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
       
       writeConnection(def, out, indent);
       writeLifecycle(def, out, indent);
@@ -173,7 +212,10 @@ public class McCodeGen extends AbstractCodeGen
       out.write("log.finest(\"getConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("connection = new " + def.getConnImplClass() + "(mcf);");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("return connection;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 

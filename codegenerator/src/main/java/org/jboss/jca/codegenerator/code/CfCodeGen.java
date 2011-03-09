@@ -71,6 +71,22 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("private Reference reference;");
       writeEol(out);
       writeEol(out);
+
+      writeIndent(out, indent);
+      out.write("/** ManagedConnectionFactory */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private " + def.getMcfClass() + " mcf;");
+      writeEol(out);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/** ConnectionManager */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private ConnectionManager connectionManager;");
+      writeEol(out);
+      writeEol(out);
       
       writeDefaultConstructor(def, out, indent);
       
@@ -82,6 +98,9 @@ public class CfCodeGen extends AbstractCodeGen
       out.write(" * Default constructor");
       writeEol(out);
       writeIndent(out, indent);
+      out.write(" * @param mcf ManagedConnectionFactory");
+      writeEol(out);
+      writeIndent(out, indent);
       out.write(" * @param cxManager ConnectionManager");
       writeEol(out);
       writeIndent(out, indent);
@@ -89,8 +108,13 @@ public class CfCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "(ConnectionManager cxManager)");
+      out.write("public " + getClassName(def) + "(" + def.getMcfClass() + " mcf, ConnectionManager cxManager)");
       writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this.mcf = mcf;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("this.connectionManager = cxManager;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -175,7 +199,7 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("log.finest(\"getConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getConnImplClass() + "();");
+      out.write("return (" + def.getConnInterfaceClass() + ")connectionManager.allocateConnection(mcf, null);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

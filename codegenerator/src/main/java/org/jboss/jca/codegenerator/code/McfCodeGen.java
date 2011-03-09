@@ -256,10 +256,6 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      if (def.isImplRaAssociation())
-      {
-         writeIfRaNull(out, indent);
-      }
       writeIndent(out, indent + 1);
       out.write("log.finest(\"createConnectionFactory()\");");
       writeEol(out);
@@ -267,7 +263,7 @@ public class McfCodeGen extends PropsCodeGen
       if (def.isUseCciConnection())
          out.write("return new " + def.getCciConnFactoryClass() + "(cxManager);");
       else
-         out.write("return new " + def.getCfClass() + "(cxManager);");
+         out.write("return new " + def.getCfClass() + "(this, cxManager);");
       
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -295,31 +291,10 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public Object createConnectionFactory() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      if (def.isImplRaAssociation())
-      {
-         writeIfRaNull(out, indent);
-      }
-
       writeIndent(out, indent + 1);
       out.write("throw new ResourceException(\"This resource adapter doesn't support non-managed environments\");");
 
       writeRightCurlyBracket(out, indent);
-      writeEol(out);
-   }
-
-   /**
-    * Output if (ra == null) 
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeIfRaNull(Writer out, int indent) throws IOException
-   {
-      writeIndent(out, indent + 1);
-      out.write("if (ra == null)");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("throw new IllegalStateException(\"RA is null\");");
       writeEol(out);
    }
    
@@ -364,15 +339,11 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      if (def.isImplRaAssociation())
-      {
-         writeIfRaNull(out, indent);
-      }
       writeIndent(out, indent + 1);
       out.write("log.finest(\"createManagedConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("return new " + def.getMcClass() + "(this);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -411,10 +382,6 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      if (def.isImplRaAssociation())
-      {
-         writeIfRaNull(out, indent);
-      }
       writeIndent(out, indent + 1);
       out.write("log.finest(\"matchManagedConnections()\");");
       writeEol(out);

@@ -58,7 +58,35 @@ public class ConnImplCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
       
-      writeDefaultConstructor(def, out, indent);
+      writeIndent(out, indent);
+      out.write("/** ManagedConnectionFactory */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private " + def.getMcfClass() + " mcf;");
+      writeEol(out);
+      writeEol(out);
+      
+      //constructor
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param mcf " + def.getMcfClass());
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "(" + def.getMcfClass() + " mcf)");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this.mcf = mcf;");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
       
       writeMethod(def, out, indent);
       writeRightCurlyBracket(out, 0);
