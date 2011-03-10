@@ -22,7 +22,6 @@
 package org.jboss.jca.common.api.metadata.common;
 
 
-import org.jboss.jca.common.api.metadata.ds.Recovery;
 
 import java.util.HashMap;
 import java.util.Map;

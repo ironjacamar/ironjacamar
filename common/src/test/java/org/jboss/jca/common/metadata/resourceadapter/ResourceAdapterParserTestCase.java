@@ -26,8 +26,8 @@ import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 
@@ -156,7 +156,7 @@ public class ResourceAdapterParserTestCase
          Recovery recovery = xaPool.getRecovery();
          assertThat(recovery, not(isNull()));
          assertThat(recovery.getNoRecovery(), is(false));
-         Credential security = recovery.getSecurity();
+         Credential security = recovery.getCredential();
          Extension plugin = recovery.getPlugin();
          assertThat(security.getUserName(), is("myUserName"));
          assertThat(security.getPassword(), is("myPassword"));

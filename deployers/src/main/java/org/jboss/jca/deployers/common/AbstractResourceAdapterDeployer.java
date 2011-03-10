@@ -29,6 +29,8 @@ import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.common.Credential;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
@@ -46,6 +48,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.spi.connectionmanager.xa.XAResourceRecoveryImpl;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;
@@ -84,6 +87,7 @@ import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
+import org.jboss.tm.XAResourceRecoveryRegistry;
 
 /**
  * An abstract resource adapter deployer which contains common functionality
@@ -104,6 +108,9 @@ public abstract class AbstractResourceAdapterDeployer
 
    /** The configuration */
    private Configuration configuration = null;
+
+   /** xaResourceRecoveryRegistry */
+   protected org.jboss.tm.XAResourceRecoveryRegistry xaResourceRecoveryRegistry;
 
    /**
     * Create a new AbstractResourceAdapterDeployer.
@@ -746,7 +753,8 @@ public abstract class AbstractResourceAdapterDeployer
     */
    protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root, ClassLoader cl,
       Connector cmd, IronJacamar ijmd, org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml)
-      throws DeployException, ResourceException, ValidatorException, org.jboss.jca.core.spi.mdr.AlreadyExistsException,
+      throws DeployException, ResourceException, ValidatorException,
+      org.jboss.jca.core.spi.mdr.AlreadyExistsException,
              ClassNotFoundException, Throwable
    {
       Set<Failure> failures = null;
@@ -989,7 +997,7 @@ public abstract class AbstractResourceAdapterDeployer
                      // Select the correct connection manager
                      if (tsl == TransactionSupportLevel.NoTransaction)
                      {
-                        cm = cmf.createNonTransactional(tsl, pool, 
+                        cm = cmf.createNonTransactional(tsl, pool,
                                                         getSubjectFactory(securityDomain), securityDomain,
                                                         allocationRetry, allocationRetryWaitMillis);
                      }
@@ -1030,10 +1038,10 @@ public abstract class AbstractResourceAdapterDeployer
                            }
                         }
 
-                        cm = cmf.createTransactional(tsl, pool, 
+                        cm = cmf.createTransactional(tsl, pool,
                                                      getSubjectFactory(securityDomain), securityDomain,
                                                      allocationRetry, allocationRetryWaitMillis,
-                                                     getTransactionManager(), interleaving, 
+                                                     getTransactionManager(), interleaving,
                                                      xaResourceTimeout, isSameRMOverride,
                                                      wrapXAResource, padXid);
                      }
@@ -1328,12 +1336,13 @@ public abstract class AbstractResourceAdapterDeployer
                                     if (allocationRetryWaitMillis == null)
                                        allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
                                  }
-
+                                 XAResourceRecoveryImpl resourceRecovery = null;
                                  // Select the correct connection manager
                                  if (tsl == TransactionSupportLevel.NoTransaction)
                                  {
-                                    cm = cmf.createNonTransactional(tsl, pool, 
-                                                                    getSubjectFactory(securityDomain), securityDomain,
+                                    cm = cmf.createNonTransactional(tsl, pool,
+                                                                    getSubjectFactory(securityDomain),
+                                       securityDomain,
                                                                     allocationRetry, allocationRetryWaitMillis);
                                  }
                                  else
@@ -1343,14 +1352,16 @@ public abstract class AbstractResourceAdapterDeployer
                                     Boolean isSameRMOverride = null;
                                     Boolean wrapXAResource = null;
                                     Boolean padXid = null;
+                                    Recovery recoveryMD = null;
                                     if (cdRaXml != null && cdRaXml.isXa())
                                     {
-                                       CommonXaPool ijXaPool = (CommonXaPool) cdRaXml.getPool();
+                                       CommonXaPool cdRaXmlXaPool = (CommonXaPool) cdRaXml.getPool();
 
-                                       interleaving = ijXaPool.isInterleaving();
-                                       isSameRMOverride = ijXaPool.isSameRmOverride();
-                                       wrapXAResource = ijXaPool.isWrapXaDataSource();
-                                       padXid = ijXaPool.isPadXid();
+                                       interleaving = cdRaXmlXaPool.isInterleaving();
+                                       isSameRMOverride = cdRaXmlXaPool.isSameRmOverride();
+                                       wrapXAResource = cdRaXmlXaPool.isWrapXaDataSource();
+                                       padXid = cdRaXmlXaPool.isPadXid();
+                                       recoveryMD = cdRaXmlXaPool.getRecovery();
                                     }
 
                                     if (ijCD != null && ijCD.isXa())
@@ -1368,14 +1379,59 @@ public abstract class AbstractResourceAdapterDeployer
 
                                        if (padXid == null)
                                           padXid = ijXaPool.isPadXid();
+                                       if (recoveryMD == null)
+                                          recoveryMD = ijXaPool.getRecovery();
                                     }
 
-                                    cm = cmf.createTransactional(tsl, pool, 
+                                    cm = cmf.createTransactional(tsl, pool,
                                                                  getSubjectFactory(securityDomain), securityDomain,
                                                                  allocationRetry, allocationRetryWaitMillis,
                                                                  getTransactionManager(), interleaving,
-                                                                 xaResourceTimeout, isSameRMOverride, 
+                                                                 xaResourceTimeout, isSameRMOverride,
                                                                  wrapXAResource, padXid);
+                                    String recoverSecurityDomain = securityDomain;
+                                    String recoverUser = null;
+                                    String recoverPassword = null;
+                                    if (recoveryMD == null || !recoveryMD.getNoRecovery())
+                                    {
+                                       // If we have an XAResourceRecoveryRegistry and the deployment is XA
+                                       // lets register it for XA Resource Recovery using the "recover" definitions
+                                       // from the -ds.xml file. Fallback to the standard definitions for
+                                       // user name, password. Keep a seperate reference to the security-domain
+
+                                       Credential credential = recoveryMD != null ? recoveryMD.getCredential() : null;
+                                       if (credential != null)
+                                       {
+                                          recoverSecurityDomain = credential.getSecurityDomain();
+
+                                          recoverUser = credential.getUserName();
+                                          recoverPassword = credential.getPassword();
+                                       }
+
+                                       if (log.isDebugEnabled())
+                                       {
+                                          if (recoverUser != null)
+                                          {
+                                             log.debug("RecoverUser=" + recoverUser);
+                                          }
+                                          else if (recoverSecurityDomain != null)
+                                          {
+                                             log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
+                                          }
+
+                                       }
+                                       resourceRecovery = new XAResourceRecoveryImpl(
+                                                                                     mcf,
+                                                                                     padXid,
+                                                                                     isSameRMOverride,
+                                                                                     wrapXAResource,
+                                                                                     recoverUser,
+                                                                                     recoverPassword,
+                                                                                     recoverSecurityDomain,
+                                                                                     getSubjectFactory(
+                                                                                        recoverSecurityDomain));
+
+                                    }
                                  }
 
                                  // ConnectionFactory
@@ -1468,12 +1524,16 @@ public abstract class AbstractResourceAdapterDeployer
 
                                        pool.setName(poolName);
                                     }
-
+                                    if (getXAResourceRecoveryRegistry() != null && resourceRecovery != null)
+                                    {
+                                       resourceRecovery.registerXaRecovery(getXAResourceRecoveryRegistry(),
+                                          cm.getJndiName());
+                                    }
                                     if (activateDeployment)
                                     {
                                        org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
                                           new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
-                                       
+
                                        mgtMcf.getConfigProperties().
                                           addAll(createManagementView(cdMeta.getConfigProperties()));
                                        mgtMcf.setPoolConfiguration(pc);
@@ -1495,7 +1555,7 @@ public abstract class AbstractResourceAdapterDeployer
 
             failures = initAdminObject(cmd, cl, archiveValidationObjects, beanValidationObjects, failures, url,
                deploymentName, activateDeployment, raxml != null ? raxml.getAdminObjects() : null, ijmd != null
-               ? ijmd.getAdminObjects() : null, aos, aoJndiNames, activateDeployment ? mgtConnector : null);
+                  ? ijmd.getAdminObjects() : null, aos, aoJndiNames, activateDeployment ? mgtConnector : null);
          }
 
          // Archive validation
@@ -1784,5 +1844,25 @@ public abstract class AbstractResourceAdapterDeployer
     */
    protected abstract Object initAndInject(String value, List<? extends ConfigProperty> cpm, ClassLoader cl)
       throws DeployException;
+
+   /**
+    * Get the xAResourceRecoveryRegistry.
+    *
+    * @return the xAResourceRecoveryRegistry.
+    */
+   public final org.jboss.tm.XAResourceRecoveryRegistry getXAResourceRecoveryRegistry()
+   {
+      return xaResourceRecoveryRegistry;
+   }
+
+   /**
+    * Set the xAResourceRecoveryRegistry.
+    *
+    * @param xAResourceRecoveryRegistry The xAResourceRecoveryRegistry to set.
+    */
+   public final void setXAResourceRecoveryRegistry(XAResourceRecoveryRegistry xAResourceRecoveryRegistry)
+   {
+      xaResourceRecoveryRegistry = xAResourceRecoveryRegistry;
+   }
 
 }

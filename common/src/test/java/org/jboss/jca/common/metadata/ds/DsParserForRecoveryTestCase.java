@@ -23,8 +23,8 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
-import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 
@@ -89,7 +89,7 @@ public class DsParserForRecoveryTestCase
       Recovery recovery = ds.getRecovery();
       assertThat(recovery, not(isNull()));
       assertThat(recovery.getNoRecovery(), is(false));
-      Credential security = recovery.getSecurity();
+      Credential security = recovery.getCredential();
       Extension plugin = recovery.getPlugin();
       assertThat(security.getUserName(), is("myUserName"));
       assertThat(security.getPassword(), is("myPassword"));

@@ -22,6 +22,7 @@
 package org.jboss.jca.common.api.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -29,8 +29,8 @@ import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.ds.Recovery;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.metadata.ParserException;
 
@@ -609,7 +609,7 @@ public class IronJacamarParserTestCase
             Recovery recovery = xaPool.getRecovery();
             assertThat(recovery, not(isNull()));
             assertThat(recovery.getNoRecovery(), is(false));
-            Credential security = recovery.getSecurity();
+            Credential security = recovery.getCredential();
             Extension plugin = recovery.getPlugin();
             assertThat(security.getUserName(), is("myUserName"));
             assertThat(security.getPassword(), is("myPassword"));

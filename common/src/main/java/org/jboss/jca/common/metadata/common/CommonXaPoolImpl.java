@@ -22,7 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
-import org.jboss.jca.common.api.metadata.ds.Recovery;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 /**

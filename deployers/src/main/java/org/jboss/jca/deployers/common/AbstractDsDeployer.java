@@ -24,6 +24,8 @@ package org.jboss.jca.deployers.common;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
+import org.jboss.jca.common.api.metadata.common.Credential;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
@@ -38,6 +40,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.spi.connectionmanager.xa.XAResourceRecoveryImpl;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 
 import java.lang.reflect.Method;
@@ -51,6 +54,7 @@ import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
+import org.jboss.tm.XAResourceRecoveryRegistry;
 
 /**
  * An abstract deployer implementation for datasources
@@ -68,6 +72,9 @@ public abstract class AbstractDsDeployer
 
    /** Metadata repository */
    protected MetadataRepository mdr;
+
+   /** xaResourceRecoveryRegistry */
+   protected XAResourceRecoveryRegistry xaResourceRecoveryRegistry;
 
    /**
     * Create a new AbstractDsDeployer.
@@ -289,7 +296,7 @@ public abstract class AbstractDsDeployer
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm = 
+      ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionManager(), null, null, null, null, null);
@@ -327,7 +334,8 @@ public abstract class AbstractDsDeployer
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId, ClassLoader cl) throws Throwable
+   private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId, ClassLoader cl)
+      throws Throwable
    {
       log.debug("XaDataSource=" + ds);
 
@@ -398,7 +406,7 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  allocationRetry, allocationRetryWaitMillis,
-                                 getTransactionManager(), interleaving, 
+                                 getTransactionManager(), interleaving,
                                  xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
 
       cm.setJndiName(jndiName);
@@ -420,7 +428,66 @@ public abstract class AbstractDsDeployer
          injectValue(mcf, "setSpy", Boolean.TRUE);
          injectValue(mcf, "setJndiName", jndiName);
       }
+      Recovery recoveryMD = ds.getRecovery();
+      String defaultSecurityDomain = null;
+      String defaultUserName = null;
+      String defaultPassword = null;
 
+      if (ds.getSecurity() != null)
+      {
+         defaultSecurityDomain = ds.getSecurity().getSecurityDomain();
+         defaultUserName = ds.getSecurity().getUserName();
+         defaultPassword = ds.getSecurity().getPassword();
+      }
+      String recoverSecurityDomain = defaultSecurityDomain;
+      String recoverUser = defaultUserName;
+      String recoverPassword = defaultPassword;
+      XAResourceRecoveryImpl resourceRecovery = null;
+      if (recoveryMD == null || !recoveryMD.getNoRecovery())
+      {
+         // If we have an XAResourceRecoveryRegistry and the deployment is XA
+         // lets register it for XA Resource Recovery using the "recover" definitions
+         // from the -ds.xml file. Fallback to the standard definitions for
+         // user name, password. Keep a seperate reference to the security-domain
+
+         Credential credential = recoveryMD != null ? recoveryMD.getCredential() : null;
+         if (credential != null)
+         {
+            recoverSecurityDomain = credential.getSecurityDomain();
+
+            recoverUser = credential.getUserName();
+            recoverPassword = credential.getPassword();
+         }
+
+         if (log.isDebugEnabled())
+         {
+            if (recoverUser != null)
+            {
+               log.debug("RecoverUser=" + recoverUser);
+            }
+            else if (recoverSecurityDomain != null)
+            {
+               log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
+            }
+
+         }
+         resourceRecovery = new XAResourceRecoveryImpl(
+                                                       mcf,
+                                                       padXid,
+                                                       isSameRMOverride,
+                                                       wrapXAResource,
+                                                       recoverUser,
+                                                       recoverPassword,
+                                                       recoverSecurityDomain,
+                                                       null);
+
+      }
+
+      if (getXAResourceRecoveryRegistry() != null && resourceRecovery != null)
+      {
+         resourceRecovery.registerXaRecovery(getXAResourceRecoveryRegistry(),
+            cm.getJndiName());
+      }
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }
@@ -537,4 +604,23 @@ public abstract class AbstractDsDeployer
     * @exception DeployException Thrown if the security domain can't be resolved
     */
    protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
+
+   /** Get the xAResourceRecoveryRegistry.
+    *
+    * @return the xAResourceRecoveryRegistry.
+    */
+   public final XAResourceRecoveryRegistry getXAResourceRecoveryRegistry()
+   {
+      return xaResourceRecoveryRegistry;
+   }
+
+   /**
+    * Set the xAResourceRecoveryRegistry.
+    *
+    * @param xAResourceRecoveryRegistry The xAResourceRecoveryRegistry to set.
+    */
+   public final void setXAResourceRecoveryRegistry(XAResourceRecoveryRegistry xAResourceRecoveryRegistry)
+   {
+      xaResourceRecoveryRegistry = xAResourceRecoveryRegistry;
+   }
 }

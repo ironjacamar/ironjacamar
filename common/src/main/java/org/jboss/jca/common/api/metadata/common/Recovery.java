@@ -19,12 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.ds;
+package org.jboss.jca.common.api.metadata.common;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ValidatableMetadata;
-import org.jboss.jca.common.api.metadata.common.Credential;
-import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.HashMap;
@@ -42,7 +40,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
    /** The serialVersionUID */
    private static final long serialVersionUID = -7425365995463321893L;
 
-   private final Credential security;
+   private final Credential credential;
 
    private final Extension plugin;
 
@@ -51,15 +49,15 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
    /**
     * Create a new Recovery.
     *
-    * @param security security
+    * @param credential credential
     * @param plugin plugin
     * @param noRecovery niRecovery
     * @throws ValidateException in case of not valid metadata creation
     */
-   public Recovery(Credential security, Extension plugin, Boolean noRecovery) throws ValidateException
+   public Recovery(Credential credential, Extension plugin, Boolean noRecovery) throws ValidateException
    {
       super();
-      this.security = security;
+      this.credential = credential;
       this.plugin = plugin;
       this.noRecovery = noRecovery;
       this.validate();
@@ -70,9 +68,9 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
     *
     * @return the security.
     */
-   public final Credential getSecurity()
+   public final Credential getCredential()
    {
-      return security;
+      return credential;
    }
 
    /**
@@ -108,7 +106,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       int result = 1;
       result = prime * result + ((noRecovery == null) ? 0 : noRecovery.hashCode());
       result = prime * result + ((plugin == null) ? 0 : plugin.hashCode());
-      result = prime * result + ((security == null) ? 0 : security.hashCode());
+      result = prime * result + ((credential == null) ? 0 : credential.hashCode());
       return result;
    }
 
@@ -136,12 +134,12 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       }
       else if (!plugin.equals(other.plugin))
          return false;
-      if (security == null)
+      if (credential == null)
       {
-         if (other.security != null)
+         if (other.credential != null)
             return false;
       }
-      else if (!security.equals(other.security))
+      else if (!credential.equals(other.credential))
          return false;
       return true;
    }
@@ -149,7 +147,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
    @Override
    public String toString()
    {
-      return "Recovery [security=" + security + ", plugin=" + plugin + ", noRecovery=" + noRecovery + "]";
+      return "Recovery [credential=" + credential + ", plugin=" + plugin + ", noRecovery=" + noRecovery + "]";
    }
 
    /**
