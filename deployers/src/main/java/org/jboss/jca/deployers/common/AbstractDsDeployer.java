@@ -40,7 +40,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
-import org.jboss.jca.core.spi.connectionmanager.xa.XAResourceRecoveryImpl;
+import org.jboss.jca.core.connectionmanager.xa.XAResourceRecoveryImpl;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 
 import java.lang.reflect.Method;
