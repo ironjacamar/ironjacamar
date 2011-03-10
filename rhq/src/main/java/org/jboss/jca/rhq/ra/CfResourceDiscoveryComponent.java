@@ -21,13 +21,6 @@
  */
 package org.jboss.jca.rhq.ra;
 
-import org.jboss.jca.core.api.management.Connector;
-import org.jboss.jca.core.api.management.ManagedConnectionFactory;
-import org.jboss.jca.core.api.management.ManagementRepository;
-
-import org.jboss.jca.rhq.core.ManagementRepositoryManager;
-import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,13 +30,12 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 
 /**
- * Discovery McfResourceDiscoveryComponent resources from JCA container.
+ * Discovery Connection factories resources from JCA container.
  * 
- * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class McfResourceDiscoveryComponent
-   implements ResourceDiscoveryComponent<McfResourceComponent>
+public class CfResourceDiscoveryComponent
+   implements ResourceDiscoveryComponent<CfResourceComponent>
 {
    /**
     * discoverResources
@@ -55,34 +47,16 @@ public class McfResourceDiscoveryComponent
     */
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<McfResourceComponent> context)
+      ResourceDiscoveryContext<CfResourceComponent> context)
       throws InvalidPluginConfigurationException, Exception
    {
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
 
-      // the uniqueId is the key of parent component.
-      //String rarUniqueId = context.getParentResourceContext().getResourceKey();
-      String rarUniqueId = "xa.rar";
-      // FIXME: get rarUniqueId from parent of parent ResourceContext
-
-      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
-      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, rarUniqueId);
-      
-      if (connector == null || connector.getManagedConnectionFactories() == null)
-         return result;
-      
-      for (ManagedConnectionFactory mcf : connector.getManagedConnectionFactories())
-      {
-         javax.resource.spi.ManagedConnectionFactory jcaMcf = mcf.getManagedConnectionFactory();
-         
-
-         Class<?> mcfCls = jcaMcf.getClass();
-         String key = rarUniqueId + "#" + mcfCls.getName(); //IMPORTANT: make the key uniqueId#class name
-         String name = mcfCls.getSimpleName();
-         DiscoveredResourceDetails mcfRes = new DiscoveredResourceDetails(context.getResourceType(), key, name, null,
-            "Managed Connection Factories", context.getDefaultPluginConfiguration(), null);
-         result.add(mcfRes);
-      }
+      DiscoveredResourceDetails resConnector = new DiscoveredResourceDetails(
+            context.getResourceType(), "ConnectionFactory", "ConnectionFactory", "1.0.0",
+            "ConnectionFactory", context.getDefaultPluginConfiguration(),
+            null);
+      result.add(resConnector);
       return result;
    }
 

@@ -21,42 +21,43 @@
  */
 package org.jboss.jca.rhq.ra;
 
+import org.jboss.jca.core.api.management.ConfigProperty;
+import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.api.management.ResourceAdapter;
 import org.jboss.jca.rhq.core.AbstractResourceComponent;
+import org.jboss.jca.rhq.core.ManagementRepositoryManager;
+import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
-import java.io.InputStream;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
-import org.rhq.core.domain.content.PackageType;
-import org.rhq.core.domain.content.transfer.DeployPackageStep;
-import org.rhq.core.domain.content.transfer.DeployPackagesResponse;
-import org.rhq.core.domain.content.transfer.RemovePackagesResponse;
-import org.rhq.core.domain.content.transfer.ResourcePackageDetails;
-import org.rhq.core.pluginapi.content.ContentFacet;
-import org.rhq.core.pluginapi.content.ContentServices;
+import org.rhq.core.domain.configuration.PropertyList;
+
 
 /**
- * RarResourceComponent
+ * Represent Resource Adpater in JCA container.
  * 
- * @author <a href="mailto:yyang@gmail.com">Young Yang</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class RarResourceComponent extends AbstractResourceComponent implements ContentFacet
+public class RaResourceComponent extends AbstractResourceComponent
 {
+   /** log */
+   private static final Logger logger = Logger.getLogger(RaResourceComponent.class);
+
    /**
     * loadResourceConfiguration
     * 
-    * @return Configuration Configuration
+    * @return Configuration configuration
     * @throws Exception exception
     */
    @Override
    public Configuration loadResourceConfiguration() throws Exception
    {
-      Configuration config = new Configuration();
 
-      /*
+      Configuration config = new Configuration();
       ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
 
@@ -64,43 +65,6 @@ public class RarResourceComponent extends AbstractResourceComponent implements C
       List<ConfigProperty> manResConfigProps = manResAdapter.getConfigProperties();
       PropertyList configList = getConfigPropertiesList(manResAdapter.getResourceAdapter(), manResConfigProps);
       config.put(configList);
-      */
       return config;
-   }
-
-   @Override
-   public DeployPackagesResponse deployPackages(Set<ResourcePackageDetails> arg0, ContentServices arg1)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public Set<ResourcePackageDetails> discoverDeployedPackages(PackageType arg0)
-   {
-      Set<ResourcePackageDetails> details = new HashSet<ResourcePackageDetails>();
-      // TODO Auto-generated method stub
-      return details;
-   }
-
-   @Override
-   public List<DeployPackageStep> generateInstallationSteps(ResourcePackageDetails arg0)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public RemovePackagesResponse removePackages(Set<ResourcePackageDetails> arg0)
-   {
-      // TODO Auto-generated method stub
-      return null;
-   }
-
-   @Override
-   public InputStream retrievePackageBits(ResourcePackageDetails arg0)
-   {
-      // TODO Auto-generated method stub
-      return null;
    }
 }
