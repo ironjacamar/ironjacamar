@@ -683,6 +683,7 @@
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -723,6 +724,7 @@
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -763,6 +765,7 @@
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -803,6 +806,7 @@
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -843,6 +847,7 @@
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -883,6 +888,7 @@
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -914,6 +920,7 @@
 
       <classpath>
         <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+        <pathelement location="${build.dir}/adapters/"/>
         <pathelement location="${build.dir}/adapters/test"/>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
@@ -924,6 +931,7 @@
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -931,6 +939,49 @@
       
       <batchtest todir="${reports.dir}/cobertura/tests">
         <fileset dir="${build.dir}/adapters/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <junit dir="rhq/src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="yes"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="archives.dir" value="${build.dir}/rhq"/>
+      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+
+      <classpath>
+        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+        <pathelement location="${build.dir}/rhq/"/>
+        <pathelement location="${build.dir}/rhq/test"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/mail" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${lib.dir}/rhq" includes="*.jar" />
+      </classpath>
+      <classpath refid="cobertura.lib.path.id" />
+      
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/cobertura/tests">
+        <fileset dir="${build.dir}/rhq/test">
           <include name="**/*TestCase.class"/>
         </fileset>
       </batchtest>
@@ -969,6 +1020,9 @@
       <fileset dir="web/src/main/java">
         <include name="**/*.java" />
       </fileset>
+      <fileset dir="rhq/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
     </cobertura-report>
 
     <cobertura-report format="xml" 
@@ -1002,6 +1056,9 @@
         <include name="**/*.java" />
       </fileset>
       <fileset dir="web/src/main/java">
+        <include name="**/*.java" />
+      </fileset>
+      <fileset dir="rhq/src/main/java">
         <include name="**/*.java" />
       </fileset>
     </cobertura-report>
