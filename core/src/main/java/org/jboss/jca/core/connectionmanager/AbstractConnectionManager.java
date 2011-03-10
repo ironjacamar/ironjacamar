@@ -44,6 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -651,7 +652,19 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       Subject subject = null;
 
       if (subjectFactory != null && securityDomain != null)
+      {
          subject = subjectFactory.createSubject(securityDomain);
+
+         Set<PasswordCredential> credentials = subject.getPrivateCredentials(PasswordCredential.class);
+         if (credentials != null && credentials.size() > 0)
+         {
+            ManagedConnectionFactory pcMcf = getManagedConnectionFactory();
+            for (PasswordCredential pc : credentials)
+            {
+               pc.setManagedConnectionFactory(pcMcf);
+            }
+         }
+      }
 
       log.tracef("Subject: %s", subject);
 

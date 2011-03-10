@@ -21,9 +21,12 @@
  */
 package org.jboss.jca.core.security;
 
+import java.security.Principal;
+
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
+import org.jboss.security.SimplePrincipal;
 import org.jboss.security.SubjectFactory;
 
 /**
@@ -99,8 +102,13 @@ public class DefaultSubjectFactory implements SubjectFactory
          throw new IllegalStateException("Password is null");
 
       Subject subject = new Subject();
+
+      Principal p = new SimplePrincipal(userName);
+      subject.getPrincipals().add(p);
+
       PasswordCredential credential = new PasswordCredential(userName, password.toCharArray());
       subject.getPrivateCredentials().add(credential);
+
       return subject;
    }
 
@@ -115,10 +123,13 @@ public class DefaultSubjectFactory implements SubjectFactory
    public int hashCode()
    {
       final int prime = 31;
+
       int result = 1;
+
       result = prime * result + ((password == null) ? 0 : password.hashCode());
       result = prime * result + ((securityDomain == null) ? 0 : securityDomain.hashCode());
       result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+
       return result;
    }
 
@@ -127,11 +138,15 @@ public class DefaultSubjectFactory implements SubjectFactory
    {
       if (this == obj)
          return true;
+
       if (obj == null)
          return false;
+
       if (!(obj instanceof DefaultSubjectFactory))
          return false;
+
       DefaultSubjectFactory other = (DefaultSubjectFactory) obj;
+
       if (password == null)
       {
          if (other.password != null)
@@ -139,6 +154,7 @@ public class DefaultSubjectFactory implements SubjectFactory
       }
       else if (!password.equals(other.password))
          return false;
+
       if (securityDomain == null)
       {
          if (other.securityDomain != null)
@@ -146,6 +162,7 @@ public class DefaultSubjectFactory implements SubjectFactory
       }
       else if (!securityDomain.equals(other.securityDomain))
          return false;
+
       if (userName == null)
       {
          if (other.userName != null)
@@ -153,14 +170,13 @@ public class DefaultSubjectFactory implements SubjectFactory
       }
       else if (!userName.equals(other.userName))
          return false;
+
       return true;
    }
 
    @Override
    public String toString()
    {
-      return "DefaultSubjectFactory [securityDomain=" + securityDomain + ", userName=" + userName + ", password=" +
-             password + "]";
+      return "DefaultSubjectFactory [securityDomain=" + securityDomain + ", userName=" + userName + "]";
    }
 }
-
