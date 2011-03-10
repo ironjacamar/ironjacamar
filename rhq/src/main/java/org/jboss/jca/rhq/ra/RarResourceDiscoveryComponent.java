@@ -36,16 +36,16 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 
 /**
- * ResourceAdapterResourceDiscoveryComponent
+ * RarResourceDiscoveryComponent
  * 
  * @author <a href="mailto:yyang@gmail.com">Young Yang</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class ResourceAdapterResourceDiscoveryComponent 
-   implements ResourceDiscoveryComponent<ResourceAdapterResourceComponent>
+public class RarResourceDiscoveryComponent 
+   implements ResourceDiscoveryComponent<RarResourceComponent>
 {
    /** log */
-   private static final Logger logger = Logger.getLogger(ResourceAdapterResourceDiscoveryComponent.class);
+   private static final Logger logger = Logger.getLogger(RarResourceDiscoveryComponent.class);
    
    /**
     * discoverResources
@@ -57,7 +57,7 @@ public class ResourceAdapterResourceDiscoveryComponent
     */
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<ResourceAdapterResourceComponent> jcaRarResourceComponentResourceDiscoveryContext)
+      ResourceDiscoveryContext<RarResourceComponent> jcaRarResourceComponentResourceDiscoveryContext)
       throws InvalidPluginConfigurationException, Exception
    {
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();

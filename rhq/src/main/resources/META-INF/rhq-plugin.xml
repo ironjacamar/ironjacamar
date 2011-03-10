@@ -338,8 +338,8 @@
 			</runs-inside> -->
 
 		<!-- Resource Adapter Archive (RAR) --> 
-		<service name="Resource Adapter Archive (RAR)" discovery="org.jboss.jca.rhq.ra.ResourceAdapterResourceDiscoveryComponent" 
-		    class="org.jboss.jca.rhq.ra.ResourceAdapterResourceComponent" createDeletePolicy="both" creationDataType="content">
+		<service name="Resource Adapter Archive (RAR)" discovery="org.jboss.jca.rhq.ra.RarResourceDiscoveryComponent" 
+		    class="org.jboss.jca.rhq.ra.RarResourceComponent" createDeletePolicy="both" creationDataType="content">
 			
 			<plugin-configuration>
                 <c:group name="general" displayName="General">
@@ -349,16 +349,16 @@
             </plugin-configuration>
 
 			<operation name="start"
-                       description="starts this RAR"/>
+                       description="start this RAR"/>
 
             <operation name="stop"
-                       description="stops this RAR"/>
+                       description="stop this RAR"/>
 
             <operation name="restart"
-                       description="stops and then restarts this RAR"/>
+                       description="stop and restart this RAR"/>
                        
             <operation name="suspend"
-                       description="suspends this RAR"/>
+                       description="suspend this RAR"/>
 				
 			<content name="file" displayName="RAR File" category="deployable" isCreationType="true">
             	
@@ -366,15 +366,12 @@
             
             <resource-configuration>
                  <c:group name="general" displayName="General">
-                    <c:simple-property name="jndi_name" displayName="JNDI Name"/>
-                    <c:simple-property name="deploy_name" displayName="Name" readOnly="true"/>
-                    <c:simple-property name="class_name" displayName="Class Name" description="Class name of ResourceAdapter" />
-                    <c:simple-property name="use_ra_association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true"/>
-                    <c:simple-property name="source_path" displayName="Source Path" description="RAR file path" readOnly="true"/>
-                    <c:simple-property name="native_lig_dir" displayName="Native Lib Dir" description="native library directory" />
-                    <c:simple-property name="access_out_app" displayName="Access outside of App Enabled" description="Can this resource adapter be accessed from outside of the application?" type="boolean" />
-                    <c:simple-property name="access_to_class" displayName="Global Access To Classes Enabled" description="Is access to resource adapter classes enabled?" type="boolean" />
-                    
+                    <c:simple-property name="name" displayName="Display name" readOnly="true"/>
+                    <c:simple-property name="jndi-name" displayName="JNDI name"/>
+                    <c:simple-property name="class-name" displayName="Class name" required="false" description="Class name of ResourceAdapter" />
+                    <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
+                    <c:simple-property name="source-path" displayName="Source Path" description="RAR file path" readOnly="true"/>
+
                 </c:group>
                 
 	             <c:group name="ConfigProperties" displayName="All Config Properties">
@@ -386,16 +383,21 @@
             <!-- here are some resource configurations on the connector -->
 			
 			<!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
-			<service name="Managed Connection Factories" discovery="org.jboss.jca.rhq.ra.ManagedConnectionFactoryResourceDiscoveryComponent"
-				class="org.jboss.jca.rhq.ra.ManagedConnectionFactoryResourceComponent" supportsManualAdd="true">
+			<service name="Managed Connection Factories" discovery="org.jboss.jca.rhq.ra.McfResourceDiscoveryComponent"
+				class="org.jboss.jca.rhq.ra.McfResourceComponent" supportsManualAdd="true">
             
             	&datasourceAndConnectionFactoryOperations;
             
 				<resource-configuration>
 					 <c:group name="general" displayName="General">
-					    <c:simple-property name="jndi_name" displayName="JNDI Name"/>
-	                    <c:simple-property name="interface_class_name" displayName="interface class name" description="the interface class name of the managed connection factory" />
-	                    <c:simple-property name="trans_support_type" displayName="Transaction support type" description="Transaction support type">
+					    <c:simple-property name="jndi-name" displayName="JNDI Name"/>
+	                    <c:simple-property name="mcf-class-name" displayName="ManagedConnectionFactory class name"/>
+	                    <c:simple-property name="cf-interface-name" displayName="ConnectionFactory interface class name"/>
+	                    <c:simple-property name="cf-impl-name" displayName="ConnectionFactory implement class name"/>
+	                    <c:simple-property name="connection-interface-name" displayName="Connection interface class name"/>
+	                    <c:simple-property name="connection-impl-name" displayName="Connection implement class name"/>
+
+	                    <c:simple-property name="transaction-type" displayName="Transaction type" description="Transaction type">
 	                    	<c:property-options>
 				                <c:option name="No Transaction" value="no"/>
 				                <c:option name="Local Transaction" value="local"/>
@@ -405,8 +407,8 @@
 					 </c:group>
 					 
 					 <c:group name="Authentication" displayName="Authentication">
-					 	<c:simple-property name="re_auth_support" displayName="Reauthentication Support" type="boolean" description="Does this outbound connection support reauthentication?"></c:simple-property>
-					 	<c:simple-property name="res_auth_src" displayName="Resource Authentication Source">
+					 	<c:simple-property name="re-auth_support" displayName="Reauthentication Support" type="boolean" description="Does this outbound connection support reauthentication?"></c:simple-property>
+					 	<c:simple-property name="res-auth-src" displayName="Resource Authentication Source">
 					 		<c:description>
 					 		   Is reauthentication application-based or container-based?
 					 		</c:description>
@@ -432,8 +434,8 @@
 			</service>
 			
 			<!-- Admin Objects -->
-			<service name="Admin Object" discovery="org.jboss.jca.rhq.ra.AdminObjectResourceDiscoveryComponent" 
-			    class="org.jboss.jca.rhq.ra.AdminObjectResourceComponent" supportsManualAdd="true">
+			<service name="Admin Object" discovery="org.jboss.jca.rhq.ra.AoResourceDiscoveryComponent" 
+			    class="org.jboss.jca.rhq.ra.AoResourceComponent" supportsManualAdd="true">
 				
 				<resource-configuration>
 	                 <c:group name="general" displayName="General">
@@ -447,11 +449,12 @@
 				
 			</service>
 	
-			<!-- Connection Factories -->
+			<!-- Connection Factories
 			<service name="Connection Factories" discovery="org.jboss.jca.rhq.ds.ConnectionFactoryResourceDiscoveryComponent"
 				class="org.jboss.jca.rhq.ds.ConnectionFactoryResourceComponent" supportsManualAdd="true">
-				<!-- Not Implemented yet. -->
+
 			</service>
+			 -->
 
 			<!-- XA Datasource 
 			<service name="XA Datasources" subCategory="Datasources"

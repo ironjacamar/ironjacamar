@@ -82,8 +82,8 @@ public class PluginDescriptorTestCase
       
       ServiceDescriptor rarServiceDesc = services.get(0);
       assertEquals("Resource Adapter Archive (RAR)", rarServiceDesc.getName());
-      assertEquals("org.jboss.jca.rhq.ra.ResourceAdapterResourceDiscoveryComponent", rarServiceDesc.getDiscovery());
-      assertEquals("org.jboss.jca.rhq.ra.ResourceAdapterResourceComponent", rarServiceDesc.getClazz());
+      assertEquals("org.jboss.jca.rhq.ra.RarResourceDiscoveryComponent", rarServiceDesc.getDiscovery());
+      assertEquals("org.jboss.jca.rhq.ra.RarResourceComponent", rarServiceDesc.getClazz());
       assertEquals(ResourceCreateDeletePolicy.BOTH, rarServiceDesc.getCreateDeletePolicy());
       assertEquals(ResourceCreationData.CONTENT, rarServiceDesc.getCreationDataType());
       
@@ -99,9 +99,9 @@ public class PluginDescriptorTestCase
       ConfigurationDescriptor resConfDesc = rarServiceDesc.getResourceConfiguration();
       assertNotNull(resConfDesc);
       
-      // 3 sub services in RAR service
+      // 2 sub services in RAR service
       List<ServiceDescriptor> subServiceDesc = rarServiceDesc.getServices();
-      assertEquals(3, subServiceDesc.size());
+      assertEquals(2, subServiceDesc.size());
       
    }
    

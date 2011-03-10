@@ -38,18 +38,19 @@ import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertyList;
 
 /**
- * ManagedConnectionFactoryResourceComponent represent the ManagedConnectionFactory in JCA container.
+ * McfResourceComponent represent the ManagedConnectionFactory in JCA container.
  * 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class ManagedConnectionFactoryResourceComponent extends AbstractResourceComponent
+public class McfResourceComponent extends AbstractResourceComponent
 {
    /** log */
-   private static final Logger logger = Logger.getLogger(ManagedConnectionFactoryResourceComponent.class);
+   private static final Logger logger = Logger.getLogger(McfResourceComponent.class);
 
    /**
     * loadResourceConfiguration
+    * 
     * 
     * @return Configuration Configuration
     * @throws Exception exception

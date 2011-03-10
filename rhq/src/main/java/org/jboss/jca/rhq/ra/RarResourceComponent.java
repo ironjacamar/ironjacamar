@@ -45,12 +45,12 @@ import org.rhq.core.pluginapi.content.ContentFacet;
 import org.rhq.core.pluginapi.content.ContentServices;
 
 /**
- * ResourceAdapterResourceComponent
+ * RarResourceComponent
  * 
  * @author <a href="mailto:yyang@gmail.com">Young Yang</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class ResourceAdapterResourceComponent extends AbstractResourceComponent implements ContentFacet
+public class RarResourceComponent extends AbstractResourceComponent implements ContentFacet
 {
    /**
     * loadResourceConfiguration
