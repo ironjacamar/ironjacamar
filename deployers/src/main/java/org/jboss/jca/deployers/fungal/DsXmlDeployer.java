@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jboss.logging.Logger;
+import org.jboss.security.SubjectFactory;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;
@@ -297,6 +298,27 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       catch (Throwable t)
       {
          throw new RuntimeException(t.getMessage(), t);
+      }
+   }
+
+   @Override
+   protected SubjectFactory getSubjectFactory(String securityDomain) 
+      throws org.jboss.jca.deployers.common.DeployException
+   {
+      log.tracef("getSubjectFactory(%s)", securityDomain);
+
+      if (securityDomain == null || securityDomain.trim().equals(""))
+         return null;
+
+      try
+      {
+         return kernel.getBean(securityDomain, SubjectFactory.class);
+      }
+      catch (Throwable t)
+      {
+         throw new 
+            org.jboss.jca.deployers.common.DeployException("Error during loookup of security domain: " +
+                                                           securityDomain, t);
       }
    }
 }

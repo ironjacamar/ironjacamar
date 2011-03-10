@@ -50,6 +50,7 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
+import org.jboss.security.SubjectFactory;
 
 /**
  * An abstract deployer implementation for datasources
@@ -260,7 +261,20 @@ public abstract class AbstractDsDeployer
       PoolConfiguration pc = createPoolConfiguration(ds.getPool(), ds.getTimeOut(), ds.getValidation());
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, false);
+      PoolStrategy strategy = PoolStrategy.ONE_POOL;
+
+      // Security
+      String securityDomain = null;
+      if (ds.getSecurity() != null)
+      {
+         if (ds.getSecurity().getSecurityDomain() != null)
+         {
+            strategy = PoolStrategy.POOL_BY_SUBJECT;
+            securityDomain = ds.getSecurity().getSecurityDomain();
+         }
+      }
+
+      Pool pool = pf.create(strategy, mcf, pc, false);
 
       // Connection manager properties
       Integer allocationRetry = null;
@@ -276,7 +290,8 @@ public abstract class AbstractDsDeployer
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm = 
-         cmf.createTransactional(tsl, pool, null, null, allocationRetry, allocationRetryWaitMillis,
+         cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
+                                 allocationRetry, allocationRetryWaitMillis,
                                  getTransactionManager(), null, null, null, null, null);
 
       cm.setJndiName(jndiName);
@@ -338,7 +353,20 @@ public abstract class AbstractDsDeployer
          noTxSeparatePool = ds.getXaPool().isNoTxSeparatePool();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, noTxSeparatePool.booleanValue());
+      PoolStrategy strategy = PoolStrategy.ONE_POOL;
+
+      // Security
+      String securityDomain = null;
+      if (ds.getSecurity() != null)
+      {
+         if (ds.getSecurity().getSecurityDomain() != null)
+         {
+            strategy = PoolStrategy.POOL_BY_SUBJECT;
+            securityDomain = ds.getSecurity().getSecurityDomain();
+         }
+      }
+
+      Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue());
 
       // Connection manager properties
       Integer allocationRetry = null;
@@ -368,7 +396,7 @@ public abstract class AbstractDsDeployer
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
-         cmf.createTransactional(tsl, pool, null, null,
+         cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionManager(), interleaving, 
                                  xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
@@ -501,4 +529,12 @@ public abstract class AbstractDsDeployer
     */
    protected abstract Object initAndInject(String className, List<? extends ConfigProperty> configs, ClassLoader cl)
       throws DeployException;
+
+   /**
+    * Get a subject factory
+    * @param securityDomain The security domain
+    * @return The subject factory; must return <code>null</code> if security domain isn't defined
+    * @exception DeployException Thrown if the security domain can't be resolved
+    */
+   protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
 }
