@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
+import org.rhq.core.pluginapi.inventory.ResourceContext;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 
@@ -53,6 +54,7 @@ public class McfResourceDiscoveryComponent
     * @throws InvalidPluginConfigurationException invalidPluginConfigurationException
     * @throws Exception exception
     */
+   @SuppressWarnings("unchecked")
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
       ResourceDiscoveryContext<McfResourceComponent> context)
@@ -61,10 +63,12 @@ public class McfResourceDiscoveryComponent
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
 
       // the uniqueId is the key of parent component.
-      //String rarUniqueId = context.getParentResourceContext().getResourceKey();
-      String rarUniqueId = "xa.rar";
-      // FIXME: get rarUniqueId from parent of parent ResourceContext
-
+      
+      ResourceContext<RarResourceComponent> parentResContext = context.getParentResourceContext();
+      
+      RarResourceComponent raResourceCom = parentResContext.getParentResourceComponent();
+      String rarUniqueId = raResourceCom.getResourceContext().getResourceKey();
+      
       ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, rarUniqueId);
       
@@ -75,7 +79,6 @@ public class McfResourceDiscoveryComponent
       {
          javax.resource.spi.ManagedConnectionFactory jcaMcf = mcf.getManagedConnectionFactory();
          
-
          Class<?> mcfCls = jcaMcf.getClass();
          String key = rarUniqueId + "#" + mcfCls.getName(); //IMPORTANT: make the key uniqueId#class name
          String name = mcfCls.getSimpleName();

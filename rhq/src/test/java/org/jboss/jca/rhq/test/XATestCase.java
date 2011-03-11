@@ -78,7 +78,7 @@ public class XATestCase
       
       Set<Resource> subRarServiceRes = rarServiceRes.getChildResources();
       
-      // connectionfactory, managedConnectionFactory and adminObject
+      // connectionfactory, resource adapter and adminObject
       assertEquals(3, subRarServiceRes.size());
       
    }
