@@ -435,7 +435,11 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          {
             XAManagedConnection mc = (XAManagedConnection) o;
             
-            if (mc.getProperties().equals(newProps))
+            if (Boolean.TRUE.equals(getReauthEnabled()))
+            {
+               return mc;
+            }
+            else if (mc.getProperties().equals(newProps))
             {
                //Next check to see if we are validating on matchManagedConnections
                if ((getValidateOnMatch() && mc.checkValid()) || !getValidateOnMatch())

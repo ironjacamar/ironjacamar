@@ -29,6 +29,7 @@ import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
 import org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker;
 import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
 import org.jboss.jca.adapters.jdbc.util.Injection;
 
 import java.io.ByteArrayInputStream;
@@ -44,9 +45,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
@@ -208,6 +211,18 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** JNDI name */
    private String jndiName;
+
+   /** Reauth enabled */
+   private Boolean reauthEnabled = Boolean.FALSE;
+
+   /** Reauth plugin class name */
+   private String reauthPluginClassName;
+
+   /** Reauth plugin properties - format: [key|value](,key|value)+ */
+   private String reauthPluginProperties;
+
+   /** Reauth plugin */
+   private ReauthPlugin reauthPlugin;
 
    /**
     * Constructor
@@ -645,6 +660,124 @@ public abstract class BaseWrapperManagedConnectionFactory
    }
 
    /**
+    * Get reauth enabled
+    * @return The value
+    */
+   public Boolean getReauthEnabled()
+   {
+      return reauthEnabled;
+   }
+
+   /**
+    * Set reauth enabled
+    * @param v The value
+    */
+   public void setReauthEnabled(Boolean v)
+   {
+      if (v != null)
+         reauthEnabled = v;
+   }
+
+   /**
+    * Get reauth plugin class name
+    * @return The value
+    */
+   public String getReauthPluginClassName()
+   {
+      return reauthPluginClassName;
+   }
+
+   /**
+    * Set reauth plugin class name
+    * @param v The value
+    */
+   public void setReauthPluginClassName(String v)
+   {
+      if (v != null)
+         reauthPluginClassName = v;
+   }
+
+   /**
+    * Get reauth plugin properties
+    * @return The value
+    */
+   public String getReauthPluginProperties()
+   {
+      return reauthPluginProperties;
+   }
+
+   /**
+    * Set reauth plugin properties
+    * @param v The value
+    */
+   public void setReauthPluginProperties(String v)
+   {
+      if (v != null)
+         reauthPluginProperties = v;
+   }
+
+   /**
+    * Load reauth plugin
+    * @exception ResourceException Thrown in case of an error
+    */
+   synchronized void loadReauthPlugin() throws ResourceException
+   {
+      if (reauthPlugin != null)
+         return;
+
+      if (Boolean.FALSE.equals(reauthEnabled))
+         throw new IllegalStateException("Reauthentication not enabled");
+
+      if (reauthPluginClassName == null || reauthPluginClassName.trim().equals(""))
+         throw new IllegalStateException("ReauthPlugin class name not defined");
+
+      try
+      {
+         Class<?> clz = Class.forName(reauthPluginClassName, true, Thread.currentThread().getContextClassLoader());
+         reauthPlugin = (ReauthPlugin)clz.newInstance();
+
+         if (reauthPluginProperties != null)
+         {
+            Injection injector = new Injection();
+
+            StringTokenizer st = new StringTokenizer(reauthPluginProperties, ",");
+            while (st.hasMoreTokens())
+            {
+               String keyValue = st.nextToken();
+
+               int split = keyValue.indexOf("|");
+
+               if (split == -1)
+                  throw new IllegalStateException("Reauth plugin property incorrect: " + keyValue);
+
+               String key = keyValue.substring(0, split);
+               String value = "";
+
+               if (keyValue.length() > (split + 1))
+                  value = keyValue.substring(split + 1);
+
+               injector.inject(reauthPlugin, key, value);
+            }
+         }
+
+         reauthPlugin.initialize(Thread.currentThread().getContextClassLoader());
+      }
+      catch (Throwable t)
+      {
+         throw new ResourceException("Error during loading reauth plugin", t);
+      }
+   }
+
+   /**
+    * Get the reauth plugin
+    * @return The value
+    */
+   ReauthPlugin getReauthPlugin()
+   {
+      return reauthPlugin;
+   }
+
+   /**
     * Set the url delimiter.
     * @param urlDelimiter The value
     * @exception ResourceException Thrown in case of an error
@@ -951,13 +1084,11 @@ public abstract class BaseWrapperManagedConnectionFactory
        */
       public Boolean run()
       {
-         Iterator<?> i = subject.getPrivateCredentials().iterator();
-         while (i.hasNext())
+         Set<PasswordCredential> creds = subject.getPrivateCredentials(PasswordCredential.class);
+         if (creds != null && creds.size() > 0)
          {
-            Object o = i.next();
-            if (o instanceof PasswordCredential)
+            for (PasswordCredential cred: creds)
             {
-               PasswordCredential cred = (PasswordCredential) o;
                if (cred.getManagedConnectionFactory().equals(mcf))
                {
                   props.setProperty("user", (cred.getUserName() == null) ? "" : cred.getUserName());

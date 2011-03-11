@@ -46,7 +46,9 @@ import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
@@ -274,7 +276,12 @@ public abstract class AbstractDsDeployer
       String securityDomain = null;
       if (ds.getSecurity() != null)
       {
-         if (ds.getSecurity().getSecurityDomain() != null)
+         if (ds.getSecurity().getReauthPlugin() != null)
+         {
+            strategy = PoolStrategy.REAUTH;
+            securityDomain = ds.getSecurity().getSecurityDomain();
+         }
+         else if (ds.getSecurity().getSecurityDomain() != null)
          {
             strategy = PoolStrategy.POOL_BY_SUBJECT;
             securityDomain = ds.getSecurity().getSecurityDomain();
@@ -319,6 +326,34 @@ public abstract class AbstractDsDeployer
       {
          injectValue(mcf, "setSpy", Boolean.TRUE);
          injectValue(mcf, "setJndiName", jndiName);
+      }
+
+      // Reauth
+      if (strategy == PoolStrategy.REAUTH)
+      {
+         injectValue(mcf, "setReauthEnabled", Boolean.TRUE);
+         injectValue(mcf, "setReauthPluginClassName", ds.getSecurity().getReauthPlugin().getClassName());
+
+         Map<String, String> mps = ds.getSecurity().getReauthPlugin().getConfigPropertiesMap();
+         if (mps != null && mps.size() > 0)
+         {
+            StringBuilder reauthPluginProperties = new StringBuilder();
+
+            Iterator<Map.Entry<String, String>> entryIterator = mps.entrySet().iterator();
+            while (entryIterator.hasNext())
+            {
+               Map.Entry<String, String> entry = entryIterator.next();
+
+               reauthPluginProperties.append(entry.getKey());
+               reauthPluginProperties.append("|");
+               reauthPluginProperties.append(entry.getValue());
+
+               if (entryIterator.hasNext())
+                  reauthPluginProperties.append(",");
+            }
+
+            injectValue(mcf, "setReauthPluginProperties", reauthPluginProperties.toString());
+         }
       }
 
       // ConnectionFactory
@@ -367,7 +402,12 @@ public abstract class AbstractDsDeployer
       String securityDomain = null;
       if (ds.getSecurity() != null)
       {
-         if (ds.getSecurity().getSecurityDomain() != null)
+         if (ds.getSecurity().getReauthPlugin() != null)
+         {
+            strategy = PoolStrategy.REAUTH;
+            securityDomain = ds.getSecurity().getSecurityDomain();
+         }
+         else if (ds.getSecurity().getSecurityDomain() != null)
          {
             strategy = PoolStrategy.POOL_BY_SUBJECT;
             securityDomain = ds.getSecurity().getSecurityDomain();
@@ -428,6 +468,35 @@ public abstract class AbstractDsDeployer
          injectValue(mcf, "setSpy", Boolean.TRUE);
          injectValue(mcf, "setJndiName", jndiName);
       }
+
+      // Reauth
+      if (strategy == PoolStrategy.REAUTH)
+      {
+         injectValue(mcf, "setReauthEnabled", Boolean.TRUE);
+         injectValue(mcf, "setReauthPluginClassName", ds.getSecurity().getReauthPlugin().getClassName());
+
+         Map<String, String> mps = ds.getSecurity().getReauthPlugin().getConfigPropertiesMap();
+         if (mps != null && mps.size() > 0)
+         {
+            StringBuilder reauthPluginProperties = new StringBuilder();
+
+            Iterator<Map.Entry<String, String>> entryIterator = mps.entrySet().iterator();
+            while (entryIterator.hasNext())
+            {
+               Map.Entry<String, String> entry = entryIterator.next();
+
+               reauthPluginProperties.append(entry.getKey());
+               reauthPluginProperties.append("|");
+               reauthPluginProperties.append(entry.getValue());
+
+               if (entryIterator.hasNext())
+                  reauthPluginProperties.append(",");
+            }
+
+            injectValue(mcf, "setReauthPluginProperties", reauthPluginProperties.toString());
+         }
+      }
+
       Recovery recoveryMD = ds.getRecovery();
       String defaultSecurityDomain = null;
       String defaultUserName = null;

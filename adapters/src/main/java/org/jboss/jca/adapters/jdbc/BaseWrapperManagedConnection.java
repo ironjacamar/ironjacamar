@@ -22,6 +22,8 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
+
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -77,7 +79,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
    protected final Connection con;
 
    /** The properties */
-   protected final Properties props;
+   protected Properties props;
 
    private final int transactionIsolation;
 
@@ -158,7 +160,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
     */
    public BaseWrapperManagedConnection(final BaseWrapperManagedConnectionFactory mcf,
                                        final Connection con,
-                                       final Properties props, 
+                                       Properties props, 
                                        final int transactionIsolation, 
                                        final int psCacheSize) 
       throws SQLException
@@ -354,6 +356,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
     */
    public Object getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
+      if (Boolean.TRUE.equals(mcf.getReauthEnabled()))
+         mcf.loadReauthPlugin();
+
       checkIdentity(subject, cri);
       WrappedConnection lc = WRAPPED_CONNECTION_FACTORY.createWrappedConnection(this,
                                                                                 mcf.getSpy().booleanValue(),
@@ -704,9 +709,27 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
    private void checkIdentity(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
       Properties newProps = mcf.getConnectionProperties(subject, cri);
-      if (!props.equals(newProps))
+
+      if (Boolean.TRUE.equals(mcf.getReauthEnabled()))
       {
-         throw new ResourceException("Wrong credentials passed to getConnection!");
+         if (!props.getProperty("user").equals(newProps.getProperty("user")))
+         {
+            try
+            {
+               ReauthPlugin plugin = mcf.getReauthPlugin();
+               plugin.reauthenticate(con, newProps.getProperty("user"), newProps.getProperty("password"));
+               props = newProps;
+            }
+            catch (SQLException se)
+            {
+               throw new ResourceException("Error during reauthentication", se);
+            }
+         }
+      }
+      else
+      {
+         if (!props.equals(newProps))
+            throw new ResourceException("Wrong credentials passed to getConnection!");
       }
    }
 
