@@ -21,6 +21,13 @@
  */
 package org.jboss.jca.rhq.ra;
 
+import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.api.management.ResourceAdapter;
+
+import org.jboss.jca.rhq.core.ManagementRepositoryManager;
+import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,14 +39,17 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 /**
  * Discovery RaResourceDiscoveryComponent from JCA container.
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>  
  */
 public class RaResourceDiscoveryComponent implements ResourceDiscoveryComponent<RaResourceComponent>
 {
    /**
     * discoverResources
     * 
-    * @param context ResourceDiscoveryContext<AdminObjectResourceComponent>
+    * Each deployed RAR resource has <i>one</i> or <i>none</i> ResourceAdapter.
+    * 
+    * @param context ResourceDiscoveryContext<RaResourceComponent>
     * @return Set<DiscoveredResourceDetails> set of DiscoveredResourceDetails
     * @throws InvalidPluginConfigurationException invalidPluginConfigurationException
     * @throws Exception exception
@@ -51,8 +61,20 @@ public class RaResourceDiscoveryComponent implements ResourceDiscoveryComponent<
    {
 
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
+      String rarUniqueId = context.getParentResourceContext().getResourceKey();
+      
+      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, rarUniqueId);
+      ResourceAdapter ra = connector.getResourceAdapter();
+      if (ra == null)
+      {
+         return result;
+      }
+      String raClsName = ra.getResourceAdapter().getClass().getName();
+      String simpleName = ra.getResourceAdapter().getClass().getSimpleName();
+      String key = rarUniqueId + "#" + raClsName;
       DiscoveredResourceDetails resConnector = new DiscoveredResourceDetails(
-            context.getResourceType(), "ResourceAdpater", "ResourceAdpater", "1.0.0",
+            context.getResourceType(), key, simpleName, "1.0.0",
             "Resource Adapter", context.getDefaultPluginConfiguration(),
             null);
       result.add(resConnector);

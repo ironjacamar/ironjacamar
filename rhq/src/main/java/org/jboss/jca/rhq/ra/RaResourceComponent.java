@@ -35,6 +35,7 @@ import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertyList;
+import org.rhq.core.domain.configuration.PropertySimple;
 
 
 /**
@@ -60,7 +61,11 @@ public class RaResourceComponent extends AbstractResourceComponent
       Configuration config = new Configuration();
       ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
-
+      
+      // class-name
+      PropertySimple clsNameProp = new PropertySimple("class-name", getJCAClassName());
+      config.put(clsNameProp);
+      
       ResourceAdapter manResAdapter = connector.getResourceAdapter();
       List<ConfigProperty> manResConfigProps = manResAdapter.getConfigProperties();
       PropertyList configList = getConfigPropertiesList(manResAdapter.getResourceAdapter(), manResConfigProps);
