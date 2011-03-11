@@ -57,8 +57,8 @@ public class PluginDescriptorTestCase
    @Test
    public void testValidatePluginDescriptor() throws Throwable
    {
-      File pluginDir = new File(System.getProperty("target.dir"));
-      File pluginFile = new File(pluginDir, "ironjacamar-rhq.jar");
+      File pluginDir = new File(System.getProperty("archives.dir"));
+      File pluginFile = new File(pluginDir, "ironjacamar-rhq-test-all.jar");
       URL pluginURL = pluginFile.toURI().toURL();
       PluginDescriptorLoader pluginLoader = new PluginDescriptorLoader(pluginURL, getClass().getClassLoader());
       
