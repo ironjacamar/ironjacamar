@@ -23,11 +23,11 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
-import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
@@ -178,7 +178,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
-      Credential securitySettings = null;
+      DsSecurity securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
@@ -287,7 +287,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case SECURITY : {
-                     securitySettings = parseCredential(reader);
+                     securitySettings = parseDsSecurity(reader);
                      break;
                   }
                   case STATEMENT : {
@@ -316,6 +316,64 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException("Reached end of xml document unexpectedly");
    }
 
+   private DsSecurity parseDsSecurity(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+
+      String userName = null;
+      String password = null;
+      String securityDomain = null;
+      Extension reauthPlugin = null;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
+               {
+
+                  return new DsSecurityImpl(userName, password, securityDomain, reauthPlugin);
+               }
+               else
+               {
+                  if (DsSecurity.Tag.forName(reader.getLocalName()) == DsSecurity.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               DsSecurity.Tag tag = DsSecurity.Tag.forName(reader.getLocalName());
+               switch (tag)
+               {
+                  case PASSWORD : {
+                     password = elementAsString(reader);
+                     break;
+                  }
+                  case USERNAME : {
+                     userName = elementAsString(reader);
+                     break;
+                  }
+                  case SECURITY_DOMAIN : {
+                     securityDomain = elementAsString(reader);
+                     break;
+                  }
+                  case REAUTH_PLUGIN : {
+                     reauthPlugin = parseExtension(reader, tag.getLocalName());
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
    private DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
@@ -325,7 +383,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       TransactionIsolation transactionIsolation = null;
       Map<String, String> connectionProperties = new HashMap<String, String>();
       TimeOut timeOutSettings = null;
-      Credential securitySettings = null;
+      DsSecurity securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
@@ -433,7 +491,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case SECURITY : {
-                     securitySettings = parseCredential(reader);
+                     securitySettings = parseDsSecurity(reader);
                      break;
                   }
                   case STATEMENT : {
@@ -509,11 +567,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case EXCEPTIONSORTER : {
-                     exceptionSorter = parseExtension(reader, currTag);
+                     exceptionSorter = parseExtension(reader, currTag.getLocalName());
                      break;
                   }
                   case STALECONNECTIONCHECKER : {
-                     staleConnectionChecker = parseExtension(reader, currTag);
+                     staleConnectionChecker = parseExtension(reader, currTag.getLocalName());
                      break;
                   }
                   case USEFASTFAIL : {
@@ -525,7 +583,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case VALIDCONNECTIONCHECKER : {
-                     validConnectionChecker = parseExtension(reader, currTag);
+                     validConnectionChecker = parseExtension(reader, currTag.getLocalName());
                      break;
                   }
                   default :

@@ -710,12 +710,12 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  <xs:complexType name="credentialType">
+  <xs:complexType name="dsSecurityType">
     <xs:sequence>
       <xs:element name="user-name" type="xs:token" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
-              <![CDATA[[
+            <![CDATA[[
                 Specify the username used when creating a new connection. 
                 Ex: <user-name>sa</user-name>
                ]]>
@@ -725,7 +725,7 @@
       <xs:element name="password" type="xs:token" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
-              <![CDATA[[
+            <![CDATA[[
                 Specify the password used when creating a new connection. 
                 Ex: <password>sa-pass</password>
                ]]>
@@ -746,8 +746,9 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="reauth-plugin" type="extensionType" minOccurs="0" maxOccurs="1"></xs:element>
     </xs:sequence>
-   </xs:complexType>
+  </xs:complexType>
 
   <xs:complexType name="extensionType">
     <xs:sequence>

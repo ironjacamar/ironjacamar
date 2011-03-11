@@ -22,8 +22,8 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
+import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
@@ -83,7 +83,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     */
    public DataSourceImpl(String connectionUrl, String driverClass, String module,
       TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, TimeOut timeOut,
-      Credential security, Statement statement, Validation validation, String urlDelimiter,
+      DsSecurity security, Statement statement, Validation validation, String urlDelimiter,
       String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
       boolean enabled, String jndiName, boolean spy, CommonPool pool) throws ValidateException
    {
