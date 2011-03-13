@@ -61,15 +61,20 @@ public class RaResourceComponent extends AbstractResourceComponent
       Configuration config = new Configuration();
       ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
-      
-      // class-name
-      PropertySimple clsNameProp = new PropertySimple("class-name", getJCAClassName());
-      config.put(clsNameProp);
-      
-      ResourceAdapter manResAdapter = connector.getResourceAdapter();
-      List<ConfigProperty> manResConfigProps = manResAdapter.getConfigProperties();
-      PropertyList configList = getConfigPropertiesList(manResAdapter.getResourceAdapter(), manResConfigProps);
-      config.put(configList);
+      ResourceAdapter ra = connector.getResourceAdapter();
+      if (ra != null)
+      {
+         String raClsName = ra.getResourceAdapter().getClass().getName();
+         
+         // class-name
+         PropertySimple clsNameProp = new PropertySimple("class-name", raClsName);
+         config.put(clsNameProp);
+         
+         List<ConfigProperty> configProps = ra.getConfigProperties();
+         PropertyList configList = getConfigPropertiesList(ra.getResourceAdapter(), configProps);
+         config.put(configList);
+      }
+
       return config;
    }
 }

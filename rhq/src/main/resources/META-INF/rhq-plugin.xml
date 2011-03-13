@@ -379,8 +379,7 @@
 				
 				<resource-configuration>
 	                 <c:group name="general" displayName="General">
-	                    <c:simple-property name="class-name" displayName="Class name" required="false" description="Class name of ResourceAdapter" />
-	                    <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
+	                    <c:simple-property name="class-name" displayName="Class name" readOnly="true" required="false" description="Class name of ResourceAdapter" />
 	                 </c:group>
 		             <c:group name="ConfigProperties" displayName="All Config Properties">
 						&advancedResourceConfigProps;						
@@ -433,6 +432,8 @@
 		                    <c:simple-property name="cf-impl-name" displayName="ConnectionFactory implement class name"/>
 		                    <c:simple-property name="connection-interface-name" displayName="Connection interface class name"/>
 		                    <c:simple-property name="connection-impl-name" displayName="Connection implement class name"/>
+
+	                        <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
 						 </c:group>
 						 
 						 <c:group name="conn_pool" displayName="Connection Pool">
@@ -456,6 +457,7 @@
 	                 <c:group name="general" displayName="General">
 	                    <c:simple-property name="jndi_name" displayName="JNDI Name"/>
 	                    <c:simple-property name="interface_class_name" displayName="interface class name" description="the interface class name of the admin object" />
+	                    <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
 	                </c:group>
 		             <c:group name="ConfigProperties" displayName="All Config Properties">
 						&advancedResourceConfigProps;						

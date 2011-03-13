@@ -45,9 +45,7 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 public class RaResourceDiscoveryComponent implements ResourceDiscoveryComponent<RaResourceComponent>
 {
    /**
-    * discoverResources
-    * 
-    * Each deployed RAR resource has <i>one</i> or <i>none</i> ResourceAdapter.
+    * discoverResources, RAR has 1 or 0 ResourceAdapter.
     * 
     * @param context ResourceDiscoveryContext<RaResourceComponent>
     * @return Set<DiscoveredResourceDetails> set of DiscoveredResourceDetails
@@ -66,18 +64,16 @@ public class RaResourceDiscoveryComponent implements ResourceDiscoveryComponent<
       ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, rarUniqueId);
       ResourceAdapter ra = connector.getResourceAdapter();
-      if (ra == null)
+      if (ra != null)
       {
-         return result;
-      }
-      String raClsName = ra.getResourceAdapter().getClass().getName();
-      String simpleName = ra.getResourceAdapter().getClass().getSimpleName();
-      String key = rarUniqueId + "#" + raClsName;
-      DiscoveredResourceDetails resConnector = new DiscoveredResourceDetails(
+         String simpleName = ra.getResourceAdapter().getClass().getSimpleName();
+         String key = rarUniqueId + "#" + simpleName;
+         DiscoveredResourceDetails resRa = new DiscoveredResourceDetails(
             context.getResourceType(), key, simpleName, "1.0.0",
             "Resource Adapter", context.getDefaultPluginConfiguration(),
             null);
-      result.add(resConnector);
+         result.add(resRa);
+      }
       return result;
    }
 
