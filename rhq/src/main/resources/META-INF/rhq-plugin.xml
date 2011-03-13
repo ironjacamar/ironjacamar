@@ -324,31 +324,31 @@
 ]>
 
 <plugin name="IronJacamar" displayName="IronJacamar Plugin"
-	description="Supports management and monitoring of IronJacamar"
-	version="1.0.0"
-	pluginLifecycleListener="org.jboss.jca.rhq.core.IronJacamarPluginLifecyleListener"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:xmlns:rhq-plugin"
-	xmlns:c="urn:xmlns:rhq-configuration">
+    description="Supports management and monitoring of IronJacamar"
+    version="1.0.0"
+    pluginLifecycleListener="org.jboss.jca.rhq.core.IronJacamarPluginLifecyleListener"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:xmlns:rhq-plugin"
+    xmlns:c="urn:xmlns:rhq-configuration">
 
-	<server name="IronJacamar_AS7" singleton="true"
-		discovery="org.jboss.jca.rhq.core.IronJacamarResourceDiscoveryComponent" 
-		class="org.jboss.jca.rhq.core.IronJacamarResourceComponent">
+    <server name="IronJacamar_AS7" singleton="true"
+        discovery="org.jboss.jca.rhq.core.IronJacamarResourceDiscoveryComponent" 
+        class="org.jboss.jca.rhq.core.IronJacamarResourceComponent">
 
-		<!-- <runs-inside> <parent-resource-type name="JBossAS Server" plugin="JBossAS"/> 
-			</runs-inside> -->
+        <!-- <runs-inside> <parent-resource-type name="JBossAS Server" plugin="JBossAS"/> 
+            </runs-inside> -->
 
-		<!-- Resource Adapter Archive (RAR) --> 
-		<service name="Resource Adapter Archive (RAR)" discovery="org.jboss.jca.rhq.ra.RarResourceDiscoveryComponent" 
-		    class="org.jboss.jca.rhq.ra.RarResourceComponent" createDeletePolicy="both" creationDataType="content">
-			
-			<plugin-configuration>
+        <!-- Resource Adapter Archive (RAR) --> 
+        <service name="Resource Adapter Archive (RAR)" discovery="org.jboss.jca.rhq.ra.RarResourceDiscoveryComponent" 
+            class="org.jboss.jca.rhq.ra.RarResourceComponent" createDeletePolicy="both" creationDataType="content">
+            
+            <plugin-configuration>
                 <c:group name="general" displayName="General">
                     <c:simple-property name="deploymentName" description="the name of this RAR" readOnly="true"/>
                     <c:simple-property name="filename" readOnly="true"/>
                 </c:group>
             </plugin-configuration>
 
-			<operation name="start"
+            <operation name="start"
                        description="start this RAR"/>
 
             <operation name="stop"
@@ -359,9 +359,9 @@
                        
             <operation name="suspend"
                        description="suspend this RAR"/>
-				
-			<content name="file" displayName="RAR File" category="deployable" isCreationType="true">
-            	
+                
+            <content name="file" displayName="RAR File" category="deployable" isCreationType="true">
+                
             </content>
             
             <resource-configuration>
@@ -370,118 +370,118 @@
                     <c:simple-property name="jndi-name" displayName="JNDI name"/>
                     <c:simple-property name="source-path" displayName="Source Path" description="RAR file path" readOnly="true"/>
                 </c:group>
-			</resource-configuration>
-			
-
-			<!-- Resource Adpater -->
-			<service name="Resource Adapter" discovery="org.jboss.jca.rhq.ra.RaResourceDiscoveryComponent" 
-			    class="org.jboss.jca.rhq.ra.RaResourceComponent" supportsManualAdd="true">
-				
-				<resource-configuration>
-	                 <c:group name="general" displayName="General">
-	                    <c:simple-property name="class-name" displayName="Class name" readOnly="true" required="false" description="Class name of ResourceAdapter" />
-	                 </c:group>
-		             <c:group name="ConfigProperties" displayName="All Config Properties">
-						&advancedResourceConfigProps;						
-	                </c:group>
-				</resource-configuration>
-				
-			</service>
-			
-			<!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
-			<service name="Connection Factory" discovery="org.jboss.jca.rhq.ra.CfResourceDiscoveryComponent"
-				class="org.jboss.jca.rhq.ra.CfResourceComponent" supportsManualAdd="true">
+            </resource-configuration>
             
-				<resource-configuration>
-					 <c:group name="general" displayName="General">
-	                    <c:simple-property name="transaction-type" displayName="Transaction type" description="Transaction type">
-	                    	<c:property-options>
-				                <c:option name="No Transaction" value="no"/>
-				                <c:option name="Local Transaction" value="local"/>
-				                <c:option name="XA Transaction" value="xa"/>
-				            </c:property-options>
-	                    </c:simple-property>
-					 </c:group>
-					 
-					 <c:group name="Authentication" displayName="Authentication">
-					 	<c:simple-property name="re-auth_support" displayName="Reauthentication Support" type="boolean" description="Does this outbound connection support reauthentication?"></c:simple-property>
-					 	<c:simple-property name="res-auth-src" displayName="Resource Authentication Source">
-					 		<c:description>
-					 		   Is reauthentication application-based or container-based?
-					 		</c:description>
-					 		<c:property-options>
-					 			<c:option name="Container" value="Container"></c:option>
-					 			<c:option name="Application" value="Application"></c:option>
-					 		</c:property-options>
-					 	</c:simple-property>
-					 </c:group>
 
-				</resource-configuration>
-				
-				<!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
-				<service name="Managed Connection Factory" discovery="org.jboss.jca.rhq.ra.McfResourceDiscoveryComponent"
-					class="org.jboss.jca.rhq.ra.McfResourceComponent" supportsManualAdd="true">
-	            
-	            	&datasourceAndConnectionFactoryOperations;
-	            
-					<resource-configuration>
-						 <c:group name="general" displayName="General">
-						    <c:simple-property name="jndi-name" displayName="JNDI Name"/>
-		                    <c:simple-property name="mcf-class-name" displayName="ManagedConnectionFactory class name"/>
-		                    <c:simple-property name="cf-interface-name" displayName="ConnectionFactory interface class name"/>
-		                    <c:simple-property name="cf-impl-name" displayName="ConnectionFactory implement class name"/>
-		                    <c:simple-property name="connection-interface-name" displayName="Connection interface class name"/>
-		                    <c:simple-property name="connection-impl-name" displayName="Connection implement class name"/>
+            <!-- Resource Adpater -->
+            <service name="Resource Adapter" discovery="org.jboss.jca.rhq.ra.RaResourceDiscoveryComponent" 
+                class="org.jboss.jca.rhq.ra.RaResourceComponent" supportsManualAdd="true">
+                
+                <resource-configuration>
+                    <c:group name="general" displayName="General">
+                        <c:simple-property name="class-name" displayName="Class name" readOnly="true" required="false" description="Class name of ResourceAdapter" />
+                    </c:group>
+                    <c:group name="ConfigProperties" displayName="All Config Properties">
+                        &advancedResourceConfigProps;                        
+                    </c:group>
+                </resource-configuration>
+                
+            </service>
+            
+            <!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
+            <service name="Connection Factory" discovery="org.jboss.jca.rhq.ra.CfResourceDiscoveryComponent"
+                class="org.jboss.jca.rhq.ra.CfResourceComponent" supportsManualAdd="true">
+            
+                <resource-configuration>
+                    <c:group name="general" displayName="General">
+                        <c:simple-property name="transaction-type" displayName="Transaction type" description="Transaction type">
+                            <c:property-options>
+                                <c:option name="No Transaction" value="no"/>
+                                <c:option name="Local Transaction" value="local"/>
+                                <c:option name="XA Transaction" value="xa"/>
+                            </c:property-options>
+                        </c:simple-property>
+                    </c:group>
+                     
+                    <c:group name="Authentication" displayName="Authentication">
+                         <c:simple-property name="re-auth_support" displayName="Reauthentication Support" type="boolean" description="Does this outbound connection support reauthentication?"></c:simple-property>
+                         <c:simple-property name="res-auth-src" displayName="Resource Authentication Source">
+                             <c:description>
+                                Is reauthentication application-based or container-based?
+                             </c:description>
+                             <c:property-options>
+                                 <c:option name="Container" value="Container"></c:option>
+                                 <c:option name="Application" value="Application"></c:option>
+                             </c:property-options>
+                         </c:simple-property>
+                    </c:group>
 
-	                        <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
-						 </c:group>
-						 
-						 <c:group name="conn_pool" displayName="Connection Pool">
-						 	 &datasourceAndConnectionFactoryConnectionResourceConfigProps;
-						 	 &datasourceAndConnectionFactoryAdvancedResourceConfigProps;
-						 </c:group>
-						 
-			             <c:group name="ConfigProperties" displayName="All Config Properties">
-							&advancedResourceConfigProps;						
-		                </c:group>
-					</resource-configuration>
-				
-				</service>
-			</service>
-			
-			<!-- Admin Objects -->
-			<service name="Admin Object" discovery="org.jboss.jca.rhq.ra.AoResourceDiscoveryComponent" 
-			    class="org.jboss.jca.rhq.ra.AoResourceComponent" supportsManualAdd="true">
-				
-				<resource-configuration>
-	                 <c:group name="general" displayName="General">
-	                    <c:simple-property name="jndi_name" displayName="JNDI Name"/>
-	                    <c:simple-property name="interface_class_name" displayName="interface class name" description="the interface class name of the admin object" />
-	                    <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
-	                </c:group>
-		             <c:group name="ConfigProperties" displayName="All Config Properties">
-						&advancedResourceConfigProps;						
-	                </c:group>
-				</resource-configuration>
-				
-			</service>
-	
-			<!-- Connection Factories
-			<service name="Connection Factories" discovery="org.jboss.jca.rhq.ds.ConnectionFactoryResourceDiscoveryComponent"
-				class="org.jboss.jca.rhq.ds.ConnectionFactoryResourceComponent" supportsManualAdd="true">
+                </resource-configuration>
+                
+                <!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
+                <service name="Managed Connection Factory" discovery="org.jboss.jca.rhq.ra.McfResourceDiscoveryComponent"
+                    class="org.jboss.jca.rhq.ra.McfResourceComponent" supportsManualAdd="true">
+                
+                    &datasourceAndConnectionFactoryOperations;
+                
+                    <resource-configuration>
+                        <c:group name="general" displayName="General">
+                            <c:simple-property name="jndi-name" displayName="JNDI Name"/>
+                            <c:simple-property name="mcf-class-name" displayName="ManagedConnectionFactory class name"/>
+                            <c:simple-property name="cf-interface-name" displayName="ConnectionFactory interface class name"/>
+                            <c:simple-property name="cf-impl-name" displayName="ConnectionFactory implement class name"/>
+                            <c:simple-property name="connection-interface-name" displayName="Connection interface class name"/>
+                            <c:simple-property name="connection-impl-name" displayName="Connection implement class name"/>
 
-			</service>
-			 -->
+                            <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
+                        </c:group>
+                         
+                        <c:group name="conn_pool" displayName="Connection Pool">
+                             &datasourceAndConnectionFactoryConnectionResourceConfigProps;
+                             &datasourceAndConnectionFactoryAdvancedResourceConfigProps;
+                        </c:group>
+                         
+                        <c:group name="ConfigProperties" displayName="All Config Properties">
+                            &advancedResourceConfigProps;                        
+                        </c:group>
+                    </resource-configuration>
+                
+                </service>
+            </service>
+            
+            <!-- Admin Objects -->
+            <service name="Admin Object" discovery="org.jboss.jca.rhq.ra.AoResourceDiscoveryComponent" 
+                class="org.jboss.jca.rhq.ra.AoResourceComponent" supportsManualAdd="true">
+                
+                <resource-configuration>
+                    <c:group name="general" displayName="General">
+                        <c:simple-property name="jndi_name" displayName="JNDI Name"/>
+                        <c:simple-property name="interface_class_name" displayName="interface class name" description="the interface class name of the admin object" />
+                        <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
+                    </c:group>
+                    <c:group name="ConfigProperties" displayName="All Config Properties">
+                        &advancedResourceConfigProps;                        
+                    </c:group>
+                </resource-configuration>
+                
+            </service>
+    
+            <!-- Connection Factories
+            <service name="Connection Factories" discovery="org.jboss.jca.rhq.ds.ConnectionFactoryResourceDiscoveryComponent"
+                class="org.jboss.jca.rhq.ds.ConnectionFactoryResourceComponent" supportsManualAdd="true">
 
-			<!-- XA Datasource 
-			<service name="XA Datasources" subCategory="Datasources"
-				discovery="org.jboss.jca.rhq.ds.XADatasourceResourceDiscoveryComponent" 
-				class="org.jboss.jca.rhq.ds.XADatasourceResourceComponent" supportsManualAdd="true">
-	
-			</service>
-			-->
-			
-		</service>
-		
-	</server>
+            </service>
+             -->
+
+            <!-- XA Datasource 
+            <service name="XA Datasources" subCategory="Datasources"
+                discovery="org.jboss.jca.rhq.ds.XADatasourceResourceDiscoveryComponent" 
+                class="org.jboss.jca.rhq.ds.XADatasourceResourceComponent" supportsManualAdd="true">
+    
+            </service>
+            -->
+            
+        </service>
+        
+    </server>
 </plugin>
