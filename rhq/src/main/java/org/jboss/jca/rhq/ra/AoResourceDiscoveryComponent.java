@@ -70,7 +70,8 @@ public class AoResourceDiscoveryComponent implements ResourceDiscoveryComponent<
          Object aoObj = ao.getAdminObject();
          Class<?> aoCls = aoObj.getClass();
          String key = rarUniqueId + "#" + aoCls.getName();
-         String name = aoCls.getSimpleName();
+         //String name = aoCls.getSimpleName();
+         String name = ao.getJndiName();
          DiscoveredResourceDetails mcfRes = new DiscoveredResourceDetails(context.getResourceType(), key, name, null,
             "Admin Objects", context.getDefaultPluginConfiguration(), null);
          result.add(mcfRes);

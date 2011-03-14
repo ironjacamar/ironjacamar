@@ -687,6 +687,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                                  mgtAo.getConfigProperties().
                                     addAll(createManagementView(aoMeta.getConfigProperties()));
+                                 mgtAo.setJndiName(jndiName);
 
                                  mgtConnector.getAdminObjects().add(mgtAo);
                               }

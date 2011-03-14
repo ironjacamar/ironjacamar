@@ -48,6 +48,9 @@ public class ManagedConnectionFactory
    /** The pool configuration instance */
    private WeakReference<PoolConfiguration> poolConfiguration;
 
+   /** jndi name */
+   private String jndiName;
+   
    /**
     * Constructor
     * @param mcf The managed connection factory instance
@@ -130,6 +133,27 @@ public class ManagedConnectionFactory
    public void setPoolConfiguration(PoolConfiguration pc)
    {
       this.poolConfiguration = new WeakReference<PoolConfiguration>(pc);
+   }
+
+
+   /**
+    * Get the jndiName.
+    * 
+    * @return the jndiName.
+    */
+   public String getJndiName()
+   {
+      return jndiName;
+   }
+
+   /**
+    * Set the jndiName.
+    * 
+    * @param jndiName The jndiName to set.
+    */
+   public void setJndiName(String jndiName)
+   {
+      this.jndiName = jndiName;
    }
 
    /**

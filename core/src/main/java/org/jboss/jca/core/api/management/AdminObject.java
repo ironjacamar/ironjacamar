@@ -38,6 +38,9 @@ public class AdminObject
 
    /** The config property's */
    private List<ConfigProperty> configProperties;
+   
+   /** jndi name */
+   private String jndiName;
 
    /**
     * Constructor
@@ -71,6 +74,26 @@ public class AdminObject
          configProperties = new ArrayList<ConfigProperty>(1);
 
       return configProperties;
+   }
+
+   /**
+    * Get the jndiName.
+    * 
+    * @return the jndiName.
+    */
+   public String getJndiName()
+   {
+      return jndiName;
+   }
+
+   /**
+    * Set the jndiName.
+    * 
+    * @param jndiName The jndiName to set.
+    */
+   public void setJndiName(String jndiName)
+   {
+      this.jndiName = jndiName;
    }
 
    /**

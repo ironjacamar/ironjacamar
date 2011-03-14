@@ -76,7 +76,7 @@ public class AoResourceComponent extends AbstractResourceComponent
             // jndi name
             
             // interface_class_name
-            PropertySimple intfClsNameProp = new PropertySimple("interface_class_name", jcaClsName);
+            PropertySimple intfClsNameProp = new PropertySimple("interface-class-name", jcaClsName);
             config.put(intfClsNameProp);
             
             // use-ra-association
