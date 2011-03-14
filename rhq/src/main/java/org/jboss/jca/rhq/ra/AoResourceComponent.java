@@ -31,10 +31,13 @@ import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
 import java.util.List;
 
+import javax.resource.spi.ResourceAdapterAssociation;
+
 import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertyList;
+import org.rhq.core.domain.configuration.PropertySimple;
 
 /**
  * Represent Admin Object in JCA container.
@@ -70,6 +73,18 @@ public class AoResourceComponent extends AbstractResourceComponent
          if (aoCls.getName().equals(jcaClsName))
          {
             logger.debug("Class Name is: " + jcaClsName);
+            // jndi name
+            
+            // interface_class_name
+            PropertySimple intfClsNameProp = new PropertySimple("interface_class_name", jcaClsName);
+            config.put(intfClsNameProp);
+            
+            // use-ra-association
+            boolean useRaAsso = ResourceAdapterAssociation.class.isAssignableFrom(aoCls);
+            PropertySimple useRaAssoProp = new PropertySimple("use-ra-association", Boolean.valueOf(useRaAsso));
+            config.put(useRaAssoProp);
+            
+            // config properties
             List<ConfigProperty> aoConfigProps = ao.getConfigProperties();
             PropertyList configList = getConfigPropertiesList(obj, aoConfigProps);
             config.put(configList);

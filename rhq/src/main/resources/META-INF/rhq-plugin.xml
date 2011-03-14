@@ -45,9 +45,9 @@
                        displayName="Maximum Pool Size"
                        type="integer"
                        required="false"
-                       defaultValue="10">
+                       defaultValue="20">
         <c:description>
-            The maximum number of connections the pool should hold. The default is 10.
+            The maximum number of connections the pool should hold. The default is 20.
         </c:description>
         <c:constraint>
             <c:integer-constraint minimum="0"/>
@@ -174,11 +174,9 @@
         </c:description>
     </c:simple-property>
 
-    <c:simple-property name="prefill" type="boolean" required="false">
+    <c:simple-property name="prefill" type="boolean" required="false" defaultValue="true">
         <c:description>
-            Whether to attempt to prefill the connection pool to the minimum number of connections. NOTE: Only
-            supporting pools (OnePool) support this feature. A warning can be found in the logs if the pool does not
-            support this. The default is No.
+            Whether to attempt to prefill the connection pool. Default is true.
         </c:description>
     </c:simple-property>
 
@@ -265,7 +263,7 @@
         </c:description>
     </c:simple-property>
 
-    <c:simple-property name="use-strict-min" type="boolean" required="false">
+    <c:simple-property name="use-strict-min" type="boolean" required="false" defaultValue="false">
         <c:description>
              Whether idle connections below the min-pool-size should be closed. The default is No.
         </c:description>
@@ -464,13 +462,13 @@
             
             <!-- Admin Objects -->
             <service name="Admin Object" discovery="org.jboss.jca.rhq.ra.AoResourceDiscoveryComponent" 
-                class="org.jboss.jca.rhq.ra.AoResourceComponent" supportsManualAdd="true">
+                class="org.jboss.jca.rhq.ra.AoResourceComponent">
                 
                 <resource-configuration>
                     <c:group name="general" displayName="General">
                         <c:simple-property name="jndi_name" displayName="JNDI Name"/>
-                        <c:simple-property name="interface_class_name" displayName="interface class name" description="the interface class name of the admin object" />
-                        <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" required="false"/>
+                        <c:simple-property name="interface_class_name" displayName="interface class name" description="the interface class name of the admin object" readOnly="true"/>
+                        <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" />
                     </c:group>
                     <c:group name="ConfigProperties" displayName="All Config Properties">
                         &advancedResourceConfigProps;                        

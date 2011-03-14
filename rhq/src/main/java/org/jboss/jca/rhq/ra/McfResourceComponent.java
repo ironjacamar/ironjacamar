@@ -128,7 +128,9 @@ public class McfResourceComponent extends AbstractResourceComponent
       PropertySimple blockingTimeoutProp = new PropertySimple("blocking-timeout-millis", blTimeout);
       config.put(blockingTimeoutProp);
       
-      Integer idleTimeout = Integer.valueOf((int)poolConfig.getIdleTimeout());
+      Long idleTimeoutMills = poolConfig.getIdleTimeout();
+      
+      Integer idleTimeout = (int)(idleTimeoutMills / (1000 * 60)); // convert to minutes
       PropertySimple idleTimeoutProp = new PropertySimple("idle-timeout-minutes", idleTimeout);
       config.put(idleTimeoutProp);
       

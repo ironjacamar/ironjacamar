@@ -28,12 +28,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.resource.Resource;
 import org.rhq.core.pc.PluginContainer;
 import org.rhq.core.pc.PluginContainerConfiguration;
 import org.rhq.core.pc.inventory.InventoryManager;
 import org.rhq.core.pc.inventory.RuntimeDiscoveryExecutor;
 import org.rhq.core.pc.plugin.FileSystemPluginFinder;
+import org.rhq.core.pluginapi.configuration.ConfigurationFacet;
 
 import static org.junit.Assert.*;
 
@@ -80,6 +82,47 @@ public class XATestCase
       
       // connectionfactory, resource adapter and adminObject
       assertEquals(3, subRarServiceRes.size());
+      
+      for (Resource res : subRarServiceRes)
+      {
+         ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(res);
+         Configuration config = configFacet.loadResourceConfiguration();
+         
+         if (res.getName().equals("XAResourceAdapter"))
+         {
+            assertEquals("org.jboss.jca.rhq.rar.xa.XAResourceAdapter", config.getSimpleValue("class-name", null));
+         }
+         if (res.getName().equals("ConnectionFactory"))
+         {
+            assertEquals(1, res.getChildResources().size());
+            
+            // text mcf
+            Resource mcfRes = res.getChildResources().iterator().next();
+            ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(mcfRes);
+            Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
+            
+            String mcfCls = mcfConfig.getSimpleValue("mcf-class-name", null);
+            assertEquals("org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory", mcfCls);
+            assertEquals("true", mcfConfig.getSimpleValue("use-ra-association", null));
+            assertEquals("0", mcfConfig.getSimpleValue("min-pool-size", null));
+            assertEquals("20", mcfConfig.getSimpleValue("max-pool-size", null));
+            assertEquals("false", mcfConfig.getSimpleValue("background-validation", null));
+            assertEquals("0", mcfConfig.getSimpleValue("background-validation-millis", null));
+            assertEquals("0", mcfConfig.getSimpleValue("background-validation-minutes", null));
+            assertEquals("30000", mcfConfig.getSimpleValue("blocking-timeout-millis", null));
+            assertEquals("30", mcfConfig.getSimpleValue("idle-timeout-minutes", null));
+            assertEquals("true", mcfConfig.getSimpleValue("prefill", null));
+            assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
+            assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
+            
+         }
+         if (res.getName().equals("XAAdminObjectImpl"))
+         {
+            String aoCls = config.getSimpleValue("interface_class_name", null);
+            assertEquals("org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl", aoCls);
+            assertEquals("true", config.getSimpleValue("use-ra-association", "null"));
+         }
+      }
       
    }
 
