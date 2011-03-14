@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.rhq.ra;
 
+import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.ConfigProperty;
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagedConnectionFactory;
@@ -32,10 +33,13 @@ import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
 import java.util.List;
 
+import javax.resource.spi.ResourceAdapterAssociation;
+
 import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertyList;
+import org.rhq.core.domain.configuration.PropertySimple;
 
 /**
  * McfResourceComponent represent the ManagedConnectionFactory in JCA container.
@@ -64,20 +68,84 @@ public class McfResourceComponent extends AbstractResourceComponent
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
 
       String jcaClsName = getJCAClassName();
-
-      for (ManagedConnectionFactory mcf : connector.getManagedConnectionFactories())
+      ManagedConnectionFactory mcf = null;
+      for (ManagedConnectionFactory connectorMcf : connector.getManagedConnectionFactories())
       {
-         javax.resource.spi.ManagedConnectionFactory jcaMcf = mcf.getManagedConnectionFactory();
-         Class<?> mcfCls = jcaMcf.getClass();
+         Class<?> mcfCls = connectorMcf.getManagedConnectionFactory().getClass();
          if (mcfCls.getName().equals(jcaClsName))
          {
             logger.debug("Class Name is: " + jcaClsName);
-            List<ConfigProperty> mcfConfProps = mcf.getConfigProperties();
-            PropertyList configList = getConfigPropertiesList(jcaMcf, mcfConfProps);
-            config.put(configList);
+            mcf = connectorMcf;
             break;
          }
       }
+      if (null == mcf)
+      {
+         throw new IllegalStateException("Can not find the associated ManagedConnectionFactory in the Connector.");
+      }
+      
+      javax.resource.spi.ManagedConnectionFactory jcaMcf = mcf.getManagedConnectionFactory();
+      // jndi name
+      
+      // mcf-class-name
+      PropertySimple clsNameProp = new PropertySimple("mcf-class-name", jcaClsName);
+      config.put(clsNameProp);
+      
+      // cf-interface-name
+      
+      // cf-impl-name
+      
+      // connection-interface-name
+      
+      // connection-impl-name
+      
+      // use-ra-association
+      boolean useRaAsso = ResourceAdapterAssociation.class.isAssignableFrom(jcaMcf.getClass());
+      PropertySimple useRaAssoProp = new PropertySimple("use-ra-association", Boolean.valueOf(useRaAsso));
+      config.put(useRaAssoProp);
+      
+      // conn_pool
+      PoolConfiguration poolConfig = mcf.getPoolConfiguration();
+      PropertySimple minSizeProp = new PropertySimple("min-pool-size", Integer.valueOf(poolConfig.getMinSize()));
+      config.put(minSizeProp);
+      
+      PropertySimple maxSizeProp = new PropertySimple("max-pool-size", Integer.valueOf(poolConfig.getMaxSize()));
+      config.put(maxSizeProp);
+      
+      Boolean doBackGroundValidation = Boolean.valueOf(poolConfig.isBackgroundValidation());
+      PropertySimple isBackGroundValidateProp = new PropertySimple("background-validation", doBackGroundValidation);
+      config.put(isBackGroundValidateProp);
+      
+      Long bvInterval = Long.valueOf(poolConfig.getBackgroundValidationInterval());
+      PropertySimple backGroundValidateIntervalProp = new PropertySimple("background-validation-millis", bvInterval);
+      config.put(backGroundValidateIntervalProp);
+      
+      Integer bvMinutes = Integer.valueOf(poolConfig.getBackgroundValidationMinutes());
+      PropertySimple backGroundValidateMintuesProp = new PropertySimple("background-validation-minutes", bvMinutes);
+      config.put(backGroundValidateMintuesProp);
+      
+      Integer blTimeout = Integer.valueOf((int)poolConfig.getBlockingTimeout());
+      PropertySimple blockingTimeoutProp = new PropertySimple("blocking-timeout-millis", blTimeout);
+      config.put(blockingTimeoutProp);
+      
+      Integer idleTimeout = Integer.valueOf((int)poolConfig.getIdleTimeout());
+      PropertySimple idleTimeoutProp = new PropertySimple("idle-timeout-minutes", idleTimeout);
+      config.put(idleTimeoutProp);
+      
+      PropertySimple prefillProp = new PropertySimple("prefill", Boolean.valueOf(poolConfig.isPrefill()));
+      config.put(prefillProp);
+      
+      PropertySimple useStictMinProp = new PropertySimple("use-strict-min", Boolean.valueOf(poolConfig.isStrictMin()));
+      config.put(useStictMinProp);
+      
+      PropertySimple useFasFailProp = new PropertySimple("use-fast-fail", Boolean.valueOf(poolConfig.isUseFastFail()));
+      config.put(useFasFailProp);
+      
+      // config properties
+      List<ConfigProperty> mcfConfProps = mcf.getConfigProperties();
+      PropertyList configList = getConfigPropertiesList(jcaMcf, mcfConfProps);
+      config.put(configList);
+      
       return config;
    }
 }
