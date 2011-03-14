@@ -33,15 +33,18 @@ import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
+import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.metadata.merge.Merger;
+import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
-import org.jboss.jca.core.connectionmanager.xa.XAResourceRecoveryImpl;
+import org.jboss.jca.core.recovery.XAResourceRecoveryImpl;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
+import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -49,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
@@ -540,15 +544,46 @@ public abstract class AbstractDsDeployer
             }
 
          }
-         resourceRecovery = new XAResourceRecoveryImpl(
-                                                       mcf,
+         RecoveryPlugin plugin = null;
+         if (recoveryMD != null && recoveryMD.getPlugin() != null)
+         {
+            List<ConfigProperty> configProperties = null;
+            if (recoveryMD
+               .getPlugin()
+               .getConfigPropertiesMap() != null)
+            {
+               configProperties = new ArrayList<ConfigProperty>(recoveryMD.getPlugin()
+                  .getConfigPropertiesMap().size());
+               for (Entry<String, String> property : recoveryMD.getPlugin()
+                  .getConfigPropertiesMap().entrySet())
+               {
+                  ConfigProperty c = new ConfigPropertyImpl(
+                                                            null,
+                                                            new XsdString(property
+                                                               .getKey(),
+                                                                          null),
+                                                            new XsdString("String",
+                                                                          null),
+                                                            new XsdString(
+                                                                          property
+                                                                             .getValue(),
+                                                                          null), null);
+                  configProperties.add(c);
+               }
+
+               plugin = (RecoveryPlugin) initAndInject(recoveryMD
+                  .getPlugin().getClassName(), configProperties, cl);
+            }
+         }
+         resourceRecovery = new XAResourceRecoveryImpl(mcf,
                                                        padXid,
                                                        isSameRMOverride,
                                                        wrapXAResource,
                                                        recoverUser,
                                                        recoverPassword,
                                                        recoverSecurityDomain,
-                                                       null);
+                                                       null,
+                                                       plugin);
 
       }
 

@@ -27,6 +27,13 @@ import org.jboss.jca.common.api.metadata.common.Extension;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *
+ * A DsSecurity.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ *
+ */
 public interface DsSecurity extends Credential
 {
 

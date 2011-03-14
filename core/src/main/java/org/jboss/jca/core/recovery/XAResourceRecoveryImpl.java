@@ -19,8 +19,11 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.xa;
+package org.jboss.jca.core.recovery;
 
+
+import org.jboss.jca.core.connectionmanager.xa.XAResourceWrapperImpl;
+import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 
 import java.security.AccessController;
 import java.security.Principal;
@@ -72,6 +75,8 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
 
    private ManagedConnection recoverMC;
 
+   private final RecoveryPlugin plugin;
+
    /** Log instance */
    private static Logger log = Logger.getLogger(XAResourceRecoveryImpl.class);
 
@@ -86,10 +91,11 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
     * @param recoverPassword recoverPassword
     * @param recoverSecurityDomain recoverSecurityDomain
     * @param subjectFactory subjectFactory
+    * @param plugin recovery plugin
     */
    public XAResourceRecoveryImpl(ManagedConnectionFactory mcf, Boolean padXid, Boolean isSameRMOverrideValue,
       Boolean wrapXAResource, String recoverUserName,
-      String recoverPassword, String recoverSecurityDomain, SubjectFactory subjectFactory)
+      String recoverPassword, String recoverSecurityDomain, SubjectFactory subjectFactory, RecoveryPlugin plugin)
    {
       super();
       this.mcf = mcf;
@@ -100,6 +106,7 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
       this.recoverPassword = recoverPassword;
       this.recoverSecurityDomain = recoverSecurityDomain;
       this.subjectFactory = subjectFactory;
+      this.plugin = plugin;
 
    }
 
@@ -130,15 +137,31 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
             ManagedConnection mc = open(subject);
             XAResource xaResource = null;
 
+            Object connection = null;
             try
             {
+               connection = openConnection(mc, subject);
                xaResource = mc.getXAResource();
             }
             catch (ResourceException reconnect)
             {
+               closeConnection(connection);
+               connection = null;
                close(mc);
                mc = open(subject);
                xaResource = mc.getXAResource();
+            }
+            finally
+            {
+               boolean forceDestroy = closeConnection(connection);
+               connection = null;
+
+               if (forceDestroy)
+               {
+                  close(mc);
+                  mc = open(subject);
+                  xaResource = mc.getXAResource();
+               }
             }
 
             String eisProductName = null;
@@ -354,6 +377,38 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
       }
 
       mc = null;
+   }
+
+   /**
+    * Open a connection
+    * @param mc The managed connection
+    * @param s The subject
+    * @return The connection handle
+    * @exception ResourceException Thrown in case of an error
+    */
+   private Object openConnection(ManagedConnection mc, Subject s) throws ResourceException
+   {
+      if (log.isDebugEnabled())
+         log.debug("Creating connection for recovery check");
+
+      return mc.getConnection(s, null);
+   }
+
+   /**
+    * Close a connection
+    * @param c The connection
+    * @return Should the managed connection be forced closed
+    */
+   private boolean closeConnection(Object c)
+   {
+      if (c != null)
+      {
+         if (plugin.isValid(c))
+         {
+            return !plugin.close(c);
+         }
+      }
+      return false;
    }
 
    /**
