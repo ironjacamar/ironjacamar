@@ -42,6 +42,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.recovery.XAResourceRecoveryImpl;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
@@ -545,36 +546,31 @@ public abstract class AbstractDsDeployer
 
          }
          RecoveryPlugin plugin = null;
+
          if (recoveryMD != null && recoveryMD.getPlugin() != null)
          {
             List<ConfigProperty> configProperties = null;
-            if (recoveryMD
-               .getPlugin()
-               .getConfigPropertiesMap() != null)
+            if (recoveryMD.getPlugin().getConfigPropertiesMap() != null)
             {
-               configProperties = new ArrayList<ConfigProperty>(recoveryMD.getPlugin()
-                  .getConfigPropertiesMap().size());
-               for (Entry<String, String> property : recoveryMD.getPlugin()
-                  .getConfigPropertiesMap().entrySet())
+               configProperties = new ArrayList<ConfigProperty>(recoveryMD.getPlugin().getConfigPropertiesMap().size());
+               for (Entry<String, String> property : recoveryMD.getPlugin().getConfigPropertiesMap().entrySet())
                {
-                  ConfigProperty c = new ConfigPropertyImpl(
-                                                            null,
-                                                            new XsdString(property
-                                                               .getKey(),
-                                                                          null),
-                                                            new XsdString("String",
-                                                                          null),
-                                                            new XsdString(
-                                                                          property
-                                                                             .getValue(),
-                                                                          null), null);
+                  ConfigProperty c = new ConfigPropertyImpl(null,
+                                                            new XsdString(property.getKey(), null),
+                                                            new XsdString("String", null),
+                                                            new XsdString(property.getValue(), null),
+                                                            null);
                   configProperties.add(c);
                }
 
-               plugin = (RecoveryPlugin) initAndInject(recoveryMD
-                  .getPlugin().getClassName(), configProperties, cl);
+               plugin = (RecoveryPlugin) initAndInject(recoveryMD.getPlugin().getClassName(), configProperties, cl);
             }
          }
+         else
+         {
+            plugin = new DefaultRecoveryPlugin();
+         }
+
          resourceRecovery = new XAResourceRecoveryImpl(mcf,
                                                        padXid,
                                                        isSameRMOverride,
@@ -582,16 +578,17 @@ public abstract class AbstractDsDeployer
                                                        recoverUser,
                                                        recoverPassword,
                                                        recoverSecurityDomain,
-                                                       null,
+                                                       getSubjectFactory(recoverSecurityDomain),
                                                        plugin);
 
       }
 
       if (getXAResourceRecoveryRegistry() != null && resourceRecovery != null)
       {
-         resourceRecovery.registerXaRecovery(getXAResourceRecoveryRegistry(),
-            cm.getJndiName());
+         resourceRecovery.setJndiName(cm.getJndiName());
+         resourceRecovery.registerXaRecovery(getXAResourceRecoveryRegistry());
       }
+
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }

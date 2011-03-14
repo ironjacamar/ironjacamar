@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,13 +21,13 @@
  */
 package org.jboss.jca.core.recovery;
 
-
 import org.jboss.jca.core.connectionmanager.xa.XAResourceWrapperImpl;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 
 import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedAction;
+import java.util.Set;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
@@ -46,14 +46,15 @@ import org.jboss.tm.XAResourceRecovery;
 import org.jboss.tm.XAResourceRecoveryRegistry;
 
 /**
- *
- * A XAResourceRecoveryImpl.
+ * An XAResourceRecovery implementation.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class XAResourceRecoveryImpl implements XAResourceRecovery
 {
+   /** Log instance */
+   private static Logger log = Logger.getLogger(XAResourceRecoveryImpl.class);
 
    private final ManagedConnectionFactory mcf;
 
@@ -63,8 +64,6 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
 
    private final Boolean wrapXAResource;
 
-   private String jndiName;
-
    private final String recoverUserName;
 
    private final String recoverPassword;
@@ -73,12 +72,11 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
 
    private final SubjectFactory subjectFactory;
 
-   private ManagedConnection recoverMC;
-
    private final RecoveryPlugin plugin;
 
-   /** Log instance */
-   private static Logger log = Logger.getLogger(XAResourceRecoveryImpl.class);
+   private ManagedConnection recoverMC;
+
+   private String jndiName;
 
    /**
     * Create a new XAResourceRecoveryImpl.
@@ -93,11 +91,18 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
     * @param subjectFactory subjectFactory
     * @param plugin recovery plugin
     */
-   public XAResourceRecoveryImpl(ManagedConnectionFactory mcf, Boolean padXid, Boolean isSameRMOverrideValue,
-      Boolean wrapXAResource, String recoverUserName,
-      String recoverPassword, String recoverSecurityDomain, SubjectFactory subjectFactory, RecoveryPlugin plugin)
+   public XAResourceRecoveryImpl(ManagedConnectionFactory mcf,
+                                 Boolean padXid, Boolean isSameRMOverrideValue, Boolean wrapXAResource,
+                                 String recoverUserName, String recoverPassword, String recoverSecurityDomain,
+                                 SubjectFactory subjectFactory,
+                                 RecoveryPlugin plugin)
    {
-      super();
+      if (mcf == null)
+         throw new IllegalArgumentException("MCF is null");
+
+      if (plugin == null)
+         throw new IllegalArgumentException("Plugin is null");
+
       this.mcf = mcf;
       this.padXid = padXid;
       this.isSameRMOverrideValue = isSameRMOverrideValue;
@@ -107,7 +112,18 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
       this.recoverSecurityDomain = recoverSecurityDomain;
       this.subjectFactory = subjectFactory;
       this.plugin = plugin;
+      this.recoverMC = null;
+      this.jndiName = null;
+   }
 
+   /**
+    * Set the jndiName.
+    *
+    * @param jndiName The jndiName to set.
+    */
+   public void setJndiName(String jndiName)
+   {
+      this.jndiName = jndiName;
    }
 
    /**
@@ -126,7 +142,6 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
    @Override
    public XAResource[] getXAResources()
    {
-
       try
       {
          Subject subject = getSubject();
@@ -163,62 +178,51 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
                   xaResource = mc.getXAResource();
                }
             }
-
-            String eisProductName = null;
-            String eisProductVersion = null;
-
-            try
+            
+            if (wrapXAResource)
             {
-               if (mc.getMetaData() != null)
+               String eisProductName = null;
+               String eisProductVersion = null;
+
+               try
                {
-                  eisProductName = mc.getMetaData().getEISProductName();
-                  eisProductVersion = mc.getMetaData().getEISProductVersion();
+                  if (mc.getMetaData() != null)
+                  {
+                     eisProductName = mc.getMetaData().getEISProductName();
+                     eisProductVersion = mc.getMetaData().getEISProductVersion();
+                  }
                }
-            }
-            catch (ResourceException re)
-            {
-               // Ignore
-            }
-
-            if (eisProductName == null)
-               eisProductName = getJndiName();
-
-            if (eisProductVersion == null)
-               eisProductVersion = getJndiName();
-
-            try
-            {
-               if (wrapXAResource)
+               catch (ResourceException re)
                {
-
-                  xaResource = new XAResourceWrapperImpl(xaResource,
-                                                            padXid,
-                                                            isSameRMOverrideValue,
-                                                            eisProductName,
-                                                            eisProductVersion,
-                                                            jndiName);
+                  // Ignore
                }
-            }
-            catch (Throwable t)
-            {
-               // Ignore
+
+               if (eisProductName == null)
+                  eisProductName = jndiName;
+
+               if (eisProductVersion == null)
+                  eisProductVersion = jndiName;
+
+               xaResource = new XAResourceWrapperImpl(xaResource,
+                                                      padXid,
+                                                      isSameRMOverrideValue,
+                                                      eisProductName,
+                                                      eisProductVersion,
+                                                      jndiName);
             }
 
-            if (log.isDebugEnabled())
-               log.debug("Recovery XAResource=" + xaResource + " for " + jndiName);
+            log.debugf("Recovery XAResource=%s for %s", xaResource, jndiName);
 
             return new XAResource[]{xaResource};
          }
          else
          {
-            if (log.isDebugEnabled())
-               log.debug("Subject for recovery was null");
+            log.debugf("Subject for recovery was null");
          }
       }
       catch (ResourceException re)
       {
-         if (log.isDebugEnabled())
-            log.debug("Error during recovery", re);
+         log.debugf("Error during recovery", re);
       }
 
       return new XAResource[0];
@@ -244,6 +248,8 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
          {
             if (recoverUserName != null && recoverPassword != null)
             {
+               log.debugf("Recovery user name=%s", recoverUserName);
+
                // User name and password use-case
                Subject subject = new Subject();
 
@@ -259,8 +265,7 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
                // PublicCredentials
                // None
 
-               if (log.isDebugEnabled())
-                  log.debug("Recovery Subject=" + subject);
+               log.debugf("Recovery Subject=%s", subject);
 
                return subject;
             }
@@ -287,25 +292,32 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
                   // Select the domain
                   String domain = recoverSecurityDomain;
 
-                  if (domain != null)
+                  if (domain != null && subjectFactory != null)
                   {
                      // Use the unauthenticated subject to get the real recovery subject instance
                      Subject subject = subjectFactory.createSubject(domain);
+                     
+                     Set<PasswordCredential> pcs = subject.getPrivateCredentials(PasswordCredential.class);
+                     if (pcs != null && pcs.size() > 0)
+                     {
+                        for (PasswordCredential pc : pcs)
+                        {
+                           pc.setManagedConnectionFactory(mcf);
+                        }
+                     }
 
-                     if (log.isDebugEnabled())
-                        log.debug("Recovery Subject=" + subject);
+                     log.debugf("Recovery Subject=%s", subject);
 
                      return subject;
                   }
                   else
                   {
-                     if (log.isDebugEnabled())
-                        log.debug("RecoverySecurityDomain was empty");
+                     log.debugf("RecoverySecurityDomain was empty");
                   }
                }
                catch (Throwable t)
                {
-                  log.debug("Exception during getSubject()" + t.getMessage(), t);
+                  log.debugf("Exception during getSubject() - %s", t.getMessage(), t);
                }
 
                return null;
@@ -315,17 +327,29 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
    }
 
    /**
+    * Register instance for recovery
     *
-    * registeer this impl to passed XAResourceRecoveryRegistry
-    *
-    * @param registry the registry
-    * @param cfJndiName the connection factory jndi name
+    * @param registry The recovery registry
     */
-   public void registerXaRecovery(XAResourceRecoveryRegistry registry, String cfJndiName)
+   public void registerXaRecovery(XAResourceRecoveryRegistry registry)
    {
-      this.jndiName = cfJndiName;
-      registry.addXAResourceRecovery(this);
+      if (registry == null)
+         throw new IllegalArgumentException("Registry is null");
 
+      registry.addXAResourceRecovery(this);
+   }
+
+   /**
+    * Deregister instance for recovery
+    *
+    * @param registry The recovery registry
+    */
+   public void deregisterXaRecovery(XAResourceRecoveryRegistry registry)
+   {
+      if (registry == null)
+         throw new IllegalArgumentException("Registry is null");
+
+      registry.removeXAResourceRecovery(this);
    }
 
    /**
@@ -336,20 +360,22 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
     */
    private ManagedConnection open(Subject s) throws ResourceException
    {
+      log.debugf("Open managed connection (%s)", s);
+
       if (recoverMC == null)
-      {
          recoverMC = mcf.createManagedConnection(s, null);
-      }
 
       return recoverMC;
    }
 
    /**
-   * Close a managed connection
-   * @param mc The managed connection
-   */
+    * Close a managed connection
+    * @param mc The managed connection
+    */
    private void close(ManagedConnection mc)
    {
+      log.debugf("Closing managed connection for recovery (%s)", mc);
+
       if (mc != null)
       {
          try
@@ -358,8 +384,7 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
          }
          catch (ResourceException ire)
          {
-            if (log.isDebugEnabled())
-               log.debug("Error during recovery cleanup", ire);
+            log.debugf("Error during recovery cleanup", ire);
          }
       }
 
@@ -371,12 +396,14 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
          }
          catch (ResourceException ire)
          {
-            if (log.isDebugEnabled())
-               log.debug("Error during recovery destroy", ire);
+            log.debugf("Error during recovery destroy", ire);
          }
       }
 
       mc = null;
+
+      // The managed connection for recovery is now gone
+      recoverMC = null;
    }
 
    /**
@@ -388,8 +415,7 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
     */
    private Object openConnection(ManagedConnection mc, Subject s) throws ResourceException
    {
-      if (log.isDebugEnabled())
-         log.debug("Creating connection for recovery check");
+      log.debugf("Open connection (%s, %s)", mc, s);
 
       return mc.getConnection(s, null);
    }
@@ -401,133 +427,35 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
     */
    private boolean closeConnection(Object c)
    {
+      log.debugf("Closing connection for recovery check (%s)", c);
+
+      boolean forceClose = false;
+
       if (c != null)
       {
-         if (plugin.isValid(c))
+         try
          {
-            return !plugin.close(c);
+            forceClose = !plugin.isValid(c);
+         }
+         catch (ResourceException re)
+         {
+            log.debugf("Error during recovery plugin isValid()", re);
+            forceClose = true;
+         }
+
+         try
+         {
+            plugin.close(c);
+         }
+         catch (ResourceException re)
+         {
+            log.debugf("Error during recovery plugin close()", re);
+            forceClose = true;
          }
       }
-      return false;
-   }
 
-   /**
-    * Get the recoverMC.
-    *
-    * @return the recoverMC.
-    */
-   public final ManagedConnection getRecoverMC()
-   {
-      return recoverMC;
-   }
+      log.debugf("Force close=%s", forceClose);
 
-   /**
-    * Set the recoverMC.
-    *
-    * @param recoverMC The recoverMC to set.
-    */
-   public final void setRecoverMC(ManagedConnection recoverMC)
-   {
-      this.recoverMC = recoverMC;
-   }
-
-   /**
-    * Get the mcf.
-    *
-    * @return the mcf.
-    */
-   public final ManagedConnectionFactory getMcf()
-   {
-      return mcf;
-   }
-
-   /**
-    * Get the padXid.
-    *
-    * @return the padXid.
-    */
-   public final Boolean isPadXid()
-   {
-      return padXid;
-   }
-
-   /**
-    * Get the isSameRMOverrideValue.
-    *
-    * @return the isSameRMOverrideValue.
-    */
-   public final Boolean isSameRMOverrideValue()
-   {
-      return isSameRMOverrideValue;
-   }
-
-   /**
-    * Get the wrapXAResource.
-    *
-    * @return the wrapXAResource.
-    */
-   public final Boolean isWrapXAResource()
-   {
-      return wrapXAResource;
-   }
-
-   /**
-    * Get the jndiName.
-    *
-    * @return the jndiName.
-    */
-   public final String getJndiName()
-   {
-      return jndiName;
-   }
-
-   /**
-    * Get the recoverUserName.
-    *
-    * @return the recoverUserName.
-    */
-   public final String getRecoverUserName()
-   {
-      return recoverUserName;
-   }
-
-   /**
-    * Get the recoverPassword.
-    *
-    * @return the recoverPassword.
-    */
-   public final String getRecoverPassword()
-   {
-      return recoverPassword;
-   }
-
-   /**
-    * Get the recoverSecurityDomain.
-    *
-    * @return the recoverSecurityDomain.
-    */
-   public final String getRecoverSecurityDomain()
-   {
-      return recoverSecurityDomain;
-   }
-
-   /**
-    * Get the subjectFactory.
-    *
-    * @return the subjectFactory.
-    */
-   public final SubjectFactory getSubjectFactory()
-   {
-      return subjectFactory;
-   }
-
-   /**
-    * Set the jndiName.
-    *
-    * @param jndiName The jndiName to set.
-    */
-   public final void setJndiName(String jndiName)
-   {
-      this.jndiName = jndiName;
+      return forceClose;
    }
 }

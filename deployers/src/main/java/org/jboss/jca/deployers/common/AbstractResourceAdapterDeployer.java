@@ -50,6 +50,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.recovery.XAResourceRecoveryImpl;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.validator.Failure;
@@ -147,6 +148,24 @@ public abstract class AbstractResourceAdapterDeployer
    public Configuration getConfiguration()
    {
       return configuration;
+   }
+
+   /**
+    * Get the xAResourceRecoveryRegistry.
+    * @return The value
+    */
+   public XAResourceRecoveryRegistry getXAResourceRecoveryRegistry()
+   {
+      return xaResourceRecoveryRegistry;
+   }
+
+   /**
+    * Set the XAResourcRecoveryRegistry.
+    * @param value The value
+    */
+   public void setXAResourceRecoveryRegistry(XAResourceRecoveryRegistry value)
+   {
+      xaResourceRecoveryRegistry = value;
    }
 
    /**
@@ -1347,7 +1366,7 @@ public abstract class AbstractResourceAdapterDeployer
                                  {
                                     cm = cmf.createNonTransactional(tsl, pool,
                                                                     getSubjectFactory(securityDomain),
-                                       securityDomain,
+                                                                    securityDomain,
                                                                     allocationRetry, allocationRetryWaitMillis);
                                  }
                                  else
@@ -1457,6 +1476,11 @@ public abstract class AbstractResourceAdapterDeployer
                                                 .getPlugin().getClassName(), configProperties, cl);
                                           }
                                        }
+                                       else
+                                       {
+                                          plugin = new DefaultRecoveryPlugin();
+                                       }
+
                                        resourceRecovery = new XAResourceRecoveryImpl(mcf,
                                                                                      padXid,
                                                                                      isSameRMOverride,
@@ -1561,11 +1585,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                                        pool.setName(poolName);
                                     }
+
                                     if (getXAResourceRecoveryRegistry() != null && resourceRecovery != null)
                                     {
-                                       resourceRecovery.registerXaRecovery(getXAResourceRecoveryRegistry(),
-                                          cm.getJndiName());
+                                       resourceRecovery.setJndiName(cm.getJndiName());
+                                       resourceRecovery.registerXaRecovery(getXAResourceRecoveryRegistry());
                                     }
+
                                     if (activateDeployment)
                                     {
                                        org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
@@ -1881,25 +1907,4 @@ public abstract class AbstractResourceAdapterDeployer
     */
    protected abstract Object initAndInject(String value, List<? extends ConfigProperty> cpm, ClassLoader cl)
       throws DeployException;
-
-   /**
-    * Get the xAResourceRecoveryRegistry.
-    *
-    * @return the xAResourceRecoveryRegistry.
-    */
-   public final org.jboss.tm.XAResourceRecoveryRegistry getXAResourceRecoveryRegistry()
-   {
-      return xaResourceRecoveryRegistry;
-   }
-
-   /**
-    * Set the xAResourceRecoveryRegistry.
-    *
-    * @param xAResourceRecoveryRegistry The xAResourceRecoveryRegistry to set.
-    */
-   public final void setXAResourceRecoveryRegistry(XAResourceRecoveryRegistry xAResourceRecoveryRegistry)
-   {
-      xaResourceRecoveryRegistry = xAResourceRecoveryRegistry;
-   }
-
 }

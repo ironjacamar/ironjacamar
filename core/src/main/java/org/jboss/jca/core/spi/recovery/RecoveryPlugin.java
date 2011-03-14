@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,34 +21,43 @@
  */
 package org.jboss.jca.core.spi.recovery;
 
+import javax.resource.ResourceException;
+
 /**
+ * Defines the contract for an XA recovery plugin.
  *
- * A RecoveryPlugin.
+ * An implementation of this SPI can provide feedback to the JCA container
+ * if the physinal connection is still valid to use for getting recovery information
+ * from.
+ *
+ * An implementation of this SPI must have a default constructor and will have
+ * its Java bean properties set after initialization.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public interface RecoveryPlugin
 {
+   /**
+    * Check if the passed connection object instance is still valid, and hence
+    * the underlying physical connection
+    *
+    * @param c The connection instance
+    * @return <code>True</code> if the connection is still valid, otherwise <code>false</code>
+    * @exception ResourceException Thrown in case of an error
+    */
+   public boolean isValid(Object c) throws ResourceException;
 
    /**
+    * Perform a close operation on the passed connection object instance - like
+    * a CCI Connection instance.
     *
-    * Verify if connection is valid
+    * Any error during this operation should result in an exception, which
+    * will force a close of the physical connection to the Enterprise Information System
     *
-    * @param c the connection object
-    * @return true if it's valid, false in case it is not valid or an exception occurred during verification
+    * @param c The connection instance
+    * @exception ResourceException Thrown in case of an error
+    * @see javax.resource.cci.Connection
     */
-   public boolean isValid(Object c);
-
-   /**
-    *
-    * Invoke close on c instance
-    *
-    * @param c the connection object instance
-    * @return true if close completed without problem.
-    *  false in case of failed close or exceptions during close process
-    */
-   public boolean close(Object c);
-
+   public void close(Object c) throws ResourceException;
 }
-
