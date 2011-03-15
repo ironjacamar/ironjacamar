@@ -21,6 +21,12 @@
  */
 package org.jboss.jca.rhq.test;
 
+import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.rhq.core.ManagementRepositoryManager;
+import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
+
 import java.io.File;
 import java.util.Set;
 
@@ -29,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.domain.resource.Resource;
 import org.rhq.core.pc.PluginContainer;
 import org.rhq.core.pc.PluginContainerConfiguration;
@@ -36,6 +43,7 @@ import org.rhq.core.pc.inventory.InventoryManager;
 import org.rhq.core.pc.inventory.RuntimeDiscoveryExecutor;
 import org.rhq.core.pc.plugin.FileSystemPluginFinder;
 import org.rhq.core.pluginapi.configuration.ConfigurationFacet;
+import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 
 import static org.junit.Assert.*;
 
@@ -96,7 +104,7 @@ public class XATestCase
          {
             assertEquals(1, res.getChildResources().size());
             
-            // text mcf
+            // test mcf loadConfiguration
             Resource mcfRes = res.getChildResources().iterator().next();
             ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(mcfRes);
             Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
@@ -115,6 +123,33 @@ public class XATestCase
             assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
             assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
             
+            // test mcf updateConfiguration
+            mcfConfig.put(new PropertySimple("min-pool-size", 5));
+            mcfConfig.put(new PropertySimple("max-pool-size", 15));
+            mcfConfig.put(new PropertySimple("background-validation", true));
+            mcfConfig.put(new PropertySimple("background-validation-minutes", 30));
+            mcfConfig.put(new PropertySimple("blocking-timeout-millis", 10000));
+            mcfConfig.put(new PropertySimple("idle-timeout-minutes", 15));
+            mcfConfig.put(new PropertySimple("prefill", false));
+            mcfConfig.put(new PropertySimple("use-strict-min", true));
+            mcfConfig.put(new PropertySimple("use-fast-fail", true));
+            
+            ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(mcfConfig);
+            mcfConfigFacet.updateResourceConfiguration(updateConfigReport);
+            
+            ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
+            Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
+            PoolConfiguration poolConfig = connector.getManagedConnectionFactories().get(0).getPoolConfiguration();
+            
+            assertEquals(5, poolConfig.getMinSize());
+            assertEquals(15, poolConfig.getMaxSize());
+            assertTrue(poolConfig.isBackgroundValidation());
+            assertEquals(30, poolConfig.getBackgroundValidationMinutes());
+            assertEquals(10000, poolConfig.getBlockingTimeout());
+            assertEquals(15 * 60 * 1000L, poolConfig.getIdleTimeout());
+            assertFalse(poolConfig.isPrefill());
+            assertTrue(poolConfig.isStrictMin());
+            assertTrue(poolConfig.isUseFastFail());
          }
          if (res.getName().equals("XAAdminObjectImpl"))
          {

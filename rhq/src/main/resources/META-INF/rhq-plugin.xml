@@ -97,7 +97,7 @@
 
     <c:simple-property name="blocking-timeout-millis" displayName="Blocking Timeout in Milliseconds"
                        units="milliseconds" defaultValue="30000"
-                       type="integer" required="false">
+                       type="long" required="false">
         <c:description>
             Indicates the maximum time in milliseconds to block while waiting for a connection before throwing
             an exception. Note that this blocks only while waiting for a permit for a connection, and will never
@@ -386,7 +386,7 @@
 
             <!-- Resource Adpater -->
             <service name="Resource Adapter" discovery="org.jboss.jca.rhq.ra.RaResourceDiscoveryComponent" 
-                class="org.jboss.jca.rhq.ra.RaResourceComponent" supportsManualAdd="true">
+                class="org.jboss.jca.rhq.ra.RaResourceComponent">
                 
                 <resource-configuration>
                     <c:group name="general" displayName="General">
@@ -401,7 +401,7 @@
             
             <!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
             <service name="Connection Factory" discovery="org.jboss.jca.rhq.ra.CfResourceDiscoveryComponent"
-                class="org.jboss.jca.rhq.ra.CfResourceComponent" supportsManualAdd="true">
+                class="org.jboss.jca.rhq.ra.CfResourceComponent">
             
                 <resource-configuration>
                     <c:group name="general" displayName="General">
@@ -447,7 +447,7 @@
                             <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true"/>
                         </c:group>
                          
-                        <c:group name="conn_pool" displayName="Connection Pool">
+                        <c:group name="conn-pool" displayName="Connection Pool">
                              &datasourceAndConnectionFactoryConnectionResourceConfigProps;
                              &datasourceAndConnectionFactoryAdvancedResourceConfigProps;
                         </c:group>

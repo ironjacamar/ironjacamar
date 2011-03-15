@@ -31,6 +31,7 @@ import java.util.Set;
 import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.Property;
 import org.rhq.core.domain.configuration.PropertyList;
 import org.rhq.core.domain.configuration.PropertyMap;
 import org.rhq.core.domain.configuration.PropertySimple;
@@ -253,6 +254,123 @@ public abstract class AbstractResourceComponent extends BaseResourceComponent
          return getResourceContext().getPluginConfiguration();
       else
          return null;
+   }
+   
+   /**
+    * Updates the ConfigProperty from value of ProperyList to the jcaObj.
+    * 
+    * @param jcaObj the JCA object which the value will be update to
+    * @param configPropList the PropertyList where the value comes from
+    * @param configProperties The ConfigProperty list
+    */
+   protected void updatePropertyList(Object jcaObj, PropertyList configPropList, List<ConfigProperty> configProperties)
+   {
+      for (Property prop : configPropList.getList())
+      {
+         PropertyMap propMap = (PropertyMap)prop;
+         String configName = propMap.getSimpleValue("name", null);
+         String type = propMap.getSimpleValue("type", null);
+         String valueString = propMap.getSimpleValue("value", null);
+         ConfigProperty configProp = getConfigPropertyByName(configName, configProperties);
+         if (null == configProp)
+         {
+            throw new IllegalStateException("Can not find ConfigProperty with name: " + configName);
+         }
+         if (!configProp.isDynamic())
+         {
+            logger.warn("ConfigProperty with name: " + configName + " is not updatable, ignore it.");
+            continue;
+         }
+         try
+         {
+            setPropertyValue(jcaObj, configName, type, valueString);
+         }
+         catch (Exception e)
+         {
+            throw new IllegalStateException("Can not update ConfigProperty value.", e);
+         }
+      }
+   }
+   
+   private void setPropertyValue(Object jcaObj, String name, String type, String valueString) throws Exception
+   {
+      Class<?> typeCls = Class.forName(type);
+      Object value = convertObjValue(typeCls, valueString);
+      String methodNameBase = name.substring(0, 1).toUpperCase() + name.substring(1);
+      String methodName = "set" + methodNameBase;
+      Method setMtd = jcaObj.getClass().getMethod(methodName, typeCls);
+      setMtd.invoke(jcaObj, value);
+   }
+
+   /**
+    * convertObjValue
+    * 
+    * @param typeCls Class.
+    *        the Class is one of the <code>config-property-typeType</code> defined in <code>connector_1.6.xsd</code>
+    * @param valueString value string
+    * @return value in typeCls
+    */
+   private Object convertObjValue(Class<?> typeCls, String valueString)
+   {
+      if (typeCls.equals(String.class))
+      {
+         return valueString;
+      }
+      else if (typeCls.equals(Character.class))
+      {
+         return Character.valueOf(valueString.charAt(0));
+      }
+      else if (typeCls.equals(Integer.class))
+      {
+         return Integer.valueOf(valueString);
+      }
+      else if (typeCls.equals(Boolean.class))
+      {
+         return Boolean.valueOf(valueString);
+      }
+      else if (typeCls.equals(Double.class))
+      {
+         return Double.valueOf(valueString);
+      }
+      else if (typeCls.equals(Byte.class))
+      {
+         return Byte.valueOf(valueString);
+      }
+      else if (typeCls.equals(Short.class))
+      {
+         return Short.valueOf(valueString);
+      }
+      else if (typeCls.equals(Long.class))
+      {
+         return Long.valueOf(valueString);
+      }
+      else if (typeCls.equals(Float.class))
+      {
+         return Float.valueOf(valueString);
+      }
+      else
+      {
+         throw new IllegalStateException("Unknown class: " + typeCls);
+      }
+   }
+
+   /**
+    * getConfigPropertyByName
+    * 
+    * @param configName ConfigProperty name
+    * @param configProperties ConfigProperty list
+    * @return ConfigProperty with name configName, otherwise null.
+    */
+   protected ConfigProperty getConfigPropertyByName(String configName, List<ConfigProperty> configProperties)
+   {
+      for (ConfigProperty configProperty : configProperties)
+      {
+         if (configName.equals(configProperty.getName()))
+         {
+            return configProperty;
+         }
+      }
+      return null;
    }
 
 }
