@@ -42,7 +42,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
 
    private final Credential credential;
 
-   private final Extension plugin;
+   private final Extension recoverPlugin;
 
    private final Boolean noRecovery;
 
@@ -50,15 +50,15 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
     * Create a new Recovery.
     *
     * @param credential credential
-    * @param plugin plugin
+    * @param recoverPlugin plugin
     * @param noRecovery niRecovery
     * @throws ValidateException in case of not valid metadata creation
     */
-   public Recovery(Credential credential, Extension plugin, Boolean noRecovery) throws ValidateException
+   public Recovery(Credential credential, Extension recoverPlugin, Boolean noRecovery) throws ValidateException
    {
       super();
       this.credential = credential;
-      this.plugin = plugin;
+      this.recoverPlugin = recoverPlugin;
       this.noRecovery = noRecovery;
       this.validate();
    }
@@ -78,9 +78,9 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
     *
     * @return the plugin.
     */
-   public final Extension getPlugin()
+   public final Extension getRecoverPlugin()
    {
-      return plugin;
+      return recoverPlugin;
    }
 
    /**
@@ -105,7 +105,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       final int prime = 31;
       int result = 1;
       result = prime * result + ((noRecovery == null) ? 0 : noRecovery.hashCode());
-      result = prime * result + ((plugin == null) ? 0 : plugin.hashCode());
+      result = prime * result + ((recoverPlugin == null) ? 0 : recoverPlugin.hashCode());
       result = prime * result + ((credential == null) ? 0 : credential.hashCode());
       return result;
    }
@@ -127,12 +127,12 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       }
       else if (!noRecovery.equals(other.noRecovery))
          return false;
-      if (plugin == null)
+      if (recoverPlugin == null)
       {
-         if (other.plugin != null)
+         if (other.recoverPlugin != null)
             return false;
       }
-      else if (!plugin.equals(other.plugin))
+      else if (!recoverPlugin.equals(other.recoverPlugin))
          return false;
       if (credential == null)
       {
@@ -147,7 +147,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
    @Override
    public String toString()
    {
-      return "Recovery [credential=" + credential + ", plugin=" + plugin + ", noRecovery=" + noRecovery + "]";
+      return "Recovery [credential=" + credential + ", plugin=" + recoverPlugin + ", noRecovery=" + noRecovery + "]";
    }
 
    /**
@@ -173,7 +173,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       RECOVER_CREDENTIAL("recover-credential"),
       /** plugin tag */
 
-      PLUGIN("plugin");
+      RECOVER_PLUGIN("recover-plugin");
 
       private final String name;
 

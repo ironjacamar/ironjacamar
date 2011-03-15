@@ -126,7 +126,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="security" type="credentialType" minOccurs="0">
+      <xs:element name="security" type="dsSecurityType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -781,7 +781,7 @@
   </xs:complexType>
   <xs:complexType name="recoverType">
     <xs:sequence>
-      <xs:element name="recover-credential" type="credentialType">
+      <xs:element name="recover-credential" type="dsSecurityType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -791,7 +791,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="plugin" type="extensionType">
+      <xs:element name="recover-plugin" type="extensionType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[

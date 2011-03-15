@@ -1446,16 +1446,17 @@ public abstract class AbstractResourceAdapterDeployer
                                        }
 
                                        RecoveryPlugin plugin = null;
-                                       if (recoveryMD != null && recoveryMD.getPlugin() != null)
+                                       if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
                                        {
                                           List<ConfigProperty> configProperties = null;
                                           if (recoveryMD
-                                             .getPlugin()
+                                             .getRecoverPlugin()
                                              .getConfigPropertiesMap() != null)
                                           {
-                                             configProperties = new ArrayList<ConfigProperty>(recoveryMD.getPlugin()
+                                             configProperties = new ArrayList<ConfigProperty>(recoveryMD
+                                                .getRecoverPlugin()
                                                 .getConfigPropertiesMap().size());
-                                             for (Entry<String, String> property : recoveryMD.getPlugin()
+                                             for (Entry<String, String> property : recoveryMD.getRecoverPlugin()
                                                 .getConfigPropertiesMap().entrySet())
                                              {
                                                 ConfigProperty c = new ConfigPropertyImpl(
@@ -1473,7 +1474,7 @@ public abstract class AbstractResourceAdapterDeployer
                                              }
 
                                              plugin = (RecoveryPlugin) initAndInject(recoveryMD
-                                                .getPlugin().getClassName(), configProperties, cl);
+                                                .getRecoverPlugin().getClassName(), configProperties, cl);
                                           }
                                        }
                                        else

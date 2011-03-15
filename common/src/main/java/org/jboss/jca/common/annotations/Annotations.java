@@ -284,7 +284,6 @@ public class Annotations
       // Vendor name
       XsdString vendorName = new XsdString(conAnnotation.vendorName(), null);
 
-
       // Description
       ArrayList<LocalizedXsdString> descriptions = null;
       if (conAnnotation.description() != null && conAnnotation.description().length != 0)
@@ -350,8 +349,8 @@ public class Annotations
             (conAnnotation.largeIcon() != null && conAnnotation.largeIcon().length != 0))
       {
          icons = new ArrayList<Icon>(
-               (conAnnotation.smallIcon() == null ? 0 : conAnnotation.smallIcon().length) +
-                     (conAnnotation.largeIcon() == null ? 0 : conAnnotation.largeIcon().length));
+                                     (conAnnotation.smallIcon() == null ? 0 : conAnnotation.smallIcon().length) +
+                                        (conAnnotation.largeIcon() == null ? 0 : conAnnotation.largeIcon().length));
          for (String smallIconAnnotation : conAnnotation.smallIcon())
          {
             icons.add(new Icon(Path.valueOf(smallIconAnnotation), null, null));
@@ -374,21 +373,24 @@ public class Annotations
             .authMechanisms());
 
       OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(connectionDefinitions,
-            transactionSupport, authenticationMechanisms, reauthenticationSupport, null);
+                                                                                        transactionSupport,
+                                                                                        authenticationMechanisms,
+                                                                                        reauthenticationSupport, null);
 
       // Security permission
       ArrayList<SecurityPermission> securityPermissions = processSecurityPermissions(conAnnotation
             .securityPermissions());
 
       ResourceAdapter1516Impl resourceAdapter = new ResourceAdapter1516Impl(raClass, configProperties,
-            outboundResourceadapter, inboundResourceadapter, adminObjs, securityPermissions, null);
+                                                                            outboundResourceadapter,
+                                                                            inboundResourceadapter, adminObjs,
+                                                                            securityPermissions, null);
 
       XsdString resourceadapterVersion = new XsdString("1.6", null);
       return new Connector16Impl("", vendorName, eisType, resourceadapterVersion, license, resourceAdapter,
-            requiredWorkContexts, false, descriptions, displayNames, icons, null);
+                                 requiredWorkContexts, false, descriptions, displayNames, icons, null);
 
    }
-
 
    private ArrayList<SecurityPermission> processSecurityPermissions(
          javax.resource.spi.SecurityPermission[] securityPermissionAnotations)
@@ -401,8 +403,11 @@ public class Annotations
             securityPermissions = new ArrayList<SecurityPermission>(securityPermissionAnotations.length);
             for (javax.resource.spi.SecurityPermission securityPermission : securityPermissionAnotations)
             {
-               SecurityPermission spmd = new SecurityPermissionImpl(null, new XsdString(
-                     securityPermission.permissionSpec(), null), null);
+               SecurityPermission spmd = new SecurityPermissionImpl(
+                                                                    null,
+                                                                    new XsdString(
+                                                                                  securityPermission.permissionSpec(),
+                                                                                  null), null);
                securityPermissions.add(spmd);
             }
             securityPermissions.trimToSize();
@@ -433,8 +438,10 @@ public class Annotations
                   .authMechanism(), null);
 
             authenticationMechanisms.add(new AuthenticationMechanismImpl(descriptions, authenticationMechanismType,
-                  CredentialInterfaceEnum.valueOf(authMechanismAnnotation.credentialInterface()
-                        .name()), null));
+                                                                         CredentialInterfaceEnum
+                                                                            .valueOf(authMechanismAnnotation
+                                                                               .credentialInterface()
+                                                                               .name()), null));
          }
       }
       return authenticationMechanisms;
@@ -457,7 +464,8 @@ public class Annotations
          if (values.size() == 1)
          {
             Annotation annotation = values.iterator().next();
-            ConnectionDefinitions connectionDefinitionsAnnotation = (ConnectionDefinitions) annotation.getAnnotation();
+            ConnectionDefinitions connectionDefinitionsAnnotation = (ConnectionDefinitions) annotation
+               .getAnnotation();
 
             if (trace)
                log.trace("Processing: " + connectionDefinitionsAnnotation);
@@ -513,7 +521,8 @@ public class Annotations
    {
       ArrayList<ConnectionDefinition> connectionDefinitions = null;
 
-      Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.ConnectionDefinition.class);
+      Collection<Annotation> values = annotationRepository
+         .getAnnotation(javax.resource.spi.ConnectionDefinition.class);
       if (values != null)
       {
          connectionDefinitions =
@@ -539,7 +548,8 @@ public class Annotations
          ArrayList<? extends ConfigProperty> configProperty)
       throws Exception
    {
-      javax.resource.spi.ConnectionDefinition cd = (javax.resource.spi.ConnectionDefinition) annotation.getAnnotation();
+      javax.resource.spi.ConnectionDefinition cd = (javax.resource.spi.ConnectionDefinition) annotation
+         .getAnnotation();
 
       if (trace)
          log.trace("Processing: " + annotation);
@@ -580,8 +590,9 @@ public class Annotations
       XsdString connectionImplClass = new XsdString(cd.connectionImpl().getName(), null);
       XsdString connectionfactoryImplClass = new XsdString(cd.connectionFactoryImpl().getName(), null);
       XsdString connectionInterface = new XsdString(cd.connection().getName(), null);
-      return new ConnectionDefinitionImpl(managedconnectionfactoryClass, configProperties, connectionfactoryInterface,
-            connectionfactoryImplClass, connectionInterface, connectionImplClass, null);
+      return new ConnectionDefinitionImpl(managedconnectionfactoryClass, configProperties,
+                                          connectionfactoryInterface,
+                                          connectionfactoryImplClass, connectionInterface, connectionImplClass, null);
    }
 
    /**
@@ -591,7 +602,8 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private Map<Metadatas, ArrayList<ConfigProperty16>> processConfigProperty(AnnotationRepository annotationRepository,
+   private Map<Metadatas, ArrayList<ConfigProperty16>> processConfigProperty(
+      AnnotationRepository annotationRepository,
                                                                              ClassLoader classLoader)
       throws Exception
    {
@@ -610,7 +622,8 @@ public class Annotations
 
             XsdString configPropertyValue = XsdString.NULL_XSDSTRING;
             XsdString configPropertyName = new XsdString(getConfigPropertyName(annotation), null);
-            if (configPropertyAnnotation.defaultValue() != null && !configPropertyAnnotation.defaultValue().equals(""))
+            if (configPropertyAnnotation.defaultValue() != null &&
+                !configPropertyAnnotation.defaultValue().equals(""))
                configPropertyValue = new XsdString(configPropertyAnnotation.defaultValue(), null);
             XsdString configPropertyType;
             if (!Object.class.equals(configPropertyAnnotation.type()))
@@ -643,9 +656,10 @@ public class Annotations
             if (hasInterface(attachedClass, "javax.resource.spi.ResourceAdapter"))
             {
                ConfigProperty16 cfgMeta = new ConfigProperty16Impl(descriptions, configPropertyName,
-                     configPropertyType,
-                     configPropertyValue, configPropertyIgnore, configPropertySupportsDynamicUpdates,
-                     configPropertyConfidential, null);
+                                                                   configPropertyType,
+                                                                   configPropertyValue, configPropertyIgnore,
+                                                                   configPropertySupportsDynamicUpdates,
+                                                                   configPropertyConfidential, null);
                if (valueMap.get(Metadatas.RA) == null)
                {
                   valueMap.put(Metadatas.RA, new ArrayList<ConfigProperty16>());
@@ -655,9 +669,11 @@ public class Annotations
             else
             {
                ConfigProperty16 cfgMeta = new ConfigProperty16Impl(descriptions, configPropertyName,
-                     configPropertyType,
-                     configPropertyValue, configPropertyIgnore, configPropertySupportsDynamicUpdates,
-                     configPropertyConfidential, null, attachedClassName);
+                                                                   configPropertyType,
+                                                                   configPropertyValue, configPropertyIgnore,
+                                                                   configPropertySupportsDynamicUpdates,
+                                                                   configPropertyConfidential, null,
+                                                                   attachedClassName);
                if (hasInterface(attachedClass, "javax.resource.spi.ManagedConnectionFactory"))
                {
                   if (valueMap.get(Metadatas.MANAGED_CONN_FACTORY) == null)
@@ -752,16 +768,19 @@ public class Annotations
             String aoClassName = annotation.getClassName();
             Class<?> aClass = Class.forName(aoClassName, true, classLoader);
             List<Class<?>> declaredInterfaces = null;
-            if (aClass.getInterfaces() != null && aClass.getInterfaces().length != 0) {
+            if (aClass.getInterfaces() != null && aClass.getInterfaces().length != 0)
+            {
                declaredInterfaces = Arrays.asList(aClass.getInterfaces());
 
-            } else {
+            }
+            else
+            {
                declaredInterfaces = Collections.emptyList();
             }
             if (a.adminObjectInterfaces() != null && a.adminObjectInterfaces().length > 0)
             {
                for (Class<?> annotatedInterface : a.adminObjectInterfaces())
-            {
+               {
                   if (declaredInterfaces.contains(annotatedInterface) &&
                       !annotatedInterface.equals(Serializable.class) &&
                       !annotatedInterface.equals(Externalizable.class))
@@ -841,8 +860,8 @@ public class Annotations
          for (Class asClass : activation.messageListeners())
          {
             Activationspec16 asMeta = new Activationspec16Impl(new XsdString(annotation.getClassName(), null), null,
-                  validProperties,
-                  null);
+                                                               validProperties,
+                                                               null);
             MessageListener mlMeta = new MessageListenerImpl(new XsdString(asClass.getName(), null), asMeta, null);
             messageListeners.add(mlMeta);
 

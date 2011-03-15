@@ -547,13 +547,15 @@ public abstract class AbstractDsDeployer
          }
          RecoveryPlugin plugin = null;
 
-         if (recoveryMD != null && recoveryMD.getPlugin() != null)
+         if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
          {
             List<ConfigProperty> configProperties = null;
-            if (recoveryMD.getPlugin().getConfigPropertiesMap() != null)
+            if (recoveryMD.getRecoverPlugin().getConfigPropertiesMap() != null)
             {
-               configProperties = new ArrayList<ConfigProperty>(recoveryMD.getPlugin().getConfigPropertiesMap().size());
-               for (Entry<String, String> property : recoveryMD.getPlugin().getConfigPropertiesMap().entrySet())
+               configProperties = new ArrayList<ConfigProperty>(recoveryMD.getRecoverPlugin()
+                  .getConfigPropertiesMap().size());
+               for (Entry<String, String> property : recoveryMD.getRecoverPlugin().getConfigPropertiesMap()
+                  .entrySet())
                {
                   ConfigProperty c = new ConfigPropertyImpl(null,
                                                             new XsdString(property.getKey(), null),
@@ -563,7 +565,8 @@ public abstract class AbstractDsDeployer
                   configProperties.add(c);
                }
 
-               plugin = (RecoveryPlugin) initAndInject(recoveryMD.getPlugin().getClassName(), configProperties, cl);
+               plugin = (RecoveryPlugin) initAndInject(recoveryMD.getRecoverPlugin().getClassName(),
+                  configProperties, cl);
             }
          }
          else

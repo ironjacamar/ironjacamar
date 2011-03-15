@@ -610,7 +610,7 @@ public class IronJacamarParserTestCase
             assertThat(recovery, not(isNull()));
             assertThat(recovery.getNoRecovery(), is(false));
             Credential security = recovery.getCredential();
-            Extension plugin = recovery.getPlugin();
+            Extension plugin = recovery.getRecoverPlugin();
             assertThat(security.getUserName(), is("myUserName"));
             assertThat(security.getPassword(), is("myPassword"));
             assertThat(security.getSecurityDomain(), is("mySecurityDomain"));

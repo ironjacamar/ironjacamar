@@ -652,7 +652,7 @@ public abstract class AbstractParser
                      security = parseCredential(reader);
                      break;
                   }
-                  case PLUGIN : {
+                  case RECOVER_PLUGIN : {
                      plugin = parseExtension(reader, tag.getLocalName());
                      break;
                   }

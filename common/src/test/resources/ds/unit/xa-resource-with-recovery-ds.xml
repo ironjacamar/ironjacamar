@@ -21,9 +21,9 @@
          <password>myPassword</password>
          <security-domain>mySecurityDomain</security-domain>
       </recover-credential>
-      <plugin class-name="myClassName">
+      <recover-plugin class-name="myClassName">
          <config-property name="MyProperty">MyPropertyValue</config-property>
-      </plugin>
+      </recover-plugin>
     </recovery>
   </xa-datasource>
 </datasources>
