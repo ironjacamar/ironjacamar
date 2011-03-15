@@ -61,6 +61,7 @@ import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
+import org.jboss.tm.XAResourceRecovery;
 import org.jboss.tm.XAResourceRecoveryRegistry;
 
 /**
@@ -156,6 +157,7 @@ public abstract class AbstractDsDeployer
       {
          List<Object> cfs = new ArrayList<Object>(1);
          List<String> jndis = new ArrayList<String>(1);
+         List<XAResourceRecovery> recoveryModules = new ArrayList<XAResourceRecovery>(1);
 
          if (uniqueJdbcLocalId != null)
          {
@@ -215,7 +217,13 @@ public abstract class AbstractDsDeployer
                         jndiName = "java:/" + jndiName;
                      }
 
-                     Object cf = deployXADataSource(xaDataSource, jndiName, uniqueJdbcXAId, jdbcXADeploymentCl);
+                     XAResourceRecovery recovery = null;
+                     Object cf = deployXADataSource(xaDataSource, 
+                                                    jndiName, uniqueJdbcXAId, 
+                                                    recovery,
+                                                    jdbcXADeploymentCl);
+
+                     recoveryModules.add(recovery);
 
                      bindConnectionFactory(deploymentName, jndiName, cf);
 
@@ -236,7 +244,10 @@ public abstract class AbstractDsDeployer
          }
 
          return new CommonDeployment(url, deploymentName, true, null, null, cfs.toArray(new Object[cfs.size()]),
-                                     jndis.toArray(new String[jndis.size()]), null, null, null, parentClassLoader,
+                                     jndis.toArray(new String[jndis.size()]), 
+                                     null, null, 
+                                     recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
+                                     null, parentClassLoader,
                                      log);
       }
       catch (Throwable t)
@@ -370,11 +381,13 @@ public abstract class AbstractDsDeployer
     * @param ds The datasource
     * @param jndiName The JNDI name
     * @param uniqueId The unique id for the resource adapter
+    * @param recovery The recovery module
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId, ClassLoader cl)
+   private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId,
+                                     XAResourceRecovery recovery, ClassLoader cl)
       throws Throwable
    {
       log.debug("XaDataSource=" + ds);
@@ -513,10 +526,13 @@ public abstract class AbstractDsDeployer
          defaultUserName = ds.getSecurity().getUserName();
          defaultPassword = ds.getSecurity().getPassword();
       }
+
       String recoverSecurityDomain = defaultSecurityDomain;
       String recoverUser = defaultUserName;
       String recoverPassword = defaultPassword;
-      XAResourceRecoveryImpl resourceRecovery = null;
+
+      XAResourceRecoveryImpl recoveryImpl = null;
+
       if (recoveryMD == null || !recoveryMD.getNoRecovery())
       {
          // If we have an XAResourceRecoveryRegistry and the deployment is XA
@@ -543,8 +559,8 @@ public abstract class AbstractDsDeployer
             {
                log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
             }
-
          }
+
          RecoveryPlugin plugin = null;
 
          if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
@@ -574,22 +590,24 @@ public abstract class AbstractDsDeployer
             plugin = new DefaultRecoveryPlugin();
          }
 
-         resourceRecovery = new XAResourceRecoveryImpl(mcf,
-                                                       padXid,
-                                                       isSameRMOverride,
-                                                       wrapXAResource,
-                                                       recoverUser,
-                                                       recoverPassword,
-                                                       recoverSecurityDomain,
-                                                       getSubjectFactory(recoverSecurityDomain),
-                                                       plugin);
+         recoveryImpl = new XAResourceRecoveryImpl(mcf,
+                                                   padXid,
+                                                   isSameRMOverride,
+                                                   wrapXAResource,
+                                                   recoverUser,
+                                                   recoverPassword,
+                                                   recoverSecurityDomain,
+                                                   getSubjectFactory(recoverSecurityDomain),
+                                                   plugin);
 
       }
 
-      if (getXAResourceRecoveryRegistry() != null && resourceRecovery != null)
+      if (getXAResourceRecoveryRegistry() != null && recoveryImpl != null)
       {
-         resourceRecovery.setJndiName(cm.getJndiName());
-         resourceRecovery.registerXaRecovery(getXAResourceRecoveryRegistry());
+         recoveryImpl.setJndiName(cm.getJndiName());
+         getXAResourceRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
+         
+         recovery = recoveryImpl;
       }
 
       // ConnectionFactory

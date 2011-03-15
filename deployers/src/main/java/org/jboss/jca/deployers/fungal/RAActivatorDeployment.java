@@ -36,6 +36,8 @@ import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
+import org.jboss.tm.XAResourceRecovery;
+import org.jboss.tm.XAResourceRecoveryRegistry;
 
 /**
  * A resource adapter activator deployment for JCA/SJC
@@ -56,6 +58,8 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
     * @param cfJndis The JNDI names for the connection factories
     * @param aos The admin objects
     * @param aoJndis The JNDI names for the admin objects
+    * @param recoveryModules The recovery modules
+    * @param recoveryRegistry The recovery registry
     * @param managementRepository The management repository
     * @param connector The management connector instance
     * @param server The MBeanServer
@@ -68,11 +72,13 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
                                 MetadataRepository mdr, ResourceAdapterRepository resourceAdapterRepository,
                                 Object[] cfs, String[] cfJndis, 
                                 Object[] aos, String[] aoJndis, 
+                                XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                                 ManagementRepository managementRepository, Connector connector,
                                 MBeanServer server, List<ObjectName> objectNames,
                                 ClassLoader cl, Logger log)
    {
       super(deployment, deploymentName, true, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
-            cfs, cfJndis, aos, aoJndis, managementRepository, connector, server, objectNames, cl, log);
+            cfs, cfJndis, aos, aoJndis, recoveryModules, recoveryRegistry, managementRepository,
+            connector, server, objectNames, cl, log);
    }
 }

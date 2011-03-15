@@ -181,7 +181,10 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                                                           uniqueJdbcLocalId, uniqueJdbcXAId,
                                                           dataSources, parent);
 
-         return new DsXmlDeployment(c.getURL(), c.getDeploymentName(), c.getCfs(), c.getCfJndiNames(), c.getCl());
+         return new DsXmlDeployment(c.getURL(), c.getDeploymentName(), 
+                                    c.getCfs(), c.getCfJndiNames(),
+                                    c.getRecovery(), getXAResourceRecoveryRegistry(),
+                                    c.getCl());
       }
       catch (DeployException de)
       {

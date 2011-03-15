@@ -38,6 +38,8 @@ import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
+import org.jboss.tm.XAResourceRecovery;
+import org.jboss.tm.XAResourceRecoveryRegistry;
 
 import com.github.fungal.api.util.FileUtil;
 
@@ -64,6 +66,8 @@ public class RADeployment extends AbstractFungalDeployment
     * @param cfJndis The JNDI names of the connection factories
     * @param aos The admin objects
     * @param aoJndis The JNDI names of the admin objects
+    * @param recoveryModules The recovery modules
+    * @param recoveryRegistry The recovery registry
     * @param tmpDirectory The temporary directory
     * @param managementRepository The management repository
     * @param connector The management connector instance
@@ -78,13 +82,15 @@ public class RADeployment extends AbstractFungalDeployment
                        ResourceAdapterRepository resourceAdapterRepository,
                        Object[] cfs, String[] cfJndis,
                        Object[] aos, String[] aoJndis,
+                       XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                        File tmpDirectory,
                        ManagementRepository managementRepository, Connector connector,
                        MBeanServer server, List<ObjectName> objectNames,
                        ClassLoader cl, Logger log)
    {
       super(deployment, deploymentName, activator, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
-            cfs, cfJndis, aos, aoJndis, managementRepository, connector, server, objectNames, cl, log);
+            cfs, cfJndis, aos, aoJndis, recoveryModules, recoveryRegistry, managementRepository,
+            connector, server, objectNames, cl, log);
 
       this.tmpDirectory = tmpDirectory;
    }

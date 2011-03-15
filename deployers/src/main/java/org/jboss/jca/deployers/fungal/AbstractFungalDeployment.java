@@ -38,6 +38,8 @@ import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
+import org.jboss.tm.XAResourceRecovery;
+import org.jboss.tm.XAResourceRecoveryRegistry;
 
 import com.github.fungal.spi.deployers.Deployment;
 
@@ -86,6 +88,12 @@ public abstract class AbstractFungalDeployment implements Deployment
    /** The JNDI names of the admin objects */
    protected String[] aoJndis;
 
+   /** The recovery modules */
+   protected XAResourceRecovery[] recoveryModules;
+
+   /** The recovery registry */
+   protected XAResourceRecoveryRegistry recoveryRegistry;
+
    /** The management repository */
    protected ManagementRepository managementRepository;
 
@@ -115,6 +123,8 @@ public abstract class AbstractFungalDeployment implements Deployment
     * @param cfJndis The JNDI names of the connection factories
     * @param aos The admin objects
     * @param aoJndis The JNDI names of the admin objects
+    * @param recoveryModules The recovery modules
+    * @param recoveryRegistry The recovery registry
     * @param managementRepository The management repository
     * @param connector The management connector instance
     * @param server The MBeanServer
@@ -128,6 +138,7 @@ public abstract class AbstractFungalDeployment implements Deployment
                                    ResourceAdapterRepository resourceAdapterRepository,
                                    Object[] cfs, String[] cfJndis,
                                    Object[] aos, String[] aoJndis,
+                                   XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                                    ManagementRepository managementRepository, Connector connector,
                                    MBeanServer server, List<ObjectName> objectNames,
                                    ClassLoader cl, Logger log)
@@ -144,6 +155,8 @@ public abstract class AbstractFungalDeployment implements Deployment
       this.cfJndis = cfJndis;
       this.aos = aos;
       this.aoJndis = aoJndis;
+      this.recoveryModules = recoveryModules;
+      this.recoveryRegistry = recoveryRegistry;
       this.managementRepository = managementRepository;
       this.connector = connector;
       this.server = server;
@@ -193,6 +206,14 @@ public abstract class AbstractFungalDeployment implements Deployment
                {
                   log.warn("Exception during unregistering deployment", t);
                }
+            }
+         }
+
+         if (recoveryRegistry != null && recoveryModules != null)
+         {
+            for (XAResourceRecovery recovery : recoveryModules)
+            {
+               recoveryRegistry.removeXAResourceRecovery(recovery);
             }
          }
 

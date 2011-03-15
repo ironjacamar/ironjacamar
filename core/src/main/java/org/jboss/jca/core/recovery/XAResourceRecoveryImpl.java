@@ -43,7 +43,6 @@ import org.jboss.security.SecurityContextFactory;
 import org.jboss.security.SimplePrincipal;
 import org.jboss.security.SubjectFactory;
 import org.jboss.tm.XAResourceRecovery;
-import org.jboss.tm.XAResourceRecoveryRegistry;
 
 /**
  * An XAResourceRecovery implementation.
@@ -324,32 +323,6 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
             }
          }
       });
-   }
-
-   /**
-    * Register instance for recovery
-    *
-    * @param registry The recovery registry
-    */
-   public void registerXaRecovery(XAResourceRecoveryRegistry registry)
-   {
-      if (registry == null)
-         throw new IllegalArgumentException("Registry is null");
-
-      registry.addXAResourceRecovery(this);
-   }
-
-   /**
-    * Deregister instance for recovery
-    *
-    * @param registry The recovery registry
-    */
-   public void deregisterXaRecovery(XAResourceRecoveryRegistry registry)
-   {
-      if (registry == null)
-         throw new IllegalArgumentException("Registry is null");
-
-      registry.removeXAResourceRecovery(this);
    }
 
    /**

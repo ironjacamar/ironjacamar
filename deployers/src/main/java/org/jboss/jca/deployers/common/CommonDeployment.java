@@ -29,6 +29,7 @@ import java.util.Arrays;
 import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
+import org.jboss.tm.XAResourceRecovery;
 
 /**
  *
@@ -58,6 +59,8 @@ public class CommonDeployment
 
    private final String[] aoJndiNames;
 
+   private final XAResourceRecovery[] recoveryModules;
+
    private final Connector connector;
 
    private final ClassLoader cl;
@@ -76,6 +79,7 @@ public class CommonDeployment
     * @param cfJndiNames The JNDI names for the connection factories
     * @param aos The admin objects
     * @param aoJndiNames The JNDI names for the admin objects
+    * @param recoveryModules The recovery modules
     * @param connector The management view of a connector
     * @param cl cl
     * @param log log
@@ -84,6 +88,7 @@ public class CommonDeployment
                            ResourceAdapter resourceAdapter, String resourceAdapterKey,
                            Object[] cfs, String[] cfJndiNames, 
                            Object[] aos, String[] aoJndiNames,
+                           XAResourceRecovery[] recoveryModules,
                            Connector connector,
                            ClassLoader cl, Logger log)
    {
@@ -97,6 +102,7 @@ public class CommonDeployment
       this.cfJndiNames = cfJndiNames != null ? Arrays.copyOf(cfJndiNames, cfJndiNames.length) : null;
       this.aos = aos != null ? Arrays.copyOf(aos, aos.length) : null;
       this.aoJndiNames = aoJndiNames != null ? Arrays.copyOf(aoJndiNames, aoJndiNames.length) : null;
+      this.recoveryModules = recoveryModules;
       this.connector = connector;
       this.cl = cl;
       this.log = log;
@@ -192,6 +198,15 @@ public class CommonDeployment
    }
 
    /**
+    * Get the recovery modules.
+    * @return The value
+    */
+   public final XAResourceRecovery[] getRecovery()
+   {
+      return recoveryModules;
+   }
+ 
+  /**
     * Get the management view of the connector
     * @return The value
     */

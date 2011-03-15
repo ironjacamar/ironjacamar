@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
+import org.jboss.tm.XAResourceRecovery;
+import org.jboss.tm.XAResourceRecoveryRegistry;
 
 import com.github.fungal.spi.deployers.Deployment;
 
@@ -54,6 +56,12 @@ public class DsXmlDeployment implements Deployment
    /** The JNDI names */
    private String[] jndis;
 
+   /** XAResource recovery modules */
+   private XAResourceRecovery[] recoveryModules;
+
+   /** XAResource recovery registry */
+   private XAResourceRecoveryRegistry recoveryRegistry;
+
    /** The classloader */
    private ClassLoader cl;
 
@@ -63,14 +71,22 @@ public class DsXmlDeployment implements Deployment
     * @param deploymentName The unique deployment name
     * @param cfs The connection factories
     * @param jndis The JNDI names for the factories
+    * @param recoveryModules The recovery modules
+    * @param recoveryRegistry The recovery registry
     * @param cl The classloader
     */
-   public DsXmlDeployment(URL deployment, String deploymentName, Object[] cfs, String[] jndis, ClassLoader cl)
+   public DsXmlDeployment(URL deployment, 
+                          String deploymentName,
+                          Object[] cfs, String[] jndis,
+                          XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
+                          ClassLoader cl)
    {
       this.deployment = deployment;
       this.deploymentName = deploymentName;
       this.cfs = cfs;
       this.jndis = jndis;
+      this.recoveryModules = recoveryModules;
+      this.recoveryRegistry = recoveryRegistry;
       this.cl = cl;
    }
 
@@ -100,6 +116,14 @@ public class DsXmlDeployment implements Deployment
    public void stop()
    {
       log.debug("Undeploying: " + deployment.toExternalForm());
+
+      if (recoveryModules != null && recoveryRegistry != null)
+      {
+         for (XAResourceRecovery recovery : recoveryModules)
+         {
+            recoveryRegistry.removeXAResourceRecovery(recovery);
+         }
+      }
 
       if (cfs != null)
       {
