@@ -23,6 +23,7 @@ package org.jboss.jca.rhq.test;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.ManagedConnectionFactory;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
@@ -109,6 +110,7 @@ public class XATestCase
             ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(mcfRes);
             Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
             
+//            assertEquals("", mcfConfig.getSimpleValue("jndi-name", null));
             String mcfCls = mcfConfig.getSimpleValue("mcf-class-name", null);
             assertEquals("org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory", mcfCls);
             assertEquals("true", mcfConfig.getSimpleValue("use-ra-association", null));
@@ -124,6 +126,7 @@ public class XATestCase
             assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
             
             // test mcf updateConfiguration
+            mcfConfig.put(new PropertySimple("jndi-name", "TestMcfJndiName"));
             mcfConfig.put(new PropertySimple("min-pool-size", 5));
             mcfConfig.put(new PropertySimple("max-pool-size", 15));
             mcfConfig.put(new PropertySimple("background-validation", true));
@@ -139,8 +142,10 @@ public class XATestCase
             
             ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
             Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
-            PoolConfiguration poolConfig = connector.getManagedConnectionFactories().get(0).getPoolConfiguration();
+            ManagedConnectionFactory mcf = connector.getManagedConnectionFactories().get(0);
+            PoolConfiguration poolConfig = mcf.getPoolConfiguration();
             
+            assertEquals("TestMcfJndiName", mcf.getJndiName());
             assertEquals(5, poolConfig.getMinSize());
             assertEquals(15, poolConfig.getMaxSize());
             assertTrue(poolConfig.isBackgroundValidation());

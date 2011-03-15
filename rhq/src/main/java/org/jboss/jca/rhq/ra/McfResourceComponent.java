@@ -129,7 +129,10 @@ public class McfResourceComponent extends AbstractResourceComponent
       Configuration config = new Configuration();
       
       javax.resource.spi.ManagedConnectionFactory jcaMcf = this.mcf.getManagedConnectionFactory();
+      
       // jndi name
+      PropertySimple jndiNameProp = new PropertySimple("jndi-name", this.mcf.getJndiName());
+      config.put(jndiNameProp);
       
       // mcf-class-name
       PropertySimple clsNameProp = new PropertySimple("mcf-class-name", getJCAClassName());
@@ -148,7 +151,7 @@ public class McfResourceComponent extends AbstractResourceComponent
       PropertySimple useRaAssoProp = new PropertySimple("use-ra-association", Boolean.valueOf(useRaAsso));
       config.put(useRaAssoProp);
       
-      // conn_pool
+      // conn-pool
       PoolConfiguration poolConfig = this.mcf.getPoolConfiguration();
       PropertySimple minSizeProp = new PropertySimple("min-pool-size", Integer.valueOf(poolConfig.getMinSize()));
       config.put(minSizeProp);
@@ -208,6 +211,12 @@ public class McfResourceComponent extends AbstractResourceComponent
       super.updateResourceConfiguration(updateResourceConfiguration);
       Configuration config = updateResourceConfiguration.getConfiguration();
       
+      // update jndi-name
+      String jndiName = config.getSimpleValue("jndi-name", null);
+      if (null != jndiName && jndiName.length() > 0)
+      {
+         this.mcf.setJndiName(jndiName);
+      }
       // update conn-pool configurations
       PoolConfiguration poolConfig = this.mcf.getPoolConfiguration();
       Integer minPoolSize = Integer.valueOf(config.getSimpleValue("min-pool-size", "0"));

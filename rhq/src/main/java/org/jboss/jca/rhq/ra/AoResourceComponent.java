@@ -74,6 +74,8 @@ public class AoResourceComponent extends AbstractResourceComponent
          {
             logger.debug("Class Name is: " + jcaClsName);
             // jndi name
+            PropertySimple jndiNameProp = new PropertySimple("jndi-name", ao.getJndiName());
+            config.put(jndiNameProp);
             
             // interface_class_name
             PropertySimple intfClsNameProp = new PropertySimple("interface-class-name", jcaClsName);
@@ -93,4 +95,5 @@ public class AoResourceComponent extends AbstractResourceComponent
       }
       return config;
    }
+   
 }
