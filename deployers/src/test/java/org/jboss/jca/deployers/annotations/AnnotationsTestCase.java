@@ -244,6 +244,7 @@ public class AnnotationsTestCase
       }
       catch (Throwable t)
       {
+         t.printStackTrace();
          fail(t.getMessage());
       }
    }

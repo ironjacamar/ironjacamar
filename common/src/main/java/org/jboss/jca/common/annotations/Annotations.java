@@ -59,12 +59,16 @@ import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
 import org.jboss.jca.common.spi.annotations.repository.Annotation;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 
-import java.lang.reflect.Array;
+import java.io.Externalizable;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.resource.spi.Activation;
@@ -192,7 +196,7 @@ public class Annotations
       //md = processAuthenticationMechanism(md, annotationRepository);
 
       // @AdministeredObject
-      ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository);
+      ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository, classLoader);
 
       //log.debug("ConnectorMetadata " + md);
 
@@ -725,10 +729,12 @@ public class Annotations
     * Process: @AdministeredObject
     * @param md The metadata
     * @param annotationRepository The annotation repository
+    * @param classLoader the classloadedr used to load annotated class
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ArrayList<AdminObject> processAdministeredObject(AnnotationRepository annotationRepository)
+   private ArrayList<AdminObject> processAdministeredObject(AnnotationRepository annotationRepository,
+      ClassLoader classLoader)
       throws Exception
    {
       ArrayList<AdminObject> adminObjs = null;
@@ -743,12 +749,28 @@ public class Annotations
             if (trace)
                log.trace("Processing: " + a);
             String aoName = null;
-            String aoClassName = null;
-            if (a.adminObjectInterfaces().length > 0)
-            {
-               aoName = ((Class) Array.get(a.adminObjectInterfaces(), 0)).getName();
+            String aoClassName = annotation.getClassName();
+            Class<?> aClass = Class.forName(aoClassName, true, classLoader);
+            List<Class<?>> declaredInterfaces = null;
+            if (aClass.getInterfaces() != null && aClass.getInterfaces().length != 0) {
+               declaredInterfaces = Arrays.asList(aClass.getInterfaces());
+
+            } else {
+               declaredInterfaces = Collections.emptyList();
             }
-            aoClassName = annotation.getClassName();
+            if (a.adminObjectInterfaces() != null && a.adminObjectInterfaces().length > 0)
+            {
+               for (Class<?> annotatedInterface : a.adminObjectInterfaces())
+            {
+                  if (declaredInterfaces.contains(annotatedInterface) &&
+                      !annotatedInterface.equals(Serializable.class) &&
+                      !annotatedInterface.equals(Externalizable.class))
+                  {
+                     aoName = annotatedInterface.getName();
+                     break;
+                  }
+               }
+            }
             XsdString adminobjectInterface = new XsdString(aoName, null);
             XsdString adminobjectClass = new XsdString(aoClassName, null);
 
