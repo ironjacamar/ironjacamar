@@ -23,7 +23,6 @@ package org.jboss.jca.common.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.Recovery;
@@ -152,8 +151,7 @@ public class ResourceAdapterParserTestCase
          //then
          assertThat(ra.getResourceAdapters().size() == 1, is(true));
          ResourceAdapter res = ra.getResourceAdapters().get(0);
-         CommonXaPool xaPool = (CommonXaPool) res.getConnectionDefinitions().get(0).getPool();
-         Recovery recovery = xaPool.getRecovery();
+         Recovery recovery = res.getConnectionDefinitions().get(0).getRecovery();
          assertThat(recovery, not(isNull()));
          assertThat(recovery.getNoRecovery(), is(false));
          Credential security = recovery.getCredential();

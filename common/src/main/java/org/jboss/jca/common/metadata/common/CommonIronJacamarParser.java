@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.AbstractParser;
@@ -68,6 +69,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       CommonTimeOut timeOut = null;
       CommonValidation validation = null;
       CommonPool pool = null;
+      Recovery recovery = null;
 
       //attributes reading
       boolean useJavaContext = true;
@@ -121,7 +123,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
 
                   return new CommonConnDefImpl(configProperties, className, jndiName, poolName, enabled,
-                                               useJavaContext, pool, timeOut, validation, security);
+                                               useJavaContext, pool, timeOut, validation, security, recovery);
                }
                else
                {
@@ -164,6 +166,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                         throw new ParserException("You cannot define more than one pool or xa-poll in same"
                                                   + " connection-definition");
                      pool = parsePool(reader);
+                     break;
+                  }
+                  case RECOVERY : {
+                     recovery = parseRecovery(reader);
                      break;
                   }
                   default :

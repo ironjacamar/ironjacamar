@@ -380,7 +380,6 @@ public abstract class AbstractParser
       boolean noTxSeparatePool = false;
       boolean wrapXaDataSource = false;
       boolean useStrictMin = false;
-      Recovery recovery = null;
 
       while (reader.hasNext())
       {
@@ -391,7 +390,7 @@ public abstract class AbstractParser
                {
 
                   return new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, isSameRmOverrideValue,
-                                              interleaving, padXid, wrapXaDataSource, noTxSeparatePool, recovery);
+                                              interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
 
                }
                else
@@ -440,10 +439,6 @@ public abstract class AbstractParser
                   }
                   case USE_STRICT_MIN : {
                      useStrictMin = elementAsBoolean(reader);
-                     break;
-                  }
-                  case RECOVERY : {
-                     recovery = parseRecovery(reader);
                      break;
                   }
                   default :

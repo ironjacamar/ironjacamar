@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,6 +65,8 @@ public class CommonConnDefImpl implements CommonConnDef
 
    private final CommonSecurity security;
 
+   private final Recovery recovery;
+
    /**
     * Create a new ConnectionDefinition.
     *
@@ -77,10 +80,11 @@ public class CommonConnDefImpl implements CommonConnDef
     * @param timeOut timeOut
     * @param validation validation
     * @param security security
+    * @param recovery recovery
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
       String poolName, Boolean enabled, Boolean useJavaContext, CommonPool pool, CommonTimeOut timeOut,
-      CommonValidation validation, CommonSecurity security)
+      CommonValidation validation, CommonSecurity security, Recovery recovery)
    {
       super();
       if (configProperties != null)
@@ -101,6 +105,7 @@ public class CommonConnDefImpl implements CommonConnDef
       this.timeOut = timeOut;
       this.validation = validation;
       this.security = security;
+      this.recovery = recovery;
 
    }
 
@@ -231,6 +236,7 @@ public class CommonConnDefImpl implements CommonConnDef
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
       result = prime * result + ((pool == null) ? 0 : pool.hashCode());
       result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
+      result = prime * result + ((recovery == null) ? 0 : recovery.hashCode());
       result = prime * result + ((security == null) ? 0 : security.hashCode());
       result = prime * result + ((timeOut == null) ? 0 : timeOut.hashCode());
       result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
@@ -290,6 +296,13 @@ public class CommonConnDefImpl implements CommonConnDef
       }
       else if (!poolName.equals(other.poolName))
          return false;
+      if (recovery == null)
+      {
+         if (other.recovery != null)
+            return false;
+      }
+      else if (!recovery.equals(other.recovery))
+         return false;
       if (security == null)
       {
          if (other.security != null)
@@ -324,10 +337,21 @@ public class CommonConnDefImpl implements CommonConnDef
    @Override
    public String toString()
    {
-      return "ConnectionDefinitionImpl [configProperties=" + configProperties + ", className=" + className +
-             ", jndiName=" + jndiName + ", poolName=" + poolName + ", enabled=" + enabled + ", useJavaContext=" +
-             useJavaContext + ", pool=" + pool + ", timeOut=" + timeOut + ", validation=" + validation +
-             ", security=" + security + "]";
+      return "CommonConnDefImpl [configProperties=" + configProperties + ", className=" + className + ", jndiName=" +
+             jndiName + ", poolName=" + poolName + ", enabled=" + enabled + ", useJavaContext=" + useJavaContext +
+             ", pool=" + pool + ", timeOut=" + timeOut + ", validation=" + validation + ", security=" + security +
+             ", recovery=" + recovery + "]";
+   }
+
+   /**
+    * Get the recovery.
+    *
+    * @return the recovery.
+    */
+   @Override
+   public final Recovery getRecovery()
+   {
+      return recovery;
    }
 
 }

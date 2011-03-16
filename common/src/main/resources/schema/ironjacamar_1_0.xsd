@@ -339,7 +339,8 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-    </xs:sequence>
+            <xs:element name="recovery" type="recoverType" minOccurs="0" maxOccurs="1"></xs:element>
+        </xs:sequence>
     <xs:attributeGroup ref="common-attribute"></xs:attributeGroup>
   </xs:complexType>
 
@@ -448,7 +449,6 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="recovery" type="recoverType" minOccurs="0" maxOccurs="1"></xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

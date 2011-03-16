@@ -71,12 +71,6 @@ public interface CommonXaPool extends CommonPool
     */
    public Boolean isNoTxSeparatePool();
 
-   /**
-    * Get the recovery settings.
-    *
-    * @return the recovery settings.
-    */
-   public Recovery getRecovery();
 
    /**
    *
@@ -131,10 +125,7 @@ public interface CommonXaPool extends CommonPool
       /**
        * no-tx-separate-pools tag
        */
-      NO_TX_SEPARATE_POOLS("no-tx-separate-pools"),
-
-      /** recovery tag */
-      RECOVERY("recovery");
+      NO_TX_SEPARATE_POOLS("no-tx-separate-pools");
 
       private final String name;
 

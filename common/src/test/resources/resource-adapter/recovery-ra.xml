@@ -32,16 +32,6 @@
         <xa-pool>
           <min-pool-size>0</min-pool-size>
           <max-pool-size>64</max-pool-size>
-          <recovery>
-            <recover-credential>
-             <user-name>myUserName</user-name>
-             <password>myPassword</password>
-             <security-domain>mySecurityDomain</security-domain>
-            </recover-credential>
-            <recover-plugin class-name="myClassName">
-             <config-property name="MyProperty">MyPropertyValue</config-property>
-            </recover-plugin>
-          </recovery>
         </xa-pool>
         <security>
           <application />
@@ -50,6 +40,16 @@
           <blocking-timeout-millis>5000</blocking-timeout-millis>
           <idle-timeout-minutes>15</idle-timeout-minutes>
         </timeout>
+        <recovery>
+          <recover-credential>
+            <user-name>myUserName</user-name>
+            <password>myPassword</password>
+            <security-domain>mySecurityDomain</security-domain>
+          </recover-credential>
+          <recover-plugin class-name="myClassName">
+            <config-property name="MyProperty">MyPropertyValue</config-property>
+          </recover-plugin>
+        </recovery>
       </connection-definition>
     </connection-definitions>
     <admin-objects>

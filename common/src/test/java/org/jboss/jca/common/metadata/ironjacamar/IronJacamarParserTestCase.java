@@ -26,7 +26,6 @@ import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.Recovery;
@@ -605,8 +604,7 @@ public class IronJacamarParserTestCase
             //pool default
             assertThat(connDef.isXa(), is(true));
 
-            CommonXaPool xaPool = (CommonXaPool) connDef.getPool();
-            Recovery recovery = xaPool.getRecovery();
+            Recovery recovery = connDef.getRecovery();
             assertThat(recovery, not(isNull()));
             assertThat(recovery.getNoRecovery(), is(false));
             Credential security = recovery.getCredential();

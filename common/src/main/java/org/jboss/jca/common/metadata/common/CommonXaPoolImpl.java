@@ -22,7 +22,6 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
-import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
@@ -47,7 +46,6 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
 
    private final Boolean noTxSeparatePool;
 
-   private final Recovery recovery;
 
    /**
     * Create a new XaPoolImpl.
@@ -61,12 +59,11 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @param padXid padXid
     * @param wrapXaDataSource wrapXaDataSource
     * @param noTxSeparatePool noTxSeparatePool
-    * @param recovery recovery
     * @throws ValidateException ValidateException
     */
    public CommonXaPoolImpl(Integer minPoolSize, Integer maxPoolSize, Boolean prefill, Boolean useStrictMin,
       Boolean isSameRmOverride, Boolean interleaving, Boolean padXid, Boolean wrapXaDataSource,
-      Boolean noTxSeparatePool, Recovery recovery) throws ValidateException
+      Boolean noTxSeparatePool) throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin);
       this.isSameRmOverride = isSameRmOverride;
@@ -74,7 +71,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
       this.padXid = padXid;
       this.wrapXaDataSource = wrapXaDataSource;
       this.noTxSeparatePool = noTxSeparatePool;
-      this.recovery = recovery;
+
    }
 
    /**
@@ -141,7 +138,6 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
       result = prime * result + ((isSameRmOverride == null) ? 0 : isSameRmOverride.hashCode());
       result = prime * result + ((noTxSeparatePool == null) ? 0 : noTxSeparatePool.hashCode());
       result = prime * result + ((padXid == null) ? 0 : padXid.hashCode());
-      result = prime * result + ((recovery == null) ? 0 : recovery.hashCode());
       result = prime * result + ((wrapXaDataSource == null) ? 0 : wrapXaDataSource.hashCode());
       return result;
    }
@@ -184,13 +180,6 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
       }
       else if (!padXid.equals(other.padXid))
          return false;
-      if (recovery == null)
-      {
-         if (other.recovery != null)
-            return false;
-      }
-      else if (!recovery.equals(other.recovery))
-         return false;
       if (wrapXaDataSource == null)
       {
          if (other.wrapXaDataSource != null)
@@ -206,14 +195,9 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
    {
       return "CommonXaPoolImpl [isSameRmOverride=" + isSameRmOverride + ", interleaving=" + interleaving +
              ", padXid=" + padXid + ", wrapXaDataSource=" + wrapXaDataSource + ", noTxSeparatePool=" +
-             noTxSeparatePool + ", recovery=" + recovery + "]";
+             noTxSeparatePool + "]";
    }
 
-   @Override
-   public Recovery getRecovery()
-   {
-      return recovery;
-   }
 
 
 }

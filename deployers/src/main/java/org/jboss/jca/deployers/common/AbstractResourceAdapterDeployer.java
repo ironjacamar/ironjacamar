@@ -1390,7 +1390,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        isSameRMOverride = cdRaXmlXaPool.isSameRmOverride();
                                        wrapXAResource = cdRaXmlXaPool.isWrapXaDataSource();
                                        padXid = cdRaXmlXaPool.isPadXid();
-                                       recoveryMD = cdRaXmlXaPool.getRecovery();
+                                       recoveryMD = cdRaXml.getRecovery();
                                     }
 
                                     if (ijCD != null && ijCD.isXa())
@@ -1410,7 +1410,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           padXid = ijXaPool.isPadXid();
 
                                        if (recoveryMD == null)
-                                          recoveryMD = ijXaPool.getRecovery();
+                                          recoveryMD = ijCD.getRecovery();
                                     }
 
                                     cm = cmf.createTransactional(tsl, pool,
@@ -1431,7 +1431,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           // from the -ds.xml file. Fallback to the standard definitions for
                                           // user name, password. Keep a seperate reference to the security-domain
 
-                                          Credential credential = 
+                                          Credential credential =
                                              recoveryMD != null ? recoveryMD.getCredential() : null;
 
                                           if (credential != null)
@@ -1723,7 +1723,7 @@ public abstract class AbstractResourceAdapterDeployer
          return new CommonDeployment(url, deploymentName, activateDeployment,
                                      resourceAdapter, resourceAdapterKey,
                                      cfs, cfJndiNames,
-                                     aos, aoJndiNames, 
+                                     aos, aoJndiNames,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
                                      mgtConnector, cl, log);
 

@@ -115,6 +115,13 @@ public interface CommonConnDef extends JCAMetadata
    public Boolean isXa();
 
    /**
+    * Get the recovery settings.
+    *
+    * @return the recovery settings.
+    */
+   public Recovery getRecovery();
+
+   /**
    *
    * A Tag.
    *
@@ -151,7 +158,10 @@ public interface CommonConnDef extends JCAMetadata
       /**
        * validation tag
        */
-      VALIDATION("validation");
+      VALIDATION("validation"),
+
+      /** recovery tag */
+      RECOVERY("recovery");
 
       private final String name;
 
