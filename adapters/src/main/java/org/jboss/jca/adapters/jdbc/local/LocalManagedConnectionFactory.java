@@ -541,7 +541,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       try
       {
          //try to load the class... this should register with DriverManager.
-         Class<?> clazz = Class.forName(driverClass, true, Thread.currentThread().getContextClassLoader());
+         Class<?> clazz = Class.forName(driverClass, true, getClassLoaderPlugin().getClassLoader());
          if (isDriverLoadedForURL(url))
             //return immediately, some drivers (Cloudscape) do not let you create an instance.
             return driver;

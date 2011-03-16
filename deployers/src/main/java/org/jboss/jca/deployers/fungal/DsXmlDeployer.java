@@ -181,7 +181,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                                                           uniqueJdbcLocalId, uniqueJdbcXAId,
                                                           dataSources, parent);
 
-         return new DsXmlDeployment(c.getURL(), c.getDeploymentName(), 
+         return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
                                     c.getCfs(), c.getCfJndiNames(),
                                     c.getRecovery(), getXAResourceRecoveryRegistry(),
                                     c.getCl());
@@ -263,7 +263,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       JndiStrategy js = new ExplicitJndiStrategy();
 
       String[] result = js.bindConnectionFactories(deployment, new Object[]{cf}, new String[]{jndi});
-      
+
       log.infof("Bound data source at: %s", jndi);
 
       return result;
@@ -305,7 +305,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    }
 
    @Override
-   protected SubjectFactory getSubjectFactory(String securityDomain) 
+   protected SubjectFactory getSubjectFactory(String securityDomain)
       throws org.jboss.jca.deployers.common.DeployException
    {
       log.tracef("getSubjectFactory(%s)", securityDomain);
@@ -319,9 +319,8 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       }
       catch (Throwable t)
       {
-         throw new 
-            org.jboss.jca.deployers.common.DeployException("Error during loookup of security domain: " +
-                                                           securityDomain, t);
+         throw new org.jboss.jca.deployers.common.DeployException("Error during loookup of security domain: " +
+                                                                  securityDomain, t);
       }
    }
 }

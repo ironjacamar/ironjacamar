@@ -22,9 +22,11 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.extensions.novendor.NullExceptionSorter;
 import org.jboss.jca.adapters.jdbc.extensions.novendor.NullStaleConnectionChecker;
 import org.jboss.jca.adapters.jdbc.extensions.novendor.NullValidConnectionChecker;
+import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
 import org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker;
 import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
@@ -45,7 +47,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -223,6 +224,8 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** Reauth plugin */
    private ReauthPlugin reauthPlugin;
+
+   private ClassLoaderPlugin classLoaderPlugin;
 
    /**
     * Constructor
@@ -1087,7 +1090,7 @@ public abstract class BaseWrapperManagedConnectionFactory
          Set<PasswordCredential> creds = subject.getPrivateCredentials(PasswordCredential.class);
          if (creds != null && creds.size() > 0)
          {
-            for (PasswordCredential cred: creds)
+            for (PasswordCredential cred : creds)
             {
                if (cred.getManagedConnectionFactory().equals(mcf))
                {
@@ -1260,5 +1263,29 @@ public abstract class BaseWrapperManagedConnectionFactory
             throw new RuntimeException("Could not load connection properties", ioe);
          }
       }
+   }
+
+   /**
+    * Get the clPlugin.
+    *
+    * @return the clPlugin.
+    */
+   public final ClassLoaderPlugin getClassLoaderPlugin()
+   {
+      if (classLoaderPlugin == null)
+      {
+         classLoaderPlugin = new TCClassLoaderPlugin();
+      }
+      return classLoaderPlugin;
+   }
+
+   /**
+    * Set the clPlugin.
+    *
+    * @param clPlugin The clPlugin to set.
+    */
+   public final void setClassLoaderPlugin(ClassLoaderPlugin clPlugin)
+   {
+      this.classLoaderPlugin = clPlugin;
    }
 }

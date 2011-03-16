@@ -45,12 +45,6 @@ public interface XaDataSource extends CommonDataSource
    public String getXaDataSourceClass();
 
    /**
-    * Get the module
-    * @return The value
-    */
-   public String getModule();
-
-   /**
     * Get the statement.
     *
     * @return the statement.

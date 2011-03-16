@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Recovery;
+import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
@@ -218,8 +219,8 @@ public abstract class AbstractDsDeployer
                      }
 
                      XAResourceRecovery recovery = null;
-                     Object cf = deployXADataSource(xaDataSource, 
-                                                    jndiName, uniqueJdbcXAId, 
+                     Object cf = deployXADataSource(xaDataSource,
+                                                    jndiName, uniqueJdbcXAId,
                                                     recovery,
                                                     jdbcXADeploymentCl);
 
@@ -244,8 +245,8 @@ public abstract class AbstractDsDeployer
          }
 
          return new CommonDeployment(url, deploymentName, true, null, null, cfs.toArray(new Object[cfs.size()]),
-                                     jndis.toArray(new String[jndis.size()]), 
-                                     null, null, 
+                                     jndis.toArray(new String[jndis.size()]),
+                                     null, null,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
                                      null, parentClassLoader,
                                      log);
@@ -282,6 +283,8 @@ public abstract class AbstractDsDeployer
       // ManagedConnectionFactory
       ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cd.getManagedConnectionFactoryClass()
          .getValue(), cd.getConfigProperties(), cl);
+
+      initAndInjectClassLoaderPlugin(mcf, ds);
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getPool(), ds.getTimeOut(), ds.getValidation());
 
@@ -405,6 +408,7 @@ public abstract class AbstractDsDeployer
       // ManagedConnectionFactory
       ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cd.getManagedConnectionFactoryClass()
          .getValue(), cd.getConfigProperties(), cl);
+      initAndInjectClassLoaderPlugin(mcf, ds);
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getXaPool(), ds.getTimeOut(), ds.getValidation());
 
@@ -606,13 +610,15 @@ public abstract class AbstractDsDeployer
       {
          recoveryImpl.setJndiName(cm.getJndiName());
          getXAResourceRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
-         
+
          recovery = recoveryImpl;
       }
 
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }
+
+
 
    /**
     * Create an instance of the pool configuration based on the input
@@ -718,6 +724,21 @@ public abstract class AbstractDsDeployer
     */
    protected abstract Object initAndInject(String className, List<? extends ConfigProperty> configs, ClassLoader cl)
       throws DeployException;
+
+   /**
+    *
+    * Initialize and inject class loader plugin
+    *
+    * @param mcf The managed connection factory
+    * @param dsMetadata The dataSource metadata
+    * @throws DeployException Thrown if the object cant be initialized or injected
+    */
+   protected void initAndInjectClassLoaderPlugin(ManagedConnectionFactory mcf, CommonDataSource dsMetadata)
+      throws DeployException
+   {
+      //Default impl is doing nothing, delagating to MCF the default plugin instance creation
+   }
+
 
    /**
     * Get a subject factory

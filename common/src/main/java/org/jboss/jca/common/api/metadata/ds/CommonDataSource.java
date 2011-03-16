@@ -105,4 +105,10 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
     */
 
    public boolean isSpy();
+
+   /**
+    * Get the module
+    * @return The value
+    */
+   public String getModule();
 }

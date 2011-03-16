@@ -56,22 +56,22 @@ import javax.sql.XADataSource;
 public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFactory
 {
    private static final long serialVersionUID = 1647927657609573729L;
-   
+
    private String xaDataSourceClass;
-   
+
    private String xaDataSourceProperties;
 
    /** THe XA properties */
    protected final Properties xaProps = new Properties();
-   
+
    private Boolean isSameRMOverrideValue;
-   
+
    private XADataSource xads;
-   
+
    private String urlProperty;
-   
+
    private URLSelectorStrategy xadsSelector;
-   
+
    /**
     * Constructor
     */
@@ -87,7 +87,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    {
       return urlProperty;
    }
-   
+
    /**
     * Set the URL property
     * @param urlProperty The value
@@ -104,12 +104,13 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
     * @param urlDelimiter The value
     * @exception ResourceException Thrown in case of an error
     */
+   @Override
    public void setURLDelimiter(String urlDelimiter) throws ResourceException
    {
       this.urlDelimiter = urlDelimiter;
       initSelector();
    }
-   
+
    /**
     * Get the XaDataSourceClass value.
     * @return the XaDataSourceClass value.
@@ -151,7 +152,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          // Map any \ to \\
          xaDataSourceProperties = xaDataSourceProperties.replaceAll("\\\\", "\\\\\\\\");
-         
+
          InputStream is = new ByteArrayInputStream(xaDataSourceProperties.getBytes());
          try
          {
@@ -190,7 +191,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       if (urlProperty != null && urlProperty.length() > 0)
       {
          String urlsStr = xaProps.getProperty(urlProperty);
-         if (urlsStr != null && urlsStr.trim().length() > 0 && 
+         if (urlsStr != null && urlsStr.trim().length() > 0 &&
              urlDelimiter != null && urlDelimiter.trim().length() > 0)
          {
             List<XAData> xaDataList = new ArrayList<XAData>(2);
@@ -240,7 +241,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          }
       }
    }
-   
+
    @SuppressWarnings("unchecked")
    private XADataSource createXaDataSource(Properties xaProps) throws ResourceException
    {
@@ -248,11 +249,11 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          throw new ResourceException("No XADataSourceClass supplied!");
       }
-      
+
       XADataSource xads = null;
       try
       {
-         Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(getXADataSourceClass());
+         Class<?> clazz = getClassLoaderPlugin().getClassLoader().loadClass(getXADataSourceClass());
          xads = (XADataSource)clazz.newInstance();
          final Class<?>[] noClasses = new Class<?>[]{};
          for (Iterator<?> i = xaProps.keySet().iterator(); i.hasNext();)
@@ -302,7 +303,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
             editor.setAsText(value);
             setter.invoke(xads, new Object[]{editor.getValue()});
-            
+
          }
       }
       catch (ClassNotFoundException cnfe)
@@ -329,7 +330,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          throw new ResourceException("Could not find accessor on XADataSource: ", nsme);
       }
-      
+
       return xads;
    }
 
@@ -343,15 +344,15 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          return getXAManagedConnection(subject, cri);
       }
-      
+
       // try to get a connection as many times as many urls we have in the list
       for (int i = 0; i < xadsSelector.getCustomSortedUrls().size(); ++i)
       {
          XAData xaData = (XAData)xadsSelector.getUrlObject();
-         
+
          if (log.isTraceEnabled())
             log.trace("Trying to create an XA connection to " + xaData.url);
-         
+
          try
          {
             return getXAManagedConnection(subject, cri);
@@ -364,7 +365,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       }
 
       // we have supposedly tried all the urls
-      throw new ResourceException("Could not create connection using any of the URLs: " + 
+      throw new ResourceException("Could not create connection using any of the URLs: " +
                                   xadsSelector.getAllUrlObjects());
    }
 
@@ -385,11 +386,11 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          final String user = props.getProperty("user");
          final String password = props.getProperty("password");
-         
+
          xaConnection = (user != null)
             ? getXADataSource().getXAConnection(user, password)
             : getXADataSource().getXAConnection();
-         
+
          return newXAManagedConnection(props, xaConnection);
       }
       catch (Throwable e)
@@ -434,7 +435,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          if (o instanceof XAManagedConnection)
          {
             XAManagedConnection mc = (XAManagedConnection) o;
-            
+
             if (Boolean.TRUE.equals(getReauthEnabled()))
             {
                return mc;
@@ -455,6 +456,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    /**
     * {@inheritDoc}
     */
+   @Override
    public int hashCode()
    {
       int result = 17;
@@ -469,6 +471,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    /**
     * {@inheritDoc}
     */
+   @Override
    public boolean equals(Object other)
    {
       if (this == other)
@@ -512,7 +515,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             for (Iterator<?> i = xaProps.keySet().iterator(); i.hasNext();)
             {
                String name = (String)i.next();
-               String value = xaProps.getProperty(name);      
+               String value = xaProps.getProperty(name);
                char firstCharName = Character.toUpperCase(name.charAt(0));
 
                if (name.length() > 1)
@@ -687,7 +690,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          return getXAData();
       }
    }
-   
+
    private static class XAData
    {
       private final XADataSource xads;
@@ -709,13 +712,14 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          return url;
       }
 
+      @Override
       public boolean equals(Object o)
       {
          if (this == o)
          {
             return true;
          }
-         
+
          if (!(o instanceof XAData))
          {
             return false;
@@ -731,11 +735,13 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          return true;
       }
 
+      @Override
       public int hashCode()
       {
          return url.hashCode();
       }
 
+      @Override
       public String toString()
       {
          return "[XA URL=" + url + "]";
