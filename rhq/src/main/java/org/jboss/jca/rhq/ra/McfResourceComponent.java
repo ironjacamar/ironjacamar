@@ -42,15 +42,9 @@ import org.rhq.core.domain.configuration.ConfigurationUpdateStatus;
 import org.rhq.core.domain.configuration.PropertyList;
 import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
-import org.rhq.core.pluginapi.inventory.ResourceContext;
 
 /**
  * McfResourceComponent represent the ManagedConnectionFactory in JCA container.
- * 
- * The <i>mcf</i> will be initialized when <code>start(ResourceContext)</code> method is called.
- * The <i>mcf</i> will be released when <code>stop()</code> method is called.
- *
- * The <i>mcf</i> must be kept not-null value during the life time of this <code>McfResourceComponent</code>.
  * 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
@@ -60,58 +54,26 @@ public class McfResourceComponent extends AbstractResourceComponent
    /** log */
    private static final Logger logger = Logger.getLogger(McfResourceComponent.class);
    
-   /** ManagedConnectionFactory associated with this McfResourceComponent */
-   private ManagedConnectionFactory mcf = null;
-   
    /**
-    * start
+    * Get associated ManagedConnectionFactory
     * 
-    * @param resourceContext The ResourceContext
-    * @throws Exception exception
+    * @return ManagedConnectionFactory
     */
-   @SuppressWarnings("rawtypes")
-   @Override
-   public void start(ResourceContext resourceContext) throws Exception
+   private ManagedConnectionFactory getManagedConnectionFactory()
    {
-      super.start(resourceContext);
-      if (null == this.mcf)
+      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
+      String jcaClsName = getJCAClassName();
+      for (ManagedConnectionFactory mcf : connector.getManagedConnectionFactories())
       {
-         ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
-         Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
-         String jcaClsName = getJCAClassName();
-         for (ManagedConnectionFactory connectorMcf : connector.getManagedConnectionFactories())
+         Class<?> mcfCls = mcf.getManagedConnectionFactory().getClass();
+         if (mcfCls.getName().equals(jcaClsName))
          {
-            Class<?> mcfCls = connectorMcf.getManagedConnectionFactory().getClass();
-            if (mcfCls.getName().equals(jcaClsName))
-            {
-               logger.debug("Class Name is: " + jcaClsName);
-               this.mcf = connectorMcf;
-               break;
-            }
+            logger.debug("Class Name is: " + jcaClsName);
+            return mcf;
          }
       }
-      validateState();
-   }
-   
-   /**
-    * stop
-    */
-   @Override
-   public void stop()
-   {
-      super.stop();
-      this.mcf = null;
-   }
-
-   /**
-    * Check that the mcf is not null. 
-    */
-   private void validateState()
-   {
-      if (null == this.mcf)
-      {
-         throw new IllegalStateException("ManagedConnectionFactory can not be found.");
-      }
+      throw new IllegalStateException("Can not find ManagedConnectionFactory.");
    }
    
    /**
@@ -124,14 +86,13 @@ public class McfResourceComponent extends AbstractResourceComponent
    @Override
    public Configuration loadResourceConfiguration() throws Exception
    {
-      validateState();
-      
       Configuration config = new Configuration();
       
-      javax.resource.spi.ManagedConnectionFactory jcaMcf = this.mcf.getManagedConnectionFactory();
+      ManagedConnectionFactory mcf = getManagedConnectionFactory();
+      javax.resource.spi.ManagedConnectionFactory jcaMcf = mcf.getManagedConnectionFactory();
       
       // jndi name
-      PropertySimple jndiNameProp = new PropertySimple("jndi-name", this.mcf.getJndiName());
+      PropertySimple jndiNameProp = new PropertySimple("jndi-name", mcf.getJndiName());
       config.put(jndiNameProp);
       
       // mcf-class-name
@@ -152,9 +113,9 @@ public class McfResourceComponent extends AbstractResourceComponent
       config.put(useRaAssoProp);
       
       // conn-pool
-      PoolConfiguration poolConfig = this.mcf.getPoolConfiguration();
+      PoolConfiguration poolConfig = mcf.getPoolConfiguration();
       
-      PropertySimple poolNameProp = new PropertySimple("pool-name", this.mcf.getPool().getName());
+      PropertySimple poolNameProp = new PropertySimple("pool-name", mcf.getPool().getName());
       config.put(poolNameProp);
       
       PropertySimple minSizeProp = new PropertySimple("min-pool-size", Integer.valueOf(poolConfig.getMinSize()));
@@ -195,7 +156,7 @@ public class McfResourceComponent extends AbstractResourceComponent
       config.put(useFasFailProp);
       
       // config properties
-      List<ConfigProperty> mcfConfProps = this.mcf.getConfigProperties();
+      List<ConfigProperty> mcfConfProps = mcf.getConfigProperties();
       PropertyList configList = getConfigPropertiesList(jcaMcf, mcfConfProps);
       config.put(configList);
       
@@ -211,18 +172,18 @@ public class McfResourceComponent extends AbstractResourceComponent
    @Override
    public void updateResourceConfiguration(ConfigurationUpdateReport updateResourceConfiguration)
    {
-      validateState();
       super.updateResourceConfiguration(updateResourceConfiguration);
       Configuration config = updateResourceConfiguration.getConfiguration();
+      ManagedConnectionFactory mcf = getManagedConnectionFactory();
       
       // update jndi-name
       String jndiName = config.getSimpleValue("jndi-name", null);
       if (null != jndiName && jndiName.length() > 0)
       {
-         this.mcf.setJndiName(jndiName);
+         mcf.setJndiName(jndiName);
       }
       // update conn-pool configurations
-      PoolConfiguration poolConfig = this.mcf.getPoolConfiguration();
+      PoolConfiguration poolConfig = mcf.getPoolConfiguration();
       Integer minPoolSize = Integer.valueOf(config.getSimpleValue("min-pool-size", "0"));
       poolConfig.setMinSize(minPoolSize.intValue());
       
@@ -261,8 +222,8 @@ public class McfResourceComponent extends AbstractResourceComponent
       
       // config-properties
       PropertyList configPropertiesList = config.getList("config-property");
-      javax.resource.spi.ManagedConnectionFactory jcaMcf = this.mcf.getManagedConnectionFactory();
-      List<ConfigProperty> configProperties = this.mcf.getConfigProperties();
+      javax.resource.spi.ManagedConnectionFactory jcaMcf = mcf.getManagedConnectionFactory();
+      List<ConfigProperty> configProperties = mcf.getConfigProperties();
       updatePropertyList(jcaMcf, configPropertiesList, configProperties);
       
       updateResourceConfiguration.setStatus(ConfigurationUpdateStatus.SUCCESS);
