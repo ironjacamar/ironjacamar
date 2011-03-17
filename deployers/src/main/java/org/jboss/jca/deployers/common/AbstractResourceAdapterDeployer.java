@@ -1092,9 +1092,9 @@ public abstract class AbstractResourceAdapterDeployer
 
                      if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                      {
+                        String jndiName;
                         if (cdRaXml != null || ijCD != null)
                         {
-                           String jndiName;
                            if (cdRaXml != null)
                            {
                               jndiName = cdRaXml.getJndiName();
@@ -1158,7 +1158,8 @@ public abstract class AbstractResourceAdapterDeployer
 
                            if (poolName == null)
                               poolName = cfJndiNames[0];
-
+                           
+                           jndiName = poolName;
                            pool.setName(poolName);
                         }
 
@@ -1170,6 +1171,7 @@ public abstract class AbstractResourceAdapterDeployer
                            mgtMcf.getConfigProperties().addAll(createManagementView(ra10.getConfigProperties()));
                            mgtMcf.setPoolConfiguration(pc);
                            mgtMcf.setPool(pool);
+                           mgtMcf.setJndiName(jndiName);
 
                            mgtConnector.getManagedConnectionFactories().add(mgtMcf);
                         }
@@ -1528,9 +1530,9 @@ public abstract class AbstractResourceAdapterDeployer
 
                                  if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
                                  {
+                                    String jndiName;
                                     if (cdRaXml != null || ijCD != null)
                                     {
-                                       String jndiName;
                                        if (cdRaXml != null)
                                        {
                                           jndiName = cdRaXml.getJndiName();
@@ -1595,6 +1597,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        if (poolName == null)
                                           poolName = cfJndiNames[0];
 
+                                       jndiName = poolName;
                                        pool.setName(poolName);
                                     }
 
@@ -1615,6 +1618,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           addAll(createManagementView(cdMeta.getConfigProperties()));
                                        mgtMcf.setPoolConfiguration(pc);
                                        mgtMcf.setPool(pool);
+                                       mgtMcf.setJndiName(jndiName);
 
                                        mgtConnector.getManagedConnectionFactories().add(mgtMcf);
                                     }
