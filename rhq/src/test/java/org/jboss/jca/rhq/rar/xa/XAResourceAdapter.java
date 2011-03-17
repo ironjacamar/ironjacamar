@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConfigProperty;
 import javax.resource.spi.Connector;

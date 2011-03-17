@@ -31,14 +31,13 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import static org.hamcrest.core.Is.is;
-
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.core.Is.is;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test cases for deploying resource adapter archives (.RAR) using -ra.xml files
