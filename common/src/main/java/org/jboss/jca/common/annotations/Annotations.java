@@ -82,6 +82,7 @@ import org.jboss.logging.Logger;
 /**
  * The annotation processor for JCA 1.6
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  */
 public class Annotations
 {
@@ -91,7 +92,7 @@ public class Annotations
 
    private enum Metadatas
    {
-      RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY;
+      RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY, ADMIN_OBJECT;
    };
 
    /**
@@ -196,7 +197,8 @@ public class Annotations
       //md = processAuthenticationMechanism(md, annotationRepository);
 
       // @AdministeredObject
-      ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository, classLoader);
+      ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository, classLoader, 
+         configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ADMIN_OBJECT));
 
       //log.debug("ConnectorMetadata " + md);
 
@@ -690,6 +692,14 @@ public class Annotations
                   }
                   valueMap.get(Metadatas.ACTIVATION_SPEC).add(cfgMeta);
                }
+               else if (hasAnnotation(attachedClass, AdministeredObject.class, annotationRepository))
+               {
+                  if (valueMap.get(Metadatas.ADMIN_OBJECT) == null)
+                  {
+                     valueMap.put(Metadatas.ADMIN_OBJECT, new ArrayList<ConfigProperty16>());
+                  }
+                  valueMap.get(Metadatas.ADMIN_OBJECT).add(cfgMeta);
+               }
             }
          }
          if (valueMap.get(Metadatas.RA) != null)
@@ -698,6 +708,8 @@ public class Annotations
             valueMap.get(Metadatas.MANAGED_CONN_FACTORY).trimToSize();
          if (valueMap.get(Metadatas.ACTIVATION_SPEC) != null)
             valueMap.get(Metadatas.ACTIVATION_SPEC).trimToSize();
+         if (valueMap.get(Metadatas.ADMIN_OBJECT) != null)
+            valueMap.get(Metadatas.ADMIN_OBJECT).trimToSize();
          return valueMap;
       }
 
@@ -740,17 +752,40 @@ public class Annotations
       }
       return false;
    }
+   
+   /**
+    * hasAnnotation, if class c contains annotation targetClass
+    *
+    * @param c 
+    * @param targetClass
+    * @param annotationRepository
+    * @return
+    */
+   private boolean hasAnnotation(Class c, Class targetClass, AnnotationRepository annotationRepository)
+   {
+      Collection<Annotation> values = annotationRepository.getAnnotation(targetClass);
+      if (values == null)
+         return false;
+      for (Annotation annotation : values)
+      {
+         if (annotation.getClassName().equals(c.getName()));
+            return true;
+      }
+      return false;
+   
+   }
 
    /**
     * Process: @AdministeredObject
     * @param md The metadata
     * @param annotationRepository The annotation repository
     * @param classLoader the classloadedr used to load annotated class
+    * @param configProperties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private ArrayList<AdminObject> processAdministeredObject(AnnotationRepository annotationRepository,
-      ClassLoader classLoader)
+      ClassLoader classLoader, ArrayList<ConfigProperty16> configProperties)
       throws Exception
    {
       ArrayList<AdminObject> adminObjs = null;
@@ -793,7 +828,7 @@ public class Annotations
             XsdString adminobjectInterface = new XsdString(aoName, null);
             XsdString adminobjectClass = new XsdString(aoClassName, null);
 
-            adminObjs.add(new AdminObjectImpl(adminobjectInterface, adminobjectClass, null, null));
+            adminObjs.add(new AdminObjectImpl(adminobjectInterface, adminobjectClass, configProperties, null));
          }
       }
 

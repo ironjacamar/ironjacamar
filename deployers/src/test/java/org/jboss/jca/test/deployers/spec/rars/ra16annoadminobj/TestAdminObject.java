@@ -37,7 +37,7 @@ import javax.resource.spi.ConfigProperty;
 @AdministeredObject
 public class TestAdminObject implements Serializable, Referenceable
 {
-
+   /** reference */
    Reference reference;
 
    @ConfigProperty(type = String.class, defaultValue = "InAO")

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16annoconndefs;
 
+import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.ConfigProperty;
 
 /**
@@ -28,6 +29,7 @@ import javax.resource.spi.ConfigProperty;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @version $Revision: $
  */
+@AdministeredObject
 public class TestAdminObject
 {
    @ConfigProperty(type = String.class, defaultValue = "InAO")

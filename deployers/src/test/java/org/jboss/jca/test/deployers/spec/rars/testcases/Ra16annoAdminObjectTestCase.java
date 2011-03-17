@@ -31,10 +31,14 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
+import static org.hamcrest.core.Is.is;
+
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNotNull;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Test cases for deploying resource adapter archives (.RAR) using -ra.xml files
@@ -86,8 +90,7 @@ public class Ra16annoAdminObjectTestCase
    public void testBasic() throws Throwable
    {
       assertNotNull(adminObj);
-      //assertThat(adminObj.getMyStringProperty(), is("InAO"));
-
+      assertThat(adminObj.getMyStringProperty(), is("InAO"));
    }
 
 }

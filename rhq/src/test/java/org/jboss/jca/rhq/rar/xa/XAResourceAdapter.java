@@ -49,7 +49,6 @@ import javax.transaction.xa.XAResource;
 @Connector(
    reauthenticationSupport = false,
    transactionSupport = TransactionSupport.TransactionSupportLevel.XATransaction)
-@AdministeredObject(adminObjectInterfaces = { XAAdminObjectImpl.class })
 public class XAResourceAdapter implements ResourceAdapter
 {
 
