@@ -34,8 +34,10 @@ import java.util.List;
 import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.ConfigurationUpdateStatus;
 import org.rhq.core.domain.configuration.PropertyList;
 import org.rhq.core.domain.configuration.PropertySimple;
+import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 
 
 /**
@@ -47,6 +49,18 @@ public class RaResourceComponent extends AbstractResourceComponent
 {
    /** log */
    private static final Logger logger = Logger.getLogger(RaResourceComponent.class);
+   
+   /**
+    * Gets associated ResourceAdapter.
+    * 
+    * @return ResourceAdapter null if there is no ResourceAdapter in the connector.
+    */
+   private ResourceAdapter getResourceAdapter()
+   {
+      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
+      return connector.getResourceAdapter();
+   }
 
    /**
     * loadResourceConfiguration
@@ -59,9 +73,7 @@ public class RaResourceComponent extends AbstractResourceComponent
    {
 
       Configuration config = new Configuration();
-      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
-      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
-      ResourceAdapter ra = connector.getResourceAdapter();
+      ResourceAdapter ra = getResourceAdapter();
       if (ra != null)
       {
          String raClsName = ra.getResourceAdapter().getClass().getName();
@@ -76,5 +88,20 @@ public class RaResourceComponent extends AbstractResourceComponent
       }
 
       return config;
+   }
+   
+   @Override
+   public void updateResourceConfiguration(ConfigurationUpdateReport updateResourceConfiguration)
+   {
+      super.updateResourceConfiguration(updateResourceConfiguration);
+      ResourceAdapter ra = getResourceAdapter();
+      if (ra != null)
+      {
+         Configuration config = updateResourceConfiguration.getConfiguration();
+         PropertyList configPropList = config.getList("config-property");
+         List<ConfigProperty> configProps = ra.getConfigProperties();
+         updatePropertyList(ra.getResourceAdapter(), configPropList, configProps);
+      }
+      updateResourceConfiguration.setStatus(ConfigurationUpdateStatus.SUCCESS);
    }
 }

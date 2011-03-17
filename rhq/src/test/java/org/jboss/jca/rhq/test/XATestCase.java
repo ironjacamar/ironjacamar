@@ -104,8 +104,40 @@ public class XATestCase
          if (res.getName().equals("XAResourceAdapter"))
          {
             assertEquals("org.jboss.jca.rhq.rar.xa.XAResourceAdapter", config.getSimpleValue("class-name", null));
+            
+            // config-properties
+            PropertyList configPropList = config.getList("config-property");
+            List<Property> configs = configPropList.getList();
+            assertEquals(3, configs.size());
+            for (Property prop : configs)
+            {
+               PropertyMap raConfigPropMap = (PropertyMap)prop;
+               String propName = raConfigPropMap.getSimpleValue("name", null);
+               String propType = raConfigPropMap.getSimpleValue("type", null);
+               String propValue = raConfigPropMap.getSimpleValue("value", null);
+               if (propName.equals("name"))
+               {
+                  assertEquals("java.lang.String", propType);
+                  assertEquals("Jeff", propValue);
+               }
+               else if (propName.equals("password"))
+               {
+                  assertEquals("java.lang.String", propType);
+                  assertEquals("Confidential", propValue);
+               }
+               else if (propName.equals("score"))
+               {
+                  assertEquals("java.lang.Integer", propType);
+                  assertEquals("100", propValue);
+               }
+               else
+               {
+                  throw new IllegalStateException("Unkown prop name: " + propName);
+               }
+            }
+            
          }
-         if (res.getName().equals("ConnectionFactory"))
+         else if (res.getName().equals("ConnectionFactory"))
          {
             assertEquals(1, res.getChildResources().size());
             
@@ -183,13 +215,44 @@ public class XATestCase
 //            XAManagedConnectionFactory xaMcf = (XAManagedConnectionFactory)mcf.getManagedConnectionFactory();
 //            assertEquals("new-rhq", xaMcf.getManagement());
          }
-         if (res.getName().equals("XAAdminObjectImpl"))
+         else if (res.getName().equals("java:/XAAdminObjectImpl"))
          {
             String aoJndiName = config.getSimpleValue("jndi-name", null);
             assertEquals("java:/XAAdminObjectImpl", aoJndiName);
             String aoCls = config.getSimpleValue("class-name", null);
             assertEquals("org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl", aoCls);
             assertEquals("true", config.getSimpleValue("use-ra-association", "null"));
+            
+            // config-properties
+//            PropertyList configPropList = config.getList("config-property");
+//            List<Property> configs = configPropList.getList();
+//            assertEquals(1, configs.size());
+//            PropertyMap aoConfigPropMap = (PropertyMap)configs.get(0);
+//            assertEquals("aoConfig", aoConfigPropMap.getSimpleValue("name", null));
+//            assertEquals("java.lang.String", aoConfigPropMap.getSimpleValue("type", null));
+//            assertEquals("ao-config", aoConfigPropMap.getSimpleValue("value", null));
+            
+            // test update AdminObject config-properties
+            
+//            aoConfigPropMap.put(new PropertySimple("value", "new-ao-config"));
+//            
+//            ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(config);
+//            configFacet.updateResourceConfiguration(updateConfigReport);
+//            
+//            assertEquals(ConfigurationUpdateStatus.SUCCESS, updateConfigReport.getStatus());
+//            
+//            ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
+//            Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
+//            AdminObject ao = connector.getAdminObjects().get(0);
+//            XAAdminObjectImpl aoObj = (XAAdminObjectImpl)ao.getAdminObject();
+//            
+//            assertEquals("new-ao-config", aoObj.getAoConfig());
+            
+            
+         }
+         else
+         {
+            throw new IllegalStateException("UnKnown resource name: " + res.getName());
          }
       }
       
