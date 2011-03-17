@@ -36,8 +36,10 @@ import javax.resource.spi.ResourceAdapterAssociation;
 import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.ConfigurationUpdateStatus;
 import org.rhq.core.domain.configuration.PropertyList;
 import org.rhq.core.domain.configuration.PropertySimple;
+import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 
 /**
  * Represent Admin Object in JCA container.
@@ -49,6 +51,30 @@ public class AoResourceComponent extends AbstractResourceComponent
 {
    /** log */
    private static final Logger logger = Logger.getLogger(AoResourceComponent.class);
+   
+   /**
+    * Gets associated AdminObject.
+    * 
+    * @return AdminObject
+    */
+   private AdminObject getAdminObject()
+   {
+      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
+      String jcaClsName = getJCAClassName();
+
+      for (AdminObject ao : connector.getAdminObjects())
+      {
+         Object obj = ao.getAdminObject();
+         Class<?> aoCls = obj.getClass();
+         if (aoCls.getName().equals(jcaClsName))
+         {
+            logger.debug("Class Name is: " + jcaClsName);
+            return ao;
+         }
+      }
+      throw new IllegalStateException("Can not find associated AdminObject.");
+   }
 
    /**
     * loadResourceConfiguration
@@ -61,41 +87,46 @@ public class AoResourceComponent extends AbstractResourceComponent
    {
 
       Configuration config = new Configuration();
-
-      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
-      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
       String jcaClsName = getJCAClassName();
 
-      for (AdminObject ao : connector.getAdminObjects())
-      {
-         Object obj = ao.getAdminObject();
-         Class<?> aoCls = obj.getClass();
-         if (aoCls.getName().equals(jcaClsName))
-         {
-            logger.debug("Class Name is: " + jcaClsName);
-            // jndi name
-            PropertySimple jndiNameProp = new PropertySimple("jndi-name", ao.getJndiName());
-            config.put(jndiNameProp);
-            
-            // class-name
-            PropertySimple intfClsNameProp = new PropertySimple("class-name", jcaClsName);
-            config.put(intfClsNameProp);
-            
-            // interface-class-name
-            
-            // use-ra-association
-            boolean useRaAsso = ResourceAdapterAssociation.class.isAssignableFrom(aoCls);
-            PropertySimple useRaAssoProp = new PropertySimple("use-ra-association", Boolean.valueOf(useRaAsso));
-            config.put(useRaAssoProp);
-            
-            // config properties
-            List<ConfigProperty> aoConfigProps = ao.getConfigProperties();
-            PropertyList configList = getConfigPropertiesList(obj, aoConfigProps);
-            config.put(configList);
-            break;
-         }
-      }
+      AdminObject ao = getAdminObject();
+      Object obj = ao.getAdminObject();
+      
+      // jndi name
+      PropertySimple jndiNameProp = new PropertySimple("jndi-name", ao.getJndiName());
+      config.put(jndiNameProp);
+      
+      // class-name
+      PropertySimple intfClsNameProp = new PropertySimple("class-name", jcaClsName);
+      config.put(intfClsNameProp);
+      
+      // interface-class-name
+      
+      // use-ra-association
+      boolean useRaAsso = ResourceAdapterAssociation.class.isAssignableFrom(obj.getClass());
+      PropertySimple useRaAssoProp = new PropertySimple("use-ra-association", Boolean.valueOf(useRaAsso));
+      config.put(useRaAssoProp);
+      
+      // config properties
+      List<ConfigProperty> aoConfigProps = ao.getConfigProperties();
+      PropertyList configList = getConfigPropertiesList(obj, aoConfigProps);
+      config.put(configList);
+      
       return config;
+   }
+   
+   @Override
+   public void updateResourceConfiguration(ConfigurationUpdateReport updateResourceConfiguration)
+   {
+      super.updateResourceConfiguration(updateResourceConfiguration);
+      Configuration config = updateResourceConfiguration.getConfiguration();
+      AdminObject ao = getAdminObject();
+      List<ConfigProperty> configProperties = ao.getConfigProperties();
+      PropertyList configPropertiesList = config.getList("config-property");
+      updatePropertyList(ao.getAdminObject(), configPropertiesList, configProperties);
+      
+      updateResourceConfiguration.setStatus(ConfigurationUpdateStatus.SUCCESS);
+      
    }
    
 }
