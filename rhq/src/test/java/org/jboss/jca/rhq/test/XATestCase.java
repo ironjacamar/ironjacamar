@@ -224,13 +224,13 @@ public class XATestCase
             assertEquals("true", config.getSimpleValue("use-ra-association", "null"));
             
             // config-properties
-//            PropertyList configPropList = config.getList("config-property");
-//            List<Property> configs = configPropList.getList();
-//            assertEquals(1, configs.size());
-//            PropertyMap aoConfigPropMap = (PropertyMap)configs.get(0);
-//            assertEquals("aoConfig", aoConfigPropMap.getSimpleValue("name", null));
-//            assertEquals("java.lang.String", aoConfigPropMap.getSimpleValue("type", null));
-//            assertEquals("ao-config", aoConfigPropMap.getSimpleValue("value", null));
+            PropertyList configPropList = config.getList("config-property");
+            List<Property> configs = configPropList.getList();
+            assertEquals(1, configs.size());
+            PropertyMap aoConfigPropMap = (PropertyMap)configs.get(0);
+            assertEquals("aoConfig", aoConfigPropMap.getSimpleValue("name", null));
+            assertEquals("java.lang.String", aoConfigPropMap.getSimpleValue("type", null));
+            assertEquals("ao-config", aoConfigPropMap.getSimpleValue("value", null));
             
             // test update AdminObject config-properties
             
