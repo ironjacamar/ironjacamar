@@ -473,7 +473,8 @@
                 <resource-configuration>
                     <c:group name="general" displayName="General">
                         <c:simple-property name="jndi-name" displayName="JNDI Name"/>
-                        <c:simple-property name="interface-class-name" displayName="interface class name" description="the interface class name of the admin object" readOnly="true"/>
+                        <c:simple-property name="class-name" displayName="Class name of AdminObject" description="The class name of the admin object" readOnly="true"/>
+                        <c:simple-property name="interface-class-name" displayName="Interface class name of AdminObject" description="The interface class name of the admin object" readOnly="true"/>
                         <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true" />
                     </c:group>
                     <c:group name="ConfigProperties" displayName="All Config Properties">

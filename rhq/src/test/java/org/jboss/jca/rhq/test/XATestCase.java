@@ -185,7 +185,9 @@ public class XATestCase
          }
          if (res.getName().equals("XAAdminObjectImpl"))
          {
-            String aoCls = config.getSimpleValue("interface-class-name", null);
+            String aoJndiName = config.getSimpleValue("jndi-name", null);
+            assertEquals("java:/XAAdminObjectImpl", aoJndiName);
+            String aoCls = config.getSimpleValue("class-name", null);
             assertEquals("org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl", aoCls);
             assertEquals("true", config.getSimpleValue("use-ra-association", "null"));
          }
