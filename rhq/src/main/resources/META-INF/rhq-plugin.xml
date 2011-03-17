@@ -28,6 +28,12 @@
 '>
 
 <!ENTITY datasourceAndConnectionFactoryConnectionResourceConfigProps '
+    <c:simple-property name="pool-name" displayName="Pool Name" readOnly="true">
+        <c:description>
+            The Name of the Connection Pool.
+        </c:description>
+    </c:simple-property>
+    
     <c:simple-property name="min-pool-size"
                        displayName="Minimum Pool Size"
                        type="integer"

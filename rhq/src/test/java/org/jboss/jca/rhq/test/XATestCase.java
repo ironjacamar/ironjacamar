@@ -29,6 +29,7 @@ import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.After;
@@ -36,6 +37,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.Property;
+import org.rhq.core.domain.configuration.PropertyList;
+import org.rhq.core.domain.configuration.PropertyMap;
 import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.domain.resource.Resource;
 import org.rhq.core.pc.PluginContainer;
@@ -110,6 +114,7 @@ public class XATestCase
             ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(mcfRes);
             Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
             
+            assertEquals("XA", mcfConfig.getSimpleValue("pool-name", null));
 //            assertEquals("", mcfConfig.getSimpleValue("jndi-name", null));
             String mcfCls = mcfConfig.getSimpleValue("mcf-class-name", null);
             assertEquals("org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory", mcfCls);
@@ -125,6 +130,15 @@ public class XATestCase
             assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
             assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
             
+            // config-properties
+            PropertyList configPropList = mcfConfig.getList("config-property");
+            List<Property> configs = configPropList.getList();
+            assertEquals(1, configs.size());
+            PropertyMap managementPropMap = (PropertyMap)configs.get(0);
+            assertEquals("management", managementPropMap.getSimpleValue("name", null));
+            assertEquals("java.lang.String", managementPropMap.getSimpleValue("type", null));
+            assertEquals("rhq", managementPropMap.getSimpleValue("value", null));
+            
             // test mcf updateConfiguration
             mcfConfig.put(new PropertySimple("jndi-name", "TestMcfJndiName"));
             mcfConfig.put(new PropertySimple("min-pool-size", 5));
@@ -136,6 +150,17 @@ public class XATestCase
             mcfConfig.put(new PropertySimple("prefill", false));
             mcfConfig.put(new PropertySimple("use-strict-min", true));
             mcfConfig.put(new PropertySimple("use-fast-fail", true));
+            
+            PropertyList updateConfigPropList = new PropertyList("config-property");
+            PropertyMap mcfConfigPropMap = new PropertyMap("config-property");
+            PropertySimple mcfNameProp = new PropertySimple("name", "management");
+            PropertySimple mcfTypeProp = new PropertySimple("type", "java.lang.String");
+            PropertySimple mcfValueProp = new PropertySimple("value", "new-rhq");
+            mcfConfigPropMap.put(mcfNameProp);
+            mcfConfigPropMap.put(mcfTypeProp);
+            mcfConfigPropMap.put(mcfValueProp);
+            updateConfigPropList.add(mcfConfigPropMap);
+            mcfConfig.put(updateConfigPropList);
             
             ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(mcfConfig);
             mcfConfigFacet.updateResourceConfiguration(updateConfigReport);
@@ -155,6 +180,8 @@ public class XATestCase
             assertFalse(poolConfig.isPrefill());
             assertTrue(poolConfig.isStrictMin());
             assertTrue(poolConfig.isUseFastFail());
+//            XAManagedConnectionFactory xaMcf = (XAManagedConnectionFactory)mcf.getManagedConnectionFactory();
+//            assertEquals("new-rhq", xaMcf.getManagement());
          }
          if (res.getName().equals("XAAdminObjectImpl"))
          {

@@ -63,7 +63,7 @@ public class XAManagedConnectionFactory implements ManagedConnectionFactory, Res
    private PrintWriter logwriter;
 
    /** management */
-   @ConfigProperty(defaultValue = "rhq")
+   @ConfigProperty(defaultValue = "rhq", supportsDynamicUpdates = true)
    private String management;
 
    /**

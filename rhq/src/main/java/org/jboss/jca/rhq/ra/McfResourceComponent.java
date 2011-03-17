@@ -153,6 +153,10 @@ public class McfResourceComponent extends AbstractResourceComponent
       
       // conn-pool
       PoolConfiguration poolConfig = this.mcf.getPoolConfiguration();
+      
+      PropertySimple poolNameProp = new PropertySimple("pool-name", this.mcf.getPool().getName());
+      config.put(poolNameProp);
+      
       PropertySimple minSizeProp = new PropertySimple("min-pool-size", Integer.valueOf(poolConfig.getMinSize()));
       config.put(minSizeProp);
       
