@@ -29,8 +29,12 @@ import org.jboss.jca.rhq.core.AbstractResourceComponent;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.resource.Referenceable;
+import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.ResourceAdapterAssociation;
 
 import org.jboss.logging.Logger;
@@ -101,6 +105,9 @@ public class AoResourceComponent extends AbstractResourceComponent
       config.put(intfClsNameProp);
       
       // interface-class-name
+      String aoIntfClsName = getAdminObjectInterfaceClassName(obj.getClass());
+      PropertySimple aoIntfClsNameProp = new PropertySimple("interface-class-name", aoIntfClsName);
+      config.put(aoIntfClsNameProp);
       
       // use-ra-association
       boolean useRaAsso = ResourceAdapterAssociation.class.isAssignableFrom(obj.getClass());
@@ -115,6 +122,60 @@ public class AoResourceComponent extends AbstractResourceComponent
       return config;
    }
    
+   /**
+    * Gets AdminObject interfaces class name string.
+    * 
+    * @param aoCls AdminObject class
+    * @return string represents all interfaces class names, connected by ', '.
+    */
+   private String getAdminObjectInterfaceClassName(Class<? extends Object> aoCls)
+   {
+      List<Class<?>> intfClsList = new ArrayList<Class<?>>();
+      AdministeredObject aoAnnotation = aoCls.getAnnotation(AdministeredObject.class);
+      if (aoAnnotation != null)
+      {
+         Class<?>[] intfCls = aoAnnotation.adminObjectInterfaces();
+         if (null != intfCls)
+         {
+            for (Class<?> cls : intfCls)
+            {
+               intfClsList.add(cls);
+            }
+         }
+      }
+      Class<?>[] intfs = aoCls.getInterfaces();
+      for (Class<?> intf : intfs)
+      {
+         if (intf.equals(Serializable.class) || intf.equals(Referenceable.class))
+         {
+            continue;
+         }
+         else if (intf.getName().startsWith("javax.resource.spi"))
+         {
+            continue;
+         }
+         else if (intf.getName().startsWith("javax.naming"))
+         {
+            continue;
+         }
+         if (!intfClsList.contains(intf))
+         {
+            intfClsList.add(intf);
+         }
+      }
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i< intfClsList.size(); i ++)
+      {
+         Class<?> cls = intfClsList.get(i);
+         sb.append(cls.getName());
+         if (i < intfClsList.size() - 1)
+         {
+            sb.append(", ");
+         }
+      }
+      return sb.toString();
+   }
+
    @Override
    public void updateResourceConfiguration(ConfigurationUpdateReport updateResourceConfiguration)
    {
