@@ -164,7 +164,7 @@ public class AoResourceComponent extends AbstractResourceComponent
          }
       }
       StringBuilder sb = new StringBuilder();
-      for (int i = 0; i< intfClsList.size(); i ++)
+      for (int i = 0; i < intfClsList.size(); i++)
       {
          Class<?> cls = intfClsList.get(i);
          sb.append(cls.getName());
