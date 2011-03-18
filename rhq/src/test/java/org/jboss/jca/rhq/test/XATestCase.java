@@ -23,9 +23,12 @@ package org.jboss.jca.rhq.test;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.AdminObject;
+import org.jboss.jca.core.api.management.ConfigProperty;
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagedConnectionFactory;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.api.management.ResourceAdapter;
+import org.jboss.jca.rhq.core.EmbeddedJcaDiscover;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl;
 import org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory;
@@ -419,6 +422,54 @@ public class XATestCase
       assertEquals("Confidential", ra.getPassword());
       assertEquals(Integer.valueOf(99), ra.getScore());
       
+   }
+   
+   /**
+    * Tests ConfigProperties dynamic and confidential attributes in management model.
+    * 
+    */
+   @Test
+   public void testConfigProperiesDynamicAndConfidential()
+   {
+      ManagementRepository manRepo = EmbeddedJcaDiscover.getInstance().getManagementRepository();
+      Connector xaConnector = manRepo.getConnectors().get(0);
+      AdminObject ao = xaConnector.getAdminObjects().get(0);
+      ManagedConnectionFactory mcf = xaConnector.getManagedConnectionFactories().get(0);
+      ResourceAdapter ra = xaConnector.getResourceAdapter();
+
+      // ao-config 
+      ConfigProperty aoConfig = ao.getConfigProperties().get(0);
+      assertFalse(aoConfig.isConfidential());
+      assertFalse(aoConfig.isDynamic());
+      
+      // management
+      ConfigProperty managementConfig = mcf.getConfigProperties().get(0);
+      assertTrue(managementConfig.isDynamic());
+      assertFalse(managementConfig.isConfidential());
+      
+      // resource adapter
+      for (ConfigProperty raConfig : ra.getConfigProperties())
+      {
+         if (raConfig.getName().equals("name"))
+         {
+            assertFalse(raConfig.isConfidential());
+            assertFalse(raConfig.isDynamic());
+         }
+         else if (raConfig.getName().equals("password"))
+         {
+            assertTrue(raConfig.isConfidential());
+            assertFalse(raConfig.isDynamic());
+         }
+         else if (raConfig.getName().equals("score"))
+         {
+            assertTrue(raConfig.isDynamic());
+            assertFalse(raConfig.isConfidential());
+         }
+         else
+         {
+            throw new IllegalStateException("Unknown ConfigProperty: " + raConfig.getName());
+         }
+      }
    }
 
    /**
