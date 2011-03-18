@@ -89,13 +89,13 @@ public class Merger
       {
          if (ijProperties != null && ijProperties.containsKey(c.getConfigPropertyName().getValue()))
          {
-            if (original instanceof ConfigProperty16)
+            if (c instanceof ConfigProperty16)
             {
                ConfigProperty16 c16 = (ConfigProperty16) c;
                XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
                   .getConfigPropertyName().getId());
                ConfigProperty16 newProp = new ConfigProperty16Impl(c.getDescriptions(), c.getConfigPropertyName(),
-                                                                   c.getConfigPropertyName(), newValue,
+                                                                   c.getConfigPropertyType(), newValue,
                                                                    c16.getConfigPropertyIgnore(),
                                                                    c16.getConfigPropertySupportsDynamicUpdates(),
                                                                    c16.getConfigPropertyConfidential(), c.getId());
