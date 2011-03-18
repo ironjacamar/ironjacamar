@@ -22,21 +22,26 @@
 package org.jboss.jca.rhq.test;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.management.AdminObject;
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagedConnectionFactory;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
+import org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl;
+import org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory;
+import org.jboss.jca.rhq.rar.xa.XAResourceAdapter;
 import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.ConfigurationUpdateStatus;
 import org.rhq.core.domain.configuration.Property;
 import org.rhq.core.domain.configuration.PropertyList;
 import org.rhq.core.domain.configuration.PropertyMap;
@@ -59,8 +64,9 @@ import static org.junit.Assert.*;
  */
 public class XATestCase
 {
-
-   private PluginContainerConfiguration pcConfig;
+   
+   /** RAR resource */
+   private static Resource rarServiceResource;
    
    /**
     * Basic
@@ -69,192 +75,349 @@ public class XATestCase
    @Test
    public void testBasic() throws Throwable
    {
-      PluginContainer pc = PluginContainer.getInstance();
-      
-      InventoryManager im = pc.getInventoryManager();
-
-      im.executeServerScanImmediately();
-      
-      Resource platformRes = im.getPlatform();
-      assertNotNull(platformRes);
-      
-      assertEquals(1, platformRes.getChildResources().size());
-      
-      Resource serverRes = platformRes.getChildResources().iterator().next();
-      
-      RuntimeDiscoveryExecutor discoverExecutor = new RuntimeDiscoveryExecutor(im, pcConfig, serverRes);
-      discoverExecutor.run();
-      
-      assertEquals(1, serverRes.getChildResources().size());
-      Resource rarServiceRes = serverRes.getChildResources().iterator().next();
-      
       // only xa.rar is deployed
-      assertEquals("xa.rar", rarServiceRes.getName());
+      assertEquals("xa.rar", rarServiceResource.getName());
       
-      Set<Resource> subRarServiceRes = rarServiceRes.getChildResources();
+      Set<Resource> subRarServiceRes = rarServiceResource.getChildResources();
       
       // connectionfactory, resource adapter and adminObject
       assertEquals(3, subRarServiceRes.size());
-      
       for (Resource res : subRarServiceRes)
       {
-         ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(res);
-         Configuration config = configFacet.loadResourceConfiguration();
-         
          if (res.getName().equals("XAResourceAdapter"))
          {
-            assertEquals("org.jboss.jca.rhq.rar.xa.XAResourceAdapter", config.getSimpleValue("class-name", null));
-            
-            // config-properties
-            PropertyList configPropList = config.getList("config-property");
-            List<Property> configs = configPropList.getList();
-            assertEquals(3, configs.size());
-            for (Property prop : configs)
-            {
-               PropertyMap raConfigPropMap = (PropertyMap)prop;
-               String propName = raConfigPropMap.getSimpleValue("name", null);
-               String propType = raConfigPropMap.getSimpleValue("type", null);
-               String propValue = raConfigPropMap.getSimpleValue("value", null);
-               if (propName.equals("name"))
-               {
-                  assertEquals("java.lang.String", propType);
-                  assertEquals("Jeff", propValue);
-               }
-               else if (propName.equals("password"))
-               {
-                  assertEquals("java.lang.String", propType);
-                  assertEquals("Confidential", propValue);
-               }
-               else if (propName.equals("score"))
-               {
-                  assertEquals("java.lang.Integer", propType);
-                  assertEquals("100", propValue);
-               }
-               else
-               {
-                  throw new IllegalStateException("Unkown prop name: " + propName);
-               }
-            }
-            
+            assertEquals("xa.rar#XAResourceAdapter", res.getResourceKey());
          }
          else if (res.getName().equals("ConnectionFactory"))
          {
             assertEquals(1, res.getChildResources().size());
-            
-            // test mcf loadConfiguration
             Resource mcfRes = res.getChildResources().iterator().next();
-            ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(mcfRes);
-            Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
-            
-            assertEquals("XA", mcfConfig.getSimpleValue("pool-name", null));
-//            assertEquals("", mcfConfig.getSimpleValue("jndi-name", null));
-            String mcfCls = mcfConfig.getSimpleValue("mcf-class-name", null);
-            assertEquals("org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory", mcfCls);
-            assertEquals("true", mcfConfig.getSimpleValue("use-ra-association", null));
-            assertEquals("0", mcfConfig.getSimpleValue("min-pool-size", null));
-            assertEquals("20", mcfConfig.getSimpleValue("max-pool-size", null));
-            assertEquals("false", mcfConfig.getSimpleValue("background-validation", null));
-            assertEquals("0", mcfConfig.getSimpleValue("background-validation-millis", null));
-            assertEquals("0", mcfConfig.getSimpleValue("background-validation-minutes", null));
-            assertEquals("30000", mcfConfig.getSimpleValue("blocking-timeout-millis", null));
-            assertEquals("30", mcfConfig.getSimpleValue("idle-timeout-minutes", null));
-            assertEquals("true", mcfConfig.getSimpleValue("prefill", null));
-            assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
-            assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
-            
-            // config-properties
-            PropertyList configPropList = mcfConfig.getList("config-property");
-            List<Property> configs = configPropList.getList();
-            assertEquals(1, configs.size());
-            PropertyMap managementPropMap = (PropertyMap)configs.get(0);
-            assertEquals("management", managementPropMap.getSimpleValue("name", null));
-            assertEquals("java.lang.String", managementPropMap.getSimpleValue("type", null));
-            assertEquals("rhq", managementPropMap.getSimpleValue("value", null));
-            
-            // test mcf updateConfiguration
-            mcfConfig.put(new PropertySimple("jndi-name", "TestMcfJndiName"));
-            mcfConfig.put(new PropertySimple("min-pool-size", 5));
-            mcfConfig.put(new PropertySimple("max-pool-size", 15));
-            mcfConfig.put(new PropertySimple("background-validation", true));
-            mcfConfig.put(new PropertySimple("background-validation-minutes", 30));
-            mcfConfig.put(new PropertySimple("blocking-timeout-millis", 10000));
-            mcfConfig.put(new PropertySimple("idle-timeout-minutes", 15));
-            mcfConfig.put(new PropertySimple("prefill", false));
-            mcfConfig.put(new PropertySimple("use-strict-min", true));
-            mcfConfig.put(new PropertySimple("use-fast-fail", true));
-            
-            PropertyList updateConfigPropList = new PropertyList("config-property");
-            PropertyMap mcfConfigPropMap = new PropertyMap("config-property");
-            PropertySimple mcfNameProp = new PropertySimple("name", "management");
-            PropertySimple mcfTypeProp = new PropertySimple("type", "java.lang.String");
-            PropertySimple mcfValueProp = new PropertySimple("value", "new-rhq");
-            mcfConfigPropMap.put(mcfNameProp);
-            mcfConfigPropMap.put(mcfTypeProp);
-            mcfConfigPropMap.put(mcfValueProp);
-            updateConfigPropList.add(mcfConfigPropMap);
-            mcfConfig.put(updateConfigPropList);
-            
-            ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(mcfConfig);
-            mcfConfigFacet.updateResourceConfiguration(updateConfigReport);
-            
-            ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
-            Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
-            ManagedConnectionFactory mcf = connector.getManagedConnectionFactories().get(0);
-            PoolConfiguration poolConfig = mcf.getPoolConfiguration();
-            
-            assertEquals("TestMcfJndiName", mcf.getJndiName());
-            assertEquals(5, poolConfig.getMinSize());
-            assertEquals(15, poolConfig.getMaxSize());
-            assertTrue(poolConfig.isBackgroundValidation());
-            assertEquals(30, poolConfig.getBackgroundValidationMinutes());
-            assertEquals(10000, poolConfig.getBlockingTimeout());
-            assertEquals(15 * 60 * 1000L, poolConfig.getIdleTimeout());
-            assertFalse(poolConfig.isPrefill());
-            assertTrue(poolConfig.isStrictMin());
-            assertTrue(poolConfig.isUseFastFail());
-//            XAManagedConnectionFactory xaMcf = (XAManagedConnectionFactory)mcf.getManagedConnectionFactory();
-//            assertEquals("new-rhq", xaMcf.getManagement());
+            assertEquals("XAManagedConnectionFactory", mcfRes.getName());
          }
          else if (res.getName().equals("java:/XAAdminObjectImpl"))
          {
-            String aoJndiName = config.getSimpleValue("jndi-name", null);
-            assertEquals("java:/XAAdminObjectImpl", aoJndiName);
-            String aoCls = config.getSimpleValue("class-name", null);
-            assertEquals("org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl", aoCls);
-            assertEquals("true", config.getSimpleValue("use-ra-association", "null"));
-            
-            // config-properties
-            PropertyList configPropList = config.getList("config-property");
-            List<Property> configs = configPropList.getList();
-            assertEquals(1, configs.size());
-            PropertyMap aoConfigPropMap = (PropertyMap)configs.get(0);
-            assertEquals("aoConfig", aoConfigPropMap.getSimpleValue("name", null));
-            assertEquals("java.lang.String", aoConfigPropMap.getSimpleValue("type", null));
-            assertEquals("ao-config", aoConfigPropMap.getSimpleValue("value", null));
-            
-            // test update AdminObject config-properties
-            
-//            aoConfigPropMap.put(new PropertySimple("value", "new-ao-config"));
-//            
-//            ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(config);
-//            configFacet.updateResourceConfiguration(updateConfigReport);
-//            
-//            assertEquals(ConfigurationUpdateStatus.SUCCESS, updateConfigReport.getStatus());
-//            
-//            ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
-//            Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
-//            AdminObject ao = connector.getAdminObjects().get(0);
-//            XAAdminObjectImpl aoObj = (XAAdminObjectImpl)ao.getAdminObject();
-//            
-//            assertEquals("new-ao-config", aoObj.getAoConfig());
-            
-            
+            assertEquals("xa.rar#org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl", res.getResourceKey());
          }
          else
          {
-            throw new IllegalStateException("UnKnown resource name: " + res.getName());
+            throw new IllegalStateException("Unknown resource name: " + res.getName());
          }
       }
+   }
+   
+   /**
+    * Tests AoResourceComponent load resource configuration.
+    * 
+    * @throws Exception exception
+    */
+   @Test
+   public void testLoadAoResourceConfiguration() throws Exception
+   {
+      Resource aoResource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals("java:/XAAdminObjectImpl"))
+         {
+            aoResource = res;
+         }
+      }
+      assertNotNull(aoResource);
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(aoResource);
+      Configuration config = configFacet.loadResourceConfiguration();
+      
+      String aoJndiName = config.getSimpleValue("jndi-name", null);
+      assertEquals("java:/XAAdminObjectImpl", aoJndiName);
+      String aoCls = config.getSimpleValue("class-name", null);
+      assertEquals("org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl", aoCls);
+      String aoIntfCls = config.getSimpleValue("interface-class-name", null);
+      assertEquals("org.jboss.jca.rhq.rar.xa.XAAdminObjectInterface", aoIntfCls);
+      assertEquals("true", config.getSimpleValue("use-ra-association", "null"));
+      
+      // config-properties
+      PropertyList configPropList = config.getList("config-property");
+      List<Property> configs = configPropList.getList();
+      assertEquals(1, configs.size());
+      PropertyMap aoConfigPropMap = (PropertyMap)configs.get(0);
+      assertEquals("aoConfig", aoConfigPropMap.getSimpleValue("name", null));
+      assertEquals("java.lang.String", aoConfigPropMap.getSimpleValue("type", null));
+      assertEquals("ao-config", aoConfigPropMap.getSimpleValue("value", null));
+   }
+   
+   /**
+    * Tests AoResourceComponent update resource configuration.
+    * 
+    * @throws Exception exception
+    */
+   @Test
+   public void testUpdateAoResourceComponentConfiguration() throws Exception
+   {
+      Resource aoResource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals("java:/XAAdminObjectImpl"))
+         {
+            aoResource = res;
+         }
+      }
+      assertNotNull(aoResource);
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(aoResource);
+      Configuration config = configFacet.loadResourceConfiguration();
+      PropertyList configPropList = config.getList("config-property");
+      List<Property> configs = configPropList.getList();
+      assertEquals(1, configs.size());
+      PropertyMap aoConfigPropMap = (PropertyMap)configs.get(0);
+      aoConfigPropMap.put(new PropertySimple("value", "new-ao-config"));
+      ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(config);
+      configFacet.updateResourceConfiguration(updateConfigReport);
+      assertEquals(ConfigurationUpdateStatus.SUCCESS, updateConfigReport.getStatus());
+      
+      ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
+      AdminObject ao = connector.getAdminObjects().get(0);
+      XAAdminObjectImpl aoObj = (XAAdminObjectImpl)ao.getAdminObject();
+      
+      // not changed, because of not dynamic
+      assertEquals("ao-config", aoObj.getAoConfig());
+      
+   }
+   
+   
+   /**
+    * Tests McfResourceComponent loadResourceConfiguration
+    * 
+    * @throws Exception exception
+    */
+   @Test
+   public void testMcfLoadResourceConfiguration() throws Exception
+   {
+      Resource cfResource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals("ConnectionFactory"))
+         {
+            cfResource = res;
+         }
+      }
+      assertNotNull(cfResource);
+      assertEquals(1, cfResource.getChildResources().size());
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      
+      // test mcf loadConfiguration
+      Resource mcfRes = cfResource.getChildResources().iterator().next();
+      ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(mcfRes);
+      Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
+      
+      assertEquals("XA", mcfConfig.getSimpleValue("pool-name", null));
+      assertEquals("java:/eis/XA", mcfConfig.getSimpleValue("jndi-name", null));
+      String mcfCls = mcfConfig.getSimpleValue("mcf-class-name", null);
+      assertEquals("org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory", mcfCls);
+      assertEquals("true", mcfConfig.getSimpleValue("use-ra-association", null));
+      assertEquals("0", mcfConfig.getSimpleValue("min-pool-size", null));
+      assertEquals("20", mcfConfig.getSimpleValue("max-pool-size", null));
+      assertEquals("false", mcfConfig.getSimpleValue("background-validation", null));
+      assertEquals("0", mcfConfig.getSimpleValue("background-validation-millis", null));
+      assertEquals("0", mcfConfig.getSimpleValue("background-validation-minutes", null));
+      assertEquals("30000", mcfConfig.getSimpleValue("blocking-timeout-millis", null));
+      assertEquals("30", mcfConfig.getSimpleValue("idle-timeout-minutes", null));
+      assertEquals("true", mcfConfig.getSimpleValue("prefill", null));
+      assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
+      assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
+      
+      // config-properties
+      PropertyList configPropList = mcfConfig.getList("config-property");
+      List<Property> configs = configPropList.getList();
+      assertEquals(1, configs.size());
+      PropertyMap managementPropMap = (PropertyMap)configs.get(0);
+      assertEquals("management", managementPropMap.getSimpleValue("name", null));
+      assertEquals("java.lang.String", managementPropMap.getSimpleValue("type", null));
+      assertEquals("rhq", managementPropMap.getSimpleValue("value", null));
+   }
+   
+   /**
+    * Tests McfResourceComponent update resource configuration.
+    * 
+    * @throws Exception exception
+    */
+   @Test
+   public void testMcfUpdateResourceConfinguration() throws Exception
+   {
+      Resource cfResource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals("ConnectionFactory"))
+         {
+            cfResource = res;
+         }
+      }
+      assertNotNull(cfResource);
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      
+      Resource mcfRes = cfResource.getChildResources().iterator().next();
+      ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(mcfRes);
+      Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
+      
+      // test mcf updateConfiguration
+      mcfConfig.put(new PropertySimple("jndi-name", "TestMcfJndiName"));
+      mcfConfig.put(new PropertySimple("min-pool-size", 5));
+      mcfConfig.put(new PropertySimple("max-pool-size", 15));
+      mcfConfig.put(new PropertySimple("background-validation", true));
+      mcfConfig.put(new PropertySimple("background-validation-minutes", 30));
+      mcfConfig.put(new PropertySimple("blocking-timeout-millis", 10000));
+      mcfConfig.put(new PropertySimple("idle-timeout-minutes", 15));
+      mcfConfig.put(new PropertySimple("prefill", false));
+      mcfConfig.put(new PropertySimple("use-strict-min", true));
+      mcfConfig.put(new PropertySimple("use-fast-fail", true));
+      
+      PropertyList updateConfigPropList = new PropertyList("config-property");
+      PropertyMap mcfConfigPropMap = new PropertyMap("config-property");
+      PropertySimple mcfNameProp = new PropertySimple("name", "management");
+      PropertySimple mcfTypeProp = new PropertySimple("type", "java.lang.String");
+      PropertySimple mcfValueProp = new PropertySimple("value", "new-rhq");
+      mcfConfigPropMap.put(mcfNameProp);
+      mcfConfigPropMap.put(mcfTypeProp);
+      mcfConfigPropMap.put(mcfValueProp);
+      updateConfigPropList.add(mcfConfigPropMap);
+      mcfConfig.put(updateConfigPropList);
+      
+      ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(mcfConfig);
+      mcfConfigFacet.updateResourceConfiguration(updateConfigReport);
+      
+      ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
+      ManagedConnectionFactory mcf = connector.getManagedConnectionFactories().get(0);
+      PoolConfiguration poolConfig = mcf.getPoolConfiguration();
+      
+      assertEquals("TestMcfJndiName", mcf.getJndiName());
+      assertEquals(5, poolConfig.getMinSize());
+      assertEquals(15, poolConfig.getMaxSize());
+      assertTrue(poolConfig.isBackgroundValidation());
+      assertEquals(30, poolConfig.getBackgroundValidationMinutes());
+      assertEquals(10000, poolConfig.getBlockingTimeout());
+      assertEquals(15 * 60 * 1000L, poolConfig.getIdleTimeout());
+      assertFalse(poolConfig.isPrefill());
+      assertTrue(poolConfig.isStrictMin());
+      assertTrue(poolConfig.isUseFastFail());
+      
+      XAManagedConnectionFactory xaMcf = (XAManagedConnectionFactory)mcf.getManagedConnectionFactory();
+      assertEquals("new-rhq", xaMcf.getManagement());
+   }
+   
+   /**
+    * Tests RaResourceComponent load resource configuration.
+    * 
+    * @throws Exception exception
+    */
+   @Test
+   public void testRaLoadResourceCondiguration() throws Exception
+   {
+      Resource raResource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals("XAResourceAdapter"))
+         {
+            raResource = res;
+         }
+      }
+      assertNotNull(raResource);
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(raResource);
+      Configuration config = configFacet.loadResourceConfiguration();
+      assertEquals("org.jboss.jca.rhq.rar.xa.XAResourceAdapter", config.getSimpleValue("class-name", null));
+      
+      // config-properties
+      PropertyList configPropList = config.getList("config-property");
+      List<Property> configs = configPropList.getList();
+      assertEquals(3, configs.size());
+      for (Property prop : configs)
+      {
+         PropertyMap raConfigPropMap = (PropertyMap)prop;
+         String propName = raConfigPropMap.getSimpleValue("name", null);
+         String propType = raConfigPropMap.getSimpleValue("type", null);
+         String propValue = raConfigPropMap.getSimpleValue("value", null);
+         if (propName.equals("name"))
+         {
+            assertEquals("java.lang.String", propType);
+            assertEquals("Jeff", propValue);
+         }
+         else if (propName.equals("password"))
+         {
+            assertEquals("java.lang.String", propType);
+            assertEquals("Confidential", propValue);
+         }
+         else if (propName.equals("score"))
+         {
+            assertEquals("java.lang.Integer", propType);
+            assertEquals("100", propValue);
+         }
+         else
+         {
+            throw new IllegalStateException("Unkown prop name: " + propName);
+         }
+      }
+   }
+   
+   /**
+    * Tests RaResourceComponent update resource component.
+    * 
+    * @throws Exception exception
+    */
+   @Test
+   public void testRaUpdateResourceConfiguration() throws Exception
+   {
+      Resource raResource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals("XAResourceAdapter"))
+         {
+            raResource = res;
+         }
+      }
+      assertNotNull(raResource);
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(raResource);
+      Configuration config = configFacet.loadResourceConfiguration();
+      PropertyList configPropList = new PropertyList("config-property");
+      
+      PropertyMap namePropMap = new PropertyMap("config-property");
+      namePropMap.put(new PropertySimple("name", "name"));
+      namePropMap.put(new PropertySimple("type", "java.lang.String"));
+      namePropMap.put(new PropertySimple("value", "TangZhenni"));
+      configPropList.add(namePropMap);
+      
+      PropertyMap scorePropMap = new PropertyMap("config-property");
+      scorePropMap.put(new PropertySimple("name", "score"));
+      scorePropMap.put(new PropertySimple("type", "java.lang.Integer"));
+      scorePropMap.put(new PropertySimple("value", 99));
+      configPropList.add(scorePropMap);
+      
+      PropertyMap passPropMap = new PropertyMap("config-property");
+      passPropMap.put(new PropertySimple("name", "password"));
+      passPropMap.put(new PropertySimple("type", "java.lang.String"));
+      passPropMap.put(new PropertySimple("value", "123456"));
+      configPropList.add(passPropMap);
+      
+      config.put(configPropList);
+      
+      ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(config);
+      configFacet.updateResourceConfiguration(updateConfigReport);
+      
+      assertEquals(ConfigurationUpdateStatus.SUCCESS, updateConfigReport.getStatus());
+      
+      ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
+      XAResourceAdapter ra = (XAResourceAdapter)connector.getResourceAdapter().getResourceAdapter();
+
+      assertEquals("Jeff", ra.getName());
+      assertEquals("Confidential", ra.getPassword());
+      assertEquals(Integer.valueOf(99), ra.getScore());
       
    }
 
@@ -262,11 +425,11 @@ public class XATestCase
     * Lifecycle start, before the suite is executed
     * @throws Throwable throwable exception 
     */
-   @Before
-   public void setUp() throws Throwable
+   @BeforeClass
+   public static void setUp() throws Throwable
    {
       File pluginDir = new File(System.getProperty("archives.dir"));
-      pcConfig = new PluginContainerConfiguration();
+      PluginContainerConfiguration pcConfig = new PluginContainerConfiguration();
       pcConfig.setPluginFinder(new FileSystemPluginFinder(pluginDir));
       pcConfig.setPluginDirectory(pluginDir);
       pcConfig.setInsideAgent(false);
@@ -275,14 +438,25 @@ public class XATestCase
 
       pc.setConfiguration(pcConfig);
       pc.initialize();
+      
+      InventoryManager im = pc.getInventoryManager();
+      im.executeServerScanImmediately();
+
+      Resource platformRes = im.getPlatform();
+      Resource serverRes = platformRes.getChildResources().iterator().next();
+
+      RuntimeDiscoveryExecutor discoverExecutor = new RuntimeDiscoveryExecutor(im, pcConfig, serverRes);
+      discoverExecutor.run();
+      
+      rarServiceResource = serverRes.getChildResources().iterator().next();
    }
 
    /**
     * Lifecycle stop, after the suite is executed
     * @throws Throwable throwable exception 
     */
-   @After
-   public void tearDown() throws Throwable
+   @AfterClass
+   public static void tearDown() throws Throwable
    {
       PluginContainer pc = PluginContainer.getInstance();
       pc.shutdown();
