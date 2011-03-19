@@ -445,11 +445,12 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             }
          }
 
-         for (org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf :
-                 mgtConnector.getManagedConnectionFactories())
+         for (org.jboss.jca.core.api.management.ConnectionFactory mgtCf :
+                 mgtConnector.getConnectionFactories())
          {
-            if (mgtMcf.getManagedConnectionFactory() != null)
+            if (mgtCf.getMcf() != null)
             {
+               org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf = mgtCf.getMcf();
                Set<String> writeable = new HashSet<String>();
                Set<String> excludeAttributes = new HashSet<String>();
 
@@ -482,13 +483,13 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                ons.add(mcfON);
             }
 
-            if (mgtMcf.getPoolConfiguration() != null)
+            if (mgtCf.getPoolConfiguration() != null)
             {
                String mcfPCName = baseName + ",type=ManagedConnectionFactory,class=" +
-                  getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName()) +
+                  getClassName(mgtCf.getMcf().getClass().getName()) +
                   ",subcategory=PoolConfiguration";
 
-               DynamicMBean mcfPCDMB = JMX.createMBean(mgtMcf.getPoolConfiguration(), "Pool configuration");
+               DynamicMBean mcfPCDMB = JMX.createMBean(mgtCf.getPoolConfiguration(), "Pool configuration");
                ObjectName mcfPCON = new ObjectName(mcfPCName);
 
                server.registerMBean(mcfPCDMB, mcfPCON);
@@ -496,12 +497,12 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                ons.add(mcfPCON);
             }
 
-            if (mgtMcf.getPool() != null)
+            if (mgtCf.getPool() != null)
             {
                String mcfPName = baseName + ",type=ManagedConnectionFactory,class=" +
-                  getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName()) + ",subcategory=Pool";
+                  getClassName(mgtCf.getMcf().getClass().getName()) + ",subcategory=Pool";
 
-               DynamicMBean mcfPDMB = JMX.createMBean(mgtMcf.getPool(), "Pool");
+               DynamicMBean mcfPDMB = JMX.createMBean(mgtCf.getPool(), "Pool");
                ObjectName mcfPON = new ObjectName(mcfPName);
 
                server.registerMBean(mcfPDMB, mcfPON);

@@ -24,6 +24,7 @@ package org.jboss.jca.rhq.test;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.AdminObject;
 import org.jboss.jca.core.api.management.ConfigProperty;
+import org.jboss.jca.core.api.management.ConnectionFactory;
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagedConnectionFactory;
 import org.jboss.jca.core.api.management.ManagementRepository;
@@ -64,9 +65,13 @@ import static org.junit.Assert.*;
  * RHQ plugin test cases for an XA resource adapter
  * 
  * @author Jesper Pedersen <jesper.pedersen@jboss.org>
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
+ * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  */
 public class XATestCase
 {
+   /** cf jndi name */
+   private static final String CF_JNDI_NAME = "java:/eis/XA";
    
    /** RAR resource */
    private static Resource rarServiceResource;
@@ -91,11 +96,11 @@ public class XATestCase
          {
             assertEquals("xa.rar#XAResourceAdapter", res.getResourceKey());
          }
-         else if (res.getName().equals("ConnectionFactory"))
+         else if (res.getName().equals(CF_JNDI_NAME))
          {
-            assertEquals(1, res.getChildResources().size());
+            //assertEquals(1, res.getChildResources().size());
             Resource mcfRes = res.getChildResources().iterator().next();
-            assertEquals("XAManagedConnectionFactory", mcfRes.getName());
+            assertEquals("ManagedConnectionFactory", mcfRes.getName());
          }
          else if (res.getName().equals("java:/XAAdminObjectImpl"))
          {
@@ -188,6 +193,46 @@ public class XATestCase
       
    }
    
+   /**
+    * Tests CfResourceComponent loadResourceConfiguration
+    * 
+    * @throws Exception exception
+    */
+   @Test
+   public void testCfLoadResourceConfiguration() throws Exception
+   {
+      Resource cfResource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals(CF_JNDI_NAME))
+         {
+            cfResource = res;
+         }
+      }
+      assertNotNull(cfResource);
+      //assertEquals(1, cfResource.getChildResources().size());
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      
+      // test cf loadConfiguration
+      Resource cfRes = cfResource;
+      ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(cfRes);
+      Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
+      
+      assertEquals("XA", mcfConfig.getSimpleValue("pool-name", null));
+      assertEquals("java:/eis/XA", mcfConfig.getSimpleValue("jndi-name", null));
+
+      assertEquals("0", mcfConfig.getSimpleValue("min-pool-size", null));
+      assertEquals("20", mcfConfig.getSimpleValue("max-pool-size", null));
+      assertEquals("false", mcfConfig.getSimpleValue("background-validation", null));
+      assertEquals("0", mcfConfig.getSimpleValue("background-validation-millis", null));
+      assertEquals("0", mcfConfig.getSimpleValue("background-validation-minutes", null));
+      assertEquals("30000", mcfConfig.getSimpleValue("blocking-timeout-millis", null));
+      assertEquals("30", mcfConfig.getSimpleValue("idle-timeout-minutes", null));
+      assertEquals("true", mcfConfig.getSimpleValue("prefill", null));
+      assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
+      assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
+   }
    
    /**
     * Tests McfResourceComponent loadResourceConfiguration
@@ -200,13 +245,13 @@ public class XATestCase
       Resource cfResource = null;
       for (Resource res : rarServiceResource.getChildResources())
       {
-         if (res.getName().equals("ConnectionFactory"))
+         if (res.getName().equals(CF_JNDI_NAME))
          {
             cfResource = res;
          }
       }
       assertNotNull(cfResource);
-      assertEquals(1, cfResource.getChildResources().size());
+      //assertEquals(1, cfResource.getChildResources().size());
       PluginContainer pc = PluginContainer.getInstance();
       InventoryManager im = pc.getInventoryManager();
       
@@ -215,21 +260,9 @@ public class XATestCase
       ConfigurationFacet mcfConfigFacet = (ConfigurationFacet)im.getResourceComponent(mcfRes);
       Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
       
-      assertEquals("XA", mcfConfig.getSimpleValue("pool-name", null));
-      assertEquals("java:/eis/XA", mcfConfig.getSimpleValue("jndi-name", null));
       String mcfCls = mcfConfig.getSimpleValue("mcf-class-name", null);
       assertEquals("org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory", mcfCls);
       assertEquals("true", mcfConfig.getSimpleValue("use-ra-association", null));
-      assertEquals("0", mcfConfig.getSimpleValue("min-pool-size", null));
-      assertEquals("20", mcfConfig.getSimpleValue("max-pool-size", null));
-      assertEquals("false", mcfConfig.getSimpleValue("background-validation", null));
-      assertEquals("0", mcfConfig.getSimpleValue("background-validation-millis", null));
-      assertEquals("0", mcfConfig.getSimpleValue("background-validation-minutes", null));
-      assertEquals("30000", mcfConfig.getSimpleValue("blocking-timeout-millis", null));
-      assertEquals("30", mcfConfig.getSimpleValue("idle-timeout-minutes", null));
-      assertEquals("true", mcfConfig.getSimpleValue("prefill", null));
-      assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
-      assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
       
       // config-properties
       PropertyList configPropList = mcfConfig.getList("config-property");
@@ -239,6 +272,60 @@ public class XATestCase
       assertEquals("management", managementPropMap.getSimpleValue("name", null));
       assertEquals("java.lang.String", managementPropMap.getSimpleValue("type", null));
       assertEquals("rhq", managementPropMap.getSimpleValue("value", null));
+   }
+   
+   /**
+    * Tests CfResourceComponent update resource configuration.
+    * 
+    * @throws Exception exception
+    */
+   @Test
+   public void testCfUpdateResourceConfinguration() throws Exception
+   {
+      Resource cfResource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals(CF_JNDI_NAME))
+         {
+            cfResource = res;
+         }
+      }
+      assertNotNull(cfResource);
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      
+      Resource cfRes = cfResource;
+      ConfigurationFacet cfConfigFacet = (ConfigurationFacet)im.getResourceComponent(cfRes);
+      Configuration cfConfig = cfConfigFacet.loadResourceConfiguration();
+      
+      // test cf updateConfiguration
+      cfConfig.put(new PropertySimple("min-pool-size", 5));
+      cfConfig.put(new PropertySimple("max-pool-size", 15));
+      cfConfig.put(new PropertySimple("background-validation", true));
+      cfConfig.put(new PropertySimple("background-validation-minutes", 30));
+      cfConfig.put(new PropertySimple("blocking-timeout-millis", 10000));
+      cfConfig.put(new PropertySimple("idle-timeout-minutes", 15));
+      cfConfig.put(new PropertySimple("prefill", false));
+      cfConfig.put(new PropertySimple("use-strict-min", true));
+      cfConfig.put(new PropertySimple("use-fast-fail", true));
+      
+      ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(cfConfig);
+      cfConfigFacet.updateResourceConfiguration(updateConfigReport);
+      
+      ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
+      ConnectionFactory mcf = connector.getConnectionFactories().get(0);
+      PoolConfiguration poolConfig = mcf.getPoolConfiguration();
+      
+      assertEquals(5, poolConfig.getMinSize());
+      assertEquals(15, poolConfig.getMaxSize());
+      assertTrue(poolConfig.isBackgroundValidation());
+      assertEquals(30, poolConfig.getBackgroundValidationMinutes());
+      assertEquals(10000, poolConfig.getBlockingTimeout());
+      assertEquals(15 * 60 * 1000L, poolConfig.getIdleTimeout());
+      assertFalse(poolConfig.isPrefill());
+      assertTrue(poolConfig.isStrictMin());
+      assertTrue(poolConfig.isUseFastFail());
    }
    
    /**
@@ -252,7 +339,7 @@ public class XATestCase
       Resource cfResource = null;
       for (Resource res : rarServiceResource.getChildResources())
       {
-         if (res.getName().equals("ConnectionFactory"))
+         if (res.getName().equals(CF_JNDI_NAME))
          {
             cfResource = res;
          }
@@ -266,16 +353,6 @@ public class XATestCase
       Configuration mcfConfig = mcfConfigFacet.loadResourceConfiguration();
       
       // test mcf updateConfiguration
-      mcfConfig.put(new PropertySimple("jndi-name", "TestMcfJndiName"));
-      mcfConfig.put(new PropertySimple("min-pool-size", 5));
-      mcfConfig.put(new PropertySimple("max-pool-size", 15));
-      mcfConfig.put(new PropertySimple("background-validation", true));
-      mcfConfig.put(new PropertySimple("background-validation-minutes", 30));
-      mcfConfig.put(new PropertySimple("blocking-timeout-millis", 10000));
-      mcfConfig.put(new PropertySimple("idle-timeout-minutes", 15));
-      mcfConfig.put(new PropertySimple("prefill", false));
-      mcfConfig.put(new PropertySimple("use-strict-min", true));
-      mcfConfig.put(new PropertySimple("use-fast-fail", true));
       
       PropertyList updateConfigPropList = new PropertyList("config-property");
       PropertyMap mcfConfigPropMap = new PropertyMap("config-property");
@@ -293,19 +370,7 @@ public class XATestCase
       
       ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
-      ManagedConnectionFactory mcf = connector.getManagedConnectionFactories().get(0);
-      PoolConfiguration poolConfig = mcf.getPoolConfiguration();
-      
-      assertEquals("TestMcfJndiName", mcf.getJndiName());
-      assertEquals(5, poolConfig.getMinSize());
-      assertEquals(15, poolConfig.getMaxSize());
-      assertTrue(poolConfig.isBackgroundValidation());
-      assertEquals(30, poolConfig.getBackgroundValidationMinutes());
-      assertEquals(10000, poolConfig.getBlockingTimeout());
-      assertEquals(15 * 60 * 1000L, poolConfig.getIdleTimeout());
-      assertFalse(poolConfig.isPrefill());
-      assertTrue(poolConfig.isStrictMin());
-      assertTrue(poolConfig.isUseFastFail());
+      ManagedConnectionFactory mcf = connector.getConnectionFactories().get(0).getMcf();
       
       XAManagedConnectionFactory xaMcf = (XAManagedConnectionFactory)mcf.getManagedConnectionFactory();
       assertEquals("new-rhq", xaMcf.getManagement());
@@ -434,7 +499,7 @@ public class XATestCase
       ManagementRepository manRepo = EmbeddedJcaDiscover.getInstance().getManagementRepository();
       Connector xaConnector = manRepo.getConnectors().get(0);
       AdminObject ao = xaConnector.getAdminObjects().get(0);
-      ManagedConnectionFactory mcf = xaConnector.getManagedConnectionFactories().get(0);
+      ManagedConnectionFactory mcf = xaConnector.getConnectionFactories().get(0).getMcf();
       ResourceAdapter ra = xaConnector.getResourceAdapter();
 
       // ao-config 

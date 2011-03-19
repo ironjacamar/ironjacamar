@@ -21,15 +21,9 @@
  */
 package org.jboss.jca.rhq.ra;
 
-import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.ConfigProperty;
-import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagedConnectionFactory;
-import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.rhq.core.AbstractResourceComponent;
-
-import org.jboss.jca.rhq.core.ManagementRepositoryManager;
-import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
 import java.util.List;
 
@@ -61,19 +55,8 @@ public class McfResourceComponent extends AbstractResourceComponent
     */
    private ManagedConnectionFactory getManagedConnectionFactory()
    {
-      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
-      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
-      String jcaClsName = getJCAClassName();
-      for (ManagedConnectionFactory mcf : connector.getManagedConnectionFactories())
-      {
-         Class<?> mcfCls = mcf.getManagedConnectionFactory().getClass();
-         if (mcfCls.getName().equals(jcaClsName))
-         {
-            logger.debug("Class Name is: " + jcaClsName);
-            return mcf;
-         }
-      }
-      throw new IllegalStateException("Can not find ManagedConnectionFactory.");
+      CfResourceComponent parentRes = (CfResourceComponent)getResourceContext().getParentResourceComponent();
+      return parentRes.getConnectionFactory().getMcf();
    }
    
    /**
@@ -91,12 +74,9 @@ public class McfResourceComponent extends AbstractResourceComponent
       ManagedConnectionFactory mcf = getManagedConnectionFactory();
       javax.resource.spi.ManagedConnectionFactory jcaMcf = mcf.getManagedConnectionFactory();
       
-      // jndi name
-      PropertySimple jndiNameProp = new PropertySimple("jndi-name", mcf.getJndiName());
-      config.put(jndiNameProp);
-      
       // mcf-class-name
-      PropertySimple clsNameProp = new PropertySimple("mcf-class-name", getJCAClassName());
+      Class<?> mcfCls = jcaMcf.getClass();
+      PropertySimple clsNameProp = new PropertySimple("mcf-class-name", mcfCls.getName());
       config.put(clsNameProp);
       
       // cf-interface-name
@@ -111,49 +91,6 @@ public class McfResourceComponent extends AbstractResourceComponent
       boolean useRaAsso = ResourceAdapterAssociation.class.isAssignableFrom(jcaMcf.getClass());
       PropertySimple useRaAssoProp = new PropertySimple("use-ra-association", Boolean.valueOf(useRaAsso));
       config.put(useRaAssoProp);
-      
-      // conn-pool
-      PoolConfiguration poolConfig = mcf.getPoolConfiguration();
-      
-      PropertySimple poolNameProp = new PropertySimple("pool-name", mcf.getPool().getName());
-      config.put(poolNameProp);
-      
-      PropertySimple minSizeProp = new PropertySimple("min-pool-size", Integer.valueOf(poolConfig.getMinSize()));
-      config.put(minSizeProp);
-      
-      PropertySimple maxSizeProp = new PropertySimple("max-pool-size", Integer.valueOf(poolConfig.getMaxSize()));
-      config.put(maxSizeProp);
-      
-      Boolean doBackGroundValidation = Boolean.valueOf(poolConfig.isBackgroundValidation());
-      PropertySimple isBackGroundValidateProp = new PropertySimple("background-validation", doBackGroundValidation);
-      config.put(isBackGroundValidateProp);
-      
-      Long bvInterval = Long.valueOf(poolConfig.getBackgroundValidationInterval());
-      PropertySimple backGroundValidateIntervalProp = new PropertySimple("background-validation-millis", bvInterval);
-      config.put(backGroundValidateIntervalProp);
-      
-      Integer bvMinutes = Integer.valueOf(poolConfig.getBackgroundValidationMinutes());
-      PropertySimple backGroundValidateMintuesProp = new PropertySimple("background-validation-minutes", bvMinutes);
-      config.put(backGroundValidateMintuesProp);
-      
-      Long blTimeout = Long.valueOf(poolConfig.getBlockingTimeout());
-      PropertySimple blockingTimeoutProp = new PropertySimple("blocking-timeout-millis", blTimeout);
-      config.put(blockingTimeoutProp);
-      
-      Long idleTimeoutMills = poolConfig.getIdleTimeout();
-      
-      Integer idleTimeout = (int)(idleTimeoutMills / (1000 * 60)); // convert to minutes
-      PropertySimple idleTimeoutProp = new PropertySimple("idle-timeout-minutes", idleTimeout);
-      config.put(idleTimeoutProp);
-      
-      PropertySimple prefillProp = new PropertySimple("prefill", Boolean.valueOf(poolConfig.isPrefill()));
-      config.put(prefillProp);
-      
-      PropertySimple useStictMinProp = new PropertySimple("use-strict-min", Boolean.valueOf(poolConfig.isStrictMin()));
-      config.put(useStictMinProp);
-      
-      PropertySimple useFasFailProp = new PropertySimple("use-fast-fail", Boolean.valueOf(poolConfig.isUseFastFail()));
-      config.put(useFasFailProp);
       
       // config properties
       List<ConfigProperty> mcfConfProps = mcf.getConfigProperties();
@@ -174,51 +111,8 @@ public class McfResourceComponent extends AbstractResourceComponent
    {
       super.updateResourceConfiguration(updateResourceConfiguration);
       Configuration config = updateResourceConfiguration.getConfiguration();
+      
       ManagedConnectionFactory mcf = getManagedConnectionFactory();
-      
-      // update jndi-name
-      String jndiName = config.getSimpleValue("jndi-name", null);
-      if (null != jndiName && jndiName.length() > 0)
-      {
-         mcf.setJndiName(jndiName);
-      }
-      // update conn-pool configurations
-      PoolConfiguration poolConfig = mcf.getPoolConfiguration();
-      Integer minPoolSize = Integer.valueOf(config.getSimpleValue("min-pool-size", "0"));
-      poolConfig.setMinSize(minPoolSize.intValue());
-      
-      Integer maxPoolSize = Integer.valueOf(config.getSimpleValue("max-pool-size", "20"));
-      poolConfig.setMaxSize(maxPoolSize.intValue());
-      
-      Boolean backGroundValid = Boolean.valueOf(config.getSimpleValue("background-validation", "false"));
-      poolConfig.setBackgroundValidation(backGroundValid.booleanValue());
-      
-      // background-validation-millis
-      
-      // background-validation-minutes
-      Integer backGroundValidMinutes = Integer.valueOf(config.getSimpleValue("background-validation-minutes", "0"));
-      poolConfig.setBackgroundValidationMinutes(backGroundValidMinutes.intValue());
-
-      // blocking-timeout-millis
-      Long blockTimeoutMillis = Long.valueOf(config.getSimpleValue("blocking-timeout-millis", "30000"));
-      poolConfig.setBlockingTimeout(blockTimeoutMillis.longValue());
-      
-      // idle-timeout-minutes
-      Integer idleTimeoutMinutes = Integer.valueOf(config.getSimpleValue("idle-timeout-minutes", "30"));
-      Long idleTimeoutMillis = Long.valueOf(idleTimeoutMinutes * 60 * 1000);
-      poolConfig.setIdleTimeout(idleTimeoutMillis.longValue());
-      
-      // prefill
-      Boolean preFill = Boolean.valueOf(config.getSimpleValue("prefill", "true"));
-      poolConfig.setPrefill(preFill);
-      
-      // use-strict-min
-      Boolean useStrictMin = Boolean.valueOf(config.getSimpleValue("use-strict-min", "false"));
-      poolConfig.setStrictMin(useStrictMin);
-      
-      // use-fast-fail
-      Boolean useFastFail = Boolean.valueOf(config.getSimpleValue("use-fast-fail", "false"));
-      poolConfig.setUseFastFail(useFastFail);
       
       // config-properties
       PropertyList configPropertiesList = config.getList("config-property");

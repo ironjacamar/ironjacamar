@@ -21,6 +21,12 @@
  */
 package org.jboss.jca.rhq.ra;
 
+import org.jboss.jca.core.api.management.ConnectionFactory;
+import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.rhq.core.ManagementRepositoryManager;
+import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -52,11 +58,24 @@ public class CfResourceDiscoveryComponent
    {
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
 
-      DiscoveredResourceDetails resConnector = new DiscoveredResourceDetails(
-            context.getResourceType(), "ConnectionFactory", "ConnectionFactory", "1.0.0",
-            "ConnectionFactory", context.getDefaultPluginConfiguration(),
-            null);
-      result.add(resConnector);
+      // the uniqueId is the key of parent component.
+      String rarUniqueId = context.getParentResourceContext().getResourceKey();
+      
+      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
+      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, rarUniqueId);
+      
+      if (connector == null || connector.getConnectionFactories() == null)
+         return result;
+      
+      for (ConnectionFactory cf : connector.getConnectionFactories())
+      {
+         String jndiName = cf.getJndiName();
+         String key = rarUniqueId + "#" + jndiName;
+
+         DiscoveredResourceDetails cfRes = new DiscoveredResourceDetails(context.getResourceType(), key, jndiName, null,
+            "Connection Factories", context.getDefaultPluginConfiguration(), null);
+         result.add(cfRes);
+      }
       return result;
    }
 

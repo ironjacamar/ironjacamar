@@ -411,6 +411,7 @@
             
                 <resource-configuration>
                     <c:group name="general" displayName="General">
+                        <c:simple-property name="jndi-name" displayName="JNDI Name"/>
                         <c:simple-property name="transaction-type" displayName="Transaction type" description="Transaction type">
                             <c:property-options>
                                 <c:option name="No Transaction" value="no"/>
@@ -419,7 +420,12 @@
                             </c:property-options>
                         </c:simple-property>
                     </c:group>
-                     
+
+                    <c:group name="conn-pool" displayName="Connection Pool">
+                         &datasourceAndConnectionFactoryConnectionResourceConfigProps;
+                         &datasourceAndConnectionFactoryAdvancedResourceConfigProps;
+                    </c:group>
+
                     <c:group name="Authentication" displayName="Authentication">
                          <c:simple-property name="re-auth_support" displayName="Reauthentication Support" type="boolean" description="Does this outbound connection support reauthentication?"></c:simple-property>
                          <c:simple-property name="res-auth-src" displayName="Resource Authentication Source">
@@ -443,7 +449,7 @@
                 
                     <resource-configuration>
                         <c:group name="general" displayName="General">
-                            <c:simple-property name="jndi-name" displayName="JNDI Name"/>
+
                             <c:simple-property name="mcf-class-name" displayName="ManagedConnectionFactory class name" readOnly="true" />
                             <c:simple-property name="cf-interface-name" displayName="ConnectionFactory interface class name" readOnly="true"/>
                             <c:simple-property name="cf-impl-name" displayName="ConnectionFactory implement class name" readOnly="true"/>
@@ -452,12 +458,7 @@
                             
                             <c:simple-property name="use-ra-association" displayName="Use ResourceAdapterAssociation" type="boolean" readOnly="true"/>
                         </c:group>
-                         
-                        <c:group name="conn-pool" displayName="Connection Pool">
-                             &datasourceAndConnectionFactoryConnectionResourceConfigProps;
-                             &datasourceAndConnectionFactoryAdvancedResourceConfigProps;
-                        </c:group>
-                         
+
                         <c:group name="ConfigProperties" displayName="All Config Properties">
                             &advancedResourceConfigProps;                        
                         </c:group>

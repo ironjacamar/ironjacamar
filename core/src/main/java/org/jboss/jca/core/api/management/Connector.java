@@ -29,6 +29,7 @@ import java.util.List;
  * Represents a connector instance
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
 public class Connector
 {
@@ -38,8 +39,8 @@ public class Connector
    /** The resource adapter instance */
    private ResourceAdapter resourceAdapter;
 
-   /** The managed connection factories */
-   private List<ManagedConnectionFactory> managedConnectionFactories;
+   /** The connection factories */
+   private List<ConnectionFactory> connectionFactories;
 
    /** The admin objects */
    private List<AdminObject> adminObjects;
@@ -52,7 +53,7 @@ public class Connector
    {
       this.uniqueId = uniqueId;
       this.resourceAdapter = null;
-      this.managedConnectionFactories = null;
+      this.connectionFactories = null;
       this.adminObjects = null;
    }
 
@@ -84,15 +85,15 @@ public class Connector
    }
 
    /**
-    * Get the list of managed connection factories
+    * Get the list of connection factories
     * @return The value
     */
-   public List<ManagedConnectionFactory> getManagedConnectionFactories()
+   public List<ConnectionFactory> getConnectionFactories()
    {
-      if (managedConnectionFactories == null)
-         managedConnectionFactories = new ArrayList<ManagedConnectionFactory>(1);
+      if (connectionFactories == null)
+         connectionFactories = new ArrayList<ConnectionFactory>(1);
 
-      return managedConnectionFactories;
+      return connectionFactories;
    }
 
    /**
@@ -119,7 +120,7 @@ public class Connector
       sb.append("Connector@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[uniqueId=").append(uniqueId);
       sb.append(" resourceAdapter=").append(resourceAdapter);
-      sb.append(" managedConnectionFactories=").append(managedConnectionFactories);
+      sb.append(" connectionFactories=").append(connectionFactories);
       sb.append(" adminObjects=").append(adminObjects);
       sb.append("]");
 

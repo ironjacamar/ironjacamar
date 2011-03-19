@@ -171,6 +171,21 @@ public abstract class AbstractResourceComponent extends BaseResourceComponent
       }
       return resKey.substring(lastPos + 1);
    }
+   
+   /**
+    * getJndiName
+    * @return binding jndi name
+    */
+   protected String getJndiName()
+   {
+      String resKey = getResourceContext().getResourceKey();
+      int lastPos = resKey.lastIndexOf("#");
+      if (lastPos == -1)
+      {
+         return null;
+      }
+      return resKey.substring(lastPos + 1);
+   }
 
    /**
     * getConfigPropertiesList

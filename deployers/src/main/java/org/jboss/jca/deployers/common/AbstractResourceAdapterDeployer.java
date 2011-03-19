@@ -1165,15 +1165,17 @@ public abstract class AbstractResourceAdapterDeployer
 
                         if (activateDeployment)
                         {
-                           org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
-                              new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
+                           org.jboss.jca.core.api.management.ConnectionFactory mgtCf =
+                              new org.jboss.jca.core.api.management.ConnectionFactory(mcf);
 
-                           mgtMcf.getConfigProperties().addAll(createManagementView(ra10.getConfigProperties()));
-                           mgtMcf.setPoolConfiguration(pc);
-                           mgtMcf.setPool(pool);
-                           mgtMcf.setJndiName(jndiName);
+                           mgtCf.setPoolConfiguration(pc);
+                           mgtCf.setPool(pool);
+                           mgtCf.setJndiName(jndiName);
+                           
+                           mgtCf.getMcf().getConfigProperties().
+                              addAll(createManagementView(ra10.getConfigProperties()));
 
-                           mgtConnector.getManagedConnectionFactories().add(mgtMcf);
+                           mgtConnector.getConnectionFactories().add(mgtCf);
                         }
                      }
                   }
@@ -1611,16 +1613,17 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     if (activateDeployment)
                                     {
-                                       org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf =
-                                          new org.jboss.jca.core.api.management.ManagedConnectionFactory(mcf);
+                                       org.jboss.jca.core.api.management.ConnectionFactory mgtCf =
+                                          new org.jboss.jca.core.api.management.ConnectionFactory(mcf);
 
-                                       mgtMcf.getConfigProperties().
+                                       mgtCf.setPoolConfiguration(pc);
+                                       mgtCf.setPool(pool);
+                                       mgtCf.setJndiName(jndiName);
+                                       
+                                       mgtCf.getMcf().getConfigProperties().
                                           addAll(createManagementView(cdMeta.getConfigProperties()));
-                                       mgtMcf.setPoolConfiguration(pc);
-                                       mgtMcf.setPool(pool);
-                                       mgtMcf.setJndiName(jndiName);
 
-                                       mgtConnector.getManagedConnectionFactories().add(mgtMcf);
+                                       mgtConnector.getConnectionFactories().add(mgtCf);
                                     }
                                  }
                               }
