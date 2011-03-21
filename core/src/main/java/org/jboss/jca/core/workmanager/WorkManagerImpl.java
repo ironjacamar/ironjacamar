@@ -312,7 +312,8 @@ public class WorkManagerImpl implements WorkManager
             throw exception;
          }
 
-         checkWorkCompletionException(wrapper);
+         if (wrapper != null)
+            checkWorkCompletionException(wrapper);
       }
    }
    
@@ -412,7 +413,8 @@ public class WorkManagerImpl implements WorkManager
             throw exception;
          }
 
-         checkWorkCompletionException(wrapper);
+         if (wrapper != null)
+            checkWorkCompletionException(wrapper);
       }
 
       return WorkManager.UNKNOWN;
@@ -506,7 +508,8 @@ public class WorkManagerImpl implements WorkManager
             throw exception;
          }
 
-         checkWorkCompletionException(wrapper);
+         if (wrapper != null)
+            checkWorkCompletionException(wrapper);
       }
    }
 
