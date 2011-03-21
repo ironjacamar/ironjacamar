@@ -107,8 +107,8 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
    public boolean isSpy();
 
    /**
-    * Get the module
+    * Get the driver
     * @return The value
     */
-   public String getModule();
+   public String getDriver();
 }

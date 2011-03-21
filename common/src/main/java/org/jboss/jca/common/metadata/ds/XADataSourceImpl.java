@@ -51,7 +51,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final String xaDataSourceClass;
 
-   private final String module;
+   private final String driver;
 
    private final String newConnectionSql;
 
@@ -76,7 +76,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param spy spy
     * @param xaDataSourceProperty xaDataSourceProperty
     * @param xaDataSourceClass xaDataSourceClass
-    * @param module module
+    * @param driver driver
     * @param newConnectionSql newConnectionSql
     * @param xaPool xaPool
     * @param recovery recovery
@@ -85,7 +85,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
       boolean useJavaContext, String poolName, boolean enabled, String jndiName, boolean spy,
-      Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String module, String newConnectionSql,
+      Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver, String newConnectionSql,
       CommonXaPool xaPool, Recovery recovery) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
@@ -100,7 +100,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          this.xaDataSourceProperty = new HashMap<String, String>(0);
       }
       this.xaDataSourceClass = xaDataSourceClass;
-      this.module = module;
+      this.driver = driver;
       this.newConnectionSql = newConnectionSql;
       this.xaPool = xaPool;
       this.recovery = recovery;
@@ -119,14 +119,14 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    }
 
    /**
-    * Get the module.
+    * Get the driver.
     *
-    * @return the module.
+    * @return the driver.
     */
    @Override
-   public final String getModule()
+   public final String getDriver()
    {
-      return module;
+      return driver;
    }
 
    /**
@@ -178,7 +178,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((module == null) ? 0 : module.hashCode());
+      result = prime * result + ((driver == null) ? 0 : driver.hashCode());
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
       result = prime * result + ((xaDataSourceClass == null) ? 0 : xaDataSourceClass.hashCode());
       result = prime * result + ((xaDataSourceProperty == null) ? 0 : xaDataSourceProperty.hashCode());
@@ -196,12 +196,12 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       if (!(obj instanceof XADataSourceImpl))
          return false;
       XADataSourceImpl other = (XADataSourceImpl) obj;
-      if (module == null)
+      if (driver == null)
       {
-         if (other.module != null)
+         if (other.driver != null)
             return false;
       }
-      else if (!module.equals(other.module))
+      else if (!driver.equals(other.driver))
          return false;
       if (newConnectionSql == null)
       {
@@ -238,7 +238,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public String toString()
    {
       return "XADataSourceImpl [xaDataSourceProperty=" + xaDataSourceProperty + ", xaDataSourceClass=" +
-             xaDataSourceClass + ", module=" + module + ", newConnectionSql=" + newConnectionSql + ", xaPool=" +
+             xaDataSourceClass + ", driver=" + driver + ", newConnectionSql=" + newConnectionSql + ", xaPool=" +
              xaPool + ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut + ", security=" +
              security + ", statement=" + statement + ", validation=" + validation + ", urlDelimiter=" + urlDelimiter +
              ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName + ", useJavaContext=" + useJavaContext +

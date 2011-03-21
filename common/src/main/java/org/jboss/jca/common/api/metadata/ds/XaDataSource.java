@@ -119,7 +119,7 @@ public interface XaDataSource extends CommonDataSource
       /**
       * module tag
       */
-      MODULE("module"),
+      DRIVER("driver"),
       /**
       * transactionIsolation tag
       */

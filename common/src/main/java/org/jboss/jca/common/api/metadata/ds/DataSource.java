@@ -125,7 +125,7 @@ public interface DataSource extends CommonDataSource
       /**
       * module tag
       */
-      MODULE("module"),
+      DRIVER("driver"),
       /**
       * transactionIsolation tag
       */
