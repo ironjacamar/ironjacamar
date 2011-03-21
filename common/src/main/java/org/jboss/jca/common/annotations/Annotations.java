@@ -197,7 +197,7 @@ public class Annotations
       //md = processAuthenticationMechanism(md, annotationRepository);
 
       // @AdministeredObject
-      ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository, classLoader, 
+      ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository, classLoader,
          configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ADMIN_OBJECT));
 
       //log.debug("ConnectorMetadata " + md);
@@ -752,11 +752,11 @@ public class Annotations
       }
       return false;
    }
-   
+
    /**
     * hasAnnotation, if class c contains annotation targetClass
     *
-    * @param c 
+    * @param c
     * @param targetClass
     * @param annotationRepository
     * @return
@@ -768,11 +768,11 @@ public class Annotations
          return false;
       for (Annotation annotation : values)
       {
-         if (annotation.getClassName().equals(c.getName()));
+         if (annotation.getClassName() != null && annotation.getClassName().equals(c.getName()))
             return true;
       }
       return false;
-   
+
    }
 
    /**
