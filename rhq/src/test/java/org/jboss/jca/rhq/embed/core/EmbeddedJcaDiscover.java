@@ -58,7 +58,7 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
    private boolean stopped = true;
    
    /** ManagementRepository */
-   ManagementRepository mr = null;
+   private ManagementRepository mr = null;
    
    /** 
     * singleton getInstance

@@ -31,6 +31,7 @@ import org.rhq.core.pluginapi.plugin.PluginLifecycleListener;
 /**
  * IronJacamarPluginLifecyleListener
  * 
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  *
  */
