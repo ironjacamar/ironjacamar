@@ -21,6 +21,10 @@
  */
 package org.jboss.jca.rhq.core;
 
+import org.jboss.jca.rhq.util.ContainerHelper;
+
+import org.jboss.logging.Logger;
+
 import org.rhq.core.pluginapi.plugin.PluginContext;
 import org.rhq.core.pluginapi.plugin.PluginLifecycleListener;
 
@@ -32,21 +36,35 @@ import org.rhq.core.pluginapi.plugin.PluginLifecycleListener;
  */
 public class IronJacamarPluginLifecyleListener implements PluginLifecycleListener
 {
+   /** log */
+   private static final Logger logger = Logger.getLogger(IronJacamarPluginLifecyleListener.class);
    /** 
     * initialize
     * 
     * @param context PluginContext
     * @throws Exception exception
     */
+   @Override
    public void initialize(PluginContext context) throws Exception
    {
+      if (ContainerHelper.useEmbeddedJCA())
+      {
+         ((Lifecycle)ContainerHelper.getEmbeddedDiscover()).start();
+      }
+      logger.info("IronJacamarPlugin started");
    }
    
    /** 
     * shutdown
     */
+   @Override
    public void shutdown()
    {
+      if (ContainerHelper.useEmbeddedJCA())
+      {
+         ((Lifecycle)ContainerHelper.getEmbeddedDiscover()).stop();
+      }
+      logger.info("IronJacamarPlugin stoped");
    }
 
 }

@@ -19,32 +19,63 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.rhq.core;
+package org.jboss.jca.rhq.util;
 
-import org.jboss.jca.core.api.management.ManagementRepository;
-import org.jboss.jca.rhq.util.ContainerHelper;
+import java.lang.reflect.Method;
+
 
 /**
- * ManagementRepositoryManager
+ * Helper class for embedded container
  * 
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class ManagementRepositoryManager
+public class ContainerHelper
 {
+   /** EmbedDiscoverClassName */
+   private static final String EmbedDiscoverClassName = "org.jboss.jca.rhq.embed.core.EmbeddedJcaDiscover";
+   
    /**
-    * Get a management repository instance
+    * get discover object of embedded JCA container
     * 
-    * @return ManagementRepository
+    * @return boolean
     */
-   public static ManagementRepository getManagementRepository()
+   public static Object getEmbeddedDiscover()
    {
-      if (ContainerHelper.useEmbeddedJCA())
+      try
       {
-         return ((Discover)ContainerHelper.getEmbeddedDiscover()).getManagementRepository();
+         Class<?> cls = Class.forName (EmbedDiscoverClassName);
+         Method method = cls.getMethod ("getInstance");
+         Object discoverObject = method.invoke(cls, (Object[])null);
+         return discoverObject;
       }
-
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
       return null;
-
+   }
+   
+   /**
+    * use embedded JCA container
+    * 
+    * @return boolean
+    */
+   public static boolean useEmbeddedJCA()
+   {
+      try
+      {
+         Class.forName(EmbedDiscoverClassName);
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         return false;
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         return false;
+      }
+      return true;
    }
 
 }

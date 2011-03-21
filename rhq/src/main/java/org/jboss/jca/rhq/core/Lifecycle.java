@@ -21,30 +21,21 @@
  */
 package org.jboss.jca.rhq.core;
 
-import org.jboss.jca.core.api.management.ManagementRepository;
-import org.jboss.jca.rhq.util.ContainerHelper;
-
 /**
- * ManagementRepositoryManager
+ * lifecycle interface of jca contaner
  * 
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class ManagementRepositoryManager
+public interface Lifecycle
 {
-   /**
-    * Get a management repository instance
-    * 
-    * @return ManagementRepository
+   /** 
+    * start jca container
     */
-   public static ManagementRepository getManagementRepository()
-   {
-      if (ContainerHelper.useEmbeddedJCA())
-      {
-         return ((Discover)ContainerHelper.getEmbeddedDiscover()).getManagementRepository();
-      }
+   public void start();
 
-      return null;
-
-   }
-
+   /**
+    * stop the embedded jca container.
+    */
+   public void stop();
+   
 }

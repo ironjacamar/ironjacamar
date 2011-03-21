@@ -19,12 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.rhq.core;
+package org.jboss.jca.rhq.embed.core;
 
 import org.jboss.jca.core.api.management.ManagementRepository;
 
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
+import org.jboss.jca.rhq.core.Discover;
+import org.jboss.jca.rhq.core.Lifecycle;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,7 +43,7 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class EmbeddedJcaDiscover implements Discover
+public class EmbeddedJcaDiscover implements Discover, Lifecycle
 {
    /** log */
    private static final Logger logger = Logger.getLogger(EmbeddedJcaDiscover.class);
@@ -82,6 +84,7 @@ public class EmbeddedJcaDiscover implements Discover
    /** 
     * start jca container
     */
+   @Override
    public void start()
    {
       try
@@ -185,9 +188,7 @@ public class EmbeddedJcaDiscover implements Discover
       {
          if (stopped)
          {
-            start();
-            if (stopped)
-               throw new IllegalStateException("Container is stopped");
+            return null;
          }
          mr = embedJCA.lookup("ManagementRepository", ManagementRepository.class);
          return mr;
@@ -201,16 +202,28 @@ public class EmbeddedJcaDiscover implements Discover
    /**
     * stop the embedded jca container.
     */
+   @Override
    public void stop()
    {
       try
       {
          embedJCA.shutdown();
+         mr = null;
          stopped = true;
       }
       catch (Throwable e)
       {
          throw new IllegalStateException("Can not shutdown the Embedded JCA container", e);
       }
+   }
+   /**
+    * Get plugin environment
+    * 
+    * @return String in which container
+    */
+   @Override
+   public String getPluginEnv()
+   {
+      return Discover.EMBEDDED;
    }
 }

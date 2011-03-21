@@ -29,8 +29,9 @@ import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagedConnectionFactory;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.api.management.ResourceAdapter;
-import org.jboss.jca.rhq.core.EmbeddedJcaDiscover;
+
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
+import org.jboss.jca.rhq.embed.core.EmbeddedJcaDiscover;
 import org.jboss.jca.rhq.rar.xa.XAAdminObjectImpl;
 import org.jboss.jca.rhq.rar.xa.XAManagedConnectionFactory;
 import org.jboss.jca.rhq.rar.xa.XAResourceAdapter;

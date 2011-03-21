@@ -31,11 +31,21 @@ import org.jboss.jca.core.api.management.ManagementRepository;
  */
 public interface Discover
 {
+   /** embedded */
+   public static final String EMBEDDED = "embedded";
+   
    /**
     * Get a management repository instance
     * 
     * @return ManagementRepository
     */
    public ManagementRepository getManagementRepository();
+   
+   /**
+    * Get plugin environment
+    * 
+    * @return String in which container
+    */
+   public String getPluginEnv();
 
 }
