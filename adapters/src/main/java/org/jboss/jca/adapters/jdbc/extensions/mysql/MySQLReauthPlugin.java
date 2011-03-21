@@ -54,7 +54,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
       try
       {
          Class<?> mysqlConnection = cl.loadClass("com.mysql.jdbc.Connection");
-         changeUser = mysqlConnection.getMethod("changeUser", new Class[] {String.class, String.class});			
+         changeUser = mysqlConnection.getMethod("changeUser", new Class[] {String.class, String.class});
       } 
       catch (Throwable t) 
       {
@@ -78,7 +78,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
       }
       catch (Throwable t) 
       {
-         Throwable cause = t.getCause();		    
+         Throwable cause = t.getCause();
 
          if (cause instanceof SQLException)
          {
@@ -86,7 +86,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
          }
          else
          {
-            throw new SQLException("Unexpected error in changeUser", t);				
+            throw new SQLException("Unexpected error in changeUser", t);
          }
       }
    }
