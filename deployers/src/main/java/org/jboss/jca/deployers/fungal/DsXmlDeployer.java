@@ -274,8 +274,8 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
     */
    public void start()
    {
-      if (transactionManager == null)
-         throw new IllegalStateException("TransactionManager not defined");
+      if (transactionIntegration == null)
+         throw new IllegalStateException("TransactionIntegration not defined");
 
       if (mdr == null)
          throw new IllegalStateException("MetadataRepository not defined");

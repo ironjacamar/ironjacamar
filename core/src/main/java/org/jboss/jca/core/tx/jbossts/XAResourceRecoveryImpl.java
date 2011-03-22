@@ -19,10 +19,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.recovery;
+package org.jboss.jca.core.tx.jbossts;
 
-import org.jboss.jca.core.connectionmanager.xa.XAResourceWrapperImpl;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.security.AccessController;
 import java.security.Principal;
@@ -42,7 +42,6 @@ import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
 import org.jboss.security.SimplePrincipal;
 import org.jboss.security.SubjectFactory;
-import org.jboss.tm.XAResourceRecovery;
 
 /**
  * An XAResourceRecovery implementation.
@@ -50,10 +49,13 @@ import org.jboss.tm.XAResourceRecovery;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class XAResourceRecoveryImpl implements XAResourceRecovery
+public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery,
+                                               org.jboss.tm.XAResourceRecovery
 {
    /** Log instance */
    private static Logger log = Logger.getLogger(XAResourceRecoveryImpl.class);
+
+   private final TransactionIntegration ti;
 
    private final ManagedConnectionFactory mcf;
 
@@ -80,6 +82,7 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
    /**
     * Create a new XAResourceRecoveryImpl.
     *
+    * @param ti ti
     * @param mcf mcf
     * @param padXid padXid
     * @param isSameRMOverrideValue isSameRMOverrideValue
@@ -90,18 +93,23 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
     * @param subjectFactory subjectFactory
     * @param plugin recovery plugin
     */
-   public XAResourceRecoveryImpl(ManagedConnectionFactory mcf,
+   public XAResourceRecoveryImpl(TransactionIntegration ti,
+                                 ManagedConnectionFactory mcf,
                                  Boolean padXid, Boolean isSameRMOverrideValue, Boolean wrapXAResource,
                                  String recoverUserName, String recoverPassword, String recoverSecurityDomain,
                                  SubjectFactory subjectFactory,
                                  RecoveryPlugin plugin)
    {
+      if (ti == null)
+         throw new IllegalArgumentException("TransactionIntegration is null");
+
       if (mcf == null)
          throw new IllegalArgumentException("MCF is null");
 
       if (plugin == null)
          throw new IllegalArgumentException("Plugin is null");
 
+      this.ti = ti;
       this.mcf = mcf;
       this.padXid = padXid;
       this.isSameRMOverrideValue = isSameRMOverrideValue;
@@ -202,12 +210,12 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
                if (eisProductVersion == null)
                   eisProductVersion = jndiName;
 
-               xaResource = new XAResourceWrapperImpl(xaResource,
-                                                      padXid,
-                                                      isSameRMOverrideValue,
-                                                      eisProductName,
-                                                      eisProductVersion,
-                                                      jndiName);
+               xaResource = ti.createXAResourceWrapper(xaResource,
+                                                       padXid,
+                                                       isSameRMOverrideValue,
+                                                       eisProductName,
+                                                       eisProductVersion,
+                                                       jndiName);
             }
 
             log.debugf("Recovery XAResource=%s for %s", xaResource, jndiName);

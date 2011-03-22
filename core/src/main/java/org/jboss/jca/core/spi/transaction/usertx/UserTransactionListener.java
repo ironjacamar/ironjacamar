@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,24 +19,22 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.api.connectionmanager.transaction;
+package org.jboss.jca.core.spi.transaction.usertx;
 
-import javax.transaction.RollbackException;
+import java.util.EventListener;
+
 import javax.transaction.SystemException;
 
 /**
- * JTATransactionChecker.
+ * UserTransactionListener.
  * 
- * @author <a href="adrian@jboss.com">Adrian Brock</a>
- * @version $Revision: 85945 $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface JTATransactionChecker
+public interface UserTransactionListener extends EventListener
 {
    /**
-    * Check whether a tranasction is active
-    * 
-    * @throws RollbackException if the transaction is not active, preparing, prepared or committing
-    * @throws SystemException for any error in the transaction manager
+    * An user transaction has started
+    * @exception SystemException Thrown in case of an error
     */
-   void checkTransactionActive() throws RollbackException, SystemException;
+   public void userTransactionStarted() throws SystemException;
 }

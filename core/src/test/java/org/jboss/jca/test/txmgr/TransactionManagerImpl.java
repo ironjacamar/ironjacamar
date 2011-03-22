@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.test.txmgr;
 
+import org.jboss.jca.core.spi.transaction.xa.XATerminator;
+
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.InvalidTransactionException;
@@ -31,8 +33,6 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
-import org.jboss.tm.JBossXATerminator;
-
 /**
  * A transaction manager implementation
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
@@ -40,7 +40,7 @@ import org.jboss.tm.JBossXATerminator;
 public class TransactionManagerImpl implements TransactionManager
 {
    private TxRegistry registry;
-   private JBossXATerminator terminator;
+   private XATerminator terminator;
 
    /**
     * Constructor
@@ -62,7 +62,7 @@ public class TransactionManagerImpl implements TransactionManager
     * Get the terminator
     * @return The value
     */
-   public JBossXATerminator getXATerminator()
+   public XATerminator getXATerminator()
    {
       return terminator;
    }
@@ -71,7 +71,7 @@ public class TransactionManagerImpl implements TransactionManager
     * Set the terminator
     * @param v The value
     */
-   public void setXATerminator(JBossXATerminator v)
+   public void setXATerminator(XATerminator v)
    {
       terminator = v;
    }

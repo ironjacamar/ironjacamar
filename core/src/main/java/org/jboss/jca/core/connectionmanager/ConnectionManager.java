@@ -82,13 +82,6 @@ public interface ConnectionManager extends
    public void setJndiName(String value);
 
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
-    */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
-
-   /**
     * Unregister association.
     * @param cl connection listener
     * @param c connection

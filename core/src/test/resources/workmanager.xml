@@ -54,7 +54,7 @@
     <property name="LongRunningThreadPool"><inject bean="LongRunningThreadPool"/></property>
 
     <!-- The XA terminator -->
-    <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
   </bean>
 
 </deployment>

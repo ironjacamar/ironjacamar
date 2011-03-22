@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,45 +19,36 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.xa;
+package org.jboss.jca.core.tx.jbossts;
 
-import javax.transaction.xa.XAException;
-
-import org.jboss.logging.Logger;
-import org.jboss.tm.XAExceptionFormatter;
+import javax.transaction.SystemException;
 
 /**
- * JBossLocalXAExceptionFormatter.java
- *
- * @author <a href="mailto:igorfie at yahoo dot com">Igor Fedorenko</a>.
- * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
- * @version $Revision$
+ * UserTransactionListener implementation
+ * 
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-
-public class JBossLocalXAExceptionFormatter implements XAExceptionFormatter
+public class UserTransactionListenerImpl implements org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener,
+                                                    org.jboss.tm.usertx.UserTransactionListener
 {
+   /** The user transaction listener */
+   private org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener utl;
 
    /**
-    * Creates a new formatter.
+    * Constructor
+    * @param utl The user transaction listener
     */
-   public JBossLocalXAExceptionFormatter()
+   public UserTransactionListenerImpl(org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener utl)
    {
-      
+      this.utl = utl;
    }
-   
+
    /**
-    * {@inheritDoc}
+    * An user transaction has started
+    * @exception SystemException Thrown in case of an error
     */
-   public void formatXAException(XAException xae, Logger log)
+   public void userTransactionStarted() throws SystemException
    {
-      if (xae instanceof JBossLocalXAException)
-      {
-         log.warn("JBoss Local XA wrapper error: ", ((JBossLocalXAException) xae).getCause());   
-      }
-      else
-      {
-         log.warn("Problem trying to format XAException: ", xae);     
-      }
+      utl.userTransactionStarted();
    }
 }

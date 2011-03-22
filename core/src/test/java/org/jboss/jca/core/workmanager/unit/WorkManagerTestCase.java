@@ -102,7 +102,7 @@ public class WorkManagerTestCase
 
       assertNotNull(workManager);
       assertNotNull(workManager.getXATerminator());
-      assertTrue(workManager.getXATerminator() instanceof org.jboss.tm.JBossXATerminator);
+      assertTrue(workManager.getXATerminator() instanceof org.jboss.jca.core.spi.transaction.xa.XATerminator);
    }
 
    // --------------------------------------------------------------------------------||

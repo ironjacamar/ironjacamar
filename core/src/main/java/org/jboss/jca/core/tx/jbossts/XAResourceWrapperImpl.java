@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,10 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.xa;
+package org.jboss.jca.core.tx.jbossts;
 
-import org.jboss.jca.core.spi.connectionmanager.xa.XAResourceWrapper;
-import org.jboss.jca.core.spi.connectionmanager.xa.XidWrapper;
+import org.jboss.jca.core.spi.transaction.xa.XidWrapper;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -35,9 +34,9 @@ import org.jboss.logging.Logger;
  * 
  * @author <a href="weston.price@jboss.com">Weston Price</a>
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision$
  */
-public class XAResourceWrapperImpl implements XAResourceWrapper
+public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper,
+                                              org.jboss.tm.XAResourceWrapper
 {
    /** Serial version UID */
    private static final long serialVersionUID = 2147435420748633848L;
@@ -134,9 +133,10 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
       }
       else
       {
-         if (resource instanceof XAResourceWrapper)
+         if (resource instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper)
          {
-            XAResourceWrapper other = (XAResourceWrapper)resource;
+            org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper other =
+               (org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper)resource;
             return xaResource.isSameRM(other.getResource());
          }
          else

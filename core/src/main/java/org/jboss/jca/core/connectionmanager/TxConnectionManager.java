@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,23 +21,19 @@
  */
 package org.jboss.jca.core.connectionmanager;
 
-import org.jboss.jca.core.api.connectionmanager.transaction.JTATransactionChecker;
-
-import org.jboss.tm.TransactionTimeoutConfiguration;
+import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 
 /**
  * Internal connection manager contract for transactional contexts.
  * <p>
  * <ul>
- *    <li>Responsible for managing transaction operations via 
- *    {@link TransactionTimeoutConfiguration} and {@link JTATransactionChecker}</li>.
+ *    <li>Responsible for managing transaction operations via {@link TransactionTimeoutConfiguration}</li>
  * </ul>
  * </p> 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
-public interface TxConnectionManager extends ConnectionManager,
-                                             TransactionTimeoutConfiguration, 
-                                             JTATransactionChecker
+public interface TxConnectionManager extends ConnectionManager, TransactionTimeoutConfiguration
 {
    /**
     * Get the interleaving status

@@ -27,6 +27,8 @@ import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +40,6 @@ import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.XAResourceRecovery;
-import org.jboss.tm.XAResourceRecoveryRegistry;
 
 import com.github.fungal.api.util.FileUtil;
 

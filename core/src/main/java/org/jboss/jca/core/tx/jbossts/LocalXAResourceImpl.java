@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,10 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.xa;
+package org.jboss.jca.core.tx.jbossts;
 
-import org.jboss.jca.core.connectionmanager.ConnectionManager;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
+import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.spi.transaction.local.LocalXAException;
+import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
 import javax.resource.ResourceException;
 import javax.transaction.xa.XAException;
@@ -30,25 +32,21 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.LastResource;
 
 /**
  * Local XA resource implementation.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class LocalXAResource implements XAResource, LastResource
+public class LocalXAResourceImpl implements LocalXAResource
 {
    /** Log instance */
-   private static Logger log = Logger.getLogger(LocalXAResource.class);
+   private static Logger log = Logger.getLogger(LocalXAResourceImpl.class);
 
    /** Connection listener */
    private ConnectionListener cl;
 
-   /** Log trace */
-   private boolean trace;
-   
    /**Connection manager*/
    private ConnectionManager connectionManager = null;
 
@@ -63,18 +61,21 @@ public class LocalXAResource implements XAResource, LastResource
 
    /**
     * Creates a new instance.
-    * @param connectionManager connection manager
     */
-   public LocalXAResource(ConnectionManager connectionManager)
+   public LocalXAResourceImpl()
    {
-      this.trace = log.isTraceEnabled();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setConnectionManager(ConnectionManager connectionManager)
+   {
       this.connectionManager = connectionManager;
    }
 
    /**
-    * Sets connection listener.
-    * 
-    * @param cl connection listener
+    * {@inheritDoc}
     */
    public void setConnectionListener(ConnectionListener cl)
    {
@@ -86,39 +87,36 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public void start(Xid xid, int flags) throws XAException
    {
-      if (this.trace)
-      {
-         log.trace("start, xid: " + xid + ", flags: " + flags);  
-      }
+      log.tracef("start(%s, %s)", xid, flags);  
       
-      if (this.currentXid != null && flags == XAResource.TMNOFLAGS)
+      if (currentXid != null && flags == XAResource.TMNOFLAGS)
       {
-         throw new JBossLocalXAException("Trying to start a new tx when old is not complete! old: " +
+         throw new LocalXAException("Trying to start a new tx when old is not complete! old: " +
                currentXid + ", new " + xid + ", flags " + flags, XAException.XAER_PROTO);
       }
       
-      if (this.currentXid == null && flags != XAResource.TMNOFLAGS)
+      if (currentXid == null && flags != XAResource.TMNOFLAGS)
       {
-         throw new JBossLocalXAException("Trying to start a new tx with wrong flags!  new " + xid +
+         throw new LocalXAException("Trying to start a new tx with wrong flags!  new " + xid +
                ", flags " + flags, XAException.XAER_PROTO);
       }
 
-      if (this.currentXid == null)
+      if (currentXid == null)
       {
          try
          {
-            this.cl.getManagedConnection().getLocalTransaction().begin();
+            cl.getManagedConnection().getLocalTransaction().begin();
          }
          catch (ResourceException re)
          {
-            throw new JBossLocalXAException("Error trying to start local tx: ", XAException.XAER_RMERR, re);
+            throw new LocalXAException("Error trying to start local tx: ", XAException.XAER_RMERR, re);
          }
          catch (Throwable t)
          {
-            throw new JBossLocalXAException("Throwable trying to start local transaction!", XAException.XAER_RMERR, t);
+            throw new LocalXAException("Throwable trying to start local transaction!", XAException.XAER_RMERR, t);
          }
 
-         this.currentXid = xid;
+         currentXid = xid;
       }
    }
 
@@ -127,10 +125,7 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public void end(Xid xid, int flags) throws XAException
    {
-      if (this.trace)
-      {
-         log.trace("end on xid: " + xid + " called with flags " + flags);  
-      }
+      log.tracef("end(%s,%s)", xid, flags);  
    }
 
    /**
@@ -138,29 +133,23 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public void commit(Xid xid, boolean onePhase) throws XAException
    {
-      if (!xid.equals(this.currentXid))
+      if (!xid.equals(currentXid))
       {
-         throw new JBossLocalXAException("wrong xid in commit: expected: " + this.currentXid +
+         throw new LocalXAException("Wrong xid in commit: expected: " + currentXid +
                ", got: " + xid, XAException.XAER_PROTO);
          
       }
       
-      this.currentXid = null;
+      currentXid = null;
 
       try
       {
-         this.cl.getManagedConnection().getLocalTransaction().commit();
+         cl.getManagedConnection().getLocalTransaction().commit();
       }
       catch (ResourceException re)
       {
-         this.connectionManager.returnManagedConnection(this.cl, true);
-         
-         if (this.trace)
-         {
-            log.trace("commit problem: ", re);  
-         }
-         
-         throw new JBossLocalXAException("could not commit local tx", XAException.XA_RBROLLBACK, re);
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException("Could not commit local tx", XAException.XA_RBROLLBACK, re);
       }
    }
 
@@ -169,7 +158,7 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public void forget(Xid xid) throws XAException
    {
-      throw new JBossLocalXAException("forget not supported in local tx", XAException.XAER_RMERR);
+      throw new LocalXAException("Forget not supported in local tx", XAException.XAER_RMERR);
    }
    
    /**
@@ -177,7 +166,6 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public int getTransactionTimeout() throws XAException
    {
-      // TODO implement this javax.transaction.xa.XAResource method
       return 0;
    }
 
@@ -194,7 +182,7 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public int prepare(Xid xid) throws XAException
    {
-      if (!this.warned)
+      if (!warned)
       {
          log.warn("Prepare called on a local tx. Use of local transactions on a jta transaction with more " +
                "than one branch may result in inconsistent data in some cases of failure.");  
@@ -209,7 +197,7 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public Xid[] recover(int flag) throws XAException
    {
-      throw new JBossLocalXAException("no recover with local-tx only resource managers", XAException.XAER_RMERR);
+      throw new LocalXAException("No recover with local-tx only resource managers", XAException.XAER_RMERR);
    }
 
    /**
@@ -217,26 +205,20 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public void rollback(Xid xid) throws XAException
    {
-      if (!xid.equals(this.currentXid))
+      if (!xid.equals(currentXid))
       {
-         throw new JBossLocalXAException("wrong xid in rollback: expected: " +
-               this.currentXid + ", got: " + xid, XAException.XAER_PROTO);  
+         throw new LocalXAException("Wrong xid in rollback: expected: " +
+               currentXid + ", got: " + xid, XAException.XAER_PROTO);  
       }
-      this.currentXid = null;
+      currentXid = null;
       try
       {
-         this.cl.getManagedConnection().getLocalTransaction().rollback();
+         cl.getManagedConnection().getLocalTransaction().rollback();
       }
       catch (ResourceException re)
       {
-         this.connectionManager.returnManagedConnection(this.cl, true);
-        
-         if (this.trace)
-         {
-            log.trace("rollback problem: ", re);  
-         }
-         
-         throw new JBossLocalXAException("could not rollback local tx", XAException.XAER_RMERR, re);
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException("Could not rollback local tx", XAException.XAER_RMERR, re);
       }
    }
 
@@ -245,7 +227,6 @@ public class LocalXAResource implements XAResource, LastResource
     */
    public boolean setTransactionTimeout(int seconds) throws XAException
    {
-      // TODO implement this javax.transaction.xa.XAResource method
       return false;
    }
 }

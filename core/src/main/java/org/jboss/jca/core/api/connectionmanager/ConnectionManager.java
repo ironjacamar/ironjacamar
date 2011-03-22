@@ -22,12 +22,20 @@
 
 package org.jboss.jca.core.api.connectionmanager;
 
+import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
+
 /**
  * The JBoss specific connection manager interface.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public interface ConnectionManager extends javax.resource.spi.ConnectionManager, java.io.Serializable
 {
+   /**
+    * Kill given connection listener wrapped connection instance.
+    * @param cl connection listener that wraps connection
+    * @param kill kill connection or not
+    */
+   public void returnManagedConnection(ConnectionListener cl, boolean kill);
 }

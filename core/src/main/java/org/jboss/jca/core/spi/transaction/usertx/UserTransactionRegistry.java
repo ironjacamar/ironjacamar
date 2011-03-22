@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,23 +19,24 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.spi.connectionmanager.xa;
-
-import java.io.Serializable;
-
-import javax.transaction.xa.Xid;
+package org.jboss.jca.core.spi.transaction.usertx;
 
 /**
- * A XidWrapper.
+ * UserTransactionRegistry.
  * 
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision: 85945 $
  */
-public interface XidWrapper extends Serializable, Xid
+public interface UserTransactionRegistry
 {
    /**
-    * Get the JNDI name
-    * @return The value
+    * Add a listener
+    * @param listener The listener
     */
-   public String getJndiName();
+   public void addListener(UserTransactionListener listener);
+   
+   /**
+    * Remove a listener
+    * @param listener The listener
+    */
+   public void removeListener(UserTransactionListener listener);
 }

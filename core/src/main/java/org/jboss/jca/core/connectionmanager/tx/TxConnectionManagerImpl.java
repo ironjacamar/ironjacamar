@@ -29,8 +29,9 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.xa.LocalXAResource;
-import org.jboss.jca.core.connectionmanager.xa.XAResourceWrapperImpl;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
+import org.jboss.jca.core.spi.transaction.TxUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -45,7 +46,6 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 import javax.transaction.RollbackException;
-import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -53,8 +53,6 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.tm.TransactionLocal;
-import org.jboss.tm.TransactionTimeoutConfiguration;
-import org.jboss.tm.TxUtils;
 import org.jboss.util.NestedRuntimeException;
 import org.jboss.util.NotImplementedException;
 
@@ -135,38 +133,43 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
 
-   /**Transaction manager instance*/
+   /** Transaction manager instance */
    private transient TransactionManager transactionManager;
 
-   /**Interleaving or not*/
+   /** Transaction integration */
+   private TransactionIntegration txIntegration;
+
+   /** Interleaving or not */
    private boolean interleaving;
 
-   /**Local tx or not*/
+   /** Local tx or not */
    private boolean localTransactions;
    
-   /**XA resource timeout*/
+   /** XA resource timeout */
    private int xaResourceTimeout = 0;
    
-   /**Xid pad*/
+   /** Xid pad */
    private boolean padXid;
    
-   /**XA resource wrapped or not*/
+   /** XA resource wrapped or not */
    private boolean wrapXAResource = true;
 
-   /**Same RM override*/
+   /** Same RM override */
    private boolean isSameRMOverride;
    
-   /**Log trace*/
-   private boolean trace = getLog().isTraceEnabled();
-      
    /**
     * Constructor
-    * @param tm The transaction manager
+    * @param txIntegration The transaction integration layer
     * @param localTransactions Is local transactions enabled
     */
-   public TxConnectionManagerImpl(final TransactionManager tm, final boolean localTransactions)
+   public TxConnectionManagerImpl(final TransactionIntegration txIntegration,
+                                  final boolean localTransactions)
    {
-      transactionManager = tm;
+      if (txIntegration == null)
+         throw new IllegalArgumentException("TransactionIntegration is null");
+
+      this.transactionManager = txIntegration.getTransactionManager();
+      this.txIntegration = txIntegration;
 
       setLocalTransactions(localTransactions);
    }
@@ -316,31 +319,6 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    /**
     * {@inheritDoc}
     */
-   @Override
-   public void checkTransactionActive() throws RollbackException, SystemException
-   {
-      if (transactionManager == null)
-      {
-         throw new IllegalStateException("No transaction manager: " + getCachedConnectionManager());  
-      }
-      
-      Transaction tx = transactionManager.getTransaction();
-      if (tx != null)
-      {
-         int status = tx.getStatus();
-
-         // Only allow states that will actually succeed
-         if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING && 
-             status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
-         {
-            throw new RollbackException("Transaction " + tx + " cannot proceed " + TxUtils.getStatusAsString(status));  
-         }
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public ConnectionListener getManagedConnection(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
@@ -363,10 +341,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          JBossResourceException.rethrowAsResourceException("Error checking for a transaction.", t);
       }
 
-      if (trace)
-      {
-         getLog().trace("getManagedConnection interleaving=" + interleaving + " tx=" + trackByTransaction);  
-      }
+      getLog().tracef("getManagedConnection interleaving=%s , tx=%s", interleaving, trackByTransaction);  
       
       return super.getManagedConnection(trackByTransaction, subject, cri);
    }
@@ -425,10 +400,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       }
       catch (Throwable t)
       {
-         if (trace)
-         {
-            getLog().trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
-         }
+         getLog().trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
+
          throw new JBossResourceException("Could not enlist in transaction on entering meta-aware object!", t);
       }
    }
@@ -451,14 +424,13 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       //if there are no more handles and tx is complete, we can return to pool.
       if (cl.isManagedConnectionFree())
       {
-         if (trace)
-            getLog().trace("Disconnected isManagedConnectionFree=true" + " cl=" + cl);
+         getLog().tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
 
          returnManagedConnection(cl, false);
       }
-      else if (trace)
+      else
       {
-         getLog().trace("Disconnected isManagedConnectionFree=false" + " cl=" + cl);
+         getLog().tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
       }
 
       // Rethrow the error
@@ -479,7 +451,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       
       if (localTransactions)
       {
-         xaResource = new LocalXAResource(this);
+         xaResource = txIntegration.createLocalXAResource(this);
     
          if (xaResourceTimeout != 0)
          {
@@ -512,18 +484,16 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (eisProductVersion == null)
                eisProductVersion = getJndiName();
 
-            if (trace)
-               getLog().trace("Generating XAResourceWrapper for TxConnectionManager" + this);
+            getLog().tracef("Generating XAResourceWrapper for TxConnectionManager (%s)", this);
 
-            xaResource = new XAResourceWrapperImpl(mc.getXAResource(), padXid, 
-                                                   isSameRMOverride, 
-                                                   eisProductName, eisProductVersion,
-                                                   getJndiName());
+            xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
+                                                               isSameRMOverride, 
+                                                               eisProductName, eisProductVersion,
+                                                               getJndiName());
          }
          else
          {
-            if (trace)
-               getLog().trace("Not wrapping XAResource.");
+            getLog().tracef("Not wrapping XAResource.");
 
             xaResource = mc.getXAResource();
          }
@@ -552,7 +522,14 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     */
    public boolean isTransactional()
    {
-      return !TxUtils.isCompleted(transactionManager);
+      try
+      {
+         return !TxUtils.isCompleted(transactionManager.getTransaction());
+      }
+      catch (SystemException se)
+      {
+         throw new RuntimeException("Error during isTransactional()", se);
+      }
    }
    
    /**

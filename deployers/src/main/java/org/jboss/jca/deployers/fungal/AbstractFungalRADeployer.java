@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer;
 import org.jboss.jca.deployers.common.DeployException;
 
@@ -368,7 +369,13 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    @Override
    protected TransactionManager getTransactionManager()
    {
-      return ((RAConfiguration) getConfiguration()).getTransactionManager();
+      return ((RAConfiguration) getConfiguration()).getTransactionIntegration().getTransactionManager();
+   }
+
+   @Override
+   protected TransactionIntegration getTransactionIntegration()
+   {
+      return ((RAConfiguration) getConfiguration()).getTransactionIntegration();
    }
 
    @Override

@@ -27,6 +27,8 @@ import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
@@ -87,7 +89,10 @@ public class ConnectionManagerFactory
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
-      setProperties(cm, pool, subjectFactory, securityDomain, allocationRetry, allocationRetryWaitMillis, null);
+      setProperties(cm, pool,
+                    subjectFactory, securityDomain, 
+                    allocationRetry, allocationRetryWaitMillis, 
+                    null, null);
       setNoTxProperties(cm);
 
       return cm;
@@ -101,7 +106,7 @@ public class ConnectionManagerFactory
     * @param securityDomain The security domain 
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
-    * @param tm The transaction manager
+    * @param txIntegration The transaction manager integration
     * @param interleaving Enable interleaving
     * @param xaResourceTimeout The transaction timeout for XAResource
     * @param isSameRMOverride Should isSameRM be overridden
@@ -115,7 +120,7 @@ public class ConnectionManagerFactory
                                                   final String securityDomain,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
-                                                  final TransactionManager tm,
+                                                  final TransactionIntegration txIntegration,
                                                   final Boolean interleaving,
                                                   final Integer xaResourceTimeout,
                                                   final Boolean isSameRMOverride,
@@ -128,8 +133,8 @@ public class ConnectionManagerFactory
       if (pool == null)
          throw new IllegalArgumentException("Pool is null");
 
-      if (tm == null)
-         throw new IllegalArgumentException("TransactionManager is null");
+      if (txIntegration == null)
+         throw new IllegalArgumentException("TransactionIntegration is null");
 
       TxConnectionManagerImpl cm = null;
 
@@ -139,20 +144,23 @@ public class ConnectionManagerFactory
             throw new IllegalArgumentException("Non transactional connection manager not supported");
 
          case LocalTransaction:
-            cm = new TxConnectionManagerImpl(tm, true);
+            cm = new TxConnectionManagerImpl(txIntegration, true);
             break;
 
          case XATransaction:
-            cm = new TxConnectionManagerImpl(tm, false);
+            cm = new TxConnectionManagerImpl(txIntegration, false);
             break;
 
          default:
             throw new IllegalArgumentException("Unknown transaction support level " + tsl);
       }
 
-      setProperties(cm, pool, subjectFactory, securityDomain, allocationRetry, allocationRetryWaitMillis, tm);
+      setProperties(cm, pool, 
+                    subjectFactory, securityDomain, 
+                    allocationRetry, allocationRetryWaitMillis,
+                    txIntegration.getTransactionManager(), txIntegration.getUserTransactionRegistry());
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
-      handleTxIntegration(tm);
+      handleTxIntegration(txIntegration.getTransactionManager());
 
       return cm;
    }
@@ -166,6 +174,7 @@ public class ConnectionManagerFactory
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
+    * @param utr The user transaction registry
     */
    private void setProperties(AbstractConnectionManager cm,
                               Pool pool,
@@ -173,7 +182,8 @@ public class ConnectionManagerFactory
                               String securityDomain,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
-                              TransactionManager tm)
+                              TransactionManager tm,
+                              UserTransactionRegistry utr)
    {
       pool.setConnectionListenerFactory(cm);
       cm.setPool(pool);
@@ -186,6 +196,8 @@ public class ConnectionManagerFactory
 
       if (allocationRetryWaitMillis != null)
          cm.setAllocationRetryWaitMillis(allocationRetryWaitMillis.longValue());
+
+      cm.setUserTransactionRegistry(utr);
 
       CachedConnectionManager ccm = new CachedConnectionManager(tm);
       cm.setCachedConnectionManager(ccm);

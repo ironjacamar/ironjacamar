@@ -24,33 +24,24 @@ package org.jboss.jca.core.connectionmanager.listener;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionEventListener;
-import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
 /**
  * Connection listener.
  * 
- * @version $Rev: $
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
  * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface ConnectionListener extends ConnectionEventListener, Comparable
+public interface ConnectionListener extends org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener
 {
-   /**
-    * Retrieve the managed connection for this listener.
-    * 
-    * @return the managed connection
-    */
-   ManagedConnection getManagedConnection();
-
    /**
     * Retrieve the pool for this listener.
     * 
     * @return the pool
     */
-   Pool getPool();
+   public Pool getPool();
 
    /**
     * Tidyup
@@ -60,28 +51,28 @@ public interface ConnectionListener extends ConnectionEventListener, Comparable
     * 
     * @throws ResourceException for any error
     */
-   void tidyup() throws ResourceException;
+   public void tidyup() throws ResourceException;
 
    /**
     * Retrieve the context used by the pool.
     * 
     * @return the context
     */
-   Object getContext();
+   public Object getContext();
 
    /**
     * Retrieve the state of this connection.
     * 
     * @return the state
     */
-   ConnectionState getState();
+   public ConnectionState getState();
 
    /**
     * Set the state of this connection.
     * 
     * @param newState new state
     */
-   void setState(ConnectionState newState);
+   public void setState(ConnectionState newState);
 
    /**
     * Has the connection timed out?
@@ -89,68 +80,68 @@ public interface ConnectionListener extends ConnectionEventListener, Comparable
     * @param timeout the timeout
     * @return true for timed out, false otherwise
     */
-   boolean isTimedOut(long timeout);
+   public boolean isTimedOut(long timeout);
 
    /**
     * Mark the connection as used
     */
-   void used();
+   public void used();
 
    /**
     * Register a new connection
     * 
     * @param handle the connection handle
     */
-   void registerConnection(Object handle);
+   public void registerConnection(Object handle);
 
    /**
     * Unregister a connection
     * 
     * @param handle the connection handle
     */
-   void unregisterConnection(Object handle);
+   public void unregisterConnection(Object handle);
 
    /**
     * Is the managed connection free?
     * 
     * @return true when it is free
     */
-   boolean isManagedConnectionFree();
+   public boolean isManagedConnectionFree();
 
    /**
     * Enlist the managed connection
     * 
     * @throws SystemException for errors
     */
-   void enlist() throws SystemException;
+   public void enlist() throws SystemException;
 
    /**
     * Delist the managed connection
     * 
     * @throws ResourceException if exception occurs
     */
-   void delist() throws ResourceException;
+   public void delist() throws ResourceException;
 
    /**
     * Get whether the listener is track by transaction
     * 
     * @return true for track by transaction, false otherwise
     */
-   boolean isTrackByTx();
+   public boolean isTrackByTx();
 
    /**
     * Set whether the listener is track by transaction
     * 
     * @param trackByTx true for track by transaction, false otherwise
     */
-   void setTrackByTx(boolean trackByTx);
+   public void setTrackByTx(boolean trackByTx);
 
    /**
     * Retrieve the last time this connection was validated.
     * 
     * @return the last time the connection was validated
     */
-   long getLastValidatedTime();
+   public long getLastValidatedTime();
 
    /**
     * Set the last time, in milliseconds, that this connection was validated.
@@ -158,5 +149,5 @@ public interface ConnectionListener extends ConnectionEventListener, Comparable
     * @param lastValidated the last time the connection was validated in
     *           milliseconds.
     */
-   void setLastValidatedTime(long lastValidated);
+   public void setLastValidatedTime(long lastValidated);
 }

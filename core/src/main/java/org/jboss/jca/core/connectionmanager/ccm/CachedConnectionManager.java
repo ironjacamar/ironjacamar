@@ -26,6 +26,8 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.spi.connectionmanager.ComponentStack;
+import org.jboss.jca.core.spi.transaction.TxUtils;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -49,9 +51,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.TxUtils;
-import org.jboss.tm.usertx.UserTransactionListener;
-import org.jboss.tm.usertx.client.ServerVMClientUserTransaction.UserTransactionStartedListener;
 import org.jboss.util.Strings;
 
 /**
@@ -59,10 +58,7 @@ import org.jboss.util.Strings;
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class CachedConnectionManager implements
-   UserTransactionStartedListener,
-   UserTransactionListener,
-   ComponentStack
+public class CachedConnectionManager implements UserTransactionListener, ComponentStack
 {
    /** Log instance */
    private static Logger log = Logger.getLogger(CachedConnectionManager.class);

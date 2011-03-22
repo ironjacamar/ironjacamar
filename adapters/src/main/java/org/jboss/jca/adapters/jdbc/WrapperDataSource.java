@@ -22,7 +22,8 @@
 
 package org.jboss.jca.adapters.jdbc;
 
-import org.jboss.jca.core.api.connectionmanager.transaction.JTATransactionChecker;
+import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
+import org.jboss.jca.core.spi.transaction.TxUtils;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -30,6 +31,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.naming.Reference;
 import javax.resource.Referenceable;
 import javax.resource.ResourceException;
@@ -37,9 +40,11 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.sql.DataSource;
 import javax.transaction.RollbackException;
+import javax.transaction.Status;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.TransactionTimeoutConfiguration;
 
 /**
  * WrapperDataSource
@@ -60,6 +65,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
 
    private PrintWriter logger;
    private Reference reference;
+   private TransactionManager transactionManager;
 
    /**
     * Constructor
@@ -70,6 +76,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    {
       this.mcf = mcf;
       this.cm = cm;
+      this.transactionManager = null;
    }
 
    /**
@@ -204,16 +211,62 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    protected void checkTransactionActive() throws SQLException
    {
-      if (cm == null)
-         throw new SQLException("No connection manager");
+      if (transactionManager == null)
+         initTransactionManager();
+
       try
       {
-         if (cm instanceof JTATransactionChecker)
-            ((JTATransactionChecker) cm).checkTransactionActive();
+         Transaction tx = transactionManager.getTransaction();
+         if (tx != null)
+         {
+            int status = tx.getStatus();
+
+            // Only allow states that will actually succeed
+            if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING && 
+                status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
+            {
+               throw new SQLException("Transaction " + tx + " cannot proceed " + TxUtils.getStatusAsString(status));
+            }
+         }
       }
-      catch (Exception e)
+      catch (SQLException se)
       {
-         throw new SQLException(e);
+         throw se;
+      }
+      catch (Throwable t)
+      {
+         throw new SQLException(t.getMessage(), t);
+      }
+   }
+
+   /**
+    * Init the transaction manager reference
+    */
+   private void initTransactionManager() throws SQLException
+   {
+      Context context = null;
+      try
+      {
+         context = new InitialContext();
+         transactionManager = (TransactionManager)context.lookup(mcf.getTransactionManagerJndiName());
+      }
+      catch (Throwable t)
+      {
+         throw new SQLException(t.getMessage(), t);
+      }
+      finally
+      {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (Exception e)
+            {
+               // Ignore
+            }
+         }
       }
    }
 }

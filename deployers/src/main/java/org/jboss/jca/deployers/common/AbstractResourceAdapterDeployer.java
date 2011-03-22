@@ -51,8 +51,9 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
-import org.jboss.jca.core.recovery.XAResourceRecoveryImpl;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;
@@ -92,8 +93,6 @@ import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
-import org.jboss.tm.XAResourceRecovery;
-import org.jboss.tm.XAResourceRecoveryRegistry;
 
 /**
  * An abstract resource adapter deployer which contains common functionality
@@ -114,9 +113,6 @@ public abstract class AbstractResourceAdapterDeployer
 
    /** The configuration */
    private Configuration configuration = null;
-
-   /** xaResourceRecoveryRegistry */
-   protected org.jboss.tm.XAResourceRecoveryRegistry xaResourceRecoveryRegistry;
 
    /**
     * Create a new AbstractResourceAdapterDeployer.
@@ -149,24 +145,6 @@ public abstract class AbstractResourceAdapterDeployer
    public Configuration getConfiguration()
    {
       return configuration;
-   }
-
-   /**
-    * Get the xAResourceRecoveryRegistry.
-    * @return The value
-    */
-   public XAResourceRecoveryRegistry getXAResourceRecoveryRegistry()
-   {
-      return xaResourceRecoveryRegistry;
-   }
-
-   /**
-    * Set the XAResourcRecoveryRegistry.
-    * @param value The value
-    */
-   public void setXAResourceRecoveryRegistry(XAResourceRecoveryRegistry value)
-   {
-      xaResourceRecoveryRegistry = value;
    }
 
    /**
@@ -1067,7 +1045,7 @@ public abstract class AbstractResourceAdapterDeployer
                         cm = cmf.createTransactional(tsl, pool,
                                                      getSubjectFactory(securityDomain), securityDomain,
                                                      allocationRetry, allocationRetryWaitMillis,
-                                                     getTransactionManager(), interleaving,
+                                                     getTransactionIntegration(), interleaving,
                                                      xaResourceTimeout, isSameRMOverride,
                                                      wrapXAResource, padXid);
                      }
@@ -1350,7 +1328,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
                                  // XAResource recovery
-                                 XAResourceRecoveryImpl recoveryImpl = null;
+                                 XAResourceRecovery recoveryImpl = null;
 
                                  // Connection manager properties
                                  Integer allocationRetry = null;
@@ -1420,7 +1398,8 @@ public abstract class AbstractResourceAdapterDeployer
                                     cm = cmf.createTransactional(tsl, pool,
                                                                  getSubjectFactory(securityDomain), securityDomain,
                                                                  allocationRetry, allocationRetryWaitMillis,
-                                                                 getTransactionManager(), interleaving,
+                                                                 getTransactionIntegration(),
+                                                                 interleaving,
                                                                  xaResourceTimeout, isSameRMOverride,
                                                                  wrapXAResource, padXid);
                                     if (tsl == TransactionSupportLevel.XATransaction)
@@ -1497,16 +1476,18 @@ public abstract class AbstractResourceAdapterDeployer
                                              plugin = new DefaultRecoveryPlugin();
                                           }
 
-                                          recoveryImpl = new XAResourceRecoveryImpl(mcf,
-                                                                                    padXid,
-                                                                                    isSameRMOverride,
-                                                                                    wrapXAResource,
-                                                                                    recoverUser,
-                                                                                    recoverPassword,
-                                                                                    recoverSecurityDomain,
-                                                                                    getSubjectFactory(
-                                                                                       recoverSecurityDomain),
-                                                                                    plugin);
+                                          recoveryImpl =
+                                             getTransactionIntegration().
+                                                createXAResourceRecovery(mcf,
+                                                                         padXid,
+                                                                         isSameRMOverride,
+                                                                         wrapXAResource,
+                                                                         recoverUser,
+                                                                         recoverPassword,
+                                                                         recoverSecurityDomain,
+                                                                         getSubjectFactory(
+                                                                            recoverSecurityDomain),
+                                                                         plugin);
                                        }
                                     }
                                  }
@@ -1603,10 +1584,12 @@ public abstract class AbstractResourceAdapterDeployer
                                        pool.setName(poolName);
                                     }
 
-                                    if (getXAResourceRecoveryRegistry() != null && recoveryImpl != null)
+                                    if (getTransactionIntegration().getRecoveryRegistry() != null &&
+                                        recoveryImpl != null)
                                     {
                                        recoveryImpl.setJndiName(cm.getJndiName());
-                                       getXAResourceRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
+                                       getTransactionIntegration().
+                                          getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
 
                                        recoveryModules.add(recoveryImpl);
                                     }
@@ -1846,12 +1829,16 @@ public abstract class AbstractResourceAdapterDeployer
    protected abstract String registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance);
 
    /**
-    *
-    * get The transaction Manager. Implementers have to provide right implementation to find and get it
-    *
-    * @return the transaction manager to be used
+    * Get the transaction Manager. Implementers have to provide right implementation to find and get it
+    * @return The value
     */
    protected abstract TransactionManager getTransactionManager();
+
+   /**
+    * Get the transaction integration. Implementers have to provide right implementation to find and get it
+    * @return The value
+    */
+   protected abstract TransactionIntegration getTransactionIntegration();
 
    /**
     *

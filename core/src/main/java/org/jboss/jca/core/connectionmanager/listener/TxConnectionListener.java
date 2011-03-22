@@ -26,7 +26,8 @@ import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
-import org.jboss.jca.core.connectionmanager.xa.LocalXAResource;
+import org.jboss.jca.core.spi.transaction.TxUtils;
+import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,17 +43,13 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 
-import org.jboss.tm.TxUtils;
-
-
 /**
  * Tx connection listener.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class TxConnectionListener extends AbstractConnectionListener
 {
-
    /**Transaction synch. instance*/
    private TransactionSynchronization transactionSynchronization;
 

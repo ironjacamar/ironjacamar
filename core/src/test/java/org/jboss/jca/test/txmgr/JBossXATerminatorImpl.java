@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.test.txmgr;
 
+import org.jboss.jca.core.spi.transaction.xa.XATerminator;
+
 import java.io.Serializable;
 
 import javax.resource.spi.work.Work;
@@ -29,13 +31,11 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.jboss.tm.JBossXATerminator;
-
 /**
  * A JBoss XATerminator implementation
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class JBossXATerminatorImpl implements JBossXATerminator, Serializable
+public class JBossXATerminatorImpl implements XATerminator, Serializable
 {
    private static final long serialVersionUID = 1L;
 

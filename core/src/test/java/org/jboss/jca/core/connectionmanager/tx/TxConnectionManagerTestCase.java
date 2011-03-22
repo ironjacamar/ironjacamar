@@ -34,6 +34,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
@@ -309,7 +310,8 @@ public class TxConnectionManagerTestCase
       embedded.deploy(naming);
       embedded.deploy(transaction);
 
-      TransactionManager tm = embedded.lookup("RealTransactionManager", TransactionManager.class);
+      TransactionIntegration ti = embedded.lookup("TransactionIntegration", TransactionIntegration.class);
+      assertNotNull(ti);
 
       mcf = new MockManagedConnectionFactory();
       PoolConfiguration pc = new PoolConfiguration();
@@ -320,7 +322,7 @@ public class TxConnectionManagerTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = 
          cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-                                 null, null, null, null, tm, null, null, null, null, null);
+                                 null, null, null, null, ti, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;
    }

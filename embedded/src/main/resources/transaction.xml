@@ -227,4 +227,17 @@
     <depends>NamingServer</depends>
   </bean>
   
+  <!-- Transaction integration -->
+  <bean name="TransactionIntegration"
+        interface="org.jboss.jca.core.spi.transaction.TransactionIntegration"
+        class="org.jboss.jca.core.tx.jbossts.TransactionIntegrationImpl">
+    <constructor>
+      <parameter><inject bean="RealTransactionManager"/></parameter>
+      <parameter><inject bean="TransactionSynchronizationRegistry"/></parameter>
+      <parameter><inject bean="UserTransactionRegistry"/></parameter>
+      <parameter><inject bean="TransactionManager" property="XATerminator"/></parameter>
+      <parameter><inject bean="RecoveryManager"/></parameter>
+    </constructor>
+  </bean>
+
 </deployment>

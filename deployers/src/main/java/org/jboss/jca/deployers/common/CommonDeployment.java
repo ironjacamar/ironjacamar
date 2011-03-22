@@ -22,6 +22,7 @@
 package org.jboss.jca.deployers.common;
 
 import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -29,7 +30,6 @@ import java.util.Arrays;
 import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.XAResourceRecovery;
 
 /**
  *

@@ -103,7 +103,7 @@
     <property name="LongRunningThreadPool"><inject bean="LongRunningThreadPool"/></property>
 
     <!-- The XA terminator -->
-    <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
 
     <!-- The callback security module -->
     <property name="CallbackSecurity"><inject bean="UsersRoles"/></property>
@@ -121,7 +121,7 @@
     <property name="WorkManager"><inject bean="WorkManager"/></property>
 
     <!-- The XA terminator -->
-    <property name="XATerminator"><inject bean="TransactionManager" property="XATerminator"/></property>
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
   </bean>
 
   <!-- Explicit JNDI strategy -->
@@ -169,7 +169,7 @@
     <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
     <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
     <property name="JndiStrategy"><inject bean="ExplicitJndiStrategy"/></property>
-    <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
+    <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
@@ -185,7 +185,7 @@
     <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
     <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
     <property name="JndiStrategy"><inject bean="SimpleJndiStrategy"/></property>
-    <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
+    <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>

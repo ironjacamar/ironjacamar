@@ -19,9 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.xa;
+package org.jboss.jca.core.tx.jbossts;
 
-import org.jboss.jca.core.spi.connectionmanager.xa.XidWrapper;
+import org.jboss.jca.core.spi.transaction.xa.XidWrapper;
 
 import java.util.Arrays;
 

@@ -275,7 +275,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
                                           jndiStrategy, metadataRepository, resourceAdapterRepository,
                                           c.getCfs(), c.getCfJndiNames(), 
                                           c.getAos(), c.getAoJndiNames(),
-                                          c.getRecovery(), getXAResourceRecoveryRegistry(),
+                                          c.getRecovery(), getTransactionIntegration().getRecoveryRegistry(),
                                           ((RAConfiguration)getConfiguration()).getManagementRepository(), 
                                           c.getConnector(),
                                           kernel.getMBeanServer(), ons,

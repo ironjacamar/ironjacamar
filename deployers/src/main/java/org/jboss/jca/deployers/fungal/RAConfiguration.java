@@ -27,13 +27,12 @@ import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.deployers.common.Configuration;
 
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 
@@ -47,8 +46,8 @@ public class RAConfiguration implements Configuration
 
    private static boolean trace = log.isTraceEnabled();
 
-   /** The transaction manager */
-   private TransactionManager transactionManager = null;
+   /** The transaction integration */
+   private TransactionIntegration transactionIntegration = null;
 
    /** Preform bean validation */
    private final AtomicBoolean beanValidation = new AtomicBoolean(true);
@@ -94,21 +93,21 @@ public class RAConfiguration implements Configuration
    }
 
    /**
-    * Set the transaction manager
+    * Set the transaction integration
     * @param value The value
     */
-   public void setTransactionManager(TransactionManager value)
+   public void setTransactionIntegration(TransactionIntegration value)
    {
-      transactionManager = value;
+      transactionIntegration = value;
    }
 
    /**
-    * Get the transaction manager
+    * Get the transaction integration
     * @return The value
     */
-   public TransactionManager getTransactionManager()
+   public TransactionIntegration getTransactionIntegration()
    {
-      return transactionManager;
+      return transactionIntegration;
    }
 
    /**

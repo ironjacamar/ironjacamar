@@ -24,14 +24,14 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.XAResourceRecovery;
-import org.jboss.tm.XAResourceRecoveryRegistry;
 
 import com.github.fungal.spi.deployers.Deployment;
 

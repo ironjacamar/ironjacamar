@@ -227,6 +227,9 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    private ClassLoaderPlugin classLoaderPlugin;
 
+   /** The JNDI name for the transaction manager */
+   private String transactionManagerJndiName;
+
    /**
     * Constructor
     */
@@ -856,6 +859,27 @@ public abstract class BaseWrapperManagedConnectionFactory
       }
 
       return result;
+   }
+
+   /**
+    * Get the transaction manager JNDI name
+    * @return The value
+    */
+   public String getTransactionManagerJndiName()
+   {
+      if (transactionManagerJndiName == null || transactionManagerJndiName.trim().equals(""))
+         return "java:/TransactionManager";
+
+      return transactionManagerJndiName;
+   }
+
+   /**
+    * Set the transaction manager JNDI name
+    * @param v The value
+    */
+   public void setTransactionManagerJndiName(String v)
+   {
+      this.transactionManagerJndiName = v;
    }
 
    /**

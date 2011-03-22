@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager;
 
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.security.Callback;
+import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -52,7 +53,6 @@ import javax.resource.spi.work.WorkRejectedException;
 import org.jboss.logging.Logger;
 import org.jboss.threads.BlockingExecutor;
 import org.jboss.threads.ExecutionTimedOutException;
-import org.jboss.tm.JBossXATerminator;
 
 /**
  * The work manager implementation.
@@ -87,7 +87,7 @@ public class WorkManagerImpl implements WorkManager
    private BlockingExecutor longRunningExecutor;
 
    /** The XA terminator */
-   private JBossXATerminator xaTerminator;
+   private XATerminator xaTerminator;
 
    /** Validated work instances */
    private Set<String> validatedWork;
@@ -152,7 +152,7 @@ public class WorkManagerImpl implements WorkManager
     * Get the XATerminator
     * @return The XA terminator
     */
-   public JBossXATerminator getXATerminator()
+   public XATerminator getXATerminator()
    {
       return xaTerminator;
    }
@@ -161,7 +161,7 @@ public class WorkManagerImpl implements WorkManager
     * Set the XATerminator
     * @param xaTerminator The XA terminator
     */
-   public void setXATerminator(JBossXATerminator xaTerminator)
+   public void setXATerminator(XATerminator xaTerminator)
    {
       this.xaTerminator = xaTerminator;
    }

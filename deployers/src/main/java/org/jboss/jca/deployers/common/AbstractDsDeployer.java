@@ -44,9 +44,11 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
-import org.jboss.jca.core.recovery.XAResourceRecoveryImpl;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -58,12 +60,9 @@ import java.util.Map.Entry;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
-import org.jboss.tm.XAResourceRecovery;
-import org.jboss.tm.XAResourceRecoveryRegistry;
 
 /**
  * An abstract deployer implementation for datasources
@@ -76,8 +75,8 @@ public abstract class AbstractDsDeployer
    /** log **/
    protected Logger log;
 
-   /** The transaction manager */
-   protected TransactionManager transactionManager;
+   /** The transaction integration */
+   protected TransactionIntegration transactionIntegration;
 
    /** Metadata repository */
    protected MetadataRepository mdr;
@@ -92,26 +91,26 @@ public abstract class AbstractDsDeployer
    public AbstractDsDeployer(Logger log)
    {
       this.log = log;
-      this.transactionManager = null;
+      this.transactionIntegration = null;
       this.mdr = null;
    }
 
    /**
-    * Set the transaction manager
+    * Set the transaction integration
     * @param value The value
     */
-   public void setTransactionManager(TransactionManager value)
+   public void setTransactionIntegration(TransactionIntegration value)
    {
-      transactionManager = value;
+      transactionIntegration = value;
    }
 
    /**
-    * Get the transaction manager
+    * Get the transaction integration
     * @return The value
     */
-   public TransactionManager getTransactionManager()
+   public TransactionIntegration getTransactionIntegration()
    {
-      return transactionManager;
+      return transactionIntegration;
    }
 
    /**
@@ -325,7 +324,8 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  allocationRetry, allocationRetryWaitMillis,
-                                 getTransactionManager(), null, null, null, null, null);
+                                 getTransactionIntegration(),
+                                 null, null, null, null, null);
 
       cm.setJndiName(jndiName);
 
@@ -468,7 +468,7 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  allocationRetry, allocationRetryWaitMillis,
-                                 getTransactionManager(), interleaving,
+                                 getTransactionIntegration(), interleaving,
                                  xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
 
       cm.setJndiName(jndiName);
@@ -535,7 +535,7 @@ public abstract class AbstractDsDeployer
       String recoverUser = defaultUserName;
       String recoverPassword = defaultPassword;
 
-      XAResourceRecoveryImpl recoveryImpl = null;
+      XAResourceRecovery recoveryImpl = null;
 
       if (recoveryMD == null || !recoveryMD.getNoRecovery())
       {
@@ -594,22 +594,23 @@ public abstract class AbstractDsDeployer
             plugin = new DefaultRecoveryPlugin();
          }
 
-         recoveryImpl = new XAResourceRecoveryImpl(mcf,
-                                                   padXid,
-                                                   isSameRMOverride,
-                                                   wrapXAResource,
-                                                   recoverUser,
-                                                   recoverPassword,
-                                                   recoverSecurityDomain,
-                                                   getSubjectFactory(recoverSecurityDomain),
-                                                   plugin);
+         recoveryImpl = 
+            getTransactionIntegration().createXAResourceRecovery(mcf,
+                                                                 padXid,
+                                                                 isSameRMOverride,
+                                                                 wrapXAResource,
+                                                                 recoverUser,
+                                                                 recoverPassword,
+                                                                 recoverSecurityDomain,
+                                                                 getSubjectFactory(recoverSecurityDomain),
+                                                                 plugin);
 
       }
 
-      if (getXAResourceRecoveryRegistry() != null && recoveryImpl != null)
+      if (getTransactionIntegration().getRecoveryRegistry() != null && recoveryImpl != null)
       {
          recoveryImpl.setJndiName(cm.getJndiName());
-         getXAResourceRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
+         getTransactionIntegration().getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
 
          recovery = recoveryImpl;
       }

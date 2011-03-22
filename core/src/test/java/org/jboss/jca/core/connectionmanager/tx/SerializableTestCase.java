@@ -28,6 +28,7 @@ import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
@@ -38,7 +39,6 @@ import java.net.URL;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.transaction.TransactionManager;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -62,8 +62,8 @@ public class SerializableTestCase
    @Test(expected = IOException.class)
    public void testSerializable() throws Throwable
    {
-      TransactionManager tm = embedded.lookup("RealTransactionManager", TransactionManager.class);
-      assertNotNull(tm);
+      TransactionIntegration ti = embedded.lookup("TransactionIntegration", TransactionIntegration.class);
+      assertNotNull(ti);
 
       ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
       PoolConfiguration pc = new PoolConfiguration();
@@ -73,7 +73,7 @@ public class SerializableTestCase
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
-                                                                    pool, null, null, null, null, tm, 
+                                                                    pool, null, null, null, null, ti, 
                                                                     Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);
 

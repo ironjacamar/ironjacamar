@@ -30,7 +30,6 @@ import org.jboss.jca.embedded.EmbeddedFactory;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.naming.InitialContext;

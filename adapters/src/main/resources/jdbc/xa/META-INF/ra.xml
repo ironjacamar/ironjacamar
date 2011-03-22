@@ -167,6 +167,11 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
           <config-property-name>JndiName</config-property-name>
           <config-property-type>java.lang.String</config-property-type>
         </config-property>
+        <config-property>
+          <description>The JNDI name of the transaction manager</description>
+          <config-property-name>TransactionManagerJndiName</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+        </config-property>
         <connectionfactory-interface>javax.sql.DataSource</connectionfactory-interface>
         <connectionfactory-impl-class>org.jboss.jca.adapters.jdbc.WrapperDataSource</connectionfactory-impl-class>
         <connection-interface>java.sql.Connection</connection-interface>

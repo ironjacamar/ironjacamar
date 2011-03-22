@@ -27,6 +27,7 @@ import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -91,6 +92,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Startup/ShutDown flag */
    private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
+   /** User transaction registry */
+   private UserTransactionRegistry userTransactionRegistry;
+
    /** Cached connection manager */
    private CachedConnectionManager cachedConnectionManager;
 
@@ -133,12 +137,24 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
 
    /**
+    * Set the user transaction registry
+    * @param utr The value
+    */
+   public void setUserTransactionRegistry(UserTransactionRegistry utr)
+   {
+      this.userTransactionRegistry = utr;
+   }
+
+   /**
     * Sets cached connection manager.
     * @param cachedConnectionManager cached connection manager
     */
    public void setCachedConnectionManager(CachedConnectionManager cachedConnectionManager)
    {
       this.cachedConnectionManager = cachedConnectionManager;
+
+      if (userTransactionRegistry != null && cachedConnectionManager != null)
+         userTransactionRegistry.addListener(cachedConnectionManager);
    }
 
    /**
@@ -157,6 +173,12 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public void setShutDown(boolean shutDown)
    {
       this.shutdown.set(shutDown);
+
+      if (shutDown)
+      {
+         if (userTransactionRegistry != null && cachedConnectionManager != null)
+            userTransactionRegistry.removeListener(cachedConnectionManager);
+      }
    }
 
    /**
@@ -365,11 +387,15 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
    /**
     * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
+    * @param bcl connection listener that wraps connection
     * @param kill kill connection or not
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill)
+   public void returnManagedConnection(org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener bcl,
+                                       boolean kill)
    {
+      // Hack - We know that we can type cast it
+      ConnectionListener cl = (ConnectionListener)bcl;
+
       Pool localStrategy = cl.getPool();
       if (localStrategy != pool)
       {

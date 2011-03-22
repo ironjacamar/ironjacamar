@@ -23,9 +23,9 @@
 package org.jboss.jca.core.api.workmanager;
 
 import org.jboss.jca.core.spi.security.Callback;
+import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import org.jboss.threads.BlockingExecutor;
-import org.jboss.tm.JBossXATerminator;
 
 /**
  * The JBoss specific work manager interface
@@ -60,13 +60,13 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Clonea
     * Get the XATerminator
     * @return The XA terminator
     */
-   public JBossXATerminator getXATerminator();
+   public XATerminator getXATerminator();
 
    /**
     * Set the XATerminator
     * @param xaTerminator The XA terminator
     */
-   public void setXATerminator(JBossXATerminator xaTerminator);
+   public void setXATerminator(XATerminator xaTerminator);
 
    /**
     * Is spec compliant

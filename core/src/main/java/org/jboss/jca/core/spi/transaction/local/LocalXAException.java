@@ -19,19 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.spi.connectionmanager.xa;
+package org.jboss.jca.core.spi.transaction.local;
+
+import javax.transaction.xa.XAException;
 
 /**
- * An XAResource wrapper.
- * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision: 85945 $
+ * LocalXAException
+ *
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface XAResourceWrapper extends org.jboss.tm.XAResourceWrapper
+public class LocalXAException extends XAException
 {
+   /** Serial version UID */
+   private static final long serialVersionUID = 1299192262106064112L;
+   
    /**
-    * Get the JNDI name
-    * @return The value
-    */
-   public String getJndiName();
+    * Creates a new instance.
+    * @param message message
+    * @param errorcode error code
+    */   
+   public LocalXAException(String message, int errorcode)
+   {
+      this(message, errorcode, null);
+   }
+
+   /**
+    * Creates a new instance.
+    * @param message message
+    * @param t cause
+    * @param errorcode error code
+    */   
+   public LocalXAException(String message, int errorcode, Throwable t)
+   {
+      super(message);
+      this.errorCode = errorcode;
+      initCause(t);
+   }
 }
