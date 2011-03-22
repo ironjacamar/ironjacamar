@@ -1501,6 +1501,23 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-validator-maven" extension="jar"/>
     <snapshot-install-file file="install-snapshot.sh" artifact="${name}-validator-maven" extension="jar"/>
 
+    <!-- adapters-jdbc -->
+    <delete file="${target.dir}/${name}-jdbc.xml"/>
+    <ivy:makepom artifactName="${name}-jdbc" 
+                conf="${name}-jdbc"
+                ivyfile="${basedir}/ivy.xml" 
+                pomfile="${target.dir}/${name}-jdbc.xml"
+                headerFile="${tools.dir}/mvn/HEADER"
+                templatefile="${tools.dir}/mvn/pom.template"
+                printIvyInfo="false">
+      <mapping conf="${name}-jdbc" scope="runtime"/>
+    </ivy:makepom>
+
+     <deploy-file file="release.sh" artifact="${name}-jdbc" extension="jar"/>
+     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-jdbc" extension="jar"/>
+     <snapshot-install-file file="install-snapshot.sh" artifact="${name}-jdbc" extension="jar"/>
+
+  	
     <!-- jdbc-local -->
     <delete file="${target.dir}/jdbc-local.xml"/>
     <ivy:makepom artifactName="jdbc-local" 
