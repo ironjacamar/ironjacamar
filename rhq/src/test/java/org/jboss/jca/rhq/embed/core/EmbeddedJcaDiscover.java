@@ -33,6 +33,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.logging.Logger;
 
@@ -59,6 +61,9 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
    
    /** ManagementRepository */
    private ManagementRepository mr = null;
+   
+   /** URL of rar file */
+   private List<URL> rarUrls = new ArrayList<URL>();
    
    /** 
     * singleton getInstance
@@ -95,8 +100,9 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
          
          //embedJCA.deploy(EmbeddedJcaDiscover.class.getResource("h2-ds.xml"));
          
-         deployFile("/xa.rar");
+         URL deployedURL = deployFile("/xa.rar");
          logger.debug("xa.rar deployed");
+         rarUrls.add(deployedURL);
          
          stopped = false;
       }
@@ -112,7 +118,7 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
     * 
     * @param fileName file name
     */
-   private void deployFile(String fileName)
+   private URL deployFile(String fileName)
    {
       URL url = EmbeddedJcaDiscover.class.getResource(fileName);
       try
@@ -122,7 +128,8 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
          copyURLToFile(url, outputFile);
          URL finalURL = outputFile.toURI().toURL();
          embedJCA.deploy(finalURL);
-         outputFile.deleteOnExit();
+         //outputFile.deleteOnExit();
+         return finalURL;
       }
       catch (Throwable e)
       {
@@ -207,6 +214,10 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
    {
       try
       {
+         for (URL url : rarUrls)
+         {
+            embedJCA.undeploy(url);
+         }
          embedJCA.shutdown();
          mr = null;
          stopped = true;
