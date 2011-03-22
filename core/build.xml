@@ -338,6 +338,38 @@
       <fileset dir="${build.core.dir}/test/rars/security/reauth/subject"/>
     </jar>
 
+    <!-- Pure inflow resource adapter -->
+    <jar destfile="${build.core.dir}/test/pure-inflow.jar"
+         basedir="${build.core.dir}/test"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/inflow/ra/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test - Pure inflow"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+    <jar destfile="${build.core.dir}/test/pure-inflow.rar"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test - Pure inflow RAR"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+      <fileset dir="${build.core.dir}/test">
+        <include name="pure-inflow.jar"/>
+      </fileset>
+      <fileset dir="${build.core.dir}/test/rars/inflow"/>
+    </jar>
+
   </target>
 
   <!-- ================================= 
