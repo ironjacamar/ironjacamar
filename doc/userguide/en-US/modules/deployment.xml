@@ -717,9 +717,10 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                 </entry>
               </row>
               <row>
-                <entry><code>module</code></entry>
+                <entry><code>driver</code></entry>
                 <entry>
                   An unique reference to the classloader module which contains the JDBC driver
+                   The accepted format is driverName#majorVersion.minorVersion
                 </entry>
               </row>
               <row>
@@ -825,9 +826,10 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                 </entry>
               </row>
               <row>
-                <entry><code>module</code></entry>
+                <entry><code>driver</code></entry>
                 <entry>
                   An unique reference to the classloader module which contains the JDBC driver
+                   The accepted format is driverName#majorVersion.minorVersion
                 </entry>
               </row>
               <row>

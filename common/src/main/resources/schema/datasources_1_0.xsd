@@ -60,6 +60,7 @@
           <xs:documentation>
             <![CDATA[[
               An unique reference to the classloader module which contains the JDBC driver
+              The accepted format is driverName#majorVersion.minorVersion
              ]]>
           </xs:documentation>
         </xs:annotation>
@@ -202,6 +203,7 @@
           <xs:documentation>
             <![CDATA[[
               An unique reference to the classloader module which contains the JDBC driver
+              The accepted format is driverName#majorVersion.minorVersion
              ]]>
           </xs:documentation>
         </xs:annotation>
