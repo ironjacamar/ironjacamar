@@ -41,8 +41,7 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.sql.DataSource;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import org.jboss.logging.Logger;
 
@@ -65,7 +64,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
 
    private PrintWriter logger;
    private Reference reference;
-   private TransactionManager transactionManager;
+   private UserTransaction userTransaction;
 
    /**
     * Constructor
@@ -76,7 +75,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    {
       this.mcf = mcf;
       this.cm = cm;
-      this.transactionManager = null;
+      this.userTransaction = null;
    }
 
    /**
@@ -211,22 +210,19 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    protected void checkTransactionActive() throws SQLException
    {
-      if (transactionManager == null)
-         initTransactionManager();
+      if (userTransaction == null)
+         initUserTransaction();
 
       try
       {
-         Transaction tx = transactionManager.getTransaction();
-         if (tx != null)
+         int status = userTransaction.getStatus();
+         if (status == Status.STATUS_NO_TRANSACTION)
+            return;
+         // Only allow states that will actually succeed
+         if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING &&
+             status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
          {
-            int status = tx.getStatus();
-
-            // Only allow states that will actually succeed
-            if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING && 
-                status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
-            {
-               throw new SQLException("Transaction " + tx + " cannot proceed " + TxUtils.getStatusAsString(status));
-            }
+            throw new SQLException("Transaction cannot proceed " + TxUtils.getStatusAsString(status));
          }
       }
       catch (SQLException se)
@@ -240,15 +236,15 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    }
 
    /**
-    * Init the transaction manager reference
+    * Init the user transaction reference
     */
-   private void initTransactionManager() throws SQLException
+   private void initUserTransaction() throws SQLException
    {
       Context context = null;
       try
       {
          context = new InitialContext();
-         transactionManager = (TransactionManager)context.lookup(mcf.getTransactionManagerJndiName());
+         userTransaction = (UserTransaction)context.lookup(mcf.getUserTransactionJndiName());
       }
       catch (Throwable t)
       {
