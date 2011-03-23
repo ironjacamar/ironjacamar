@@ -216,7 +216,8 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          Driver d = getDriver(url);
          con = d.connect(url, copy);
          if (con == null)
-            throw new ResourceException("Wrong driver class for this connection URL");
+            throw new ResourceException("Wrong driver class [" + d.getClass() + "] for this connection URL [" + url +
+                                        "]");
 
          return new LocalManagedConnection(this, con, props, transactionIsolation, preparedStatementCacheSize);
       }
@@ -258,7 +259,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
             con = d.connect(url, copy);
             if (con == null)
             {
-               log.warn("Wrong driver class for this connection URL: " + url);
+               log.warn("Wrong driver class [" + d.getClass() + "] for this connection URL: " + url);
                urlSelector.failedUrlObject(url);
             }
             else
