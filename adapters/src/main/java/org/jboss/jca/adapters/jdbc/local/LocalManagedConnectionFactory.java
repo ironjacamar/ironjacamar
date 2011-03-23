@@ -35,8 +35,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
@@ -66,6 +68,8 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    /** The connection properties */
    protected String connectionProperties;
+
+   private static Map<String, Driver> driverCache = new ConcurrentHashMap<String, Driver>();
 
    /**
     * Constructor
@@ -534,10 +538,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
       // Check if the driver is already loaded, if not then try to load it
 
-      if (isDriverLoadedForURL(url))
-      {
-         return driver;
-      } // end of if ()
+      driver = driverCache.get(url.substring(0, url.indexOf(":", 6)));
 
       try
       {
@@ -551,8 +552,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          //and is not spec compliant, or is the wrong class.
          driver = (Driver) clazz.newInstance();
          DriverManager.registerDriver(driver);
-         if (isDriverLoadedForURL(url))
-            return driver;
+         log.info("class loaded and instance created:" + driver);
+
+         driverCache.put(url.substring(0, url.indexOf(":", 6)), driver);
          //We can even instantiate one, it must be the wrong class for the URL.
       }
       catch (Exception e)
@@ -560,16 +562,17 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          throw new ResourceException("Failed to register driver for: " + driverClass, e);
       }
 
-      throw new ResourceException("Apparently wrong driver class specified for URL: class: " + driverClass +
-                                  ", url: " + url);
+      return driver;
    }
 
    private boolean isDriverLoadedForURL(String url)
    {
       boolean trace = log.isTraceEnabled();
 
+      ClassLoader tccl = Thread.currentThread().getContextClassLoader();
       try
       {
+         Thread.currentThread().setContextClassLoader(getClassLoaderPlugin().getClassLoader());
          driver = DriverManager.getDriver(url);
          if (trace)
             log.trace("Driver already registered for url: " + url);
@@ -577,9 +580,14 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
       catch (Exception e)
       {
+         log.info("Driver not yet registered for url: " + url);
          if (trace)
             log.trace("Driver not yet registered for url: " + url);
          return false;
+      }
+      finally
+      {
+         Thread.currentThread().setContextClassLoader(tccl);
       }
    }
 
