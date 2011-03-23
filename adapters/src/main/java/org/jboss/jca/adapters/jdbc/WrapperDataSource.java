@@ -66,6 +66,8 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    private Reference reference;
    private UserTransaction userTransaction;
 
+   private boolean initialized = false;
+
    /**
     * Constructor
     * @param mcf The managed connection factory
@@ -210,9 +212,22 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    protected void checkTransactionActive() throws SQLException
    {
+      if (initialized && userTransaction == null)
+         return;
       if (userTransaction == null)
-         initUserTransaction();
-
+      {
+         try
+         {
+            initialized = true;
+            initUserTransaction();
+         }
+         catch (SQLException e)
+         {
+            // HACK
+            Logger.getLogger(this.getClass()).debugf("UserTransaction not found", e);
+            return;
+         }
+      }
       try
       {
          int status = userTransaction.getStatus();
