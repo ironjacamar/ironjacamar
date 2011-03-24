@@ -24,6 +24,8 @@ package org.jboss.jca.core.spi.transaction;
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
+import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
+import org.jboss.jca.core.spi.transaction.local.TransactionLocalDelegate;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
@@ -84,6 +86,12 @@ public interface TransactionIntegration
    public XATerminator getXATerminator();
 
    /**
+    * Get the transaction local delegate
+    * @return The value
+    */
+   public TransactionLocalDelegate getTransactionLocalDelegate();
+
+   /**
     * Create an XAResourceRecovery instance
     *
     * @param mcf The managed connection factory
@@ -126,4 +134,10 @@ public interface TransactionIntegration
                                                     boolean pad, Boolean override, 
                                                     String productName, String productVersion,
                                                     String jndiName);
+
+   /**
+    * Create a transaction local instance
+    * @return The value
+    */
+   public TransactionLocal createTransactionLocal();
 }

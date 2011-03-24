@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.common;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.Collection;
 
@@ -67,6 +68,12 @@ public class MockConnectionManager extends AbstractConnectionManager
 
    @Override
    public TransactionManager getTransactionManager()
+   {
+      return null;
+   }
+
+   @Override
+   public TransactionIntegration getTransactionIntegration()
    {
       return null;
    }

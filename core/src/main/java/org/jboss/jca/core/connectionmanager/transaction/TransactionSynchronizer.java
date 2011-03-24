@@ -21,6 +21,9 @@
  */
 package org.jboss.jca.core.connectionmanager.transaction;
 
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Condition;
@@ -30,10 +33,8 @@ import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.TransactionLocal;
 import org.jboss.util.NestedRuntimeException;
 
 /**
@@ -79,11 +80,11 @@ public class TransactionSynchronizer implements Synchronization
 
    /** 
     * Initialization. 
-    * @param tm transaction manager
+    * @param ti transaction integration
     */
-   public static void setTransactionManager(TransactionManager tm)
+   public static void setTransactionIntegration(TransactionIntegration ti)
    {
-      txSynchs = new TransactionLocal(tm);
+      txSynchs = ti.createTransactionLocal();
    }
    
    /**

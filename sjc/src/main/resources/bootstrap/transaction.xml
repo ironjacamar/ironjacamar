@@ -237,6 +237,7 @@
       <parameter><inject bean="UserTransactionRegistry"/></parameter>
       <parameter><inject bean="TransactionManager" property="XATerminator"/></parameter>
       <parameter><inject bean="RecoveryManager"/></parameter>
+      <parameter><inject bean="RealTransactionManager"/></parameter>
     </constructor>
   </bean>
 

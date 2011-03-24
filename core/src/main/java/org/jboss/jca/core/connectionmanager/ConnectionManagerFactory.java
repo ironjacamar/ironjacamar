@@ -160,7 +160,7 @@ public class ConnectionManagerFactory
                     allocationRetry, allocationRetryWaitMillis,
                     txIntegration.getTransactionManager(), txIntegration.getUserTransactionRegistry());
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
-      handleTxIntegration(txIntegration.getTransactionManager());
+      handleTxIntegration(txIntegration);
 
       return cm;
    }
@@ -245,12 +245,12 @@ public class ConnectionManagerFactory
 
    /**
     * Associate the transaction synchronizer with the transaction
-    * manager.
+    * integration.
     *
-    * @param tm TransactionManager
+    * @param ti TransactionManager
     */
-   public void handleTxIntegration(final TransactionManager tm)
+   public void handleTxIntegration(final TransactionIntegration ti)
    {
-      TransactionSynchronizer.setTransactionManager(tm);
+      TransactionSynchronizer.setTransactionIntegration(ti);
    }
 }

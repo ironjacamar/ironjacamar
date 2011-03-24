@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.TransactionManager;
@@ -42,7 +44,7 @@ public interface ConnectionListenerFactory
     * @return a new connection event listener
     * @throws ResourceException for any error
     */
-   ConnectionListener createConnectionListener(ManagedConnection managedConnection, Object context)
+   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, Object context)
       throws ResourceException;
 
    /**
@@ -50,12 +52,19 @@ public interface ConnectionListenerFactory
     *
     * @return whether it is a transactional or not
     */
-   boolean isTransactional();
+   public boolean isTransactional();
    
    /**
     * Get the transaction manager.
     * 
     * @return the transaction manager
     */
-   TransactionManager getTransactionManager();
+   public TransactionManager getTransactionManager();
+
+   /**
+    * Get the transaction integration.
+    * 
+    * @return the transaction integration
+    */
+   public TransactionIntegration getTransactionIntegration();
 }

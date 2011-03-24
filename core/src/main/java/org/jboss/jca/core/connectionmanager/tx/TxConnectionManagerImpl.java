@@ -32,6 +32,7 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
+import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -52,7 +53,6 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
-import org.jboss.tm.TransactionLocal;
 import org.jboss.util.NestedRuntimeException;
 import org.jboss.util.NotImplementedException;
 
@@ -181,6 +181,15 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    public TransactionManager getTransactionManager()
    {
       return transactionManager;
+   }
+
+   /**
+    * Get the transaction integration instance
+    * @return The transaction integration
+    */
+   public TransactionIntegration getTransactionIntegration()
+   {
+      return txIntegration;
    }
 
    /**

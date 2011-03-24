@@ -28,6 +28,8 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,8 +44,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.TransactionLocal;
-
 
 /**
  * Abstract pool implementation.
@@ -149,7 +149,7 @@ public abstract class AbstractPool implements Pool
       SubPoolContext subPoolContext = subPools.get(key);
       if (subPoolContext == null)
       {
-         SubPoolContext newSubPoolContext = new SubPoolContext(getTransactionManager(), mcf, clf, subject,
+         SubPoolContext newSubPoolContext = new SubPoolContext(getTransactionIntegration(), mcf, clf, subject,
                                                                cri, poolConfiguration, this, log);
          subPoolContext = subPools.putIfAbsent(key, newSubPoolContext);
          if (subPoolContext == null)
@@ -159,6 +159,23 @@ public abstract class AbstractPool implements Pool
       }
 
       return subPoolContext;
+   }
+
+   /**
+    * Get any transaction integration associated with the pool.
+    *
+    * @return the transaction integration
+    */
+   protected TransactionIntegration getTransactionIntegration()
+   {
+      if (clf != null)
+      {
+         return clf.getTransactionIntegration();
+      }
+      else
+      {
+         return null;
+      }
    }
 
    /**
@@ -177,7 +194,6 @@ public abstract class AbstractPool implements Pool
          return null;
       }
    }
-
 
    /**
     * {@inheritDoc}
@@ -242,7 +258,7 @@ public abstract class AbstractPool implements Pool
       ManagedConnectionPool imcp = subPoolContext.getSubPool();
 
       // Are we doing track by transaction?
-      TransactionLocal trackByTx = subPoolContext.getTrackByTx();
+      TransactionLocal trackByTx = subPoolContext.getTrackByTx();  // TODO - Use TSR
 
       if (trackByTransaction == null || trackByTx == null)
       {
@@ -338,7 +354,7 @@ public abstract class AbstractPool implements Pool
    {
       ConnectionListener cl = null;
 
-      // Track by transaction
+      // Track by transaction // TODO - Use Coordinator
       try
       {
          trackByTx.lock(trackByTransaction);

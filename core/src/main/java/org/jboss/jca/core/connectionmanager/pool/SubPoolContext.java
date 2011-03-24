@@ -27,15 +27,15 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
-import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
-import org.jboss.tm.TransactionLocal;
 
 /**
  * Sub-pool context. 
@@ -54,7 +54,7 @@ public class SubPoolContext
    /**
     * Create a new SubPoolContext.
     * 
-    * @param tm the transaction manager
+    * @param ti the transaction integration
     * @param mcf the managed connection factory
     * @param clf the connection listener factory
     * @param subject the subject
@@ -64,7 +64,7 @@ public class SubPoolContext
     * @param log The logger for the managed connection pool
     * @throws ResourceException for any error
     */
-   public SubPoolContext(TransactionManager tm, ManagedConnectionFactory mcf, ConnectionListenerFactory clf, 
+   public SubPoolContext(TransactionIntegration ti, ManagedConnectionFactory mcf, ConnectionListenerFactory clf, 
                          Subject subject, ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log)
       throws ResourceException
    {
@@ -74,9 +74,9 @@ public class SubPoolContext
 
          subPool = mcpf.create(mcf, clf, subject, cri, pc, p, this, log);
 
-         if (tm != null)
+         if (ti != null)
          {
-            trackByTx = new TransactionLocal(tm);  
+            trackByTx = ti.createTransactionLocal();  
          }
       }
       catch (Throwable t)

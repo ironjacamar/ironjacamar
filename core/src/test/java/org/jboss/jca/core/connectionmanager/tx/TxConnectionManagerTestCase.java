@@ -82,7 +82,7 @@ public class TxConnectionManagerTestCase
       assertNotNull(txConnectionManager.getCachedConnectionManager());
 
       TransactionManager transactionManager = txConnectionManager.getTransactionManager();
-      TransactionSynchronizer.setTransactionManager(transactionManager);
+      TransactionSynchronizer.setTransactionIntegration(txConnectionManager.getTransactionIntegration());
 
       assertNotNull(transactionManager);
       try
@@ -231,7 +231,7 @@ public class TxConnectionManagerTestCase
    {
       //given
       TransactionManager transactionManager = txConnectionManager.getTransactionManager();
-      TransactionSynchronizer.setTransactionManager(transactionManager);
+      TransactionSynchronizer.setTransactionIntegration(txConnectionManager.getTransactionIntegration());
       try
       {
          //when
@@ -257,7 +257,7 @@ public class TxConnectionManagerTestCase
    {
       //given
       TransactionManager transactionManager = txConnectionManager.getTransactionManager();
-      TransactionSynchronizer.setTransactionManager(transactionManager);
+      TransactionSynchronizer.setTransactionIntegration(txConnectionManager.getTransactionIntegration());
 
       //when no transactionManager.begin() called
 
