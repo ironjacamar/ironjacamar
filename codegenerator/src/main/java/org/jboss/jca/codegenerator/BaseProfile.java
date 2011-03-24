@@ -80,7 +80,8 @@ public class BaseProfile implements Profile
          generateAntXml(def, def.getOutputDir());
 
       generateRaXml(def, def.getOutputDir());
-      generateIronjacamarXml(def, def.getOutputDir());
+      if (def.isSupportOutbound())
+         generateIronjacamarXml(def, def.getOutputDir());
       
       if (def.isGenMbean() && !def.isUseCciConnection())
       {

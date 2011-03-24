@@ -119,6 +119,7 @@ public class RaCodeGen extends PropsCodeGen
          out.write("/** The activations by activation spec */");
          writeEol(out);
          writeIndent(out, indent);
+         out.write("private ");
          if (def.getVersion().equals("1.6"))
          {
             out.write("ConcurrentHash");
@@ -449,8 +450,7 @@ public class RaCodeGen extends PropsCodeGen
       if (def.isSupportInbound())
       {
          writeIndent(out, indent + 1);
-         out.write(def.getActivationClass() + " activation = (" + def.getActivationClass() + 
-            ")activations.remove(spec);");
+         out.write(def.getActivationClass() + " activation = activations.remove(spec);");
          writeEol(out);
          writeIndent(out, indent + 1);
          out.write("if (activation != null)");
