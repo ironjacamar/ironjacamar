@@ -30,18 +30,23 @@ import java.util.List;
  * The management repository
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
 public class ManagementRepository
 {
    /** Resource adapter archives */
    private List<Connector> connectors;
 
+   /** data sources */
+   private List<DataSource> datasources;
+   
    /**
     * Constructor
     */
    public ManagementRepository()
    {
       this.connectors = Collections.synchronizedList(new ArrayList<Connector>(1));
+      this.datasources = Collections.synchronizedList(new ArrayList<DataSource>(1));
    }
 
    /**
@@ -54,6 +59,15 @@ public class ManagementRepository
    }
 
    /**
+    * Get the list of connectors
+    * @return The value
+    */
+   public List<DataSource> getDataSources()
+   {
+      return datasources;
+   }
+   
+   /**
     * String representation
     * @return The string
     */
@@ -64,6 +78,7 @@ public class ManagementRepository
 
       sb.append("ManagementRepository@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[connectors=").append(connectors);
+      sb.append(" datasources=").append(datasources);
       sb.append("]");
 
       return sb.toString();

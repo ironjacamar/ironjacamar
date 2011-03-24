@@ -38,6 +38,7 @@ import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -84,6 +85,9 @@ public abstract class AbstractDsDeployer
    /** xaResourceRecoveryRegistry */
    protected XAResourceRecoveryRegistry xaResourceRecoveryRegistry;
 
+   /** The ManagementRepository */
+   private ManagementRepository managementRepository = null;
+
    /**
     * Create a new AbstractDsDeployer.
     * @param log The logger
@@ -129,6 +133,26 @@ public abstract class AbstractDsDeployer
    public MetadataRepository getMetadataRepository()
    {
       return mdr;
+   }
+   
+   /**
+    * Get the managementRepository.
+    * 
+    * @return the managementRepository.
+    */
+   public ManagementRepository getManagementRepository()
+   {
+      return managementRepository;
+   }
+
+   /**
+    * Set the managementRepository.
+    * 
+    * @param managementRepository The managementRepository to set.
+    */
+   public void setManagementRepository(ManagementRepository managementRepository)
+   {
+      this.managementRepository = managementRepository;
    }
 
    /**
@@ -318,6 +342,14 @@ public abstract class AbstractDsDeployer
          allocationRetryWaitMillis = ds.getTimeOut().getAllocationRetryWaitMillis();
       }
 
+      //register data sources
+      org.jboss.jca.core.api.management.DataSource mgtDs =
+         new org.jboss.jca.core.api.management.DataSource(false, jndiName);
+      mgtDs.setPoolConfiguration(pc);
+      mgtDs.setPool(pool);
+      log.debugf("Adding management datasource: %s", mgtDs);
+      getManagementRepository().getDataSources().add(mgtDs);
+      
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -462,6 +494,14 @@ public abstract class AbstractDsDeployer
          padXid = ds.getXaPool().isPadXid();
       }
 
+      //register data sources
+      org.jboss.jca.core.api.management.DataSource mgtDs =
+         new org.jboss.jca.core.api.management.DataSource(true, jndiName);
+      mgtDs.setPoolConfiguration(pc);
+      mgtDs.setPool(pool);
+      log.debugf("Adding management datasource: %s", mgtDs);
+      getManagementRepository().getDataSources().add(mgtDs);
+      
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
