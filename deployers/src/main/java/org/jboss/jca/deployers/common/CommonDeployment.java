@@ -22,6 +22,7 @@
 package org.jboss.jca.deployers.common;
 
 import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 
 import java.net.URL;
@@ -63,6 +64,8 @@ public class CommonDeployment
 
    private final Connector connector;
 
+   private final DataSource[] dataSources;
+
    private final ClassLoader cl;
 
    private final Logger log;
@@ -81,6 +84,7 @@ public class CommonDeployment
     * @param aoJndiNames The JNDI names for the admin objects
     * @param recoveryModules The recovery modules
     * @param connector The management view of a connector
+    * @param dataSources The management view of datasources
     * @param cl cl
     * @param log log
     */
@@ -89,7 +93,7 @@ public class CommonDeployment
                            Object[] cfs, String[] cfJndiNames, 
                            Object[] aos, String[] aoJndiNames,
                            XAResourceRecovery[] recoveryModules,
-                           Connector connector,
+                           Connector connector, DataSource[] dataSources,
                            ClassLoader cl, Logger log)
    {
       super();
@@ -104,6 +108,7 @@ public class CommonDeployment
       this.aoJndiNames = aoJndiNames != null ? Arrays.copyOf(aoJndiNames, aoJndiNames.length) : null;
       this.recoveryModules = recoveryModules;
       this.connector = connector;
+      this.dataSources = dataSources;
       this.cl = cl;
       this.log = log;
    }
@@ -206,13 +211,22 @@ public class CommonDeployment
       return recoveryModules;
    }
  
-  /**
+   /**
     * Get the management view of the connector
     * @return The value
     */
    public final Connector getConnector()
    {
       return connector;
+   }
+
+   /**
+    * Get the management view of the datasources
+    * @return The value
+    */
+   public final DataSource[] getDataSources()
+   {
+      return dataSources;
    }
 
    /**

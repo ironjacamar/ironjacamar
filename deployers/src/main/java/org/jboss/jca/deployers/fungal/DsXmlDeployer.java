@@ -184,6 +184,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
          return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
                                     c.getCfs(), c.getCfJndiNames(),
                                     c.getRecovery(), getXAResourceRecoveryRegistry(),
+                                    c.getDataSources(), getManagementRepository(),
                                     c.getCl());
       }
       catch (DeployException de)

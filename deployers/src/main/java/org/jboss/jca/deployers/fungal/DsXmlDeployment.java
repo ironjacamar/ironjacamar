@@ -22,6 +22,8 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.core.api.management.DataSource;
+import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
@@ -62,6 +64,12 @@ public class DsXmlDeployment implements Deployment
    /** XAResource recovery registry */
    private XAResourceRecoveryRegistry recoveryRegistry;
 
+   /** The data source management view */
+   private DataSource[] dataSources;
+
+   /** The management repository */
+   private ManagementRepository managementRepository;
+
    /** The classloader */
    private ClassLoader cl;
 
@@ -73,12 +81,15 @@ public class DsXmlDeployment implements Deployment
     * @param jndis The JNDI names for the factories
     * @param recoveryModules The recovery modules
     * @param recoveryRegistry The recovery registry
+    * @param dataSources The management view of the datasources
+    * @param managementRepository The management repository
     * @param cl The classloader
     */
    public DsXmlDeployment(URL deployment, 
                           String deploymentName,
                           Object[] cfs, String[] jndis,
                           XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
+                          DataSource[] dataSources, ManagementRepository managementRepository,
                           ClassLoader cl)
    {
       this.deployment = deployment;
@@ -87,6 +98,8 @@ public class DsXmlDeployment implements Deployment
       this.jndis = jndis;
       this.recoveryModules = recoveryModules;
       this.recoveryRegistry = recoveryRegistry;
+      this.dataSources = dataSources;
+      this.managementRepository = managementRepository;
       this.cl = cl;
    }
 
@@ -116,6 +129,14 @@ public class DsXmlDeployment implements Deployment
    public void stop()
    {
       log.debug("Undeploying: " + deployment.toExternalForm());
+
+      if (dataSources != null && managementRepository != null)
+      {
+         for (DataSource mgtDs : dataSources)
+         {
+            managementRepository.getDataSources().remove(mgtDs);
+         }
+      }
 
       if (recoveryModules != null && recoveryRegistry != null)
       {

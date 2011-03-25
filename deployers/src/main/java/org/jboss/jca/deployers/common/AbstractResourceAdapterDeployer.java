@@ -1715,7 +1715,7 @@ public abstract class AbstractResourceAdapterDeployer
                                      cfs, cfJndiNames,
                                      aos, aoJndiNames,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
-                                     mgtConnector, cl, log);
+                                     mgtConnector, null, cl, log);
 
       }
       catch (DeployException de)

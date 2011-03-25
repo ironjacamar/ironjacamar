@@ -33,8 +33,7 @@ import java.lang.ref.WeakReference;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
 public class DataSource
-{
-   
+{   
    /** xa datasource or not */
    private boolean xa;
    
@@ -49,19 +48,15 @@ public class DataSource
 
    /**
     * Constructor
-    * 
     * @param xa datasource is xa or not
-    * @param jndiName jndi name
     */
-   public DataSource(boolean xa, String jndiName)
+   public DataSource(boolean xa)
    {
       this.xa = xa;
-      this.jndiName = jndiName;
    }
 
    /**
     * xa datasource
-    * 
     * @return true if it xa datasource
     */
    public boolean isXA()
@@ -125,6 +120,15 @@ public class DataSource
    public String getJndiName()
    {
       return jndiName;
+   }
+
+   /**
+    * Set the jndiName.
+    * @param v The value
+    */
+   public void setJndiName(String v)
+   {
+      this.jndiName = v;
    }
 
    /**

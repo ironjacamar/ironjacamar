@@ -182,6 +182,8 @@ public abstract class AbstractDsDeployer
          List<Object> cfs = new ArrayList<Object>(1);
          List<String> jndis = new ArrayList<String>(1);
          List<XAResourceRecovery> recoveryModules = new ArrayList<XAResourceRecovery>(1);
+         List<org.jboss.jca.core.api.management.DataSource> mgts =
+            new ArrayList<org.jboss.jca.core.api.management.DataSource>(1);
 
          if (uniqueJdbcLocalId != null)
          {
@@ -202,12 +204,16 @@ public abstract class AbstractDsDeployer
                         jndiName = "java:/" + jndiName;
                      }
 
-                     Object cf = deployDataSource(dataSource, jndiName, uniqueJdbcLocalId, jdbcLocalDeploymentCl);
+                     org.jboss.jca.core.api.management.DataSource mgtDataSource =
+                        new org.jboss.jca.core.api.management.DataSource(false);
+                     Object cf = deployDataSource(dataSource, jndiName, 
+                                                  uniqueJdbcLocalId, mgtDataSource, jdbcLocalDeploymentCl);
 
                      bindConnectionFactory(deploymentName, jndiName, cf);
 
                      cfs.add(cf);
                      jndis.add(jndiName);
+                     mgts.add(mgtDataSource);
                   }
                   catch (Throwable t)
                   {
@@ -241,10 +247,13 @@ public abstract class AbstractDsDeployer
                         jndiName = "java:/" + jndiName;
                      }
 
+                     org.jboss.jca.core.api.management.DataSource mgtDataSource =
+                        new org.jboss.jca.core.api.management.DataSource(true);
                      XAResourceRecovery recovery = null;
                      Object cf = deployXADataSource(xaDataSource,
                                                     jndiName, uniqueJdbcXAId,
                                                     recovery,
+                                                    mgtDataSource,
                                                     jdbcXADeploymentCl);
 
                      recoveryModules.add(recovery);
@@ -253,6 +262,7 @@ public abstract class AbstractDsDeployer
 
                      cfs.add(cf);
                      jndis.add(jndiName);
+                     mgts.add(mgtDataSource);
                   }
                   catch (Throwable t)
                   {
@@ -271,8 +281,9 @@ public abstract class AbstractDsDeployer
                                      jndis.toArray(new String[jndis.size()]),
                                      null, null,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
-                                     null, parentClassLoader,
-                                     log);
+                                     null, 
+                                     mgts.toArray(new org.jboss.jca.core.api.management.DataSource[mgts.size()]),
+                                     parentClassLoader, log);
       }
       catch (Throwable t)
       {
@@ -285,11 +296,13 @@ public abstract class AbstractDsDeployer
     * @param ds The datasource
     * @param jndiName The JNDI name
     * @param uniqueId The unique id for the resource adapter
+    * @param mgtDs The management of a datasource
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployDataSource(DataSource ds, String jndiName, String uniqueId, ClassLoader cl) throws Throwable
+   private Object deployDataSource(DataSource ds, String jndiName, String uniqueId,
+                                   org.jboss.jca.core.api.management.DataSource mgtDs, ClassLoader cl) throws Throwable
    {
       log.debug("DataSource=" + ds);
 
@@ -342,11 +355,11 @@ public abstract class AbstractDsDeployer
          allocationRetryWaitMillis = ds.getTimeOut().getAllocationRetryWaitMillis();
       }
 
-      //register data sources
-      org.jboss.jca.core.api.management.DataSource mgtDs =
-         new org.jboss.jca.core.api.management.DataSource(false, jndiName);
+      // Register data sources
+      mgtDs.setJndiName(jndiName);
       mgtDs.setPoolConfiguration(pc);
       mgtDs.setPool(pool);
+
       log.debugf("Adding management datasource: %s", mgtDs);
       getManagementRepository().getDataSources().add(mgtDs);
       
@@ -417,12 +430,14 @@ public abstract class AbstractDsDeployer
     * @param jndiName The JNDI name
     * @param uniqueId The unique id for the resource adapter
     * @param recovery The recovery module
+    * @param mgtDs The management of a datasource
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
    private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId,
-                                     XAResourceRecovery recovery, ClassLoader cl)
+                                     XAResourceRecovery recovery, 
+                                     org.jboss.jca.core.api.management.DataSource mgtDs, ClassLoader cl)
       throws Throwable
    {
       log.debug("XaDataSource=" + ds);
@@ -494,11 +509,11 @@ public abstract class AbstractDsDeployer
          padXid = ds.getXaPool().isPadXid();
       }
 
-      //register data sources
-      org.jboss.jca.core.api.management.DataSource mgtDs =
-         new org.jboss.jca.core.api.management.DataSource(true, jndiName);
+      // Register data sources
+      mgtDs.setJndiName(jndiName);
       mgtDs.setPoolConfiguration(pc);
       mgtDs.setPool(pool);
+
       log.debugf("Adding management datasource: %s", mgtDs);
       getManagementRepository().getDataSources().add(mgtDs);
       
