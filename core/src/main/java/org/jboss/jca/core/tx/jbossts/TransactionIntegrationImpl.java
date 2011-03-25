@@ -92,7 +92,6 @@ public class TransactionIntegrationImpl implements TransactionIntegration
       this.terminator = terminator;
       this.rr = rr;
       this.tld = tld;
-      log.error("TransactionIntegrationImpl: 6");
    }
 
    /**
