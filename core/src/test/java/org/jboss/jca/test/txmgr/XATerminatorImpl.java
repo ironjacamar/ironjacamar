@@ -32,17 +32,17 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 /**
- * A JBoss XATerminator implementation
+ * An XATerminator implementation
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class JBossXATerminatorImpl implements XATerminator, Serializable
+public class XATerminatorImpl implements XATerminator, Serializable
 {
    private static final long serialVersionUID = 1L;
 
    /**
     * Constructor
     */
-   public JBossXATerminatorImpl()
+   public XATerminatorImpl()
    {
    }
 
