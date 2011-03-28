@@ -194,30 +194,33 @@ public abstract class AbstractDsDeployer
 
                for (DataSource dataSource : ds)
                {
-                  try
+                  if (dataSource.isEnabled())
                   {
-                     String jndiName = dataSource.getJndiName();
-
-                     if (dataSource.isUseJavaContext() != null && dataSource.isUseJavaContext().booleanValue() &&
-                         !jndiName.startsWith("java:/"))
+                     try
                      {
-                        jndiName = "java:/" + jndiName;
+                        String jndiName = dataSource.getJndiName();
+
+                        if (dataSource.isUseJavaContext() != null && dataSource.isUseJavaContext().booleanValue() &&
+                            !jndiName.startsWith("java:/"))
+                        {
+                           jndiName = "java:/" + jndiName;
+                        }
+
+                        org.jboss.jca.core.api.management.DataSource mgtDataSource =
+                           new org.jboss.jca.core.api.management.DataSource(false);
+                        Object cf = deployDataSource(dataSource, jndiName, 
+                                                     uniqueJdbcLocalId, mgtDataSource, jdbcLocalDeploymentCl);
+
+                        bindConnectionFactory(deploymentName, jndiName, cf);
+                        
+                        cfs.add(cf);
+                        jndis.add(jndiName);
+                        mgts.add(mgtDataSource);
                      }
-
-                     org.jboss.jca.core.api.management.DataSource mgtDataSource =
-                        new org.jboss.jca.core.api.management.DataSource(false);
-                     Object cf = deployDataSource(dataSource, jndiName, 
-                                                  uniqueJdbcLocalId, mgtDataSource, jdbcLocalDeploymentCl);
-
-                     bindConnectionFactory(deploymentName, jndiName, cf);
-
-                     cfs.add(cf);
-                     jndis.add(jndiName);
-                     mgts.add(mgtDataSource);
-                  }
-                  catch (Throwable t)
-                  {
-                     log.error("Error during the deployment of " + dataSource.getJndiName(), t);
+                     catch (Throwable t)
+                     {
+                        log.error("Error during the deployment of " + dataSource.getJndiName(), t);
+                     }
                   }
                }
             }
@@ -237,36 +240,39 @@ public abstract class AbstractDsDeployer
 
                for (XaDataSource xaDataSource : xads)
                {
-                  try
+                  if (xaDataSource.isEnabled())
                   {
-                     String jndiName = xaDataSource.getJndiName();
-
-                     if (xaDataSource.isUseJavaContext() != null && xaDataSource.isUseJavaContext().booleanValue() &&
-                         !jndiName.startsWith("java:/"))
+                     try
                      {
-                        jndiName = "java:/" + jndiName;
+                        String jndiName = xaDataSource.getJndiName();
+
+                        if (xaDataSource.isUseJavaContext() != null && xaDataSource.isUseJavaContext().booleanValue() &&
+                            !jndiName.startsWith("java:/"))
+                        {
+                           jndiName = "java:/" + jndiName;
+                        }
+
+                        org.jboss.jca.core.api.management.DataSource mgtDataSource =
+                           new org.jboss.jca.core.api.management.DataSource(true);
+                        XAResourceRecovery recovery = null;
+                        Object cf = deployXADataSource(xaDataSource,
+                                                       jndiName, uniqueJdbcXAId,
+                                                       recovery,
+                                                       mgtDataSource,
+                                                       jdbcXADeploymentCl);
+                        
+                        recoveryModules.add(recovery);
+
+                        bindConnectionFactory(deploymentName, jndiName, cf);
+
+                        cfs.add(cf);
+                        jndis.add(jndiName);
+                        mgts.add(mgtDataSource);
                      }
-
-                     org.jboss.jca.core.api.management.DataSource mgtDataSource =
-                        new org.jboss.jca.core.api.management.DataSource(true);
-                     XAResourceRecovery recovery = null;
-                     Object cf = deployXADataSource(xaDataSource,
-                                                    jndiName, uniqueJdbcXAId,
-                                                    recovery,
-                                                    mgtDataSource,
-                                                    jdbcXADeploymentCl);
-
-                     recoveryModules.add(recovery);
-
-                     bindConnectionFactory(deploymentName, jndiName, cf);
-
-                     cfs.add(cf);
-                     jndis.add(jndiName);
-                     mgts.add(mgtDataSource);
-                  }
-                  catch (Throwable t)
-                  {
-                     log.error("Error during the deployment of " + xaDataSource.getJndiName(), t);
+                     catch (Throwable t)
+                     {
+                        log.error("Error during the deployment of " + xaDataSource.getJndiName(), t);
+                     }
                   }
                }
             }
