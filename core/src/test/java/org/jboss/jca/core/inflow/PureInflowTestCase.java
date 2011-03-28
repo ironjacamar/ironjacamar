@@ -25,6 +25,7 @@ package org.jboss.jca.core.inflow;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.MessageListener;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
+import org.jboss.jca.deployers.fungal.RAActivator;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
@@ -74,14 +75,21 @@ public class PureInflowTestCase
       try
       {
          embedded.startup();
-         embedded.deploy(pureInflowRar);
-
-         ic = new InitialContext();
 
          ResourceAdapterRepository raRepository = 
             embedded.lookup("ResourceAdapterRepository", ResourceAdapterRepository.class);
 
          assertNotNull(raRepository);
+
+         RAActivator raActivator = 
+            embedded.lookup("RAActivator", RAActivator.class);
+
+         assertNotNull(raActivator);
+         raActivator.setEnabled(false);
+
+         embedded.deploy(pureInflowRar);
+
+         ic = new InitialContext();
 
          Set<String> ids = raRepository.getResourceAdapters(javax.jms.MessageListener.class);
 
