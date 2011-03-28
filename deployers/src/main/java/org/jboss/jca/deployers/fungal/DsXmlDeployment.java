@@ -32,6 +32,10 @@ import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.jboss.logging.Logger;
 
@@ -70,6 +74,12 @@ public class DsXmlDeployment implements Deployment
    /** The management repository */
    private ManagementRepository managementRepository;
 
+   /** JMX MBean's */
+   private List<ObjectName> objectNames;
+
+   /** The MBean server */
+   private MBeanServer mbeanServer;
+
    /** The classloader */
    private ClassLoader cl;
 
@@ -83,6 +93,8 @@ public class DsXmlDeployment implements Deployment
     * @param recoveryRegistry The recovery registry
     * @param dataSources The management view of the datasources
     * @param managementRepository The management repository
+    * @param onames The object names for the JMX MBeans
+    * @param mbeanServer The MBeanServer
     * @param cl The classloader
     */
    public DsXmlDeployment(URL deployment, 
@@ -90,6 +102,7 @@ public class DsXmlDeployment implements Deployment
                           Object[] cfs, String[] jndis,
                           XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                           DataSource[] dataSources, ManagementRepository managementRepository,
+                          List<ObjectName> onames, MBeanServer mbeanServer,
                           ClassLoader cl)
    {
       this.deployment = deployment;
@@ -100,6 +113,8 @@ public class DsXmlDeployment implements Deployment
       this.recoveryRegistry = recoveryRegistry;
       this.dataSources = dataSources;
       this.managementRepository = managementRepository;
+      this.objectNames = onames;
+      this.mbeanServer = mbeanServer;
       this.cl = cl;
    }
 
@@ -129,6 +144,21 @@ public class DsXmlDeployment implements Deployment
    public void stop()
    {
       log.debug("Undeploying: " + deployment.toExternalForm());
+
+      if (objectNames != null && mbeanServer != null)
+      {
+         for (ObjectName on : objectNames)
+         {
+            try
+            {
+               mbeanServer.unregisterMBean(on);
+            }
+            catch (Throwable t)
+            {
+               log.warn("Exception during JMX unregistering", t);
+            }
+         }
+      }
 
       if (dataSources != null && managementRepository != null)
       {

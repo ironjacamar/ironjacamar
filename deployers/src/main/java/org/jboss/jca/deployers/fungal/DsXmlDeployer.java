@@ -35,14 +35,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import javax.management.DynamicMBean;
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;
+import com.github.fungal.api.util.JMX;
 import com.github.fungal.spi.deployers.DeployException;
 import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
@@ -181,10 +188,13 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                                                           uniqueJdbcLocalId, uniqueJdbcXAId,
                                                           dataSources, parent);
 
+         List<ObjectName> onames = registerManagementView(c.getDataSources(), kernel.getMBeanServer());
+
          return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
                                     c.getCfs(), c.getCfJndiNames(),
                                     c.getRecovery(), getXAResourceRecoveryRegistry(),
                                     c.getDataSources(), getManagementRepository(),
+                                    onames, kernel.getMBeanServer(),
                                     c.getCl());
       }
       catch (DeployException de)
@@ -323,5 +333,60 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
          throw new org.jboss.jca.deployers.common.DeployException("Error during loookup of security domain: " +
                                                                   securityDomain, t);
       }
+   }
+
+   /**
+    * Register management view of datasources in JMX
+    * @param mgtDses The management view of the datasources
+    * @param server The MBeanServer instance
+    * @return The ObjectName's generated for these datasources
+    * @exception JMException Thrown in case of an error
+    */
+   private List<ObjectName> registerManagementView(org.jboss.jca.core.api.management.DataSource[] mgtDses,
+                                                   MBeanServer server)
+      throws JMException
+   {
+      if (server == null)
+         throw new IllegalArgumentException("MBeanServer is null");
+
+      List<ObjectName> ons = new ArrayList<ObjectName>();
+
+      if (mgtDses != null)
+      {
+         for (org.jboss.jca.core.api.management.DataSource mgtDs : mgtDses)
+         {
+            String jndiName = mgtDs.getJndiName();
+            if (jndiName.indexOf("/") != -1)
+               jndiName = jndiName.substring(jndiName.lastIndexOf("/") + 1);
+
+            String baseName = server.getDefaultDomain() + ":deployment=" + jndiName;
+
+            if (mgtDs.getPoolConfiguration() != null)
+            {
+               String dsPCName = baseName + ",type=PoolConfigutation";
+                  
+               DynamicMBean dsPCDMB = JMX.createMBean(mgtDs.getPoolConfiguration(), "Pool configuration");
+               ObjectName dsPCON = new ObjectName(dsPCName);
+               
+               server.registerMBean(dsPCDMB, dsPCON);
+               
+               ons.add(dsPCON);
+            }
+
+            if (mgtDs.getPool() != null)
+            {
+               String dsPName = baseName + ",type=Pool";
+                  
+               DynamicMBean dsPDMB = JMX.createMBean(mgtDs.getPool(), "Pool");
+               ObjectName dsPON = new ObjectName(dsPName);
+
+               server.registerMBean(dsPDMB, dsPON);
+               
+               ons.add(dsPON);
+            }
+         }
+      }
+
+      return ons;
    }
 }
