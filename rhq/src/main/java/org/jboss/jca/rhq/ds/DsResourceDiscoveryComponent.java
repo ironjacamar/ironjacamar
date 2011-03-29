@@ -21,21 +21,28 @@
  */
 package org.jboss.jca.rhq.ds;
 
+import org.jboss.jca.core.api.management.DataSource;
+import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.rhq.core.ManagementRepositoryManager;
+import org.jboss.jca.rhq.ra.RarResourceComponent;
+
 import java.util.HashSet;
 import java.util.Set;
 
+import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 
 /**
- * Discovery<code>XADatasourceResourceComponent</code> from JCA container.
+ * Discovery<code>DatasourceResourceDiscoveryComponent</code> from JCA container.
  * 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  */
-public class XADatasourceResourceDiscoveryComponent
-   implements ResourceDiscoveryComponent<XADatasourceResourceComponent>
+public class DsResourceDiscoveryComponent
+   implements ResourceDiscoveryComponent<RarResourceComponent>
 {
    /**
     * discoverResources
@@ -47,18 +54,22 @@ public class XADatasourceResourceDiscoveryComponent
     */
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<XADatasourceResourceComponent> context) 
+      ResourceDiscoveryContext<RarResourceComponent> context) 
       throws InvalidPluginConfigurationException, Exception
    {
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
 
-      DiscoveredResourceDetails xaDatasourceRes = new DiscoveredResourceDetails(context.getResourceType(),
-         "XA_Datasource", "XA Datasource", null, "XA Datasource(Demo)", context.getDefaultPluginConfiguration(),
-         null);
-      result.add(xaDatasourceRes);
-
-      // TODO find XA Datasource resources.
-
+      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
+      for (DataSource ds : mr.getDataSources())
+      {
+         String dsJndiName = ds.getJndiName();
+         DiscoveredResourceDetails dsRes = new DiscoveredResourceDetails(context.getResourceType(),
+               dsJndiName, dsJndiName, null, "Datasource of " + dsJndiName, context.getDefaultPluginConfiguration(),
+               null);
+         Configuration configuration = dsRes.getPluginConfiguration();
+         configuration.put(new PropertySimple("jndi-name", dsJndiName));
+         result.add(dsRes);
+      }
       return result;
    }
 

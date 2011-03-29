@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,85 +19,78 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.rhq.ra;
+package org.jboss.jca.rhq.ds;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
-import org.jboss.jca.core.api.management.ConnectionFactory;
-import org.jboss.jca.core.api.management.Connector;
+import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
 
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.core.PoolResourceComponent;
-import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
-
-import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.ConfigurationUpdateStatus;
 import org.rhq.core.domain.configuration.PropertySimple;
-
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 
 /**
- * CfResourceComponent represent the ManagedConnectionFactory in JCA container.
+ * Represent <b>XA Datasource</b> in JCA container
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  */
-public class CfResourceComponent extends PoolResourceComponent
+public class DsResourceComponent extends PoolResourceComponent
 {
-   /** log */
-   private static final Logger logger = Logger.getLogger(CfResourceComponent.class);
    
    /**
-    * Get associated ConnectionFactory
+    * getDataSource
     * 
-    * @return ConnectionFactory
+    * @return DataSource associated with this ResourceComponent
     */
-   public ConnectionFactory getConnectionFactory()
+   private DataSource getDataSource()
    {
       ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
-      Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
-      String jndiName = getJndiName();
-
-      for (ConnectionFactory cf : connector.getConnectionFactories())
+      Configuration plugConfig = getPluginConfiguration();
+      String dsJndiName = plugConfig.getSimpleValue("jndi-name", null);
+      if (dsJndiName == null || dsJndiName.length() == 0)
       {
-         if (cf.getJndiName().equals(jndiName))
+         throw new IllegalStateException("DataSource jndi name is null.");
+      }
+      for (DataSource ds : mr.getDataSources())
+      {
+         if (dsJndiName.equals(ds.getJndiName()))
          {
-            logger.debug("Class Name is: " + jndiName);
-            return cf;
+            return ds;
          }
       }
-      return null;
+      throw new IllegalStateException("Can not find the DataSource");
    }
+
    
    /**
     * loadResourceConfiguration
-    * 
-    * 
-    * @return Configuration Configuration
+    * @return The resource Configuration
     * @throws Exception exception
     */
    @Override
    public Configuration loadResourceConfiguration() throws Exception
    {
       Configuration config = new Configuration();
-      
-      ConnectionFactory cf = getConnectionFactory();
-      if (cf == null)
-         throw new IllegalStateException("Can not find ConnectionFactory.");
+      DataSource ds = getDataSource();
       
       // jndi name
-      PropertySimple jndiNameProp = new PropertySimple("jndi-name", cf.getJndiName());
+      PropertySimple jndiNameProp = new PropertySimple("jndi-name", ds.getJndiName());
       config.put(jndiNameProp);
       
+      // is xa
+      PropertySimple isXAProp = new PropertySimple("xa", Boolean.valueOf(ds.isXA()));
+      config.put(isXAProp);
+      
       // conn-pool
-      PoolConfiguration poolConfig = cf.getPoolConfiguration();
-      putPoolConfigToResourceConfiguration(cf.getPool(), poolConfig, config);
+      PoolConfiguration poolConfig = ds.getPoolConfiguration();
+      putPoolConfigToResourceConfiguration(ds.getPool(), poolConfig, config);
       
       return config;
    }
-   
    
    /**
     * updateResourceConfiguration
@@ -109,23 +102,20 @@ public class CfResourceComponent extends PoolResourceComponent
    {
       super.updateResourceConfiguration(updateResourceConfiguration);
       Configuration config = updateResourceConfiguration.getConfiguration();
-      
-      ConnectionFactory cf = getConnectionFactory();
-      if (cf == null)
-         throw new IllegalStateException("Can not find ConnectionFactory.");
+      DataSource ds = getDataSource();
       
       // update jndi-name
       String jndiName = config.getSimpleValue("jndi-name", null);
       if (null != jndiName && jndiName.length() > 0)
       {
-         cf.setJndiName(jndiName);
+         ds.setJndiName(jndiName);
       }
       
       // update conn-pool configurations
-      PoolConfiguration poolConfig = cf.getPoolConfiguration();
+      PoolConfiguration poolConfig = ds.getPoolConfiguration();
       updatePoolConfiguration(poolConfig, config);
       
       updateResourceConfiguration.setStatus(ConfigurationUpdateStatus.SUCCESS);
-      
    }
+   
 }

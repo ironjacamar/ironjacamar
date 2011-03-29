@@ -99,9 +99,9 @@ public class PluginDescriptorTestCase
       ConfigurationDescriptor resConfDesc = rarServiceDesc.getResourceConfiguration();
       assertNotNull(resConfDesc);
       
-      // 3 sub services in RAR service
+      // 4 sub services in RAR service
       List<ServiceDescriptor> subServiceDesc = rarServiceDesc.getServices();
-      assertEquals(3, subServiceDesc.size());
+      assertEquals(4, subServiceDesc.size());
       
    }
    
