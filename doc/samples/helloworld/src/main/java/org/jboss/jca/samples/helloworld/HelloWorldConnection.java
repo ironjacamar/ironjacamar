@@ -40,4 +40,9 @@ public interface HelloWorldConnection
     * @return String
     */
    public String helloWorld(String name);
+
+   /**
+    * Close
+    */
+   public void close();
 }

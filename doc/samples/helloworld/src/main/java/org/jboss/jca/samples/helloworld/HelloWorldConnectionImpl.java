@@ -33,15 +33,21 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
    /** The logger */
    private static Logger log = Logger.getLogger("HelloWorldConnectionImpl");
 
+   /** ManagedConnection */
+   private HelloWorldManagedConnection mc;
+
    /** ManagedConnectionFactory */
    private HelloWorldManagedConnectionFactory mcf;
 
    /**
     * Default constructor
+    * @param mc HelloWorldManagedConnection
     * @param mcf HelloWorldManagedConnectionFactory
     */
-   public HelloWorldConnectionImpl(HelloWorldManagedConnectionFactory mcf)
+   public HelloWorldConnectionImpl(HelloWorldManagedConnection mc,
+                                   HelloWorldManagedConnectionFactory mcf)
    {
+      this.mc = mc;
       this.mcf = mcf;
    }
 
@@ -62,5 +68,13 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
    public String helloWorld(String name)
    {
       return "Hello World, " + name + " !";
+   }
+
+   /**
+    * Close
+    */
+   public void close()
+   {
+      mc.closeHandle(this);
    }
 }

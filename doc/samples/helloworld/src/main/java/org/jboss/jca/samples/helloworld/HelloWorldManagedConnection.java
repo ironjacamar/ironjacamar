@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.LocalTransaction;
@@ -84,7 +85,7 @@ public class HelloWorldManagedConnection implements ManagedConnection
                                ConnectionRequestInfo cxRequestInfo) 
       throws ResourceException
    {
-      connection = new HelloWorldConnectionImpl(mcf);
+      connection = new HelloWorldConnectionImpl(this, mcf);
 
       return connection;
    }
@@ -203,5 +204,20 @@ public class HelloWorldManagedConnection implements ManagedConnection
    public ManagedConnectionMetaData getMetaData() throws ResourceException
    {
       return new HelloWorldManagedConnectionMetaData();
+   }
+
+   /**
+    * Close handle
+    * @param handle The handle
+    */
+   void closeHandle(HelloWorldConnection handle)
+   {
+      ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+      event.setConnectionHandle(handle);
+
+      for (ConnectionEventListener cel : listeners)
+      {
+         cel.connectionClosed(event);
+      }
    }
 }

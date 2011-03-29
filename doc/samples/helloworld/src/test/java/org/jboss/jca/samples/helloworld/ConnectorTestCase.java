@@ -91,6 +91,7 @@ public class ConnectorTestCase
       HelloWorldConnection connection = connectionFactory.getConnection();
       assertNotNull(connection);
       String result = connection.helloWorld();
+      connection.close();
    }
 
    /**
@@ -105,7 +106,6 @@ public class ConnectorTestCase
       HelloWorldConnection connection = connectionFactory.getConnection();
       assertNotNull(connection);
       String result = connection.helloWorld(null);
+      connection.close();
    }
-
-
 }
