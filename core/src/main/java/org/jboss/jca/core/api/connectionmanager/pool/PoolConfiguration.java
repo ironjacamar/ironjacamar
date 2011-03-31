@@ -22,6 +22,10 @@
 
 package org.jboss.jca.core.api.connectionmanager.pool;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * The pool configuration. 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
@@ -30,49 +34,49 @@ package org.jboss.jca.core.api.connectionmanager.pool;
 public class PoolConfiguration
 {
    /** Minumum size of the pool */
-   private int minSize;
+   private AtomicInteger minSize;
 
    /** Maximum size of the pool */
-   private int maxSize;
+   private AtomicInteger maxSize;
 
    /** Blocking timeout. In milliseconds */
-   private long blockingTimeout;
+   private AtomicLong blockingTimeout;
    
    /** Idle timeout period. Default 30 mins. In milliseconds */
-   private long idleTimeout;
+   private AtomicLong idleTimeout;
 
    /** Background validation */
-   private boolean backgroundValidation;
+   private AtomicBoolean backgroundValidation;
    
    /** Background validation - minutes */
-   private int backgroundValidationMinutes;
+   private AtomicInteger backgroundValidationMinutes;
    
    /** Prefill pool*/
-   private boolean prefill;
+   private AtomicBoolean prefill;
    
    /** Strict minumum, default false */
-   private boolean strictMin;
+   private AtomicBoolean strictMin;
 
    /** 
     * Do we want to immeadiately break when a connection cannot be matched and
     * not evaluate the rest of the pool? 
     */
-   private boolean useFastFail;
+   private AtomicBoolean useFastFail;
 
    /**
     * Constructor
     */
    public PoolConfiguration()
    {
-      minSize = 0;
-      maxSize = 20;
-      blockingTimeout = 30000;
-      idleTimeout = 1000 * 60 * 30;
-      backgroundValidation = false;
-      backgroundValidationMinutes = 0;
-      prefill = true;
-      strictMin = false;
-      useFastFail = false;
+      minSize = new AtomicInteger(0);
+      maxSize = new AtomicInteger(20);
+      blockingTimeout = new AtomicLong(30000);
+      idleTimeout = new AtomicLong(1000 * 60 * 30);
+      backgroundValidation = new AtomicBoolean(false);
+      backgroundValidationMinutes = new AtomicInteger(0);
+      prefill = new AtomicBoolean(true);
+      strictMin = new AtomicBoolean(false);
+      useFastFail = new AtomicBoolean(false);
    }
 
    /**
@@ -80,10 +84,10 @@ public class PoolConfiguration
     */
    public int getMinSize()
    {
-      if (minSize > maxSize)
-         return maxSize;
+      if (minSize.get() > maxSize.get())
+         return maxSize.get();
 
-      return minSize;
+      return minSize.get();
    }
 
    /**
@@ -91,7 +95,7 @@ public class PoolConfiguration
     */
    public void setMinSize(int minSize)
    {
-      this.minSize = minSize;
+      this.minSize.set(minSize);
    }
 
    /**
@@ -99,10 +103,10 @@ public class PoolConfiguration
     */
    public int getMaxSize()
    {
-      if (maxSize < minSize)
-         return minSize;
+      if (maxSize.get() < minSize.get())
+         return minSize.get();
 
-      return maxSize;
+      return maxSize.get();
    }
 
    /**
@@ -110,7 +114,7 @@ public class PoolConfiguration
     */
    public void setMaxSize(int maxSize)
    {
-      this.maxSize = maxSize;
+      this.maxSize.set(maxSize);
    }
 
    /**
@@ -118,7 +122,7 @@ public class PoolConfiguration
     */
    public long getBlockingTimeout()
    {
-      return blockingTimeout;
+      return blockingTimeout.get();
    }
 
    /**
@@ -126,7 +130,7 @@ public class PoolConfiguration
     */
    public void setBlockingTimeout(long blockingTimeout)
    {
-      this.blockingTimeout = blockingTimeout;
+      this.blockingTimeout.set(blockingTimeout);
    }
 
    /**
@@ -134,7 +138,7 @@ public class PoolConfiguration
     */
    public long getIdleTimeout()
    {
-      return idleTimeout;
+      return idleTimeout.get();
    }
 
    /**
@@ -142,7 +146,7 @@ public class PoolConfiguration
     */
    public void setIdleTimeout(long idleTimeout)
    {
-      this.idleTimeout = idleTimeout;
+      this.idleTimeout.set(idleTimeout);
    }
 
    /**
@@ -150,7 +154,7 @@ public class PoolConfiguration
     */
    public boolean isBackgroundValidation()
    {
-      return backgroundValidation;
+      return backgroundValidation.get();
    }
 
    /**
@@ -158,7 +162,7 @@ public class PoolConfiguration
     */
    public void setBackgroundValidation(boolean v)
    {
-      this.backgroundValidation = v;
+      this.backgroundValidation.set(v);
    }
 
    /**
@@ -167,7 +171,7 @@ public class PoolConfiguration
     */
    public int getBackgroundValidationMinutes()
    {
-      return backgroundValidationMinutes;
+      return backgroundValidationMinutes.get();
    }
 
    /**
@@ -176,7 +180,7 @@ public class PoolConfiguration
     */
    public void setBackgroundValidationMinutes(int v)
    {
-      this.backgroundValidationMinutes = v;
+      this.backgroundValidationMinutes.set(v);
    }
 
    /**
@@ -185,7 +189,7 @@ public class PoolConfiguration
     */
    public long getBackgroundValidationInterval()
    {
-      return backgroundValidationMinutes * 60000L;
+      return backgroundValidationMinutes.get() * 60000L;
    }
 
    /**
@@ -193,7 +197,7 @@ public class PoolConfiguration
     */
    public boolean isPrefill()
    {
-      return prefill;
+      return prefill.get();
    }
 
    /**
@@ -201,7 +205,7 @@ public class PoolConfiguration
     */
    public void setPrefill(boolean prefill)
    {
-      this.prefill = prefill;
+      this.prefill.set(prefill);
    }
 
    /**
@@ -209,7 +213,7 @@ public class PoolConfiguration
     */
    public boolean isStrictMin()
    {
-      return strictMin;
+      return strictMin.get();
    }
 
    /**
@@ -217,7 +221,7 @@ public class PoolConfiguration
     */
    public void setStrictMin(boolean strictMin)
    {
-      this.strictMin = strictMin;
+      this.strictMin.set(strictMin);
    }
 
    /**
@@ -225,7 +229,7 @@ public class PoolConfiguration
     */
    public boolean isUseFastFail()
    {
-      return useFastFail;
+      return useFastFail.get();
    }
 
    /**
@@ -233,7 +237,7 @@ public class PoolConfiguration
     */
    public void setUseFastFail(boolean useFastFail)
    {
-      this.useFastFail = useFastFail;
+      this.useFastFail.set(useFastFail);
    }
 
    /**
@@ -246,15 +250,15 @@ public class PoolConfiguration
       StringBuilder sb = new StringBuilder();
 
       sb.append("PoolConfiguration@").append(Integer.toHexString(System.identityHashCode(this)));
-      sb.append("[minSize=").append(minSize);
-      sb.append(" maxSize=").append(maxSize);
-      sb.append(" blockingTimeout=").append(blockingTimeout);
-      sb.append(" idleTimeout=").append(idleTimeout);
-      sb.append(" backgroundValidation=").append(backgroundValidation);
-      sb.append(" backgroundValidationMinutes=").append(backgroundValidationMinutes);
-      sb.append(" prefill=").append(prefill);
-      sb.append(" strictMin=").append(strictMin);
-      sb.append(" useFastFail=").append(useFastFail);
+      sb.append("[minSize=").append(minSize.get());
+      sb.append(" maxSize=").append(maxSize.get());
+      sb.append(" blockingTimeout=").append(blockingTimeout.get());
+      sb.append(" idleTimeout=").append(idleTimeout.get());
+      sb.append(" backgroundValidation=").append(backgroundValidation.get());
+      sb.append(" backgroundValidationMinutes=").append(backgroundValidationMinutes.get());
+      sb.append(" prefill=").append(prefill.get());
+      sb.append(" strictMin=").append(strictMin.get());
+      sb.append(" useFastFail=").append(useFastFail.get());
       sb.append("]");
 
       return sb.toString();
