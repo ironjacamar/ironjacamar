@@ -493,8 +493,8 @@
              -->
 
             <!-- XA Datasource -->
-            <service name="Datasources" discovery="org.jboss.jca.rhq.ds.XADatasourceResourceDiscoveryComponent" 
-                class="org.jboss.jca.rhq.ds.XADatasourceResourceComponent">
+            <service name="Datasources" discovery="org.jboss.jca.rhq.ds.DsResourceDiscoveryComponent" 
+                class="org.jboss.jca.rhq.ds.DsResourceComponent">
 
             <plugin-configuration>
                 <c:group name="general" displayName="General">
