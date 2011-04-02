@@ -23,8 +23,8 @@ package org.jboss.jca.rhq.ds;
 
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.rhq.core.IronJacamarResourceComponent;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
-import org.jboss.jca.rhq.ra.RarResourceComponent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -42,7 +42,7 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  */
 public class DsResourceDiscoveryComponent
-   implements ResourceDiscoveryComponent<RarResourceComponent>
+   implements ResourceDiscoveryComponent<IronJacamarResourceComponent>
 {
    /**
     * discoverResources
@@ -54,7 +54,7 @@ public class DsResourceDiscoveryComponent
     */
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<RarResourceComponent> context) 
+      ResourceDiscoveryContext<IronJacamarResourceComponent> context) 
       throws InvalidPluginConfigurationException, Exception
    {
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();

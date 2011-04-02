@@ -492,50 +492,49 @@
             </service>
              -->
 
-            <!-- XA Datasource -->
-            <service name="Datasources" discovery="org.jboss.jca.rhq.ds.DsResourceDiscoveryComponent" 
-                class="org.jboss.jca.rhq.ds.DsResourceComponent">
-
-            <plugin-configuration>
-                <c:group name="general" displayName="General">
-                    <c:simple-property name="jndi-name" description="JNDI Name of the datasource" readOnly="true"/>
-                </c:group>
-            </plugin-configuration>
-
-                <resource-configuration>
-                    <c:group name="general" displayName="General">
-                        <c:simple-property name="jndi-name" displayName="JNDI Name"/>
-                        <c:simple-property name="xa" type="boolean" displayName="Is XA datasource" required="true" />
-                        <c:simple-property name="transaction-type" displayName="Transaction type" description="Transaction type">
-                            <c:property-options>
-                                <c:option name="No Transaction" value="no"/>
-                                <c:option name="Local Transaction" value="local"/>
-                                <c:option name="XA Transaction" value="xa"/>
-                            </c:property-options>
-                        </c:simple-property>
-                    </c:group>
-
-                    <c:group name="conn-pool" displayName="Connection Pool">
-                         &datasourceAndConnectionFactoryConnectionResourceConfigProps;
-                         &datasourceAndConnectionFactoryAdvancedResourceConfigProps;
-                    </c:group>
-
-                    <c:group name="Authentication" displayName="Authentication">
-                         <c:simple-property name="re-auth-support" displayName="Reauthentication Support" type="boolean" description="Does this datasource support reauthentication?"></c:simple-property>
-                         <c:simple-property name="res-auth-src" displayName="Resource Authentication Source">
-                             <c:description>
-                                Is reauthentication application-based or container-based?
-                             </c:description>
-                             <c:property-options>
-                                 <c:option name="Container" value="Container"></c:option>
-                                 <c:option name="Application" value="Application"></c:option>
-                             </c:property-options>
-                         </c:simple-property>
-                    </c:group>
-
-                </resource-configuration>
-            </service>
         </service>
         
+        <!-- Datasource -->
+        <service name="Datasources" discovery="org.jboss.jca.rhq.ds.DsResourceDiscoveryComponent" 
+            class="org.jboss.jca.rhq.ds.DsResourceComponent">
+
+        <plugin-configuration>
+            <c:group name="general" displayName="General">
+                <c:simple-property name="jndi-name" description="JNDI Name of the datasource" readOnly="true"/>
+            </c:group>
+        </plugin-configuration>
+
+            <resource-configuration>
+                <c:group name="general" displayName="General">
+                    <c:simple-property name="jndi-name" displayName="JNDI Name"/>
+                    <c:simple-property name="xa" type="boolean" displayName="Is XA datasource" required="true" />
+                    <c:simple-property name="transaction-type" displayName="Transaction type" description="Transaction type">
+                        <c:property-options>
+                            <c:option name="No Transaction" value="no"/>
+                            <c:option name="Local Transaction" value="local"/>
+                            <c:option name="XA Transaction" value="xa"/>
+                        </c:property-options>
+                    </c:simple-property>
+                </c:group>
+
+                <c:group name="conn-pool" displayName="Connection Pool">
+                     &datasourceAndConnectionFactoryConnectionResourceConfigProps;
+                     &datasourceAndConnectionFactoryAdvancedResourceConfigProps;
+                </c:group>
+
+                <c:group name="Authentication" displayName="Authentication">
+                     <c:simple-property name="re-auth-support" displayName="Reauthentication Support" type="boolean" description="Does this datasource support reauthentication?"></c:simple-property>
+                     <c:simple-property name="res-auth-src" displayName="Resource Authentication Source">
+                         <c:description>
+                            Is reauthentication application-based or container-based?
+                         </c:description>
+                         <c:property-options>
+                             <c:option name="Container" value="Container"></c:option>
+                             <c:option name="Application" value="Application"></c:option>
+                         </c:property-options>
+                     </c:simple-property>
+                </c:group>
+            </resource-configuration>
+        </service>
     </server>
 </plugin>

@@ -21,10 +21,6 @@
  */
 package org.jboss.jca.rhq.test;
 
-import java.io.File;
-import java.net.URL;
-import java.util.List;
-
 import org.jboss.jca.rhq.ds.DsResourceComponent;
 import org.jboss.jca.rhq.ds.DsResourceDiscoveryComponent;
 import org.jboss.jca.rhq.ra.AoResourceComponent;
@@ -37,6 +33,11 @@ import org.jboss.jca.rhq.ra.RaResourceComponent;
 import org.jboss.jca.rhq.ra.RaResourceDiscoveryComponent;
 import org.jboss.jca.rhq.ra.RarResourceComponent;
 import org.jboss.jca.rhq.ra.RarResourceDiscoveryComponent;
+
+import java.io.File;
+import java.net.URL;
+import java.util.List;
+
 import org.junit.Test;
 
 import org.rhq.core.clientapi.descriptor.configuration.ConfigurationDescriptor;
@@ -90,65 +91,72 @@ public class PluginDescriptorTestCase
       assertEquals("IronJacamar_AS7", serverDesc.getName());
       
       List<ServiceDescriptor> services = serverDesc.getServices();
-      assertEquals(1, services.size());
+      assertEquals(2, services.size());
       
-      ServiceDescriptor rarServiceDesc = services.get(0);
-      assertEquals("Resource Adapter Archive (RAR)", rarServiceDesc.getName());
-      assertEquals(RarResourceDiscoveryComponent.class.getName(), rarServiceDesc.getDiscovery());
-      assertEquals(RarResourceComponent.class.getName(), rarServiceDesc.getClazz());
-      assertEquals(ResourceCreateDeletePolicy.BOTH, rarServiceDesc.getCreateDeletePolicy());
-      assertEquals(ResourceCreationData.CONTENT, rarServiceDesc.getCreationDataType());
-      
-      // RAR service has the plugin configuration
-      ConfigurationDescriptor pluginConfDesc = rarServiceDesc.getPluginConfiguration();
-      assertNotNull(pluginConfDesc);
-      
-      // 4 operations for 
-      List<OperationDescriptor> rarOperDescs = rarServiceDesc.getOperation();
-      assertEquals(4, rarOperDescs.size());
-      
-      // RAR service has resource configuration
-      ConfigurationDescriptor resConfDesc = rarServiceDesc.getResourceConfiguration();
-      assertNotNull(resConfDesc);
-      
-      // 4 sub services in RAR service
-      List<ServiceDescriptor> subServiceDesc = rarServiceDesc.getServices();
-      assertEquals(4, subServiceDesc.size());
-      
-      // test discovery and class definitions
-      for (ServiceDescriptor sd : subServiceDesc)
+      for (ServiceDescriptor serviceDesc : services)
       {
-         if (sd.getName().equals("Resource Adapter"))
+         if (serviceDesc.getName().equals("Resource Adapter Archive (RAR)"))
          {
-            assertEquals(RaResourceDiscoveryComponent.class.getName(), sd.getDiscovery());
-            assertEquals(RaResourceComponent.class.getName(), sd.getClazz());
+            assertEquals(RarResourceDiscoveryComponent.class.getName(), serviceDesc.getDiscovery());
+            assertEquals(RarResourceComponent.class.getName(), serviceDesc.getClazz());
+            assertEquals(ResourceCreateDeletePolicy.BOTH, serviceDesc.getCreateDeletePolicy());
+            assertEquals(ResourceCreationData.CONTENT, serviceDesc.getCreationDataType());
+            
+            // RAR service has the plugin configuration
+            ConfigurationDescriptor pluginConfDesc = serviceDesc.getPluginConfiguration();
+            assertNotNull(pluginConfDesc);
+            
+            // 4 operations for 
+            List<OperationDescriptor> rarOperDescs = serviceDesc.getOperation();
+            assertEquals(4, rarOperDescs.size());
+            
+            // RAR service has resource configuration
+            ConfigurationDescriptor resConfDesc = serviceDesc.getResourceConfiguration();
+            assertNotNull(resConfDesc);
+            
+            // 3 sub services in RAR service
+            List<ServiceDescriptor> subServiceDesc = serviceDesc.getServices();
+            assertEquals(3, subServiceDesc.size());
+            
+            // test discovery and class definitions
+            for (ServiceDescriptor sd : subServiceDesc)
+            {
+               if (sd.getName().equals("Resource Adapter"))
+               {
+                  assertEquals(RaResourceDiscoveryComponent.class.getName(), sd.getDiscovery());
+                  assertEquals(RaResourceComponent.class.getName(), sd.getClazz());
+               }
+               else if (sd.getName().equals("Connection Factory"))
+               {
+                  assertEquals(CfResourceDiscoveryComponent.class.getName(), sd.getDiscovery());
+                  assertEquals(CfResourceComponent.class.getName(), sd.getClazz());
+                  List<ServiceDescriptor> cfSubServices = sd.getServices();
+                  assertEquals(1, cfSubServices.size());
+                  ServiceDescriptor mcfServiceDescriptor = cfSubServices.get(0);
+                  assertEquals(McfResourceDiscoveryComponent.class.getName(), mcfServiceDescriptor.getDiscovery());
+                  assertEquals(McfResourceComponent.class.getName(), mcfServiceDescriptor.getClazz());
+               }
+               else if (sd.getName().equals("Admin Object"))
+               {
+                  assertEquals(AoResourceDiscoveryComponent.class.getName(), sd.getDiscovery());
+                  assertEquals(AoResourceComponent.class.getName(), sd.getClazz());
+               }
+               else
+               {
+                  throw new IllegalStateException("Unkown ResourceDescriptor name: " + sd.getName());
+               }
+            }
          }
-         else if (sd.getName().equals("Connection Factory"))
+         else if (serviceDesc.getName().equals("Datasources"))
          {
-            assertEquals(CfResourceDiscoveryComponent.class.getName(), sd.getDiscovery());
-            assertEquals(CfResourceComponent.class.getName(), sd.getClazz());
-            List<ServiceDescriptor> cfSubServices = sd.getServices();
-            assertEquals(1, cfSubServices.size());
-            ServiceDescriptor mcfServiceDescriptor = cfSubServices.get(0);
-            assertEquals(McfResourceDiscoveryComponent.class.getName(), mcfServiceDescriptor.getDiscovery());
-            assertEquals(McfResourceComponent.class.getName(), mcfServiceDescriptor.getClazz());
-         }
-         else if (sd.getName().equals("Admin Object"))
-         {
-            assertEquals(AoResourceDiscoveryComponent.class.getName(), sd.getDiscovery());
-            assertEquals(AoResourceComponent.class.getName(), sd.getClazz());
-         }
-         else if (sd.getName().equals("Datasources"))
-         {
-            assertEquals(DsResourceDiscoveryComponent.class.getName(), sd.getDiscovery());
-            assertEquals(DsResourceComponent.class.getName(), sd.getClazz());
+            assertEquals(DsResourceDiscoveryComponent.class.getName(), serviceDesc.getDiscovery());
+            assertEquals(DsResourceComponent.class.getName(), serviceDesc.getClazz());
          }
          else
          {
-            throw new IllegalStateException("Unkown ResourceDescriptor name: " + sd.getName());
+            throw new IllegalStateException("Unkown ResourceDescriptor name: " + serviceDesc.getName());
          }
       }
-      
    }
    
 }
