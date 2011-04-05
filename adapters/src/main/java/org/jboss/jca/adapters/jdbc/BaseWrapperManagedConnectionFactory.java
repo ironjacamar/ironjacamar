@@ -32,7 +32,9 @@ import org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker;
 import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
 import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
+import org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin;
 import org.jboss.jca.adapters.jdbc.util.Injection;
+import org.jboss.jca.core.spi.statistics.Statistics;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -74,7 +76,7 @@ import org.jboss.logging.Logger;
  */
 
 public abstract class BaseWrapperManagedConnectionFactory
-   implements ManagedConnectionFactory, ValidatingManagedConnectionFactory, Serializable
+   implements ManagedConnectionFactory, ValidatingManagedConnectionFactory, Statistics, Serializable
 {
    /** @since 4.0.1 */
    static final long serialVersionUID = -84923705377702088L;
@@ -229,6 +231,9 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** The JNDI name for the user transaction */
    private String userTransactionJndiName;
+
+   /** The statistics plugin */
+   private JdbcStatisticsPlugin statisticsPlugin = new JdbcStatisticsPlugin();
 
    /**
     * Constructor
@@ -880,6 +885,15 @@ public abstract class BaseWrapperManagedConnectionFactory
    public void setUserTransactionJndiName(String v)
    {
       this.userTransactionJndiName = v;
+   }
+
+   /**
+    * Get the statistics plugin
+    * @return The value
+    */
+   public JdbcStatisticsPlugin getStatistics()
+   {
+      return statisticsPlugin;
    }
 
    /**

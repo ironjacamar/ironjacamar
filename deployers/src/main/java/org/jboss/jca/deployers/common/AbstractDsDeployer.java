@@ -47,6 +47,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.statistics.Statistics;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
@@ -366,6 +367,9 @@ public abstract class AbstractDsDeployer
       mgtDs.setPoolConfiguration(pc);
       mgtDs.setPool(pool);
 
+      if (mcf instanceof Statistics)
+         mgtDs.setStatistics(((Statistics)mcf).getStatistics());
+
       log.debugf("Adding management datasource: %s", mgtDs);
       getManagementRepository().getDataSources().add(mgtDs);
       
@@ -519,6 +523,9 @@ public abstract class AbstractDsDeployer
       mgtDs.setJndiName(jndiName);
       mgtDs.setPoolConfiguration(pc);
       mgtDs.setPool(pool);
+
+      if (mcf instanceof Statistics)
+         mgtDs.setStatistics(((Statistics)mcf).getStatistics());
 
       log.debugf("Adding management datasource: %s", mgtDs);
       getManagementRepository().getDataSources().add(mgtDs);

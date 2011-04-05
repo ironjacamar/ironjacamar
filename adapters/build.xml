@@ -77,13 +77,18 @@
        Target: jars 
        ================================= -->
   <target name="jars" depends="compile">
+    <copy todir="${build.adapters.dir}/impl">
+      <fileset dir="src/main/resources/jdbc/jar"
+               includes="**/*.properties"/>
+    </copy>
+
     <jar destfile="${target.dir}/${name}-jdbc.jar"
          basedir="${build.adapters.dir}/impl"
          index="true"
          indexMetaInf="true"
          update="true"
          level="9"
-         includes="**/jdbc/**">
+         includes="**/jdbc/**,**/*.properties">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar JDBC Resource Adapter"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>

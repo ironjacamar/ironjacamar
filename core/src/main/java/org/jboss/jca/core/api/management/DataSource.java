@@ -24,6 +24,7 @@ package org.jboss.jca.core.api.management;
 
 import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
 
 import java.lang.ref.WeakReference;
 
@@ -46,6 +47,9 @@ public class DataSource
    /** The pool configuration instance */
    private WeakReference<PoolConfiguration> poolConfiguration;
 
+   /** The statistics */
+   private WeakReference<StatisticsPlugin> statistics;
+   
    /**
     * Constructor
     * @param xa datasource is xa or not
@@ -132,6 +136,30 @@ public class DataSource
    }
 
    /**
+    * Get the statistics instance.
+    * 
+    * Note, that the value may be <code>null</code> if the statistics module was
+    * undeployed and this object wasn't cleared up correctly.
+    * @return The instance
+    */
+   public StatisticsPlugin getStatistics()
+   {
+      if (statistics == null)
+         return null;
+
+      return statistics.get();
+   }
+
+   /**
+    * Set the statistics
+    * @param v The statistics module
+    */
+   public void setStatistics(StatisticsPlugin v)
+   {
+      this.statistics = new WeakReference<StatisticsPlugin>(v);
+   }
+
+   /**
     * String representation
     * @return The string
     */
@@ -144,6 +172,7 @@ public class DataSource
       sb.append(" jndiName=").append(getJndiName());
       sb.append(" pool=").append(getPool());
       sb.append(" poolconfiguration=").append(getPoolConfiguration());
+      sb.append(" statistics=").append(getStatistics());
       sb.append("]");
 
       return sb.toString();
