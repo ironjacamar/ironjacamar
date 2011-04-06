@@ -235,6 +235,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
          {
+            statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+
             //We have a permit to get a connection. Is there one in the pool already?
             ConnectionListener cl = null;
             do
@@ -371,6 +373,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       catch (InterruptedException ie)
       {
          long end = System.currentTimeMillis() - startWait;
+         statistics.deltaTotalBlockingTime(end);
          throw new ResourceException("Interrupted while requesting permit! Waited " + end + " ms");
       }
    }
@@ -539,6 +542,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             ConnectionListener cl = cls.get(0);
             if (cl.isTimedOut(timeout) && shouldRemove())
             {
+               statistics.deltaTimedOut();
+
                // We need to destroy this one
                cls.remove(0);
 
@@ -665,12 +670,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    {
       ManagedConnection mc = mcf.createManagedConnection(subject, cri);
 
+      statistics.deltaCreatedCount();
       try
       {
          return clf.createConnectionListener(mc, this);
       }
       catch (ResourceException re)
       {
+         statistics.deltaDestroyedCount();
          mc.destroy();
          throw re;
       }
@@ -691,6 +698,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          return;
       }
 
+      statistics.deltaDestroyedCount();
       cl.setState(ConnectionState.DESTROYED);
 
       try

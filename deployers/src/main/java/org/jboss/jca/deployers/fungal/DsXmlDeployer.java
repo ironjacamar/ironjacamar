@@ -383,6 +383,18 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                server.registerMBean(dsPDMB, dsPON);
                
                ons.add(dsPON);
+
+               if (mgtDs.getPool().getStatistics() != null)
+               {
+                  String dsPSName = baseName + ",type=PoolStatistics";
+                  
+                  DynamicMBean dsPSDMB = JMX.createMBean(mgtDs.getPool().getStatistics(), "PoolStatistics");
+                  ObjectName dsPSON = new ObjectName(dsPSName);
+
+                  server.registerMBean(dsPSDMB, dsPSON);
+               
+                  ons.add(dsPSON);
+               }
             }
 
             if (mgtDs.getStatistics() != null)

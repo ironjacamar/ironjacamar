@@ -30,6 +30,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Core statistics.
@@ -38,10 +40,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoolStatistics
 {
+   private static final String ACTIVE_COUNT = "ActiveCount";
+   private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
+   private static final String CREATED_COUNT = "CreatedCount";
+   private static final String DESTROYED_COUNT = "DestroyedCount";
+   private static final String MAX_WAIT_TIME = "MaxWaitTime";
+   private static final String TIMED_OUT = "TimedOut";
+   private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
+
    private Set<String> names;
    private Map<String, Class> types;
    private AtomicBoolean enabled;
    private Map<Locale, ResourceBundle> rbs;
+
+   private AtomicLong totalBlockingTime;
+   private AtomicInteger createdCount;
+   private AtomicInteger destroyedCount;
+   private AtomicLong maxWaitTime;
+   private AtomicInteger timedOut;
 
    /**
     * Constructor
@@ -50,6 +66,27 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    {
       Set<String> n = new HashSet<String>();
       Map<String, Class> t = new HashMap<String, Class>();
+
+      n.add(ACTIVE_COUNT);
+      t.put(ACTIVE_COUNT, int.class);
+
+      n.add(AVERAGE_BLOCKING_TIME);
+      t.put(AVERAGE_BLOCKING_TIME, long.class);
+
+      n.add(CREATED_COUNT);
+      t.put(CREATED_COUNT, int.class);
+
+      n.add(DESTROYED_COUNT);
+      t.put(DESTROYED_COUNT, int.class);
+
+      n.add(MAX_WAIT_TIME);
+      t.put(MAX_WAIT_TIME, long.class);
+
+      n.add(TIMED_OUT);
+      t.put(TIMED_OUT, int.class);
+
+      n.add(TOTAL_BLOCKING_TIME);
+      t.put(TOTAL_BLOCKING_TIME, long.class);
 
       this.names = Collections.unmodifiableSet(n);
       this.types = Collections.unmodifiableMap(t);
@@ -60,6 +97,12 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
                                   ManagedConnectionPoolStatisticsImpl.class.getClassLoader());
       this.rbs = new HashMap<Locale, ResourceBundle>(1);
       this.rbs.put(Locale.US, defaultResourceBundle);
+
+      this.totalBlockingTime = new AtomicLong(0);
+      this.createdCount = new AtomicInteger(0);
+      this.destroyedCount = new AtomicInteger(0);
+      this.maxWaitTime = new AtomicLong(Long.MIN_VALUE);
+      this.timedOut = new AtomicInteger(0);
 
       clear();
    }
@@ -119,6 +162,35 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public Object getValue(String name)
    {
+      if (ACTIVE_COUNT.equals(name))
+      {
+         return getActiveCount();
+      }
+      else if (AVERAGE_BLOCKING_TIME.equals(name))
+      {
+         return getAverageBlockingTime();
+      }
+      else if (CREATED_COUNT.equals(name))
+      {
+         return getCreatedCount();
+      }
+      else if (DESTROYED_COUNT.equals(name))
+      {
+         return getDestroyedCount();
+      }
+      else if (MAX_WAIT_TIME.equals(name))
+      {
+         return getMaxWaitTime();
+      }
+      else if (TIMED_OUT.equals(name))
+      {
+         return getTimedOut();
+      }
+      else if (TOTAL_BLOCKING_TIME.equals(name))
+      {
+         return getTotalBlockingTime();
+      }
+
       return null;
    }
 
@@ -136,6 +208,98 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    public void setEnabled(boolean v)
    {
       enabled.set(v);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getActiveCount()
+   {
+      return createdCount.get() - destroyedCount.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getAverageBlockingTime()
+   {
+      return createdCount.get() != 0 ? totalBlockingTime.get() / createdCount.get() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getCreatedCount()
+   {
+      return createdCount.get();
+   }
+
+   /**
+    * Delta the created count value
+    */
+   public void deltaCreatedCount()
+   {
+      createdCount.incrementAndGet();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getDestroyedCount()
+   {
+      return destroyedCount.get();
+   }
+
+   /**
+    * Delta the destroyed count value
+    */
+   public void deltaDestroyedCount()
+   {
+      destroyedCount.incrementAndGet();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getMaxWaitTime()
+   {
+      return maxWaitTime.get() != Long.MIN_VALUE ? maxWaitTime.get() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getTimedOut()
+   {
+      return timedOut.get();
+   }
+
+   /**
+    * Delta the timed out value
+    */
+   public void deltaTimedOut()
+   {
+      timedOut.incrementAndGet();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getTotalBlockingTime()
+   {
+      return totalBlockingTime.get();
+   }
+
+   /**
+    * Add delta to total blocking timeout
+    * @param delta The value
+    */
+   public void deltaTotalBlockingTime(long delta)
+   {
+      totalBlockingTime.addAndGet(delta);
+
+      if (delta > maxWaitTime.get())
+         maxWaitTime.set(delta);
    }
 
    /**

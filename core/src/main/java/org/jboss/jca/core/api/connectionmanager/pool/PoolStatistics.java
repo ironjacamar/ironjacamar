@@ -30,4 +30,45 @@ import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
  */
 public interface PoolStatistics extends StatisticsPlugin
 {
+   /**
+    * Get active count
+    * @return The value
+    */
+   public int getActiveCount();
+
+   /**
+    * Get the average time spent waiting on a connection (milliseconds)
+    * @return The value
+    */
+   public long getAverageBlockingTime();
+
+   /**
+    * Get created count
+    * @return The value
+    */
+   public int getCreatedCount();
+
+   /**
+    * Get destroyed count
+    * @return The value
+    */
+   public int getDestroyedCount();
+
+   /**
+    * Get max wait time (milliseconds)
+    * @return The value
+    */
+   public long getMaxWaitTime();
+
+   /**
+    * Get timed out
+    * @return The value
+    */
+   public int getTimedOut();
+
+   /**
+    * Get the total time spent waiting on connections (milliseconds)
+    * @return The value
+    */
+   public long getTotalBlockingTime();
 }
