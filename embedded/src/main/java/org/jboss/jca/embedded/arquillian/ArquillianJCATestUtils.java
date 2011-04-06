@@ -114,7 +114,7 @@ public final class ArquillianJCATestUtils
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, "ironjacamar-jdbc.jar");
       ja.addClasses(getClasses(packageName));
-      ja.setManifest("jdbc/jar/META-INF/MANIFEST.MF");
+      //ja.setManifest("jdbc/jar/META-INF/MANIFEST.MF");
       return ja;
    }
 
