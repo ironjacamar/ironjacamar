@@ -121,6 +121,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** the max connections ever checked out **/
    private volatile int maxUsedConnections = 0;
 
+   /** Statistics */
+   private ManagedConnectionPoolStatisticsImpl statistics;
+
    /**
     * Constructor
     */
@@ -147,7 +150,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.permits = new Semaphore(this.maxSize, true);
-  
+      this.statistics = new ManagedConnectionPoolStatisticsImpl();
+
       if (pc.isPrefill())
       {
          PoolFiller.fillPool(this);
@@ -637,6 +641,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             log.trace("Interrupted while requesting permit in fillToMin");
          }
       }
+   }
+
+   /**
+    * Get statistics
+    * @return The module
+    */
+   public ManagedConnectionPoolStatistics getStatistics()
+   {
+      return statistics;
    }
 
    /**

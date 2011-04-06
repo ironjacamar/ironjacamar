@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -82,6 +83,9 @@ public abstract class AbstractPool implements Pool
    /** The poolName */
    private String poolName;
 
+   /** Statistics */
+   private SubPoolStatistics statistics;
+
    /**
     * Create a new base pool.
     *
@@ -102,6 +106,7 @@ public abstract class AbstractPool implements Pool
       this.poolConfiguration = pc;
       this.noTxSeparatePools = noTxSeparatePools;
       this.trace = log.isTraceEnabled();
+      this.statistics = new SubPoolStatistics(subPools);
    }
 
    /**
@@ -303,10 +308,7 @@ public abstract class AbstractPool implements Pool
          //Get connection from imcp
          cl = imcp.getConnection(subject, cri);
 
-         if (trace)
-         {
-            dump("Got connection from pool : " + cl);
-         }
+         log.tracef("Got connection from pool: %s", cl);
 
          return cl;
 
@@ -327,8 +329,8 @@ public abstract class AbstractPool implements Pool
 
             //Getting connection from pool
             cl = imcp.getConnection(subject, cri);
-            if (trace)
-               dump("Got connection from pool (retried) " + cl);
+
+            log.tracef("Got connection from pool (retried): %s", cl);
 
             return cl;
          }
@@ -370,10 +372,7 @@ public abstract class AbstractPool implements Pool
          cl = (ConnectionListener) trackByTx.get(trackByTransaction);
          if (cl != null)
          {
-            if (trace)
-            {
-               dump("Previous connection tracked by transaction " + cl + " tx=" + trackByTransaction);
-            }
+            log.tracef("Previous connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
             return cl;
          }
@@ -411,10 +410,7 @@ public abstract class AbstractPool implements Pool
       // Instead we do a double check after we got the transaction to see
       // whether another thread beat us to the punch.
       cl = mcp.getConnection(subject, cri);
-      if (trace)
-      {
-         dump("Got connection from pool tracked by transaction " + cl + " tx=" + trackByTransaction);
-      }
+      log.tracef("Got connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
       // Relock and check/set status
       try
@@ -424,11 +420,8 @@ public abstract class AbstractPool implements Pool
       catch (Throwable t)
       {
          mcp.returnConnection(cl, false);
-         if (trace)
-         {
-            dump("Had to return connection tracked by transaction " + cl + " tx=" +
-                  trackByTransaction + " error=" + t.getMessage());
-         }
+         log.tracef("Had to return connection tracked by transaction=%s tx=%s error=%s",
+                    cl, trackByTransaction, t.getMessage());
 
          JBossResourceException.rethrowAsResourceException("Unable to get connection from the pool for tx="
                + trackByTransaction, t);
@@ -440,11 +433,9 @@ public abstract class AbstractPool implements Pool
          if (other != null)
          {
             mcp.returnConnection(cl, false);
-            if (trace)
-            {
-               dump("Another thread already got a connection tracked by transaction " +
-                     other + " tx=" + trackByTransaction);
-            }
+
+            log.tracef("Another thread already got a connection tracked by transaction=%s tx=%s",
+                       other, trackByTransaction);
 
             cl = other;
          }
@@ -453,11 +444,7 @@ public abstract class AbstractPool implements Pool
          cl.setTrackByTx(true);
          trackByTx.set(cl);
 
-         if (trace)
-         {
-            dump("Using connection from pool tracked by transaction " + cl + " tx=" + trackByTransaction);
-         }
-
+         log.tracef("Using connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
       }
       finally
       {
@@ -487,10 +474,7 @@ public abstract class AbstractPool implements Pool
       //Return connection to the pool
       mcp.returnConnection(cl, kill);
 
-      if (trace)
-      {
-         dump("Returning connection to pool " + cl);
-      }
+      log.tracef("Returning connection to pool %s", cl);
    }
 
    /**
@@ -510,24 +494,11 @@ public abstract class AbstractPool implements Pool
    }
 
    /**
-    * Dump the stats to the trace log
-    * @param info some context
+    * {@inheritDoc}
     */
-   private void dump(String info)
+   public PoolStatistics getStatistics()
    {
-      if (trace)
-      {
-         StringBuffer toLog = new StringBuffer(100);
-         toLog.append(info);
-         /*
-           .append(" [InUse/Available/Max]: [");
-           toLog.append(getInUseConnectionCount()).append("/");
-           toLog.append(getAvailableConnectionCount()).append("/");
-           toLog.append(poolConfiguration.getMaxSize());
-           toLog.append("]");
-         */
-         log.trace(toLog);
-      }
+      return statistics;
    }
 
    /**

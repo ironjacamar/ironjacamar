@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,24 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.api.connectionmanager.pool;
+
+package org.jboss.jca.core.connectionmanager.pool.mcp;
+
+import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 
 /**
- * A pool.
+ * Statistics for a managed connection pool
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface Pool
-{
-   /**
-    * Gets pool name.
-    * @return pool name
-    */
-   public String getName();
-
-   /**
-    * Get the statistics
-    * @return The value
-    */
-   public PoolStatistics getStatistics();
+public interface ManagedConnectionPoolStatistics extends PoolStatistics
+{   
 }

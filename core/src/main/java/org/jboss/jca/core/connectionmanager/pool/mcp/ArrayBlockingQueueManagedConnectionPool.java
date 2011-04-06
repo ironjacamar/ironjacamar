@@ -114,6 +114,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /** the max connections ever checked out **/
    private AtomicInteger maxUsedConnections = new AtomicInteger(0);
 
+   /** Statistics */
+   private ManagedConnectionPoolStatisticsImpl statistics;
+
    /**
     * Constructor
     */
@@ -140,6 +143,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayBlockingQueue<ConnectionListener>(this.maxSize, true);
       this.permits = new ConcurrentHashMap<ConnectionListener, ConnectionListener>(this.maxSize);
+      this.statistics = new ManagedConnectionPoolStatisticsImpl();
   
       if (pc.isPrefill())
       {
@@ -641,6 +645,15 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             }
          }
       }
+   }
+
+   /**
+    * Get statistics
+    * @return The module
+    */
+   public ManagedConnectionPoolStatistics getStatistics()
+   {
+      return statistics;
    }
 
    /**

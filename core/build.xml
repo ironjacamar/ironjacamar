@@ -66,6 +66,11 @@
        Target: jars 
        ================================= -->
   <target name="jars" depends="compile">
+    <copy todir="${build.core.dir}/impl">
+      <fileset dir="src/main/resources"
+               includes="**/*.properties"/>
+    </copy>
+
     <jar destfile="${target.dir}/${name}-core-api.jar"
          basedir="${build.core.dir}/impl"
          index="true"

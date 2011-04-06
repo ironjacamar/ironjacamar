@@ -118,4 +118,10 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @throws Exception for exception
     */
    public void validateConnections() throws Exception;
+
+   /**
+    * Get statistics
+    * @return The module
+    */
+   public ManagedConnectionPoolStatistics getStatistics();
 }

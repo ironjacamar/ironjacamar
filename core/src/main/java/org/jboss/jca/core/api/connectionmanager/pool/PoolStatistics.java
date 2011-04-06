@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,22 +21,13 @@
  */
 package org.jboss.jca.core.api.connectionmanager.pool;
 
-/**
- * A pool.
- *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- */
-public interface Pool
-{
-   /**
-    * Gets pool name.
-    * @return pool name
-    */
-   public String getName();
+import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
 
-   /**
-    * Get the statistics
-    * @return The value
-    */
-   public PoolStatistics getStatistics();
+/**
+ * The pool statistics
+ *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ */
+public interface PoolStatistics extends StatisticsPlugin
+{
 }
