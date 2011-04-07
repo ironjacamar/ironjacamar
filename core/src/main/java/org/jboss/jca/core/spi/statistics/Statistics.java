@@ -24,8 +24,8 @@ package org.jboss.jca.core.spi.statistics;
 /**
  * Defines the contract for a statistics enabled resource adapter.
  *
- * This interface can be applied to ManagedConnectionFactory and ResourceAdapter
- * instances.
+ * This interface can be applied to ManagedConnectionFactory, ResourceAdapter
+ * and AdminObject instances.
  *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */

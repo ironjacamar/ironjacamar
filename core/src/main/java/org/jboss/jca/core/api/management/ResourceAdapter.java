@@ -22,6 +22,9 @@
 
 package org.jboss.jca.core.api.management;
 
+import org.jboss.jca.core.spi.statistics.Statistics;
+import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,5 +74,37 @@ public class ResourceAdapter
          configProperties = new ArrayList<ConfigProperty>(1);
 
       return configProperties;
+   }
+
+   /**
+    * Get the statistics
+    * @return The value; <code>null</code> if no statistics is available
+    */
+   public StatisticsPlugin getStatistics()
+   {
+      if (getResourceAdapter() != null && getResourceAdapter() instanceof Statistics)
+      {
+         return ((Statistics)getResourceAdapter()).getStatistics();
+      }
+
+      return null;
+   }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("ResourceAdapter@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[instance=").append(getResourceAdapter());
+      sb.append(" configProperties=").append(configProperties);
+      sb.append(" statistics=").append(getStatistics());
+      sb.append("]");
+
+      return sb.toString();
    }
 }

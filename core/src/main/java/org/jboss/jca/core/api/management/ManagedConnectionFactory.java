@@ -22,6 +22,9 @@
 
 package org.jboss.jca.core.api.management;
 
+import org.jboss.jca.core.spi.statistics.Statistics;
+import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +78,20 @@ public class ManagedConnectionFactory
    }
 
    /**
+    * Get the statistics
+    * @return The value; <code>null</code> if no statistics is available
+    */
+   public StatisticsPlugin getStatistics()
+   {
+      if (getManagedConnectionFactory() != null && getManagedConnectionFactory() instanceof Statistics)
+      {
+         return ((Statistics)getManagedConnectionFactory()).getStatistics();
+      }
+
+      return null;
+   }
+
+   /**
     * String representation
     * @return The string
     */
@@ -86,6 +103,7 @@ public class ManagedConnectionFactory
       sb.append("ManagedConnectionFactory@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[instance=").append(getManagedConnectionFactory());
       sb.append(" configProperties=").append(configProperties);
+      sb.append(" statistics=").append(getStatistics());
       sb.append("]");
 
       return sb.toString();
