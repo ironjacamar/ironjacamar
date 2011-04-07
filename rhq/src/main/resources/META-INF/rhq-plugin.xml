@@ -347,7 +347,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:xmlns:rhq-plugin"
     xmlns:c="urn:xmlns:rhq-configuration">
 
-    <server name="IronJacamar_AS7" singleton="true"
+    <server name="IronJacamar (JCA)" singleton="true"
         discovery="org.jboss.jca.rhq.core.IronJacamarResourceDiscoveryComponent" 
         class="org.jboss.jca.rhq.core.IronJacamarResourceComponent">
 
@@ -405,7 +405,7 @@
                 
             </service>
             
-            <!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
+            <!-- Connection Factory  -->
             <service name="Connection Factory" discovery="org.jboss.jca.rhq.ra.CfResourceDiscoveryComponent"
                 class="org.jboss.jca.rhq.ra.CfResourceComponent">
             
@@ -441,7 +441,7 @@
 
                 </resource-configuration>
                 
-                <!-- Managed Connection Factories. Includes No Tx / Tx connection factories  -->
+                <!-- Managed Connection Factoriy. -->
                 <service name="Managed Connection Factory" discovery="org.jboss.jca.rhq.ra.McfResourceDiscoveryComponent"
                     class="org.jboss.jca.rhq.ra.McfResourceComponent">
                 
@@ -467,7 +467,7 @@
                 </service>
             </service>
             
-            <!-- Admin Objects -->
+            <!-- Admin Object -->
             <service name="Admin Object" discovery="org.jboss.jca.rhq.ra.AoResourceDiscoveryComponent" 
                 class="org.jboss.jca.rhq.ra.AoResourceComponent">
                 
@@ -484,13 +484,6 @@
                 </resource-configuration>
                 
             </service>
-    
-            <!-- Connection Factories
-            <service name="Connection Factories" discovery="org.jboss.jca.rhq.ds.ConnectionFactoryResourceDiscoveryComponent"
-                class="org.jboss.jca.rhq.ds.ConnectionFactoryResourceComponent" supportsManualAdd="true">
-
-            </service>
-             -->
 
         </service>
         

@@ -41,7 +41,7 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
 public class CfResourceDiscoveryComponent
-   implements ResourceDiscoveryComponent<CfResourceComponent>
+   implements ResourceDiscoveryComponent<RarResourceComponent>
 {
    /**
     * discoverResources
@@ -53,7 +53,7 @@ public class CfResourceDiscoveryComponent
     */
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<CfResourceComponent> context)
+      ResourceDiscoveryContext<RarResourceComponent> context)
       throws InvalidPluginConfigurationException, Exception
    {
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();

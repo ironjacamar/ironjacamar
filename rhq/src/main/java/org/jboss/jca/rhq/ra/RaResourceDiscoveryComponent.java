@@ -42,7 +42,7 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>  
  */
-public class RaResourceDiscoveryComponent implements ResourceDiscoveryComponent<RaResourceComponent>
+public class RaResourceDiscoveryComponent implements ResourceDiscoveryComponent<RarResourceComponent>
 {
    /**
     * discoverResources, RAR has 1 or 0 ResourceAdapter.
@@ -54,7 +54,7 @@ public class RaResourceDiscoveryComponent implements ResourceDiscoveryComponent<
     */
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<RaResourceComponent> context) 
+      ResourceDiscoveryContext<RarResourceComponent> context) 
       throws InvalidPluginConfigurationException, Exception
    {
 
@@ -70,7 +70,7 @@ public class RaResourceDiscoveryComponent implements ResourceDiscoveryComponent<
          String key = rarUniqueId + "#" + simpleName;
          DiscoveredResourceDetails resRa = new DiscoveredResourceDetails(
             context.getResourceType(), key, simpleName, "1.0.0",
-            "Resource Adapter", context.getDefaultPluginConfiguration(),
+            "Resource Adapters", context.getDefaultPluginConfiguration(),
             null);
          result.add(resRa);
       }

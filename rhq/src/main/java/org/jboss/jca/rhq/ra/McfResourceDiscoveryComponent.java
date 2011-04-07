@@ -36,7 +36,7 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
 public class McfResourceDiscoveryComponent
-   implements ResourceDiscoveryComponent<McfResourceComponent>
+   implements ResourceDiscoveryComponent<CfResourceComponent>
 {
    /**
     * discoverResources
@@ -49,14 +49,14 @@ public class McfResourceDiscoveryComponent
    @SuppressWarnings("unchecked")
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<McfResourceComponent> context)
+      ResourceDiscoveryContext<CfResourceComponent> context)
       throws InvalidPluginConfigurationException, Exception
    {
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
 
       DiscoveredResourceDetails mcfRes = new DiscoveredResourceDetails(context.getResourceType(), 
             "ManagedConnectionFactory", "ManagedConnectionFactory", null,
-            "Managed Connection Factory", context.getDefaultPluginConfiguration(), null);
+            "Managed Connection Factories", context.getDefaultPluginConfiguration(), null);
       result.add(mcfRes);
       return result;
    }

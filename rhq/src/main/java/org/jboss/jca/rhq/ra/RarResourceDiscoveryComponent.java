@@ -23,6 +23,7 @@ package org.jboss.jca.rhq.ra;
 
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.rhq.core.IronJacamarResourceComponent;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 
 import java.util.HashSet;
@@ -42,7 +43,7 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
 public class RarResourceDiscoveryComponent 
-   implements ResourceDiscoveryComponent<RarResourceComponent>
+   implements ResourceDiscoveryComponent<IronJacamarResourceComponent>
 {
    /** log */
    private static final Logger logger = Logger.getLogger(RarResourceDiscoveryComponent.class);
@@ -50,14 +51,14 @@ public class RarResourceDiscoveryComponent
    /**
     * discoverResources
     * 
-    * @param jcaRarResourceComponentResourceDiscoveryContext ResourceDiscoveryContext<JCARarResourceComponent>
+    * @param context ResourceDiscoveryContext<JCARarResourceComponent>
     * @return Set<DiscoveredResourceDetails> set of DiscoveredResourceDetails
     * @throws InvalidPluginConfigurationException invalidPluginConfigurationException
     * @throws Exception exception
     */
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<RarResourceComponent> jcaRarResourceComponentResourceDiscoveryContext)
+      ResourceDiscoveryContext<IronJacamarResourceComponent> context)
       throws InvalidPluginConfigurationException, Exception
    {
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
@@ -70,8 +71,8 @@ public class RarResourceDiscoveryComponent
          String key = connector.getUniqueId();
          String name = key;
          DiscoveredResourceDetails resConnector = new DiscoveredResourceDetails(
-            jcaRarResourceComponentResourceDiscoveryContext.getResourceType(), key, name, "1.0.0",
-            "Resource Adapters", jcaRarResourceComponentResourceDiscoveryContext.getDefaultPluginConfiguration(),
+            context.getResourceType(), key, name, "1.0.0",
+            "Resource Adapter Archives", context.getDefaultPluginConfiguration(),
             null);
          result.add(resConnector);
       }

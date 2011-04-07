@@ -88,7 +88,7 @@ public class PluginDescriptorTestCase
       assertEquals(1, servers.size());
       
       ServerDescriptor serverDesc = servers.get(0);
-      assertEquals("IronJacamar_AS7", serverDesc.getName());
+      assertEquals("IronJacamar (JCA)", serverDesc.getName());
       
       List<ServiceDescriptor> services = serverDesc.getServices();
       assertEquals(2, services.size());

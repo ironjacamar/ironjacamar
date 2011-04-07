@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
+import org.rhq.core.pluginapi.inventory.ResourceComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 
@@ -33,8 +34,11 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
  * Discovery the root element of this plug-in.
  * 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
+ * 
+ * @param <P> the parent resource component type for those resources discovered by this discovery component
  */
-public class IronJacamarResourceDiscoveryComponent implements ResourceDiscoveryComponent<IronJacamarResourceComponent>
+public class IronJacamarResourceDiscoveryComponent<P extends ResourceComponent> implements ResourceDiscoveryComponent<P>
 {
    /**
     * discoverResources
@@ -45,13 +49,13 @@ public class IronJacamarResourceDiscoveryComponent implements ResourceDiscoveryC
     * @throws Exception Exception
     */
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<IronJacamarResourceComponent> context) 
+      ResourceDiscoveryContext<P> context) 
       throws InvalidPluginConfigurationException, Exception
    {
 
       Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
-      String resourceKey = "IronJacamar_AS7";
-      String resourceName = "IronJacamar_AS7";
+      String resourceKey = "IronJacamar";
+      String resourceName = "IronJacamar";
       String resourceVersion = "1.0.0";
       String resourceDescription = "JCA Management Resources";
 

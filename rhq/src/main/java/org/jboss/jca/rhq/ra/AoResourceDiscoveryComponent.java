@@ -41,7 +41,7 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class AoResourceDiscoveryComponent implements ResourceDiscoveryComponent<AoResourceComponent>
+public class AoResourceDiscoveryComponent implements ResourceDiscoveryComponent<RarResourceComponent>
 {
    /**
     * discoverResources
@@ -53,7 +53,7 @@ public class AoResourceDiscoveryComponent implements ResourceDiscoveryComponent<
     */
    @Override
    public Set<DiscoveredResourceDetails> discoverResources(
-      ResourceDiscoveryContext<AoResourceComponent> context) 
+      ResourceDiscoveryContext<RarResourceComponent> context) 
       throws InvalidPluginConfigurationException, Exception
    {
 
