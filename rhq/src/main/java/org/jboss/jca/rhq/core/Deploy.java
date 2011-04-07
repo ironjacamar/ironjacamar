@@ -19,63 +19,31 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.rhq.util;
+package org.jboss.jca.rhq.core;
 
-import java.lang.reflect.Method;
-
+import java.net.URL;
 
 /**
- * Helper class for embedded container
+ * Deploy interface
+ * deploy and undeploy for jca container
  * 
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class ContainerHelper
+public interface Deploy
 {
-   /** EmbedDiscoverClassName */
-   private static final String EmbedDiscoverClassName = "org.jboss.jca.rhq.embed.core.EmbeddedJcaDiscover";
-   
    /**
-    * get discover object of embedded JCA container
+    * deploy file
     * 
-    * @return boolean
+    * @param url deployment file
+    * @throws Throwable if some error
     */
-   public static Object getEmbeddedDiscover()
-   {
-      try
-      {
-         Class<?> cls = Class.forName(EmbedDiscoverClassName);
-         Method method = cls.getMethod("getInstance");
-         Object discoverObject = method.invoke(cls, (Object[])null);
-         return discoverObject;
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-      }
-      return null;
-   }
-   
-   /**
-    * use embedded JCA container
-    * 
-    * @return boolean
-    */
-   public static boolean useEmbeddedJCA()
-   {
-      try
-      {
-         Class.forName(EmbedDiscoverClassName);
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         return false;
-      }
-      catch (Exception e)
-      {
-         e.printStackTrace();
-         return false;
-      }
-      return true;
-   }
+   public void deploy(URL url) throws Throwable;
 
+   /**
+    * undeploy file
+    * 
+    * @param url deployment file
+    * @throws Throwable if some error
+    */
+   public void undeploy(URL url) throws Throwable;
 }

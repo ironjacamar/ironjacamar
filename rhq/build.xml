@@ -205,7 +205,7 @@
 
     <copy todir="${build.rhq.dir}/test">
       <fileset dir="src/test/resources"
-               includes="*.properties"/>
+               includes="*.properties *.xml"/>
     </copy>
 
     <jar destfile="${build.rhq.dir}/test/${name}-rhq-test.jar"
@@ -229,6 +229,12 @@
                 includes="org/jboss/jca/rhq/rar/xa/**"/>
        <fileset dir="src/test/resources/xa.rar"/>
     </jar>
+
+    <!-- local-jdbc.rar -->
+    <copy todir="${build.rhq.dir}/test">
+      <fileset dir="${target.dir}"
+               includes="jdbc-local.rar"/>
+    </copy>
 
     <antcall target="plugin"/>
   </target>

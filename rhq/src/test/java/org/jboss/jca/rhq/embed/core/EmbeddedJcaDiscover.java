@@ -25,6 +25,7 @@ import org.jboss.jca.core.api.management.ManagementRepository;
 
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
+import org.jboss.jca.rhq.core.Deploy;
 import org.jboss.jca.rhq.core.Discover;
 import org.jboss.jca.rhq.core.Lifecycle;
 
@@ -33,8 +34,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 
@@ -45,7 +46,7 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class EmbeddedJcaDiscover implements Discover, Lifecycle
+public class EmbeddedJcaDiscover implements Discover, Lifecycle, Deploy
 {
    /** log */
    private static final Logger logger = Logger.getLogger(EmbeddedJcaDiscover.class);
@@ -63,7 +64,7 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
    private ManagementRepository mr = null;
    
    /** URL of rar file */
-   private List<URL> rarUrls = new ArrayList<URL>();
+   private Map<URL, URL> rarUrls = new HashMap<URL, URL>();
    
    /** 
     * singleton getInstance
@@ -100,9 +101,9 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
          
          //embedJCA.deploy(EmbeddedJcaDiscover.class.getResource("h2-ds.xml"));
          
-         URL deployedURL = deployFile("/xa.rar");
-         logger.debug("xa.rar deployed");
-         rarUrls.add(deployedURL);
+         //URL deployedURL = deployFile("/xa.rar");
+         //logger.debug("xa.rar deployed");
+         //rarUrls.add(deployedURL);
          
          stopped = false;
       }
@@ -111,6 +112,55 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
          throw new IllegalStateException("Something wrong when starting Embedded JCA container", e);
       }
 
+   }
+   
+   /**
+    * deploy file
+    * 
+    * @param url deployment file
+    * @throws Throwable if some error
+    */
+   @Override
+   public void deploy(URL url) throws Throwable
+   {
+      if (url == null || url.toString().equals(""))
+         throw new IllegalArgumentException("url is null");
+
+      URL finalURL;
+      if (url.toExternalForm().startsWith("jar"))
+      {
+         String tmpPath = System.getProperty("java.io.tmpdir");
+         File outputFile = new File(tmpPath, url.getFile());
+         copyURLToFile(url, outputFile);
+         finalURL = outputFile.toURI().toURL();
+      }
+      else
+      {
+         finalURL = url;
+      }
+      embedJCA.deploy(finalURL);
+      logger.debug(url + " deployed");
+      rarUrls.put(url, finalURL);
+   }
+
+   /**
+    * undeploy file
+    * 
+    * @param url deployment file
+    * @throws Throwable if some error
+    */
+   @Override
+   public void undeploy(URL url) throws Throwable
+   {
+      if (url == null || url.toString().equals(""))
+         return;
+      
+      URL targetUrl = rarUrls.remove(url);
+      if (targetUrl != null)
+      {
+         embedJCA.undeploy(targetUrl);
+         logger.debug(url + " undeployed");
+      }
    }
    
    /** 
@@ -214,7 +264,7 @@ public class EmbeddedJcaDiscover implements Discover, Lifecycle
    {
       try
       {
-         for (URL url : rarUrls)
+         for (URL url : rarUrls.values())
          {
             embedJCA.undeploy(url);
          }

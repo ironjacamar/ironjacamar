@@ -38,6 +38,7 @@ import org.jboss.jca.rhq.rar.xa.XAResourceAdapter;
 import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
@@ -76,6 +77,9 @@ public class XATestCase
    
    /** RAR resource */
    private static Resource rarServiceResource;
+   
+   /** deployed url */
+   private static URL deployedUrl;
    
    /**
     * Basic
@@ -543,7 +547,7 @@ public class XATestCase
     * @throws Throwable throwable exception 
     */
    @BeforeClass
-   public static void setUp() throws Throwable
+   public static void beforeClass() throws Throwable
    {
       File pluginDir = new File(System.getProperty("archives.dir"));
       PluginContainerConfiguration pcConfig = new PluginContainerConfiguration();
@@ -556,6 +560,10 @@ public class XATestCase
       pc.setConfiguration(pcConfig);
       pc.initialize();
       
+      EmbeddedJcaDiscover jca = EmbeddedJcaDiscover.getInstance();
+      deployedUrl = XATestCase.class.getResource("/xa.rar");
+      jca.deploy(deployedUrl);
+      
       InventoryManager im = pc.getInventoryManager();
       im.executeServerScanImmediately();
 
@@ -564,7 +572,7 @@ public class XATestCase
 
       RuntimeDiscoveryExecutor discoverExecutor = new RuntimeDiscoveryExecutor(im, pcConfig, serverRes);
       discoverExecutor.run();
-      
+
       rarServiceResource = serverRes.getChildResources().iterator().next();
    }
 
@@ -573,8 +581,11 @@ public class XATestCase
     * @throws Throwable throwable exception 
     */
    @AfterClass
-   public static void tearDown() throws Throwable
+   public static void afterClass() throws Throwable
    {
+      EmbeddedJcaDiscover jca = EmbeddedJcaDiscover.getInstance();
+      jca.undeploy(deployedUrl);
+      
       PluginContainer pc = PluginContainer.getInstance();
       pc.shutdown();
    }
