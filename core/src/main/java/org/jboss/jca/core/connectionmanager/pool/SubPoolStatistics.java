@@ -212,14 +212,19 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public int getActiveCount()
    {
-      int result = 0;
-
-      for (SubPoolContext spc : subPools.values())
+      if (isEnabled())
       {
-         result += spc.getSubPool().getStatistics().getActiveCount();
+         int result = 0;
+
+         for (SubPoolContext spc : subPools.values())
+         {
+            result += spc.getSubPool().getStatistics().getActiveCount();
+         }
+         
+         return result;
       }
 
-      return result;
+      return 0;
    }
 
    /**
@@ -227,7 +232,10 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public long getAverageBlockingTime()
    {
-      return getCreatedCount() != 0 ? getTotalBlockingTime() / getCreatedCount() : 0;
+      if (isEnabled())
+         return getCreatedCount() != 0 ? getTotalBlockingTime() / getCreatedCount() : 0;
+
+      return 0;
    }
 
    /**
@@ -235,14 +243,19 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public int getCreatedCount()
    {
-      int result = 0;
-
-      for (SubPoolContext spc : subPools.values())
+      if (isEnabled())
       {
-         result += spc.getSubPool().getStatistics().getCreatedCount();
+         int result = 0;
+
+         for (SubPoolContext spc : subPools.values())
+         {
+            result += spc.getSubPool().getStatistics().getCreatedCount();
+         }
+
+         return result;
       }
 
-      return result;
+      return 0;
    }
 
    /**
@@ -250,14 +263,19 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public int getDestroyedCount()
    {
-      int result = 0;
-
-      for (SubPoolContext spc : subPools.values())
+      if (isEnabled())
       {
-         result += spc.getSubPool().getStatistics().getDestroyedCount();
+         int result = 0;
+
+         for (SubPoolContext spc : subPools.values())
+         {
+            result += spc.getSubPool().getStatistics().getDestroyedCount();
+         }
+
+         return result;
       }
 
-      return result;
+      return 0;
    }
 
    /**
@@ -265,16 +283,21 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public long getMaxWaitTime()
    {
-      long result = Long.MIN_VALUE;
-
-      for (SubPoolContext spc : subPools.values())
+      if (isEnabled())
       {
-         long v = spc.getSubPool().getStatistics().getMaxWaitTime();
-         if (v > result)
-            result = v;
+         long result = Long.MIN_VALUE;
+
+         for (SubPoolContext spc : subPools.values())
+         {
+            long v = spc.getSubPool().getStatistics().getMaxWaitTime();
+            if (v > result)
+               result = v;
+         }
+
+         return result != Long.MIN_VALUE ? result : 0;
       }
 
-      return result != Long.MIN_VALUE ? result : 0;
+      return 0;
    }
 
    /**
@@ -282,14 +305,19 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public int getTimedOut()
    {
-      int result = 0;
-
-      for (SubPoolContext spc : subPools.values())
+      if (isEnabled())
       {
-         result += spc.getSubPool().getStatistics().getTimedOut();
+         int result = 0;
+
+         for (SubPoolContext spc : subPools.values())
+         {
+            result += spc.getSubPool().getStatistics().getTimedOut();
+         }
+
+         return result;
       }
 
-      return result;
+      return 0;
    }
 
    /**
@@ -297,14 +325,19 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public long getTotalBlockingTime()
    {
-      long result = 0;
-
-      for (SubPoolContext spc : subPools.values())
+      if (isEnabled())
       {
-         result += spc.getSubPool().getStatistics().getTotalBlockingTime();
+         long result = 0;
+
+         for (SubPoolContext spc : subPools.values())
+         {
+            result += spc.getSubPool().getStatistics().getTotalBlockingTime();
+         }
+
+         return result;
       }
 
-      return result;
+      return 0;
    }
 
    /**
