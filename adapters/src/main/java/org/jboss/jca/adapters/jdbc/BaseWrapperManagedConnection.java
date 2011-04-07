@@ -170,7 +170,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       this.props = props;
 
       if (psCacheSize > 0)
+      {
          psCache = new PreparedStatementCache(psCacheSize);
+         mcf.getStatistics().registerPreparedStatementCache(psCache);
+      }
 
       if (transactionIsolation == -1)
          this.transactionIsolation = con.getTransactionIsolation();
@@ -400,6 +403,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       {
          getLog().trace("Ignored error during close: ", ignored);
       }
+
+      if (psCache != null)
+         mcf.getStatistics().deregisterPreparedStatementCache(psCache);
    }
 
    /**
@@ -573,6 +579,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
    {
       if (psCache != null)
       {
+         mcf.getStatistics().deltaPreparedStatementCacheAccessCount();
+
          PreparedStatementCache.Key key = 
             new PreparedStatementCache.Key(sql,
                                            PreparedStatementCache.Key.PREPARED_STATEMENT, 
@@ -584,10 +592,14 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
          {
             if (canUse(cachedps))
             {
+               mcf.getStatistics().deltaPreparedStatementCacheHitCount();
+
                cachedps.inUse();
             }
             else
             {
+               mcf.getStatistics().deltaPreparedStatementCacheMissCount();
+
                return doPrepareStatement(sql, resultSetType, resultSetConcurrency);
             }
          }
@@ -596,6 +608,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
             PreparedStatement ps = doPrepareStatement(sql, resultSetType, resultSetConcurrency);
             cachedps = WRAPPED_CONNECTION_FACTORY.createCachedPreparedStatement(ps);
             psCache.insert(key, cachedps);
+
+            mcf.getStatistics().deltaPreparedStatementCacheAddCount();
          }
 
          return cachedps;
@@ -631,6 +645,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
    {
       if (psCache != null)
       {
+         mcf.getStatistics().deltaPreparedStatementCacheAccessCount();
+
          PreparedStatementCache.Key key = 
             new PreparedStatementCache.Key(sql, 
                                            PreparedStatementCache.Key.CALLABLE_STATEMENT, 
@@ -643,10 +659,12 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
          {
             if (canUse(cachedps))
             {
+               mcf.getStatistics().deltaPreparedStatementCacheHitCount();
                cachedps.inUse();
             }
             else
             {
+               mcf.getStatistics().deltaPreparedStatementCacheMissCount();
                return doPrepareCall(sql, resultSetType, resultSetConcurrency);
             }
          }
@@ -655,6 +673,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
             CallableStatement cs = doPrepareCall(sql, resultSetType, resultSetConcurrency);
             cachedps = WRAPPED_CONNECTION_FACTORY.createCachedCallableStatement(cs);
             psCache.insert(key, cachedps);
+            mcf.getStatistics().deltaPreparedStatementCacheAddCount();
          }
          return cachedps;
       }

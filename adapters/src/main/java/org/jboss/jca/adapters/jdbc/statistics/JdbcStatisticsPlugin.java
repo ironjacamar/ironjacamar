@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.adapters.jdbc.statistics;
 
+import org.jboss.jca.adapters.jdbc.PreparedStatementCache;
 import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
 
 import java.util.Collections;
@@ -31,6 +32,8 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * JDBC statistics.
@@ -39,10 +42,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class JdbcStatisticsPlugin implements StatisticsPlugin
 {
+   private static final String PREPARED_STATEMENT_CACHE_ACCESS_COUNT = "PreparedStatementCacheAccessCount";
+   private static final String PREPARED_STATEMENT_CACHE_ADD_COUNT = "PreparedStatementCacheAddCount";
+   private static final String PREPARED_STATEMENT_CACHE_CURRENT_SIZE = "PreparedStatementCacheCurrentSize";
+   private static final String PREPARED_STATEMENT_CACHE_DELETE_COUNT = "PreparedStatementCacheDeleteCount";
+   private static final String PREPARED_STATEMENT_CACHE_HIT_COUNT = "PreparedStatementCacheHitCount";
+   private static final String PREPARED_STATEMENT_CACHE_MISS_COUNT = "PreparedStatementCacheMissCount";
+
+   private AtomicLong preparedStatementCacheAccessCount;
+   private AtomicLong preparedStatementCacheAddCount;
+   private AtomicLong preparedStatementCacheDeleteCount;
+   private AtomicInteger preparedStatementCacheHitCount;
+   private AtomicInteger preparedStatementCacheMissCount;
+
    private Set<String> names;
    private Map<String, Class> types;
    private AtomicBoolean enabled;
    private Map<Locale, ResourceBundle> rbs;
+
+   private Set<PreparedStatementCache> psCaches;
 
    /**
     * Constructor
@@ -52,6 +70,24 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
       Set<String> n = new HashSet<String>();
       Map<String, Class> t = new HashMap<String, Class>();
 
+      n.add(PREPARED_STATEMENT_CACHE_ACCESS_COUNT);
+      t.put(PREPARED_STATEMENT_CACHE_ACCESS_COUNT, long.class);
+
+      n.add(PREPARED_STATEMENT_CACHE_ADD_COUNT);
+      t.put(PREPARED_STATEMENT_CACHE_ADD_COUNT, long.class);
+
+      n.add(PREPARED_STATEMENT_CACHE_CURRENT_SIZE);
+      t.put(PREPARED_STATEMENT_CACHE_CURRENT_SIZE, int.class);
+
+      n.add(PREPARED_STATEMENT_CACHE_DELETE_COUNT);
+      t.put(PREPARED_STATEMENT_CACHE_DELETE_COUNT, long.class);
+
+      n.add(PREPARED_STATEMENT_CACHE_HIT_COUNT);
+      t.put(PREPARED_STATEMENT_CACHE_HIT_COUNT, int.class);
+
+      n.add(PREPARED_STATEMENT_CACHE_MISS_COUNT);
+      t.put(PREPARED_STATEMENT_CACHE_MISS_COUNT, int.class);
+
       this.names = Collections.unmodifiableSet(n);
       this.types = Collections.unmodifiableMap(t);
       this.enabled = new AtomicBoolean(true);
@@ -60,6 +96,14 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
          ResourceBundle.getBundle("jdbc", Locale.US, JdbcStatisticsPlugin.class.getClassLoader());
       this.rbs = new HashMap<Locale, ResourceBundle>(1);
       this.rbs.put(Locale.US, defaultResourceBundle);
+
+      this.preparedStatementCacheAccessCount = new AtomicLong(0);
+      this.preparedStatementCacheAddCount = new AtomicLong(0);
+      this.preparedStatementCacheDeleteCount = new AtomicLong(0);
+      this.preparedStatementCacheHitCount = new AtomicInteger(0);
+      this.preparedStatementCacheMissCount = new AtomicInteger(0);
+
+      this.psCaches = Collections.synchronizedSet(new HashSet<PreparedStatementCache>());
 
       clear();
    }
@@ -118,6 +162,31 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
     */
    public Object getValue(String name)
    {
+      if (PREPARED_STATEMENT_CACHE_ACCESS_COUNT.equals(name))
+      {
+         return getPreparedStatementCacheAccessCount();
+      }
+      else if (PREPARED_STATEMENT_CACHE_ADD_COUNT.equals(name))
+      {
+         return getPreparedStatementCacheAddCount();
+      }
+      else if (PREPARED_STATEMENT_CACHE_CURRENT_SIZE.equals(name))
+      {
+         return getPreparedStatementCacheCurrentSize();
+      }
+      else if (PREPARED_STATEMENT_CACHE_DELETE_COUNT.equals(name))
+      {
+         return getPreparedStatementCacheDeleteCount();
+      }
+      else if (PREPARED_STATEMENT_CACHE_HIT_COUNT.equals(name))
+      {
+         return getPreparedStatementCacheHitCount();
+      }
+      else if (PREPARED_STATEMENT_CACHE_MISS_COUNT.equals(name))
+      {
+         return getPreparedStatementCacheMissCount();
+      }
+
       return null;
    }
 
@@ -138,9 +207,162 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
    }
 
    /**
+    * Register prepared statement cache
+    * @param v The cache
+    */
+   public void registerPreparedStatementCache(PreparedStatementCache v)
+   {
+      psCaches.add(v);
+   }
+
+   /**
+    * Deregister prepared statement cache
+    * @param v The cache
+    */
+   public void deregisterPreparedStatementCache(PreparedStatementCache v)
+   {
+      psCaches.remove(v);
+   }
+
+   /**
+    * Get the access count for the prepated statement cache
+    * @return The value
+    */
+   public long getPreparedStatementCacheAccessCount()
+   {
+      if (isEnabled())
+         return preparedStatementCacheAccessCount.get();
+
+      return 0;
+   }
+
+   /**
+    * Delta the access count for the prepated statement cache
+    */
+   public void deltaPreparedStatementCacheAccessCount()
+   {
+      if (isEnabled())
+         preparedStatementCacheAccessCount.incrementAndGet();
+   }
+
+   /**
+    * Get the add count for the prepated statement cache
+    * @return The value
+    */
+   public long getPreparedStatementCacheAddCount()
+   {
+      if (isEnabled())
+         return preparedStatementCacheAddCount.get();
+
+      return 0;
+   }
+
+   /**
+    * Delta the add count for the prepated statement cache
+    */
+   public void deltaPreparedStatementCacheAddCount()
+   {
+      if (isEnabled())
+         preparedStatementCacheAddCount.incrementAndGet();
+   }
+
+   /**
+    * Get the current size for the prepated statement cache
+    * @return The value
+    */
+   public int getPreparedStatementCacheCurrentSize()
+   {
+      if (isEnabled())
+      {
+         Set<PreparedStatementCache> copy = new HashSet<PreparedStatementCache>(psCaches);
+         int size = 0;
+
+         for (PreparedStatementCache psc : copy)
+         {
+            size += psc.size();
+         }
+
+         return size;
+      }
+
+      return 0;
+   }
+
+   /**
+    * Get the delete count for the prepated statement cache
+    * @return The value
+    */
+   public long getPreparedStatementCacheDeleteCount()
+   {
+      if (isEnabled())
+         return preparedStatementCacheDeleteCount.get();
+
+      return 0;
+   }
+
+   /**
+    * Delta the delete count for the prepated statement cache
+    */
+   public void deltaPreparedStatementCacheDeleteCount()
+   {
+      if (isEnabled())
+         preparedStatementCacheDeleteCount.incrementAndGet();
+   }
+
+   /**
+    * Get the hit count for the prepated statement cache
+    * @return The value
+    */
+   public int getPreparedStatementCacheHitCount()
+   {
+      if (isEnabled())
+         return preparedStatementCacheHitCount.get();
+
+      return 0;
+   }
+
+   /**
+    * Delta the hit count for the prepated statement cache
+    */
+   public void deltaPreparedStatementCacheHitCount()
+   {
+      if (isEnabled())
+         preparedStatementCacheHitCount.incrementAndGet();
+   }
+
+   /**
+    * Get the miss count for the prepated statement cache
+    * @return The value
+    */
+   public int getPreparedStatementCacheMissCount()
+   {
+      if (isEnabled())
+         return preparedStatementCacheMissCount.get();
+
+      return 0;
+   }
+
+   /**
+    * Delta the miss count for the prepated statement cache
+    */
+   public void deltaPreparedStatementCacheMissCount()
+   {
+      if (isEnabled())
+         preparedStatementCacheMissCount.incrementAndGet();
+   }
+
+   /**
     * {@inheritDoc}
     */
    public synchronized void clear()
    {
+      if (isEnabled())
+      {
+         preparedStatementCacheAccessCount.set(0);
+         preparedStatementCacheAddCount.set(0);
+         preparedStatementCacheDeleteCount.set(0);
+         preparedStatementCacheHitCount.set(0);
+         preparedStatementCacheMissCount.set(0);
+      }
    }
 }
