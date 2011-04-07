@@ -371,7 +371,7 @@ public class XATestCase
       
       ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
-      ManagedConnectionFactory mcf = connector.getConnectionFactories().get(0).getMcf();
+      ManagedConnectionFactory mcf = connector.getConnectionFactories().get(0).getManagedConnectionFactory();
       
       XAManagedConnectionFactory xaMcf = (XAManagedConnectionFactory)mcf.getManagedConnectionFactory();
       assertEquals("new-rhq", xaMcf.getManagement());
@@ -500,7 +500,7 @@ public class XATestCase
       ManagementRepository manRepo = EmbeddedJcaDiscover.getInstance().getManagementRepository();
       Connector xaConnector = manRepo.getConnectors().get(0);
       AdminObject ao = xaConnector.getAdminObjects().get(0);
-      ManagedConnectionFactory mcf = xaConnector.getConnectionFactories().get(0).getMcf();
+      ManagedConnectionFactory mcf = xaConnector.getConnectionFactories().get(0).getManagedConnectionFactory();
       ResourceAdapter ra = xaConnector.getResourceAdapter();
 
       // ao-config 

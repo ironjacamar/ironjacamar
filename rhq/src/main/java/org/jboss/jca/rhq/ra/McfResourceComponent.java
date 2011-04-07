@@ -56,7 +56,7 @@ public class McfResourceComponent extends AbstractResourceComponent
    private ManagedConnectionFactory getManagedConnectionFactory()
    {
       CfResourceComponent parentRes = (CfResourceComponent)getResourceContext().getParentResourceComponent();
-      return parentRes.getConnectionFactory().getMcf();
+      return parentRes.getConnectionFactory().getManagedConnectionFactory();
    }
    
    /**

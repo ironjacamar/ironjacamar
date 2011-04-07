@@ -34,6 +34,9 @@ import java.lang.ref.WeakReference;
  */
 public class ConnectionFactory
 {
+   /** The connection factory */
+   private WeakReference<Object> connectionFactory;
+
    /** The managed connection factory */
    private ManagedConnectionFactory managedConnectionFactory;
 
@@ -48,13 +51,27 @@ public class ConnectionFactory
    
    /**
     * Constructor
+    * @param cf The connection factory
     * @param mcf The managed connection factory instance
     */
-   public ConnectionFactory(javax.resource.spi.ManagedConnectionFactory mcf)
+   public ConnectionFactory(Object cf, javax.resource.spi.ManagedConnectionFactory mcf)
    {
+      this.connectionFactory = new WeakReference<Object>(cf);
       this.managedConnectionFactory = new ManagedConnectionFactory(mcf);
       this.pool = null;
       this.poolConfiguration = null;
+   }
+
+   /**
+    * Get the connection factory instance.
+    * 
+    * Note, that the value may be <code>null</code> if the connection factory was
+    * undeployed and this object wasn't cleared up correctly.
+    * @return The instance
+    */
+   public Object getConnectionFactory()
+   {
+      return connectionFactory.get();
    }
 
    /**
@@ -64,7 +81,7 @@ public class ConnectionFactory
     * undeployed and this object wasn't cleared up correctly.
     * @return The instance
     */
-   public ManagedConnectionFactory getMcf()
+   public ManagedConnectionFactory getManagedConnectionFactory()
    {
       return managedConnectionFactory;
    }
@@ -117,7 +134,6 @@ public class ConnectionFactory
       this.poolConfiguration = new WeakReference<PoolConfiguration>(pc);
    }
 
-
    /**
     * Get the jndiName.
     * 
@@ -147,8 +163,10 @@ public class ConnectionFactory
    {
       StringBuilder sb = new StringBuilder();
 
-      sb.append("ManagedConnectionFactory@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("ConnectionFactory@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[jndiName=").append(getJndiName());
+      sb.append(" connectionFactory=").append(getConnectionFactory());
+      sb.append(" managedConnectionFactory=").append(getManagedConnectionFactory());
       sb.append(" pool=").append(getPool());
       sb.append(" poolconfiguration=").append(getPoolConfiguration());
       sb.append("]");

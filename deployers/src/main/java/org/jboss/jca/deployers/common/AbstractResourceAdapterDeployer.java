@@ -1144,13 +1144,13 @@ public abstract class AbstractResourceAdapterDeployer
                         if (activateDeployment)
                         {
                            org.jboss.jca.core.api.management.ConnectionFactory mgtCf =
-                              new org.jboss.jca.core.api.management.ConnectionFactory(mcf);
+                              new org.jboss.jca.core.api.management.ConnectionFactory(cf, mcf);
 
                            mgtCf.setPoolConfiguration(pc);
                            mgtCf.setPool(pool);
                            mgtCf.setJndiName(jndiName);
                            
-                           mgtCf.getMcf().getConfigProperties().
+                           mgtCf.getManagedConnectionFactory().getConfigProperties().
                               addAll(createManagementView(ra10.getConfigProperties()));
 
                            mgtConnector.getConnectionFactories().add(mgtCf);
@@ -1597,13 +1597,13 @@ public abstract class AbstractResourceAdapterDeployer
                                     if (activateDeployment)
                                     {
                                        org.jboss.jca.core.api.management.ConnectionFactory mgtCf =
-                                          new org.jboss.jca.core.api.management.ConnectionFactory(mcf);
+                                          new org.jboss.jca.core.api.management.ConnectionFactory(cf, mcf);
 
                                        mgtCf.setPoolConfiguration(pc);
                                        mgtCf.setPool(pool);
                                        mgtCf.setJndiName(jndiName);
                                        
-                                       mgtCf.getMcf().getConfigProperties().
+                                       mgtCf.getManagedConnectionFactory().getConfigProperties().
                                           addAll(createManagementView(cdMeta.getConfigProperties()));
 
                                        mgtConnector.getConnectionFactories().add(mgtCf);
