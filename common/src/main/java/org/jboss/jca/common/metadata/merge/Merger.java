@@ -206,12 +206,18 @@ public class Merger
                ConnectionDefinition newConDef = conDef;
                if (ij.getConnectionDefinitions() != null)
                {
-
-                  for (CommonConnDef commonConDef : ij.getConnectionDefinitions())
+                  if (ij.getConnectionDefinitions().size() == 1)
                   {
-                     if (connDefMatcher.match(conDef, commonConDef))
+                     newConDef = mergeConDef(ij.getConnectionDefinitions().get(0), newConDef);
+                  }
+                  else
+                  {
+                     for (CommonConnDef commonConDef : ij.getConnectionDefinitions())
                      {
-                        newConDef = mergeConDef(commonConDef, newConDef);
+                        if (connDefMatcher.match(conDef, commonConDef))
+                        {
+                           newConDef = mergeConDef(commonConDef, newConDef);
+                        }
                      }
                   }
                }
