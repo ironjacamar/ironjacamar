@@ -22,6 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin;
 import org.jboss.jca.adapters.jdbc.util.LRUCachePolicy;
 
 import java.sql.ResultSet;
@@ -41,6 +42,8 @@ import org.jboss.logging.Logger;
 public class PreparedStatementCache extends LRUCachePolicy
 {
    private final Logger log = Logger.getLogger(getClass());
+
+   private JdbcStatisticsPlugin statistics;
 
    /**
     * Ket class
@@ -170,11 +173,14 @@ public class PreparedStatementCache extends LRUCachePolicy
    /**
     * Constructor
     * @param max The max value
+    * @param stats The statistics plugin
     */
-   public PreparedStatementCache(int max)
+   public PreparedStatementCache(int max, JdbcStatisticsPlugin stats)
    {
       super(2, max);
       create();
+
+      this.statistics = stats;
    }
 
    /**
@@ -196,6 +202,7 @@ public class PreparedStatementCache extends LRUCachePolicy
       finally
       {
          super.ageOut(entry);
+         statistics.deltaPreparedStatementCacheDeleteCount();
       }
    }
 

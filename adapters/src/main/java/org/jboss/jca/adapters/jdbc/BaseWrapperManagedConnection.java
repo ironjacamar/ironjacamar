@@ -171,7 +171,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
 
       if (psCacheSize > 0)
       {
-         psCache = new PreparedStatementCache(psCacheSize);
+         psCache = new PreparedStatementCache(psCacheSize, mcf.getStatistics());
          mcf.getStatistics().registerPreparedStatementCache(psCache);
       }
 
