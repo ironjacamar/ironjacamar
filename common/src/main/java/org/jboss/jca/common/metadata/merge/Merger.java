@@ -206,7 +206,7 @@ public class Merger
                ConnectionDefinition newConDef = conDef;
                if (ij.getConnectionDefinitions() != null)
                {
-                  if (ij.getConnectionDefinitions().size() == 1)
+                  if (ij.getConnectionDefinitions().size() == 1 && ij.getConnectionDefinitions().get(0).isEnabled())
                   {
                      newConDef = mergeConDef(ij.getConnectionDefinitions().get(0), newConDef);
                   }

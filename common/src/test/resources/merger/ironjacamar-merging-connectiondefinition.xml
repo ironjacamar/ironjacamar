@@ -2,8 +2,8 @@
 <ironjacamar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../main/resources/schema/ironjacamar_1_0.xsd">
   <transaction-support>NoTransaction</transaction-support>
   <connection-definitions>
-    <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutjbossra.TestManagedConnectionFactory"
-      enabled="true" jndi-name="aSAPXcess" pool-name="aSAPXcess">
+    <connection-definition 
+      enabled="true" jndi-name="aSAPXcess" pool-name="aSAPXcess" class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutjbossra.TestManagedConnectionFactory">
       <config-property name="LogConfigFile">ASAP_SAP_1_0.xml</config-property>
       <config-property name="RootLogContext">ASAP_SAP_1_0</config-property>
       <config-property name="LogLevel">WARN</config-property>
