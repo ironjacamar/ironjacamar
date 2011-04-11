@@ -353,10 +353,13 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    {
       if (isEnabled())
       {
-         totalBlockingTime.addAndGet(delta);
+         if (delta > 0)
+         {
+            totalBlockingTime.addAndGet(delta);
 
-         if (delta > maxWaitTime.get())
-            maxWaitTime.set(delta);
+            if (delta > maxWaitTime.get())
+               maxWaitTime.set(delta);
+         }
       }
    }
 

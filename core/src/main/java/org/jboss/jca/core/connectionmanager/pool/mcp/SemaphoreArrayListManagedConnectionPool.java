@@ -609,8 +609,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          // Also avoids unnessary fill checking when all connections are checked out
          try
          {
+            long startWait = System.currentTimeMillis();
             if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
             {
+               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try
                {
                   if (shutdown.get())
