@@ -631,6 +631,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                            log.trace("Filling pool cl=" + cl);
 
                         cls.add(cl);
+                        statistics.setMaxUsedCount(maxSize - permits.availablePermits());
                      }
                   }
                   catch (ResourceException re)
