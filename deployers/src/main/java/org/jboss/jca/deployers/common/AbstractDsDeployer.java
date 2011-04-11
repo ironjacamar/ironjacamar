@@ -440,7 +440,7 @@ public abstract class AbstractDsDeployer
          Subject subject = null;
 
          if (subjectFactory != null)
-            subject = subjectFactory.createSubject();
+            subject = subjectFactory.createSubject(securityDomain);
 
          pp.prefill(subject, null, false);
       }
@@ -706,7 +706,7 @@ public abstract class AbstractDsDeployer
          Subject subject = null;
 
          if (subjectFactory != null)
-            subject = subjectFactory.createSubject();
+            subject = subjectFactory.createSubject(securityDomain);
 
          pp.prefill(subject, null, noTxSeparatePool.booleanValue());
       }
