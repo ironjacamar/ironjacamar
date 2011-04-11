@@ -44,6 +44,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
+   private static final String MAX_USED_COUNT = "MaxUsedCount";
    private static final String MAX_WAIT_TIME = "MaxWaitTime";
    private static final String TIMED_OUT = "TimedOut";
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
@@ -56,6 +57,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private AtomicLong totalBlockingTime;
    private AtomicInteger createdCount;
    private AtomicInteger destroyedCount;
+   private AtomicInteger maxUsedCount;
    private AtomicLong maxWaitTime;
    private AtomicInteger timedOut;
 
@@ -79,6 +81,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       n.add(DESTROYED_COUNT);
       t.put(DESTROYED_COUNT, int.class);
 
+      n.add(MAX_USED_COUNT);
+      t.put(MAX_USED_COUNT, int.class);
+
       n.add(MAX_WAIT_TIME);
       t.put(MAX_WAIT_TIME, long.class);
 
@@ -101,6 +106,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.totalBlockingTime = new AtomicLong(0);
       this.createdCount = new AtomicInteger(0);
       this.destroyedCount = new AtomicInteger(0);
+      this.maxUsedCount = new AtomicInteger(Integer.MIN_VALUE);
       this.maxWaitTime = new AtomicLong(Long.MIN_VALUE);
       this.timedOut = new AtomicInteger(0);
 
@@ -270,6 +276,31 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    {
       if (isEnabled())
          destroyedCount.incrementAndGet();
+   }
+
+   /**
+    * Get max used count
+    * @return The value
+    */
+   public int getMaxUsedCount()
+   {
+      if (isEnabled())
+         return maxUsedCount.get() != Integer.MIN_VALUE ? maxUsedCount.get() : 0;
+
+      return 0;
+   }
+
+   /**
+    * Set max used count
+    * @param v The value
+    */
+   public void setMaxUsedCount(int v)
+   {
+      if (isEnabled())
+      {
+         if (v > maxUsedCount.get())
+            maxUsedCount.set(v);
+      }
    }
 
    /**

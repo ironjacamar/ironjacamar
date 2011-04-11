@@ -113,14 +113,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** The checked out connections */
    private HashSet<ConnectionListener> checkedOut = new HashSet<ConnectionListener>();
 
-   /** Whether the pool has been started */
-   private AtomicBoolean started = new AtomicBoolean(false);
-
    /** Whether the pool has been shutdown */
    private AtomicBoolean shutdown = new AtomicBoolean(false);
-
-   /** the max connections ever checked out **/
-   private volatile int maxUsedConnections = 0;
 
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
@@ -274,9 +268,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   {
                      cl = cls.remove(clsSize - 1);
                      checkedOut.add(cl);
-                     int size = maxSize - permits.availablePermits();
-                     if (size > maxUsedConnections)
-                        maxUsedConnections = size;
+                     statistics.setMaxUsedCount(maxSize - permits.availablePermits());
                   }
                }
                if (cl != null)
@@ -347,15 +339,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                synchronized (cls)
                {
                   checkedOut.add(cl);
-                  int size = maxSize - permits.availablePermits();
-                  if (size > maxUsedConnections)
-                     maxUsedConnections = size;
-               }
-
-               if (!started.getAndSet(true))
-               {
-                  if (poolConfiguration.getMinSize() > 0)
-                     PoolFiller.fillPool(this);
+                  statistics.setMaxUsedCount(maxSize - permits.availablePermits());
                }
 
                if (trace)

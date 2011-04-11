@@ -45,6 +45,7 @@ public class SubPoolStatistics implements PoolStatistics
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
+   private static final String MAX_USED_COUNT = "MaxUsedCount";
    private static final String MAX_WAIT_TIME = "MaxWaitTime";
    private static final String TIMED_OUT = "TimedOut";
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
@@ -77,6 +78,9 @@ public class SubPoolStatistics implements PoolStatistics
 
       n.add(DESTROYED_COUNT);
       t.put(DESTROYED_COUNT, int.class);
+
+      n.add(MAX_USED_COUNT);
+      t.put(MAX_USED_COUNT, int.class);
 
       n.add(MAX_WAIT_TIME);
       t.put(MAX_WAIT_TIME, long.class);
@@ -170,6 +174,10 @@ public class SubPoolStatistics implements PoolStatistics
       else if (DESTROYED_COUNT.equals(name))
       {
          return getDestroyedCount();
+      }
+      else if (MAX_USED_COUNT.equals(name))
+      {
+         return getMaxUsedCount();
       }
       else if (MAX_WAIT_TIME.equals(name))
       {
@@ -273,6 +281,29 @@ public class SubPoolStatistics implements PoolStatistics
          }
 
          return result;
+      }
+
+      return 0;
+   }
+
+   /**
+    * Get max used count
+    * @return The value
+    */
+   public int getMaxUsedCount()
+   {
+      if (isEnabled())
+      {
+         int result = Integer.MIN_VALUE;
+
+         for (SubPoolContext spc : subPools.values())
+         {
+            int v = spc.getSubPool().getStatistics().getMaxUsedCount();
+            if (v > result)
+               result = v;
+         }
+
+         return result != Integer.MIN_VALUE ? result : 0;
       }
 
       return 0;

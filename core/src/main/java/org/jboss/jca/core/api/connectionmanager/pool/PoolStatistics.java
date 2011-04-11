@@ -55,6 +55,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public int getDestroyedCount();
 
    /**
+    * Get max used count
+    * @return The value
+    */
+   public int getMaxUsedCount();
+
+   /**
     * Get max wait time (milliseconds)
     * @return The value
     */
