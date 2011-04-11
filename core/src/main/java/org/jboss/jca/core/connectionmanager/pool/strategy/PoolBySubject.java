@@ -23,7 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
-import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
+import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -36,7 +36,7 @@ import javax.security.auth.Subject;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class PoolBySubject extends AbstractPool
+public class PoolBySubject extends AbstractPrefillPool
 {
    
    /**

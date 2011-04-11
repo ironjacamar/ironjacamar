@@ -634,7 +634,7 @@
             <![CDATA[[
               Whether to attempt to prefill the connection pool. Empty element denotes 
               a true value. e.g. <prefill>true</prefill>.
-              Default is true
+              Default is false
              ]]>
           </xs:documentation>
         </xs:annotation>

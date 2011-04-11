@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -33,7 +34,7 @@ import javax.security.auth.Subject;
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public abstract class AbstractPrefillPool extends AbstractPool implements PreFillPoolSupport
+public abstract class AbstractPrefillPool extends AbstractPool implements PrefillPool
 {
    /** Should prefill be performed */
    private boolean shouldPrefill = false;
@@ -55,25 +56,9 @@ public abstract class AbstractPrefillPool extends AbstractPool implements PreFil
    /**
     * {@inheritDoc}
     */   
-   public void prefill()
-   {      
-      prefill(null, null, false);
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public void prefill(boolean noTxSeperatePool)
-   {
-      prefill(null, null, noTxSeperatePool);      
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
    public void prefill(Subject subject, ConnectionRequestInfo cri, boolean noTxnSeperatePool)
    {
-      if (shouldPrefill())
+      if (shouldPrefill)
       {
          if (log.isDebugEnabled())
             log.debug("Attempting to prefill pool: " + getName());
@@ -92,13 +77,5 @@ public abstract class AbstractPrefillPool extends AbstractPool implements PreFil
             log.error("Unable to prefill pool: " + getName(), t);
          }
       }
-   }
-
-   /**
-    * {@inheritDoc}
-    */   
-   public boolean shouldPrefill()
-   {
-      return shouldPrefill;
    }
 }

@@ -57,7 +57,6 @@ public class MockManagedConnectionFactory implements ManagedConnectionFactory
 
    public Object createConnectionFactory() throws ResourceException
    {
-      
       return null;
    }
 
@@ -68,7 +67,6 @@ public class MockManagedConnectionFactory implements ManagedConnectionFactory
    public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cxRequestInfo) 
       throws ResourceException
    {
-      
       return new MockManagedConnection();
    }
 
@@ -78,7 +76,6 @@ public class MockManagedConnectionFactory implements ManagedConnectionFactory
 
    public PrintWriter getLogWriter() throws ResourceException
    {
-      
       return null;
    }
 
@@ -87,9 +84,14 @@ public class MockManagedConnectionFactory implements ManagedConnectionFactory
     */
    @SuppressWarnings("unchecked")
    public ManagedConnection matchManagedConnections(Set connectionSet, Subject subject, 
-         ConnectionRequestInfo cxRequestInfo) throws ResourceException
+                                                    ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      
+      for (Object c : connectionSet)
+      {
+         if (c instanceof MockManagedConnection)
+            return (ManagedConnection)c;
+      }
+
       return null;
    }
 
@@ -99,8 +101,5 @@ public class MockManagedConnectionFactory implements ManagedConnectionFactory
 
    public void setLogWriter(PrintWriter out) throws ResourceException
    {
-      
-      
    }
-
 }

@@ -316,7 +316,7 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry><code>prefill</code></entry>
                <entry>
                  Whether to attempt to prefill the connection pool. 
-                 Default is true
+                 Default is false
                </entry>
              </row>
              <row>
@@ -362,7 +362,7 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry><code>prefill</code></entry>
                <entry>
                  Whether to attempt to prefill the connection pool. 
-                 Default is true
+                 Default is false
                </entry>
              </row>
              <row>
@@ -932,7 +932,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                 <entry><code>prefill</code></entry>
                 <entry>
                   Whether to attempt to prefill the connection pool. Empty element denotes 
-                  a true value. Default is true
+                  a true value. Default is false
                 </entry>
               </row>
               <row>
@@ -978,7 +978,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                 <entry><code>prefill</code></entry>
                 <entry>
                   Whether to attempt to prefill the connection pool. Empty element denotes 
-                  a true value. Default is true
+                  a true value. Default is false
                 </entry>
               </row>
               <row>

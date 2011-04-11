@@ -373,7 +373,7 @@
           <xs:documentation>
             <![CDATA[[
               Whether to attempt to prefill the connection pool. 
-              Default is true. e.g. <prefill>true</prefill>.
+              Default is false. e.g. <prefill>false</prefill>.
              ]]>
           </xs:documentation>
         </xs:annotation>

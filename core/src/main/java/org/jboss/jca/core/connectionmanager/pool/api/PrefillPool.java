@@ -19,33 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.connectionmanager.pool;
+package org.jboss.jca.core.connectionmanager.pool.api;
 
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.security.auth.Subject;
 
 /**
- * PreFillPoolSupport allows for prefilling connection pools.
+ * Prefill pool allows for prefilling connection pools.
  * 
  * @author <a href="weston.price@jboss.com">Weston Price</a>
- * @version $Revision: 71554 $
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface PreFillPoolSupport
+public interface PrefillPool extends Pool
 {
-   
-   /**
-    * Prefill the connection pool 
-    * 
-    */
-   public void prefill();
-   
-   /**
-    * Prefill the connection pool
-    * 
-    * @param noTxSeperatePool whether or not we are seperating non transaction and transaction pools
-    */
-   public void prefill(boolean noTxSeperatePool);
-   
    /**
     * Prefill the connection pool
     * 
@@ -55,11 +41,4 @@ public interface PreFillPoolSupport
     *   
     */
    public void prefill(Subject subject, ConnectionRequestInfo cri, boolean noTxnSeperatePool);
-
-   /**
-    * Get the flag indicating whether or not to attempt to prefill this pool.
-    * 
-    * @return true or false depending on whether or not to prefill this pool.
-    */
-   public boolean shouldPrefill();
 }

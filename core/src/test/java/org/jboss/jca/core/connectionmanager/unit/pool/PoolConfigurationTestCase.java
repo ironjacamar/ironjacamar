@@ -110,9 +110,9 @@ public class PoolConfigurationTestCase
    public void testIsPrefill()
    {
       PoolConfiguration params = new PoolConfiguration();
-      assertTrue("Prefill must be true", params.isPrefill());
-      params.setPrefill(false);
       assertFalse("Prefill must be false", params.isPrefill());
+      params.setPrefill(true);
+      assertTrue("Prefill must be true", params.isPrefill());
    }
 
    /**

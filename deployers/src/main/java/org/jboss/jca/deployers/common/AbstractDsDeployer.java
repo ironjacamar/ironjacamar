@@ -44,6 +44,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
@@ -62,6 +63,7 @@ import java.util.Map.Entry;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
@@ -430,6 +432,19 @@ public abstract class AbstractDsDeployer
          }
       }
 
+      // Prefill
+      if (pool instanceof PrefillPool)
+      {
+         PrefillPool pp = (PrefillPool)pool;
+         SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
+         Subject subject = null;
+
+         if (subjectFactory != null)
+            subject = subjectFactory.createSubject();
+
+         pp.prefill(subject, null, false);
+      }
+
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }
@@ -681,6 +696,19 @@ public abstract class AbstractDsDeployer
          getTransactionIntegration().getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
 
          recovery = recoveryImpl;
+      }
+
+      // Prefill
+      if (pool instanceof PrefillPool)
+      {
+         PrefillPool pp = (PrefillPool)pool;
+         SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
+         Subject subject = null;
+
+         if (subjectFactory != null)
+            subject = subjectFactory.createSubject();
+
+         pp.prefill(subject, null, noTxSeparatePool.booleanValue());
       }
 
       // ConnectionFactory

@@ -22,6 +22,8 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
+import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
@@ -98,65 +100,6 @@ public class OnePoolTestCase
 
    /**
    *
-   * prefillWithSubjectArgumentShouldPopulateSubPool
-   *  @throws Exception in case of unexpected errors
-   */
-   @Test
-   public void prefillWithSubjectArgumentShouldPopulateSubPool() throws Exception
-   {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
-      //when (note: argument is not important, set to null just for convenience)
-      ((OnePool) pool).prefill(null);
-      //then
-      assertThat(pool.getSubPools().get(pool.getKey(null, null, false)) == null, is(false));
-   }
-
-   /**
-   *
-   * prefillWithAllArgumentsShouldPopulateSubPoolIfPoolConfigHasPrefillSetToTrue
-   *  @throws Exception in case of unexpected errors
-   */
-   @Test
-   public void prefillWithAllArgumentsShouldPopulateSubPoolIfPoolConfigHasPrefillSetToTrue() throws Exception
-   {
-      //given
-      PoolConfiguration config = new PoolConfiguration();
-      //prefill=true is the default
-      ManagedConnectionFactory mcf = mock(ManagedConnectionFactory.class);
-      AbstractPrefillPool pool = new OnePool(mcf, config, false);
-      Subject subject = new Subject();
-      ConnectionRequestInfo cri = mock(ConnectionRequestInfo.class);
-      boolean noTxnSeperatePool = true;
-      //when
-      pool.prefill(subject, cri, noTxnSeperatePool);
-      //then
-      assertThat(pool.getSubPools().get(pool.getKey(subject, cri, noTxnSeperatePool)) == null, is(false));
-   }
-
-   /**
-   *
-   * prefillWithAllArgumentsShouldPopulateSubPool
-   *  @throws Exception in case of unexpected errors
-   */
-   @Test
-   public void prefillWithAllArgumentsShouldDoNothingIfPoolConfigHasPrefillSetToFalse() throws Exception
-   {
-      //given
-      PoolConfiguration config = new PoolConfiguration();
-      config.setPrefill(false);
-      AbstractPrefillPool pool = new OnePool(mock(ManagedConnectionFactory.class), config, false);
-      Subject subject = new Subject();
-      ConnectionRequestInfo cri = mock(ConnectionRequestInfo.class);
-      boolean noTxnSeperatePool = true;
-      //when
-      pool.prefill(subject, cri, noTxnSeperatePool);
-      //then
-      assertThat(pool.getSubPools().get(pool.getKey(subject, cri, noTxnSeperatePool)), is((SubPoolContext) null));
-   }
-
-   /**
-   *
    * emptySubPoolShouldDoNothing
    *  @throws Exception in case of unexpected errors
    */
@@ -166,11 +109,9 @@ public class OnePoolTestCase
       //given
       AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
       //when (note: argument is not important, set to null just for convenience)
-      ((OnePool) pool).prefill(null);
       ((OnePool) pool).emptySubPool(null);
       //then
-      assertThat(pool.getSubPools().get(pool.getKey(null, null, false)) == null, is(false));
-
+      assertThat(pool.getSubPools().get(pool.getKey(null, null, false)) == null, is(true));
    }
 
    /**
@@ -184,7 +125,6 @@ public class OnePoolTestCase
       //given
       AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
       //when (note: argument is not important, set to null just for convenience)
-      ((OnePool) pool).prefill(null);
       ((OnePool) pool).flush();
       //then
       assertThat(pool.getSubPools().size(), is(0));
@@ -202,7 +142,6 @@ public class OnePoolTestCase
       //given
       AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
       //when (note: argument is not important, set to null just for convenience)
-      ((OnePool) pool).prefill(null);
       ((OnePool) pool).shutdown();
       //then
       assertThat(pool.getSubPools().size(), is(0));

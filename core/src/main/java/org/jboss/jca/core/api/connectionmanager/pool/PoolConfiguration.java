@@ -74,7 +74,7 @@ public class PoolConfiguration
       idleTimeout = new AtomicLong(1000 * 60 * 30);
       backgroundValidation = new AtomicBoolean(false);
       backgroundValidationMinutes = new AtomicInteger(0);
-      prefill = new AtomicBoolean(true);
+      prefill = new AtomicBoolean(false);
       strictMin = new AtomicBoolean(false);
       useFastFail = new AtomicBoolean(false);
    }

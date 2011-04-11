@@ -27,6 +27,7 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
+import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
@@ -138,6 +139,24 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                           ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, SubPoolContext spc,
                           Logger log)
    {
+      if (mcf == null)
+         throw new IllegalArgumentException("ManagedConnectionFactory is null");
+
+      if (clf == null)
+         throw new IllegalArgumentException("ConnectionListenerFactory is null");
+
+      if (pc == null)
+         throw new IllegalArgumentException("PoolConfiguration is null");
+
+      if (p == null)
+         throw new IllegalArgumentException("Pool is null");
+
+      if (spc == null)
+         throw new IllegalArgumentException("SubPoolContext is null");
+
+      if (log == null)
+         throw new IllegalArgumentException("Logger is null");
+
       this.mcf = mcf;
       this.clf = clf;
       this.defaultSubject = subject;
@@ -152,7 +171,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.permits = new Semaphore(this.maxSize, true);
       this.statistics = new ManagedConnectionPoolStatisticsImpl();
 
-      if (pc.isPrefill())
+      // Schedule managed connection pool for prefill
+      if (pc.isPrefill() && p instanceof AbstractPrefillPool)
       {
          PoolFiller.fillPool(this);
       }

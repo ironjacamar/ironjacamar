@@ -48,8 +48,10 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
@@ -89,6 +91,7 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
@@ -1154,6 +1157,19 @@ public abstract class AbstractResourceAdapterDeployer
                               addAll(createManagementView(ra10.getConfigProperties()));
 
                            mgtConnector.getConnectionFactories().add(mgtCf);
+
+                           // Prefill
+                           if (pool instanceof PrefillPool)
+                           {
+                              PrefillPool pp = (PrefillPool)pool;
+                              SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
+                              Subject subject = null;
+
+                              if (subjectFactory != null)
+                                 subject = subjectFactory.createSubject();
+
+                              pp.prefill(subject, null, noTxSeparatePool.booleanValue());
+                           }
                         }
                      }
                   }
@@ -1607,6 +1623,19 @@ public abstract class AbstractResourceAdapterDeployer
                                           addAll(createManagementView(cdMeta.getConfigProperties()));
 
                                        mgtConnector.getConnectionFactories().add(mgtCf);
+
+                                       // Prefill
+                                       if (pool instanceof PrefillPool)
+                                       {
+                                          PrefillPool pp = (PrefillPool)pool;
+                                          SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
+                                          Subject subject = null;
+
+                                          if (subjectFactory != null)
+                                             subject = subjectFactory.createSubject();
+
+                                          pp.prefill(subject, null, noTxSeparatePool.booleanValue());
+                                       }
                                     }
                                  }
                               }

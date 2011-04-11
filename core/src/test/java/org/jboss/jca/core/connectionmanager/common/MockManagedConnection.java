@@ -22,6 +22,8 @@
 package org.jboss.jca.core.connectionmanager.common;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEventListener;
@@ -41,15 +43,15 @@ import javax.transaction.xa.XAResource;
  */
 public class MockManagedConnection implements ManagedConnection
 {
-
    private int cleanUpCalled = 0;
+   private Set<ConnectionEventListener> listeners;
 
    /**
     * Creates a new instance.
     */
    public MockManagedConnection()
    {
-
+      this.listeners = new HashSet<ConnectionEventListener>();
    }
 
    /**
@@ -57,8 +59,7 @@ public class MockManagedConnection implements ManagedConnection
     */
    public void addConnectionEventListener(ConnectionEventListener listener)
    {
-
-
+      listeners.add(listener);
    }
 
    /**
@@ -67,8 +68,6 @@ public class MockManagedConnection implements ManagedConnection
 
    public void associateConnection(Object connection) throws ResourceException
    {
-
-
    }
 
    /**
@@ -78,7 +77,6 @@ public class MockManagedConnection implements ManagedConnection
    public void cleanup() throws ResourceException
    {
       cleanUpCalled++;
-
    }
 
    /**
@@ -87,8 +85,6 @@ public class MockManagedConnection implements ManagedConnection
 
    public void destroy() throws ResourceException
    {
-
-
    }
 
    /**
@@ -106,7 +102,6 @@ public class MockManagedConnection implements ManagedConnection
 
    public LocalTransaction getLocalTransaction() throws ResourceException
    {
-
       return new MockLocalTransaction();
    }
 
@@ -116,7 +111,6 @@ public class MockManagedConnection implements ManagedConnection
 
    public PrintWriter getLogWriter() throws ResourceException
    {
-
       return null;
    }
 
@@ -126,7 +120,6 @@ public class MockManagedConnection implements ManagedConnection
 
    public ManagedConnectionMetaData getMetaData() throws ResourceException
    {
-
       return null;
    }
 
@@ -136,7 +129,6 @@ public class MockManagedConnection implements ManagedConnection
 
    public XAResource getXAResource() throws ResourceException
    {
-
       return new MockXAResource();
    }
 
@@ -146,8 +138,7 @@ public class MockManagedConnection implements ManagedConnection
 
    public void removeConnectionEventListener(ConnectionEventListener listener)
    {
-
-
+      listeners.remove(listener);
    }
 
    /**
@@ -156,8 +147,6 @@ public class MockManagedConnection implements ManagedConnection
 
    public void setLogWriter(PrintWriter out) throws ResourceException
    {
-
-
    }
 
    /**
@@ -169,5 +158,4 @@ public class MockManagedConnection implements ManagedConnection
    {
       return cleanUpCalled;
    }
-
 }

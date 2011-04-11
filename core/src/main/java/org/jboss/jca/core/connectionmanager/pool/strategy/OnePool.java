@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -26,7 +26,6 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
-import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
@@ -64,27 +63,6 @@ public class OnePool extends AbstractPrefillPool
       else
       {
          return Boolean.FALSE;
-      }
-   }
-
-   /**
-    * Prefill.
-    * 
-    * @param sub subject instance
-    */
-   public void prefill(Subject sub)
-   {
-      if (log.isDebugEnabled())
-         log.debug("Attempting to prefill pool" + getClass());
-
-      try
-      {
-         // WMP is this really the best way to do this?
-         getSubPool(getKey(null, null, false), null, null);
-      }
-      catch (ResourceException e)
-      {
-         log.error("Prefill failed for pool instance " + getClass(), e);
       }
    }
 
