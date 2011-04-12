@@ -42,24 +42,29 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 {
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
+   private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
+   private static final String MAX_CREATION_TIME = "MaxCreationTime";
    private static final String MAX_USED_COUNT = "MaxUsedCount";
    private static final String MAX_WAIT_TIME = "MaxWaitTime";
    private static final String TIMED_OUT = "TimedOut";
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
+   private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
 
    private Set<String> names;
    private Map<String, Class> types;
    private AtomicBoolean enabled;
    private Map<Locale, ResourceBundle> rbs;
 
-   private AtomicLong totalBlockingTime;
    private AtomicInteger createdCount;
    private AtomicInteger destroyedCount;
    private AtomicInteger maxUsedCount;
+   private AtomicLong maxCreationTime;
    private AtomicLong maxWaitTime;
    private AtomicInteger timedOut;
+   private AtomicLong totalBlockingTime;
+   private AtomicLong totalCreationTime;
 
    /**
     * Constructor
@@ -75,11 +80,17 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       n.add(AVERAGE_BLOCKING_TIME);
       t.put(AVERAGE_BLOCKING_TIME, long.class);
 
+      n.add(AVERAGE_CREATION_TIME);
+      t.put(AVERAGE_CREATION_TIME, long.class);
+
       n.add(CREATED_COUNT);
       t.put(CREATED_COUNT, int.class);
 
       n.add(DESTROYED_COUNT);
       t.put(DESTROYED_COUNT, int.class);
+
+      n.add(MAX_CREATION_TIME);
+      t.put(MAX_CREATION_TIME, long.class);
 
       n.add(MAX_USED_COUNT);
       t.put(MAX_USED_COUNT, int.class);
@@ -93,6 +104,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       n.add(TOTAL_BLOCKING_TIME);
       t.put(TOTAL_BLOCKING_TIME, long.class);
 
+      n.add(TOTAL_CREATION_TIME);
+      t.put(TOTAL_CREATION_TIME, long.class);
+
       this.names = Collections.unmodifiableSet(n);
       this.types = Collections.unmodifiableMap(t);
       this.enabled = new AtomicBoolean(true);
@@ -103,12 +117,14 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.rbs = new HashMap<Locale, ResourceBundle>(1);
       this.rbs.put(Locale.US, defaultResourceBundle);
 
-      this.totalBlockingTime = new AtomicLong(0);
       this.createdCount = new AtomicInteger(0);
       this.destroyedCount = new AtomicInteger(0);
+      this.maxCreationTime = new AtomicLong(Long.MIN_VALUE);
       this.maxUsedCount = new AtomicInteger(Integer.MIN_VALUE);
       this.maxWaitTime = new AtomicLong(Long.MIN_VALUE);
       this.timedOut = new AtomicInteger(0);
+      this.totalBlockingTime = new AtomicLong(0);
+      this.totalCreationTime = new AtomicLong(0);
 
       clear();
    }
@@ -176,6 +192,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       {
          return getAverageBlockingTime();
       }
+      else if (AVERAGE_CREATION_TIME.equals(name))
+      {
+         return getAverageCreationTime();
+      }
       else if (CREATED_COUNT.equals(name))
       {
          return getCreatedCount();
@@ -183,6 +203,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       else if (DESTROYED_COUNT.equals(name))
       {
          return getDestroyedCount();
+      }
+      else if (MAX_CREATION_TIME.equals(name))
+      {
+         return getMaxCreationTime();
       }
       else if (MAX_WAIT_TIME.equals(name))
       {
@@ -195,6 +219,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       else if (TOTAL_BLOCKING_TIME.equals(name))
       {
          return getTotalBlockingTime();
+      }
+      else if (TOTAL_CREATION_TIME.equals(name))
+      {
+         return getTotalCreationTime();
       }
 
       return null;
@@ -234,6 +262,17 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    {
       if (isEnabled())
          return createdCount.get() != 0 ? totalBlockingTime.get() / createdCount.get() : 0;
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getAverageCreationTime()
+   {
+      if (isEnabled())
+         return createdCount.get() != 0 ? totalCreationTime.get() / createdCount.get() : 0;
 
       return 0;
    }
@@ -306,6 +345,17 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    /**
     * {@inheritDoc}
     */
+   public long getMaxCreationTime()
+   {
+      if (isEnabled())
+         return maxCreationTime.get() != Long.MIN_VALUE ? maxCreationTime.get() : 0;
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long getMaxWaitTime()
    {
       if (isEnabled())
@@ -359,6 +409,35 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
             if (delta > maxWaitTime.get())
                maxWaitTime.set(delta);
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getTotalCreationTime()
+   {
+      if (isEnabled())
+         return totalCreationTime.get();
+
+      return 0;
+   }
+
+   /**
+    * Add delta to total creation time
+    * @param delta The value
+    */
+   public void deltaTotalCreationTime(long delta)
+   {
+      if (isEnabled())
+      {
+         if (delta > 0)
+         {
+            totalCreationTime.addAndGet(delta);
+
+            if (delta > maxCreationTime.get())
+               maxCreationTime.set(delta);
          }
       }
    }

@@ -694,8 +694,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    private ConnectionListener createConnectionEventListener(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
+      long start = System.currentTimeMillis();
+
       ManagedConnection mc = mcf.createManagedConnection(subject, cri);
 
+      statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
       statistics.deltaCreatedCount();
       try
       {
