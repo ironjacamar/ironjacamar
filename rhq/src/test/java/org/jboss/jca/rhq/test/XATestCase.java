@@ -234,7 +234,7 @@ public class XATestCase
       assertEquals("0", mcfConfig.getSimpleValue("background-validation-minutes", null));
       assertEquals("30000", mcfConfig.getSimpleValue("blocking-timeout-millis", null));
       assertEquals("30", mcfConfig.getSimpleValue("idle-timeout-minutes", null));
-      assertEquals("true", mcfConfig.getSimpleValue("prefill", null));
+      assertEquals("false", mcfConfig.getSimpleValue("prefill", null));
       assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
       assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
    }

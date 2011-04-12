@@ -27,9 +27,9 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
-import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 
@@ -166,7 +166,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.statistics = new ManagedConnectionPoolStatisticsImpl();
 
       // Schedule managed connection pool for prefill
-      if (pc.isPrefill() && p instanceof AbstractPrefillPool)
+      if (pc.isPrefill() && p instanceof PrefillPool)
       {
          PoolFiller.fillPool(this);
       }
@@ -521,8 +521,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
 
          // We destroyed something, check the minimum.
-         if (!shutdown.get() && poolConfiguration.getMinSize() > 0)
+         if (!shutdown.get() &&
+             poolConfiguration.getMinSize() > 0 &&
+             poolConfiguration.isPrefill() &&
+             pool instanceof PrefillPool)
+         {
             PoolFiller.fillPool(this);
+         }
       }
    }
 
@@ -578,8 +583,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
 
          // We destroyed something, check the minimum.
-         if (!shutdown.get() && poolConfiguration.getMinSize() > 0)
+         if (!shutdown.get() &&
+             poolConfiguration.getMinSize() > 0 &&
+             poolConfiguration.isPrefill() &&
+             pool instanceof PrefillPool)
+         {
             PoolFiller.fillPool(this);
+         }
 
          // Empty sub-pool
          if (pool != null)
@@ -603,6 +613,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public void fillToMin()
    {
+      if (poolConfiguration.getMinSize() <= 0)
+         return;
+
+      if (!poolConfiguration.isPrefill())
+         return;
+
+      if (!(pool instanceof PrefillPool))
+         return;
+
       while (true)
       {
          // Get a permit - avoids a race when the pool is nearly full
@@ -814,7 +833,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          {
             permits.release();
 
-            if (anyDestroyed && !shutdown.get() && poolConfiguration.getMinSize() > 0)
+            if (anyDestroyed &&
+                !shutdown.get() &&
+                poolConfiguration.getMinSize() > 0 &&
+                poolConfiguration.isPrefill() &&
+                pool instanceof PrefillPool)
             {
                PoolFiller.fillPool(this);
             }
