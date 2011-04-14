@@ -655,25 +655,11 @@ public abstract class AbstractResourceAdapterDeployer
                                  {
                                     if (aoRaXml != null)
                                     {
-                                       jndiName = aoRaXml.getJndiName();
-
-                                       if (aoRaXml.isUseJavaContext() != null &&
-                                           aoRaXml.isUseJavaContext().booleanValue() &&
-                                           !jndiName.startsWith("java:/"))
-                                       {
-                                          jndiName = "java:/" + jndiName;
-                                       }
+                                       jndiName = buildJndiName(aoRaXml.getJndiName(), aoRaXml.isUseJavaContext());
                                     }
                                     else
                                     {
-                                       jndiName = ijAO.getJndiName();
-
-                                       if (ijAO.isUseJavaContext() != null &&
-                                           ijAO.isUseJavaContext().booleanValue() &&
-                                           !jndiName.startsWith("java:/"))
-                                       {
-                                          jndiName = "java:/" + jndiName;
-                                       }
+                                       jndiName = buildJndiName(ijAO.getJndiName(), ijAO.isUseJavaContext());
                                     }
 
                                     bindAdminObject(url, deploymentName, ao, jndiName);
@@ -1084,25 +1070,11 @@ public abstract class AbstractResourceAdapterDeployer
                         {
                            if (cdRaXml != null)
                            {
-                              jndiName = cdRaXml.getJndiName();
-
-                              if (cdRaXml.isUseJavaContext() != null &&
-                                  cdRaXml.isUseJavaContext().booleanValue() &&
-                                  !jndiName.startsWith("java:/"))
-                              {
-                                 jndiName = "java:/" + jndiName;
-                              }
+                              jndiName = buildJndiName(cdRaXml.getJndiName(), cdRaXml.isUseJavaContext());
                            }
                            else
                            {
-                              jndiName = ijCD.getJndiName();
-
-                              if (ijCD.isUseJavaContext() != null &&
-                                  ijCD.isUseJavaContext().booleanValue() &&
-                                  !jndiName.startsWith("java:/"))
-                              {
-                                 jndiName = "java:/" + jndiName;
-                              }
+                              jndiName = buildJndiName(ijCD.getJndiName(), ijCD.isUseJavaContext());
                            }
 
                            bindConnectionFactory(url, deploymentName, cf, jndiName);
@@ -1546,25 +1518,11 @@ public abstract class AbstractResourceAdapterDeployer
                                     {
                                        if (cdRaXml != null)
                                        {
-                                          jndiName = cdRaXml.getJndiName();
-
-                                          if (cdRaXml.isUseJavaContext() != null &&
-                                              cdRaXml.isUseJavaContext().booleanValue() &&
-                                              !jndiName.startsWith("java:/"))
-                                          {
-                                             jndiName = "java:/" + jndiName;
-                                          }
+                                          jndiName = buildJndiName(cdRaXml.getJndiName(), cdRaXml.isUseJavaContext());
                                        }
                                        else
                                        {
-                                          jndiName = ijCD.getJndiName();
-
-                                          if (ijCD.isUseJavaContext() != null &&
-                                              ijCD.isUseJavaContext().booleanValue() &&
-                                              !jndiName.startsWith("java:/"))
-                                          {
-                                             jndiName = "java:/" + jndiName;
-                                          }
+                                          jndiName = buildJndiName(ijCD.getJndiName(), ijCD.isUseJavaContext());
                                        }
 
                                        bindConnectionFactory(url, deploymentName, cf, jndiName);
@@ -1779,6 +1737,29 @@ public abstract class AbstractResourceAdapterDeployer
             throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
          }
       }
+   }
+
+   /**
+    * Build the jndi name
+    * @param jndiName The jndi name
+    * @param javaContext The java context
+    * @return The value
+    */
+   protected String buildJndiName(String jndiName, Boolean javaContext)
+   {
+      if (javaContext != null)
+      {
+         if (javaContext.booleanValue() && !jndiName.startsWith("java:/"))
+         {
+            jndiName = "java:/" + jndiName;
+         }
+         else if (!javaContext.booleanValue() && jndiName.startsWith("java:/"))
+         {
+            jndiName = jndiName.substring(7);
+         }
+      }
+
+      return jndiName;
    }
 
    /**

@@ -181,6 +181,25 @@ public abstract class AbstractDsDeployer
       return ccm;
    }
 
+   /** Get the xAResourceRecoveryRegistry.
+    *
+    * @return the xAResourceRecoveryRegistry.
+    */
+   public XAResourceRecoveryRegistry getXAResourceRecoveryRegistry()
+   {
+      return xaResourceRecoveryRegistry;
+   }
+
+   /**
+    * Set the xAResourceRecoveryRegistry.
+    *
+    * @param xAResourceRecoveryRegistry The xAResourceRecoveryRegistry to set.
+    */
+   public void setXAResourceRecoveryRegistry(XAResourceRecoveryRegistry xAResourceRecoveryRegistry)
+   {
+      xaResourceRecoveryRegistry = xAResourceRecoveryRegistry;
+   }
+
    /**
    *
    * create objects and inject value for this depployment. it is a general method returning a {@link CommonDeployment}
@@ -224,13 +243,7 @@ public abstract class AbstractDsDeployer
                   {
                      try
                      {
-                        String jndiName = dataSource.getJndiName();
-
-                        if (dataSource.isUseJavaContext() != null && dataSource.isUseJavaContext().booleanValue() &&
-                            !jndiName.startsWith("java:/"))
-                        {
-                           jndiName = "java:/" + jndiName;
-                        }
+                        String jndiName = buildJndiName(dataSource.getJndiName(), dataSource.isUseJavaContext());
 
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(false);
@@ -321,6 +334,29 @@ public abstract class AbstractDsDeployer
       {
          throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
       }
+   }
+
+   /**
+    * Build the jndi name
+    * @param jndiName The jndi name
+    * @param javaContext The java context
+    * @return The value
+    */
+   protected String buildJndiName(String jndiName, Boolean javaContext)
+   {
+      if (javaContext != null)
+      {
+         if (javaContext.booleanValue() && !jndiName.startsWith("java:/"))
+         {
+            jndiName = "java:/" + jndiName;
+         }
+         else if (!javaContext.booleanValue() && jndiName.startsWith("java:/"))
+         {
+            jndiName = jndiName.substring(7);
+         }
+      }
+
+      return jndiName;
    }
 
    /**
@@ -869,23 +905,4 @@ public abstract class AbstractDsDeployer
     * @exception DeployException Thrown if the security domain can't be resolved
     */
    protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
-
-   /** Get the xAResourceRecoveryRegistry.
-    *
-    * @return the xAResourceRecoveryRegistry.
-    */
-   public final XAResourceRecoveryRegistry getXAResourceRecoveryRegistry()
-   {
-      return xaResourceRecoveryRegistry;
-   }
-
-   /**
-    * Set the xAResourceRecoveryRegistry.
-    *
-    * @param xAResourceRecoveryRegistry The xAResourceRecoveryRegistry to set.
-    */
-   public final void setXAResourceRecoveryRegistry(XAResourceRecoveryRegistry xAResourceRecoveryRegistry)
-   {
-      xaResourceRecoveryRegistry = xAResourceRecoveryRegistry;
-   }
 }
