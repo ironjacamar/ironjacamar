@@ -24,7 +24,7 @@ package org.jboss.jca.core.connectionmanager.listener;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.TxConnectionManager;
-import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
+import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
 import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener.TransactionSynchronization;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -492,7 +492,7 @@ public class TxConnectionListenerTestCase
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
       ManagedConnection mc = mock(ManagedConnection.class);
-      CachedConnectionManager ccm = mock(CachedConnectionManager.class);
+      CachedConnectionManagerImpl ccm = mock(CachedConnectionManagerImpl.class);
       when(cm.getCachedConnectionManager()).thenReturn(ccm);
       TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
       listener.setTrackByTx(false);
@@ -516,7 +516,7 @@ public class TxConnectionListenerTestCase
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
       ManagedConnection mc = mock(ManagedConnection.class);
-      CachedConnectionManager ccm = mock(CachedConnectionManager.class);
+      CachedConnectionManagerImpl ccm = mock(CachedConnectionManagerImpl.class);
       when(cm.getCachedConnectionManager()).thenReturn(ccm);
       TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
       listener.setTrackByTx(true);
@@ -540,7 +540,7 @@ public class TxConnectionListenerTestCase
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
       ManagedConnection mc = mock(ManagedConnection.class);
-      CachedConnectionManager ccm = mock(CachedConnectionManager.class);
+      CachedConnectionManagerImpl ccm = mock(CachedConnectionManagerImpl.class);
       when(cm.getCachedConnectionManager()).thenReturn(ccm);
       TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
       listener.setTrackByTx(true);
@@ -678,7 +678,7 @@ public class TxConnectionListenerTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager =
          cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-                                 null, null, null, null, ti, null, null, null, null, null);
+                                 null, null, false, null, null, null, ti, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;
    }

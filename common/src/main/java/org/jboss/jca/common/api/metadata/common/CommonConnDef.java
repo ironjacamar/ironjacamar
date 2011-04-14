@@ -79,6 +79,13 @@ public interface CommonConnDef extends JCAMetadata
    public Boolean isUseJavaContext();
 
    /**
+    * Get the useCcm.
+    *
+    * @return the useCcm.
+    */
+   public Boolean isUseCcm();
+
+   /**
     * Get the pool.
     *
     * @return the pool.
@@ -251,7 +258,11 @@ public interface CommonConnDef extends JCAMetadata
       /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context");
+      USEJAVACONTEXT("use-java-context"),
+      /** use-ccm attribute
+      *
+      */
+      USECCM("use-ccm");
 
       private final String name;
 

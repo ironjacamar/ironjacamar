@@ -347,6 +347,16 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute default="true" name="use-ccm" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Enable the use of a cached connection manager
+            Ex: use-ccm="true"
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:attributeGroup>
   <xs:simpleType name="transaction-isolationType">
     <xs:annotation>

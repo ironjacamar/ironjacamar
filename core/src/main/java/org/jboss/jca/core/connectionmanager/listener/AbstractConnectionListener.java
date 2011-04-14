@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
-import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import java.util.Iterator;

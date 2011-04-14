@@ -23,7 +23,7 @@ package org.jboss.jca.core.connectionmanager.unit;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
-import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
+import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionManager;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -76,7 +76,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertNull(connectionManager.getCachedConnectionManager());
-      connectionManager.setCachedConnectionManager(new CachedConnectionManager(null));
+      connectionManager.setCachedConnectionManager(new CachedConnectionManagerImpl(null));
       assertNotNull(connectionManager.getCachedConnectionManager());
    }
 

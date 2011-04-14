@@ -197,6 +197,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       boolean enabled = true;
       String jndiName = null;
       boolean spy = false;
+      boolean useCcm = true;
 
       for (Attribute attribute : XaDataSource.Attribute.values())
       {
@@ -222,6 +223,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                spy = attributeAsBoolean(reader, attribute.getLocalName(), false);
                break;
             }
+            case USE_CCM : {
+               useCcm = attributeAsBoolean(reader, attribute.getLocalName(), true);
+               break;
+            }
             default :
                break;
          }
@@ -239,7 +244,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
-                                              jndiName, spy, xaDataSourceProperty, xaDataSourceClass, driver,
+                                              jndiName, spy, useCcm, xaDataSourceProperty, xaDataSourceClass, driver,
                                               newConnectionSql, xaPool, recovery);
                }
                else
@@ -397,6 +402,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       boolean enabled = true;
       String jndiName = null;
       boolean spy = false;
+      boolean useCcm = true;
 
       for (Attribute attribute : XaDataSource.Attribute.values())
       {
@@ -422,6 +428,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                spy = attributeAsBoolean(reader, attribute.getLocalName(), false);
                break;
             }
+            case USE_CCM : {
+               useCcm = attributeAsBoolean(reader, attribute.getLocalName(), true);
+               break;
+            }
             default :
                break;
          }
@@ -440,7 +450,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                             connectionProperties, timeOutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                            enabled, jndiName, spy, pool);
+                                            enabled, jndiName, spy, useCcm, pool);
                }
                else
                {

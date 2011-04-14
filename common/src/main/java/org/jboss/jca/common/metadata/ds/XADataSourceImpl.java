@@ -74,6 +74,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param enabled enabled
     * @param jndiName jndiName
     * @param spy spy
+    * @param useCcm useCcm
     * @param xaDataSourceProperty xaDataSourceProperty
     * @param xaDataSourceClass xaDataSourceClass
     * @param driver driver
@@ -84,12 +85,12 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
-      boolean useJavaContext, String poolName, boolean enabled, String jndiName, boolean spy,
+      boolean useJavaContext, String poolName, boolean enabled, String jndiName, boolean spy, boolean useCcm,
       Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver, String newConnectionSql,
       CommonXaPool xaPool, Recovery recovery) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
-            urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName, spy);
+            urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName, spy, useCcm);
       if (xaDataSourceProperty != null)
       {
          this.xaDataSourceProperty = new HashMap<String, String>(xaDataSourceProperty.size());

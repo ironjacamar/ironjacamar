@@ -37,6 +37,7 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
@@ -91,6 +92,9 @@ public abstract class AbstractDsDeployer
    /** The ManagementRepository */
    private ManagementRepository managementRepository = null;
 
+   /** Cached connection manager */
+   private CachedConnectionManager ccm;
+
    /**
     * Create a new AbstractDsDeployer.
     * @param log The logger
@@ -100,6 +104,7 @@ public abstract class AbstractDsDeployer
       this.log = log;
       this.transactionIntegration = null;
       this.mdr = null;
+      this.ccm = null;
    }
 
    /**
@@ -156,6 +161,24 @@ public abstract class AbstractDsDeployer
    public void setManagementRepository(ManagementRepository managementRepository)
    {
       this.managementRepository = managementRepository;
+   }
+
+   /**
+    * Set the ccm
+    * @param value The value
+    */
+   public void setCachedConnectionManager(CachedConnectionManager value)
+   {
+      ccm = value;
+   }
+
+   /**
+    * Get the ccm
+    * @return The handle
+    */
+   public CachedConnectionManager getCachedConnectionManager()
+   {
+      return ccm;
    }
 
    /**
@@ -380,6 +403,7 @@ public abstract class AbstractDsDeployer
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
+                                 ds.isUseCcm(), ccm,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(),
                                  null, null, null, null, null);
@@ -550,6 +574,7 @@ public abstract class AbstractDsDeployer
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
+                                 ds.isUseCcm(), ccm,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,
                                  xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);

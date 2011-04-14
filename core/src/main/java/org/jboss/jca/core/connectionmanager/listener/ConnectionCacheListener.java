@@ -38,7 +38,8 @@ import javax.transaction.SystemException;
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 71554 $
  */
-public interface ConnectionCacheListener 
+public interface ConnectionCacheListener
+   extends org.jboss.jca.core.api.connectionmanager.listener.ConnectionCacheListener
 {
    /**
     * Notification of transaction started

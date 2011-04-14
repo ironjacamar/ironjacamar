@@ -70,7 +70,7 @@ public class PrefillTestCase
       AbstractPrefillPool app = (AbstractPrefillPool)pool;
 
       NoTxConnectionManager noTxConnectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, null, null);
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, false, null, null, null);
 
       app.prefill(null, null, false);
 
@@ -111,7 +111,8 @@ public class PrefillTestCase
       AbstractPrefillPool app = (AbstractPrefillPool)pool;
 
       NoTxConnectionManager noTxConnectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, null, null);
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
+                                    null, null, false, null, null, null);
 
       app.prefill(null, null, false);
 
@@ -173,7 +174,8 @@ public class PrefillTestCase
       AbstractPrefillPool app = (AbstractPrefillPool)pool;
 
       NoTxConnectionManager noTxConnectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app, subjectFactory, "domain", null, null);
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
+                                    subjectFactory, "domain", false, null, null, null);
 
       app.prefill(subject, null, false);
 
@@ -217,7 +219,8 @@ public class PrefillTestCase
       AbstractPrefillPool app = (AbstractPrefillPool)pool;
 
       NoTxConnectionManager noTxConnectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app, subjectFactory, "domain", null, null);
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
+                                    subjectFactory, "domain", false, null, null, null);
 
       app.prefill(subject, null, false);
 

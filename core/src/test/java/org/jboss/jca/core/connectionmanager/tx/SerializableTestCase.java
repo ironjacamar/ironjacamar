@@ -73,7 +73,7 @@ public class SerializableTestCase
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
-                                                                    pool, null, null, null, null, ti, 
+                                                                    pool, null, null, false, null, null, null, ti,
                                                                     Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);
 

@@ -104,6 +104,11 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected final boolean spy;
 
    /**
+   * use-ccm
+   */
+   protected final boolean useCcm;
+
+   /**
     * Create a new DataSourceAbstractImpl.
     *
     * @param transactionIsolation transactionIsolation
@@ -118,12 +123,13 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param enabled enabled
     * @param jndiName jndiName
     * @param spy spy
+    * @param useCcm useCcm
     * @throws ValidateException ValidateException
     */
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
       DsSecurity security, Statement statement, Validation validation, String urlDelimiter,
       String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
-      boolean spy)
+      boolean spy, boolean useCcm)
       throws ValidateException
    {
       super();
@@ -139,6 +145,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.enabled = enabled;
       this.jndiName = jndiName;
       this.spy = spy;
+      this.useCcm = useCcm;
       partialCommonValidation();
    }
 
@@ -248,6 +255,18 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    public final boolean isSpy()
    {
       return spy;
+   }
+
+   /**
+    * Get the use ccm
+    *
+    * @return the use ccm.
+    */
+
+   @Override
+   public final boolean isUseCcm()
+   {
+      return useCcm;
    }
 
    /**

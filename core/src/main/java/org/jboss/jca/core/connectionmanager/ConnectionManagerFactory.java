@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager;
 
-import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManager;
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
@@ -54,6 +54,8 @@ public class ConnectionManagerFactory
     * @param pool The pool for the connection manager
     * @param subjectFactory The subject factory
     * @param securityDomain The security domain 
+    * @param useCcm Should the CCM be used
+    * @param ccm The cached connection manager
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @return The connection manager instance
@@ -62,6 +64,8 @@ public class ConnectionManagerFactory
                                                        final Pool pool,
                                                        final SubjectFactory subjectFactory,
                                                        final String securityDomain,
+                                                       final boolean useCcm,
+                                                       final CachedConnectionManager ccm,
                                                        final Integer allocationRetry,
                                                        final Long allocationRetryWaitMillis)
    {
@@ -91,6 +95,7 @@ public class ConnectionManagerFactory
 
       setProperties(cm, pool,
                     subjectFactory, securityDomain, 
+                    useCcm, ccm,
                     allocationRetry, allocationRetryWaitMillis, 
                     null, null);
       setNoTxProperties(cm);
@@ -104,6 +109,8 @@ public class ConnectionManagerFactory
     * @param pool The pool for the connection manager
     * @param subjectFactory The subject factory
     * @param securityDomain The security domain 
+    * @param useCcm Should the CCM be used
+    * @param ccm The cached connection manager
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param txIntegration The transaction manager integration
@@ -118,6 +125,8 @@ public class ConnectionManagerFactory
                                                   final Pool pool,
                                                   final SubjectFactory subjectFactory,
                                                   final String securityDomain,
+                                                  final boolean useCcm,
+                                                  final CachedConnectionManager ccm,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
                                                   final TransactionIntegration txIntegration,
@@ -157,6 +166,7 @@ public class ConnectionManagerFactory
 
       setProperties(cm, pool, 
                     subjectFactory, securityDomain, 
+                    useCcm, ccm,
                     allocationRetry, allocationRetryWaitMillis,
                     txIntegration.getTransactionManager(), txIntegration.getUserTransactionRegistry());
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
@@ -171,6 +181,8 @@ public class ConnectionManagerFactory
     * @param pool The pool
     * @param subjectFactory The subject factory
     * @param securityDomain The security domain
+    * @param useCcm Should the CCM be used
+    * @param ccm The cached connection manager
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
@@ -180,6 +192,8 @@ public class ConnectionManagerFactory
                               Pool pool,
                               SubjectFactory subjectFactory,
                               String securityDomain,
+                              boolean useCcm,
+                              CachedConnectionManager ccm,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
                               TransactionManager tm,
@@ -199,8 +213,8 @@ public class ConnectionManagerFactory
 
       cm.setUserTransactionRegistry(utr);
 
-      CachedConnectionManager ccm = new CachedConnectionManager(tm);
-      cm.setCachedConnectionManager(ccm);
+      if (useCcm)
+         cm.setCachedConnectionManager(ccm);
    }
 
    /**

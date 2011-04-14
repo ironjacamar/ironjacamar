@@ -299,6 +299,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
       if (jdbcXA == null)
          throw new IllegalStateException("JDBCXA not defined");
+
+      if (getCachedConnectionManager() == null)
+         throw new IllegalStateException("CachedConnectionManager not defined");
    }
 
    @Override

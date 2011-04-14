@@ -57,6 +57,8 @@ public class CommonConnDefImpl implements CommonConnDef
 
    private final Boolean useJavaContext;
 
+   private final Boolean useCcm;
+
    private final CommonPool pool;
 
    private final CommonTimeOut timeOut;
@@ -76,6 +78,7 @@ public class CommonConnDefImpl implements CommonConnDef
     * @param poolName poolName
     * @param enabled enabled
     * @param useJavaContext useJavaContext
+    * @param useCcm useCcm
     * @param pool pool
     * @param timeOut timeOut
     * @param validation validation
@@ -83,7 +86,7 @@ public class CommonConnDefImpl implements CommonConnDef
     * @param recovery recovery
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
-      String poolName, Boolean enabled, Boolean useJavaContext, CommonPool pool, CommonTimeOut timeOut,
+      String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm, CommonPool pool, CommonTimeOut timeOut,
       CommonValidation validation, CommonSecurity security, Recovery recovery)
    {
       super();
@@ -101,6 +104,7 @@ public class CommonConnDefImpl implements CommonConnDef
       this.poolName = poolName;
       this.enabled = enabled;
       this.useJavaContext = useJavaContext;
+      this.useCcm = useCcm;
       this.pool = pool;
       this.timeOut = timeOut;
       this.validation = validation;
@@ -176,6 +180,17 @@ public class CommonConnDefImpl implements CommonConnDef
    }
 
    /**
+    * Get the useCcm.
+    *
+    * @return the useCcm.
+    */
+   @Override
+   public final Boolean isUseCcm()
+   {
+      return useCcm;
+   }
+
+   /**
     * Get the pool.
     *
     * @return the pool.
@@ -240,6 +255,7 @@ public class CommonConnDefImpl implements CommonConnDef
       result = prime * result + ((security == null) ? 0 : security.hashCode());
       result = prime * result + ((timeOut == null) ? 0 : timeOut.hashCode());
       result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
+      result = prime * result + ((useCcm == null) ? 0 : useCcm.hashCode());
       result = prime * result + ((validation == null) ? 0 : validation.hashCode());
       return result;
    }
@@ -324,6 +340,13 @@ public class CommonConnDefImpl implements CommonConnDef
       }
       else if (!useJavaContext.equals(other.useJavaContext))
          return false;
+      if (useCcm == null)
+      {
+         if (other.useCcm != null)
+            return false;
+      }
+      else if (!useCcm.equals(other.useCcm))
+         return false;
       if (validation == null)
       {
          if (other.validation != null)
@@ -339,8 +362,8 @@ public class CommonConnDefImpl implements CommonConnDef
    {
       return "CommonConnDefImpl [configProperties=" + configProperties + ", className=" + className + ", jndiName=" +
              jndiName + ", poolName=" + poolName + ", enabled=" + enabled + ", useJavaContext=" + useJavaContext +
-             ", pool=" + pool + ", timeOut=" + timeOut + ", validation=" + validation + ", security=" + security +
-             ", recovery=" + recovery + "]";
+             ", useCcm=" + useCcm + ", pool=" + pool + ", timeOut=" + timeOut + ", validation=" + validation +
+             ", security=" + security + ", recovery=" + recovery + "]";
    }
 
    /**

@@ -23,6 +23,7 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
@@ -84,6 +85,9 @@ public class RAConfiguration implements Configuration
 
    /** The resource adapter repository */
    private ResourceAdapterRepository resourceAdapterRepository;
+
+   /** The cached connection manager */
+   private CachedConnectionManager ccm;
 
    /**
     * Constructor
@@ -339,6 +343,24 @@ public class RAConfiguration implements Configuration
    }
 
    /**
+    * Set the cached connection manager
+    * @param value The value
+    */
+   public void setCachedConnectionManager(CachedConnectionManager value)
+   {
+      ccm = value;
+   }
+
+   /**
+    * Get the cached connection manager
+    * @return The handle
+    */
+   public CachedConnectionManager getCachedConnectionManager()
+   {
+      return ccm;
+   }
+
+   /**
     * Start
     */
    public void start()
@@ -360,5 +382,8 @@ public class RAConfiguration implements Configuration
 
       if (resourceAdapterRepository == null)
          throw new IllegalStateException("ResourceAdapterRepository not defined");
+
+      if (ccm == null)
+         throw new IllegalStateException("CachedConnectionManager not defined");
    }
 }

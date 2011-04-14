@@ -78,9 +78,6 @@ public class TxConnectionManagerTestCase
    @Test
    public void testAllocateConnection() throws Throwable
    {
-
-      assertNotNull(txConnectionManager.getCachedConnectionManager());
-
       TransactionManager transactionManager = txConnectionManager.getTransactionManager();
       TransactionSynchronizer.setTransactionIntegration(txConnectionManager.getTransactionIntegration());
 
@@ -322,7 +319,8 @@ public class TxConnectionManagerTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = 
          cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-                                 null, null, null, null, ti, null, null, null, null, null);
+                                 null, null, false, null,
+                                 null, null, ti, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;
    }

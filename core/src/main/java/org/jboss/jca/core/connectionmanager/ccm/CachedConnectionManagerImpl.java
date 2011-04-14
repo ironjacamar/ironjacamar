@@ -21,13 +21,11 @@
  */
 package org.jboss.jca.core.connectionmanager.ccm;
 
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
-import org.jboss.jca.core.spi.connectionmanager.ComponentStack;
 import org.jboss.jca.core.spi.transaction.TxUtils;
-import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -58,19 +56,16 @@ import org.jboss.util.Strings;
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class CachedConnectionManager implements UserTransactionListener, ComponentStack
+public class CachedConnectionManagerImpl implements CachedConnectionManager
 {
    /** Log instance */
-   private static Logger log = Logger.getLogger(CachedConnectionManager.class);
-
-   /** Log trace */
-   private static boolean trace = log.isTraceEnabled();
+   private static Logger log = Logger.getLogger(CachedConnectionManagerImpl.class);
 
    /** Debugging flag */
-   private static boolean debug = false;
+   private boolean debug = false;
 
    /** Enabled error handling for debugging */
-   private static boolean error = false;
+   private boolean error = false;
 
    /** Transaction Manager instance */
    private final TransactionManager transactionManager;
@@ -103,7 +98,7 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
     * Creates a new instance.
     * @param transactionManager The transaction manager
     */
-   public CachedConnectionManager(final TransactionManager transactionManager)
+   public CachedConnectionManagerImpl(final TransactionManager transactionManager)
    {
       this.transactionManager = transactionManager;
    }
@@ -118,35 +113,50 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
    }
 
    /**
+    * Set debug flag
+    * @param v The value
+    */
+   public void setDebug(boolean v)
+   {
+      debug = v;
+   }
+
+   /**
+    * Set error flag
+    * @param v The value
+    */
+   public void setError(boolean v)
+   {
+      error = v;
+   }
+
+   /**
     * {@inheritDoc}
     */
    public void userTransactionStarted() throws SystemException
    {
       KeyConnectionAssociation key = peekMetaAwareObject();
-      if (trace)
+
+      log.tracef("user tx started, key: %s", key);
+
+      if (key != null)
       {
-         log.trace("user tx started, key: " + key);
-      }
-      if (key == null)
-      {
-         return; //not participating properly in this management scheme.
-      }
+         ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
+            key.getCMToConnectionsMap();
 
-      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
-         key.getCMToConnectionsMap();
+         Iterator<Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> cmToConnectionsMapIterator =
+            cmToConnectionsMap.entrySet().iterator();
 
-      Iterator<Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> cmToConnectionsMapIterator =
-         cmToConnectionsMap.entrySet().iterator();
+         while (cmToConnectionsMapIterator.hasNext())
+         {
+            Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> entry =
+               cmToConnectionsMapIterator.next();
 
-      while (cmToConnectionsMapIterator.hasNext())
-      {
-         Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> entry =
-            cmToConnectionsMapIterator.next();
+            ConnectionCacheListener cm = entry.getKey();
+            CopyOnWriteArrayList<ConnectionRecord> conns = entry.getValue();
 
-         ConnectionCacheListener cm = entry.getKey();
-         CopyOnWriteArrayList<ConnectionRecord> conns = entry.getValue();
-
-         cm.transactionStarted(conns);
+            cm.transactionStarted(conns);
+         }
       }
    }
 
@@ -157,20 +167,13 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
    private KeyConnectionAssociation peekMetaAwareObject()
    {
       LinkedList<Object> stack = currentObjects.get();
-      if (stack == null)
+
+      if (stack != null && !stack.isEmpty())
       {
-         return null;
+         return (KeyConnectionAssociation)stack.getLast();
       }
 
-      if (!stack.isEmpty())
-      {
-         return (KeyConnectionAssociation) stack.getLast();
-      }
-
-      else
-      {
-         return null;
-      }
+      return null;
    }
 
 
@@ -182,22 +185,19 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
    {
       LinkedList<Object> stack = currentObjects.get();
       KeyConnectionAssociation oldKey = (KeyConnectionAssociation) stack.removeLast();
-      if (trace)
-      {
-         log.trace("popped object: " + Strings.defaultToString(oldKey));
-      }
+
+      log.tracef("popped object: %s", Strings.defaultToString(oldKey));
 
       if (!stack.contains(oldKey))
       {
          disconnect(oldKey, unsharableResources);
-      } // end of if ()
+      }
 
       if (debug)
       {
          if (closeAll(oldKey.getCMToConnectionsMap()) && error)
          {
-            throw new ResourceException("Some connections were not closed, " +
-                  "see the log for the allocation stacktraces");
+            throw new ResourceException("Some connections were not closed, see the log for the allocation stacktraces");
          }
       }
    }
@@ -209,8 +209,9 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
     * @param connection connection handle
     * @param cri connection request info.
     */
-   public void registerConnection(ConnectionCacheListener cm, ConnectionListener cl,
-         Object connection, ConnectionRequestInfo cri)
+   public void registerConnection(org.jboss.jca.core.api.connectionmanager.listener.ConnectionCacheListener cm,
+                                  org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener cl,
+                                  Object connection, ConnectionRequestInfo cri)
    {
       if (debug)
       {
@@ -222,29 +223,23 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
 
       KeyConnectionAssociation key = peekMetaAwareObject();
 
-      if (trace)
+      log.tracef("registering connection from connection manager: %s, connection : %s, key: %s", cm, connection, key);
+
+      if (key != null)
       {
-         log.trace("registering connection from connection manager " + cm +
-               ", connection : " + connection + ", key: " + key);
+         ConnectionRecord cr = new ConnectionRecord(cl, connection, cri);
+         ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
+            key.getCMToConnectionsMap();
+
+         CopyOnWriteArrayList<ConnectionRecord> conns = cmToConnectionsMap.get(cm);
+         if (conns == null)
+         {
+            conns = new CopyOnWriteArrayList<ConnectionRecord>();
+            cmToConnectionsMap.put((ConnectionCacheListener)cm, conns);
+         }
+
+         conns.add(cr);
       }
-
-      if (key == null)
-      {
-         return; //not participating properly in this management scheme.
-      }
-
-      ConnectionRecord cr = new ConnectionRecord(cl, connection, cri);
-      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
-         key.getCMToConnectionsMap();
-
-      CopyOnWriteArrayList<ConnectionRecord> conns = cmToConnectionsMap.get(cm);
-      if (conns == null)
-      {
-         conns = new CopyOnWriteArrayList<ConnectionRecord>();
-         cmToConnectionsMap.put(cm, conns);
-      }
-
-      conns.add(cr);
    }
 
    /**
@@ -252,7 +247,8 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
     * @param cm connection manager
     * @param connection connection handle
     */
-   public void unregisterConnection(ConnectionCacheListener cm, Object connection)
+   public void unregisterConnection(org.jboss.jca.core.api.connectionmanager.listener.ConnectionCacheListener cm,
+                                    Object connection)
    {
       if (debug)
       {
@@ -270,28 +266,22 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
 
       KeyConnectionAssociation key = peekMetaAwareObject();
 
-      if (trace)
-      {
-         log.trace("unregistering connection from connection manager " + cm +
-               ", object: " + connection + ", key: " + key);
-      }
+      log.tracef("unregistering connection from connection manager: %s, connection: %s, key: %s", cm, connection, key);
 
       if (key == null)
-      {
-         return; //not participating properly in this management scheme.
-      }
+         return;
 
       ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
          key.getCMToConnectionsMap();
 
       CopyOnWriteArrayList<ConnectionRecord> conns = cmToConnectionsMap.get(cm);
-      if (conns == null)
-      {
-         return; // Can happen if connections are "passed" between contexts
-      }
 
-      //note iterator of CopyOnWriteArrayList does not support remove method
-      //we use here remove on CopyOnWriteArrayList directly
+      // Can happen if connections are "passed" between contexts
+      if (conns == null)
+         return; 
+
+      // Note iterator of CopyOnWriteArrayList does not support remove method
+      // We use here remove on CopyOnWriteArrayList directly
       for (ConnectionRecord connectionRecord : conns)
       {
          if (connectionRecord.getConnection() == connection)
@@ -313,20 +303,14 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
       LinkedList<Object> stack = currentObjects.get();
       if (stack == null)
       {
-         if (trace)
-         {
-            log.trace("new stack for key: " + Strings.defaultToString(rawKey));
-         }
+         log.tracef("new stack for key: %s", Strings.defaultToString(rawKey));
 
          stack = new LinkedList<Object>();
          currentObjects.set(stack);
       }
       else
       {
-         if (trace)
-         {
-            log.trace("old stack for key: " + Strings.defaultToString(rawKey));
-         }
+         log.tracef("old stack for key: %s", Strings.defaultToString(rawKey));
       }
 
       KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
@@ -415,10 +399,7 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
     */
    public void unregisterConnectionCacheListener(ConnectionCacheListener cm)
    {
-      if (trace)
-      {
-         log.trace("unregisterConnectionCacheListener: " + cm);
-      }
+      log.tracef("unregisterConnectionCacheListener: %s", cm);
 
       Iterator<ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> it =
          objectToConnectionManagerMap.values().iterator();
@@ -441,11 +422,6 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
    private boolean closeAll(ConcurrentMap<ConnectionCacheListener,
                             CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap)
    {
-      if (!debug)
-      {
-         return false;
-      }
-
       boolean unclosed = false;
 
       Collection<CopyOnWriteArrayList<ConnectionRecord>> connections = cmToConnectionsMap.values();
@@ -494,8 +470,8 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
             TransactionSynchronizer.lock(tx);
             try
             {
-               CloseConnectionSynchronization cas = (CloseConnectionSynchronization)
-                                                   TransactionSynchronizer.getCCMSynchronization(tx);
+               CloseConnectionSynchronization cas = 
+                  (CloseConnectionSynchronization)TransactionSynchronizer.getCCMSynchronization(tx);
 
                if (cas == null && createIfNotFound && TxUtils.isActive(tx))
                {
@@ -578,7 +554,6 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
        */
       public CloseConnectionSynchronization()
       {
-
       }
 
       /**
@@ -587,11 +562,8 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
        */
       public  void add(Object c)
       {
-         if (closing.get())
-         {
-            return;
-         }
-         connections.add(c);
+         if (!closing.get())
+            connections.add(c);
       }
 
       /**
@@ -600,12 +572,8 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
        */
       public  void remove(Object c)
       {
-         if (closing.get())
-         {
-            return;
-         }
-
-         connections.remove(c);
+         if (!closing.get())
+            connections.remove(c);
       }
 
       /**
@@ -613,7 +581,7 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
        */
       public void beforeCompletion()
       {
-         //No-action
+         // No-action
       }
 
       /**
@@ -643,5 +611,4 @@ public class CachedConnectionManager implements UserTransactionListener, Compone
    {
       return currentObjects;
    }
-
 }

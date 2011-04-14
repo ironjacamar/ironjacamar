@@ -247,7 +247,12 @@ public interface DataSource extends CommonDataSource
       /** spy attribute
       *
       */
-      SPY("spy");
+      SPY("spy"),
+
+      /** use-ccm attribute
+      *
+      */
+      USE_CCM("use-ccm");
 
       private final String name;
 

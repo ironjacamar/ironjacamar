@@ -44,6 +44,7 @@ import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -1000,11 +1001,16 @@ public abstract class AbstractResourceAdapterDeployer
                            allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
                      }
 
+                     Boolean useCCM = Boolean.TRUE;
+                     if (ijCD != null)
+                        useCCM = ijCD.isUseCcm();
+
                      // Select the correct connection manager
                      if (tsl == TransactionSupportLevel.NoTransaction)
                      {
                         cm = cmf.createNonTransactional(tsl, pool,
                                                         getSubjectFactory(securityDomain), securityDomain,
+                                                        useCCM, getCachedConnectionManager(),
                                                         allocationRetry, allocationRetryWaitMillis);
                      }
                      else
@@ -1046,6 +1052,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                         cm = cmf.createTransactional(tsl, pool,
                                                      getSubjectFactory(securityDomain), securityDomain,
+                                                     useCCM, getCachedConnectionManager(),
                                                      allocationRetry, allocationRetryWaitMillis,
                                                      getTransactionIntegration(), interleaving,
                                                      xaResourceTimeout, isSameRMOverride,
@@ -1363,12 +1370,17 @@ public abstract class AbstractResourceAdapterDeployer
                                        allocationRetryWaitMillis = ijCD.getTimeOut().getAllocationRetryWaitMillis();
                                  }
 
+                                 Boolean useCCM = Boolean.TRUE;
+                                 if (ijCD != null)
+                                    useCCM = ijCD.isUseCcm();
+
                                  // Select the correct connection manager
                                  if (tsl == TransactionSupportLevel.NoTransaction)
                                  {
                                     cm = cmf.createNonTransactional(tsl, pool,
                                                                     getSubjectFactory(securityDomain),
                                                                     securityDomain,
+                                                                    useCCM, getCachedConnectionManager(),
                                                                     allocationRetry, allocationRetryWaitMillis);
                                  }
                                  else
@@ -1412,6 +1424,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     cm = cmf.createTransactional(tsl, pool,
                                                                  getSubjectFactory(securityDomain), securityDomain,
+                                                                 useCCM, getCachedConnectionManager(),
                                                                  allocationRetry, allocationRetryWaitMillis,
                                                                  getTransactionIntegration(),
                                                                  interleaving,
@@ -1775,6 +1788,12 @@ public abstract class AbstractResourceAdapterDeployer
     * @exception DeployException Thrown if the security domain can't be resolved
     */
    protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
+
+   /**
+    * Get the cached connection manager
+    * @return The handle
+    */
+   protected abstract CachedConnectionManager getCachedConnectionManager();
 
    /**
     * Get management views for config property's

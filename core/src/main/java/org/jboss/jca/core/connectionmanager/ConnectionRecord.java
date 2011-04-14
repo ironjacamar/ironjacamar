@@ -45,11 +45,11 @@ public class ConnectionRecord
     * @param connection connection handle
     * @param cri connection request info
     */
-   public ConnectionRecord (final ConnectionListener cl, 
+   public ConnectionRecord (final org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener cl, 
                             final Object connection, 
                             final ConnectionRequestInfo cri)
    {
-      this.connectionListener = cl;
+      this.connectionListener = (ConnectionListener)cl;
       this.connection = connection;
       this.cri = cri;
    }

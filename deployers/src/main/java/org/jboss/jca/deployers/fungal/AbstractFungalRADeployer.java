@@ -25,6 +25,7 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer;
@@ -650,5 +651,11 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
       {
          throw new DeployException("Error during loookup of security domain: " + securityDomain, t);
       }
+   }
+
+   @Override
+   protected CachedConnectionManager getCachedConnectionManager()
+   {
+      return ((RAConfiguration) getConfiguration()).getCachedConnectionManager();
    }
 }

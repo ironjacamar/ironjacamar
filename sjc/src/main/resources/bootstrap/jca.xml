@@ -142,6 +142,17 @@
         interface="org.jboss.jca.core.spi.mdr.MetadataRepository"
         class="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
 
+  <!-- CCM -->
+  <bean name="CCM"
+        interface="org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager"
+        class="org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManagerImpl">
+    <constructor>
+      <parameter><inject bean="TransactionIntegration" property="TransactionManager"/></parameter>
+    </constructor>
+    <property name="Debug">false</property>
+    <property name="Error">false</property>
+  </bean>
+
   <!-- Resource adapter repository -->
   <bean name="ResourceAdapterRepository"
         interface="org.jboss.jca.core.spi.rar.ResourceAdapterRepository"
@@ -167,6 +178,7 @@
     <property name="MetadataRepository"><inject bean="MDR"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
+    <property name="CachedConnectionManager"><inject bean="CCM"/></property>
   </bean>
 
   <!-- Activator configuration -->
@@ -183,6 +195,7 @@
     <property name="MetadataRepository"><inject bean="MDR"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
+    <property name="CachedConnectionManager"><inject bean="CCM"/></property>
   </bean>
 
   <!-- RA deployer -->
