@@ -21,12 +21,72 @@
  */
 package org.jboss.jca.rhq.core;
 
+import org.jboss.jca.rhq.util.ContainerHelper;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+
+import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.content.transfer.ResourcePackageDetails;
+import org.rhq.core.domain.resource.CreateResourceStatus;
+import org.rhq.core.domain.resource.ResourceType;
+import org.rhq.core.pluginapi.content.ContentContext;
+import org.rhq.core.pluginapi.content.ContentServices;
+import org.rhq.core.pluginapi.inventory.CreateChildResourceFacet;
+import org.rhq.core.pluginapi.inventory.CreateResourceReport;
+
 /**
  * A IronJacamarResourceComponent
  * 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
  */
-public class IronJacamarResourceComponent extends BaseResourceComponent
+public class IronJacamarResourceComponent extends AbstractResourceComponent implements CreateChildResourceFacet
 {
+
+   @Override
+   public Configuration loadResourceConfiguration() throws Exception
+   {
+      return new Configuration();
+   }
+
+   @Override
+   public CreateResourceReport createResource(CreateResourceReport report)
+   {
+
+      ResourceType resType = report.getResourceType();
+      String resName = resType.getName();
+      ResourcePackageDetails pkgDetail = report.getPackageDetails();
+      ContentContext contentContext = getResourceContext().getContentContext();
+      ContentServices contentServices = contentContext.getContentServices();
+      String tmpDir = System.getProperty("java.io.tmpdir");
+      File outFile = new File(tmpDir, pkgDetail.getFileName()); // change to plugin configuration ??
+      OutputStream output;
+      try
+      {
+         output = new FileOutputStream(outFile);
+         contentServices.downloadPackageBitsForChildResource(contentContext, resName, pkgDetail.getKey(), output);
+         Deploy deployer = (Deploy)ContainerHelper.getEmbeddedDiscover();
+         deployer.deploy(outFile.toURI().toURL());
+         
+         String resKey = outFile.getName();
+         
+         // set resource key
+         report.setResourceKey(resKey);
+         
+         // set resource name
+         report.setResourceName(resKey);
+         
+         report.setStatus(CreateResourceStatus.SUCCESS);
+      }
+      catch (Throwable e)
+      {
+         e.printStackTrace();
+         report.setStatus(CreateResourceStatus.FAILURE);
+         report.setErrorMessage(e.getMessage());
+         report.setException(e);
+      }
+      return report;
+   }
 }

@@ -377,8 +377,10 @@
             <operation name="suspend"
                        description="suspend this RAR"/>
                 
-            <content name="file" displayName="RAR File" category="deployable" isCreationType="true">
-                
+            <content name="rar-file" displayName="RAR File" category="deployable" isCreationType="true">
+                <configuration>
+                  <c:simple-property name="override" displayName="Override?" type="boolean" defaultValue="true"/>
+                </configuration>
             </content>
             
             <resource-configuration>
@@ -489,14 +491,20 @@
         
         <!-- Datasource -->
         <service name="Datasources" discovery="org.jboss.jca.rhq.ds.DsResourceDiscoveryComponent" 
-            class="org.jboss.jca.rhq.ds.DsResourceComponent">
+            class="org.jboss.jca.rhq.ds.DsResourceComponent" createDeletePolicy="both" creationDataType="content">
 
         <plugin-configuration>
             <c:group name="general" displayName="General">
                 <c:simple-property name="jndi-name" description="JNDI Name of the datasource" readOnly="true"/>
             </c:group>
         </plugin-configuration>
-
+        
+        <content name="ds-file" displayName="DataSource File" category="deployable" isCreationType="true">
+            <configuration>
+              <c:simple-property name="override" displayName="Override?" type="boolean" defaultValue="true"/>
+            </configuration>
+        </content>
+            
             <resource-configuration>
                 <c:group name="general" displayName="General">
                     <c:simple-property name="jndi-name" displayName="JNDI Name"/>
