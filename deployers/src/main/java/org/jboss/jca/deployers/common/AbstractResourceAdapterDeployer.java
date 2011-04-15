@@ -30,6 +30,7 @@ import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Credential;
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
@@ -861,13 +862,21 @@ public abstract class AbstractResourceAdapterDeployer
                      associateResourceAdapter(resourceAdapter, mcf);
                      // Create the pool
                      PoolConfiguration pc = null;
+                     FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
+
                      if (cdRaXml != null)
                      {
                         pc = createPoolConfiguration(cdRaXml.getPool(), cdRaXml.getTimeOut(), cdRaXml.getValidation());
+
+                        if (cdRaXml.getPool() != null)
+                           flushStrategy = cdRaXml.getPool().getFlushStrategy();
                      }
                      else if (ijCD != null)
                      {
                         pc = createPoolConfiguration(ijCD.getPool(), ijCD.getTimeOut(), ijCD.getValidation());
+
+                        if (ijCD.getPool() != null)
+                           flushStrategy = ijCD.getPool().getFlushStrategy();
                      }
                      else
                      {
@@ -877,6 +886,7 @@ public abstract class AbstractResourceAdapterDeployer
                      PoolFactory pf = new PoolFactory();
 
                      Boolean noTxSeparatePool = Boolean.FALSE;
+
                      if (cdRaXml != null && cdRaXml.getPool() != null && cdRaXml.isXa())
                      {
                         CommonXaPool ijXaPool = (CommonXaPool) cdRaXml.getPool();
@@ -997,6 +1007,7 @@ public abstract class AbstractResourceAdapterDeployer
                         cm = cmf.createNonTransactional(tsl, pool,
                                                         getSubjectFactory(securityDomain), securityDomain,
                                                         useCCM, getCachedConnectionManager(),
+                                                        flushStrategy,
                                                         allocationRetry, allocationRetryWaitMillis);
                      }
                      else
@@ -1039,6 +1050,7 @@ public abstract class AbstractResourceAdapterDeployer
                         cm = cmf.createTransactional(tsl, pool,
                                                      getSubjectFactory(securityDomain), securityDomain,
                                                      useCCM, getCachedConnectionManager(),
+                                                     flushStrategy,
                                                      allocationRetry, allocationRetryWaitMillis,
                                                      getTransactionIntegration(), interleaving,
                                                      xaResourceTimeout, isSameRMOverride,
@@ -1212,17 +1224,26 @@ public abstract class AbstractResourceAdapterDeployer
                                                                                  cdMeta.getConfigProperties()));
                                  beanValidationObjects.add(mcf);
                                  associateResourceAdapter(resourceAdapter, mcf);
+
                                  // Create the pool
                                  PoolConfiguration pc = null;
-                                 if (cdRaXml != null && cdRaXml.getPool() != null)
+                                 FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
+
+                                 if (cdRaXml != null)
                                  {
                                     pc = createPoolConfiguration(cdRaXml.getPool(), cdRaXml.getTimeOut(),
                                        cdRaXml.getValidation());
+
+                                    if (cdRaXml.getPool() != null)
+                                       flushStrategy = cdRaXml.getPool().getFlushStrategy();
                                  }
                                  else if (ijCD != null)
                                  {
                                     pc = createPoolConfiguration(ijCD.getPool(), ijCD.getTimeOut(),
                                        ijCD.getValidation());
+
+                                    if (ijCD.getPool() != null)
+                                       flushStrategy = ijCD.getPool().getFlushStrategy();
                                  }
                                  else
                                  {
@@ -1353,6 +1374,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                     getSubjectFactory(securityDomain),
                                                                     securityDomain,
                                                                     useCCM, getCachedConnectionManager(),
+                                                                    flushStrategy,
                                                                     allocationRetry, allocationRetryWaitMillis);
                                  }
                                  else
@@ -1397,6 +1419,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     cm = cmf.createTransactional(tsl, pool,
                                                                  getSubjectFactory(securityDomain), securityDomain,
                                                                  useCCM, getCachedConnectionManager(),
+                                                                 flushStrategy,
                                                                  allocationRetry, allocationRetryWaitMillis,
                                                                  getTransactionIntegration(),
                                                                  interleaving,

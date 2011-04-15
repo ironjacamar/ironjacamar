@@ -104,6 +104,12 @@ public interface CommonXaPool extends CommonPool
        * use-strict-min tag
        */
       USE_STRICT_MIN("use-strict-min"),
+
+      /**
+       * flush-strategy tag
+       */
+      FLUSH_STRATEGY("flush-strategy"),
+
       /**
        * isSameRmOverrideValue tag
        */

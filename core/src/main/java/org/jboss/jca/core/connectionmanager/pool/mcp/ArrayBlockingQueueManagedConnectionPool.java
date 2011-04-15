@@ -495,6 +495,14 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void flush()
    {
+      flush(false);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void flush(boolean kill)
+   {
       ArrayList<ConnectionListener> destroy = null;
 
       if (trace)

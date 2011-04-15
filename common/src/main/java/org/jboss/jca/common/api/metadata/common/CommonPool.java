@@ -66,6 +66,13 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
    public Boolean isUseStrictMin();
 
    /**
+    * Get the useStrictMin.
+    *
+    * @return the useStrictMin.
+    */
+   public FlushStrategy getFlushStrategy();
+
+   /**
    *
    * A Tag.
    *
@@ -88,6 +95,7 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
       * maxPoolSize tag
       */
       MAXPOOLSIZE("max-pool-size"),
+
       /**
       * prefill tag
       */
@@ -96,12 +104,16 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
       /**
        * use-strict-min tag
        */
-      USE_STRICT_MIN("use-strict-min");
+      USE_STRICT_MIN("use-strict-min"),
+
+      /**
+       * flush-strategy tag
+       */
+      FLUSH_STRATEGY("flush-strategy");
 
       private final String name;
 
       /**
-       *
        * Create a new Tag.
        *
        * @param name a name
@@ -147,7 +159,5 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
          final Tag element = MAP.get(localName);
          return element == null ? UNKNOWN : element;
       }
-
    }
-
 }

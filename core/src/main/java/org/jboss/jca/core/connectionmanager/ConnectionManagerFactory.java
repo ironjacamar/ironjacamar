@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -56,6 +57,7 @@ public class ConnectionManagerFactory
     * @param securityDomain The security domain 
     * @param useCcm Should the CCM be used
     * @param ccm The cached connection manager
+    * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @return The connection manager instance
@@ -66,6 +68,7 @@ public class ConnectionManagerFactory
                                                        final String securityDomain,
                                                        final boolean useCcm,
                                                        final CachedConnectionManager ccm,
+                                                       final FlushStrategy flushStrategy,
                                                        final Integer allocationRetry,
                                                        final Long allocationRetryWaitMillis)
    {
@@ -74,6 +77,9 @@ public class ConnectionManagerFactory
 
       if (pool == null)
          throw new IllegalArgumentException("Pool is null");
+
+      if (flushStrategy == null)
+         throw new IllegalArgumentException("FlushStrategy is null");
 
       NoTxConnectionManagerImpl cm = null;
 
@@ -96,6 +102,7 @@ public class ConnectionManagerFactory
       setProperties(cm, pool,
                     subjectFactory, securityDomain, 
                     useCcm, ccm,
+                    flushStrategy,
                     allocationRetry, allocationRetryWaitMillis, 
                     null, null);
       setNoTxProperties(cm);
@@ -111,6 +118,7 @@ public class ConnectionManagerFactory
     * @param securityDomain The security domain 
     * @param useCcm Should the CCM be used
     * @param ccm The cached connection manager
+    * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param txIntegration The transaction manager integration
@@ -127,6 +135,7 @@ public class ConnectionManagerFactory
                                                   final String securityDomain,
                                                   final boolean useCcm,
                                                   final CachedConnectionManager ccm,
+                                                  final FlushStrategy flushStrategy,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
                                                   final TransactionIntegration txIntegration,
@@ -144,6 +153,9 @@ public class ConnectionManagerFactory
 
       if (txIntegration == null)
          throw new IllegalArgumentException("TransactionIntegration is null");
+
+      if (flushStrategy == null)
+         throw new IllegalArgumentException("FlushStrategy is null");
 
       TxConnectionManagerImpl cm = null;
 
@@ -167,6 +179,7 @@ public class ConnectionManagerFactory
       setProperties(cm, pool, 
                     subjectFactory, securityDomain, 
                     useCcm, ccm,
+                    flushStrategy,
                     allocationRetry, allocationRetryWaitMillis,
                     txIntegration.getTransactionManager(), txIntegration.getUserTransactionRegistry());
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
@@ -183,6 +196,7 @@ public class ConnectionManagerFactory
     * @param securityDomain The security domain
     * @param useCcm Should the CCM be used
     * @param ccm The cached connection manager
+    * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
@@ -194,6 +208,7 @@ public class ConnectionManagerFactory
                               String securityDomain,
                               boolean useCcm,
                               CachedConnectionManager ccm,
+                              FlushStrategy flushStrategy,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
                               TransactionManager tm,
@@ -204,6 +219,8 @@ public class ConnectionManagerFactory
 
       cm.setSubjectFactory(subjectFactory);
       cm.setSecurityDomain(securityDomain);
+
+      cm.setFlushStrategy(flushStrategy);
 
       if (allocationRetry != null)
          cm.setAllocationRetry(allocationRetry.intValue());

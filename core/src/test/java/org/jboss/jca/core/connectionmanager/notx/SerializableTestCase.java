@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.notx;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -65,7 +66,9 @@ public class SerializableTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
 
       ConnectionManager connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction,
-                                                                       pool, null, null, false, null, null, null);
+                                                                       pool, null, null, false, null, 
+                                                                       FlushStrategy.FAILING_CONNECTION_ONLY,
+                                                                       null, null);
       assertNotNull(connectionManager);
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();

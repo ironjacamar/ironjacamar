@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -226,7 +227,9 @@ public class NoTxConnectionListenerTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
-                                    null, null, false, null, null, null);
+                                    null, null, false, null, 
+                                    FlushStrategy.FAILING_CONNECTION_ONLY,
+                                    null, null);
 
       noTxCm = ((NoTxConnectionManagerImpl) connectionManager);
 

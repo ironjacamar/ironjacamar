@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.tx;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -319,7 +320,7 @@ public class TxConnectionManagerTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = 
          cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-                                 null, null, false, null,
+                                 null, null, false, null, FlushStrategy.FAILING_CONNECTION_ONLY,
                                  null, null, ti, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;

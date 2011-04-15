@@ -477,22 +477,35 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public void flush()
    {
+      flush(false);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void flush(boolean kill)
+   {
       ArrayList<ConnectionListener> destroy = null;
 
       synchronized (cls)
       {
-         if (trace)
-            log.trace("Flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
-
-         // Mark checked out connections as requiring destruction
-         for (Iterator<ConnectionListener> i = checkedOut.iterator(); i.hasNext();)
+         if (kill)
          {
-            ConnectionListener cl = i.next();
-
             if (trace)
-               log.trace("Flush marking checked out connection for destruction " + cl);
+               log.trace("Flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
 
-            cl.setState(ConnectionState.DESTROY);
+            // Mark checked out connections as requiring destruction
+            for (Iterator<ConnectionListener> i = checkedOut.iterator(); i.hasNext();)
+            {
+               ConnectionListener cl = i.next();
+
+               if (trace)
+                  log.trace("Flush marking checked out connection for destruction " + cl);
+
+               cl.setState(ConnectionState.DESTROY);
+
+               // We could mark them for eager kill too... 
+            }
          }
 
          // Destroy connections in the pool

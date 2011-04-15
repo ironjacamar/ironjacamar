@@ -99,9 +99,15 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    public void reenable();
    
    /**
-    * Flush
+    * Flush idle connections
     */
    public void flush();
+   
+   /**
+    * Flush
+    * @param kill Kill all connections
+    */
+   public void flush(boolean kill);
    
    /**
     * Shutdown

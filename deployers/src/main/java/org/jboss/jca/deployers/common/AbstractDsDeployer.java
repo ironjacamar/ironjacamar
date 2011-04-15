@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.Credential;
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
@@ -433,6 +434,11 @@ public abstract class AbstractDsDeployer
 
       log.debugf("Adding management datasource: %s", mgtDs);
       getManagementRepository().getDataSources().add(mgtDs);
+
+      // Flush strategy
+      FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
+      if (ds.getPool() != null)
+         flushStrategy = ds.getPool().getFlushStrategy();
       
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
@@ -440,6 +446,7 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  ds.isUseCcm(), ccm,
+                                 flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(),
                                  null, null, null, null, null);
@@ -604,6 +611,11 @@ public abstract class AbstractDsDeployer
 
       log.debugf("Adding management datasource: %s", mgtDs);
       getManagementRepository().getDataSources().add(mgtDs);
+
+      // Flush strategy
+      FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
+      if (ds.getXaPool() != null)
+         flushStrategy = ds.getXaPool().getFlushStrategy();
       
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
@@ -611,6 +623,7 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  ds.isUseCcm(), ccm,
+                                 flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,
                                  xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);

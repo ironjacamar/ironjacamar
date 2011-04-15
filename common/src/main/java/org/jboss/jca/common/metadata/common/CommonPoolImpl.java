@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
@@ -58,15 +59,23 @@ public class CommonPoolImpl implements CommonPool
    protected final Boolean useStrictMin;
 
    /**
+    * flush-strategy
+    */
+   protected final FlushStrategy flushStrategy;
+
+   /**
     * Create a new PoolImpl.
     *
     * @param minPoolSize minPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
     * @param useStrictMin useStrictMin
+    * @param flushStrategy flushStrategy
     * @throws ValidateException ValidateException
     */
-   public CommonPoolImpl(Integer minPoolSize, Integer maxPoolSize, Boolean prefill, Boolean useStrictMin)
+   public CommonPoolImpl(Integer minPoolSize, Integer maxPoolSize, 
+                         Boolean prefill, Boolean useStrictMin,
+                         FlushStrategy flushStrategy)
       throws ValidateException
    {
       super();
@@ -74,6 +83,7 @@ public class CommonPoolImpl implements CommonPool
       this.maxPoolSize = maxPoolSize;
       this.prefill = prefill;
       this.useStrictMin = useStrictMin;
+      this.flushStrategy = flushStrategy;
       this.validate();
    }
 
@@ -121,6 +131,16 @@ public class CommonPoolImpl implements CommonPool
       return useStrictMin;
    }
 
+   /**
+    * Get the flush strategy.
+    * @return The value
+    */
+   @Override
+   public final FlushStrategy getFlushStrategy()
+   {
+      return flushStrategy;
+   }
+
    @Override
    public void validate() throws ValidateException
    {
@@ -128,7 +148,7 @@ public class CommonPoolImpl implements CommonPool
          throw new ValidateException("maxPoolSize (xml tag " + Tag.MAXPOOLSIZE + ") cannot be < 0");
       if (this.minPoolSize != null && this.minPoolSize < 0)
          throw new ValidateException("minPoolSize (xml tag " + Tag.MIN_POOL_SIZE + ") cannot be < 0");
-
+      if (this.flushStrategy == null)
+         throw new ValidateException("flushStrategy (xml tag " + Tag.FLUSH_STRATEGY + ") cannot be null");
    }
-
 }

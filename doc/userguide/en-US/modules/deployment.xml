@@ -332,6 +332,13 @@ java:/eis/ao/&lt;deploymentName&gt;
                  Default false
                </entry>
              </row>
+             <row>
+               <entry><code>flush-strategy</code></entry>
+               <entry>
+                 Specifies how the pool should be flush in case of an error.
+                 Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
+               </entry>
+             </row>
            </tbody>
          </tgroup>
        </table>
@@ -376,6 +383,13 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry>
                  Specifies if the min-pool-size should be considered strictly.
                  Default false
+               </entry>
+             </row>
+             <row>
+               <entry><code>flush-strategy</code></entry>
+               <entry>
+                 Specifies how the pool should be flush in case of an error.
+                 Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
                </entry>
              </row>
              <row>
@@ -954,6 +968,13 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                   Default false
                 </entry>
               </row>
+              <row>
+                <entry><code>flush-strategy</code></entry>
+                <entry>
+                  Specifies how the pool should be flush in case of an error.
+                  Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
+                </entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
@@ -998,6 +1019,13 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                 <entry>
                   Define if the min-pool-size should be considered a strictly.
                   Default false
+                </entry>
+              </row>
+              <row>
+                <entry><code>flush-strategy</code></entry>
+                <entry>
+                  Specifies how the pool should be flush in case of an error.
+                  Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
                 </entry>
               </row>
               <row>

@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 /**
@@ -54,6 +55,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
     * @param useStrictMin useStrictMin
+    * @param flushStrategy flushStrategy
     * @param isSameRmOverride isSameRmOverride
     * @param interleaving interleaving
     * @param padXid padXid
@@ -61,17 +63,19 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @param noTxSeparatePool noTxSeparatePool
     * @throws ValidateException ValidateException
     */
-   public CommonXaPoolImpl(Integer minPoolSize, Integer maxPoolSize, Boolean prefill, Boolean useStrictMin,
-      Boolean isSameRmOverride, Boolean interleaving, Boolean padXid, Boolean wrapXaDataSource,
-      Boolean noTxSeparatePool) throws ValidateException
+   public CommonXaPoolImpl(Integer minPoolSize, Integer maxPoolSize,
+                           Boolean prefill, Boolean useStrictMin,
+                           FlushStrategy flushStrategy,
+                           Boolean isSameRmOverride, Boolean interleaving, 
+                           Boolean padXid, Boolean wrapXaDataSource,
+                           Boolean noTxSeparatePool) throws ValidateException
    {
-      super(minPoolSize, maxPoolSize, prefill, useStrictMin);
+      super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
       this.isSameRmOverride = isSameRmOverride;
       this.interleaving = interleaving;
       this.padXid = padXid;
       this.wrapXaDataSource = wrapXaDataSource;
       this.noTxSeparatePool = noTxSeparatePool;
-
    }
 
    /**
@@ -197,8 +201,5 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
              ", padXid=" + padXid + ", wrapXaDataSource=" + wrapXaDataSource + ", noTxSeparatePool=" +
              noTxSeparatePool + "]";
    }
-
-
-
 }
 

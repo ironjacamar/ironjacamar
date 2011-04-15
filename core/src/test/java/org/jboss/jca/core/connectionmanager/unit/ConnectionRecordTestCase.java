@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.unit;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.listener.NoTxConnectionListener;
@@ -66,8 +67,10 @@ public class ConnectionRecordTestCase
    @Test
    public void testConnectionListenerIsNotNull()
    {
-      ConnectionRecord other = new ConnectionRecord(new NoTxConnectionListener(null, null, null, null), 
-            connection, cri);
+      ConnectionRecord other = 
+         new ConnectionRecord(new NoTxConnectionListener(null, null, null, null,
+                                                         FlushStrategy.FAILING_CONNECTION_ONLY), 
+                              connection, cri);
       assertNotNull(other.getConnectionListener());
    }
    
@@ -88,5 +91,4 @@ public class ConnectionRecordTestCase
    {
       assertNotNull(cr.getCri());
    }
-   
 }

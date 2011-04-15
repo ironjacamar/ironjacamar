@@ -32,7 +32,9 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -227,15 +229,37 @@ public abstract class AbstractPool implements Pool
     */
    public void flush()
    {
+      flush(false);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void flush(boolean kill)
+   {
+      Set<ManagedConnectionPool> clearMcps = new HashSet<ManagedConnectionPool>();
+
       Iterator<SubPoolContext> itSubPoolContexts = subPools.values().iterator();
       SubPoolContext subPoolContext = null;
       while (itSubPoolContexts.hasNext())
       {
          subPoolContext = itSubPoolContexts.next();
-         subPoolContext.getSubPool().flush();
+         ManagedConnectionPool mcp = subPoolContext.getSubPool();
+
+         mcp.flush(kill);
+
+         if (mcp.isEmpty())
+            clearMcps.add(mcp);
       }
 
-      subPools.clear();
+      if (clearMcps.size() > 0)
+      {
+         for (ManagedConnectionPool mcp : clearMcps)
+         {
+            mcp.shutdown();
+            subPools.values().remove(mcp);
+         }
+      }
    }
 
    /**

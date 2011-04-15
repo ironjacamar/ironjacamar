@@ -9,6 +9,7 @@
         <xa-pool>
           <min-pool-size>0</min-pool-size>
           <max-pool-size>64</max-pool-size>
+          <flush-strategy>IdleConnections</flush-strategy>
         </xa-pool>
         <recovery>
           <recover-credential>

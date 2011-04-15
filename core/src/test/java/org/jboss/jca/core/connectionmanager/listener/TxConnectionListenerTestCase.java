@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.TxConnectionManager;
@@ -96,7 +97,8 @@ public class TxConnectionListenerTestCase
    public void delistShouldSetTransactionSynchronizationToNullIfEverythingCommitted() throws Exception
    {
       //given
-      TxConnectionListener listener = new TxConnectionListener(txConnectionManager, null, null, null, null);
+      TxConnectionListener listener = 
+         new TxConnectionListener(txConnectionManager, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(false);
       Transaction tx = mock(Transaction.class);
       when(tx.getStatus()).thenReturn(Status.STATUS_COMMITTED);
@@ -118,7 +120,8 @@ public class TxConnectionListenerTestCase
    public void delistShouldNotSetTransactionSynchronizationToNullIfTrackByTx() throws Exception
    {
       //given
-      TxConnectionListener listener = new TxConnectionListener(txConnectionManager, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(txConnectionManager, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       Transaction tx = mock(Transaction.class);
       when(tx.getStatus()).thenReturn(Status.STATUS_COMMITTED);
@@ -152,7 +155,8 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(false);
       TransactionSynchronization transactionSynchronization = null;
       listener.setTransactionSynchronization(transactionSynchronization);
@@ -187,7 +191,8 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(false);
       TransactionSynchronization transactionSynchronization = null;
       listener.setTransactionSynchronization(transactionSynchronization);
@@ -214,7 +219,8 @@ public class TxConnectionListenerTestCase
       TransactionManager tm = mock(TransactionManager.class);
       when(tm.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
       when(cm.getTransactionManager()).thenReturn(tm);
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener = 
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       Transaction tx = mock(Transaction.class);
       TransactionSynchronization transactionSynchronization = listener.new TransactionSynchronization(tx, false);
@@ -239,7 +245,8 @@ public class TxConnectionListenerTestCase
       TransactionManager tm = mock(TransactionManager.class);
       when(tm.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
       when(cm.getTransactionManager()).thenReturn(tm);
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       Transaction tx = mock(Transaction.class);
       TransactionSynchronization transactionSynch = mock(TxConnectionListener.TransactionSynchronization.class);
@@ -265,7 +272,8 @@ public class TxConnectionListenerTestCase
       when(tm.getStatus()).thenReturn(Status.STATUS_COMMITTING);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       Transaction tx = mock(Transaction.class);
       TransactionSynchronization transactionSynchronization = listener.new TransactionSynchronization(tx, false);
@@ -295,7 +303,8 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       Transaction tx = mock(Transaction.class);
       TransactionSynchronization transactionSynchronization = listener.new TransactionSynchronization(tx, false);
@@ -325,7 +334,8 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(false);
       TransactionSynchronization transactionSynchronization = listener.new TransactionSynchronization(threadTx, false);
       listener.setTransactionSynchronization(transactionSynchronization);
@@ -356,7 +366,8 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       TransactionSynchronization transactionSynchronization = listener.new TransactionSynchronization(threadTx, false);
       listener.setTransactionSynchronization(transactionSynchronization);
@@ -385,7 +396,8 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       TransactionSynchronization transactionSynchronization = listener.new TransactionSynchronization(threadTx, false);
       listener.setTransactionSynchronization(transactionSynchronization);
@@ -417,7 +429,8 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       TransactionSynchronization transactionSynchronization = null;
       listener.setTransactionSynchronization(transactionSynchronization);
@@ -448,7 +461,8 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionManager()).thenReturn(tm);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, null, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       TransactionSynchronization transactionSynchronization = null;
       listener.setTransactionSynchronization(transactionSynchronization);
@@ -472,7 +486,8 @@ public class TxConnectionListenerTestCase
       ManagedConnection mc = mock(ManagedConnection.class);
       ManagedConnection mc2 = mock(ManagedConnection.class);
 
-      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, mc, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       ConnectionEvent ce = new ConnectionEvent(mc2, ConnectionEvent.CONNECTION_CLOSED);
       //when
       listener.connectionClosed(ce);
@@ -494,7 +509,8 @@ public class TxConnectionListenerTestCase
       ManagedConnection mc = mock(ManagedConnection.class);
       CachedConnectionManagerImpl ccm = mock(CachedConnectionManagerImpl.class);
       when(cm.getCachedConnectionManager()).thenReturn(ccm);
-      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, mc, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(false);
       ConnectionEvent ce = new ConnectionEvent(mc, ConnectionEvent.CONNECTION_CLOSED);
       //when
@@ -518,7 +534,8 @@ public class TxConnectionListenerTestCase
       ManagedConnection mc = mock(ManagedConnection.class);
       CachedConnectionManagerImpl ccm = mock(CachedConnectionManagerImpl.class);
       when(cm.getCachedConnectionManager()).thenReturn(ccm);
-      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, mc, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       ConnectionEvent ce = new ConnectionEvent(mc, ConnectionEvent.CONNECTION_CLOSED);
       //when
@@ -542,7 +559,8 @@ public class TxConnectionListenerTestCase
       ManagedConnection mc = mock(ManagedConnection.class);
       CachedConnectionManagerImpl ccm = mock(CachedConnectionManagerImpl.class);
       when(cm.getCachedConnectionManager()).thenReturn(ccm);
-      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, mc, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
       ConnectionEvent ce = mock(ConnectionEvent.class);
       when(ce.getSource()).thenReturn(mc);
@@ -567,7 +585,8 @@ public class TxConnectionListenerTestCase
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
       ManagedConnection mc = mock(ManagedConnection.class);
-      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, mc, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       ConnectionEvent ce = mock(ConnectionEvent.class);
       /****** this is the important given *****/
       listener.localTransactionCommitted(ce);
@@ -589,7 +608,8 @@ public class TxConnectionListenerTestCase
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
       ManagedConnection mc = mock(ManagedConnection.class);
-      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, mc, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       ConnectionEvent ce = mock(ConnectionEvent.class);
       /****** this is the important given *****/
       listener.localTransactionStarted(ce);
@@ -612,7 +632,8 @@ public class TxConnectionListenerTestCase
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
       ManagedConnection mc = mock(ManagedConnection.class);
-      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
+      TxConnectionListener listener =
+         new TxConnectionListener(cm, mc, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       ConnectionEvent ce = mock(ConnectionEvent.class);
       /****** this is the important given *****/
       listener.localTransactionStarted(ce);
@@ -635,7 +656,8 @@ public class TxConnectionListenerTestCase
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
       ManagedConnection mc = mock(ManagedConnection.class);
-      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null, null);
+      TxConnectionListener listener = new TxConnectionListener(cm, mc, null, null,
+                                                               FlushStrategy.FAILING_CONNECTION_ONLY, null);
       ConnectionEvent ce = mock(ConnectionEvent.class);
       /****** this is the important given *****/
       listener.localTransactionStarted(ce);
@@ -678,7 +700,8 @@ public class TxConnectionListenerTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager =
          cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-                                 null, null, false, null, null, null, ti, null, null, null, null, null);
+                                 null, null, false, null, FlushStrategy.FAILING_CONNECTION_ONLY,
+                                 null, null, ti, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;
    }

@@ -397,6 +397,16 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="flush-strategy" type="xs:token" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Specifies how the pool should be flush in case of an error.
+              Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   

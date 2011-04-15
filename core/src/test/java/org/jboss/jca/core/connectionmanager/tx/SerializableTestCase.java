@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.tx;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -73,7 +74,9 @@ public class SerializableTestCase
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
-                                                                    pool, null, null, false, null, null, null, ti,
+                                                                    pool, null, null, false, null, 
+                                                                    FlushStrategy.FAILING_CONNECTION_ONLY,
+                                                                    null, null, ti,
                                                                     Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);
 

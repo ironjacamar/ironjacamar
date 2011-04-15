@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -62,6 +63,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    
    /** Pool internal context */
    private final Object internalManagedPoolContext;
+
+   /** Flush strategy */
+   private FlushStrategy flushStrategy;
    
    /** Connection State */
    private ConnectionState state = ConnectionState.NORMAL;
@@ -81,18 +85,20 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * Creates a new instance of the listener that is responsible for
     * tracking the owned connection instance.
+    * @param cm connection manager
     * @param managedConnection managed connection
     * @param pool pool
     * @param context pool internal context
-    * @param cm connection manager
+    * @param flushStrategy flushStrategy
     */
    protected AbstractConnectionListener(ConnectionManager cm, ManagedConnection managedConnection, 
-                                        Pool pool, Object context)
+                                        Pool pool, Object context, FlushStrategy flushStrategy)
    {
       this.cm = cm;
       this.managedConnection = managedConnection;
       this.pool = pool;
       this.internalManagedPoolContext = context;
+      this.flushStrategy = flushStrategy;
       this.trace = log.isTraceEnabled();
       this.lastUse = System.currentTimeMillis();
    }
@@ -349,7 +355,15 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       }
       
       getConnectionManager().returnManagedConnection(this, true);      
-      
+
+      if (flushStrategy == FlushStrategy.IDLE_CONNECTIONS)
+      {
+         pool.flush();
+      }
+      else if (flushStrategy == FlushStrategy.ENTIRE_POOL)
+      {
+         pool.flush(true);
+      }
    }
    
    

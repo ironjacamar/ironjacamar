@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
@@ -70,7 +71,10 @@ public class PrefillTestCase
       AbstractPrefillPool app = (AbstractPrefillPool)pool;
 
       NoTxConnectionManager noTxConnectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, false, null, null, null);
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, 
+                                    pool, null, null, false, null, 
+                                    FlushStrategy.FAILING_CONNECTION_ONLY,
+                                    null, null);
 
       app.prefill(null, null, false);
 
@@ -112,7 +116,9 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
-                                    null, null, false, null, null, null);
+                                    null, null, false, null, 
+                                    FlushStrategy.FAILING_CONNECTION_ONLY,
+                                    null, null);
 
       app.prefill(null, null, false);
 
@@ -175,7 +181,9 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
-                                    subjectFactory, "domain", false, null, null, null);
+                                    subjectFactory, "domain", false, null, 
+                                    FlushStrategy.FAILING_CONNECTION_ONLY,
+                                    null, null);
 
       app.prefill(subject, null, false);
 
@@ -220,7 +228,9 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
-                                    subjectFactory, "domain", false, null, null, null);
+                                    subjectFactory, "domain", false, null, 
+                                    FlushStrategy.FAILING_CONNECTION_ONLY,
+                                    null, null);
 
       app.prefill(subject, null, false);
 

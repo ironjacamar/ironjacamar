@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
@@ -226,6 +227,25 @@ public abstract class AbstractParser
    }
 
    /**
+    * convert an xml element in FlushStrategy value
+    *
+    * @param reader the StAX reader
+    * @return the flush strategy represention
+    * @throws XMLStreamException StAX exception
+    * @throws ParserException in case it isn't a number
+    */
+   protected FlushStrategy elementAsFlushStrategy(XMLStreamReader reader) throws XMLStreamException, ParserException
+   {
+      String elementtext = rawElementText(reader);
+      FlushStrategy result = FlushStrategy.forName(getSubstitutionValue(elementtext));
+
+      if (result != FlushStrategy.UNKNOWN)
+         return result;
+
+      throw new ParserException(elementtext + " isn't a valid flush strategy");
+   }
+
+   /**
     *
     * parse a {@link CommonPool} object
     *
@@ -242,6 +262,7 @@ public abstract class AbstractParser
       Integer maxPoolSize = null;
       boolean prefill = false;
       boolean useStrictMin = false;
+      FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
 
       while (reader.hasNext())
       {
@@ -251,7 +272,7 @@ public abstract class AbstractParser
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.POOL)
                {
 
-                  return new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin);
+                  return new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
 
                }
                else
@@ -281,6 +302,10 @@ public abstract class AbstractParser
                   }
                   case USE_STRICT_MIN : {
                      useStrictMin = elementAsBoolean(reader);
+                     break;
+                  }
+                  case FLUSH_STRATEGY : {
+                     flushStrategy = elementAsFlushStrategy(reader);
                      break;
                   }
                   default :
@@ -373,6 +398,7 @@ public abstract class AbstractParser
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
       boolean prefill = false;
+      FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
       boolean interleaving = false;
       boolean isSameRmOverrideValue = false;
       boolean padXid = false;
@@ -388,8 +414,9 @@ public abstract class AbstractParser
                if (XaDataSource.Tag.forName(reader.getLocalName()) == XaDataSource.Tag.XA_POOL)
                {
 
-                  return new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, isSameRmOverrideValue,
-                                              interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
+                  return new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
+                                              isSameRmOverrideValue, interleaving, padXid,
+                                              wrapXaDataSource, noTxSeparatePool);
 
                }
                else
@@ -438,6 +465,10 @@ public abstract class AbstractParser
                   }
                   case USE_STRICT_MIN : {
                      useStrictMin = elementAsBoolean(reader);
+                     break;
+                  }
+                  case FLUSH_STRATEGY : {
+                     flushStrategy = elementAsFlushStrategy(reader);
                      break;
                   }
                   default :

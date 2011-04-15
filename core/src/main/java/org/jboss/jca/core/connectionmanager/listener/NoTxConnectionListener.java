@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
@@ -43,11 +44,12 @@ public class NoTxConnectionListener extends AbstractConnectionListener
     * @param mc managed connection
     * @param pool pool
     * @param context context
+    * @param flushStrategy flushStrategy
     */
    public NoTxConnectionListener(final ConnectionManager cm, final ManagedConnection mc, 
-                                 final Pool pool, final Object context)
+                                 final Pool pool, final Object context, final FlushStrategy flushStrategy)
    {
-      super(cm, mc, pool, context);
+      super(cm, mc, pool, context, flushStrategy);
    }
    
    /**

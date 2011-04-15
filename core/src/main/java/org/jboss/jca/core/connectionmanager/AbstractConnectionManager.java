@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.common.JBossResourceException;
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
@@ -82,6 +83,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
    /** SubjectFactory */
    private SubjectFactory subjectFactory;
+
+   /** The flush strategy */
+   private FlushStrategy flushStrategy;
 
    /** Number of retry to allocate connection */
    private int allocationRetry;
@@ -241,6 +245,23 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       this.subjectFactory = subjectFactory;
    }
 
+   /**
+    * Get the flush strategy
+    * @return The value
+    */
+   public FlushStrategy getFlushStrategy()
+   {
+      return flushStrategy;
+   }
+
+   /**
+    * Set the flush strategy
+    * @param v The value
+    */
+   public void setFlushStrategy(FlushStrategy v)
+   {
+      this.flushStrategy = v;
+   }
 
    /**
     * Gets managed connection factory.
