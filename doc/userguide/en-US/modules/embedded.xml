@@ -34,6 +34,7 @@
       <para>You will need all the JAR files located in the</para>
 
       <programlisting>
+$IRON_JACAMAR_HOME/bin
 $IRON_JACAMAR_HOME/lib
 $IRON_JACAMAR_HOME/lib/embedded
       </programlisting>
@@ -55,8 +56,64 @@ $IRON_JACAMAR_HOME/lib/embedded/arquillian
 
       <para>directory as well.</para>
 
+      <para>Furthermore you will need to configure Java Naming and Directory Interface (JNDI) and logging
+        using for example property files.</para>
+
+      <para><code>jndi.properties</code> file:</para>
+      <programlisting>
+java.naming.factory.initial=org.jnp.interfaces.LocalOnlyContextFactory
+java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
+      </programlisting>
+
+      <para><code>logging.properties</code> file:</para>
+      <programlisting>
+# Additional logger names to configure (root logger is always configured)
+loggers=org.jboss.jca,org.jboss,org.jnp,com.arjuna
+
+# Root logger level
+logger.level=${iron.jacamar.log.level:INFO}
+logger.handlers=CONSOLE, FILE
+
+# org.jboss.jca
+logger.org.jboss.jca.level=DEBUG
+
+# org.jboss
+logger.org.jboss.level=INFO
+
+# org.jnp
+logger.org.jnp.level=INFO
+
+# com.arjuna
+logger.com.arjuna.level=INFO
+
+# Console handler configuration
+handler.CONSOLE=org.jboss.logmanager.handlers.ConsoleHandler
+handler.CONSOLE.properties=autoFlush
+handler.CONSOLE.level=${iron.jacamar.log.console.level:INFO}
+handler.CONSOLE.autoFlush=true
+handler.CONSOLE.formatter=PATTERN
+
+# File handler configuration
+handler.FILE=org.jboss.logmanager.handlers.FileHandler
+handler.FILE.level=${iron.jacamar.log.file.level:DEBUG}
+handler.FILE.properties=autoFlush,fileName
+handler.FILE.autoFlush=true
+handler.FILE.fileName=${test.dir}/embedded/test.log
+handler.FILE.formatter=PATTERN
+
+# Formatter pattern configuration
+formatter.PATTERN=org.jboss.logmanager.formatters.PatternFormatter
+formatter.PATTERN.properties=pattern
+formatter.PATTERN.pattern=%d{HH:mm:ss,SSS} %-5p [%c{1}] %m%n
+      </programlisting>
+
+      <para>These files needs to be available to the application classloader.</para>
+
       <para>The code generator will generate a test suite based on the Arquillian functionality, so
         that environment can be used as a starting point for your own integration.</para>
+
+      <para>This setup will show you how to use dependencies from the JBoss Nexus Maven repository instead
+        if you choose the Maven or Ant+Ivy based build environment.</para>
 
    </section>
 
