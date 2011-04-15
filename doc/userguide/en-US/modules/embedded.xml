@@ -115,6 +115,11 @@ formatter.PATTERN.pattern=%d{HH:mm:ss,SSS} %-5p [%c{1}] %m%n
       <para>This setup will show you how to use dependencies from the JBoss Nexus Maven repository instead
         if you choose the Maven or Ant+Ivy based build environment.</para>
 
+      <note>Note that, if you want to be able to deploy datasources you will need to deploy the <code>jdbc-local.rar</code>
+        for <code>&lt;datasource&gt;</code> support, or <code>jdbc-xa.rar</code>
+        for <code>&lt;xa-datasource&gt;</code> support. Both archives can be found in the
+        <code>system/</code> directory.</note>
+
    </section>
 
    <section id="embedded_usage">
