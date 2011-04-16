@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -391,7 +392,15 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                {
                   String dsPSName = baseName + ",type=PoolStatistics";
                   
-                  DynamicMBean dsPSDMB = JMX.createMBean(mgtDs.getPool().getStatistics(), "PoolStatistics");
+                  Set<String> writeAttributes = new HashSet<String>();
+                  writeAttributes.add("Enabled");
+                  Set<String> excludeAttributes = new HashSet<String>();
+                  excludeAttributes.add("Names");
+                  Set<String> excludeOperations = new HashSet<String>();
+                  excludeOperations.add("delta(.)*");
+
+                  DynamicMBean dsPSDMB = JMX.createMBean(mgtDs.getPool().getStatistics(), "PoolStatistics",
+                                                         writeAttributes, null, excludeAttributes, excludeOperations);
                   ObjectName dsPSON = new ObjectName(dsPSName);
 
                   server.registerMBean(dsPSDMB, dsPSON);
@@ -403,8 +412,15 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
             if (mgtDs.getStatistics() != null)
             {
                String dsSName = baseName + ",type=Statistics";
+               Set<String> writeAttributes = new HashSet<String>();
+               writeAttributes.add("Enabled");
+               Set<String> excludeAttributes = new HashSet<String>();
+               excludeAttributes.add("Names");
+               Set<String> excludeOperations = new HashSet<String>();
+               excludeOperations.add("delta(.)*");
                   
-               DynamicMBean dsSDMB = JMX.createMBean(mgtDs.getStatistics(), "Statistics");
+               DynamicMBean dsSDMB = JMX.createMBean(mgtDs.getStatistics(), "Statistics",
+                                                     writeAttributes, null, excludeAttributes, excludeOperations);
                ObjectName dsSON = new ObjectName(dsSName);
 
                server.registerMBean(dsSDMB, dsSON);

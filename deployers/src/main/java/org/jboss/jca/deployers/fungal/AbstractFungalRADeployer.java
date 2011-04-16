@@ -456,8 +456,17 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   String raSName = baseName + ",type=ResourceAdapterStatistics,class=" +
                      getClassName(mgtRa.getResourceAdapter().getClass().getName());
 
+                  Set<String> writeStatAttributes = new HashSet<String>();
+                  writeStatAttributes.add("Enabled");
+                  Set<String> excludeStatAttributes = new HashSet<String>();
+                  excludeStatAttributes.add("Names");
+                  Set<String> excludeStatOperations = new HashSet<String>();
+                  excludeStatOperations.add("delta(.)*");
+
                   DynamicMBean raSDMB = JMX.createMBean(mgtRa.getStatistics(),
-                                                        "Resource adapter statistics");
+                                                        "Resource adapter statistics",
+                                                        writeStatAttributes, null,
+                                                        excludeStatAttributes, excludeStatOperations);
                   ObjectName raSON = new ObjectName(raSName);
                   
                   server.registerMBean(raSDMB, raSON);
@@ -509,8 +518,17 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   String mcfSName = baseName + ",type=ManagedConnectionFactoryStatistics,class=" +
                      getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName());
 
+                  Set<String> writeStatAttributes = new HashSet<String>();
+                  writeStatAttributes.add("Enabled");
+                  Set<String> excludeStatAttributes = new HashSet<String>();
+                  excludeStatAttributes.add("Names");
+                  Set<String> excludeStatOperations = new HashSet<String>();
+                  excludeStatOperations.add("delta(.)*");
+
                   DynamicMBean mcfSDMB = JMX.createMBean(mgtMcf.getStatistics(),
-                                                         "Managed connection factory statistics");
+                                                         "Managed connection factory statistics",
+                                                         writeStatAttributes, null,
+                                                         excludeStatAttributes, excludeStatOperations);
                   ObjectName mcfSON = new ObjectName(mcfSName);
 
                   server.registerMBean(mcfSDMB, mcfSON);
@@ -550,7 +568,16 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   String cfPSName = baseName + ",type=ConnectionFactory,class=" +
                      getClassName(mgtCf.getConnectionFactory().getClass().getName()) + ",subcategory=PoolStatistics";
 
-                  DynamicMBean cfPSDMB = JMX.createMBean(mgtCf.getPool().getStatistics(), "Pool statistics");
+                  Set<String> writeStatAttributes = new HashSet<String>();
+                  writeStatAttributes.add("Enabled");
+                  Set<String> excludeStatAttributes = new HashSet<String>();
+                  excludeStatAttributes.add("Names");
+                  Set<String> excludeStatOperations = new HashSet<String>();
+                  excludeStatOperations.add("delta(.)*");
+
+                  DynamicMBean cfPSDMB = JMX.createMBean(mgtCf.getPool().getStatistics(), "Pool statistics",
+                                                         writeStatAttributes, null,
+                                                         excludeStatAttributes, excludeStatOperations);
                   ObjectName cfPSON = new ObjectName(cfPSName);
                   
                   server.registerMBean(cfPSDMB, cfPSON);
@@ -600,8 +627,17 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   String aoSName = baseName + ",type=AdminObjectStatistics,class=" +
                      getClassName(mgtAo.getAdminObject().getClass().getName());
 
+                  Set<String> writeStatAttributes = new HashSet<String>();
+                  writeStatAttributes.add("Enabled");
+                  Set<String> excludeStatAttributes = new HashSet<String>();
+                  excludeStatAttributes.add("Names");
+                  Set<String> excludeStatOperations = new HashSet<String>();
+                  excludeStatOperations.add("delta(.)*");
+
                   DynamicMBean aoSDMB = JMX.createMBean(mgtAo.getStatistics(),
-                                                        "Admin object statistics");
+                                                        "Admin object statistics",
+                                                        writeStatAttributes, null,
+                                                        excludeStatAttributes, excludeStatOperations);
                   ObjectName aoSON = new ObjectName(aoSName);
 
                   server.registerMBean(aoSDMB, aoSON);
