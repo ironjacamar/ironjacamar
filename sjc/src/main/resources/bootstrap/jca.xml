@@ -63,6 +63,7 @@
       <!-- Handoff executor -->
       <parameter><inject bean="RejectingExecutor"/></parameter>
     </constructor>
+    <destroy method="shutdown"/>
   </bean>
 
   <!-- Long running thread pool -->
@@ -84,6 +85,7 @@
       <!-- Handoff executor -->
       <parameter><inject bean="RejectingExecutor"/></parameter>
     </constructor>
+    <destroy method="shutdown"/>
   </bean>
 
   <!-- Users / roles -->
