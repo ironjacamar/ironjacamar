@@ -32,7 +32,6 @@ import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
@@ -54,17 +53,24 @@ import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
+import org.jboss.security.SecurityContext;
+import org.jboss.security.SecurityContextAssociation;
+import org.jboss.security.SecurityContextFactory;
 import org.jboss.security.SubjectFactory;
 
 /**
@@ -464,7 +470,7 @@ public abstract class AbstractDsDeployer
          Subject subject = null;
 
          if (subjectFactory != null)
-            subject = subjectFactory.createSubject(securityDomain);
+            subject = createSubject(subjectFactory, securityDomain, mcf);
 
          pp.prefill(subject, null, false);
       }
@@ -472,9 +478,6 @@ public abstract class AbstractDsDeployer
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }
-
-
-   
 
    /**
     * Deploy an XA datasource
@@ -727,7 +730,7 @@ public abstract class AbstractDsDeployer
          Subject subject = null;
 
          if (subjectFactory != null)
-            subject = subjectFactory.createSubject(securityDomain);
+            subject = createSubject(subjectFactory, securityDomain, mcf);
 
          pp.prefill(subject, null, noTxSeparatePool.booleanValue());
       }
@@ -891,4 +894,68 @@ public abstract class AbstractDsDeployer
     * @exception DeployException Thrown if the security domain can't be resolved
     */
    protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
+
+   /**
+    * Create a subject
+    * @param subjectFactory The subject factory
+    * @param securityDomain The security domain
+    * @param mcf The managed connection factory
+    * @return The subject; <code>null</code> in case of an error
+    */
+   protected Subject createSubject(final SubjectFactory subjectFactory,
+                                   final String securityDomain,
+                                   final ManagedConnectionFactory mcf)
+   {
+      if (subjectFactory == null)
+         throw new IllegalArgumentException("SubjectFactory is null");
+
+      if (securityDomain == null)
+         throw new IllegalArgumentException("SecurityDomain is null");
+
+      return AccessController.doPrivileged(new PrivilegedAction<Subject>() 
+      {
+         public Subject run()
+         {
+            try
+            {
+               // Create a security context on the association
+               SecurityContext securityContext = SecurityContextFactory.createSecurityContext(securityDomain);
+               SecurityContextAssociation.setSecurityContext(securityContext);
+               
+               // Unauthenticated
+               Subject unauthenticated = new Subject();
+                  
+               // Leave the subject empty as we don't have any information to do the
+               // authentication with - and we only need it to be able to get the
+               // real subject from the SubjectFactory
+               
+               // Set the authenticated subject
+               securityContext.getSubjectInfo().setAuthenticatedSubject(unauthenticated);
+
+               // Use the unauthenticated subject to get the real subject instance
+               Subject subject = subjectFactory.createSubject(securityDomain);
+
+               Set<PasswordCredential> pcs = subject.getPrivateCredentials(PasswordCredential.class);
+               if (pcs != null && pcs.size() > 0)
+               {
+                  for (PasswordCredential pc : pcs)
+                  {
+                     pc.setManagedConnectionFactory(mcf);
+                  }
+               }
+
+               if (log.isDebugEnabled())
+                  log.debug("Subject=" + subject);
+                     
+               return subject;
+            }
+            catch (Throwable t)
+            {
+               log.error("Exception during createSubject()" + t.getMessage(), t);
+            }
+
+            return null;
+         }
+      });
+   }
 }
