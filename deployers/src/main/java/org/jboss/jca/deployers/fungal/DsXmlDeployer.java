@@ -22,10 +22,16 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.metadata.ds.DsParser;
+import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
+import org.jboss.jca.core.spi.mdr.MetadataRepository;
+import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.deployers.common.AbstractDsDeployer;
 import org.jboss.jca.deployers.common.CommonDeployment;
@@ -69,6 +75,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
    /** The kernel */
    private Kernel kernel;
+
+   /** Metadata repository */
+   protected MetadataRepository mdr;
 
    /**
     * Constructor
@@ -368,24 +377,24 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
             if (mgtDs.getPoolConfiguration() != null)
             {
                String dsPCName = baseName + ",type=PoolConfigutation";
-                  
+
                DynamicMBean dsPCDMB = JMX.createMBean(mgtDs.getPoolConfiguration(), "Pool configuration");
                ObjectName dsPCON = new ObjectName(dsPCName);
-               
+
                server.registerMBean(dsPCDMB, dsPCON);
-               
+
                ons.add(dsPCON);
             }
 
             if (mgtDs.getPool() != null)
             {
                String dsPName = baseName + ",type=Pool";
-                  
+
                DynamicMBean dsPDMB = JMX.createMBean(mgtDs.getPool(), "Pool");
                ObjectName dsPON = new ObjectName(dsPName);
 
                server.registerMBean(dsPDMB, dsPON);
-               
+
                ons.add(dsPON);
 
                if (mgtDs.getPool().getStatistics() != null)
@@ -404,7 +413,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                   ObjectName dsPSON = new ObjectName(dsPSName);
 
                   server.registerMBean(dsPSDMB, dsPSON);
-               
+
                   ons.add(dsPSON);
                }
             }
@@ -424,7 +433,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                ObjectName dsSON = new ObjectName(dsSName);
 
                server.registerMBean(dsSDMB, dsSON);
-               
+
                ons.add(dsSON);
             }
          }
@@ -432,4 +441,43 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
       return ons;
    }
+
+   @Override
+   protected Connector getMergedMetaData(DataSource ds, String uniqueId) throws NotFoundException, Exception
+   {
+      Merger merger = new Merger();
+
+      Connector md = mdr.getResourceAdapter(uniqueId);
+      md = merger.mergeConnectorAndDs(ds, md);
+      return md;
+   }
+
+   @Override
+   protected  Connector getMergedMetaData(XaDataSource ds, String uniqueId) throws NotFoundException,
+   Exception {
+      Merger merger = new Merger();
+
+      Connector md = mdr.getResourceAdapter(uniqueId);
+      md = merger.mergeConnectorAndDs(ds, md);
+      return md;
+   }
+
+   /**
+    * Set the metadata repository
+    * @param value The value
+    */
+   public void setMetadataRepository(MetadataRepository value)
+   {
+      mdr = value;
+   }
+
+   /**
+    * Get the metadata repository
+    * @return The handle
+    */
+   public MetadataRepository getMetadataRepository()
+   {
+      return mdr;
+   }
+
 }

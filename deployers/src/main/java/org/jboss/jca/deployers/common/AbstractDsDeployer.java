@@ -36,7 +36,6 @@ import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
@@ -48,7 +47,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
-import org.jboss.jca.core.spi.mdr.MetadataRepository;
+import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.statistics.Statistics;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
@@ -84,9 +83,6 @@ public abstract class AbstractDsDeployer
    /** The transaction integration */
    protected TransactionIntegration transactionIntegration;
 
-   /** Metadata repository */
-   protected MetadataRepository mdr;
-
    /** xaResourceRecoveryRegistry */
    protected XAResourceRecoveryRegistry xaResourceRecoveryRegistry;
 
@@ -104,7 +100,6 @@ public abstract class AbstractDsDeployer
    {
       this.log = log;
       this.transactionIntegration = null;
-      this.mdr = null;
       this.ccm = null;
    }
 
@@ -127,26 +122,8 @@ public abstract class AbstractDsDeployer
    }
 
    /**
-    * Set the metadata repository
-    * @param value The value
-    */
-   public void setMetadataRepository(MetadataRepository value)
-   {
-      mdr = value;
-   }
-
-   /**
-    * Get the metadata repository
-    * @return The handle
-    */
-   public MetadataRepository getMetadataRepository()
-   {
-      return mdr;
-   }
-   
-   /**
     * Get the managementRepository.
-    * 
+    *
     * @return the managementRepository.
     */
    public ManagementRepository getManagementRepository()
@@ -156,7 +133,7 @@ public abstract class AbstractDsDeployer
 
    /**
     * Set the managementRepository.
-    * 
+    *
     * @param managementRepository The managementRepository to set.
     */
    public void setManagementRepository(ManagementRepository managementRepository)
@@ -248,11 +225,11 @@ public abstract class AbstractDsDeployer
                      {
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(false);
-                        Object cf = deployDataSource(dataSource, jndiName, 
+                        Object cf = deployDataSource(dataSource, jndiName,
                                                      uniqueJdbcLocalId, mgtDataSource, jdbcLocalDeploymentCl);
 
                         bindConnectionFactory(deploymentName, jndiName, cf);
-                        
+
                         cfs.add(cf);
                         jndis.add(jndiName);
                         mgts.add(mgtDataSource);
@@ -294,7 +271,7 @@ public abstract class AbstractDsDeployer
                                                        recovery,
                                                        mgtDataSource,
                                                        jdbcXADeploymentCl);
-                        
+
                         recoveryModules.add(recovery);
 
                         bindConnectionFactory(deploymentName, jndiName, cf);
@@ -321,7 +298,7 @@ public abstract class AbstractDsDeployer
                                      jndis.toArray(new String[jndis.size()]),
                                      null, null,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
-                                     null, 
+                                     null,
                                      mgts.toArray(new org.jboss.jca.core.api.management.DataSource[mgts.size()]),
                                      parentClassLoader, log);
       }
@@ -369,10 +346,7 @@ public abstract class AbstractDsDeployer
    {
       log.debug("DataSource=" + ds);
 
-      Merger merger = new Merger();
-
-      Connector md = mdr.getResourceAdapter(uniqueId);
-      md = merger.mergeConnectorAndDs(ds, md);
+      Connector md = getMergedMetaData(ds, uniqueId);
 
       // Get the first connection definition as there is only one
       ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
@@ -433,7 +407,7 @@ public abstract class AbstractDsDeployer
       FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
       if (ds.getPool() != null)
          flushStrategy = ds.getPool().getFlushStrategy();
-      
+
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -511,6 +485,29 @@ public abstract class AbstractDsDeployer
    }
 
    /**
+    * getMerged metadata for ds and give uniqueID
+    *
+    * @param ds the ds
+    * @param uniqueId the uniqueId
+    * @return merged MD
+    * @throws NotFoundException in case uniqueId is not found
+    * @throws Exception in case of other errors
+    */
+   protected abstract Connector getMergedMetaData(DataSource ds, String uniqueId) throws NotFoundException, Exception;
+
+   /**
+    * getMerged metadata for xa-ds and give uniqueID
+    *
+    * @param ds the xa-ds
+    * @param uniqueId the uniqueId
+    * @return merged MD
+    * @throws NotFoundException in case uniqueId is not found
+    * @throws Exception in case of other errors
+    */
+   protected abstract Connector getMergedMetaData(XaDataSource ds, String uniqueId) throws NotFoundException,
+      Exception;
+
+   /**
     * Deploy an XA datasource
     * @param ds The datasource
     * @param jndiName The JNDI name
@@ -522,16 +519,13 @@ public abstract class AbstractDsDeployer
     * @exception Throwable Thrown if an error occurs during deployment
     */
    private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId,
-                                     XAResourceRecovery recovery, 
+                                     XAResourceRecovery recovery,
                                      org.jboss.jca.core.api.management.DataSource mgtDs, ClassLoader cl)
       throws Throwable
    {
       log.debug("XaDataSource=" + ds);
 
-      Merger merger = new Merger();
-
-      Connector md = mdr.getResourceAdapter(uniqueId);
-      md = merger.mergeConnectorAndDs(ds, md);
+      Connector md = getMergedMetaData(ds, uniqueId);
 
       // Get the first connection definition as there is only one
       ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
@@ -610,7 +604,7 @@ public abstract class AbstractDsDeployer
       FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
       if (ds.getXaPool() != null)
          flushStrategy = ds.getXaPool().getFlushStrategy();
-      
+
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -745,7 +739,7 @@ public abstract class AbstractDsDeployer
             plugin = new DefaultRecoveryPlugin();
          }
 
-         recoveryImpl = 
+         recoveryImpl =
             getTransactionIntegration().createXAResourceRecovery(mcf,
                                                                  padXid,
                                                                  isSameRMOverride,
