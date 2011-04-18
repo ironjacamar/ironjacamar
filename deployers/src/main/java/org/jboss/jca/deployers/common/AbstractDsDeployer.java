@@ -32,9 +32,7 @@ import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
@@ -346,16 +344,7 @@ public abstract class AbstractDsDeployer
    {
       log.debug("DataSource=" + ds);
 
-      Connector md = getMergedMetaData(ds, uniqueId);
-
-      // Get the first connection definition as there is only one
-      ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
-      List<ConnectionDefinition> cds = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
-      ConnectionDefinition cd = cds.get(0);
-
-      // ManagedConnectionFactory
-      ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cd.getManagedConnectionFactoryClass()
-         .getValue(), cd.getConfigProperties(), cl);
+      ManagedConnectionFactory mcf = createMcf(ds, uniqueId, cl);
 
       initAndInjectClassLoaderPlugin(mcf, ds);
       // Create the pool
@@ -484,28 +473,8 @@ public abstract class AbstractDsDeployer
       return mcf.createConnectionFactory(cm);
    }
 
-   /**
-    * getMerged metadata for ds and give uniqueID
-    *
-    * @param ds the ds
-    * @param uniqueId the uniqueId
-    * @return merged MD
-    * @throws NotFoundException in case uniqueId is not found
-    * @throws Exception in case of other errors
-    */
-   protected abstract Connector getMergedMetaData(DataSource ds, String uniqueId) throws NotFoundException, Exception;
 
-   /**
-    * getMerged metadata for xa-ds and give uniqueID
-    *
-    * @param ds the xa-ds
-    * @param uniqueId the uniqueId
-    * @return merged MD
-    * @throws NotFoundException in case uniqueId is not found
-    * @throws Exception in case of other errors
-    */
-   protected abstract Connector getMergedMetaData(XaDataSource ds, String uniqueId) throws NotFoundException,
-      Exception;
+   
 
    /**
     * Deploy an XA datasource
@@ -525,17 +494,7 @@ public abstract class AbstractDsDeployer
    {
       log.debug("XaDataSource=" + ds);
 
-      Connector md = getMergedMetaData(ds, uniqueId);
-
-      // Get the first connection definition as there is only one
-      ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
-      List<ConnectionDefinition> cds = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
-      ConnectionDefinition cd = cds.get(0);
-
-      // ManagedConnectionFactory
-      ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cd.getManagedConnectionFactoryClass()
-         .getValue(), cd.getConfigProperties(), cl);
-      initAndInjectClassLoaderPlugin(mcf, ds);
+      ManagedConnectionFactory mcf = createMcf(ds, uniqueId, cl);
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getXaPool(), ds.getTimeOut(), ds.getValidation());
 
@@ -777,7 +736,33 @@ public abstract class AbstractDsDeployer
       return mcf.createConnectionFactory(cm);
    }
 
+   /**
+    * Create Mcf for xads
+    *
+    * @param ds the xsds
+    * @param uniqueId the uniqueId
+    * @param cl the classloader
+    * @return the mcf
+    * @throws NotFoundException in case it's not found in cl
+    * @throws Exception in case of other errro
+    * @throws DeployException in case of deoloy error
+    */
+   protected abstract ManagedConnectionFactory createMcf(XaDataSource ds, String uniqueId, ClassLoader cl)
+      throws NotFoundException, Exception, DeployException;
 
+   /**
+    * Create Mcf for ds
+    *
+    * @param ds the xsds
+    * @param uniqueId the uniqueId
+    * @param cl the classloader
+    * @return the mcf
+    * @throws NotFoundException in case it's not found in cl
+    * @throws Exception in case of other errro
+    * @throws DeployException in case of deoloy error
+    */
+   protected abstract ManagedConnectionFactory createMcf(DataSource ds, String uniqueId, ClassLoader cl)
+      throws NotFoundException, Exception, DeployException;
 
    /**
     * Create an instance of the pool configuration based on the input

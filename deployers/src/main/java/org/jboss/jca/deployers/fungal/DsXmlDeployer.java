@@ -26,7 +26,9 @@ import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.metadata.ds.DsParser;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
@@ -50,6 +52,7 @@ import javax.management.DynamicMBean;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.resource.spi.ManagedConnectionFactory;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
@@ -400,7 +403,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                if (mgtDs.getPool().getStatistics() != null)
                {
                   String dsPSName = baseName + ",type=PoolStatistics";
-                  
+
                   Set<String> writeAttributes = new HashSet<String>();
                   writeAttributes.add("Enabled");
                   Set<String> excludeAttributes = new HashSet<String>();
@@ -427,7 +430,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                excludeAttributes.add("Names");
                Set<String> excludeOperations = new HashSet<String>();
                excludeOperations.add("delta(.)*");
-                  
+
                DynamicMBean dsSDMB = JMX.createMBean(mgtDs.getStatistics(), "Statistics",
                                                      writeAttributes, null, excludeAttributes, excludeOperations);
                ObjectName dsSON = new ObjectName(dsSName);
@@ -442,24 +445,46 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       return ons;
    }
 
+
    @Override
-   protected Connector getMergedMetaData(DataSource ds, String uniqueId) throws NotFoundException, Exception
+   protected ManagedConnectionFactory createMcf(XaDataSource ds, String uniqueId, ClassLoader cl)
+      throws NotFoundException, Exception, DeployException
    {
       Merger merger = new Merger();
 
       Connector md = mdr.getResourceAdapter(uniqueId);
       md = merger.mergeConnectorAndDs(ds, md);
-      return md;
+      // Get the first connection definition as there is only one
+      ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
+      List<ConnectionDefinition> cds = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
+      ConnectionDefinition cd = cds.get(0);
+
+      // ManagedConnectionFactory
+      ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cd.getManagedConnectionFactoryClass()
+         .getValue(), cd.getConfigProperties(), cl);
+      initAndInjectClassLoaderPlugin(mcf, ds);
+      return mcf;
    }
 
    @Override
-   protected  Connector getMergedMetaData(XaDataSource ds, String uniqueId) throws NotFoundException,
-   Exception {
+   protected ManagedConnectionFactory createMcf(DataSource ds, String uniqueId, ClassLoader cl)
+      throws NotFoundException, Exception, DeployException
+   {
       Merger merger = new Merger();
 
       Connector md = mdr.getResourceAdapter(uniqueId);
       md = merger.mergeConnectorAndDs(ds, md);
-      return md;
+
+      // Get the first connection definition as there is only one
+      ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
+      List<ConnectionDefinition> cds = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
+      ConnectionDefinition cd = cds.get(0);
+
+      // ManagedConnectionFactory
+      ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cd.getManagedConnectionFactoryClass()
+         .getValue(), cd.getConfigProperties(), cl);
+      initAndInjectClassLoaderPlugin(mcf, ds);
+      return mcf;
    }
 
    /**
