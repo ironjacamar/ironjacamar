@@ -242,10 +242,10 @@ public abstract class AbstractDsDeployer
                {
                   if (dataSource.isEnabled())
                   {
+                     String jndiName = buildJndiName(dataSource.getJndiName(), dataSource.isUseJavaContext());
+
                      try
                      {
-                        String jndiName = buildJndiName(dataSource.getJndiName(), dataSource.isUseJavaContext());
-
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(false);
                         Object cf = deployDataSource(dataSource, jndiName, 
@@ -282,10 +282,10 @@ public abstract class AbstractDsDeployer
                {
                   if (xaDataSource.isEnabled())
                   {
+                     String jndiName = buildJndiName(xaDataSource.getJndiName(), xaDataSource.isUseJavaContext());
+
                      try
                      {
-                        String jndiName = buildJndiName(xaDataSource.getJndiName(), xaDataSource.isUseJavaContext());
-
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(true);
                         XAResourceRecovery recovery = null;
