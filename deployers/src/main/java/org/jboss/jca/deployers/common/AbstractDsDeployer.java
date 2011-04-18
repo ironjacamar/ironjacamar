@@ -259,7 +259,7 @@ public abstract class AbstractDsDeployer
                      }
                      catch (Throwable t)
                      {
-                        log.error("Error during the deployment of " + dataSource.getJndiName(), t);
+                        log.error("Error during the deployment of " + jndiName, t);
                      }
                   }
                }
@@ -284,13 +284,7 @@ public abstract class AbstractDsDeployer
                   {
                      try
                      {
-                        String jndiName = xaDataSource.getJndiName();
-
-                        if (xaDataSource.isUseJavaContext() != null && xaDataSource.isUseJavaContext().booleanValue() &&
-                            !jndiName.startsWith("java:/"))
-                        {
-                           jndiName = "java:/" + jndiName;
-                        }
+                        String jndiName = buildJndiName(xaDataSource.getJndiName(), xaDataSource.isUseJavaContext());
 
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(true);
@@ -311,7 +305,7 @@ public abstract class AbstractDsDeployer
                      }
                      catch (Throwable t)
                      {
-                        log.error("Error during the deployment of " + xaDataSource.getJndiName(), t);
+                        log.error("Error during the deployment of " + jndiName, t);
                      }
                   }
                }
