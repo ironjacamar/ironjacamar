@@ -88,17 +88,6 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public void shutdown();
 
    /**
-    * Flush idle connections from the pool
-    */
-   public void flush();
-
-   /**
-    * Flush the pool
-    * @param kill Kill all connections
-    */
-   public void flush(boolean kill);
-
-   /**
     * Remove the matching SubPoolContext if the pool is empty
     * @param pool the internal managed connection pool
     */

@@ -35,6 +35,17 @@ public interface Pool
    public String getName();
 
    /**
+    * Flush idle connections from the pool
+    */
+   public void flush();
+
+   /**
+    * Flush the pool
+    * @param kill Kill all connections
+    */
+   public void flush(boolean kill);
+
+   /**
     * Get the statistics
     * @return The value
     */
