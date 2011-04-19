@@ -62,9 +62,16 @@
   </path>
   
   <!-- ================================= 
+       Target: init
+       ================================= -->
+  <target name="init">
+    <mkdir dir="${lib.dir}" />
+  </target>
+
+  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile">
+  <target name="compile" depends="init">
     <mkdir dir="${build.dir}" />
 
     <javac srcdir="${basedir}/src/main/java"
@@ -92,7 +99,7 @@
   <!-- ================================= 
        Target: prepare-test
        ================================= -->
-  <target name="prepare-test">
+  <target name="prepare-test" depends="init">
     <mkdir dir="${build.dir}/test" />
 
     <javac srcdir="src/test"
@@ -179,12 +186,18 @@
         <include name="**/*.bak"/>
       </fileset>
     </delete>
-    <delete includeemptydirs="true">
-      <fileset dir="${lib.dir}" includes="**/*"/>
-    </delete>
     <delete dir="${build.dir}"/>
     <delete dir="${target.dir}"/>
     <delete dir="${basedir}/reports"/>
+  </target>
+
+  <!-- ================================= 
+       Target: dist-clean              
+       ================================= -->
+  <target name="dist-clean" depends="init,clean">
+    <delete includeemptydirs="true">
+      <fileset dir="${lib.dir}" includes="**/*"/>
+    </delete>
   </target>
 
 </project>

@@ -417,7 +417,7 @@
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc" />
     <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/spec" />
 
-    <ant dir="${doc.dir}/samples/helloworld" target="clean" inheritRefs="false" inheritAll="false"/>
+    <ant dir="${doc.dir}/samples/helloworld" target="dist-clean" inheritRefs="false" inheritAll="false"/>
 
     <ant dir="${doc.dir}/developerguide" target="pdf" inheritRefs="false" inheritAll="false"/>
     <ant dir="${doc.dir}/userguide" target="pdf" inheritRefs="false" inheritAll="false"/>
