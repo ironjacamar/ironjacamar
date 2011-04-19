@@ -204,6 +204,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public String getSecurityDomain()
+   {
+      return securityDomain;
+   }
+
+   /**
     * Sets security domain
     * @param securityDomain security domain
     */
@@ -219,17 +227,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
 
    /**
-    * Gets security domain.
-    * @return security domain
-    */
-   public String getSecurityDomain()
-   {
-      return securityDomain;
-   }
-
-   /**
-    * Gets subject factory instance.
-    * @return subject factory
+    * {@inheritDoc}
     */
    public SubjectFactory getSubjectFactory()
    {

@@ -46,6 +46,12 @@ public interface Pool
    public void flush(boolean kill);
 
    /**
+    * Test if a connection can be obtained
+    * @return True if it was poosible to get a connection; otherwise false
+    */
+   public boolean testConnection();
+
+   /**
     * Get the statistics
     * @return The value
     */

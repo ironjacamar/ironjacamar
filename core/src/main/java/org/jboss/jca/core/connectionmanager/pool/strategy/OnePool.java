@@ -73,4 +73,12 @@ public class OnePool extends AbstractPrefillPool
    {
       // No-operation
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean testConnection()
+   {
+      return internalTestConnection(null);
+   }
 }

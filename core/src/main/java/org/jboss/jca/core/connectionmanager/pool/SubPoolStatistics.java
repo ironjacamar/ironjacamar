@@ -42,6 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SubPoolStatistics implements PoolStatistics
 {
    private static final String ACTIVE_COUNT = "ActiveCount";
+   private static final String AVAILABLE_COUNT = "AvailableCount";
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
    private static final String CREATED_COUNT = "CreatedCount";
@@ -53,6 +54,7 @@ public class SubPoolStatistics implements PoolStatistics
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
 
+   private int maxPoolSize;
    private ConcurrentMap<Object, SubPoolContext> subPools;
    private Set<String> names;
    private Map<String, Class> types;
@@ -61,10 +63,12 @@ public class SubPoolStatistics implements PoolStatistics
 
    /**
     * Constructor
+    * @param maxPoolSize The maximum pool size
     * @param subPools The sub pool map
     */
-   public SubPoolStatistics(ConcurrentMap<Object, SubPoolContext> subPools)
+   public SubPoolStatistics(int maxPoolSize, ConcurrentMap<Object, SubPoolContext> subPools)
    {
+      this.maxPoolSize = maxPoolSize;
       this.subPools = subPools;
 
       Set<String> n = new HashSet<String>();
@@ -72,6 +76,9 @@ public class SubPoolStatistics implements PoolStatistics
 
       n.add(ACTIVE_COUNT);
       t.put(ACTIVE_COUNT, int.class);
+
+      n.add(AVAILABLE_COUNT);
+      t.put(AVAILABLE_COUNT, int.class);
 
       n.add(AVERAGE_BLOCKING_TIME);
       t.put(AVERAGE_BLOCKING_TIME, long.class);
@@ -175,6 +182,10 @@ public class SubPoolStatistics implements PoolStatistics
       {
          return getActiveCount();
       }
+      else if (AVAILABLE_COUNT.equals(name))
+      {
+         return getAvailableCount();
+      }
       else if (AVERAGE_BLOCKING_TIME.equals(name))
       {
          return getAverageBlockingTime();
@@ -254,6 +265,33 @@ public class SubPoolStatistics implements PoolStatistics
          }
          
          return result;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getAvailableCount()
+   {
+      if (isEnabled())
+      {
+         int result = -1;
+
+         if (subPools.size() > 0)
+         {
+            result = 0;
+            for (SubPoolContext spc : subPools.values())
+            {
+               result += spc.getSubPool().getStatistics().getAvailableCount();
+            }
+         }
+         
+         if (result != -1)
+            return result;
+
+         return maxPoolSize;
       }
 
       return 0;

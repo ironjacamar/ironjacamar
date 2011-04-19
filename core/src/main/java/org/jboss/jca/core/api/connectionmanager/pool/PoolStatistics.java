@@ -37,6 +37,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public int getActiveCount();
 
    /**
+    * Get the available count
+    * @return The value
+    */
+   public int getAvailableCount();
+
+   /**
     * Get the average time spent waiting on a connection (milliseconds)
     * @return The value
     */

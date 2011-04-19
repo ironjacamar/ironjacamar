@@ -60,4 +60,12 @@ public class PoolBySubjectAndCri extends AbstractPool
    {
       return new SubjectCriKey(subject, cri, separateNoTx);
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean testConnection()
+   {
+      return false;
+   }
 }

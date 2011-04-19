@@ -27,6 +27,8 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
+import org.jboss.security.SubjectFactory;
+
 /**
  * Internal connection manager contract.
  * <p>
@@ -80,6 +82,18 @@ public interface ConnectionManager extends
     * @param value The value
     */
    public void setJndiName(String value);
+
+   /**
+    * Get the security domain.
+    * @return The value
+    */
+   public String getSecurityDomain();
+
+   /**
+    * Get the subject factory
+    * @return The value
+    */
+   public SubjectFactory getSubjectFactory();
 
    /**
     * Unregister association.

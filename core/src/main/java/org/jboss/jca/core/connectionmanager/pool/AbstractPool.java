@@ -108,7 +108,7 @@ public abstract class AbstractPool implements Pool
       this.poolConfiguration = pc;
       this.noTxSeparatePools = noTxSeparatePools;
       this.trace = log.isTraceEnabled();
-      this.statistics = new SubPoolStatistics(subPools);
+      this.statistics = new SubPoolStatistics(pc.getMaxSize(), subPools);
    }
 
    /**
@@ -502,6 +502,15 @@ public abstract class AbstractPool implements Pool
    }
 
    /**
+    * Get the connection listener factory
+    * @return The value
+    */
+   protected ConnectionListenerFactory getConnectionListenerFactory()
+   {
+      return clf;
+   }
+
+   /**
     * {@inheritDoc}
     */
    public void setConnectionListenerFactory(ConnectionListenerFactory clf)
@@ -514,7 +523,7 @@ public abstract class AbstractPool implements Pool
     */
    public void shutdown()
    {
-      flush();
+      flush(true);
    }
 
    /**
@@ -523,6 +532,50 @@ public abstract class AbstractPool implements Pool
    public PoolStatistics getStatistics()
    {
       return statistics;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public abstract boolean testConnection();
+
+   /**
+    * Test if a connection can be obtained
+    * @param subject Optional subject
+    * @return True if possible; otherwise false
+    */
+   protected boolean internalTestConnection(Subject subject)
+   {
+      boolean result = false;
+      ConnectionListener cl = null;
+      try
+      {
+         if (getStatistics().getAvailableCount() > 0)
+         {
+            cl = getConnection(null, subject, null);
+            result = true;
+         }
+      }
+      catch (Throwable ignored)
+      {
+         // Ignore
+      }
+      finally
+      {
+         if (cl != null)
+         {
+            try
+            {
+               returnConnection(cl, false);
+            }
+            catch (ResourceException ire)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      return result;
    }
 
    /**

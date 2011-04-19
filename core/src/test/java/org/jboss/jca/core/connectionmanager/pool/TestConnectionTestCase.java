@@ -29,13 +29,10 @@ import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
-import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
 import org.jboss.jca.core.security.DefaultSubjectFactory;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.security.auth.Subject;
 
 import org.jboss.security.SubjectFactory;
 
@@ -44,10 +41,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Prefill test case
+ * Test connection test case
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
-public class PrefillTestCase
+public class TestConnectionTestCase
 {
    /**
     * OnePool
@@ -60,15 +57,9 @@ public class PrefillTestCase
       ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
 
       PoolConfiguration config = new PoolConfiguration();
-      config.setMinSize(10);
-      config.setPrefill(true);
 
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false);
-
-      assertTrue(pool instanceof PrefillPool);
-
-      AbstractPrefillPool app = (AbstractPrefillPool)pool;
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, 
@@ -76,65 +67,7 @@ public class PrefillTestCase
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
-      app.prefill(null, null, false);
-
-      assertEquals(1, app.getSubPools().size());
-
-      Thread.sleep(1000);
-
-      int size = 0;
-
-      for (SubPoolContext spc : app.getSubPools().values())
-      {
-         ManagedConnectionPoolStatistics mcps = spc.getSubPool().getStatistics();
-         size += mcps.getActiveCount();
-      }
-
-      assertEquals(10, size);      
-   }
-
-   /**
-    * OnePool: No prefill
-    * @throws Exception for exception.
-    */
-   @Test
-   public void testOnePoolNoPrefill() throws Exception
-   {
-      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
-
-      PoolConfiguration config = new PoolConfiguration();
-      config.setMinSize(10);
-      config.setPrefill(false);
-
-      PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false);
-
-      assertTrue(pool instanceof PrefillPool);
-
-      AbstractPrefillPool app = (AbstractPrefillPool)pool;
-
-      NoTxConnectionManager noTxConnectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
-                                    null, null, false, null, 
-                                    FlushStrategy.FAILING_CONNECTION_ONLY,
-                                    null, null);
-
-      app.prefill(null, null, false);
-
-      assertEquals(0, app.getSubPools().size());
-
-      Thread.sleep(1000);
-
-      int size = 0;
-
-      for (SubPoolContext spc : app.getSubPools().values())
-      {
-         ManagedConnectionPoolStatistics mcps = spc.getSubPool().getStatistics();
-         size += mcps.getActiveCount();
-      }
-
-      assertEquals(0, size);      
+      assertTrue(pool.testConnection());      
    }
 
    /**
@@ -152,7 +85,7 @@ public class PrefillTestCase
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.POOL_BY_CRI, mcf, config, false);
 
-      assertFalse(pool instanceof PrefillPool);
+      assertFalse(pool.testConnection());
    }
 
    /**
@@ -166,87 +99,19 @@ public class PrefillTestCase
       ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
 
       SubjectFactory subjectFactory = new DefaultSubjectFactory("domain", "user", "password");
-      Subject subject = subjectFactory.createSubject();
 
       PoolConfiguration config = new PoolConfiguration();
-      config.setMinSize(10);
-      config.setPrefill(true);
 
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false);
 
-      assertTrue(pool instanceof PrefillPool);
-
-      AbstractPrefillPool app = (AbstractPrefillPool)pool;
-
       NoTxConnectionManager noTxConnectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
                                     subjectFactory, "domain", false, null, 
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
-      app.prefill(subject, null, false);
-
-      assertEquals(1, app.getSubPools().size());
-
-      Thread.sleep(1000);
-
-      int size = 0;
-
-      for (SubPoolContext spc : app.getSubPools().values())
-      {
-         ManagedConnectionPoolStatistics mcps = spc.getSubPool().getStatistics();
-         size += mcps.getActiveCount();
-      }
-
-      assertEquals(10, size);      
-   }
-
-   /**
-    * PoolBySubject: No prefill
-    * @throws Exception for exception.
-    */
-   @Test
-   public void testPoolBySubjectNoPrefill() throws Exception
-   {
-      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
-
-      SubjectFactory subjectFactory = new DefaultSubjectFactory("domain", "user", "password");
-      Subject subject = subjectFactory.createSubject();
-
-      PoolConfiguration config = new PoolConfiguration();
-      config.setMinSize(10);
-      config.setPrefill(false);
-
-      PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false);
-
-      assertTrue(pool instanceof PrefillPool);
-
-      AbstractPrefillPool app = (AbstractPrefillPool)pool;
-
-      NoTxConnectionManager noTxConnectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
-                                    subjectFactory, "domain", false, null, 
-                                    FlushStrategy.FAILING_CONNECTION_ONLY,
-                                    null, null);
-
-      app.prefill(subject, null, false);
-
-      assertEquals(0, app.getSubPools().size());
-
-      Thread.sleep(1000);
-
-      int size = 0;
-
-      for (SubPoolContext spc : app.getSubPools().values())
-      {
-         ManagedConnectionPoolStatistics mcps = spc.getSubPool().getStatistics();
-         size += mcps.getActiveCount();
-      }
-
-      assertEquals(0, size);      
+      assertTrue(pool.testConnection());      
    }
 
    /**
@@ -264,11 +129,11 @@ public class PrefillTestCase
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT_AND_CRI, mcf, config, false);
 
-      assertFalse(pool instanceof PrefillPool);
+      assertFalse(pool.testConnection());
    }
 
    /**
-    * Reauth
+    * ReauthPool
     * @throws Exception for exception.
     */
    @Test
@@ -282,6 +147,6 @@ public class PrefillTestCase
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.REAUTH, mcf, config, false);
 
-      assertFalse(pool instanceof PrefillPool);
+      assertFalse(pool.testConnection());
    }
 }

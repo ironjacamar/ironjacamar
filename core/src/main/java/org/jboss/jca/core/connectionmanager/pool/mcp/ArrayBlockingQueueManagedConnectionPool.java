@@ -27,9 +27,9 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
-import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 
@@ -162,10 +162,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayBlockingQueue<ConnectionListener>(this.maxSize, true);
       this.permits = new ConcurrentHashMap<ConnectionListener, ConnectionListener>(this.maxSize);
-      this.statistics = new ManagedConnectionPoolStatisticsImpl();
+      this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
   
       // Schedule managed connection pool for prefill
-      if (pc.isPrefill() && p instanceof AbstractPrefillPool)
+      if (pc.isPrefill() && p instanceof PrefillPool)
       {
          PoolFiller.fillPool(this);
       }

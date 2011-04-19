@@ -59,4 +59,12 @@ public class PoolByCri extends AbstractPool
    {
       return new CriKey(cri, separateNoTx);
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean testConnection()
+   {
+      return false;
+   }
 }

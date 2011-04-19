@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoolStatistics
 {
    private static final String ACTIVE_COUNT = "ActiveCount";
+   private static final String AVAILABLE_COUNT = "AvailableCount";
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
    private static final String CREATED_COUNT = "CreatedCount";
@@ -51,6 +52,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String TIMED_OUT = "TimedOut";
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
+
+   private int maxPoolSize;
 
    private Set<String> names;
    private Map<String, Class> types;
@@ -68,14 +71,20 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
    /**
     * Constructor
+    * @param maxPoolSize The maximum pool size
     */
-   public ManagedConnectionPoolStatisticsImpl()
+   public ManagedConnectionPoolStatisticsImpl(int maxPoolSize)
    {
+      this.maxPoolSize = maxPoolSize;
+
       Set<String> n = new HashSet<String>();
       Map<String, Class> t = new HashMap<String, Class>();
 
       n.add(ACTIVE_COUNT);
       t.put(ACTIVE_COUNT, int.class);
+
+      n.add(AVAILABLE_COUNT);
+      t.put(AVAILABLE_COUNT, int.class);
 
       n.add(AVERAGE_BLOCKING_TIME);
       t.put(AVERAGE_BLOCKING_TIME, long.class);
@@ -188,6 +197,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       {
          return getActiveCount();
       }
+      else if (AVAILABLE_COUNT.equals(name))
+      {
+         return getAvailableCount();
+      }
       else if (AVERAGE_BLOCKING_TIME.equals(name))
       {
          return getAverageBlockingTime();
@@ -251,6 +264,17 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    {
       if (isEnabled())
          return createdCount.get() - destroyedCount.get();
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getAvailableCount()
+   {
+      if (isEnabled())
+         return maxPoolSize - getActiveCount();
 
       return 0;
    }

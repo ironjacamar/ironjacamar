@@ -77,4 +77,12 @@ public class ReauthPool extends AbstractPool
    {
       // No-operation
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean testConnection()
+   {
+      return false;
+   }
 }
