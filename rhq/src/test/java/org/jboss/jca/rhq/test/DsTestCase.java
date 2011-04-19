@@ -21,28 +21,38 @@
  */
 package org.jboss.jca.rhq.test;
 
+import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.management.DataSource;
+import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.embed.core.EmbeddedJcaDiscover;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.domain.resource.Resource;
 import org.rhq.core.pc.PluginContainer;
 import org.rhq.core.pc.PluginContainerConfiguration;
 import org.rhq.core.pc.inventory.InventoryManager;
 import org.rhq.core.pc.inventory.RuntimeDiscoveryExecutor;
 import org.rhq.core.pc.plugin.FileSystemPluginFinder;
+import org.rhq.core.pluginapi.configuration.ConfigurationFacet;
+import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 
 import static org.junit.Assert.*;
 
 /**
  * RHQ plugin test cases for Datasource
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
+ * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>  
  */
 public class DsTestCase
 {
@@ -65,6 +75,79 @@ public class DsTestCase
    {
       assertEquals("java:/H2DS", rarServiceResource.getName());
 
+   }
+   
+   /**
+    * test Datasource LoadResourceConfiguration.
+    * 
+    * @throws Throwable exception
+    */
+   @Test
+   public void testDsLoadResourceConfiguration() throws Throwable
+   {
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(rarServiceResource);
+      Configuration config = configFacet.loadResourceConfiguration();
+      
+      assertEquals("java:/H2DS", config.getSimpleValue("jndi-name", null));
+      assertFalse(Boolean.valueOf(config.getSimpleValue("xa", null)));
+      
+      assertEquals("H2DS", config.getSimpleValue("pool-name", null));
+      assertEquals("0", config.getSimpleValue("min-pool-size", null));
+      assertEquals("20", config.getSimpleValue("max-pool-size", null));
+      assertEquals("false", config.getSimpleValue("background-validation", null));
+      assertEquals("0", config.getSimpleValue("background-validation-millis", null));
+      assertEquals("0", config.getSimpleValue("background-validation-minutes", null));
+      assertEquals("30000", config.getSimpleValue("blocking-timeout-millis", null));
+      assertEquals("30", config.getSimpleValue("idle-timeout-minutes", null));
+      assertEquals("false", config.getSimpleValue("prefill", null));
+      assertEquals("false", config.getSimpleValue("use-strict-min", null));
+      assertEquals("false", config.getSimpleValue("use-fast-fail", null));
+      
+   }
+   
+   /**
+    * test Datasource update ResourceConfiguration.
+    * 
+    * @throws Throwable exception
+    */
+   @Test
+   public void testDsUpdateResourceConfiguration() throws Throwable
+   {
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(rarServiceResource);
+      Configuration config = configFacet.loadResourceConfiguration();
+      
+      config.put(new PropertySimple("min-pool-size", 5));
+      config.put(new PropertySimple("max-pool-size", 15));
+      config.put(new PropertySimple("background-validation", true));
+      config.put(new PropertySimple("background-validation-minutes", 30));
+      config.put(new PropertySimple("blocking-timeout-millis", 10000));
+      config.put(new PropertySimple("idle-timeout-minutes", 15));
+      config.put(new PropertySimple("prefill", false));
+      config.put(new PropertySimple("use-strict-min", true));
+      config.put(new PropertySimple("use-fast-fail", true));
+      
+      ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(config);
+      configFacet.updateResourceConfiguration(updateConfigReport);
+      
+      ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
+      List<DataSource> datasources = manRepo.getDataSources();
+      assertEquals(1, datasources.size());
+      DataSource ds = datasources.get(0);
+      PoolConfiguration poolConfig = ds.getPoolConfiguration();
+      
+      assertEquals(5, poolConfig.getMinSize());
+      assertEquals(15, poolConfig.getMaxSize());
+      assertTrue(poolConfig.isBackgroundValidation());
+      assertEquals(30, poolConfig.getBackgroundValidationMinutes());
+      assertEquals(10000, poolConfig.getBlockingTimeout());
+      assertEquals(15 * 60 * 1000L, poolConfig.getIdleTimeout());
+      assertFalse(poolConfig.isPrefill());
+      assertTrue(poolConfig.isStrictMin());
+      assertTrue(poolConfig.isUseFastFail());
    }
    
    /**
