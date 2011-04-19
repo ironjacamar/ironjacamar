@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.content.PackageDetailsKey;
 import org.rhq.core.domain.content.transfer.ResourcePackageDetails;
 import org.rhq.core.domain.resource.CreateResourceStatus;
 import org.rhq.core.domain.resource.ResourceType;
@@ -45,28 +46,53 @@ import org.rhq.core.pluginapi.inventory.CreateResourceReport;
 public class IronJacamarResourceComponent extends AbstractResourceComponent implements CreateChildResourceFacet
 {
 
+   /**
+    * loadResourceConfiguration
+    * 
+    * @return Configuration the configuration
+    * @throws Exception exception
+    */
    @Override
    public Configuration loadResourceConfiguration() throws Exception
    {
       return new Configuration();
    }
 
+   /**
+    * createResource
+    * 
+    * @param report the CreateResourceReport
+    * @return CreateResourceReport the report
+    */
    @Override
    public CreateResourceReport createResource(CreateResourceReport report)
    {
-
       ResourceType resType = report.getResourceType();
       String resName = resType.getName();
       ResourcePackageDetails pkgDetail = report.getPackageDetails();
       ContentContext contentContext = getResourceContext().getContentContext();
       ContentServices contentServices = contentContext.getContentServices();
       String tmpDir = System.getProperty("java.io.tmpdir");
+      String fileName = pkgDetail.getFileName();
+      if (!fileName.toLowerCase().endsWith(".rar"))
+      {
+         report.setErrorMessage(fileName + " is not a valid RAR file.");
+         report.setStatus(CreateResourceStatus.FAILURE);
+         return report;
+      }
       File outFile = new File(tmpDir, pkgDetail.getFileName()); // change to plugin configuration ??
       OutputStream output;
       try
       {
          output = new FileOutputStream(outFile);
-         contentServices.downloadPackageBitsForChildResource(contentContext, resName, pkgDetail.getKey(), output);
+         PackageDetailsKey key = pkgDetail.getKey();
+         long bits = contentServices.downloadPackageBitsForChildResource(contentContext, resName, key, output);
+         if (bits < 0)
+         {
+            report.setErrorMessage("Can not download package content.");
+            report.setStatus(CreateResourceStatus.FAILURE);
+            return report;
+         }
          Deploy deployer = (Deploy)ContainerHelper.getEmbeddedDiscover();
          deployer.deploy(outFile.toURI().toURL());
          

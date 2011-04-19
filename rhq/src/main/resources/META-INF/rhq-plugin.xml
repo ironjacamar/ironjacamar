@@ -379,7 +379,7 @@
                 
             <content name="rar-file" displayName="RAR File" category="deployable" isCreationType="true">
                 <configuration>
-                  <c:simple-property name="override" displayName="Override?" type="boolean" defaultValue="true"/>
+                  <c:simple-property name="override" displayName="Override?" required="false" type="boolean" defaultValue="true"/>
                 </configuration>
             </content>
             
@@ -501,7 +501,7 @@
         
         <content name="ds-file" displayName="DataSource File" category="deployable" isCreationType="true">
             <configuration>
-              <c:simple-property name="override" displayName="Override?" type="boolean" defaultValue="true"/>
+              <c:simple-property name="override" displayName="Override?" required="false" type="boolean" defaultValue="true"/>
             </configuration>
         </content>
             
