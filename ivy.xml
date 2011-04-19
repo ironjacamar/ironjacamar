@@ -122,6 +122,7 @@
     <dependency org="org.eclipse.jetty" name="jetty-http" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-io" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-jsp-2.1" rev="${version.jetty}" conf="jetty"/>
+    <dependency org="org.eclipse.jetty" name="jetty-nested" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-security" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-server" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-servlet" rev="${version.jetty}" conf="jetty"/>
