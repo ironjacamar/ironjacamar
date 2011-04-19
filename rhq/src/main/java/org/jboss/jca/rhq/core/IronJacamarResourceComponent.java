@@ -74,9 +74,9 @@ public class IronJacamarResourceComponent extends AbstractResourceComponent impl
       ContentServices contentServices = contentContext.getContentServices();
       String tmpDir = System.getProperty("java.io.tmpdir");
       String fileName = pkgDetail.getFileName();
-      if (!fileName.toLowerCase().endsWith(".rar"))
+      if (!fileName.toLowerCase().endsWith(".rar") && !fileName.toLowerCase().endsWith("-ds.xml"))
       {
-         report.setErrorMessage(fileName + " is not a valid RAR file.");
+         report.setErrorMessage(fileName + " is not a valid RAR or Datasource file.");
          report.setStatus(CreateResourceStatus.FAILURE);
          return report;
       }
