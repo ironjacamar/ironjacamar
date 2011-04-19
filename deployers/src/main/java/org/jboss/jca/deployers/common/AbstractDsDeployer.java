@@ -408,7 +408,7 @@ public abstract class AbstractDsDeployer
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
-                                 ds.isUseCcm(), ccm,
+                                 ds.isUseCcm(), getCachedConnectionManager(),
                                  flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(),
@@ -572,7 +572,7 @@ public abstract class AbstractDsDeployer
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
-                                 ds.isUseCcm(), ccm,
+                                 ds.isUseCcm(), getCachedConnectionManager(),
                                  flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,
