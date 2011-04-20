@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.rhq.test;
 
+import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
@@ -133,10 +134,7 @@ public class DsTestCase
       ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(config);
       configFacet.updateResourceConfiguration(updateConfigReport);
       
-      ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
-      List<DataSource> datasources = manRepo.getDataSources();
-      assertEquals(1, datasources.size());
-      DataSource ds = datasources.get(0);
+      DataSource ds = getDataSource();
       PoolConfiguration poolConfig = ds.getPoolConfiguration();
       
       assertEquals(5, poolConfig.getMinSize());
@@ -148,6 +146,49 @@ public class DsTestCase
       assertFalse(poolConfig.isPrefill());
       assertTrue(poolConfig.isStrictMin());
       assertTrue(poolConfig.isUseFastFail());
+   }
+   
+   /**
+    * Gets the associated DataSource
+    * @return datasource
+    */
+   private DataSource getDataSource()
+   {
+      ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
+      List<DataSource> datasources = manRepo.getDataSources();
+      assertEquals(1, datasources.size());
+      DataSource ds = datasources.get(0);
+      return ds;
+   }
+   
+   /**
+    * test DataSource Pool.flush()
+    * 
+    * @throws Throwable exception
+    */
+   @Test
+   public void testDsPoolFlush() throws Throwable
+   {
+      DataSource ds = getDataSource();
+      Pool pool = ds.getPool();
+      pool.flush();
+      
+      // just not thrown exception for now.
+   }
+   
+   /**
+    * test DataSource Pool.flush(true)
+    * 
+    * @throws Throwable exception
+    */
+   @Test
+   public void testDsPoolFlushKill() throws Throwable
+   {
+      DataSource ds = getDataSource();
+      Pool pool = ds.getPool();
+      pool.flush(true);
+      
+      // just not thrown exception for now.
    }
    
    /**
