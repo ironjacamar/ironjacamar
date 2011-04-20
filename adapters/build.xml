@@ -41,7 +41,8 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
-           excludes="**/jdk6/**,**/jdk7/**">
+           excludes="**/jdk6/**,**/jdk7/**"
+           includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -53,7 +54,8 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
-           includes="**/jdk6/**">
+           includes="**/jdk6/**"
+           includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -65,7 +67,8 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
-           includes="**/jdk7/**">
+           includes="**/jdk7/**"
+           includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -270,7 +273,8 @@
            classpathref="adapters.test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
 

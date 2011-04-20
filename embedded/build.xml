@@ -45,7 +45,8 @@
            classpathref="sjc.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -134,7 +135,8 @@
            classpathref="test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
 

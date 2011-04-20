@@ -37,7 +37,10 @@
     <javac srcdir="src"
            destdir="${build.api.dir}"
            classpathref="sjc.lib.path.id"
-           debug="${javac.debug}">
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
       <!-- <compilerarg value="-Xlint"/> -->
     </javac> 
 

@@ -40,7 +40,8 @@
            classpathref="sjc.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -85,7 +86,7 @@
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-        <attribute name="Class-Path" value="jbossxb.jar jboss-logging-spi.jar jboss-common-core.jar jboss-metadata-rar.jar jboss-metadata-common.jar jboss-reflect.jar jboss-mdr.jar ${name}-spec-api.jar papaki-core.jar javassist.jar ${name}-common-impl.jar"/>
+        <attribute name="Class-Path" value="jboss-logging.jar jboss-common-core.jar ${name}-spec-api.jar papaki-core.jar javassist.jar ${name}-common-api.jar ${name}-common-impl.jar"/>
       </manifest>
     </jar>
 
@@ -271,7 +272,8 @@
            classpathref="test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}">
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
 

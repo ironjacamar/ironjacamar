@@ -76,7 +76,10 @@
 
     <javac srcdir="${basedir}/src/main/java"
            destdir="${build.dir}"
-           classpathref="lib.path.id">
+           classpathref="lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
     </javac> 
   </target>
   
