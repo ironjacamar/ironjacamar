@@ -224,10 +224,7 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("@Resource(mappedName = \"java:/eis/" + getClassName(def) + "\")");
       writeEol(out);
       writeIndent(out, indent);
-      if (def.isDefineMethodInConnection())
-         out.write("private " + def.getCfInterfaceClass() + " connectionFactory;");
-      else
-         out.write("private Object connectionFactory;");
+      out.write("private " + def.getCfInterfaceClass() + " connectionFactory;");
       writeEol(out);
       writeEol(out);
    }
@@ -265,7 +262,15 @@ public class TestCodeGen extends AbstractCodeGen
       
       writeIndent(out, indent + 1);
       out.write("assertNotNull(connectionFactory);");
-
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write(def.getConnInterfaceClass() + " connection = connectionFactory.getConnection();");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("assertNotNull(connection);");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("connection.close();");
       writeRightCurlyBracket(out, indent);
    }
    
@@ -342,7 +347,10 @@ public class TestCodeGen extends AbstractCodeGen
                out.write(", ");
          }
          out.write(");");
-
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("connection.close();");
+         
          writeRightCurlyBracket(out, indent);
          writeEol(out);
       }

@@ -74,6 +74,14 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
+      out.write("/** Listeners */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private List<ConnectionEventListener> listeners;");
+      writeEol(out);
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("/** Connection */");
       writeEol(out);
       writeIndent(out, indent);
@@ -100,6 +108,12 @@ public class McCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("this.mcf = mcf;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("this.logwriter = null;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("this.listeners = new ArrayList<ConnectionEventListener>(1);");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("this.connection = null;");
@@ -131,10 +145,16 @@ public class McCodeGen extends AbstractCodeGen
       out.write("import java.io.PrintWriter;");
       writeEol(out);
       writeEol(out);
+      out.write("import java.util.ArrayList;");
+      writeEol(out);
+      out.write("import java.util.List;");
+      writeEol(out);
       out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
+      writeEol(out);
+      out.write("import javax.resource.spi.ConnectionEvent;");
       writeEol(out);
       out.write("import javax.resource.spi.ConnectionEventListener;");
       writeEol(out);
@@ -212,7 +232,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("log.finest(\"getConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("connection = new " + def.getConnImplClass() + "(mcf);");
+      out.write("connection = new " + def.getConnImplClass() + "(this, mcf);");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return connection;");
@@ -339,6 +359,15 @@ public class McCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.finest(\"addConnectionEventListener()\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("if (listener == null)");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("throw new IllegalArgumentException(\"Listener is null\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("listeners.add(listener);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -363,6 +392,48 @@ public class McCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.finest(\"removeConnectionEventListener()\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("if (listener == null)");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("throw new IllegalArgumentException(\"Listener is null\");");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("listeners.remove(listener);");
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Close handle");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" *");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param handle The handle");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public void closeHandle(" + def.getConnInterfaceClass() + " handle)");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("event.setConnectionHandle(handle);");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("for (ConnectionEventListener cel : listeners)");
+      writeLeftCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 2);
+      out.write("cel.connectionClosed(event);");
+      writeRightCurlyBracket(out, indent + 1);
 
       writeRightCurlyBracket(out, indent);
       writeEol(out);

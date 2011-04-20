@@ -59,6 +59,14 @@ public class ConnImplCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
+      out.write("/** ManagedConnection */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private " + def.getMcClass() + " mc;");
+      writeEol(out);
+      writeEol(out);
+      
+      writeIndent(out, indent);
       out.write("/** ManagedConnectionFactory */");
       writeEol(out);
       writeIndent(out, indent);
@@ -74,6 +82,9 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write(" * Default constructor");
       writeEol(out);
       writeIndent(out, indent);
+      out.write(" * @param mc " + def.getMcClass());
+      writeEol(out);
+      writeIndent(out, indent);
       out.write(" * @param mcf " + def.getMcfClass());
       writeEol(out);
       writeIndent(out, indent);
@@ -81,8 +92,12 @@ public class ConnImplCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "(" + def.getMcfClass() + " mcf)");
+      out.write("public " + getClassName(def) + "(" + 
+         def.getMcClass() + " mc, " + def.getMcfClass() + " mcf)");
       writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this.mc = mc;");
+      writeEol(out);
       writeIndent(out, indent + 1);
       out.write("this.mcf = mcf;");
       writeRightCurlyBracket(out, indent);
@@ -224,8 +239,24 @@ public class ConnImplCodeGen extends AbstractCodeGen
          writeLeftCurlyBracket(out, indent);
          writeIndent(out, indent + 1);
          out.write("log.finest(\"callMe()\");");
-
          writeRightCurlyBracket(out, indent);
       }
+
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Close");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public void close()");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("mc.closeHandle(this);");
+      writeRightCurlyBracket(out, indent);
    }
 }

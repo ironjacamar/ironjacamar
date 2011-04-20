@@ -132,6 +132,19 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
          out.write("public void callMe();");
       }
 
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Close");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("public void close();");
+      
       writeRightCurlyBracket(out, 0);
    }
    
