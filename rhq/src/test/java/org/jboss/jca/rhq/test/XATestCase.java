@@ -227,16 +227,7 @@ public class XATestCase
       assertEquals("XA", mcfConfig.getSimpleValue("pool-name", null));
       assertEquals("java:/eis/XA", mcfConfig.getSimpleValue("jndi-name", null));
 
-      assertEquals("0", mcfConfig.getSimpleValue("min-pool-size", null));
-      assertEquals("20", mcfConfig.getSimpleValue("max-pool-size", null));
-      assertEquals("false", mcfConfig.getSimpleValue("background-validation", null));
-      assertEquals("0", mcfConfig.getSimpleValue("background-validation-millis", null));
-      assertEquals("0", mcfConfig.getSimpleValue("background-validation-minutes", null));
-      assertEquals("30000", mcfConfig.getSimpleValue("blocking-timeout-millis", null));
-      assertEquals("30", mcfConfig.getSimpleValue("idle-timeout-minutes", null));
-      assertEquals("false", mcfConfig.getSimpleValue("prefill", null));
-      assertEquals("false", mcfConfig.getSimpleValue("use-strict-min", null));
-      assertEquals("false", mcfConfig.getSimpleValue("use-fast-fail", null));
+      DsTestCase.testLoadPoolConfigurationIntialValue(mcfConfig);
    }
    
    /**
@@ -303,34 +294,12 @@ public class XATestCase
       ConfigurationFacet cfConfigFacet = (ConfigurationFacet)im.getResourceComponent(cfRes);
       Configuration cfConfig = cfConfigFacet.loadResourceConfiguration();
       
-      // test cf updateConfiguration
-      cfConfig.put(new PropertySimple("min-pool-size", 5));
-      cfConfig.put(new PropertySimple("max-pool-size", 15));
-      cfConfig.put(new PropertySimple("background-validation", true));
-      cfConfig.put(new PropertySimple("background-validation-minutes", 30));
-      cfConfig.put(new PropertySimple("blocking-timeout-millis", 10000));
-      cfConfig.put(new PropertySimple("idle-timeout-minutes", 15));
-      cfConfig.put(new PropertySimple("prefill", false));
-      cfConfig.put(new PropertySimple("use-strict-min", true));
-      cfConfig.put(new PropertySimple("use-fast-fail", true));
-      
-      ConfigurationUpdateReport updateConfigReport = new ConfigurationUpdateReport(cfConfig);
-      cfConfigFacet.updateResourceConfiguration(updateConfigReport);
-      
       ManagementRepository manRepo = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
       ConnectionFactory mcf = connector.getConnectionFactories().get(0);
       PoolConfiguration poolConfig = mcf.getPoolConfiguration();
       
-      assertEquals(5, poolConfig.getMinSize());
-      assertEquals(15, poolConfig.getMaxSize());
-      assertTrue(poolConfig.isBackgroundValidation());
-      assertEquals(30, poolConfig.getBackgroundValidationMinutes());
-      assertEquals(10000, poolConfig.getBlockingTimeout());
-      assertEquals(15 * 60 * 1000L, poolConfig.getIdleTimeout());
-      assertFalse(poolConfig.isPrefill());
-      assertTrue(poolConfig.isStrictMin());
-      assertTrue(poolConfig.isUseFastFail());
+      DsTestCase.testUpdatePoolConfig(cfConfigFacet, cfConfig, poolConfig);
    }
    
    /**
