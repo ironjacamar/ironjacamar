@@ -237,7 +237,7 @@ public abstract class AbstractPool implements Pool
     */
    public void flush(boolean kill)
    {
-      Set<ManagedConnectionPool> clearMcps = new HashSet<ManagedConnectionPool>();
+      Set<SubPoolContext> clearSubPools = new HashSet<SubPoolContext>();
 
       Iterator<SubPoolContext> itSubPoolContexts = subPools.values().iterator();
       SubPoolContext subPoolContext = null;
@@ -249,15 +249,17 @@ public abstract class AbstractPool implements Pool
          mcp.flush(kill);
 
          if (mcp.isEmpty())
-            clearMcps.add(mcp);
+            clearSubPools.add(subPoolContext);
       }
 
-      if (clearMcps.size() > 0)
+      if (clearSubPools.size() > 0)
       {
-         for (ManagedConnectionPool mcp : clearMcps)
+         for (SubPoolContext spc : clearSubPools)
          {
+            ManagedConnectionPool mcp = spc.getSubPool();
             mcp.shutdown();
-            subPools.values().remove(mcp);
+
+            subPools.values().remove(spc);
          }
       }
    }
