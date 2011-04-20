@@ -155,6 +155,8 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       out.write("import java.io.PrintWriter;");
       writeEol(out);
+      out.write("import java.util.Iterator;");
+      writeEol(out);
       out.write("import java.util.Set;");
       writeEol(out);
       writeEol(out);
@@ -386,7 +388,27 @@ public class McfCodeGen extends PropsCodeGen
       out.write("log.finest(\"matchManagedConnections()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return null;");
+      out.write("ManagedConnection result = null;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("Iterator it = connectionSet.iterator();");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("while (result == null && it.hasNext())");
+      writeLeftCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 2);
+      out.write("ManagedConnection mc = (ManagedConnection)it.next();");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("if (mc instanceof " + def.getMcClass() + ")");
+      writeLeftCurlyBracket(out, indent + 2);
+      writeIndent(out, indent + 3);
+      out.write("result = mc;");
+      writeRightCurlyBracket(out, indent + 2);
+      writeRightCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 1);
+      out.write("return result;");
+
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
