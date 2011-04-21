@@ -244,6 +244,8 @@ public class SubPoolStatistics implements PoolStatistics
    @Override
    public void setEnabled(boolean v)
    {
+      enabled.set(v);
+
       for (SubPoolContext spc : subPools.values())
       {
          spc.getSubPool().getStatistics().setEnabled(v);
