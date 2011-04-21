@@ -40,7 +40,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -162,8 +161,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.log = log;
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
-      this.permits = new Semaphore(this.maxSize, true);
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
+      this.permits = new Semaphore(maxSize, true, statistics);
 
       // Schedule managed connection pool for prefill
       if (pc.isPrefill() && p instanceof PrefillPool)

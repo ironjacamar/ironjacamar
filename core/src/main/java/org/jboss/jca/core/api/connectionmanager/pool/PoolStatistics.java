@@ -79,6 +79,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public int getMaxUsedCount();
 
    /**
+    * Get max wait count
+    * @return The value
+    */
+   public int getMaxWaitCount();
+
+   /**
     * Get max wait time (milliseconds)
     * @return The value
     */

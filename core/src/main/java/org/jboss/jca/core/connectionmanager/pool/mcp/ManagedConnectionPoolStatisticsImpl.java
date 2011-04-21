@@ -48,6 +48,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String DESTROYED_COUNT = "DestroyedCount";
    private static final String MAX_CREATION_TIME = "MaxCreationTime";
    private static final String MAX_USED_COUNT = "MaxUsedCount";
+   private static final String MAX_WAIT_COUNT = "MaxWaitCount";
    private static final String MAX_WAIT_TIME = "MaxWaitTime";
    private static final String TIMED_OUT = "TimedOut";
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
@@ -64,6 +65,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private AtomicInteger destroyedCount;
    private AtomicInteger maxUsedCount;
    private AtomicLong maxCreationTime;
+   private AtomicInteger maxWaitCount;
    private AtomicLong maxWaitTime;
    private AtomicInteger timedOut;
    private AtomicLong totalBlockingTime;
@@ -104,6 +106,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       n.add(MAX_USED_COUNT);
       t.put(MAX_USED_COUNT, int.class);
 
+      n.add(MAX_WAIT_COUNT);
+      t.put(MAX_WAIT_COUNT, int.class);
+
       n.add(MAX_WAIT_TIME);
       t.put(MAX_WAIT_TIME, long.class);
 
@@ -130,6 +135,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.destroyedCount = new AtomicInteger(0);
       this.maxCreationTime = new AtomicLong(Long.MIN_VALUE);
       this.maxUsedCount = new AtomicInteger(Integer.MIN_VALUE);
+      this.maxWaitCount = new AtomicInteger(Integer.MIN_VALUE);
       this.maxWaitTime = new AtomicLong(Long.MIN_VALUE);
       this.timedOut = new AtomicInteger(0);
       this.totalBlockingTime = new AtomicLong(0);
@@ -220,6 +226,14 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       else if (MAX_CREATION_TIME.equals(name))
       {
          return getMaxCreationTime();
+      }
+      else if (MAX_USED_COUNT.equals(name))
+      {
+         return getMaxUsedCount();
+      }
+      else if (MAX_WAIT_COUNT.equals(name))
+      {
+         return getMaxWaitCount();
       }
       else if (MAX_WAIT_TIME.equals(name))
       {
@@ -363,6 +377,31 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       {
          if (v > maxUsedCount.get())
             maxUsedCount.set(v);
+      }
+   }
+
+   /**
+    * Get max wait count
+    * @return The value
+    */
+   public int getMaxWaitCount()
+   {
+      if (isEnabled())
+         return maxWaitCount.get() != Integer.MIN_VALUE ? maxWaitCount.get() : 0;
+
+      return 0;
+   }
+
+   /**
+    * Set max wait count
+    * @param v The value
+    */
+   public void setMaxWaitCount(int v)
+   {
+      if (isEnabled())
+      {
+         if (v > maxWaitCount.get())
+            maxWaitCount.set(v);
       }
    }
 
