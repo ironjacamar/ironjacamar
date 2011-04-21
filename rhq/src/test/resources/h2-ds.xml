@@ -9,6 +9,9 @@
       <user-name>sa</user-name>
       <password>sa</password>
     </security>
+    <statement>
+      <prepared-statement-cache-size>5</prepared-statement-cache-size>
+    </statement>
   </datasource>
 
 </datasources>
