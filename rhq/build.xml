@@ -250,11 +250,10 @@
     <property name="rhq.lib.plugin.dir" value="${build.rhq.dir}/plugin/lib" />
 
     <copy todir="${build.rhq.dir}/plugin">
-      <fileset dir="src/test/resources" includes="*.properties *.xml"/>
+      <fileset dir="src/test/resources" includes="*.properties"/>
       <fileset dir="src/main/resources/"
                includes="**/*"/>
-      <fileset dir="${build.rhq.dir}/"
-               includes="*.rar"/>
+
     </copy>
 
     <copy todir="${rhq.lib.plugin.dir}">
@@ -270,10 +269,6 @@
          includes="ironjacamar*"
          excludes="ironjacamar-rhq-plugin* ironjacamar-codegen* ironjacamar-web*"/>
       <fileset dir="${build.rhq.dir}/test" includes="*test.jar"/>
-    </copy>
-
-    <copy todir="${build.rhq.dir}/plugin">
-      <fileset dir="${build.rhq.dir}/test" includes="*rar"/>
     </copy>
 
     <jar destfile="${build.rhq.dir}/${name}-rhq-test-all.jar"
