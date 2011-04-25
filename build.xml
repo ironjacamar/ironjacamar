@@ -538,7 +538,6 @@
       <class location="${target.dir}/${name}-common-spi.jar" />
       <class location="${target.dir}/${name}-core-api.jar" />
       <class location="${target.dir}/${name}-core-impl.jar" />
-      <class location="${target.dir}/${name}-core-spi.jar" />
       <class location="${target.dir}/${name}-deployers-common.jar" />
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
@@ -598,7 +597,6 @@
       <class location="${target.dir}/${name}-common-spi.jar" />
       <class location="${target.dir}/${name}-core-api.jar" />
       <class location="${target.dir}/${name}-core-impl.jar" />
-      <class location="${target.dir}/${name}-core-spi.jar" />
       <class location="${target.dir}/${name}-deployers-common.jar" />
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
@@ -651,7 +649,6 @@
     <copy todir="${build.dir}/instrumented">
       <fileset dir="${target.dir}">
         <include name="${name}-core-api.jar"/>
-        <include name="${name}-core-spi.jar"/>
       </fileset>
     </copy>
 
@@ -1157,7 +1154,7 @@ mvn install:install-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false
     <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
   
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-impl-papaki,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-core-spi,${name}-deployers-common,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
+                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-impl-papaki,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-deployers-common,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
                   sync="true"/>
 
     <delete file="${target.dir}/release.sh"/>
@@ -1277,7 +1274,6 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
                  templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-core-api" scope="runtime"/>
-      <dependency artifact="${name}-core-spi" scope="runtime"/>
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
@@ -1297,29 +1293,12 @@ REPOSITORY='-Durl=https://repository.jboss.org/nexus/content/repositories/snapsh
       <mapping conf="${name}-core-impl" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-core-api" scope="runtime"/>
-      <dependency artifact="${name}-core-spi" scope="runtime"/>
       <dependency artifact="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
     <deploy-file file="release.sh" artifact="${name}-core-impl" extension="jar"/>
     <snapshot-deploy-file file="snapshot.sh" artifact="${name}-core-impl" extension="jar"/>
     <snapshot-install-file file="install-snapshot.sh" artifact="${name}-core-impl" extension="jar"/>
-
-    <!-- ironjacamar-core-spi -->
-    <delete file="${target.dir}/${name}-core-spi.xml"/>
-    <ivy:makepom artifactName="${name}-core-spi" 
-                 conf="${name}-core-spi"
-                 ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-core-spi.xml"
-                 headerFile="${tools.dir}/mvn/HEADER"
-                 templatefile="${tools.dir}/mvn/pom.template"
-                 printIvyInfo="false">
-      <mapping conf="${name}-core-spi" scope="runtime"/>
-    </ivy:makepom>
-
-    <deploy-file file="release.sh" artifact="${name}-core-spi" extension="jar"/>
-    <snapshot-deploy-file file="snapshot.sh" artifact="${name}-core-spi" extension="jar"/>
-    <snapshot-install-file file="install-snapshot.sh" artifact="${name}-core-spi" extension="jar"/>
 
     <!-- ironjacamar-depchain -->
     <delete file="${target.dir}/${name}-depchain.xml"/>
@@ -1372,7 +1351,6 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-core-api" scope="runtime"/>
       <dependency artifact="${name}-core-impl" scope="runtime"/>
-      <dependency artifact="${name}-core-spi" scope="runtime"/>
       <dependency artifact="${name}-spec-api" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>

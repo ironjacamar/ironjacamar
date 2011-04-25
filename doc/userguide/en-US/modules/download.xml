@@ -109,19 +109,13 @@ ironjacamar-1.0.0.tar.gz
             <row>
               <entry><code>ironjacamar-core-api</code></entry>
               <entry>
-                The API for the core module
+                The API / SPI for the core module
               </entry>
             </row>
             <row>
               <entry><code>ironjacamar-core-impl</code></entry>
               <entry>
                 The implementation for the core module
-              </entry>
-            </row>
-            <row>
-              <entry><code>ironjacamar-core-spi</code></entry>
-              <entry>
-                The SPI for the core module
               </entry>
             </row>
             <row>
