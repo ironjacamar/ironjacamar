@@ -300,6 +300,21 @@
        ================================= -->
   <target name="artifacts" depends="jars">
 
+    <jar destfile="${target.dir}/${name}-jdbc-sources.jar"
+         basedir="src/main/java"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/adapters/jdbc/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - Sources"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
     <jar destfile="${target.dir}/jdbc-local-sources.jar"
          basedir="src/main/java"
          index="true"
@@ -370,6 +385,20 @@
     <copy todir="${build.adapters.dir}/docs/jdbc" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
     </copy>
+
+    <jar destfile="${target.dir}/${name}-jdbc-javadoc.jar"
+         basedir="${build.adapters.dir}/docs/jdbc"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - JavaDoc"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
 
     <jar destfile="${target.dir}/jdbc-local-javadoc.jar"
          basedir="${build.adapters.dir}/docs/jdbc"
