@@ -31,6 +31,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class Semaphore extends java.util.concurrent.Semaphore
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = 1L;
+
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
 

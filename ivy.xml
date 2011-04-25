@@ -33,7 +33,7 @@
     </description>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;mail->default;;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-impl-papaki->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-core-spi->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;rhq->default;hornetq->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;mail->default;;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-impl-papaki->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;rhq->default;hornetq->default">
     <conf name="arquillian" transitive="false"/>
     <conf name="common" transitive="false"/>
     <conf name="embedded" transitive="false"/>
@@ -52,7 +52,6 @@
     <conf name="ironjacamar-common-spi" transitive="false"/>
     <conf name="ironjacamar-core-api" transitive="false"/>
     <conf name="ironjacamar-core-impl" transitive="false"/>
-    <conf name="ironjacamar-core-spi" transitive="false"/>
     <conf name="ironjacamar-depchain" transitive="false"/>
     <conf name="ironjacamar-deployers-common" transitive="false"/>
     <conf name="ironjacamar-deployers-fungal" transitive="false"/>
@@ -77,7 +76,6 @@
     <artifact name="ironjacamar-common-spi" type="jar"/>
     <artifact name="ironjacamar-core-api" type="jar"/>
     <artifact name="ironjacamar-core-impl" type="jar"/>
-    <artifact name="ironjacamar-core-spi" type="jar"/>
     <artifact name="ironjacamar-depchain" type="pom"/>
     <artifact name="ironjacamar-deployers-common" type="jar"/>
     <artifact name="ironjacamar-deployers-fungal" type="jar"/>

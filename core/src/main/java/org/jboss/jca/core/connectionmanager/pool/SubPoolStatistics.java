@@ -41,6 +41,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SubPoolStatistics implements PoolStatistics
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = 1L;
+
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
@@ -282,7 +285,17 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public int getAvailableCount()
    {
-      if (isEnabled())
+      return getAvailableCount(isEnabled());
+   }
+
+   /**
+    * The available count
+    * @param override True if the value should be returned
+    * @return The value
+    */
+   int getAvailableCount(boolean override)
+   {
+      if (override)
       {
          int result = -1;
 

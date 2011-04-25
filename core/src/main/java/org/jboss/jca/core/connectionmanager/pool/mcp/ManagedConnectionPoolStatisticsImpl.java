@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -40,6 +39,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoolStatistics
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = 1L;
+
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
@@ -58,7 +60,6 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
    private Set<String> names;
    private Map<String, Class> types;
-   private AtomicBoolean enabled;
    private Map<Locale, ResourceBundle> rbs;
 
    private AtomicInteger createdCount;
@@ -123,7 +124,6 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
       this.names = Collections.unmodifiableSet(n);
       this.types = Collections.unmodifiableMap(t);
-      this.enabled = new AtomicBoolean(true);
       
       ResourceBundle defaultResourceBundle = 
          ResourceBundle.getBundle("poolstatistics", Locale.US, 
@@ -140,8 +140,6 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.timedOut = new AtomicInteger(0);
       this.totalBlockingTime = new AtomicLong(0);
       this.totalCreationTime = new AtomicLong(0);
-
-      clear();
    }
 
    /**
@@ -260,7 +258,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public boolean isEnabled()
    {
-      return enabled.get();
+      return true;
    }
 
    /**
@@ -268,7 +266,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void setEnabled(boolean v)
    {
-      enabled.set(v);
+      // No-op
    }
 
    /**
@@ -276,10 +274,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public int getActiveCount()
    {
-      if (isEnabled())
-         return createdCount.get() - destroyedCount.get();
-
-      return 0;
+      return createdCount.get() - destroyedCount.get();
    }
 
    /**
@@ -287,10 +282,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public int getAvailableCount()
    {
-      if (isEnabled())
-         return maxPoolSize - getActiveCount();
-
-      return 0;
+      return maxPoolSize - getActiveCount();
    }
 
    /**
@@ -298,10 +290,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public long getAverageBlockingTime()
    {
-      if (isEnabled())
-         return createdCount.get() != 0 ? totalBlockingTime.get() / createdCount.get() : 0;
-
-      return 0;
+      return createdCount.get() != 0 ? totalBlockingTime.get() / createdCount.get() : 0;
    }
 
    /**
@@ -309,10 +298,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public long getAverageCreationTime()
    {
-      if (isEnabled())
-         return createdCount.get() != 0 ? totalCreationTime.get() / createdCount.get() : 0;
-
-      return 0;
+      return createdCount.get() != 0 ? totalCreationTime.get() / createdCount.get() : 0;
    }
 
    /**
@@ -320,10 +306,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public int getCreatedCount()
    {
-      if (isEnabled())
-         return createdCount.get();
-
-      return 0;
+      return createdCount.get();
    }
 
    /**
@@ -331,8 +314,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void deltaCreatedCount()
    {
-      if (isEnabled())
-         createdCount.incrementAndGet();
+      createdCount.incrementAndGet();
    }
 
    /**
@@ -340,10 +322,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public int getDestroyedCount()
    {
-      if (isEnabled())
-         return destroyedCount.get();
-
-      return 0;
+      return destroyedCount.get();
    }
 
    /**
@@ -351,8 +330,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void deltaDestroyedCount()
    {
-      if (isEnabled())
-         destroyedCount.incrementAndGet();
+      destroyedCount.incrementAndGet();
    }
 
    /**
@@ -361,10 +339,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public int getMaxUsedCount()
    {
-      if (isEnabled())
-         return maxUsedCount.get() != Integer.MIN_VALUE ? maxUsedCount.get() : 0;
-
-      return 0;
+      return maxUsedCount.get() != Integer.MIN_VALUE ? maxUsedCount.get() : 0;
    }
 
    /**
@@ -373,11 +348,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void setMaxUsedCount(int v)
    {
-      if (isEnabled())
-      {
-         if (v > maxUsedCount.get())
-            maxUsedCount.set(v);
-      }
+      if (v > maxUsedCount.get())
+         maxUsedCount.set(v);
    }
 
    /**
@@ -386,10 +358,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public int getMaxWaitCount()
    {
-      if (isEnabled())
-         return maxWaitCount.get() != Integer.MIN_VALUE ? maxWaitCount.get() : 0;
-
-      return 0;
+      return maxWaitCount.get() != Integer.MIN_VALUE ? maxWaitCount.get() : 0;
    }
 
    /**
@@ -398,11 +367,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void setMaxWaitCount(int v)
    {
-      if (isEnabled())
-      {
-         if (v > maxWaitCount.get())
-            maxWaitCount.set(v);
-      }
+      if (v > maxWaitCount.get())
+         maxWaitCount.set(v);
    }
 
    /**
@@ -410,10 +376,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public long getMaxCreationTime()
    {
-      if (isEnabled())
-         return maxCreationTime.get() != Long.MIN_VALUE ? maxCreationTime.get() : 0;
-
-      return 0;
+      return maxCreationTime.get() != Long.MIN_VALUE ? maxCreationTime.get() : 0;
    }
 
    /**
@@ -421,10 +384,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public long getMaxWaitTime()
    {
-      if (isEnabled())
-         return maxWaitTime.get() != Long.MIN_VALUE ? maxWaitTime.get() : 0;
-
-      return 0;
+      return maxWaitTime.get() != Long.MIN_VALUE ? maxWaitTime.get() : 0;
    }
 
    /**
@@ -432,10 +392,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public int getTimedOut()
    {
-      if (isEnabled())
-         return timedOut.get();
-
-      return 0;
+      return timedOut.get();
    }
 
    /**
@@ -443,8 +400,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void deltaTimedOut()
    {
-      if (isEnabled())
-         timedOut.incrementAndGet();
+      timedOut.incrementAndGet();
    }
 
    /**
@@ -452,10 +408,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public long getTotalBlockingTime()
    {
-      if (isEnabled())
-         return totalBlockingTime.get();
-
-      return 0;
+      return totalBlockingTime.get();
    }
 
    /**
@@ -464,15 +417,12 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void deltaTotalBlockingTime(long delta)
    {
-      if (isEnabled())
+      if (delta > 0)
       {
-         if (delta > 0)
-         {
-            totalBlockingTime.addAndGet(delta);
+         totalBlockingTime.addAndGet(delta);
 
-            if (delta > maxWaitTime.get())
-               maxWaitTime.set(delta);
-         }
+         if (delta > maxWaitTime.get())
+            maxWaitTime.set(delta);
       }
    }
 
@@ -481,10 +431,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public long getTotalCreationTime()
    {
-      if (isEnabled())
-         return totalCreationTime.get();
-
-      return 0;
+      return totalCreationTime.get();
    }
 
    /**
@@ -493,15 +440,12 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void deltaTotalCreationTime(long delta)
    {
-      if (isEnabled())
+      if (delta > 0)
       {
-         if (delta > 0)
-         {
-            totalCreationTime.addAndGet(delta);
+         totalCreationTime.addAndGet(delta);
 
-            if (delta > maxCreationTime.get())
-               maxCreationTime.set(delta);
-         }
+         if (delta > maxCreationTime.get())
+            maxCreationTime.set(delta);
       }
    }
 
@@ -510,6 +454,6 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public void clear()
    {
-      // Do nothing
+      // No-op
    }
 }

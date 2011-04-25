@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.spi.statistics;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ import java.util.Set;
  *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface StatisticsPlugin
+public interface StatisticsPlugin extends Serializable
 {
    /**
     * Get the statistics names
