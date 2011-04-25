@@ -552,7 +552,7 @@ public abstract class AbstractPool implements Pool
       ConnectionListener cl = null;
       try
       {
-         if (getStatistics().getAvailableCount() > 0)
+         if (((SubPoolStatistics)getStatistics()).getAvailableCount(true) > 0)
          {
             cl = getConnection(null, subject, null);
             result = true;

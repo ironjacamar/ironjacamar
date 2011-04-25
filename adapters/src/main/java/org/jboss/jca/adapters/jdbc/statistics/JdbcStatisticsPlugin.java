@@ -42,6 +42,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class JdbcStatisticsPlugin implements StatisticsPlugin
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = 1L;
+
    private static final String PREPARED_STATEMENT_CACHE_ACCESS_COUNT = "PreparedStatementCacheAccessCount";
    private static final String PREPARED_STATEMENT_CACHE_ADD_COUNT = "PreparedStatementCacheAddCount";
    private static final String PREPARED_STATEMENT_CACHE_CURRENT_SIZE = "PreparedStatementCacheCurrentSize";
