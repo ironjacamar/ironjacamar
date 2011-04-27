@@ -23,20 +23,14 @@ package org.jboss.jca.rhq.test;
 
 import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
-import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
-import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.embed.core.EmbeddedJcaDiscover;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.List;
-
-import javax.naming.InitialContext;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -243,85 +237,6 @@ public class DsTestCase
       // just not thrown exception for now.
    }
    
-   
-   /**
-    * Tests DataSource Statistics
-    * 
-    * @throws Throwable exception
-    */
-   @Test
-   public void testDsStatistics() throws Throwable
-   {
-      DataSource ds = getDataSource();
-      StatisticsPlugin statistics = ds.getStatistics();
-      assertNotNull(statistics);
-      assertTrue(statistics.isEnabled());
-      
-      PoolStatistics poolStatistics = ds.getPool().getStatistics();
-      assertNotNull(poolStatistics);
-      boolean oldEnable = poolStatistics.isEnabled();
-      poolStatistics.setEnabled(false);
-      
-      //TODO SubPoolStatistics.setEnabled(boolean v) needs to be fixed.
-//      assertFalse(poolStatistics.isEnabled()); 
-      
-      // ds statistics
-      assertEquals(0L, statistics.getValue("PreparedStatementCacheAccessCount"));
-      assertEquals(0L, statistics.getValue("PreparedStatementCacheAddCount"));
-      assertEquals(0, statistics.getValue("PreparedStatementCacheCurrentSize"));
-      assertEquals(0L, statistics.getValue("PreparedStatementCacheDeleteCount"));
-      assertEquals(0, statistics.getValue("PreparedStatementCacheHitCount"));
-      assertEquals(0, statistics.getValue("PreparedStatementCacheMissCount"));
-      
-      InitialContext context = new InitialContext();
-      javax.sql.DataSource sqlDS = (javax.sql.DataSource)context.lookup("java:/H2DS");
-      Connection sqlConn = sqlDS.getConnection();
-      
-      String sql = "SHOW TABLES";
-      PreparedStatement pstmt = sqlConn.prepareStatement(sql);
-      
-      long accessCount = 1L;
-      // ds statistics
-      assertEquals(accessCount, statistics.getValue("PreparedStatementCacheAccessCount"));
-      assertEquals(1L, statistics.getValue("PreparedStatementCacheAddCount"));
-      assertEquals(1, statistics.getValue("PreparedStatementCacheCurrentSize"));
-      assertEquals(0L, statistics.getValue("PreparedStatementCacheDeleteCount"));
-      assertEquals(0, statistics.getValue("PreparedStatementCacheHitCount"));
-      assertEquals(0, statistics.getValue("PreparedStatementCacheMissCount"));
-      
-      pstmt.close();
-      // same SQL again
-      pstmt = sqlConn.prepareStatement(sql);
-      
-      // ds statistics
-      assertEquals(accessCount + 1, statistics.getValue("PreparedStatementCacheAccessCount"));
-      assertEquals(1L, statistics.getValue("PreparedStatementCacheAddCount"));
-      assertEquals(1, statistics.getValue("PreparedStatementCacheCurrentSize"));
-      assertEquals(0L, statistics.getValue("PreparedStatementCacheDeleteCount"));
-      assertEquals(1, statistics.getValue("PreparedStatementCacheHitCount"));
-      assertEquals(0, statistics.getValue("PreparedStatementCacheMissCount"));
-      
-      String sql2 = "SHOW SCHEMAS";
-      PreparedStatement pstmt2 = sqlConn.prepareStatement(sql2);
-      
-      // ds statistics
-      assertEquals(accessCount + 2, statistics.getValue("PreparedStatementCacheAccessCount"));
-      assertEquals(2L, statistics.getValue("PreparedStatementCacheAddCount"));
-      assertEquals(2, statistics.getValue("PreparedStatementCacheCurrentSize"));
-      assertEquals(0L, statistics.getValue("PreparedStatementCacheDeleteCount"));
-      assertEquals(1, statistics.getValue("PreparedStatementCacheHitCount"));
-      assertEquals(0, statistics.getValue("PreparedStatementCacheMissCount"));
-      
-      pstmt.close();
-      pstmt2.close();
-      sqlConn.close();
-      
-      // clear all values at last
-      statistics.clear();
-      poolStatistics.setEnabled(oldEnable);
-      assertTrue(poolStatistics.isEnabled());
-   }
-
    
    /**
     * Lifecycle start, before the suite is executed

@@ -24,21 +24,24 @@ package org.jboss.jca.rhq.test;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.embed.core.EmbeddedJcaDiscover;
 
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 import javax.naming.InitialContext;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -100,14 +103,13 @@ public class StatisticsTestCase
     * 
     * @throws Throwable the exception
     */
-   @Ignore
    @Test
    public void testPoolStatisticsEnable() throws Throwable
    {
       DataSource ds = getDataSource();
       PoolStatistics poolStatistics = ds.getPool().getStatistics();
-      assertTrue(poolStatistics.isEnabled());  // now it is enabled
-      poolStatistics.clear(); // clear all data
+      boolean oldEnabled = poolStatistics.isEnabled();
+      assertTrue(oldEnabled);
       
       poolStatistics.setEnabled(false); // set enabled to false
       
@@ -116,25 +118,156 @@ public class StatisticsTestCase
       assertEquals(0, poolStatistics.getMaxUsedCount());
       assertEquals(0, poolStatistics.getDestroyedCount());
       assertEquals(0, poolStatistics.getAvailableCount());
+      assertTrue(poolStatistics.getMaxWaitCount() >= 0);
       
       InitialContext context = new InitialContext();
       javax.sql.DataSource sqlDS = (javax.sql.DataSource)context.lookup("java:/H2DS");
-      Connection sqlConn = sqlDS.getConnection();  // getConnection() should not affect data in poolStatistics
+      Connection sqlConn = sqlDS.getConnection();
       
-      poolStatistics.setEnabled(true);  // set the enabled to true after the connection gotten. 
+      poolStatistics.setEnabled(oldEnabled);
       
-      // no more operations, but the data in the PoolStatistics is not empty, 
-      // which means data were collected even when PoolStatistics enabled is false.
-      // is it a feature or a bug ?      
-      
-      assertEquals(0, poolStatistics.getCreatedCount());
-      assertEquals(0, poolStatistics.getActiveCount());
-      assertEquals(0, poolStatistics.getMaxUsedCount());
-      assertEquals(0, poolStatistics.getDestroyedCount());
-      assertEquals(0, poolStatistics.getAvailableCount());
+      // core statistics should NOT be disabled.
+      assertTrue(poolStatistics.getCreatedCount() >= 1);
+      assertTrue(poolStatistics.getActiveCount() >= 1);
+      assertTrue(poolStatistics.getMaxUsedCount() >= 1);
+      assertTrue(poolStatistics.getDestroyedCount() >= 0);
+      assertTrue(poolStatistics.getAvailableCount() >= 1);
+      assertTrue(poolStatistics.getMaxWaitCount() >= 0);
       
       sqlConn.close();
       
+      poolStatistics.clear();
+      // core statistics should NOT be cleared
+      assertTrue(poolStatistics.getCreatedCount() >= 1);
+      assertTrue(poolStatistics.getActiveCount() >= 1);
+      assertTrue(poolStatistics.getMaxUsedCount() >= 1);
+      assertTrue(poolStatistics.getDestroyedCount() >= 0);
+      assertTrue(poolStatistics.getAvailableCount() >= 1);
+      assertTrue(poolStatistics.getMaxWaitCount() >= 0);
+      
    }
+   
+   /**
+    * Tests DataSource PoolStatistics
+    * 
+    * @throws Throwable the exception
+    */
+   @Test
+   public void testDsPoolStatistics() throws Throwable
+   {
+      DataSource ds = getDataSource();
+      PoolStatistics poolStatistics = ds.getPool().getStatistics();
+      
+      int createdCount = poolStatistics.getCreatedCount();
+      int activeCount = poolStatistics.getActiveCount();
+      int maxUsedCount = poolStatistics.getMaxUsedCount();
+      int availableCount = poolStatistics.getAvailableCount();
+      
+      assertTrue(createdCount >= 0);
+      assertTrue(activeCount >= 0);
+      assertTrue(maxUsedCount >= 0);
+      assertTrue(poolStatistics.getDestroyedCount() >= 0);
+      assertTrue(availableCount >= 0);
+      
+      InitialContext context = new InitialContext();
+      javax.sql.DataSource sqlDS = (javax.sql.DataSource)context.lookup("java:/H2DS");
+      Connection sqlConn = sqlDS.getConnection();
+      Connection sqlConn2 = sqlDS.getConnection();
+      
+      assertTrue(poolStatistics.getCreatedCount() >= createdCount + 1);
+      assertTrue(poolStatistics.getActiveCount() >= activeCount + 1);
+      assertTrue(poolStatistics.getMaxUsedCount() >= maxUsedCount + 1);
+      assertTrue(poolStatistics.getDestroyedCount() >= 0);
+      assertTrue(poolStatistics.getAvailableCount() < availableCount);
+      assertTrue(poolStatistics.getMaxWaitCount() >= 0);
+      
+      assertTrue(poolStatistics.getAverageCreationTime() > 0);
+      assertTrue(poolStatistics.getAverageBlockingTime() >= 0);
+      assertTrue(poolStatistics.getMaxCreationTime() > 0);
+      assertTrue(poolStatistics.getTimedOut() >= 0);
+      assertTrue(poolStatistics.getTotalBlockingTime() >= 0);
+      assertTrue(poolStatistics.getTotalCreationTime() > 0);
+      
+      sqlConn.close();
+      sqlConn2.close();
+   }
+   
+   /**
+    * Tests DataSource Statistics
+    * 
+    * @throws Throwable exception
+    */
+   @Test
+   public void testDsStatistics() throws Throwable
+   {
+      DataSource ds = getDataSource();
+      StatisticsPlugin statistics = ds.getStatistics();
+      assertNotNull(statistics);
+      assertTrue(statistics.isEnabled());
+      
+      PoolStatistics poolStatistics = ds.getPool().getStatistics();
+      assertNotNull(poolStatistics);
+      boolean oldEnable = poolStatistics.isEnabled();
+      poolStatistics.setEnabled(false);
+      
+      assertFalse(poolStatistics.isEnabled()); 
+      
+      // ds statistics
+      assertEquals(0L, statistics.getValue("PreparedStatementCacheAccessCount"));
+      assertEquals(0L, statistics.getValue("PreparedStatementCacheAddCount"));
+      assertEquals(0, statistics.getValue("PreparedStatementCacheCurrentSize"));
+      assertEquals(0L, statistics.getValue("PreparedStatementCacheDeleteCount"));
+      assertEquals(0, statistics.getValue("PreparedStatementCacheHitCount"));
+      assertEquals(0, statistics.getValue("PreparedStatementCacheMissCount"));
+      
+      InitialContext context = new InitialContext();
+      javax.sql.DataSource sqlDS = (javax.sql.DataSource)context.lookup("java:/H2DS");
+      Connection sqlConn = sqlDS.getConnection();
+      
+      String sql = "SHOW TABLES";
+      PreparedStatement pstmt = sqlConn.prepareStatement(sql);
+      
+      long accessCount = 1L;
+      // ds statistics
+      assertEquals(accessCount, statistics.getValue("PreparedStatementCacheAccessCount"));
+      assertEquals(1L, statistics.getValue("PreparedStatementCacheAddCount"));
+      assertEquals(1, statistics.getValue("PreparedStatementCacheCurrentSize"));
+      assertEquals(0L, statistics.getValue("PreparedStatementCacheDeleteCount"));
+      assertEquals(0, statistics.getValue("PreparedStatementCacheHitCount"));
+      assertEquals(0, statistics.getValue("PreparedStatementCacheMissCount"));
+      
+      pstmt.close();
+      // same SQL again
+      pstmt = sqlConn.prepareStatement(sql);
+      
+      // ds statistics
+      assertEquals(accessCount + 1, statistics.getValue("PreparedStatementCacheAccessCount"));
+      assertEquals(1L, statistics.getValue("PreparedStatementCacheAddCount"));
+      assertEquals(1, statistics.getValue("PreparedStatementCacheCurrentSize"));
+      assertEquals(0L, statistics.getValue("PreparedStatementCacheDeleteCount"));
+      assertEquals(1, statistics.getValue("PreparedStatementCacheHitCount"));
+      assertEquals(0, statistics.getValue("PreparedStatementCacheMissCount"));
+      
+      String sql2 = "SHOW SCHEMAS";
+      PreparedStatement pstmt2 = sqlConn.prepareStatement(sql2);
+      
+      // ds statistics
+      assertEquals(accessCount + 2, statistics.getValue("PreparedStatementCacheAccessCount"));
+      assertEquals(2L, statistics.getValue("PreparedStatementCacheAddCount"));
+      assertEquals(2, statistics.getValue("PreparedStatementCacheCurrentSize"));
+      assertEquals(0L, statistics.getValue("PreparedStatementCacheDeleteCount"));
+      assertEquals(1, statistics.getValue("PreparedStatementCacheHitCount"));
+      assertEquals(0, statistics.getValue("PreparedStatementCacheMissCount"));
+      
+      pstmt.close();
+      pstmt2.close();
+      sqlConn.close();
+      
+      // clear all values at last
+      statistics.clear();
+      poolStatistics.setEnabled(oldEnable);
+      assertTrue(poolStatistics.isEnabled());
+   }
+   
    
 }
