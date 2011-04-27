@@ -149,8 +149,8 @@
     <dependency org="org.jboss.integration" name="jboss-transaction-spi" rev="${version.jboss.integration}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.javaee" name="jboss-jaspi-api" rev="${version.jboss.jaspi.api}" conf="common,ironjacamar-core-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.javaee" name="jboss-transaction-api" rev="${version.transaction.api}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-spec-api"/>
-    <dependency org="org.jboss.jbossts" name="jbossjts" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.jbossts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
+    <dependency org="org.jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
+    <dependency org="org.jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.netty" name="netty" rev="${version.jboss.netty}" conf="hornetq,ironjacamar-depchain"/>
     <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common,ironjacamar-common-impl-papaki,ironjacamar-depchain"/>
