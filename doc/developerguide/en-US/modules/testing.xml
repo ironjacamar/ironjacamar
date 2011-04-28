@@ -350,4 +350,24 @@ reports/tattletale
 
   </section>
 
+  <section id="performance">
+    <title>Performance testing</title>
+    <para>Performance testing can identify areas that needs to be improved or completely replaced.</para>
+
+    <section id="jprofiler">
+      <title>JProfiler</title>
+
+      <para>Insert the following line in <code>run.sh</code> or <code>run.bat</code>:</para>
+
+      <programlisting>
+-agentpath:&lt;path&gt;/jprofiler6/bin/linux-x64/libjprofilerti.so=port=8849 
+      </programlisting>
+
+      <para>where the Java command is executed.</para>
+
+      <para>The home of JProfiler is located here: <ulink url="http://www.ej-technologies.com/products/jprofiler/overview.html"/>.</para>
+
+    </section>
+  </section>
+
 </chapter>
