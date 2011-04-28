@@ -104,7 +104,7 @@
   <property name="version.javassist" value="3.14.0-GA"/>
   <property name="version.jboss.common" value="2.2.17.GA"/>
   <property name="version.jboss.integration" value="5.1.0.CR1"/>
-  <property name="version.jboss.jaspi.api" value="1.0.0.GA"/>
+  <property name="version.jboss.jaspi.api" value="1.0.0.Final"/>
   <property name="version.jboss.jms.api" value="1.0.0.Beta1"/>
   <property name="version.jboss.logging" value="3.0.0.Beta5"/>
   <property name="version.jboss.logmanager" value="1.2.0.CR9"/>
@@ -132,7 +132,7 @@
   <property name="version.maven" value="2.2.1"/>
   <property name="version.rhq" value="4.0.0.Beta1"/>
   <property name="version.slf4j" value="1.5.8"/>
-  <property name="version.transaction.api" value="1.0.1.GA"/>
+  <property name="version.transaction.api" value="1.0.0.Final"/>
   <property name="version.validation-api" value="1.0.0.GA"/>
 
   <!-- ================================= 
