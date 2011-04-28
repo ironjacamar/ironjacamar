@@ -182,6 +182,7 @@ public class WebServer implements DeployerPhases
    public void postDeploy() throws Throwable
    {
       if (server != null &&
+          !server.isRunning() &&
           handlers != null && handlers.getHandlers() != null && handlers.getHandlers().length > 0)
       {
          try
