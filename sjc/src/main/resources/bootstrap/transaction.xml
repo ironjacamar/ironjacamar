@@ -8,14 +8,14 @@
     <property name="recoveryPort">4712</property>
     <property name="transactionStatusManagerInetAddress">localhost</property>
     <property name="transactionStatusManagerPort">4713</property>
-    <property name="recoveryExtensions">
+    <property name="recoveryModuleClassNames">
       <list elementClass="java.lang.String">
         <value>com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule</value>
         <value>com.arjuna.ats.internal.txoj.recovery.TORecoveryModule</value>
         <value>com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule</value>
       </list>
     </property>
-    <property name="expiryScanners">
+    <property name="expiryScannerClassNames">
       <list elementClass="java.lang.String">
         <value>com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner</value>
       </list>
