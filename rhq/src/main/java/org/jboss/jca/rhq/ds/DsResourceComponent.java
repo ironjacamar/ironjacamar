@@ -21,12 +21,15 @@
  */
 package org.jboss.jca.rhq.ds;
 
+import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
 
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.core.PoolResourceComponent;
+
+import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.ConfigurationUpdateStatus;
@@ -40,6 +43,9 @@ import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
  */
 public class DsResourceComponent extends PoolResourceComponent
 {
+   
+   /** log */
+   private static final Logger logger = Logger.getLogger(DsResourceComponent.class);
    
    /**
     * getDataSource
@@ -116,6 +122,18 @@ public class DsResourceComponent extends PoolResourceComponent
       updatePoolConfiguration(poolConfig, config);
       
       updateResourceConfiguration.setStatus(ConfigurationUpdateStatus.SUCCESS);
+   }
+  
+   /**
+    * Gets Pool.
+    * 
+    * @return Pool the pool.
+    */
+   @Override
+   protected Pool getPool()
+   {
+      DataSource ds = getDataSource();
+      return ds.getPool();
    }
    
 }

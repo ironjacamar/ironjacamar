@@ -21,11 +21,13 @@
  */
 package org.jboss.jca.rhq.core;
 
+
 import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertySimple;
+import org.rhq.core.pluginapi.operation.OperationResult;
 
 /**
  * PoolResourceComponent
@@ -130,5 +132,55 @@ public abstract class PoolResourceComponent extends AbstractResourceComponent
       Boolean useFastFail = Boolean.valueOf(config.getSimpleValue("use-fast-fail", "false"));
       poolConfig.setUseFastFail(useFastFail);
    }
+   
+   
+   /**
+    * Invokes Operations.
+    * @param s operation name
+    * @param configuration Configuration of the operation parameters
+    * @return OperationResult result of the Operation
+    * @throws InterruptedException when canceled.
+    * @throws Exception the exception
+    */
+   @Override
+   public OperationResult invokeOperation(String s, Configuration configuration) throws InterruptedException, Exception
+   {
+      OperationResult result = new OperationResult();
+      Pool pool = getPool();
+      if ("flush".equals(s))
+      {
+         pool.flush();
+      }
+      else if ("resetConnectionPool".equals(s))
+      {
+         pool.flush(true);
+      }
+      else if ("testConnection".equals(s))
+      {
+         boolean testConn = pool.testConnection();
+         Configuration config = result.getComplexResults();
+         config.put(new PropertySimple("result", testConn));
+      }
+      else if ("listFormattedSubPoolStatistics".equals(s))
+      {
+         result.setErrorMessage("Not Implemented yet!");
+      }
+      else if ("listStatistics".equals(s))
+      {
+         result.setErrorMessage("Not Implemented yet!");
+      }
+      else
+      {
+         throw new IllegalStateException("Wrong operation: " + s);
+      }
+      return result;
+   }
+
+   /**
+    * Gets Pool.
+    * 
+    * @return Pool
+    */
+   protected abstract Pool getPool();
    
 }

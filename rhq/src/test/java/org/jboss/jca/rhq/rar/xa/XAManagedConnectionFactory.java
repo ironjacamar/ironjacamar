@@ -134,7 +134,7 @@ public class XAManagedConnectionFactory implements ManagedConnectionFactory, Res
       if (ra == null)
          throw new IllegalStateException("RA is null");
       log.finest("createManagedConnection()");
-      return null;
+      return new XAManagedConnection();
    }
 
    /**

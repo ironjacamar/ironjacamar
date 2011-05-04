@@ -411,6 +411,8 @@
             <service name="Connection Factory" discovery="org.jboss.jca.rhq.ra.CfResourceDiscoveryComponent"
                 class="org.jboss.jca.rhq.ra.CfResourceComponent">
             
+                &datasourceAndConnectionFactoryOperations;
+            
                 <resource-configuration>
                     <c:group name="general" displayName="General">
                         <c:simple-property name="jndi-name" displayName="JNDI Name"/>
@@ -446,8 +448,6 @@
                 <!-- Managed Connection Factoriy. -->
                 <service name="Managed Connection Factory" discovery="org.jboss.jca.rhq.ra.McfResourceDiscoveryComponent"
                     class="org.jboss.jca.rhq.ra.McfResourceComponent">
-                
-                    &datasourceAndConnectionFactoryOperations;
                 
                     <resource-configuration>
                         <c:group name="general" displayName="General">
@@ -499,11 +499,14 @@
             </c:group>
         </plugin-configuration>
         
+        &datasourceAndConnectionFactoryOperations;
+        
         <content name="ds-file" displayName="DataSource File" category="deployable" isCreationType="true">
             <configuration>
               <c:simple-property name="override" displayName="Override?" required="false" type="boolean" defaultValue="true"/>
             </configuration>
         </content>
+        
             
             <resource-configuration>
                 <c:group name="general" displayName="General">

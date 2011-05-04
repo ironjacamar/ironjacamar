@@ -46,6 +46,8 @@ import org.rhq.core.pc.inventory.RuntimeDiscoveryExecutor;
 import org.rhq.core.pc.plugin.FileSystemPluginFinder;
 import org.rhq.core.pluginapi.configuration.ConfigurationFacet;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
+import org.rhq.core.pluginapi.operation.OperationFacet;
+import org.rhq.core.pluginapi.operation.OperationResult;
 
 import static org.junit.Assert.*;
 
@@ -205,6 +207,34 @@ public class DsTestCase
       assertEquals(1, datasources.size());
       DataSource ds = datasources.get(0);
       return ds;
+   }
+   
+   /**
+    * Tests DsResourceComponent pool testConnection.
+    * 
+    * @throws Throwable the exception.
+    */
+   @Test
+   public void testDsPoolOperationTestConnection() throws Throwable
+   {
+      testPoolOperationTestConnection(rarServiceResource);
+   }
+   
+   /**
+    * Tests pool testConnection.
+    * 
+    * @param poolRes Resource 
+    * @throws Throwable the exception.
+    */
+   protected static void testPoolOperationTestConnection(Resource poolRes) throws Throwable
+   {
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      OperationFacet cfOpertaionFacet = (OperationFacet)im.getResourceComponent(poolRes);
+      OperationResult result = cfOpertaionFacet.invokeOperation("testConnection", null);
+      assertNotNull(result);
+      Configuration config = result.getComplexResults();
+      assertEquals("true", config.getSimpleValue("result", null));
    }
    
    /**

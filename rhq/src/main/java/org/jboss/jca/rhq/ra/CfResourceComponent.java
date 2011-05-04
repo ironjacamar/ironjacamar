@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.rhq.ra;
 
+import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.ConnectionFactory;
 import org.jboss.jca.core.api.management.Connector;
@@ -127,5 +128,17 @@ public class CfResourceComponent extends PoolResourceComponent
       
       updateResourceConfiguration.setStatus(ConfigurationUpdateStatus.SUCCESS);
       
+   }
+
+   /**
+    * Gets Pool.
+    * 
+    * @return Pool the pool.
+    */
+   @Override
+   protected Pool getPool()
+   {
+      ConnectionFactory cf = getConnectionFactory();
+      return cf.getPool();
    }
 }

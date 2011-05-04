@@ -75,6 +75,12 @@ public class XATestCase
    /** cf jndi name */
    private static final String CF_JNDI_NAME = "java:/eis/XA";
    
+   /** ao jndi name **/
+   private static final String AO_JNDI_NAME = "java:/XAAdminObjectImpl";
+   
+   /** ra jndi name **/
+   private static final String RA_JNDI_NAME = "XAResourceAdapter";
+   
    /** RAR resource */
    private static Resource rarServiceResource;
    
@@ -119,6 +125,25 @@ public class XATestCase
    }
    
    /**
+    * Gets sub resource of the rarServiceResource.
+    * 
+    * @param resJndiName jndi name of the sub resource
+    * @return Resource the resource
+    */
+   private Resource getSubResource(String resJndiName)
+   {
+      Resource resource = null;
+      for (Resource res : rarServiceResource.getChildResources())
+      {
+         if (res.getName().equals(resJndiName))
+         {
+            resource = res;
+         }
+      }
+      return resource;
+   }
+   
+   /**
     * Tests AoResourceComponent load resource configuration.
     * 
     * @throws Exception exception
@@ -126,14 +151,7 @@ public class XATestCase
    @Test
    public void testLoadAoResourceConfiguration() throws Exception
    {
-      Resource aoResource = null;
-      for (Resource res : rarServiceResource.getChildResources())
-      {
-         if (res.getName().equals("java:/XAAdminObjectImpl"))
-         {
-            aoResource = res;
-         }
-      }
+      Resource aoResource = getSubResource(AO_JNDI_NAME);
       assertNotNull(aoResource);
       PluginContainer pc = PluginContainer.getInstance();
       InventoryManager im = pc.getInventoryManager();
@@ -166,14 +184,7 @@ public class XATestCase
    @Test
    public void testUpdateAoResourceComponentConfiguration() throws Exception
    {
-      Resource aoResource = null;
-      for (Resource res : rarServiceResource.getChildResources())
-      {
-         if (res.getName().equals("java:/XAAdminObjectImpl"))
-         {
-            aoResource = res;
-         }
-      }
+      Resource aoResource = getSubResource(AO_JNDI_NAME);
       assertNotNull(aoResource);
       PluginContainer pc = PluginContainer.getInstance();
       InventoryManager im = pc.getInventoryManager();
@@ -206,14 +217,7 @@ public class XATestCase
    @Test
    public void testCfLoadResourceConfiguration() throws Exception
    {
-      Resource cfResource = null;
-      for (Resource res : rarServiceResource.getChildResources())
-      {
-         if (res.getName().equals(CF_JNDI_NAME))
-         {
-            cfResource = res;
-         }
-      }
+      Resource cfResource = getSubResource(CF_JNDI_NAME);
       assertNotNull(cfResource);
       //assertEquals(1, cfResource.getChildResources().size());
       PluginContainer pc = PluginContainer.getInstance();
@@ -238,14 +242,7 @@ public class XATestCase
    @Test
    public void testMcfLoadResourceConfiguration() throws Exception
    {
-      Resource cfResource = null;
-      for (Resource res : rarServiceResource.getChildResources())
-      {
-         if (res.getName().equals(CF_JNDI_NAME))
-         {
-            cfResource = res;
-         }
-      }
+      Resource cfResource = getSubResource(CF_JNDI_NAME);
       assertNotNull(cfResource);
       //assertEquals(1, cfResource.getChildResources().size());
       PluginContainer pc = PluginContainer.getInstance();
@@ -278,14 +275,7 @@ public class XATestCase
    @Test
    public void testCfUpdateResourceConfinguration() throws Exception
    {
-      Resource cfResource = null;
-      for (Resource res : rarServiceResource.getChildResources())
-      {
-         if (res.getName().equals(CF_JNDI_NAME))
-         {
-            cfResource = res;
-         }
-      }
+      Resource cfResource = getSubResource(CF_JNDI_NAME);
       assertNotNull(cfResource);
       PluginContainer pc = PluginContainer.getInstance();
       InventoryManager im = pc.getInventoryManager();
@@ -303,6 +293,19 @@ public class XATestCase
    }
    
    /**
+    * Tests CfResourceComponent operation of testConnection
+    * 
+    * @throws Throwable the exception
+    */
+   @Test
+   public void testCfPoolOperationTestConnection() throws Throwable
+   {
+      Resource cfResource = getSubResource(CF_JNDI_NAME);
+      assertNotNull(cfResource);
+      DsTestCase.testPoolOperationTestConnection(cfResource);
+   }
+   
+   /**
     * Tests McfResourceComponent update resource configuration.
     * 
     * @throws Exception exception
@@ -310,14 +313,7 @@ public class XATestCase
    @Test
    public void testMcfUpdateResourceConfinguration() throws Exception
    {
-      Resource cfResource = null;
-      for (Resource res : rarServiceResource.getChildResources())
-      {
-         if (res.getName().equals(CF_JNDI_NAME))
-         {
-            cfResource = res;
-         }
-      }
+      Resource cfResource = getSubResource(CF_JNDI_NAME);
       assertNotNull(cfResource);
       PluginContainer pc = PluginContainer.getInstance();
       InventoryManager im = pc.getInventoryManager();
@@ -358,14 +354,7 @@ public class XATestCase
    @Test
    public void testRaLoadResourceCondiguration() throws Exception
    {
-      Resource raResource = null;
-      for (Resource res : rarServiceResource.getChildResources())
-      {
-         if (res.getName().equals("XAResourceAdapter"))
-         {
-            raResource = res;
-         }
-      }
+      Resource raResource = getSubResource(RA_JNDI_NAME);
       assertNotNull(raResource);
       PluginContainer pc = PluginContainer.getInstance();
       InventoryManager im = pc.getInventoryManager();
@@ -413,14 +402,7 @@ public class XATestCase
    @Test
    public void testRaUpdateResourceConfiguration() throws Exception
    {
-      Resource raResource = null;
-      for (Resource res : rarServiceResource.getChildResources())
-      {
-         if (res.getName().equals("XAResourceAdapter"))
-         {
-            raResource = res;
-         }
-      }
+      Resource raResource = getSubResource(RA_JNDI_NAME);
       assertNotNull(raResource);
       PluginContainer pc = PluginContainer.getInstance();
       InventoryManager im = pc.getInventoryManager();
