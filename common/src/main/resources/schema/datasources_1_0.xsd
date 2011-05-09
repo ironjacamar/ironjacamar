@@ -35,7 +35,7 @@
           </xs:annotation>
         </xs:element>
       </xs:choice>
-      <xs:element name="driver" type="driverType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+      <xs:element name="drivers" type="driversType" maxOccurs="1" minOccurs="0"></xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="datasourceType" mixed="false">
@@ -902,5 +902,11 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="driversType">
+    <xs:sequence>
+      <xs:element name="driver" type="driverType" maxOccurs="unbounded" minOccurs="1"></xs:element>
+    </xs:sequence>
   </xs:complexType>
 </xs:schema>

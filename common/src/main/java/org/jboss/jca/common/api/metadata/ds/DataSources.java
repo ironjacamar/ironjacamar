@@ -88,6 +88,11 @@ public interface DataSources extends JCAMetadata, ValidatableMetadata
       XA_DATASOURCE("xa-datasource"),
 
       /**
+       * driverS tag
+       */
+      DRIVERS("drivers"),
+
+      /**
        * driver tag
        */
       DRIVER("driver");

@@ -134,6 +134,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       ArrayList<XaDataSource> xaDataSource = new ArrayList<XaDataSource>();
       ArrayList<DataSource> datasource = new ArrayList<DataSource>();
       HashMap<String, Driver> drivers = new HashMap<String, Driver>();
+      boolean driversMatched = false;
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -164,7 +165,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      xaDataSource.add(parseXADataSource(reader));
                      break;
                   }
+                  case DRIVERS : {
+                     driversMatched = true;
+                     break;
+                  }
                   case DRIVER : {
+//                     if (!driversMatched)
+//                        throw new ParserException("Unexpected element:" + reader.getLocalName());
                      Driver driver = parseDriver(reader);
                      drivers.put(driver.getName(), driver);
                      break;

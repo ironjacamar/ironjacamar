@@ -11,8 +11,10 @@
       <password>sa</password>
     </security>
   </datasource>
-  <driver name="h2">
-    <driver-class>org.h2.Driver</driver-class>
-  </driver>
+  <drivers>
+      <driver name="h2">
+         <driver-class>org.h2.Driver</driver-class>
+      </driver>
+  </drivers>
 
 </datasources>
