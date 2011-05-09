@@ -23,11 +23,13 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -47,14 +49,19 @@ public class DatasourcesImpl implements DataSources
 
    private final ArrayList<XaDataSource> xaDataSource;
 
+   private final HashMap<String, Driver> drivers;
+
    /**
     * Create a new DatasourcesImpl.
     *
     * @param datasource datasource
     * @param xaDataSource xaDataSource
+    * @param drivers drivers
     * @throws ValidateException ValidateException
     */
-   public DatasourcesImpl(List<DataSource> datasource, List<XaDataSource> xaDataSource) throws ValidateException
+   public DatasourcesImpl(List<DataSource> datasource, List<XaDataSource> xaDataSource,
+      HashMap<String, Driver> drivers)
+      throws ValidateException
    {
       super();
       if (datasource != null)
@@ -74,6 +81,15 @@ public class DatasourcesImpl implements DataSources
       else
       {
          this.xaDataSource = new ArrayList<XaDataSource>(0);
+      }
+      if (drivers != null)
+      {
+         this.drivers = new HashMap<String, Driver>(drivers.size());
+         this.drivers.putAll(drivers);
+      }
+      else
+      {
+         this.drivers = new HashMap<String, Driver>(0);
       }
       this.validate();
    }
@@ -155,6 +171,12 @@ public class DatasourcesImpl implements DataSources
       {
          xads.validate();
       }
+   }
+
+   @Override
+   public Driver getDriver(String name)
+   {
+      return drivers.get(name);
    }
 
 }

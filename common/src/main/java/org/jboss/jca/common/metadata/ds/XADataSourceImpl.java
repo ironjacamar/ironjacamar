@@ -49,7 +49,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
    private final HashMap<String, String> xaDataSourceProperty;
 
-   private final String xaDataSourceClass;
+   private String xaDataSourceClass;
 
    private final String driver;
 
@@ -283,5 +283,15 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    public Recovery getRecovery()
    {
       return recovery;
+   }
+
+   /**
+    * Set the xaDataSourceClass.
+    *
+    * @param xaDataSourceClass The xaDataSourceClass to set.
+    */
+   public final void forceXaDataSourceClass(String xaDataSourceClass)
+   {
+      this.xaDataSourceClass = xaDataSourceClass;
    }
 }

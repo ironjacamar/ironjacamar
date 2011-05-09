@@ -48,7 +48,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
    private final String connectionUrl;
 
-   private final String driverClass;
+   private String driverClass;
 
    private final String driver;
 
@@ -289,9 +289,21 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       if (this.connectionUrl == null || this.connectionUrl.trim().length() == 0)
          throw new ValidateException("connectionUrl (xml tag " + Tag.CONNECTIONURL + ") is required in " +
                                      this.getClass().getCanonicalName());
-      if (this.driverClass == null || this.driverClass.trim().length() == 0)
+      if ((this.driverClass == null || this.driverClass.trim().length() == 0) &&
+          (this.driver == null || this.driver.trim().length() == 0))
          throw new ValidateException("driverClass (xml tag " + Tag.DRIVERCLASS + ") is required in " +
-                                     this.getClass().getCanonicalName());
+                                     this.getClass().getCanonicalName() + "if no driver (xml tag " + Tag.DRIVER +
+                                     ") is not specified");
 
+   }
+
+   /**
+    * Set the driverClass.
+    *
+    * @param driverClass The driverClass to set.
+    */
+   public final void forceDriverClass(String driverClass)
+   {
+      this.driverClass = driverClass;
    }
 }

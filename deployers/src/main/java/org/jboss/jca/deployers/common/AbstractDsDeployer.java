@@ -33,6 +33,8 @@ import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
+import org.jboss.jca.common.metadata.ds.DataSourceImpl;
+import org.jboss.jca.common.metadata.ds.XADataSourceImpl;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
@@ -229,6 +231,14 @@ public abstract class AbstractDsDeployer
                      {
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(false);
+
+                        if (dataSource.getDriverClass() == null && dataSource.getDriver() != null &&
+                            dataSource instanceof DataSourceImpl)
+                        {
+                           ((DataSourceImpl) dataSource).forceDriverClass(dataSources.getDriver(dataSource
+                              .getDriver()).getDriverClass());
+                        }
+
                         Object cf = deployDataSource(dataSource, jndiName,
                                                      uniqueJdbcLocalId, mgtDataSource, jdbcLocalDeploymentCl);
 
@@ -270,6 +280,15 @@ public abstract class AbstractDsDeployer
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(true);
                         XAResourceRecovery recovery = null;
+
+                        if (xaDataSource.getXaDataSourceClass() == null && xaDataSource.getDriver() != null &&
+                            xaDataSource instanceof XADataSourceImpl)
+                        {
+                           ((XADataSourceImpl) xaDataSource).forceXaDataSourceClass(dataSources.getDriver(
+                              xaDataSource
+                                 .getDriver()).getXaDataSourceClass());
+                        }
+
                         Object cf = deployXADataSource(xaDataSource,
                                                        jndiName, uniqueJdbcXAId,
                                                        recovery,
@@ -912,7 +931,7 @@ public abstract class AbstractDsDeployer
       if (securityDomain == null)
          throw new IllegalArgumentException("SecurityDomain is null");
 
-      return AccessController.doPrivileged(new PrivilegedAction<Subject>() 
+      return AccessController.doPrivileged(new PrivilegedAction<Subject>()
       {
          public Subject run()
          {
@@ -921,14 +940,14 @@ public abstract class AbstractDsDeployer
                // Create a security context on the association
                SecurityContext securityContext = SecurityContextFactory.createSecurityContext(securityDomain);
                SecurityContextAssociation.setSecurityContext(securityContext);
-               
+
                // Unauthenticated
                Subject unauthenticated = new Subject();
-                  
+
                // Leave the subject empty as we don't have any information to do the
                // authentication with - and we only need it to be able to get the
                // real subject from the SubjectFactory
-               
+
                // Set the authenticated subject
                securityContext.getSubjectInfo().setAuthenticatedSubject(unauthenticated);
 
@@ -946,7 +965,7 @@ public abstract class AbstractDsDeployer
 
                if (log.isDebugEnabled())
                   log.debug("Subject=" + subject);
-                     
+
                return subject;
             }
             catch (Throwable t)

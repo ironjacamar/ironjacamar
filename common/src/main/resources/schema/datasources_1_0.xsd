@@ -14,26 +14,29 @@
     </xs:annotation>
   </xs:element>
   <xs:complexType name="datasourcesType">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="datasource" type="datasourceType">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Specifies a non-XA datasource, using local transactions
-             ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="xa-datasource" type="xa-datasourceType">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Specifies a XA datasource
-              ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:choice>
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="datasource" type="datasourceType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+                Specifies a non-XA datasource, using local transactions
+               ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="xa-datasource" type="xa-datasourceType">
+          <xs:annotation>
+            <xs:documentation>
+              <![CDATA[[
+                Specifies a XA datasource
+                ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:choice>
+      <xs:element name="driver" type="driverType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+    </xs:sequence>
   </xs:complexType>
   <xs:complexType name="datasourceType" mixed="false">
     <xs:sequence>
@@ -46,7 +49,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="driver-class" type="xs:token">
+      <xs:element name="driver-class" type="xs:token" maxOccurs="1" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -188,7 +191,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="xa-datasource-class" type="xs:token">
+      <xs:element name="xa-datasource-class" type="xs:token" maxOccurs="1" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -837,4 +840,67 @@
     </xs:attribute>
   </xs:complexType>
   
+
+
+  <xs:complexType name="driverType">
+    <xs:sequence>
+      <xs:element name="driver-class" type="xs:token" maxOccurs="1" minOccurs="0">
+      <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              The fully qualifed name of the JDBC driver class Ex: <driver-class>org.hsqldb.jdbcDriver</driver-class>
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="xa-datasource-class" type="xs:token" maxOccurs="1" minOccurs="0">
+      <xs:annotation>
+          <xs:documentation>
+           <![CDATA[[
+              The fully qualifed name of the javax.sql.XADataSource implementation 
+              class. Ex: <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+             ]]>
+          </xs:documentation>
+        </xs:annotation></xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:token" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Specifies the symbolic name of this driver used to reference this driver
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="module" type="xs:token" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Specifies the name of AS7 module providing this driver.
+            Thios tag is not used in IronJacamar standalone container.
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="major-version" type="xs:int" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Specifies the major version of this driver. If the major and minor version is obmitted the fist availabe
+            Driver in module will be used.
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="minor-verion" type="xs:int" use="optional">
+    <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Specifies the minor version of this driver. If the major and minor version is obmitted the fist availabe
+            Driver in module will be used.
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
 </xs:schema>

@@ -21,47 +21,67 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
-
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ValidatableMetadata;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-
 
 /**
  *
- * A DataSources.
+ * A DataSource.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface DataSources extends JCAMetadata, ValidatableMetadata
+public interface Driver extends JCAMetadata, ValidatableMetadata
 {
 
    /**
-    * Get the datasource.
+    * Get the name.
     *
-    * @return the datasource.
+    * @return the name.
     */
-   public List<DataSource> getDataSource();
+   public String getName();
 
    /**
-    * Get the xaDataSource.
-    *
-    * @return the xaDataSource.
+    * Get the MajorVersion
+    * @return the MajorVersion.
     */
-   public List<XaDataSource> getXaDataSource();
+   public Integer getMajorVersion();
 
    /**
-    * Get the driver with given name
-    * @param name driver's name
+    *Get the MinorVersion
     *
-    * @return the list of drivers.
+    * @return the MinorVersion.
     */
-   public Driver getDriver(String name);
+   public Integer getMinorVersion();
+
+
+   /**
+    * Get the module providing the driver. Used in AS7 configuration
+    *
+    * @return the module.
+    */
+   public String getModule();
+
+
+   /**
+    * Get the DriverClass.
+    *
+    * @return the module.
+    */
+   public String getDriverClass();
+
+
+   /**
+    * Get the XaDataSourceClass.
+    *
+    * @return the XaDataSourceClass.
+    */
+   public String getXaDataSourceClass();
+
+
 
    /**
    *
@@ -78,19 +98,13 @@ public interface DataSources extends JCAMetadata, ValidatableMetadata
       UNKNOWN(null),
 
       /**
-       * datasource tag
+       * driverClass tag
        */
-      DATASOURCE("datasource"),
-
+      DRIVERCLASS("driver-class"),
       /**
-       * xa-datasource tag
+       * xaDatasourceClass tag
        */
-      XA_DATASOURCE("xa-datasource"),
-
-      /**
-       * driver tag
-       */
-      DRIVER("driver");
+      XADATASOURCECLASS("xa-datasource-class");
 
       private final String name;
 
@@ -140,6 +154,58 @@ public interface DataSources extends JCAMetadata, ValidatableMetadata
       {
          final Tag element = MAP.get(localName);
          return element == null ? UNKNOWN : element;
+      }
+
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /**
+       * name attribute
+       */
+      NAME("name"),
+      /**
+       * major-version attribute
+       */
+      MAJOR_VERSION("major-version"),
+      /**
+       * minor-version attribute
+       */
+      MINOR_VERSION("minor-version"),
+      /**
+       * module attribute
+       */
+      MODULE("module");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
       }
 
    }

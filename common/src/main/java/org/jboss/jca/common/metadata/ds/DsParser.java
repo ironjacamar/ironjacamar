@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
@@ -132,6 +133,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
       ArrayList<XaDataSource> xaDataSource = new ArrayList<XaDataSource>();
       ArrayList<DataSource> datasource = new ArrayList<DataSource>();
+      HashMap<String, Driver> drivers = new HashMap<String, Driver>();
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -140,7 +142,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (Tag.forName(reader.getLocalName()) == Tag.DATASOURCES)
                {
 
-                  return new DatasourcesImpl(datasource, xaDataSource);
+                  return new DatasourcesImpl(datasource, xaDataSource, drivers);
                }
                else
                {
@@ -160,6 +162,92 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XA_DATASOURCE : {
                      xaDataSource.add(parseXADataSource(reader));
+                     break;
+                  }
+                  case DRIVER : {
+                     Driver driver = parseDriver(reader);
+                     drivers.put(driver.getName(), driver);
+                     break;
+                  }
+                  default :
+                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException("Reached end of xml document unexpectedly");
+   }
+
+   private Driver parseDriver(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+
+      String xaDataSourceClass = null;
+      String driverClass = null;
+
+      //attributes reading
+
+      String name = null;
+      Integer majorVersion = null;
+      Integer minorVersion = null;
+      String module = null;
+
+      for (org.jboss.jca.common.api.metadata.ds.Driver.Attribute attribute : Driver.Attribute.values())
+      {
+         switch (attribute)
+         {
+
+            case NAME : {
+               name = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
+            case MAJOR_VERSION : {
+               majorVersion = attributeAsInt(reader, attribute.getLocalName());
+               break;
+            }
+            case MINOR_VERSION : {
+               minorVersion = attributeAsInt(reader, attribute.getLocalName());
+               break;
+            }
+            case MODULE : {
+               module = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
+      //elements reading
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DRIVER)
+               {
+
+                  return new DriverImpl(name, majorVersion, minorVersion, module, driverClass, xaDataSourceClass);
+               }
+               else
+               {
+                  if (Driver.Tag.forName(reader.getLocalName()) == Driver.Tag.UNKNOWN)
+                  {
+                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (Driver.Tag.forName(reader.getLocalName()))
+               {
+                  case XADATASOURCECLASS : {
+                     xaDataSourceClass = elementAsString(reader);
+                     break;
+                  }
+                  case DRIVERCLASS : {
+                     driverClass = elementAsString(reader);
                      break;
                   }
                   default :

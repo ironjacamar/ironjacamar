@@ -45,10 +45,10 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Logger;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-
-import org.jboss.logging.Logger;
 
 /**
  *
@@ -159,6 +159,20 @@ public abstract class AbstractParser
    {
       String attributeString = rawAttributeText(reader, attributeName);
       return getSubstitutionValue(attributeString);
+   }
+
+   /**
+    * convert an xml element in String value
+    *
+    * @param reader the StAX reader
+    * @param attributeName the name of the attribute
+    * @return the string representing element
+    * @throws XMLStreamException StAX exception
+    */
+   protected Integer attributeAsInt(XMLStreamReader reader, String attributeName) throws XMLStreamException
+   {
+      String attributeString = getSubstitutionValue(rawAttributeText(reader, attributeName));
+      return attributeString != null ? Integer.valueOf(getSubstitutionValue(attributeString)) : null;
    }
 
    /**
