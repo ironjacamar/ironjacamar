@@ -23,6 +23,7 @@ package org.jboss.jca.rhq.test;
 
 import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
@@ -30,10 +31,14 @@ import org.jboss.jca.rhq.embed.core.EmbeddedJcaDiscover;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.List;
+
+import javax.naming.InitialContext;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.rhq.core.domain.configuration.Configuration;
@@ -257,13 +262,27 @@ public class DsTestCase
     * 
     * @throws Throwable exception
     */
+   @Ignore
    @Test
    public void testDsPoolFlushKill() throws Throwable
    {
       DataSource ds = getDataSource();
       Pool pool = ds.getPool();
-      pool.flush(true);
+      // set prefill to false
+      ds.getPoolConfiguration().setPrefill(false);
+      PoolStatistics poolStatistics = pool.getStatistics();
       
+      InitialContext context = new InitialContext();
+      javax.sql.DataSource sqlDS = (javax.sql.DataSource)context.lookup(ds.getJndiName());
+      Connection conn = sqlDS.getConnection();
+      
+      assertEquals(1, poolStatistics.getActiveCount());
+      
+      pool.flush(true);  // it flushes all connections from the pool.
+      
+      assertEquals(0, poolStatistics.getActiveCount());
+      
+      conn.close();
       // just not thrown exception for now.
    }
    
