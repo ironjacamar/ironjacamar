@@ -25,15 +25,24 @@ import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
 
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.core.PoolResourceComponent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.jboss.logging.Logger;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.ConfigurationUpdateStatus;
 import org.rhq.core.domain.configuration.PropertySimple;
+import org.rhq.core.domain.measurement.DataType;
+import org.rhq.core.domain.measurement.MeasurementDataNumeric;
+import org.rhq.core.domain.measurement.MeasurementReport;
+import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
 
 /**
@@ -134,6 +143,48 @@ public class DsResourceComponent extends PoolResourceComponent
    {
       DataSource ds = getDataSource();
       return ds.getPool();
+   }
+   
+   /**
+    * Available DataSource Statistics names
+    */
+   private static final List<String> dsStatisticsNames = new ArrayList<String>();
+   static
+   {
+      dsStatisticsNames.add("PreparedStatementCacheAccessCount");
+      dsStatisticsNames.add("PreparedStatementCacheAddCount");
+      dsStatisticsNames.add("PreparedStatementCacheCurrentSize");
+      dsStatisticsNames.add("PreparedStatementCacheDeleteCount");
+      dsStatisticsNames.add("PreparedStatementCacheHitCount");
+      dsStatisticsNames.add("PreparedStatementCacheMissCount");
+   }
+   
+   
+   /**
+    * Gets values for MeasurementReport
+    * 
+    * @param measurementReport the MeasurementReport
+    * @param measurementScheduleRequests the requests
+    * @throws Exception the exception
+    */
+   @Override
+   public void getValues(MeasurementReport measurementReport,
+         Set<MeasurementScheduleRequest> measurementScheduleRequests) throws Exception
+   {
+      // super for PoolStatistics
+      super.getValues(measurementReport, measurementScheduleRequests);
+      DataSource ds = getDataSource();
+      StatisticsPlugin statistics = ds.getStatistics();
+      for (MeasurementScheduleRequest request : measurementScheduleRequests)
+      {
+         String reqName = request.getName();
+         if (request.getDataType().equals(DataType.MEASUREMENT) && dsStatisticsNames.contains(reqName))
+         {
+            Double value = Double.valueOf(statistics.getValue(reqName).toString());
+            MeasurementDataNumeric dsStatisMetrics = new MeasurementDataNumeric(request, value);
+            measurementReport.addData(dsStatisMetrics);
+         }
+      }
    }
    
 }

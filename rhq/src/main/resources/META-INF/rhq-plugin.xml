@@ -294,6 +294,47 @@
 
 <!-- Metrics -->
 
+<!ENTITY poolStatisticsMetrics '
+  <metric property="ActiveCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The active count"/>
+
+  <metric property="AvailableCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The available count"/>
+  
+  <metric property="AverageBlockingTime" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The average time spent blocking on a connection"/>
+  
+  <metric property="AverageCreationTime" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The average time spent on creating a physical connection"/>
+  
+  <metric property="CreatedCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The created count"/>
+  
+  <metric property="DestroyedCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The destroyed count"/>
+  
+  <metric property="MaxCreationTime" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The maximum time spent on creating a physical connection"/>
+  
+  <metric property="MaxUsedCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The maximum number of connections used"/>
+  
+  <metric property="MaxWaitCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The maximum number of threads waiting for a connection"/>
+  
+  <metric property="MaxWaitTime" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The maximum time waiting for a connection"/>
+  
+  <metric property="TimedOut" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The timed out connections"/>
+  
+  <metric property="TotalBlockingTime" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The total time spent blocking for connections"/>
+  
+  <metric property="TotalCreationTime" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+  dataType="measurement" category="performance" description="The total time spent creating physical connections"/>
+
+'>
 
 <!-- Operations  -->
 
@@ -412,6 +453,8 @@
                 class="org.jboss.jca.rhq.ra.CfResourceComponent">
             
                 &datasourceAndConnectionFactoryOperations;
+                
+                &poolStatisticsMetrics;
             
                 <resource-configuration>
                     <c:group name="general" displayName="General">
@@ -500,6 +543,26 @@
         </plugin-configuration>
         
         &datasourceAndConnectionFactoryOperations;
+        
+        &poolStatisticsMetrics;
+        
+        <metric property="PreparedStatementCacheAccessCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+        dataType="measurement" category="performance" description="The number of times that the statement cache was accessed"/>
+        
+        <metric property="PreparedStatementCacheAddCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+        dataType="measurement" category="performance" description="The number of statements added to the statement cache"/>
+        
+        <metric property="PreparedStatementCacheCurrentSize" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+        dataType="measurement" category="performance" description="The number of prepared and callable statements currently cached in the statement cache"/>
+        
+        <metric property="PreparedStatementCacheDeleteCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+        dataType="measurement" category="performance" description="The number of statements discarded from the cache"/>
+        
+        <metric property="PreparedStatementCacheHitCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+        dataType="measurement" category="performance" description="The number of times that statements from the cache were used"/>
+        
+        <metric property="PreparedStatementCacheMissCount" measurementType="dynamic" displayType="summary" defaultOn="true" defaultInterval="600000" 
+        dataType="measurement" category="performance" description="The number of times that a statement request could not be satisfied with a statement from the cache"/>
         
         <content name="ds-file" displayName="DataSource File" category="deployable" isCreationType="true">
             <configuration>

@@ -32,7 +32,10 @@ import org.jboss.jca.rhq.embed.core.EmbeddedJcaDiscover;
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.naming.InitialContext;
 
@@ -43,6 +46,10 @@ import org.junit.Test;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertySimple;
+import org.rhq.core.domain.measurement.DataType;
+import org.rhq.core.domain.measurement.MeasurementDataNumeric;
+import org.rhq.core.domain.measurement.MeasurementReport;
+import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
 import org.rhq.core.domain.resource.Resource;
 import org.rhq.core.pc.PluginContainer;
 import org.rhq.core.pc.PluginContainerConfiguration;
@@ -51,6 +58,7 @@ import org.rhq.core.pc.inventory.RuntimeDiscoveryExecutor;
 import org.rhq.core.pc.plugin.FileSystemPluginFinder;
 import org.rhq.core.pluginapi.configuration.ConfigurationFacet;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
+import org.rhq.core.pluginapi.measurement.MeasurementFacet;
 import org.rhq.core.pluginapi.operation.OperationFacet;
 import org.rhq.core.pluginapi.operation.OperationResult;
 
@@ -284,6 +292,50 @@ public class DsTestCase
       
       conn.close();
       // just not thrown exception for now.
+   }
+   
+   
+   /**
+    * Tests DataSource metrics
+    * 
+    * @throws Throwable the exception
+    */
+   @Test
+   public void testDsMetrics() throws Throwable
+   {
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      MeasurementFacet facet = (MeasurementFacet)im.getResourceComponent(rarServiceResource);
+      MeasurementReport report = new MeasurementReport();
+      Set<MeasurementScheduleRequest> requests = new HashSet<MeasurementScheduleRequest>();
+      DataType measurement = DataType.MEASUREMENT;
+      MeasurementScheduleRequest request = new MeasurementScheduleRequest(0, "ActiveCount", 1, true, measurement);
+      requests.add(request);
+      
+      String reqName = "PreparedStatementCacheAccessCount";
+      request = new MeasurementScheduleRequest(0, reqName, 1, true, measurement);
+      requests.add(request);
+      
+      InitialContext context = new InitialContext();
+      javax.sql.DataSource sqlDS = (javax.sql.DataSource)context.lookup(getDataSource().getJndiName());
+      Connection conn = sqlDS.getConnection();
+      PreparedStatement pstmt = conn.prepareStatement("SHOW SCHEMAS");
+      
+      facet.getValues(report, requests);
+      
+      for (MeasurementDataNumeric data : report.getNumericData())
+      {
+         if (data.getName().equals("ActiveCount"))
+         {
+            assertTrue(data.getValue() >= 1);
+         }
+         else if (data.getName().equals(reqName))
+         {
+            assertTrue(data.getValue() >= 1);
+         }
+      }
+      pstmt.close();
+      conn.close();
    }
    
    

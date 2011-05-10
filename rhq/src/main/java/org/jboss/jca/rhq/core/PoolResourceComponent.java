@@ -24,9 +24,18 @@ package org.jboss.jca.rhq.core;
 
 import org.jboss.jca.core.api.connectionmanager.pool.Pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertySimple;
+import org.rhq.core.domain.measurement.DataType;
+import org.rhq.core.domain.measurement.MeasurementDataNumeric;
+import org.rhq.core.domain.measurement.MeasurementReport;
+import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
 import org.rhq.core.pluginapi.operation.OperationResult;
 
 /**
@@ -182,5 +191,51 @@ public abstract class PoolResourceComponent extends AbstractResourceComponent
     * @return Pool
     */
    protected abstract Pool getPool();
+   
+   /**
+    * Available PoolStatistics names
+    */
+   private static final List<String> poolStatisticsNames = new ArrayList<String>();
+   static
+   {
+      poolStatisticsNames.add("ActiveCount");
+      poolStatisticsNames.add("AvailableCount");
+      poolStatisticsNames.add("AverageBlockingTime");
+      poolStatisticsNames.add("AverageCreationTime");
+      poolStatisticsNames.add("CreatedCount");
+      poolStatisticsNames.add("DestroyedCount");
+      poolStatisticsNames.add("MaxCreationTime");
+      poolStatisticsNames.add("MaxUsedCount");
+      poolStatisticsNames.add("MaxWaitCount");
+      poolStatisticsNames.add("MaxWaitTime");
+      poolStatisticsNames.add("TimedOut");
+      poolStatisticsNames.add("TotalBlockingTime");
+      poolStatisticsNames.add("TotalCreationTime");
+   }
+   
+   /**
+    * Gets values for MeasurementReport
+    * 
+    * @param measurementReport the MeasurementReport
+    * @param measurementScheduleRequests the requests
+    * @throws Exception the exception
+    */
+   @Override
+   public void getValues(MeasurementReport measurementReport,
+         Set<MeasurementScheduleRequest> measurementScheduleRequests) throws Exception
+   {
+      Pool pool = getPool();
+      PoolStatistics poolStatistics = pool.getStatistics();
+      for (MeasurementScheduleRequest request : measurementScheduleRequests)
+      {
+         String reqName = request.getName();
+         if (request.getDataType().equals(DataType.MEASUREMENT) && poolStatisticsNames.contains(reqName))
+         {
+            Double value = Double.valueOf(poolStatistics.getValue(reqName).toString());
+            MeasurementDataNumeric poolStatisMetrics = new MeasurementDataNumeric(request, value);
+            measurementReport.addData(poolStatisMetrics);
+         }
+      }
+   }
    
 }
