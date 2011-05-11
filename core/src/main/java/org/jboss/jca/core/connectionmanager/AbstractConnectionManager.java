@@ -28,6 +28,7 @@ import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import java.io.IOException;
@@ -50,7 +51,6 @@ import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
@@ -68,12 +68,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
    /** Log trace */
    private final boolean trace;
-
-   /**
-    * Note that this copy has a trailing / unlike the original in
-    * JaasSecurityManagerService.
-    */
-   private static final String SECURITY_MGR_PATH = "java:/jaas/";
 
    /** The pool */
    private Pool pool;
@@ -217,12 +211,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public void setSecurityDomain(String securityDomain)
    {
-      if (securityDomain != null && securityDomain.startsWith(SECURITY_MGR_PATH))
-      {
-         securityDomain = securityDomain.substring(SECURITY_MGR_PATH.length());
-         log.warn("WARNING: UPDATE YOUR SecurityDomain! REMOVE " + SECURITY_MGR_PATH);
-      }
-
       this.securityDomain = securityDomain;
    }
 
@@ -681,12 +669,12 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * {@inheritDoc}
     */
-   public abstract TransactionManager getTransactionManager();
+   public abstract boolean isTransactional();
 
    /**
     * {@inheritDoc}
     */
-   public abstract boolean isTransactional();
+   public abstract TransactionIntegration getTransactionIntegration();
 
    /**
     * Gets subject.

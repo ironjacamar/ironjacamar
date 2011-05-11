@@ -26,7 +26,6 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
-import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
@@ -183,7 +182,6 @@ public class ConnectionManagerFactory
                     allocationRetry, allocationRetryWaitMillis,
                     txIntegration.getTransactionManager(), txIntegration.getUserTransactionRegistry());
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
-      handleTxIntegration(txIntegration);
 
       return cm;
    }
@@ -272,16 +270,5 @@ public class ConnectionManagerFactory
 
       if (padXid != null)
          cm.setPadXid(padXid.booleanValue());
-   }
-
-   /**
-    * Associate the transaction synchronizer with the transaction
-    * integration.
-    *
-    * @param ti TransactionManager
-    */
-   public void handleTxIntegration(final TransactionIntegration ti)
-   {
-      TransactionSynchronizer.setTransactionIntegration(ti);
    }
 }

@@ -27,7 +27,6 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
-import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
@@ -99,9 +98,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /** The permits used to control who can checkout a connection */
    private ConcurrentMap<ConnectionListener, ConnectionListener> permits;
 
-   /** The subpool */
-   private SubPoolContext subPool;
-
    /** The checked out connections */
    private final ConcurrentSkipListSet<ConnectionListener> checkedOut = 
       new ConcurrentSkipListSet<ConnectionListener>();
@@ -129,8 +125,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     * {@inheritDoc}
     */
    public void initialize(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, SubPoolContext spc,
-                          Logger log)
+                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log)
    {
       if (mcf == null)
          throw new IllegalArgumentException("ManagedConnectionFactory is null");
@@ -144,9 +139,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (p == null)
          throw new IllegalArgumentException("Pool is null");
 
-      if (spc == null)
-         throw new IllegalArgumentException("SubPoolContext is null");
-
       if (log == null)
          throw new IllegalArgumentException("Logger is null");
 
@@ -157,7 +149,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.poolConfiguration = pc;
       this.maxSize = pc.getMaxSize();
       this.pool = p;
-      this.subPool = spc;
       this.log = log;
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayBlockingQueue<ConnectionListener>(this.maxSize, true);
@@ -171,14 +162,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
 
       reenable();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public SubPoolContext getSubPool()
-   {
-      return subPool;
    }
 
    /**
@@ -604,9 +587,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          if (!shutdown.get() && poolConfiguration.getMinSize() > 0)
             PoolFiller.fillPool(this);
 
-         // Empty sub-pool
+         // Empty pool
          if (pool != null)
-            pool.emptySubPool(this);
+            pool.emptyManagedConnectionPool(this);
       }
    }
    

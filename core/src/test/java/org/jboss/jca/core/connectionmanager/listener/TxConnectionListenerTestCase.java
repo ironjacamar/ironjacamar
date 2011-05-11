@@ -144,6 +144,7 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
@@ -153,7 +154,8 @@ public class TxConnectionListenerTestCase
 
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
@@ -179,6 +181,7 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
@@ -189,7 +192,8 @@ public class TxConnectionListenerTestCase
 
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
@@ -216,9 +220,11 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       when(tm.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
       TxConnectionListener listener = 
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
@@ -242,9 +248,11 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       when(tm.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
       listener.setTrackByTx(true);
@@ -268,9 +276,11 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       when(tm.getStatus()).thenReturn(Status.STATUS_COMMITTING);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
@@ -295,13 +305,15 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
       when(threadTx.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
@@ -326,13 +338,15 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
       when(threadTx.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
@@ -356,6 +370,7 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
@@ -364,7 +379,8 @@ public class TxConnectionListenerTestCase
          (Synchronization) anyObject());
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
@@ -388,13 +404,15 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
       when(threadTx.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
@@ -418,6 +436,7 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
@@ -427,7 +446,8 @@ public class TxConnectionListenerTestCase
 
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);
@@ -451,6 +471,7 @@ public class TxConnectionListenerTestCase
    {
       //given
       TxConnectionManager cm = mock(TxConnectionManager.class);
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       com.arjuna.ats.jta.transaction.Transaction threadTx = mock(com.arjuna.ats.jta.transaction.Transaction.class);
       when(threadTx.isAlive()).thenReturn(true);
@@ -459,7 +480,8 @@ public class TxConnectionListenerTestCase
 
       when(tm.getStatus()).thenReturn(Status.STATUS_ACTIVE);
       when(tm.getTransaction()).thenReturn(threadTx);
-      when(cm.getTransactionManager()).thenReturn(tm);
+      when(cm.getTransactionIntegration()).thenReturn(ti);
+      when(ti.getTransactionManager()).thenReturn(tm);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null, FlushStrategy.FAILING_CONNECTION_ONLY, null);

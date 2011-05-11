@@ -39,7 +39,7 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class LocalXAResourceImpl implements LocalXAResource
+public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastResource
 {
    /** Log instance */
    private static Logger log = Logger.getLogger(LocalXAResourceImpl.class);

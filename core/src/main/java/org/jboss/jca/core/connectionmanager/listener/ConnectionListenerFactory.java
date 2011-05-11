@@ -25,7 +25,6 @@ import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
-import javax.transaction.TransactionManager;
 
 /**
  * A factory for connection event listeners.
@@ -53,13 +52,6 @@ public interface ConnectionListenerFactory
     * @return whether it is a transactional or not
     */
    public boolean isTransactional();
-   
-   /**
-    * Get the transaction manager.
-    * 
-    * @return the transaction manager
-    */
-   public TransactionManager getTransactionManager();
 
    /**
     * Get the transaction integration.

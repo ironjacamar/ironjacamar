@@ -31,7 +31,6 @@ import java.util.Collection;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 
 /**
  * Mock connection manager.
@@ -67,12 +66,6 @@ public class MockConnectionManager extends AbstractConnectionManager
    }
 
    @Override
-   public TransactionManager getTransactionManager()
-   {
-      return null;
-   }
-
-   @Override
    public TransactionIntegration getTransactionIntegration()
    {
       return null;
@@ -83,5 +76,4 @@ public class MockConnectionManager extends AbstractConnectionManager
    {
       return false;
    }
-
 }

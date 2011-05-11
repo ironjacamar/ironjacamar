@@ -27,20 +27,20 @@ import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.TxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
-import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.transaction.LockKey;
+import org.jboss.jca.core.connectionmanager.transaction.TransactionKey;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
-import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.locks.Lock;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -50,6 +50,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
@@ -136,6 +137,9 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    /** Transaction manager instance */
    private transient TransactionManager transactionManager;
 
+   /** Transaction synchronization registry */
+   private transient TransactionSynchronizationRegistry transactionSynchronizationRegistry;
+
    /** Transaction integration */
    private TransactionIntegration txIntegration;
 
@@ -169,18 +173,10 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          throw new IllegalArgumentException("TransactionIntegration is null");
 
       this.transactionManager = txIntegration.getTransactionManager();
+      this.transactionSynchronizationRegistry = txIntegration.getTransactionSynchronizationRegistry();
       this.txIntegration = txIntegration;
 
       setLocalTransactions(localTransactions);
-   }
-
-   /**
-    * Get the transaction manager instance
-    * @return The transaction manager
-    */
-   public TransactionManager getTransactionManager()
-   {
-      return transactionManager;
    }
 
    /**
@@ -361,9 +357,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    public void transactionStarted(Collection<ConnectionRecord> crs) throws SystemException
    {
       Set<ConnectionListener> cls = new HashSet<ConnectionListener>(crs.size());
-      for (Iterator<ConnectionRecord> i = crs.iterator(); i.hasNext(); )
+      for (ConnectionRecord cr : crs)
       {
-         ConnectionRecord cr = i.next();
          ConnectionListener cl = cr.getConnectionListener();
          if (!cls.contains(cl))
          {
@@ -373,25 +368,29 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (!isInterleaving())
             {
                cl.setTrackByTx(true);
+
                ManagedConnectionPool mcp = (ManagedConnectionPool)cl.getContext();
-               SubPoolContext subPool = mcp.getSubPool();
-               TransactionLocal trackByTx = subPool.getTrackByTx();
+               Transaction tx = transactionManager.getTransaction();
+
+               // The lock will be initialized when the first connection listener is obtained
+               Lock lock = (Lock)transactionSynchronizationRegistry.getResource(LockKey.INSTANCE);
                try
                {
-                  trackByTx.lock();
+                  lock.lockInterruptibly();
                }
                catch (Throwable t)
                {
                   rethrowAsSystemException("Unable to begin transaction with JCA lazy enlistment scenario", 
-                                           trackByTx.getTransaction(), t);
-               }             
+                                           tx, t);
+               }
+
                try
                {
-                  trackByTx.set(cl);
+                  transactionSynchronizationRegistry.putResource(new TransactionKey(tx), cl);
                }
                finally
                {
-                  trackByTx.unlock();
+                  lock.unlock();
                }
             }
          }

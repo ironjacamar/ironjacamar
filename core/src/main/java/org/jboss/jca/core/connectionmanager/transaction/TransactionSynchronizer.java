@@ -21,12 +21,11 @@
  */
 package org.jboss.jca.core.connectionmanager.transaction;
 
-import org.jboss.jca.core.spi.transaction.TransactionIntegration;
-import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.locks.Condition;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.transaction.RollbackException;
@@ -35,7 +34,6 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
 import org.jboss.logging.Logger;
-import org.jboss.util.NestedRuntimeException;
 
 /**
  * Organizes transaction synchronization done by JCA.
@@ -55,7 +53,12 @@ public class TransactionSynchronizer implements Synchronization
    private static Logger log = Logger.getLogger(TransactionSynchronizer.class);
 
    /** The transaction synchronizations */
-   private static TransactionLocal txSynchs;
+   private static ConcurrentMap<Transaction, TransactionSynchronizer> txSynchs =
+      new ConcurrentHashMap<Transaction, TransactionSynchronizer>();
+   
+   /** The locks */
+   private static ConcurrentMap<Transaction, Lock> locks =
+      new ConcurrentHashMap<Transaction, Lock>();
    
    /** The transaction */
    private Transaction tx;
@@ -64,28 +67,13 @@ public class TransactionSynchronizer implements Synchronization
    private Thread enlistingThread;
    
    /** Unenlisted */
-   private CopyOnWriteArrayList<Synchronization> unenlisted = new CopyOnWriteArrayList<Synchronization>();
+   private List<Synchronization> unenlisted;
    
    /** Enlisted */
-   private CopyOnWriteArrayList<Synchronization> enlisted = new CopyOnWriteArrayList<Synchronization>();
+   private List<Synchronization> enlisted;
    
    /** The cached connection manager synchronization */
    private Synchronization ccmSynch;
-   
-   /**Lock*/
-   private ReentrantLock lockObject = new ReentrantLock(true);
-   
-   /**Condition*/
-   private Condition condition = this.lockObject.newCondition();
-
-   /** 
-    * Initialization. 
-    * @param ti transaction integration
-    */
-   public static void setTransactionIntegration(TransactionIntegration ti)
-   {
-      txSynchs = ti.createTransactionLocal();
-   }
    
    /**
     * Create a new transaction synchronizer
@@ -102,8 +90,11 @@ public class TransactionSynchronizer implements Synchronization
     * 
     * @param synch the synchronization
     */
-   public void addUnenlisted(Synchronization synch)
+   public synchronized void addUnenlisted(Synchronization synch)
    {
+      if (unenlisted == null)
+         unenlisted = new ArrayList<Synchronization>(1);
+
       unenlisted.add(synch);
    }
    
@@ -113,42 +104,33 @@ public class TransactionSynchronizer implements Synchronization
     * 
     * @return the unenlisted synchronizations
     */
-   public List<Synchronization> getUnenlisted()
+   public synchronized List<Synchronization> getUnenlisted()
    {
       Thread currentThread = Thread.currentThread();
-      
+
       while (enlistingThread != null && enlistingThread != currentThread)
       {
          boolean interrupted = false;
          try
          {
-            this.lockObject.lock();
-            
-            this.condition.await();
+            wait();
          }
          catch (InterruptedException e)
          {
             interrupted = true;
-         }         
-         finally
-         {
-            this.lockObject.unlock();
          }
-         
          if (interrupted)
-         {
-            currentThread.interrupt();  
-         }
+            currentThread.interrupt();
       }
 
-      CopyOnWriteArrayList<Synchronization> result = unenlisted;
-      
+      List<Synchronization> result = unenlisted;
       unenlisted = null;
-      
+
       if (result != null)
       {
-         enlistingThread = currentThread;  
+         enlistingThread = currentThread;
       }
+
       return result;
    }
    
@@ -157,8 +139,11 @@ public class TransactionSynchronizer implements Synchronization
     * 
     * @param synch the synchronization
     */
-   public void addEnlisted(Synchronization synch)
+   public synchronized void addEnlisted(Synchronization synch)
    {
+      if (enlisted == null)
+         enlisted = new ArrayList<Synchronization>(1);
+
       enlisted.add(synch);
    }
    
@@ -168,7 +153,7 @@ public class TransactionSynchronizer implements Synchronization
     * @param synch the synchronization
     * @return true when the synchronization was enlisted
     */
-   public boolean removeEnlisted(Synchronization synch)
+   public synchronized boolean removeEnlisted(Synchronization synch)
    {
       return enlisted.remove(synch);
    }
@@ -176,30 +161,19 @@ public class TransactionSynchronizer implements Synchronization
    /**
     * This thread has finished enlisting.
     */
-   public void enlisted()
+   public synchronized void enlisted()
    {
-      try
+      Thread currentThread = Thread.currentThread();
+
+      if (enlistingThread == null || enlistingThread != currentThread)
       {
-         this.lockObject.lock();
-         
-         Thread currentThread = Thread.currentThread();
-         
-         if (enlistingThread == null || enlistingThread != currentThread)
-         {
-            log.warn("Thread " + currentThread + " not the enlisting thread " + 
-                  enlistingThread, new Exception("STACKTRACE"));
-            
-            return;
-         }
-         
-         enlistingThread = null;
-         
-         this.condition.signalAll();
+         log.warn("Thread " + currentThread + " not the enlisting thread " + enlistingThread,
+                  new Exception("STACKTRACE"));
+         return;
       }
-      finally
-      {
-         this.lockObject.unlock();
-      }      
+
+      enlistingThread = null;
+      notifyAll();
    }
    
    /**
@@ -213,12 +187,16 @@ public class TransactionSynchronizer implements Synchronization
    public static TransactionSynchronizer getRegisteredSynchronizer(Transaction tx) 
       throws SystemException, RollbackException
    {
-      TransactionSynchronizer result = (TransactionSynchronizer) txSynchs.get(tx);
+      TransactionSynchronizer result = txSynchs.get(tx);
       if (result == null)
       {
-         result = new TransactionSynchronizer(tx);
-         tx.registerSynchronization(result);
-         txSynchs.set(tx, result);
+         TransactionSynchronizer newResult = new TransactionSynchronizer(tx);
+         result = txSynchs.putIfAbsent(tx, newResult);
+         if (result == null)
+         {
+            result = newResult;
+            tx.registerSynchronization(result);
+         }
       }
       return result;
    }
@@ -231,15 +209,11 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static Synchronization getCCMSynchronization(Transaction tx)
    {
-      TransactionSynchronizer ts = (TransactionSynchronizer) txSynchs.get(tx);
+      TransactionSynchronizer ts = txSynchs.get(tx);
       if (ts != null)
-      {
          return ts.ccmSynch;  
-      }
-      else
-      {
-         return null;  
-      }
+
+      return null;  
    }
    
    /**
@@ -263,13 +237,24 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static void lock(Transaction tx)
    {
+      Lock lock = locks.get(tx);
+      if (lock == null)
+      {
+         Lock newLock = new ReentrantLock(true);
+         lock = locks.putIfAbsent(tx, newLock);
+         if (lock == null)
+         {
+            lock = newLock;
+         }
+      }
+
       try
       {
-         txSynchs.lock(tx);
+         lock.lockInterruptibly();
       }
       catch (InterruptedException e)
       {
-         throw new NestedRuntimeException("Unable to get synchronization", e);
+         throw new RuntimeException("Unable to get synchronization", e);
       }
    }
    
@@ -280,7 +265,10 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static void unlock(Transaction tx)
    {
-      txSynchs.unlock(tx);
+      Lock lock = locks.get(tx);
+
+      if (lock != null)
+         lock.unlock();
    }
 
    /**
@@ -290,12 +278,9 @@ public class TransactionSynchronizer implements Synchronization
    {
       if (enlisted != null)
       {
-         int i = 0;
-         while (i < enlisted.size())
+         for (Synchronization synch : enlisted)
          {
-            Synchronization synch = enlisted.get(i);
             invokeBefore(synch);
-            ++i;
          }
       }
       
@@ -312,12 +297,9 @@ public class TransactionSynchronizer implements Synchronization
    {
       if (enlisted != null)
       {
-         int i = 0;
-         while (i < enlisted.size())
+         for (Synchronization synch : enlisted)
          {
-            Synchronization synch = enlisted.get(i);
             invokeAfter(synch, status);
-            ++i;
          }
       }
       
@@ -325,6 +307,10 @@ public class TransactionSynchronizer implements Synchronization
       {
          invokeAfter(ccmSynch, status);  
       }
+
+      // Cleanup the maps
+      txSynchs.remove(tx);
+      locks.remove(tx);
    }
 
    /**
@@ -361,5 +347,4 @@ public class TransactionSynchronizer implements Synchronization
          log.warn("Transaction " + tx + " error in after completion " + synch, t);
       }
    }   
-   
 }

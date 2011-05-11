@@ -64,7 +64,6 @@
       <parameter><inject bean="UserTransactionRegistry"/></parameter>
       <parameter><inject bean="XATerminator"/></parameter>
       <parameter><null/></parameter>
-      <parameter><null/></parameter>
     </constructor>
   </bean>
 

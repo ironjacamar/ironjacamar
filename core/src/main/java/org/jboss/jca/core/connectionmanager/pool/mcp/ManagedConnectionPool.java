@@ -25,7 +25,6 @@ package org.jboss.jca.core.connectionmanager.pool.mcp;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
-import org.jboss.jca.core.connectionmanager.pool.SubPoolContext;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSupport;
 
@@ -52,19 +51,11 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @param cri The connection request info
     * @param pc The pool configuration
     * @param p The pool
-    * @param spc The subpool context
     * @param log The logger for the managed connection pool
     */
    public void initialize(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, SubPoolContext spc,
-                          Logger log);
+                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log);
 
-   /**
-    * Get the subpool context
-    * @return The context
-    */
-   public SubPoolContext getSubPool();
-   
    /**
     * Returns a connection listener that wraps managed connection.
     * @param subject subject

@@ -65,11 +65,11 @@ public abstract class AbstractPrefillPool extends AbstractPool implements Prefil
 
          try
          {
-            //Get sub-pool key
+            //Get pool key
             Object key = getKey(subject, cri, noTxnSeperatePool);
             
-            //Get sub-pool automatically initializes pool
-            getSubPool(key, subject, cri);
+            //Get pool automatically initializes pool
+            getManagedConnectionPool(key, subject, cri);
          }
          catch (Throwable t)
          {

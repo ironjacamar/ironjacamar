@@ -186,7 +186,7 @@ public class AbstractConnectionManagerTestCase
    public void testGetTransactionManagerInstance()
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      assertNull(connectionManager.getTransactionManager());
+      assertNull(connectionManager.getTransactionIntegration());
    }
 
    /**

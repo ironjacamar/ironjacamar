@@ -33,7 +33,6 @@ import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
-import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
@@ -80,10 +79,8 @@ public class XATxConnectionManagerTestCase
    public void testAllocateConnection() throws Throwable
    {
 
-      TransactionManager transactionManager = txConnectionManager.getTransactionManager();
+      TransactionManager transactionManager = txConnectionManager.getTransactionIntegration().getTransactionManager();
       assertNotNull(transactionManager);
-
-      TransactionSynchronizer.setTransactionIntegration(txConnectionManager.getTransactionIntegration());
 
       try
       {
@@ -199,8 +196,7 @@ public class XATxConnectionManagerTestCase
    public void isTransactionalShouldReturnTrueIfTxRunning() throws Exception
    {
       //given
-      TransactionManager transactionManager = txConnectionManager.getTransactionManager();
-      TransactionSynchronizer.setTransactionIntegration(txConnectionManager.getTransactionIntegration());
+      TransactionManager transactionManager = txConnectionManager.getTransactionIntegration().getTransactionManager();
       try
       {
          //when
@@ -225,8 +221,7 @@ public class XATxConnectionManagerTestCase
    public void isTransactionalShouldReturnFalseIfTxNotRunning() throws Exception
    {
       //given
-      TransactionManager transactionManager = txConnectionManager.getTransactionManager();
-      TransactionSynchronizer.setTransactionIntegration(txConnectionManager.getTransactionIntegration());
+      TransactionManager transactionManager = txConnectionManager.getTransactionIntegration().getTransactionManager();
 
       //when no transactionManager.begin() called
 

@@ -25,8 +25,6 @@ import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
-import org.jboss.jca.core.spi.transaction.local.TransactionLocal;
-import org.jboss.jca.core.spi.transaction.local.TransactionLocalDelegate;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
@@ -67,9 +65,6 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    /** Recovery registry */
    private org.jboss.tm.XAResourceRecoveryRegistry rr;
 
-   /** Transaction local delegate */
-   private org.jboss.tm.TransactionLocalDelegate tld;
-
    /**
     * Constructor
     * @param tm The transaction manager
@@ -77,21 +72,18 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     * @param utr The user transaction registry
     * @param terminator The XA terminator
     * @param rr The recovery registry
-    * @param tld The transaction local delegate
     */
    public TransactionIntegrationImpl(TransactionManager tm,
                                      TransactionSynchronizationRegistry tsr,
                                      org.jboss.tm.usertx.UserTransactionRegistry utr,
                                      org.jboss.tm.JBossXATerminator terminator,
-                                     org.jboss.tm.XAResourceRecoveryRegistry rr,
-                                     org.jboss.tm.TransactionLocalDelegate tld)
+                                     org.jboss.tm.XAResourceRecoveryRegistry rr)
    {
       this.tm = tm;
       this.tsr = tsr;
       this.utr = utr;
       this.terminator = terminator;
       this.rr = rr;
-      this.tld = tld;
    }
 
    /**
@@ -137,15 +129,6 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XATerminator getXATerminator()
    {
       return new XATerminatorImpl(terminator);
-   }
-
-   /**
-    * Get the XATerminator
-    * @return The value
-    */
-   public TransactionLocalDelegate getTransactionLocalDelegate()
-   {
-      return new TransactionLocalDelegateImpl(tld);
    }
 
    /**
@@ -204,14 +187,5 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                     String jndiName)
    {
       return new XAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
-   }
-
-   /**
-    * Create a transaction local instance
-    * @return The value
-    */
-   public TransactionLocal createTransactionLocal()
-   {
-      return new TransactionLocalImpl(this);
    }
 }

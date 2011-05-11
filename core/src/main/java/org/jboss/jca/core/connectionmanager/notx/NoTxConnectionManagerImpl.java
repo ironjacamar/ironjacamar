@@ -34,7 +34,6 @@ import java.util.Collection;
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 
 /**
  * Non transactional connection manager implementation.
@@ -72,12 +71,6 @@ public class NoTxConnectionManagerImpl extends AbstractConnectionManager impleme
    {
       //doing nothing
 
-   }
-
-   @Override
-   public TransactionManager getTransactionManager()
-   {
-      return null;
    }
 
    @Override

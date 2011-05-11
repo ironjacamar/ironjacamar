@@ -30,6 +30,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
 import org.jboss.jca.core.security.DefaultSubjectFactory;
 
@@ -78,15 +79,15 @@ public class PrefillTestCase
 
       app.prefill(null, null, false);
 
-      assertEquals(1, app.getSubPools().size());
+      assertEquals(1, app.getManagedConnectionPools().size());
 
       Thread.sleep(1000);
 
       int size = 0;
 
-      for (SubPoolContext spc : app.getSubPools().values())
+      for (ManagedConnectionPool mcp : app.getManagedConnectionPools().values())
       {
-         ManagedConnectionPoolStatistics mcps = spc.getSubPool().getStatistics();
+         ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
          size += mcps.getActiveCount();
       }
 
@@ -122,15 +123,15 @@ public class PrefillTestCase
 
       app.prefill(null, null, false);
 
-      assertEquals(0, app.getSubPools().size());
+      assertEquals(0, app.getManagedConnectionPools().size());
 
       Thread.sleep(1000);
 
       int size = 0;
 
-      for (SubPoolContext spc : app.getSubPools().values())
+      for (ManagedConnectionPool mcp : app.getManagedConnectionPools().values())
       {
-         ManagedConnectionPoolStatistics mcps = spc.getSubPool().getStatistics();
+         ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
          size += mcps.getActiveCount();
       }
 
@@ -187,15 +188,15 @@ public class PrefillTestCase
 
       app.prefill(subject, null, false);
 
-      assertEquals(1, app.getSubPools().size());
+      assertEquals(1, app.getManagedConnectionPools().size());
 
       Thread.sleep(1000);
 
       int size = 0;
 
-      for (SubPoolContext spc : app.getSubPools().values())
+      for (ManagedConnectionPool mcp : app.getManagedConnectionPools().values())
       {
-         ManagedConnectionPoolStatistics mcps = spc.getSubPool().getStatistics();
+         ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
          size += mcps.getActiveCount();
       }
 
@@ -234,15 +235,15 @@ public class PrefillTestCase
 
       app.prefill(subject, null, false);
 
-      assertEquals(0, app.getSubPools().size());
+      assertEquals(0, app.getManagedConnectionPools().size());
 
       Thread.sleep(1000);
 
       int size = 0;
 
-      for (SubPoolContext spc : app.getSubPools().values())
+      for (ManagedConnectionPool mcp : app.getManagedConnectionPools().values())
       {
-         ManagedConnectionPoolStatistics mcps = spc.getSubPool().getStatistics();
+         ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
          size += mcps.getActiveCount();
       }
 

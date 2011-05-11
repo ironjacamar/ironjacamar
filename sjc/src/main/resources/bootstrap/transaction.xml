@@ -62,18 +62,6 @@
     <property name="objectStoreDir">${iron.jacamar.home}/tmp/tx-object-store</property>
   </bean>
 
-  <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser">
-    <property name="types">
-      <map keyClass="java.lang.String" valueClass="java.lang.String">
-        <entry>
-          <key>StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction</key>
-          <value>com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean</value>
-        </entry>
-      </map>
-    </property>
-    <depends>ActionStoreObjectStoreEnvironmentBean</depends>
-  </bean>
-
   <bean name="JTAEnvironmentBean" class="com.arjuna.ats.jta.common.JTAEnvironmentBean">
     <constructor factoryClass="com.arjuna.ats.jta.common.jtaPropertyManager" factoryMethod="getJTAEnvironmentBean"/>
     <property name="lastResourceOptimisationInterface">org.jboss.tm.LastResource</property>
@@ -116,16 +104,10 @@
     <depends>RecoveryManager</depends>
     <depends>TransactionManagerJNDIBinding</depends>
     <depends>TransactionSynchronizationRegistryJNDIBinding</depends>
-    <depends>TransactionPropagationContextImporterJNDIBinding</depends>
-    <depends>TransactionPropagationContextExporterJNDIBinding</depends>
     <depends>ActionStoreObjectStoreEnvironmentBean</depends>
     <depends>StateStoreObjectStoreEnvironmentBean</depends>
     <depends>CommunicationStoreObjectStoreEnvironmentBean</depends>
     <depends>TxControl</depends>
-  </bean>
-
-  <bean name="TransactionStatistics" class="com.arjuna.ats.arjuna.coordinator.TxStats">
-    <constructor factoryClass="com.arjuna.ats.arjuna.coordinator.TxStats" factoryMethod="getInstance"/>
   </bean>
 
   <bean name="TransactionManagerJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
@@ -158,35 +140,6 @@
     <depends>NamingServer</depends>
   </bean>
 
-  <bean name="TransactionPropagationContextImporterJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
-    <property name="bindName">java:/TransactionPropagationContextImporter</property>
-    <property name="className">com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager</property>
-    <property name="factory">com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager</property>
-
-    <install method="bind"/>
-    <uninstall method="unbind"/>
-
-    <depends>NamingServer</depends>
-  </bean>
-
-  <bean name="TransactionPropagationContextExporterJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
-    <property name="bindName">java:/TransactionPropagationContextExporter</property>
-    <property name="className">com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager</property>
-    <property name="factory">com.arjuna.ats.internal.jbossatx.jta.PropagationContextManager</property>
-
-    <install method="bind"/>
-    <uninstall method="unbind"/>
-
-    <depends>NamingServer</depends>
-  </bean>
-
-  <!-- Ensure TransactionPropagationContextUtil's ref to TransactionPropagationContextFactory is set. See JBAS-7784. -->
-  <bean name="TransactionPropagationContextFactory" class="org.jboss.tm.TransactionPropagationContextFactory">
-    <constructor factoryClass="org.jboss.tm.TransactionPropagationContextUtil" factoryMethod="getTPCFactory"/>
-    <!--  The factory method looks up the JNDI binding, so we depend on it -->
-    <depends>TransactionPropagationContextExporterJNDIBinding</depends>
-  </bean>
-
   <!-- Make javax.transaction.TransactionManager available for injection -->
   <bean name="RealTransactionManager">
     <constructor factoryMethod="getTransactionManager">
@@ -206,7 +159,7 @@
   </bean>
   
   <!-- The provider for default in process UserTransactions -->
-  <bean name="DefaultUserTransactionprovider" class="org.jboss.tm.usertx.client.ServerVMClientUserTransaction">
+  <bean name="DefaultUserTransactionProvider" class="org.jboss.tm.usertx.client.ServerVMClientUserTransaction">
     <constructor factoryClass="org.jboss.tm.usertx.client.ServerVMClientUserTransaction" factoryMethod="getSingleton"/>
     <depends>TransactionManager</depends>
   </bean>
@@ -237,7 +190,6 @@
       <parameter><inject bean="UserTransactionRegistry"/></parameter>
       <parameter><inject bean="TransactionManager" property="XATerminator"/></parameter>
       <parameter><inject bean="RecoveryManager"/></parameter>
-      <parameter><inject bean="RealTransactionManager"/></parameter>
     </constructor>
   </bean>
 

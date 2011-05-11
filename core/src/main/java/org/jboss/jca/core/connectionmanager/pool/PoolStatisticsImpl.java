@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class SubPoolStatistics implements PoolStatistics
+public class PoolStatisticsImpl implements PoolStatistics
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
@@ -59,7 +60,7 @@ public class SubPoolStatistics implements PoolStatistics
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
 
    private int maxPoolSize;
-   private ConcurrentMap<Object, SubPoolContext> subPools;
+   private ConcurrentMap<Object, ManagedConnectionPool> mcpPools;
    private Set<String> names;
    private Map<String, Class> types;
    private AtomicBoolean enabled;
@@ -68,12 +69,12 @@ public class SubPoolStatistics implements PoolStatistics
    /**
     * Constructor
     * @param maxPoolSize The maximum pool size
-    * @param subPools The sub pool map
+    * @param mcpPools The pool map
     */
-   public SubPoolStatistics(int maxPoolSize, ConcurrentMap<Object, SubPoolContext> subPools)
+   public PoolStatisticsImpl(int maxPoolSize, ConcurrentMap<Object, ManagedConnectionPool> mcpPools)
    {
       this.maxPoolSize = maxPoolSize;
-      this.subPools = subPools;
+      this.mcpPools = mcpPools;
 
       Set<String> n = new HashSet<String>();
       Map<String, Class> t = new HashMap<String, Class>();
@@ -119,7 +120,7 @@ public class SubPoolStatistics implements PoolStatistics
       this.enabled = new AtomicBoolean(true);
       
       ResourceBundle defaultResourceBundle = 
-         ResourceBundle.getBundle("poolstatistics", Locale.US, SubPoolStatistics.class.getClassLoader());
+         ResourceBundle.getBundle("poolstatistics", Locale.US, PoolStatisticsImpl.class.getClassLoader());
       this.rbs = new HashMap<Locale, ResourceBundle>(1);
       this.rbs.put(Locale.US, defaultResourceBundle);
 
@@ -161,7 +162,7 @@ public class SubPoolStatistics implements PoolStatistics
       if (rb == null)
       {
          ResourceBundle newResourceBundle =
-            ResourceBundle.getBundle("poolstatistics", locale, SubPoolStatistics.class.getClassLoader());
+            ResourceBundle.getBundle("poolstatistics", locale, PoolStatisticsImpl.class.getClassLoader());
 
          if (newResourceBundle != null)
             rbs.put(locale, newResourceBundle);
@@ -254,9 +255,9 @@ public class SubPoolStatistics implements PoolStatistics
    {
       enabled.set(v);
 
-      for (SubPoolContext spc : subPools.values())
+      for (ManagedConnectionPool mcp : mcpPools.values())
       {
-         spc.getSubPool().getStatistics().setEnabled(v);
+         mcp.getStatistics().setEnabled(v);
       }
    }
 
@@ -269,9 +270,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          int result = 0;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            result += spc.getSubPool().getStatistics().getActiveCount();
+            result += mcp.getStatistics().getActiveCount();
          }
          
          return result;
@@ -299,12 +300,12 @@ public class SubPoolStatistics implements PoolStatistics
       {
          int result = -1;
 
-         if (subPools.size() > 0)
+         if (mcpPools.size() > 0)
          {
             result = 0;
-            for (SubPoolContext spc : subPools.values())
+            for (ManagedConnectionPool mcp : mcpPools.values())
             {
-               result += spc.getSubPool().getStatistics().getAvailableCount();
+               result += mcp.getStatistics().getAvailableCount();
             }
          }
          
@@ -348,9 +349,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          int result = 0;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            result += spc.getSubPool().getStatistics().getCreatedCount();
+            result += mcp.getStatistics().getCreatedCount();
          }
 
          return result;
@@ -368,9 +369,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          int result = 0;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            result += spc.getSubPool().getStatistics().getDestroyedCount();
+            result += mcp.getStatistics().getDestroyedCount();
          }
 
          return result;
@@ -388,9 +389,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          long result = Long.MIN_VALUE;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            long v = spc.getSubPool().getStatistics().getMaxCreationTime();
+            long v = mcp.getStatistics().getMaxCreationTime();
             if (v > result)
                result = v;
          }
@@ -411,9 +412,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          int result = Integer.MIN_VALUE;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            int v = spc.getSubPool().getStatistics().getMaxUsedCount();
+            int v = mcp.getStatistics().getMaxUsedCount();
             if (v > result)
                result = v;
          }
@@ -434,9 +435,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          int result = Integer.MIN_VALUE;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            int v = spc.getSubPool().getStatistics().getMaxWaitCount();
+            int v = mcp.getStatistics().getMaxWaitCount();
             if (v > result)
                result = v;
          }
@@ -456,9 +457,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          long result = Long.MIN_VALUE;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            long v = spc.getSubPool().getStatistics().getMaxWaitTime();
+            long v = mcp.getStatistics().getMaxWaitTime();
             if (v > result)
                result = v;
          }
@@ -478,9 +479,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          int result = 0;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            result += spc.getSubPool().getStatistics().getTimedOut();
+            result += mcp.getStatistics().getTimedOut();
          }
 
          return result;
@@ -498,9 +499,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          long result = 0;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            result += spc.getSubPool().getStatistics().getTotalBlockingTime();
+            result += mcp.getStatistics().getTotalBlockingTime();
          }
 
          return result;
@@ -518,9 +519,9 @@ public class SubPoolStatistics implements PoolStatistics
       {
          long result = 0;
 
-         for (SubPoolContext spc : subPools.values())
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            result += spc.getSubPool().getStatistics().getTotalCreationTime();
+            result += mcp.getStatistics().getTotalCreationTime();
          }
 
          return result;
@@ -534,9 +535,9 @@ public class SubPoolStatistics implements PoolStatistics
     */
    public void clear()
    {
-      for (SubPoolContext spc : subPools.values())
+      for (ManagedConnectionPool mcp : mcpPools.values())
       {
-         spc.getSubPool().getStatistics().clear();
+         mcp.getStatistics().clear();
       }
    }
 }

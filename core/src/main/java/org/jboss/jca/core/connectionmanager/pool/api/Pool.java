@@ -88,8 +88,8 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public void shutdown();
 
    /**
-    * Remove the matching SubPoolContext if the pool is empty
-    * @param pool the internal managed connection pool
+    * Remove the matching managed connection pool if the pool is empty
+    * @param pool The pool
     */
-   public void emptySubPool(ManagedConnectionPool pool);
+   public void emptyManagedConnectionPool(ManagedConnectionPool pool);
 }
