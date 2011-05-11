@@ -508,7 +508,8 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
          try
          {
-            Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(xaDataSourceClass);
+            Class<?> clazz = Class.forName(xaDataSourceClass, true, getClassLoaderPlugin().getClassLoader());
+
             xads = (XADataSource) clazz.newInstance();
             final Class<?>[] noClasses = new Class<?>[] {};
 
