@@ -34,7 +34,6 @@ import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -106,7 +105,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       new ConcurrentHashMap<ConnectionListener, ConnectionListener>();
 
    /** The checked out connections */
-   private HashSet<ConnectionListener> checkedOut = new HashSet<ConnectionListener>();
+   private ArrayList<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
 
    /** Whether the pool has been shutdown */
    private AtomicBoolean shutdown = new AtomicBoolean(false);
@@ -477,16 +476,19 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                log.trace("Flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
 
             // Mark checked out connections as requiring destruction
-            for (Iterator<ConnectionListener> i = checkedOut.iterator(); i.hasNext();)
+            while (checkedOut.size() > 0)
             {
-               ConnectionListener cl = i.next();
+               ConnectionListener cl = checkedOut.remove(0);
 
                if (trace)
                   log.trace("Flush marking checked out connection for destruction " + cl);
 
                cl.setState(ConnectionState.DESTROY);
 
-               // We could mark them for eager kill too... 
+               if (destroy == null)
+                  destroy = new ArrayList<ConnectionListener>(1);
+
+               destroy.add(cl);
             }
          }
 
@@ -505,10 +507,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       // We need to destroy some connections
       if (destroy != null)
       {
-         for (int i = 0; i < destroy.size(); ++i)
+         for (ConnectionListener cl : destroy)
          {
-            ConnectionListener cl = destroy.get(i);
-
             if (trace)
                log.trace("Destroying flushed connection " + cl);
 

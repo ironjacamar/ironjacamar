@@ -270,7 +270,6 @@ public class DsTestCase
     * 
     * @throws Throwable exception
     */
-   @Ignore
    @Test
    public void testDsPoolFlushKill() throws Throwable
    {
