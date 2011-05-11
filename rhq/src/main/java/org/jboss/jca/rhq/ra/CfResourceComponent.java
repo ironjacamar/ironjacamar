@@ -59,7 +59,12 @@ public class CfResourceComponent extends PoolResourceComponent
    {
       ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
-      String jndiName = getJndiName();
+      Configuration plugConfig = getPluginConfiguration();
+      String jndiName = plugConfig.getSimpleValue("jndi-name", null);
+      if (jndiName == null || jndiName.length() == 0)
+      {
+         throw new IllegalStateException("ConnectionFactory jndi name is null.");
+      }
 
       for (ConnectionFactory cf : connector.getConnectionFactories())
       {

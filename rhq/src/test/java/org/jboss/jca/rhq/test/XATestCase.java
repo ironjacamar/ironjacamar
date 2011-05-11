@@ -192,6 +192,7 @@ public class XATestCase
       InventoryManager im = pc.getInventoryManager();
       ConfigurationFacet configFacet = (ConfigurationFacet)im.getResourceComponent(aoResource);
       Configuration config = configFacet.loadResourceConfiguration();
+      config.put(new PropertySimple("jndi-name", "New-AO-JNDINAME"));
       PropertyList configPropList = config.getList("config-property");
       List<Property> configs = configPropList.getList();
       assertEquals(1, configs.size());
@@ -205,6 +206,8 @@ public class XATestCase
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(manRepo, "xa.rar");
       AdminObject ao = connector.getAdminObjects().get(0);
       XAAdminObjectImpl aoObj = (XAAdminObjectImpl)ao.getAdminObject();
+      
+      assertEquals("New-AO-JNDINAME", ao.getJndiName());
       
       // not changed, because of not dynamic
       assertEquals("ao-config", aoObj.getAoConfig());

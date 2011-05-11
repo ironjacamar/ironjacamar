@@ -30,6 +30,8 @@ import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
@@ -74,6 +76,9 @@ public class CfResourceDiscoveryComponent
 
          DiscoveredResourceDetails cfRes = new DiscoveredResourceDetails(context.getResourceType(), key, jndiName, null,
             "Connection Factories", context.getDefaultPluginConfiguration(), null);
+         
+         Configuration configuration = cfRes.getPluginConfiguration();
+         configuration.put(new PropertySimple("jndi-name", jndiName));
          result.add(cfRes);
       }
       return result;

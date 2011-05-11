@@ -30,6 +30,8 @@ import org.jboss.jca.rhq.util.ManagementRepositoryHelper;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.rhq.core.domain.configuration.Configuration;
+import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
@@ -74,6 +76,9 @@ public class AoResourceDiscoveryComponent implements ResourceDiscoveryComponent<
          String name = ao.getJndiName();
          DiscoveredResourceDetails mcfRes = new DiscoveredResourceDetails(context.getResourceType(), key, name, null,
             "Admin Objects", context.getDefaultPluginConfiguration(), null);
+         
+         Configuration configuration = mcfRes.getPluginConfiguration();
+         configuration.put(new PropertySimple("jndi-name", name));
          result.add(mcfRes);
       }
       return result;

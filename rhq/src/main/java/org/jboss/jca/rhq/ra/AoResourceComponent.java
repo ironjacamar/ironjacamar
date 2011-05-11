@@ -65,15 +65,18 @@ public class AoResourceComponent extends AbstractResourceComponent
    {
       ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
       Connector connector = ManagementRepositoryHelper.getConnectorByUniqueId(mr, getRarUniqueId());
-      String jcaClsName = getJCAClassName();
+      Configuration plugConfig = getPluginConfiguration();
+      String jndiName = plugConfig.getSimpleValue("jndi-name", null);
+      if (jndiName == null || jndiName.length() == 0)
+      {
+         throw new IllegalStateException("AdminObject jndi name is null.");
+      }
 
       for (AdminObject ao : connector.getAdminObjects())
       {
-         Object obj = ao.getAdminObject();
-         Class<?> aoCls = obj.getClass();
-         if (aoCls.getName().equals(jcaClsName))
+         if (ao.getJndiName().equals(jndiName))
          {
-            logger.debug("Class Name is: " + jcaClsName);
+            logger.debug("JndiName Name is: " + jndiName);
             return ao;
          }
       }
@@ -182,6 +185,14 @@ public class AoResourceComponent extends AbstractResourceComponent
       super.updateResourceConfiguration(updateResourceConfiguration);
       Configuration config = updateResourceConfiguration.getConfiguration();
       AdminObject ao = getAdminObject();
+   
+      // update jndi-name
+      String jndiName = config.getSimpleValue("jndi-name", null);
+      if (null != jndiName && jndiName.length() > 0)
+      {
+         ao.setJndiName(jndiName);
+      }
+      
       List<ConfigProperty> configProperties = ao.getConfigProperties();
       PropertyList configPropertiesList = config.getList("config-property");
       updatePropertyList(ao.getAdminObject(), configPropertiesList, configProperties);
