@@ -587,7 +587,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
                                            resultSetType, 
                                            resultSetConcurrency);
 
-         CachedPreparedStatement cachedps = (CachedPreparedStatement) psCache.get(key);
+         CachedPreparedStatement cachedps = psCache.get(key);
          if (cachedps != null)
          {
             if (canUse(cachedps))
@@ -607,7 +607,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
          {
             PreparedStatement ps = doPrepareStatement(sql, resultSetType, resultSetConcurrency);
             cachedps = WRAPPED_CONNECTION_FACTORY.createCachedPreparedStatement(ps);
-            psCache.insert(key, cachedps);
+            psCache.put(key, cachedps);
 
             mcf.getStatistics().deltaPreparedStatementCacheAddCount();
          }
@@ -672,7 +672,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
          {
             CallableStatement cs = doPrepareCall(sql, resultSetType, resultSetConcurrency);
             cachedps = WRAPPED_CONNECTION_FACTORY.createCachedCallableStatement(cs);
-            psCache.insert(key, cachedps);
+            psCache.put(key, cachedps);
             mcf.getStatistics().deltaPreparedStatementCacheAddCount();
          }
          return cachedps;

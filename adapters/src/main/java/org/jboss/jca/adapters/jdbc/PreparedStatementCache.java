@@ -23,26 +23,27 @@
 package org.jboss.jca.adapters.jdbc;
 
 import org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin;
-import org.jboss.jca.adapters.jdbc.util.LRUCachePolicy;
+import org.jboss.jca.adapters.jdbc.util.BoundedConcurrentHashMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 
 
 /**
- * LRU cache for PreparedStatements.  When ps ages out, close it.
+ * Cache for PreparedStatements. When ps ages out, close it.
  *
- * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
- * @author Scott.Stark@jboss.org
- * @version $Revision: 73034 $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class PreparedStatementCache extends LRUCachePolicy
+@SuppressWarnings("unchecked")
+public class PreparedStatementCache
 {
    private final Logger log = Logger.getLogger(getClass());
 
+   private BoundedConcurrentHashMap<Key, CachedPreparedStatement> cache;
    private JdbcStatisticsPlugin statistics;
 
    /**
@@ -177,32 +178,90 @@ public class PreparedStatementCache extends LRUCachePolicy
     */
    public PreparedStatementCache(int max, JdbcStatisticsPlugin stats)
    {
-      super(2, max);
-      create();
+      BoundedConcurrentHashMap.EvictionListener evictionListener =
+         new PreparedStatementEvictionListener(stats, log);
 
+      this.cache =
+         new BoundedConcurrentHashMap<Key, CachedPreparedStatement>(max, 16, 
+                                                                    BoundedConcurrentHashMap.Eviction.LIRS,
+                                                                    evictionListener);
       this.statistics = stats;
    }
 
    /**
-    * Age out an entry
-    * @param entry The entry
+    * Get
+    * @param key The key
+    * @return The value
     */
-   @Override
-   protected void ageOut(LRUCachePolicy.LRUCacheEntry entry)
+   public CachedPreparedStatement get(Key key)
    {
-      try
+      return cache.get(key);
+   }
+
+   /**
+    * Put
+    * @param key The key
+    * @param value The value
+    */
+   public void put(Key key, CachedPreparedStatement value)
+   {
+      cache.put(key, value);
+   }
+
+   /**
+    * Size
+    * @return The size
+    */
+   public int size()
+   {
+      return cache.size();
+   }
+
+   /**
+    * Prepared statement eviction listener
+    */
+   static class PreparedStatementEvictionListener implements BoundedConcurrentHashMap.EvictionListener
+   {
+      private JdbcStatisticsPlugin statistics;
+      private Logger log;
+
+      /**
+       * Constructor
+       * @param stats The statistics
+       * @param log The logger
+       */
+      public PreparedStatementEvictionListener(JdbcStatisticsPlugin stats, Logger log)
       {
-         CachedPreparedStatement ws = (CachedPreparedStatement) entry.getObject();
-         ws.agedOut();
+         this.statistics = stats;
+         this.log = log;
       }
-      catch (SQLException e)
+
+      /**
+       * Entry eviction
+       * @param evicted The entry
+       */
+      public void onEntryEviction(Map evicted)
       {
-         log.debug("Failed closing cached statement", e);
-      }
-      finally
-      {
-         super.ageOut(entry);
-         statistics.deltaPreparedStatementCacheDeleteCount();
+         if (evicted != null)
+         {
+            Iterator it = evicted.values().iterator();
+            while (it.hasNext())
+            {
+               try
+               {
+                  CachedPreparedStatement ws = (CachedPreparedStatement)it.next();
+                  ws.agedOut();
+               }
+               catch (SQLException e)
+               {
+                  log.debug("Failed closing cached statement", e);
+               }
+               finally
+               {
+                  statistics.deltaPreparedStatementCacheDeleteCount();
+               }
+            }
+         }
       }
    }
 
@@ -212,13 +271,13 @@ public class PreparedStatementCache extends LRUCachePolicy
    @Override
    public String toString()
    {
-      String s = " PreparedStatementCache size: " + lruList.getCount();
-      for (LRUCacheEntry entry = lruList.getHead(); entry != null; entry = entry.getNext())
+      StringBuilder sb = new StringBuilder("PreparedStatementCache size: ").append(size()).append(" ");
+      Iterator<Key> it = cache.keySet().iterator();
+      while (it.hasNext())
       {
-         CachedPreparedStatement ws = (CachedPreparedStatement) entry.getObject();
-         PreparedStatementCache.Key key = (PreparedStatementCache.Key) entry.getKey();
-         s += "[" + key.getSql() + "] ";
+         Key key = it.next();
+         sb.append("[").append(key.getSql()).append("] ");
       }
-      return s + "\n";
+      return sb.toString();
    }
 }
