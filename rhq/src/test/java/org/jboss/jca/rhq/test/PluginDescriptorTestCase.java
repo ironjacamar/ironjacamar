@@ -41,7 +41,6 @@ import java.util.List;
 import org.junit.Test;
 
 import org.rhq.core.clientapi.descriptor.configuration.ConfigurationDescriptor;
-import org.rhq.core.clientapi.descriptor.plugin.OperationDescriptor;
 import org.rhq.core.clientapi.descriptor.plugin.PluginDescriptor;
 import org.rhq.core.clientapi.descriptor.plugin.ResourceCreateDeletePolicy;
 import org.rhq.core.clientapi.descriptor.plugin.ResourceCreationData;
@@ -105,10 +104,6 @@ public class PluginDescriptorTestCase
             // RAR service has the plugin configuration
             ConfigurationDescriptor pluginConfDesc = serviceDesc.getPluginConfiguration();
             assertNotNull(pluginConfDesc);
-            
-            // 4 operations for 
-            List<OperationDescriptor> rarOperDescs = serviceDesc.getOperation();
-            assertEquals(4, rarOperDescs.size());
             
             // RAR service has resource configuration
             ConfigurationDescriptor resConfDesc = serviceDesc.getResourceConfiguration();

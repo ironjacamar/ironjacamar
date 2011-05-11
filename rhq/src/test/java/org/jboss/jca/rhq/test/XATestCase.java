@@ -60,6 +60,8 @@ import org.rhq.core.pc.inventory.RuntimeDiscoveryExecutor;
 import org.rhq.core.pc.plugin.FileSystemPluginFinder;
 import org.rhq.core.pluginapi.configuration.ConfigurationFacet;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
+import org.rhq.core.pluginapi.operation.OperationFacet;
+import org.rhq.core.pluginapi.operation.OperationResult;
 
 import static org.junit.Assert.*;
 
@@ -443,6 +445,34 @@ public class XATestCase
       assertEquals("Confidential", ra.getPassword());
       assertEquals(Integer.valueOf(99), ra.getScore());
       
+   }
+   
+   /**
+    * Tests Resource Adapter stop operation
+    * 
+    * @throws Throwable the exception.
+    */
+   @Test
+   public void testRaOperationStop() throws Throwable
+   {
+      Resource raResource = getSubResource(RA_JNDI_NAME);
+      assertNotNull(raResource);
+      PluginContainer pc = PluginContainer.getInstance();
+      InventoryManager im = pc.getInventoryManager();
+      OperationFacet facet = (OperationFacet)im.getResourceComponent(raResource);
+      OperationResult result = facet.invokeOperation("stop", null);
+      assertNotNull(result);
+      assertNull(result.getErrorMessage());
+      try
+      {
+         facet.invokeOperation("unknown operation", null);
+         fail("Fail.");
+      }
+      catch (Exception e)
+      {
+         assertTrue(e.getClass().equals(IllegalStateException.class));
+         assertEquals("Wrong operation: unknown operation", e.getMessage());
+      }
    }
    
    /**

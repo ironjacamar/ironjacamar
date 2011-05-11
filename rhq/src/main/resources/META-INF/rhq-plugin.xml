@@ -406,18 +406,6 @@
                 </c:group>
             </plugin-configuration>
 
-            <operation name="start"
-                       description="start this RAR"/>
-
-            <operation name="stop"
-                       description="stop this RAR"/>
-
-            <operation name="restart"
-                       description="stop and restart this RAR"/>
-                       
-            <operation name="suspend"
-                       description="suspend this RAR"/>
-                
             <content name="rar-file" displayName="RAR File" category="deployable" isCreationType="true">
                 <configuration>
                   <c:simple-property name="override" displayName="Override?" required="false" type="boolean" defaultValue="true"/>
@@ -436,10 +424,13 @@
             <!-- Resource Adpater -->
             <service name="Resource Adapter" discovery="org.jboss.jca.rhq.ra.RaResourceDiscoveryComponent" 
                 class="org.jboss.jca.rhq.ra.RaResourceComponent">
-                
+
+            <operation name="stop"
+                       description="Stop this Resource Adapter"/>
+                                       
                 <resource-configuration>
                     <c:group name="general" displayName="General">
-                        <c:simple-property name="class-name" displayName="Class name" readOnly="true" required="false" description="Class name of ResourceAdapter" />
+                        <c:simple-property name="class-name" displayName="Class name" readOnly="true" description="Class name of ResourceAdapter" />
                     </c:group>
                     <c:group name="ConfigProperties" displayName="All Config Properties">
                         &advancedResourceConfigProps;                        

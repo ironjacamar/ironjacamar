@@ -38,6 +38,7 @@ import org.rhq.core.domain.configuration.ConfigurationUpdateStatus;
 import org.rhq.core.domain.configuration.PropertyList;
 import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
+import org.rhq.core.pluginapi.operation.OperationResult;
 
 
 /**
@@ -103,5 +104,24 @@ public class RaResourceComponent extends AbstractResourceComponent
          updatePropertyList(ra.getResourceAdapter(), configPropList, configProps);
       }
       updateResourceConfiguration.setStatus(ConfigurationUpdateStatus.SUCCESS);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public OperationResult invokeOperation(String s, Configuration configuration) throws InterruptedException, Exception
+   {
+      OperationResult result = new OperationResult();
+      if ("stop".equals(s))
+      {
+         ResourceAdapter ra = getResourceAdapter();
+         ra.getResourceAdapter().stop();
+      }
+      else
+      {
+         throw new IllegalStateException("Wrong operation: " + s);
+      }
+      return result;
    }
 }
