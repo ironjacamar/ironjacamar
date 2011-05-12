@@ -271,7 +271,8 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    @Override
    public void validate() throws ValidateException
    {
-      if (this.xaDataSourceClass == null || this.xaDataSourceClass.trim().length() == 0)
+      if ((this.xaDataSourceClass == null || this.xaDataSourceClass.trim().length() == 0) &&
+          (this.driver == null || this.driver.trim().length() == 0))
          throw new ValidateException("xaDataSourceClass (xml tag " + Tag.XADATASOURCECLASS + ") is required");
       if (this.xaDataSourceProperty.isEmpty())
          throw new ValidateException("at least one xaDataSourceProperty (xml tag " + Tag.XADATASOURCEPROPERTY +
