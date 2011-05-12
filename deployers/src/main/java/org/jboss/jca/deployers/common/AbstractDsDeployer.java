@@ -517,6 +517,8 @@ public abstract class AbstractDsDeployer
       log.debug("XaDataSource=" + ds);
 
       ManagedConnectionFactory mcf = createMcf(ds, uniqueId, cl);
+
+      initAndInjectClassLoaderPlugin(mcf, ds);
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getXaPool(), ds.getTimeOut(), ds.getValidation());
 
