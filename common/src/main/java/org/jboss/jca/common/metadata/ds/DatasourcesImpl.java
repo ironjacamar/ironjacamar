@@ -179,4 +179,10 @@ public class DatasourcesImpl implements DataSources
       return drivers.get(name);
    }
 
+   @Override
+   public List<Driver> getDrivers()
+   {
+      return Collections.unmodifiableList(new ArrayList<Driver>(drivers.values()));
+   }
+
 }

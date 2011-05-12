@@ -56,10 +56,17 @@ public interface DataSources extends JCAMetadata, ValidatableMetadata
    public List<XaDataSource> getXaDataSource();
 
    /**
+    * Get the list of drivers
+    *
+    * @return the list of drivers.
+    */
+   public List<Driver> getDrivers();
+
+   /**
     * Get the driver with given name
     * @param name driver's name
     *
-    * @return the list of drivers.
+    * @return the driver wit given name.
     */
    public Driver getDriver(String name);
 
