@@ -88,6 +88,7 @@ import java.util.Set;
 
 import javax.resource.Referenceable;
 import javax.resource.ResourceException;
+import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
@@ -560,19 +561,28 @@ public abstract class AbstractResourceAdapterDeployer
                         if (activateDeployment)
                         {
                            List<? extends ConfigProperty> cpm = mlMD.getActivationspec().getConfigProperties();
+                           String asClass = mlMD.getActivationspec().getActivationspecClass().getValue();
 
-                           Object o = initAndInject(mlMD.getActivationspec().getActivationspecClass().getValue(),
-                              cpm, cl);
+                           ActivationSpec as = (ActivationSpec)initAndInject(asClass, cpm, cl);
 
                            if (trace)
                            {
-                              log.trace("ActivationSpec: " + o.getClass().getName());
-                              log.trace("ActivationSpec defined in classloader: " + o.getClass().getClassLoader());
+                              log.trace("ActivationSpec: " + as.getClass().getName());
+                              log.trace("ActivationSpec defined in classloader: " + as.getClass().getClassLoader());
                            }
 
-                           archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, o, cpm));
-                           beanValidationObjects.add(o);
-                           associateResourceAdapter(resourceAdapter, o);
+                           archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, as, cpm));
+                           beanValidationObjects.add(as);
+                           associateResourceAdapter(resourceAdapter, as);
+
+                           try
+                           {
+                              as.validate();
+                           }
+                           catch (Throwable t)
+                           {
+                              throw new DeployException("Validation exception for " + as, t);
+                           }
                         }
                      }
                   }
