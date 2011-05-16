@@ -1117,9 +1117,7 @@
     <attribute name="extension"/>
     <sequential>
       <concat destfile="${target.dir}/@{file}" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifact}.xml $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar $REPOSITORY
+mvn org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifact}.xml -Dsources=$PWD/@{artifact}-sources.jar -Djavadoc=$PWD/@{artifact}-javadoc.jar $REPOSITORY
 </concat>
     </sequential>
   </macrodef>
@@ -1130,9 +1128,7 @@ mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -
     <attribute name="extension"/>
     <sequential>
       <concat destfile="${target.dir}/@{file}" append="true" force="true" eol="unix">
-mvn deploy:deploy-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifact}.xml -DuniqueVersion=false $REPOSITORY 
-mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
-mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
+mvn org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifact}.xml -Dsources=$PWD/@{artifact}-sources.jar -Djavadoc=$PWD/@{artifact}-javadoc.jar $REPOSITORY
 </concat>
     </sequential>
   </macrodef>
@@ -1143,9 +1139,7 @@ mvn deploy:deploy-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -
     <attribute name="extension"/>
     <sequential>
       <concat destfile="${target.dir}/@{file}" append="true" force="true" eol="unix">
-mvn install:install-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifact}.xml -DuniqueVersion=false $REPOSITORY -Dversion=$VERSION
-mvn install:install-file -Dfile=$PWD/@{artifact}-sources.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=sources -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
-mvn install:install-file -Dfile=$PWD/@{artifact}-javadoc.jar -DgeneratePom=false -DgroupId=org.jboss.${name} -DartifactId=@{artifact} -Dversion=$VERSION -Dclassifier=javadoc -Dpackaging=jar -DuniqueVersion=false $REPOSITORY
+mvn install:install-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifact}.xml -Dsources=$PWD/@{artifact}-sources.jar -Djavadoc=$PWD/@{artifact}-javadoc.jar $REPOSITORY
 </concat>
     </sequential>
   </macrodef>
