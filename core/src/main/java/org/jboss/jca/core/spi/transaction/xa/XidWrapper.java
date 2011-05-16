@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.core.spi.transaction.xa;
 
-import java.io.Serializable;
-
 import javax.transaction.xa.Xid;
 
 /**
@@ -31,7 +29,7 @@ import javax.transaction.xa.Xid;
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: 85945 $
  */
-public interface XidWrapper extends Serializable, Xid
+public interface XidWrapper extends Xid
 {
    /**
     * Get the JNDI name

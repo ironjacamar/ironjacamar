@@ -139,6 +139,7 @@
     </dependency>
     <dependency org="org.javassist" name="javassist" rev="${version.javassist}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain"/>
+    <dependency org="org.jboss" name="jboss-transaction-spi" rev="${version.jboss.ts.spi}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="tools"/>
     <dependency org="org.jboss.arquillian" name="arquillian-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.arquillian" name="arquillian-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
@@ -146,7 +147,6 @@
     <dependency org="org.jboss.arquillian" name="arquillian-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.arquillian.protocol" name="arquillian-protocol-local" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.arquillian.testenricher" name="arquillian-testenricher-resource" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.integration" name="jboss-transaction-spi" rev="${version.jboss.integration}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
@@ -165,13 +165,13 @@
     <dependency org="org.mortbay.jetty" name="jsp-api-2.1-glassfish"  rev="${version.jetty.glassfish}" conf="jetty"/>
     <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="jetty"/>
     <dependency org="org.picketbox" name="picketbox" rev="${version.jboss.picketbox}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.rhq" name="rhq-core-plugin-api" rev="${version.rhq}" conf="rhq"/>
     <dependency org="org.rhq" name="rhq-core-client-api" rev="${version.rhq}" conf="rhq"/>
+    <dependency org="org.rhq" name="rhq-core-comm-api" rev="${version.rhq}" conf="rhq"/>
     <dependency org="org.rhq" name="rhq-core-domain" rev="${version.rhq}" conf="rhq"/>
     <dependency org="org.rhq" name="rhq-core-native-system" rev="${version.rhq}" conf="rhq"/>
-    <dependency org="org.rhq" name="rhq-core-util" rev="${version.rhq}" conf="rhq"/>
+    <dependency org="org.rhq" name="rhq-core-plugin-api" rev="${version.rhq}" conf="rhq"/>
     <dependency org="org.rhq" name="rhq-core-plugin-container" rev="${version.rhq}" conf="rhq"/>
-    <dependency org="org.rhq" name="rhq-core-comm-api" rev="${version.rhq}" conf="rhq"/>
+    <dependency org="org.rhq" name="rhq-core-util" rev="${version.rhq}" conf="rhq"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
   </dependencies>

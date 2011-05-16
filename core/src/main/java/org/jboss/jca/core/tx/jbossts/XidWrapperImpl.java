@@ -35,9 +35,6 @@ import javax.transaction.xa.Xid;
  */
 public class XidWrapperImpl implements XidWrapper
 {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 3223859423961011795L;
-
    /** The formatId */
    private int formatId;
    

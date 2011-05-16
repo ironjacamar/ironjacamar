@@ -38,9 +38,6 @@ import org.jboss.logging.Logger;
 public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper,
                                               org.jboss.tm.XAResourceWrapper
 {
-   /** Serial version UID */
-   private static final long serialVersionUID = 2147435420748633848L;
-
    /** Log instance */
    private static Logger log = Logger.getLogger(XAResourceWrapperImpl.class);
    
