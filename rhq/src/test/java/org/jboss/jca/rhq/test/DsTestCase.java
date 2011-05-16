@@ -41,7 +41,6 @@ import javax.naming.InitialContext;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import org.rhq.core.domain.configuration.Configuration;
@@ -249,9 +248,9 @@ public class DsTestCase
       Configuration config = result.getComplexResults();
       assertEquals("true", config.getSimpleValue("result", null));
    }
-   
+ 
    /**
-    * test DataSource Pool.flush()
+    * test DataSource Pool.flush(boolean kill)
     * 
     * @throws Throwable exception
     */
@@ -260,22 +259,9 @@ public class DsTestCase
    {
       DataSource ds = getDataSource();
       Pool pool = ds.getPool();
-      pool.flush();
       
-      // just not thrown exception for now.
-   }
-   
-   /**
-    * test DataSource Pool.flush(true)
-    * 
-    * @throws Throwable exception
-    */
-   @Test
-   public void testDsPoolFlushKill() throws Throwable
-   {
-      DataSource ds = getDataSource();
-      Pool pool = ds.getPool();
       // set prefill to false
+      boolean oldPrefill = ds.getPoolConfiguration().isPrefill();
       ds.getPoolConfiguration().setPrefill(false);
       PoolStatistics poolStatistics = pool.getStatistics();
       
@@ -283,14 +269,27 @@ public class DsTestCase
       javax.sql.DataSource sqlDS = (javax.sql.DataSource)context.lookup(ds.getJndiName());
       Connection conn = sqlDS.getConnection();
       
-      assertEquals(1, poolStatistics.getActiveCount());
+      assertTrue(poolStatistics.getActiveCount() >= 1);
       
       pool.flush(true);  // it flushes all connections from the pool.
       
       assertEquals(0, poolStatistics.getActiveCount());
+      assertEquals(0, poolStatistics.getCreatedCount());
+      assertEquals(ds.getPoolConfiguration().getMaxSize(), poolStatistics.getAvailableCount());
       
       conn.close();
-      // just not thrown exception for now.
+      
+      conn = sqlDS.getConnection();
+      pool.flush(); // only flushes idle connections
+      assertTrue(poolStatistics.getActiveCount() >= 1);
+      assertTrue(poolStatistics.getCreatedCount() >= 1);
+      
+      conn.close();
+      pool.flush(); // conn is closed, so it will be released.
+      assertTrue(poolStatistics.getActiveCount() >= 0);
+      assertTrue(poolStatistics.getCreatedCount() >= 0);
+      
+      ds.getPoolConfiguration().setPrefill(oldPrefill);
    }
    
    
