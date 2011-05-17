@@ -22,14 +22,19 @@
 
 package org.jboss.jca.core.rar;
 
+import org.jboss.jca.core.bv.BeanValidationUtil;
 import org.jboss.jca.core.spi.rar.Endpoint;
 
 import java.lang.ref.WeakReference;
+import java.util.Set;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import javax.validation.groups.Default;
 
 /**
  * An endpoint representation
@@ -53,13 +58,30 @@ public class EndpointImpl implements Endpoint
    /**
     * {@inheritDoc}
     */
+   @SuppressWarnings("unchecked")
    public void activate(MessageEndpointFactory endpointFactory,
                         ActivationSpec spec) throws ResourceException
    {
+      if (endpointFactory == null)
+         throw new IllegalArgumentException("MessageEndpointFactory is null");
+
+      if (spec == null)
+         throw new IllegalArgumentException("ActivationSpec is null");
+
       ResourceAdapter rar = ra.get();
 
       if (rar == null)
          throw new ResourceException("ResourceAdapter instance not active");
+
+      spec.validate();
+
+      Validator validator = BeanValidationUtil.createValidator();
+      Set errors = validator.validate(spec, Default.class);
+
+      if (errors != null && errors.size() > 0)
+      {
+         throw new ResourceException("Validation exception", new ConstraintViolationException(errors));
+      }
 
       rar.endpointActivation(endpointFactory, spec);
    }
@@ -70,6 +92,12 @@ public class EndpointImpl implements Endpoint
    public void deactivate(MessageEndpointFactory endpointFactory,
                           ActivationSpec spec) throws ResourceException
    {
+      if (endpointFactory == null)
+         throw new IllegalArgumentException("MessageEndpointFactory is null");
+
+      if (spec == null)
+         throw new IllegalArgumentException("ActivationSpec is null");
+
       ResourceAdapter rar = ra.get();
 
       if (rar == null)

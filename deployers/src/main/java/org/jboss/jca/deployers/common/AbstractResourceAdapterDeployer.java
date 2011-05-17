@@ -571,18 +571,10 @@ public abstract class AbstractResourceAdapterDeployer
                               log.trace("ActivationSpec defined in classloader: " + as.getClass().getClassLoader());
                            }
 
-                           archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, as, cpm));
-                           beanValidationObjects.add(as);
+                           // Associate for validation
                            associateResourceAdapter(resourceAdapter, as);
 
-                           try
-                           {
-                              as.validate();
-                           }
-                           catch (Throwable t)
-                           {
-                              throw new DeployException("Validation exception for " + as, t);
-                           }
+                           archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, as, cpm));
                         }
                      }
                   }
