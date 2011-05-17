@@ -192,14 +192,14 @@ org.jboss.ironjacamar
       <programlisting>
 ant nexus
 cd target
-./release.sh
+./deploy.sh
       </programlisting>
 
       <para>After the artifacts have been uploaded the release must be promoted in Nexus by logging
         in and choosing "Promote" and "Close". The path for the staging repository can be used for
         testing the release.</para>
       
-      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1.</para>
+      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1+.</para>
 
     </section>
 
@@ -210,10 +210,10 @@ cd target
       <programlisting>
 ant -Dsnapshot=true nexus
 cd target
-./snapshot.sh
+./deploy.sh
       </programlisting>
       
-      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1.</para>
+      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1+.</para>
 
     </section>
 
@@ -224,10 +224,10 @@ cd target
       <programlisting>
 ant -Dsnapshot=true nexus
 cd target
-./install-snapshot.sh
+./install.sh
       </programlisting>
       
-      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1.</para>
+      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1+.</para>
 
     </section>
 
