@@ -2,23 +2,13 @@
 	       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	       xsi:schemaLocation="urn:hornetq /schema/hornetq-jms.xsd">
   
-  <connection-factory name="NettyConnectionFactory">
+  <connection-factory name="InVMConnectionFactory">
     <connectors>
-      <connector-ref connector-name="netty"/>
+      <connector-ref connector-name="in-vm"/>
     </connectors>
     <entries>
       <entry name="/ConnectionFactory"/>
       <entry name="/XAConnectionFactory"/>
-    </entries>
-  </connection-factory>
-	
-  <connection-factory name="NettyThroughputConnectionFactory">
-    <connectors>
-      <connector-ref connector-name="netty-throughput"/>
-    </connectors>
-    <entries>
-      <entry name="/ThroughputConnectionFactory"/>
-      <entry name="/XAThroughputConnectionFactory"/>
     </entries>
   </connection-factory>
 	
