@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,52 +19,48 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.txmgr;
+package org.jboss.jca.core.tx.noopts;
 
-import java.io.Serializable;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * A transaction manager implementation
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * UserTransactionRegistry implementation.
+ * 
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class RealTransactionManagerImpl extends TransactionManagerImpl implements Serializable
+public class UserTransactionRegistryImpl implements UserTransactionRegistry
 {
-   private static final long serialVersionUID = 1L;
-   private static final String JNDI_NAME = "java:/TransactionManager";
+   /** Listeners */
+   private Set<UserTransactionListener> listeners;
 
    /**
     * Constructor
     */
-   public RealTransactionManagerImpl()
+   public UserTransactionRegistryImpl()
    {
+      this.listeners = Collections.synchronizedSet(new HashSet<UserTransactionListener>());
    }
 
    /**
-    * Start
-    * @exception Throwable Thrown if an error occurs
+    * {@inheritDoc}
     */
-   public void start() throws Throwable
+   public void addListener(UserTransactionListener listener)
    {
-      Context context = new InitialContext();
-
-      context.bind(JNDI_NAME, this);
-
-      context.close();
+      if (listener != null)
+         listeners.add(listener);
    }
-
+   
    /**
-    * Stop
-    * @exception Throwable Thrown if an error occurs
+    * {@inheritDoc}
     */
-   public void stop() throws Throwable
+   public void removeListener(UserTransactionListener listener)
    {
-      Context context = new InitialContext();
-
-      context.unbind(JNDI_NAME);
-
-      context.close();
+      if (listener != null)
+         listeners.remove(listener);
    }
 }

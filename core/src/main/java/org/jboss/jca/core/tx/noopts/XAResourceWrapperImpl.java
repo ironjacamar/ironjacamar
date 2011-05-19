@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.txmgr;
+package org.jboss.jca.core.tx.noopts;
 
 import org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper;
 
@@ -36,9 +36,6 @@ import org.jboss.logging.Logger;
  */
 public class XAResourceWrapperImpl implements XAResourceWrapper
 {
-   /** Serial version UID */
-   private static final long serialVersionUID = 2147435420748633848L;
-
    /** Log instance */
    private static Logger log = Logger.getLogger(XAResourceWrapperImpl.class);
    

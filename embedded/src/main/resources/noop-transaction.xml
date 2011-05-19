@@ -2,24 +2,24 @@
 
   <!-- Transaction registry -->
   <bean name="TxRegistry"
-        class="org.jboss.jca.test.txmgr.TxRegistry">
+        class="org.jboss.jca.core.tx.noopts.TxRegistry">
   </bean>
 
   <!-- User transaction registry -->
   <bean name="UserTxRegistry"
-        class="org.jboss.jca.test.txmgr.TxRegistry">
+        class="org.jboss.jca.core.tx.noopts.TxRegistry">
   </bean>
 
   <!-- XATerminator -->
   <bean name="XATerminator"
         interface="org.jboss.jca.core.spi.transaction.xa.XATerminator" 
-        class="org.jboss.jca.test.txmgr.XATerminatorImpl">
+        class="org.jboss.jca.core.tx.noopts.XATerminatorImpl">
   </bean>
 
   <!-- Transaction manager -->
   <bean name="TransactionManager"
         interface="javax.transaction.TransactionManager" 
-        class="org.jboss.jca.test.txmgr.TransactionManagerImpl">
+        class="org.jboss.jca.core.tx.noopts.TransactionManagerImpl">
     <property name="Registry"><inject bean="TxRegistry"/></property>
     <property name="XATerminator"><inject bean="XATerminator"/></property>
   </bean>
@@ -27,7 +27,7 @@
   <!-- Real Transaction manager -->
   <bean name="RealTransactionManager"
         interface="javax.transaction.TransactionManager" 
-        class="org.jboss.jca.test.txmgr.RealTransactionManagerImpl">
+        class="org.jboss.jca.core.tx.noopts.RealTransactionManagerImpl">
     <property name="Registry"><inject bean="TxRegistry"/></property>
     <depends>NamingServer</depends>
   </bean>
@@ -35,7 +35,7 @@
   <!-- TransactionSynchronizationRegistry -->
   <bean name="TransactionSynchronizationRegistry"
         interface="javax.transaction.TransactionSynchronizationRegistry" 
-        class="org.jboss.jca.test.txmgr.TransactionSynchronizationRegistryImpl">
+        class="org.jboss.jca.core.tx.noopts.TransactionSynchronizationRegistryImpl">
     <property name="Registry"><inject bean="TxRegistry"/></property>
     <depends>NamingServer</depends>
   </bean>
@@ -43,7 +43,7 @@
   <!-- UserTransaction -->
   <bean name="UserTransaction"
         interface="javax.transaction.UserTransaction" 
-        class="org.jboss.jca.test.txmgr.UserTransactionImpl">
+        class="org.jboss.jca.core.tx.noopts.UserTransactionImpl">
     <property name="Registry"><inject bean="UserTxRegistry"/></property>
     <depends>NamingServer</depends>
   </bean>
@@ -51,13 +51,13 @@
   <!-- UserTransactionRegistry -->
   <bean name="UserTransactionRegistry"
         interface="org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry" 
-        class="org.jboss.jca.test.txmgr.UserTransactionRegistryImpl">
+        class="org.jboss.jca.core.tx.noopts.UserTransactionRegistryImpl">
   </bean>
 
   <!-- Transaction integration -->
   <bean name="TransactionIntegration"
         interface="org.jboss.jca.core.spi.transaction.TransactionIntegration"
-        class="org.jboss.jca.test.txmgr.TransactionIntegrationImpl">
+        class="org.jboss.jca.core.tx.noopts.TransactionIntegrationImpl">
     <constructor>
       <parameter><inject bean="RealTransactionManager"/></parameter>
       <parameter><inject bean="TransactionSynchronizationRegistry"/></parameter>

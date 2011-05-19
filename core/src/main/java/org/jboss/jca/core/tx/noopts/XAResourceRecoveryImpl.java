@@ -19,48 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.txmgr;
+package org.jboss.jca.core.tx.noopts;
 
-import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
-import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import javax.transaction.xa.XAResource;
 
 /**
- * UserTransactionRegistry implementation.
- * 
+ * An XAResourceRecovery implementation.
+ *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class UserTransactionRegistryImpl implements UserTransactionRegistry
+public class XAResourceRecoveryImpl implements XAResourceRecovery
 {
-   /** Listeners */
-   private Set<UserTransactionListener> listeners;
-
    /**
     * Constructor
     */
-   public UserTransactionRegistryImpl()
+   public XAResourceRecoveryImpl()
    {
-      this.listeners = Collections.synchronizedSet(new HashSet<UserTransactionListener>());
    }
 
    /**
     * {@inheritDoc}
     */
-   public void addListener(UserTransactionListener listener)
+   @Override
+   public XAResource[] getXAResources()
    {
-      if (listener != null)
-         listeners.add(listener);
+      return new XAResource[0];
    }
-   
+
    /**
     * {@inheritDoc}
     */
-   public void removeListener(UserTransactionListener listener)
+   @Override
+   public void setJndiName(String jndiName)
    {
-      if (listener != null)
-         listeners.remove(listener);
    }
 }

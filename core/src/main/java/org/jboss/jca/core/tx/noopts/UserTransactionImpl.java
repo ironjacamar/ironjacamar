@@ -19,34 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.txmgr;
+package org.jboss.jca.core.tx.noopts;
 
-import org.jboss.jca.core.spi.transaction.xa.XATerminator;
+import java.io.Serializable;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
-import javax.transaction.InvalidTransactionException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 /**
  * A transaction manager implementation
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class TransactionManagerImpl implements TransactionManager
+public class UserTransactionImpl implements UserTransaction, Serializable
 {
+   private static final long serialVersionUID = 1L;
+   private static final String JNDI_NAME = "java:/UserTransaction";
    private TxRegistry registry;
-   private XATerminator terminator;
 
    /**
     * Constructor
     */
-   public TransactionManagerImpl()
+   public UserTransactionImpl()
    {
+      this.registry = null;
    }
 
    /**
@@ -56,24 +59,6 @@ public class TransactionManagerImpl implements TransactionManager
    public void setRegistry(TxRegistry v)
    {
       registry = v;
-   }
-
-   /**
-    * Get the terminator
-    * @return The value
-    */
-   public XATerminator getXATerminator()
-   {
-      return terminator;
-   }
-
-   /**
-    * Set the terminator
-    * @param v The value
-    */
-   public void setXATerminator(XATerminator v)
-   {
-      terminator = v;
    }
 
    /**
@@ -115,40 +100,6 @@ public class TransactionManagerImpl implements TransactionManager
    /**
     * {@inheritDoc}
     */
-   public int getStatus() throws SystemException
-   {
-      Transaction tx = registry.getTransaction();
-
-      if (tx == null)
-         return Status.STATUS_NO_TRANSACTION;
-
-      return tx.getStatus();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Transaction getTransaction() throws SystemException
-   {
-      return registry.getTransaction();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void resume(Transaction tobj) throws InvalidTransactionException,
-                                               IllegalStateException,
-                                               SystemException
-   {
-      if (!(tobj instanceof TransactionImpl))
-         throw new SystemException();
-
-      registry.assignTransaction((TransactionImpl)tobj);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public void rollback() throws IllegalStateException,
                                  SecurityException,
                                  SystemException
@@ -178,19 +129,46 @@ public class TransactionManagerImpl implements TransactionManager
    /**
     * {@inheritDoc}
     */
-   public void setTransactionTimeout(int seconds) throws SystemException
+   public int getStatus() throws SystemException
    {
+      Transaction tx = registry.getTransaction();
+
+      if (tx == null)
+         return Status.STATUS_NO_TRANSACTION;
+
+      return tx.getStatus();
    }
 
    /**
     * {@inheritDoc}
     */
-   public Transaction suspend() throws SystemException
+   public void setTransactionTimeout(int seconds) throws SystemException
    {
-      Transaction tx = registry.getTransaction();
+   }
 
-      registry.assignTransaction(null);
+   /**
+    * Start
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void start() throws Throwable
+   {
+      Context context = new InitialContext();
 
-      return tx;
+      context.bind(JNDI_NAME, this);
+
+      context.close();
+   }
+
+   /**
+    * Stop
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void stop() throws Throwable
+   {
+      Context context = new InitialContext();
+
+      context.unbind(JNDI_NAME);
+
+      context.close();
    }
 }

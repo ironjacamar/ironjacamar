@@ -19,64 +19,95 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.txmgr;
+package org.jboss.jca.core.tx.noopts;
+
+import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import java.io.Serializable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+
+import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkCompletedException;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 /**
- * The transaction registry
+ * An XATerminator implementation
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class TxRegistry implements Serializable
+public class XATerminatorImpl implements XATerminator, Serializable
 {
    private static final long serialVersionUID = 1L;
-   private ConcurrentMap<Long, TransactionImpl> txs;
 
    /**
     * Constructor
     */
-   public TxRegistry()
+   public XATerminatorImpl()
    {
-      this.txs = new ConcurrentHashMap<Long, TransactionImpl>();
    }
 
    /**
-    * Get the transaction for the current thread
-    * @return The value
+    * {@inheritDoc}
     */
-   public TransactionImpl getTransaction()
+   public void commit(Xid xid, boolean onePhase) throws XAException
    {
-      Long id = Long.valueOf(Thread.currentThread().getId());
-      return txs.get(id);
    }
 
    /**
-    * Start a transaction
+    * {@inheritDoc}
     */
-   public void startTransaction()
+   public void forget(Xid xid) throws XAException
    {
-      Long id = Long.valueOf(Thread.currentThread().getId());
-      txs.put(id, new TransactionImpl());
    }
 
    /**
-    * End a transaction
+    * {@inheritDoc}
     */
-   public void endTransaction()
+   public int prepare(Xid xid) throws XAException
    {
-      Long id = Long.valueOf(Thread.currentThread().getId());
-      txs.remove(id);
+      return XAResource.XA_OK;
    }
 
    /**
-    * Assign a transaction
-    * @param v The value
+    * {@inheritDoc}
     */
-   public void assignTransaction(TransactionImpl v)
+   public Xid[] recover(int flag) throws XAException
    {
-      Long id = Long.valueOf(Thread.currentThread().getId());
-      txs.put(id, v);
+      return new Xid[0];
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void rollback(Xid xid) throws XAException
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void registerWork(Work work, Xid xid, long timeout) throws WorkCompletedException
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void startWork(Work work, Xid xid) throws WorkCompletedException
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void endWork(Work work, Xid xid)
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void cancelWork(Work work, Xid xid)
+   {
    }
 }

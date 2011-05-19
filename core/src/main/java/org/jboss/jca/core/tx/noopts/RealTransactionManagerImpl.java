@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,40 +19,52 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.txmgr;
+package org.jboss.jca.core.tx.noopts;
 
-import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
+import java.io.Serializable;
 
-import javax.transaction.xa.XAResource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 
 /**
- * An XAResourceRecovery implementation.
- *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * A transaction manager implementation
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class XAResourceRecoveryImpl implements XAResourceRecovery
+public class RealTransactionManagerImpl extends TransactionManagerImpl implements Serializable
 {
+   private static final long serialVersionUID = 1L;
+   private static final String JNDI_NAME = "java:/TransactionManager";
+
    /**
     * Constructor
     */
-   public XAResourceRecoveryImpl()
+   public RealTransactionManagerImpl()
    {
    }
 
    /**
-    * {@inheritDoc}
+    * Start
+    * @exception Throwable Thrown if an error occurs
     */
-   @Override
-   public XAResource[] getXAResources()
+   public void start() throws Throwable
    {
-      return new XAResource[0];
+      Context context = new InitialContext();
+
+      context.bind(JNDI_NAME, this);
+
+      context.close();
    }
 
    /**
-    * {@inheritDoc}
+    * Stop
+    * @exception Throwable Thrown if an error occurs
     */
-   @Override
-   public void setJndiName(String jndiName)
+   public void stop() throws Throwable
    {
+      Context context = new InitialContext();
+
+      context.unbind(JNDI_NAME);
+
+      context.close();
    }
 }
