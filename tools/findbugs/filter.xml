@@ -56,6 +56,18 @@
     <Bug code="Nm"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.core.connectionmanager.listener.ConnectionListener"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.connectionmanager.listener.AbstractConnectionListener"/>
+    <Bug code="Eq"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.connectionmanager.pool.api.Pool"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
     <Bug code="Dm"/>
   </Match>
@@ -67,11 +79,23 @@
     <Class name="org.jboss.jca.core.spi.mdr.MetadataRepository"/>
     <Bug code="Dm"/>
   </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.spi.transaction.xa.XATerminator"/>
+    <Bug code="Nm"/>
+  </Match>
 
   <!--  org.jboss.jca.deployers filter -->
   <Match>
     <Class name="org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer"/>
     <Bug code="IP"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.common.CommonDeployment"/>
+    <Bug code="EI,EI2"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.AbstractDsDeployer"/>
+    <Bug code="IP,DLS"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.AbstractFungalDeployment"/>

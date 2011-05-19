@@ -37,8 +37,10 @@ import javax.resource.spi.ConfigProperty;
 @AdministeredObject
 public class TestAdminObject implements Serializable, Referenceable
 {
+   private static final long serialVersionUID = 1L;
+
    /** reference */
-   Reference reference;
+   private Reference reference;
 
    @ConfigProperty(type = String.class, defaultValue = "InAO")
    private String myStringProperty;
@@ -69,6 +71,5 @@ public class TestAdminObject implements Serializable, Referenceable
    public void setReference(Reference reference)
    {
       this.reference = reference;
-
    }
 }

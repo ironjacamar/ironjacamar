@@ -22,12 +22,12 @@
 
 package org.jboss.jca.test.deployers.spec.rars.testcases;
 
-import org.jboss.jca.embedded.arquillian.ArquillianJCATestUtils;
+import org.jboss.jca.test.deployers.spec.ArquillianJCATestUtils;
 
 import javax.annotation.Resource;
 import javax.resource.cci.ConnectionFactory;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
@@ -61,7 +61,7 @@ public class Ra16inoutTestCase
       String archiveName = "ra16inout.rar";
       String packageName = "org.jboss.jca.test.deployers.spec.rars.ra16inout";
       ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName, packageName);
-      raa.addManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
+      raa.addAsManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
 
       return raa;
    }

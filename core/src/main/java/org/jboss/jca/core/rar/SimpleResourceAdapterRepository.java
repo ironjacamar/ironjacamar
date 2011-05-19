@@ -294,7 +294,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (md == null)
          throw new NotFoundException("Unable to lookup resource adapter in MDR: " + uniqueId);
 
-      if (md != null && md.getResourceadapter() != null && md.getResourceadapter() instanceof ResourceAdapter1516)
+      if (md.getResourceadapter() != null && md.getResourceadapter() instanceof ResourceAdapter1516)
       {
          ResourceAdapter1516 ra1516 = (ResourceAdapter1516)md.getResourceadapter();
 

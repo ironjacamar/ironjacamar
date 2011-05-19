@@ -25,6 +25,7 @@ package org.jboss.jca.embedded;
 import java.net.URL;
 
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 /**
  * The embedded IronJacamar container
@@ -53,6 +54,13 @@ public interface Embedded
 
    /**
     * Deploy
+    * @param descriptor The descriptor
+    * @exception Throwable If an error occurs
+    */
+   public void deploy(Descriptor descriptor) throws Throwable;
+
+   /**
+    * Deploy
     * @param raa The resource adapter archive
     * @exception Throwable If an error occurs
     */
@@ -64,6 +72,13 @@ public interface Embedded
     * @exception Throwable If an error occurs
     */
    public void undeploy(URL url) throws Throwable;
+
+   /**
+    * Undeploy
+    * @param descriptor The descriptor
+    * @exception Throwable If an error occurs
+    */
+   public void undeploy(Descriptor descriptor) throws Throwable;
 
    /**
     * Undeploy

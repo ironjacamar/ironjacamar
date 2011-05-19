@@ -22,17 +22,18 @@
 
 package org.jboss.jca.adapters.jdbc.unit;
 
-import org.jboss.jca.embedded.arquillian.ArquillianJCATestUtils;
+import org.jboss.jca.adapters.ArquillianJCATestUtils;
+import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.sql.Connection;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,21 +53,30 @@ public class H2XATestCase
    //-------------------------------------------------------------------------------------||
    //---------------------- GIVEN --------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
+
    /**
     * Define the deployment
     * @return The deployment archive
     * @throws Exception in case of errors
     */
-   @Deployment
-   public static ResourceAdapterArchive createDeployment() throws Exception
+   @Deployment(order = 1)
+   public static ResourceAdapterArchive createArchive() throws Exception
    {
-      String archiveName = "jdbc-xa.rar";
-      ResourceAdapterArchive raa = ArquillianJCATestUtils.buildShrinkwrapJdbcXa(archiveName);
-      ResourceAdapterArchive external = ShrinkWrap.create(ResourceAdapterArchive.class, "complex_" + archiveName);
-      external.add(raa, "/");
-      external.addResource("h2-xa-ds.xml", "datasources-xa-ds.xml");
-      return external;
+      return ArquillianJCATestUtils.buildShrinkwrapJdbcXa();
+   }
 
+   /**
+    * Define the -ds.xml
+    * @return The deployment archive
+    * @throws Exception in case of errors
+    */
+   @Deployment(order = 2)
+   public static Descriptor createDescriptor() throws Exception
+   {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      InputStreamDescriptor isd = new InputStreamDescriptor("h2-xa-ds.xml", 
+                                                            cl.getResourceAsStream("h2-xa-ds.xml"));
+      return isd;
    }
 
    //-------------------------------------------------------------------------------------||
@@ -90,6 +100,7 @@ public class H2XATestCase
       assertNotNull(ds);
       Connection c = ds.getConnection();
       assertNotNull(c);
+      c.close();
    }
 
 }

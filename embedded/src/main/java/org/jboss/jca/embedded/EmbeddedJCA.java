@@ -22,18 +22,20 @@
 
 package org.jboss.jca.embedded;
 
-import java.io.BufferedInputStream;
+import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.KernelFactory;
@@ -49,6 +51,9 @@ class EmbeddedJCA implements Embedded
 {
    /** Buffer size */
    private static final int BUFFER_SIZE = 4096;
+
+   /** The logger */
+   private static Logger log = Logger.getLogger(EmbeddedJCA.class);
 
    /** Enable full profile */
    private final boolean fullProfile;
@@ -88,6 +93,7 @@ class EmbeddedJCA implements Embedded
       List<String> order = new ArrayList<String>(3);
       order.add(".xml");
       order.add(".rar");
+      order.add("-ra.xml");
       order.add("-ds.xml");
 
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
@@ -183,7 +189,59 @@ class EmbeddedJCA implements Embedded
       if (!started)
          throw new IllegalStateException("Container not started");
 
+      log.debugf("Deploying: %s", url);
+
       kernel.getMainDeployer().deploy(url);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deploy(Descriptor descriptor) throws Throwable
+   {
+      if (descriptor == null)
+         throw new IllegalArgumentException("Descriptor is null");
+
+      if (descriptor.getDescriptorName() == null)
+         throw new IllegalArgumentException("Descriptor name is null");
+
+      if (!(descriptor instanceof InputStreamDescriptor))
+         throw new IllegalArgumentException("Only InputStreamDescriptor is supported");
+
+      if (!started)
+         throw new IllegalStateException("Container not started");
+
+      File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
+      File descriptorFile = new File(parentDirectory, descriptor.getDescriptorName());
+
+      if (descriptorFile.exists())
+         recursiveDelete(descriptorFile);
+
+      FileOutputStream os = new FileOutputStream(descriptorFile);
+      BufferedOutputStream bos = new BufferedOutputStream(os, BUFFER_SIZE);
+      try
+      {
+         descriptor.exportTo(bos);
+         bos.flush();
+      }
+      finally
+      {
+         if (bos != null)
+         {
+            try
+            {
+               bos.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      log.debugf("Deploying: %s", descriptorFile);
+
+      kernel.getMainDeployer().deploy(descriptorFile.toURI().toURL());
    }
 
    /**
@@ -202,9 +260,6 @@ class EmbeddedJCA implements Embedded
       if (!started)
          throw new IllegalStateException("Container not started");
 
-      InputStream is = raa.as(ZipExporter.class).exportZip();
-      BufferedInputStream bis = new BufferedInputStream(is, BUFFER_SIZE);
-
       File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
       File raaFile = new File(parentDirectory, raa.getName());
 
@@ -214,51 +269,14 @@ class EmbeddedJCA implements Embedded
       if (raaFile.exists())
          recursiveDelete(raaFile);
 
-      FileOutputStream os = new FileOutputStream(raaFile);
-      BufferedOutputStream bos = new BufferedOutputStream(os, BUFFER_SIZE);
-
-      byte[] buffer = new byte[BUFFER_SIZE];
-      int read = 0;
-      try
-      {
-         while ((read = bis.read(buffer)) != -1)
-         {
-            bos.write(buffer, 0, read);
-         }
-
-         bos.flush();
-      }
-      finally
-      {
-         if (bos != null)
-         {
-            try
-            {
-               bos.close();
-            }
-            catch (IOException ignore)
-            {
-               // Ignore
-            }
-         }
-
-         if (bis != null)
-         {
-            try
-            {
-               bis.close();
-            }
-            catch (IOException ignore)
-            {
-               // Ignore
-            }
-         }
-      }
+      raa.as(ZipExporter.class).exportTo(raaFile, true);
 
       if (shrinkwrapDeployments == null)
          shrinkwrapDeployments = new ArrayList<File>(1);
 
       shrinkwrapDeployments.add(raaFile);
+
+      log.debugf("Deploying: %s", raaFile);
 
       kernel.getMainDeployer().deploy(raaFile.toURI().toURL());
    }
@@ -282,6 +300,8 @@ class EmbeddedJCA implements Embedded
       if (url == null)
          throw new IllegalArgumentException("Resource is null");
 
+      log.debugf("Deploying: %s", url);
+
       kernel.getMainDeployer().deploy(url);
    }
 
@@ -298,7 +318,36 @@ class EmbeddedJCA implements Embedded
       if (!started)
          throw new IllegalStateException("Container not started");
 
+      log.debugf("Undeploying: %s", url);
+
       kernel.getMainDeployer().undeploy(url);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void undeploy(Descriptor descriptor) throws Throwable
+   {
+      if (descriptor == null)
+         throw new IllegalArgumentException("Descriptor is null");
+
+      if (descriptor.getDescriptorName() == null)
+         throw new IllegalArgumentException("Descriptor name is null");
+
+      if (!(descriptor instanceof InputStreamDescriptor))
+         throw new IllegalArgumentException("Only InputStreamDescriptor is supported");
+
+      if (!started)
+         throw new IllegalStateException("Container not started");
+
+      File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
+      File descriptorFile = new File(parentDirectory, descriptor.getDescriptorName());
+
+      log.debugf("Undeploying: %s", descriptorFile);
+
+      kernel.getMainDeployer().undeploy(descriptorFile.toURI().toURL());
+
+      recursiveDelete(descriptorFile);
    }
 
    /**
@@ -317,7 +366,9 @@ class EmbeddedJCA implements Embedded
       File parentDirectory = new File(SecurityActions.getSystemProperty("java.io.tmpdir"));
       File raaFile = new File(parentDirectory, raa.getName());
 
-      if (!shrinkwrapDeployments.contains(raaFile))
+      log.debugf("Undeploying: %s", raaFile);
+
+      if (shrinkwrapDeployments == null || !shrinkwrapDeployments.contains(raaFile))
          throw new IOException(raa.getName() + " not deployed");
 
       kernel.getMainDeployer().undeploy(raaFile.toURI().toURL());
@@ -340,6 +391,9 @@ class EmbeddedJCA implements Embedded
          throw new IllegalArgumentException("Name is null");
 
       URL url = cl.getResource(name);
+
+      log.debugf("Undeploying: %s", url);
+
       kernel.getMainDeployer().undeploy(url);
    }
 

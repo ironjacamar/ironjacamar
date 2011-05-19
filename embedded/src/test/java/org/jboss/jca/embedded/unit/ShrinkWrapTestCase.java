@@ -129,8 +129,8 @@ public class ShrinkWrapTestCase
                     TestConnectionInterface.class, TestManagedConnection.class, 
                     TestManagedConnectionFactory.class, TestResourceAdapter.class);
 
-      raa.addLibrary(ja);
-      raa.addManifestResource("simple.rar/META-INF/ra.xml", "ra.xml");
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource("simple.rar/META-INF/ra.xml", "ra.xml");
 
       try
       {

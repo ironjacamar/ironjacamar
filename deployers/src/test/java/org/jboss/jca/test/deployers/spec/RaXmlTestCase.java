@@ -22,15 +22,15 @@
 
 package org.jboss.jca.test.deployers.spec;
 
-import org.jboss.jca.embedded.arquillian.ArquillianJCATestUtils;
+import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import javax.annotation.Resource;
 import javax.resource.cci.ConnectionFactory;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,24 +51,36 @@ public class RaXmlTestCase
    //-------------------------------------------------------------------------------------||
    //---------------------- GIVEN --------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
+
    /**
     * Define the deployment
     * @return The deployment archive
     * @throws Exception in case of errors
     */
-   @Deployment
-   public static ResourceAdapterArchive createDeployment() throws Exception
+   @Deployment(order = 1)
+   public static ResourceAdapterArchive createArchive() throws Exception
    {
       String archiveName = "ra16out.rar";
       String packageName = "org.jboss.jca.test.deployers.spec.rars.ra16out";
       ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName, packageName);
-      raa.addManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
-      raa.addManifestResource("ra16out-ra.xml", "ra16out-ra.xml");
+      raa.addAsManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
+      raa.addAsManifestResource("ra16out-ra.xml", "ra16out-ra.xml");
 
-      ResourceAdapterArchive external = ShrinkWrap.create(ResourceAdapterArchive.class, "complex_" + archiveName);
-      external.add(raa, "/");
-      external.addResource("ra16out-ra.xml", "resource-adapters-ra.xml");
-      return external;
+      return raa;
+   }
+
+   /**
+    * Define the deployment
+    * @return The deployment archive
+    * @throws Exception in case of errors
+    */
+   @Deployment(order = 2)
+   public static Descriptor createDescriptor() throws Exception
+   {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      InputStreamDescriptor isd = new InputStreamDescriptor("ra16out-ra.xml", 
+                                                            cl.getResourceAsStream("ra16out-ra.xml"));
+      return isd;
    }
 
    //-------------------------------------------------------------------------------------||

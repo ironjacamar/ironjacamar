@@ -70,7 +70,7 @@ public class ConnectorTestCase
          HelloWorldConnectionFactoryImpl.class, 
          HelloWorldConnection.class, 
          HelloWorldConnectionImpl.class);
-      raa.addLibrary(ja);
+      raa.addAsLibrary(ja);
 
       return raa;
    }

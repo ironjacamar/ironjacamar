@@ -31,6 +31,7 @@ import org.jboss.jca.validator.rules.base.BaseCciConnectionFactory;
  */
 public class ConnectionFactoryWithWrongConstructor extends BaseCciConnectionFactory
 {
+   private static final long serialVersionUID = 1L;
 
    /**
     * Constructor just to hide default constructor

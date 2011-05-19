@@ -36,7 +36,7 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -80,8 +80,8 @@ public class ArquillianTestCase
                     TestConnectionInterface.class, TestManagedConnection.class, 
                     TestManagedConnectionFactory.class, TestResourceAdapter.class);
 
-      raa.addLibrary(ja);
-      raa.addManifestResource("simple.rar/META-INF/ra.xml", "ra.xml");
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource("simple.rar/META-INF/ra.xml", "ra.xml");
 
       return raa;
    }

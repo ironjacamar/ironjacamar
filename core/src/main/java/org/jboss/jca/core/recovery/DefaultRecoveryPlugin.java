@@ -58,8 +58,8 @@ public class DefaultRecoveryPlugin implements RecoveryPlugin
          try
          {
             Method method = c.getClass().getMethod("isValid", new Class[] {int.class});
-            method.setAccessible(true);
-            Boolean b = (Boolean)method.invoke(c, new Object[] {new Integer(5)});
+            SecurityActions.setAccessible(method, true);
+            Boolean b = (Boolean)method.invoke(c, new Object[] {Integer.valueOf(5)});
             return b.booleanValue();
          }
          catch (Throwable t)
@@ -97,7 +97,7 @@ public class DefaultRecoveryPlugin implements RecoveryPlugin
             try
             {
                Method method = c.getClass().getMethod("close", (Class<?>)null);
-               method.setAccessible(true);
+               SecurityActions.setAccessible(method, true);
                method.invoke(c, (Object)null);
             }
             catch (Throwable t)

@@ -38,6 +38,7 @@ import javax.resource.Referenceable;
  */
 public class TestAdminObject implements Serializable, Referenceable
 {
+   private static final long serialVersionUID = 1L;
    private String myStringProperty;
 
    /**

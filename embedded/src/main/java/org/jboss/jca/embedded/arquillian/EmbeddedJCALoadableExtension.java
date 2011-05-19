@@ -21,28 +21,30 @@
  */
 package org.jboss.jca.embedded.arquillian;
 
-import org.jboss.arquillian.container.spi.ConfigurationException;
-import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.core.spi.LoadableExtension;
 
 /**
- * {@link ContainerConfiguration} implementation specific to the EmbeddedJCA container
- * 
+ * Arquillian {@link LoadableExtension} adaptor for Embedded JCA
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @version $Revision: $
  */
-public class EmbeddedJCAContainerConfiguration implements ContainerConfiguration
+public class EmbeddedJCALoadableExtension implements LoadableExtension
 {
    /**
     * Constructor
     */
-   public EmbeddedJCAContainerConfiguration()
+   public EmbeddedJCALoadableExtension()
    {
+      
    }
 
    /**
     * {@inheritDoc}
-    *
     */
-   public void validate() throws ConfigurationException
+   public void register(ExtensionBuilder builder)
    {
+      builder.service(DeployableContainer.class, EmbeddedJCAContainer.class);
    }
 }

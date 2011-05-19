@@ -67,8 +67,8 @@ public abstract class TestCaseAbstract
       ja.addClasses(TestActivationSpec.class, TestManagedConnection.class, TestResourceAdapterRight.class,
             TestResourceAdapterWrong.class);
 
-      raa.addLibrary(ja);
-      raa.addManifestResource("validator/" + archiveName + "/META-INF/ra.xml", "ra.xml");
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource("validator/" + archiveName + "/META-INF/ra.xml", "ra.xml");
 
       return raa;
    }

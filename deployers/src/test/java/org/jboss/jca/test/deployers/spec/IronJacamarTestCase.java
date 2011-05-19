@@ -22,12 +22,10 @@
 
 package org.jboss.jca.test.deployers.spec;
 
-import org.jboss.jca.embedded.arquillian.ArquillianJCATestUtils;
-
 import javax.annotation.Resource;
 import javax.resource.cci.ConnectionFactory;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
@@ -60,8 +58,8 @@ public class IronJacamarTestCase
       String archiveName = "ra15outironjacamar.rar";
       String packageName = "org.jboss.jca.test.deployers.spec.rars.ra15out";
       ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName, packageName);
-      raa.addManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
-      raa.addManifestResource(archiveName + "/META-INF/ironjacamar.xml", "ironjacamar.xml");
+      raa.addAsManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
+      raa.addAsManifestResource(archiveName + "/META-INF/ironjacamar.xml", "ironjacamar.xml");
 
       return raa;
    }

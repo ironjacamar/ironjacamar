@@ -191,13 +191,13 @@ public class TestCodeGen extends AbstractCodeGen
       out.write(");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("raa.addLibrary(ja);");
+      out.write("raa.addAsLibrary(ja);");
       writeEol(out);
       writeEol(out);
       if (!def.isUseAnnotation())
       {
          writeIndent(out, indent + 1);
-         out.write("raa.addManifestResource(\"META-INF/ra.xml\", \"ra.xml\");");
+         out.write("raa.addAsManifestResource(\"META-INF/ra.xml\", \"ra.xml\");");
          writeEol(out);
          writeEol(out);
       }

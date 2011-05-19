@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,30 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.embedded.arquillian;
 
-import org.jboss.arquillian.container.spi.ConfigurationException;
-import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
+package org.jboss.jca.core.recovery;
+
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * {@link ContainerConfiguration} implementation specific to the EmbeddedJCA container
- * 
+ * Privileged Blocks
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EmbeddedJCAContainerConfiguration implements ContainerConfiguration
-{
+class SecurityActions
+{ 
    /**
     * Constructor
     */
-   public EmbeddedJCAContainerConfiguration()
+   private SecurityActions()
    {
    }
 
    /**
-    * {@inheritDoc}
-    *
+    * Invoke setAccessible on a method
+    * @param m The method
+    * @param value The value
     */
-   public void validate() throws ConfigurationException
+   static void setAccessible(final Method m, final boolean value)
    {
+      AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      {
+         public Object run()
+         {
+            m.setAccessible(value);
+            return null;
+         }
+      });
    }
 }
