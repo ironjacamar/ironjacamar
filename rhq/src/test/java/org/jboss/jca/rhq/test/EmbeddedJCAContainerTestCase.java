@@ -25,10 +25,16 @@ import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
+import java.net.URL;
+
+import javax.naming.InitialContext;
+
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * EmbeddedJCAContainerTestCase
@@ -50,7 +56,46 @@ public class EmbeddedJCAContainerTestCase
    public void testGetManagementRepository() throws Throwable
    {
       ManagementRepository manRepo = embedded.lookup("ManagementRepository", ManagementRepository.class);
-      Assert.assertNotNull(manRepo);
+      assertNotNull(manRepo);
+   }
+   
+   /**
+    * Tests jndi bindings when undeploy rar resources.
+    * 
+    * @throws Throwable the exception
+    */
+   @Test
+   @Ignore
+   public void testUnDeployRAR() throws Throwable
+   {
+      URL deployedUrl = XATestCase.class.getResource("/xa.rar");
+      embedded.deploy(deployedUrl);
+      
+      InitialContext context = new InitialContext();
+      assertNotNull(context.lookup("java:/eis/XA"));
+      assertNotNull(context.lookup("java:/XAAdminObjectImpl"));
+      
+      embedded.undeploy(deployedUrl);
+      try
+      {
+         context.lookup("java:/eis/XA");
+         fail("ConnectionFactory of: java:/eis/XA should be unboundded.");
+      }
+      catch (Exception e)
+      {
+         assertEquals(javax.naming.NameNotFoundException.class, e.getClass());
+      }
+      
+      try
+      {
+         context.lookup("java:/XAAdminObjectImpl");
+         fail("AdminObject of: java:/XAAdminObjectImpl should be unboundded.");
+      }
+      catch (Exception e)
+      {
+         assertEquals(javax.naming.NameNotFoundException.class, e.getClass());
+      }
+      
    }
 
    /**
