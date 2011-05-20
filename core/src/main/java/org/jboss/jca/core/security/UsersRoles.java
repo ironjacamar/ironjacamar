@@ -24,6 +24,7 @@ package org.jboss.jca.core.security;
 
 import org.jboss.jca.core.spi.security.Callback;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -179,12 +180,18 @@ public class UsersRoles implements Callback
       {
          if (usersProperties != null)
          {
-            if (trace)
-               log.trace("users.properties: Using file: " + usersProperties);
+            File f = new File(usersProperties);
 
-            is = new FileInputStream(usersProperties);
+            if (f.exists())
+            {
+               if (trace)
+                  log.trace("users.properties: Using file: " + usersProperties);
+
+               is = new FileInputStream(f);
+            }
          }
-         else
+
+         if (is == null)
          {
             if (trace)
                log.trace("users.properties: Using classloader");
@@ -241,16 +248,24 @@ public class UsersRoles implements Callback
          }
       }
 
+      is = null;
+
       try
       {
          if (rolesProperties != null)
          {
-            if (trace)
-               log.trace("roles.properties: Using file: " + rolesProperties);
+            File f = new File(rolesProperties);
 
-            is = new FileInputStream(rolesProperties);
+            if (f.exists())
+            {
+               if (trace)
+                  log.trace("roles.properties: Using file: " + rolesProperties);
+
+               is = new FileInputStream(f);
+            }
          }
-         else
+
+         if (is == null)
          {
             if (trace)
                log.trace("roles.properties: Using classloader");
