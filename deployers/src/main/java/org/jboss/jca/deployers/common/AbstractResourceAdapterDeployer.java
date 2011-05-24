@@ -609,7 +609,7 @@ public abstract class AbstractResourceAdapterDeployer
          URL url, String deploymentName, boolean activateDeployment,
          List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
          List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
-         Object[] aos, String[] aoJndiNames,
+         List<Object> aos, List<String> aoJndiNames,
          org.jboss.jca.core.api.management.Connector mgtConnector)
       throws DeployException
    {
@@ -622,8 +622,6 @@ public abstract class AbstractResourceAdapterDeployer
             List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminObjects();
             if (aoMetas.size() > 0)
             {
-               aos = new Object[aoMetas.size()];
-               aoJndiNames = new String[aoMetas.size()];
 
                for (int i = 0; i < aoMetas.size(); i++)
                {
@@ -679,8 +677,8 @@ public abstract class AbstractResourceAdapterDeployer
                                     jndiName = names[0];
                                  }
 
-                                 aos[i] = ao;
-                                 aoJndiNames[i] = jndiName;
+                                 aos.add(ao);
+                                 aoJndiNames.add(jndiName);
 
                                  org.jboss.jca.core.api.management.AdminObject mgtAo =
                                     new org.jboss.jca.core.api.management.AdminObject(ao);
@@ -776,10 +774,10 @@ public abstract class AbstractResourceAdapterDeployer
          String resourceAdapterKey = null;
          List<Validate> archiveValidationObjects = new ArrayList<Validate>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
-         Object[] cfs = null;
-         String[] cfJndiNames = null;
-         Object[] aos = null;
-         String[] aoJndiNames = null;
+         List<Object> cfs = new ArrayList<Object>();
+         List<String> cfJndiNames = new ArrayList<String>();
+         List<Object> aos = new ArrayList<Object>();
+         List<String> aoJndiNames = new ArrayList<String>();
          List<XAResourceRecovery> recoveryModules = new ArrayList<XAResourceRecovery>(1);
 
          // Check metadata for JNDI information and activate explicit
@@ -1098,8 +1096,8 @@ public abstract class AbstractResourceAdapterDeployer
                            }
 
                            bindConnectionFactory(url, deploymentName, cf, jndiName);
-                           cfs = new Object[]{cf};
-                           cfJndiNames = new String[]{jndiName};
+                           cfs.add(cf);
+                           cfJndiNames.add(jndiName);
 
                            cm.setJndiName(jndiName);
 
@@ -1120,10 +1118,12 @@ public abstract class AbstractResourceAdapterDeployer
                         }
                         else
                         {
-                           cfJndiNames = bindConnectionFactory(url, deploymentName, cf);
-                           cfs = new Object[]{cf};
+                           String[] bindCfJndiNames = bindConnectionFactory(url, deploymentName, cf);
+                           
+                           cfs.add(cf);
+                           cfJndiNames.addAll(Arrays.asList(bindCfJndiNames));
 
-                           cm.setJndiName(cfJndiNames[0]);
+                           cm.setJndiName(bindCfJndiNames[0]);
 
                            String poolName = null;
                            if (cdRaXml != null)
@@ -1136,7 +1136,7 @@ public abstract class AbstractResourceAdapterDeployer
                            }
 
                            if (poolName == null)
-                              poolName = cfJndiNames[0];
+                              poolName = cfJndiNames.get(0);
                            
                            jndiName = poolName;
                            pool.setName(poolName);
@@ -1182,8 +1182,8 @@ public abstract class AbstractResourceAdapterDeployer
                   List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
                   if (cdMetas.size() > 0)
                   {
-                     cfs = new Object[cdMetas.size()];
-                     cfJndiNames = new String[cdMetas.size()];
+                     cfs = new ArrayList<Object>();
+                     cfJndiNames = new ArrayList<String>();
 
                      for (int cdIndex = 0; cdIndex < cdMetas.size(); cdIndex++)
                      {
@@ -1557,8 +1557,8 @@ public abstract class AbstractResourceAdapterDeployer
                                        }
 
                                        bindConnectionFactory(url, deploymentName, cf, jndiName);
-                                       cfs[cdIndex] = cf;
-                                       cfJndiNames[cdIndex] = jndiName;
+                                       cfs.add(cf);
+                                       cfJndiNames.add(jndiName);
 
                                        cm.setJndiName(jndiName);
 
@@ -1579,10 +1579,11 @@ public abstract class AbstractResourceAdapterDeployer
                                     }
                                     else
                                     {
-                                       cfJndiNames = bindConnectionFactory(url, deploymentName, cf);
-                                       cfs = new Object[]{cf};
+                                       String[] bindCfJndiNames = bindConnectionFactory(url, deploymentName, cf);
+                                       cfs.add(cf);
+                                       cfJndiNames.addAll(Arrays.asList(bindCfJndiNames));
 
-                                       cm.setJndiName(cfJndiNames[0]);
+                                       cm.setJndiName(bindCfJndiNames[0]);
 
                                        String poolName = null;
                                        if (cdRaXml != null)
@@ -1595,7 +1596,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        }
 
                                        if (poolName == null)
-                                          poolName = cfJndiNames[0];
+                                          poolName = cfJndiNames.get(0);
 
                                        jndiName = poolName;
                                        pool.setName(poolName);
@@ -1740,10 +1741,15 @@ public abstract class AbstractResourceAdapterDeployer
             log.debug("Activated: " + url.toExternalForm());
          }
 
+         Object[] aoObjs = aos.toArray(new Object[aos.size()]);
+         String[] aoJndis = aoJndiNames.toArray(new String[aoJndiNames.size()]);
+         Object[] cfObjs = cfs.toArray(new Object[cfs.size()]);
+         String[] cfJndis = cfJndiNames.toArray(new String[cfJndiNames.size()]);
+         
          return new CommonDeployment(url, deploymentName, activateDeployment,
                                      resourceAdapter, resourceAdapterKey,
-                                     cfs, cfJndiNames,
-                                     aos, aoJndiNames,
+                                     cfObjs, cfJndis,
+                                     aoObjs, aoJndis,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
                                      mgtConnector, null, cl, log);
 
