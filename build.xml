@@ -136,7 +136,7 @@
   <property name="version.jboss.slf4j.logmanager" value="1.0.0.CR3"/>
   <property name="version.jboss.stdio" value="1.0.0.CR3"/>
   <property name="version.jboss.threads" value="2.0.0.CR7"/>
-  <property name="version.jboss.ts" value="4.15.0.Final"/>
+  <property name="version.jboss.ts" value="4.15.1.Final"/>
   <property name="version.jboss.ts.spi" value="7.0.0.CR1"/>
   <property name="version.jdepend" value="2.9.1"/>
   <property name="version.jetty" value="7.4.0.v20110414"/>
