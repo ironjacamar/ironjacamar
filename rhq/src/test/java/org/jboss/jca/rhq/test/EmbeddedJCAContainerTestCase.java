@@ -31,7 +31,6 @@ import javax.naming.InitialContext;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -65,7 +64,6 @@ public class EmbeddedJCAContainerTestCase
     * @throws Throwable the exception
     */
    @Test
-   @Ignore
    public void testUnDeployRAR() throws Throwable
    {
       URL deployedUrl = XATestCase.class.getResource("/xa.rar");
