@@ -89,7 +89,10 @@ public class CciConnCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("package " + def.getRaPackage() + ";");
+      else
+         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
       writeEol(out);
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
@@ -118,7 +121,7 @@ public class CciConnCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getCciConnClass();
+      return def.getMcfDefs().get(getNumOfMcf()).getCciConnClass();
    }
    
    /**
@@ -281,7 +284,7 @@ public class CciConnCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getConnMetaClass() + "();");
+      out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getConnMetaClass() + "();");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

@@ -83,7 +83,7 @@ public class BaseProfile implements Profile
       if (def.isSupportOutbound())
          generateIronjacamarXml(def, def.getOutputDir());
       
-      if (def.isGenMbean() && !def.isUseCciConnection())
+      if (def.isGenMbean() && !def.getMcfDefs().get(0).isUseCciConnection())
       {
          generateMBeanCode(def);
          generateMbeanXml(def, def.getOutputDir());
@@ -100,6 +100,7 @@ public class BaseProfile implements Profile
       if (def.isUseRa())
       {
          generateClassCode(def, "Ra");
+         generateClassCode(def, "RaMeta");
       }
       if (def.isGenAdminObject())
       {
@@ -120,24 +121,29 @@ public class BaseProfile implements Profile
    {
       if (def.isSupportOutbound())
       {
-         generateClassCode(def, "Mcf");
-         generateClassCode(def, "Mc");
-         generateClassCode(def, "McMeta");
-   
-         if (!def.isUseCciConnection())
+         if (def.getMcfDefs() == null)
+            throw new IllegalStateException("Should define at least one mcf class");
+         
+         for (int num = 0; num < def.getMcfDefs().size(); num++)
          {
-            generateClassCode(def, "CfInterface");
-            generateClassCode(def, "Cf");
-            generateClassCode(def, "ConnInterface");
-            generateClassCode(def, "ConnImpl");
-         }
-         else
-         {
-            generateClassCode(def, "CciConn");
-            generateClassCode(def, "CciConnFactory");
-            generateClassCode(def, "ConnMeta");
-            generateClassCode(def, "RaMeta");
-            generateClassCode(def, "ConnSpec");
+            generateMultiMcfClassCode(def, "Mcf", num);
+            generateMultiMcfClassCode(def, "Mc", num);
+            generateMultiMcfClassCode(def, "McMeta", num);
+      
+            if (!def.getMcfDefs().get(num).isUseCciConnection())
+            {
+               generateMultiMcfClassCode(def, "CfInterface", num);
+               generateMultiMcfClassCode(def, "Cf", num);
+               generateMultiMcfClassCode(def, "ConnInterface", num);
+               generateMultiMcfClassCode(def, "ConnImpl", num);
+            }
+            else
+            {
+               generateMultiMcfClassCode(def, "CciConn", num);
+               generateMultiMcfClassCode(def, "CciConnFactory", num);
+               generateMultiMcfClassCode(def, "ConnMeta", num);
+               generateMultiMcfClassCode(def, "ConnSpec", num);
+            }
          }
       }
    }
@@ -210,6 +216,50 @@ public class BaseProfile implements Profile
          
          codeGen.generate(def, fw);
          
+         fw.flush();
+         fw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+   }
+   
+   /**
+    * generate multi mcf class code
+    * @param def Definition 
+    * @param className class name 
+    * @param num number of order
+    */
+   void generateMultiMcfClassCode(Definition def, String className, int num)
+   {
+      if (className == null || className.equals(""))
+         return;
+      if (num < 0 || num + 1 > def.getMcfDefs().size())
+         return;
+      try
+      {
+
+         String clazzName = this.getClass().getPackage().getName() + ".code." + className + "CodeGen";
+
+         String javaFile = (String)McfDef.class.getMethod(
+               "get" + className + "Class").invoke(def.getMcfDefs().get(num), (Object[])null) + ".java";
+         FileWriter fw = null;
+         if (def.getMcfDefs().size() == 1)
+            fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
+         else
+            fw = Utils.createSrcFile(javaFile, def.getRaPackage() + ".mcf" + num, def.getOutputDir());
+         
+         Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+         AbstractCodeGen codeGen = (AbstractCodeGen)clazz.newInstance();
+         codeGen.setNumOfMcf(num);
+         
+         codeGen.generate(def, fw);
+
          fw.flush();
          fw.close();
       }

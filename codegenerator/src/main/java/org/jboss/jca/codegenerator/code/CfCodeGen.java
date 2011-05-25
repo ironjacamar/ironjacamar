@@ -44,7 +44,8 @@ public class CfCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements " + def.getCfInterfaceClass());
+      out.write("public class " + getClassName(def) + " implements " + 
+         def.getMcfDefs().get(getNumOfMcf()).getCfInterfaceClass());
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       
@@ -76,7 +77,7 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("/** ManagedConnectionFactory */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private " + def.getMcfClass() + " mcf;");
+      out.write("private " + def.getMcfDefs().get(getNumOfMcf()).getMcfClass() + " mcf;");
       writeEol(out);
       writeEol(out);
       
@@ -108,7 +109,8 @@ public class CfCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "(" + def.getMcfClass() + " mcf, ConnectionManager cxManager)");
+      out.write("public " + getClassName(def) + "(" + def.getMcfDefs().get(getNumOfMcf()).getMcfClass() + 
+         " mcf, ConnectionManager cxManager)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("this.mcf = mcf;");
@@ -132,7 +134,10 @@ public class CfCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("package " + def.getRaPackage() + ";");
+      else
+         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
       writeEol(out);
       writeEol(out);
       out.write("import java.util.logging.Logger;");
@@ -158,7 +163,7 @@ public class CfCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getCfClass();
+      return def.getMcfDefs().get(getNumOfMcf()).getCfClass();
    }
    
    /**
@@ -180,7 +185,7 @@ public class CfCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return " + def.getConnInterfaceClass() + " instance");
+      out.write(" * @return " + def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + " instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @exception ResourceException Thrown if a connection can't be obtained");
@@ -193,13 +198,15 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("@Override");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException");
+      out.write("public " + def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + 
+         " getConnection() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.finest(\"getConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return (" + def.getConnInterfaceClass() + ")connectionManager.allocateConnection(mcf, null);");
+      out.write("return (" + def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + 
+         ")connectionManager.allocateConnection(mcf, null);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

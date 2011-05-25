@@ -49,18 +49,19 @@ public class McfCodeGen extends PropsCodeGen
       int indent = 1;
       if (def.isUseAnnotation())
       {
-         if (!def.isUseCciConnection())
+         if (!def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
          {
-            out.write("@ConnectionDefinition(connectionFactory = " + def.getCfInterfaceClass() + ".class,");
+            out.write("@ConnectionDefinition(connectionFactory = " + 
+               def.getMcfDefs().get(getNumOfMcf()).getCfInterfaceClass() + ".class,");
             writeEol(out);
             writeIndent(out, indent);
-            out.write("connectionFactoryImpl = " + def.getCfClass() + ".class,");
+            out.write("connectionFactoryImpl = " + def.getMcfDefs().get(getNumOfMcf()).getCfClass() + ".class,");
             writeEol(out);
             writeIndent(out, indent);
-            out.write("connection = " + def.getConnInterfaceClass() + ".class,");
+            out.write("connection = " + def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + ".class,");
             writeEol(out);
             writeIndent(out, indent);
-            out.write("connectionImpl = " + def.getConnImplClass() + ".class)");
+            out.write("connectionImpl = " + def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + ".class)");
             writeEol(out);
          }
          else
@@ -68,20 +69,21 @@ public class McfCodeGen extends PropsCodeGen
             out.write("@ConnectionDefinition(connectionFactory = ConnectionFactory.class,");
             writeEol(out);
             writeIndent(out, indent);
-            out.write("connectionFactoryImpl = " + def.getCciConnFactoryClass() + ".class,");
+            out.write("connectionFactoryImpl = " + 
+               def.getMcfDefs().get(getNumOfMcf()).getCciConnFactoryClass() + ".class,");
             writeEol(out);
             
             writeIndent(out, indent);
             out.write("connection = Connection.class,");
             writeEol(out);
             writeIndent(out, indent);
-            out.write("connectionImpl = " + def.getCciConnClass() + ".class)");
+            out.write("connectionImpl = " + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + ".class)");
             writeEol(out);
          }
       }
 
       out.write("public class " + getClassName(def) + " implements ManagedConnectionFactory");
-      if (def.isImplRaAssociation())
+      if (def.getMcfDefs().get(getNumOfMcf()).isImplRaAssociation())
       {
          out.write(", ResourceAdapterAssociation");
       }
@@ -103,7 +105,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
       writeEol(out);
       writeEol(out);
-      if (def.isImplRaAssociation())
+      if (def.getMcfDefs().get(getNumOfMcf()).isImplRaAssociation())
       {
          writeIndent(out, indent);
          out.write("/** The resource adapter */");
@@ -130,7 +132,7 @@ public class McfCodeGen extends PropsCodeGen
       writeConnectionFactory(def, out, indent);
       writeManagedConnection(def, out, indent);
       writeLogWriter(def, out, indent);
-      if (def.isImplRaAssociation())
+      if (def.getMcfDefs().get(getNumOfMcf()).isImplRaAssociation())
       {
          writeResourceAdapter(def, out, indent);
       }
@@ -150,7 +152,10 @@ public class McfCodeGen extends PropsCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("package " + def.getRaPackage() + ";");
+      else
+         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
       writeEol(out);
       writeEol(out);
       out.write("import java.io.PrintWriter;");
@@ -167,7 +172,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       
-      if (def.isUseCciConnection())
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
       {
          out.write("import javax.resource.cci.Connection;");
          writeEol(out);
@@ -208,7 +213,7 @@ public class McfCodeGen extends PropsCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getMcfClass();
+      return def.getMcfDefs().get(getNumOfMcf()).getMcfClass();
    }
    
    /**
@@ -219,7 +224,7 @@ public class McfCodeGen extends PropsCodeGen
    @Override
    public List<ConfigPropType> getConfigProps(Definition def)
    {
-      return def.getMcfConfigProps();
+      return def.getMcfDefs().get(getNumOfMcf()).getMcfConfigProps();
    }
    
    /**
@@ -262,10 +267,10 @@ public class McfCodeGen extends PropsCodeGen
       out.write("log.finest(\"createConnectionFactory()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      if (def.isUseCciConnection())
-         out.write("return new " + def.getCciConnFactoryClass() + "(cxManager);");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getCciConnFactoryClass() + "(cxManager);");
       else
-         out.write("return new " + def.getCfClass() + "(this, cxManager);");
+         out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getCfClass() + "(this, cxManager);");
       
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -345,7 +350,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("log.finest(\"createManagedConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getMcClass() + "(this);");
+      out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getMcClass() + "(this);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -400,7 +405,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("ManagedConnection mc = (ManagedConnection)it.next();");
       writeEol(out);
       writeIndent(out, indent + 2);
-      out.write("if (mc instanceof " + def.getMcClass() + ")");
+      out.write("if (mc instanceof " + def.getMcfDefs().get(getNumOfMcf()).getMcClass() + ")");
       writeLeftCurlyBracket(out, indent + 2);
       writeIndent(out, indent + 3);
       out.write("result = mc;");

@@ -47,7 +47,8 @@ public class ConnImplCodeGen extends AbstractCodeGen
    public void writeClassBody(Definition def, Writer out) throws IOException
    {
 
-      out.write("public class " + getClassName(def) + " implements " + def.getConnInterfaceClass());
+      out.write("public class " + getClassName(def) + " implements " + 
+         def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass());
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
       writeIndent(out, indent);
@@ -62,7 +63,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write("/** ManagedConnection */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private " + def.getMcClass() + " mc;");
+      out.write("private " + def.getMcfDefs().get(getNumOfMcf()).getMcClass() + " mc;");
       writeEol(out);
       writeEol(out);
       
@@ -70,7 +71,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write("/** ManagedConnectionFactory */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private " + def.getMcfClass() + " mcf;");
+      out.write("private " + def.getMcfDefs().get(getNumOfMcf()).getMcfClass() + " mcf;");
       writeEol(out);
       writeEol(out);
       
@@ -82,10 +83,10 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write(" * Default constructor");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param mc " + def.getMcClass());
+      out.write(" * @param mc " + def.getMcfDefs().get(getNumOfMcf()).getMcClass());
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @param mcf " + def.getMcfClass());
+      out.write(" * @param mcf " + def.getMcfDefs().get(getNumOfMcf()).getMcfClass());
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -93,7 +94,8 @@ public class ConnImplCodeGen extends AbstractCodeGen
       
       writeIndent(out, indent);
       out.write("public " + getClassName(def) + "(" + 
-         def.getMcClass() + " mc, " + def.getMcfClass() + " mcf)");
+         def.getMcfDefs().get(getNumOfMcf()).getMcClass() + " mc, " + 
+         def.getMcfDefs().get(getNumOfMcf()).getMcfClass() + " mcf)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("this.mc = mc;");
@@ -116,7 +118,10 @@ public class ConnImplCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("package " + def.getRaPackage() + ";");
+      else
+         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
       writeEol(out);
       writeEol(out);
       out.write("import java.util.logging.Logger;");
@@ -132,7 +137,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getConnImplClass();
+      return def.getMcfDefs().get(getNumOfMcf()).getConnImplClass();
    }
    
    /**
@@ -144,11 +149,11 @@ public class ConnImplCodeGen extends AbstractCodeGen
     */
    private void writeMethod(Definition def, Writer out, int indent) throws IOException
    {
-      if (def.isDefineMethodInConnection())
+      if (def.getMcfDefs().get(getNumOfMcf()).isDefineMethodInConnection())
       {
-         if (def.getMethods().size() > 0)
+         if (def.getMcfDefs().get(getNumOfMcf()).getMethods().size() > 0)
          {
-            for (MethodForConnection method : def.getMethods())
+            for (MethodForConnection method : def.getMcfDefs().get(getNumOfMcf()).getMethods())
             {
                writeIndent(out, indent);
                out.write("/**");

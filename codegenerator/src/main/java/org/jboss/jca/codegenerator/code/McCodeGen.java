@@ -69,7 +69,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("/** ManagedConnectionFactory */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private " + def.getMcfClass() + " mcf;");
+      out.write("private " + def.getMcfDefs().get(getNumOfMcf()).getMcfClass() + " mcf;");
       writeEol(out);
       writeEol(out);
       
@@ -104,7 +104,7 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("public " + getClassName(def) + "(" + def.getMcfClass() + " mcf)");
+      out.write("public " + getClassName(def) + "(" + def.getMcfDefs().get(getNumOfMcf()).getMcfClass() + " mcf)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("this.mcf = mcf;");
@@ -139,7 +139,10 @@ public class McCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("package " + def.getRaPackage() + ";");
+      else
+         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
       writeEol(out);
       writeEol(out);
       out.write("import java.io.PrintWriter;");
@@ -182,7 +185,7 @@ public class McCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getMcClass();
+      return def.getMcfDefs().get(getNumOfMcf()).getMcClass();
    }
    
    /**
@@ -232,7 +235,10 @@ public class McCodeGen extends AbstractCodeGen
       out.write("log.finest(\"getConnection()\");");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("connection = new " + def.getConnImplClass() + "(this, mcf);");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write("connection = new " + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + "();");
+      else
+         out.write("connection = new " + def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + "(this, mcf);");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return connection;");
@@ -420,7 +426,11 @@ public class McCodeGen extends AbstractCodeGen
       out.write(" */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public void closeHandle(" + def.getConnInterfaceClass() + " handle)");
+      out.write("public void closeHandle(");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + " handle)");
+      else
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + " handle)");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);");
@@ -614,7 +624,7 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getMcMetaClass() + "();");
+      out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getMcMetaClass() + "();");
 
       writeRightCurlyBracket(out, indent);
       writeEol(out);

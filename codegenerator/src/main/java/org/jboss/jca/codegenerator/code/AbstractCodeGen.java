@@ -36,6 +36,9 @@ import java.util.Locale;
  */
 public abstract class AbstractCodeGen extends BaseGen
 {
+   /** num of mcf */
+   private int numOfMcf = 0;
+   
    /**
     * generate code
     * @param def Definition 
@@ -242,6 +245,28 @@ public abstract class AbstractCodeGen extends BaseGen
       
       writeRightCurlyBracket(out, indent);
       writeEol(out);
+   }
+
+
+   /**
+    * Set the numOfMcf.
+    * 
+    * @param numOfMcf The numOfMcf to set.
+    */
+   public void setNumOfMcf(int numOfMcf)
+   {
+      this.numOfMcf = numOfMcf;
+   }
+
+
+   /**
+    * Get the numOfMcf.
+    * 
+    * @return the numOfMcf.
+    */
+   public int getNumOfMcf()
+   {
+      return numOfMcf;
    }
 
 }

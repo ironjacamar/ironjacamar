@@ -91,7 +91,10 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("package " + def.getRaPackage() + ";");
+      else
+         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
       writeEol(out);
       writeEol(out);
       out.write("import javax.naming.NamingException;");
@@ -114,6 +117,10 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write("import javax.resource.spi.ConnectionManager;");
       writeEol(out);
       writeEol(out);
+      if (def.getMcfDefs().size() != 1)
+         out.write("import " + def.getRaPackage() + ".*;");
+      writeEol(out);
+      writeEol(out);
    }
    
    /**
@@ -124,7 +131,7 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getCciConnFactoryClass();
+      return def.getMcfDefs().get(getNumOfMcf()).getCciConnFactoryClass();
    }
    
    /**
@@ -163,7 +170,8 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getCciConnClass() + "(new " + def.getConnSpecClass() + "());");
+      out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass()
+         + "(new " + def.getMcfDefs().get(getNumOfMcf()).getConnSpecClass() + "());");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -198,7 +206,7 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getCciConnClass() + "(connSpec);");
+      out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + "(connSpec);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

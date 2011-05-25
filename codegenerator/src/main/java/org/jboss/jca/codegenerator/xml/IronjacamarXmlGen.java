@@ -60,7 +60,7 @@ public class IronjacamarXmlGen extends AbstractXmlGen
       getPropsString(strRaProps, raPropsList, 2);
       
       StringBuilder strMcfProps = new StringBuilder();
-      List<ConfigPropType> mcfPropsList = def.getMcfConfigProps();
+      List<ConfigPropType> mcfPropsList = def.getMcfDefs().get(0).getMcfConfigProps();
       getPropsString(strMcfProps, mcfPropsList, 6);
       
       StringBuilder strAo = new StringBuilder();
@@ -85,7 +85,10 @@ public class IronjacamarXmlGen extends AbstractXmlGen
       Map<String, String> map = new HashMap<String, String>();
       map.put("ra.props", strRaProps.toString());
       map.put("transaction", def.getSupportTransaction());
-      map.put("mcf.class", def.getRaPackage() + "." + def.getMcfClass());
+      if (def.getMcfDefs().size() == 1)
+         map.put("mcf.class", def.getRaPackage() + "." + def.getMcfDefs().get(0).getMcfClass());
+      else
+         map.put("mcf.class", def.getRaPackage() + ".mcf0." + def.getMcfDefs().get(0).getMcfClass());
       map.put("jndi.name", "java:/eis/" + def.getDefaultValue());
       map.put("pool.name", def.getDefaultValue());
       map.put("mcf.props", strMcfProps.toString());

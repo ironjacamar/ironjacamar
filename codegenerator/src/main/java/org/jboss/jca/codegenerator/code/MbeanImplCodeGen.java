@@ -120,9 +120,10 @@ public class MbeanImplCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
 
-      out.write("import " + def.getRaPackage() + "." + def.getConnInterfaceClass() + ";");
-      writeEol(out);
-      out.write("import " + def.getRaPackage() + "." + def.getCfInterfaceClass() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("import " + def.getRaPackage() + ".*;");
+      else
+         out.write("import " + def.getRaPackage() + ".mcf0.*;");
       writeEol(out);
       writeEol(out);
    }
@@ -197,11 +198,11 @@ public class MbeanImplCodeGen extends AbstractCodeGen
     */
    private void writeMethods(Definition def, Writer out, int indent) throws IOException
    {
-      if (def.isDefineMethodInConnection())
+      if (def.getMcfDefs().get(0).isDefineMethodInConnection())
       {
-         if (def.getMethods().size() > 0)
+         if (def.getMcfDefs().get(0).getMethods().size() > 0)
          {
-            for (MethodForConnection method : def.getMethods())
+            for (MethodForConnection method : def.getMcfDefs().get(0).getMethods())
             {
                writeIndent(out, indent);
                out.write("/**");
@@ -301,8 +302,8 @@ public class MbeanImplCodeGen extends AbstractCodeGen
     */
    private void writeGetConnection(Definition def, Writer out, int indent) throws IOException
    {
-      String connInterface = def.getConnInterfaceClass();
-      String cfInterface = def.getCfInterfaceClass();
+      String connInterface = def.getMcfDefs().get(0).getConnInterfaceClass();
+      String cfInterface = def.getMcfDefs().get(0).getCfInterfaceClass();
       
       writeIndent(out, indent);
       out.write("/**");

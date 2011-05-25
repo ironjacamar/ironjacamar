@@ -50,11 +50,11 @@ public class MbeanInterfaceCodeGen extends AbstractCodeGen
       out.write("public interface " + getClassName(def));
       writeLeftCurlyBracket(out, 0);
            
-      if (def.isDefineMethodInConnection())
+      if (def.getMcfDefs().get(0).isDefineMethodInConnection())
       {
-         if (def.getMethods().size() > 0)
+         if (def.getMcfDefs().get(0).getMethods().size() > 0)
          {
-            for (MethodForConnection method : def.getMethods())
+            for (MethodForConnection method : def.getMcfDefs().get(0).getMethods())
             {
                writeIndent(out, indent);
                out.write("/**");

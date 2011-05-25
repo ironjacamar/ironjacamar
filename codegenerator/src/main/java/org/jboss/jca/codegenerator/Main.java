@@ -300,94 +300,125 @@ public class Main
       //outbound
       if (def.isSupportOutbound())
       {
-         System.out.print(rb.getString("mcf.class.name"));
-         System.out.print("[" + def.getMcfClass() + "]: ");
-         String mcfClassName = in.readLine();
-         if (mcfClassName != null && !mcfClassName.equals(""))
+         List<McfDef> mcfDefs = new ArrayList<McfDef>();
+         def.setMcfDefs(mcfDefs);
+         int mcfID = 1;
+         boolean moreMcf;
+         do
          {
-            def.setMcfClass(mcfClassName);
-            setDefaultValue(def, mcfClassName, "ManagedConnectionfactory");
-            setDefaultValue(def, mcfClassName, "Mcf");
-         }
-  
-         List<ConfigPropType> mcfProps = inputProperties("mcf", in, false);
-         def.setMcfConfigProps(mcfProps);
+            McfDef mcfdef = new McfDef(mcfID, def);
+            
+            System.out.print(rb.getString("mcf.class.name"));
+            System.out.print("[" + mcfdef.getMcfClass() + "]: ");
+            String mcfClassName = in.readLine();
+            if (mcfClassName != null && !mcfClassName.equals(""))
+            {
+               mcfdef.setMcfClass(mcfClassName);
+               setDefaultValue(def, mcfClassName, "ManagedConnectionfactory");
+               setDefaultValue(def, mcfClassName, "Mcf");
+            }
+            else
+            {
+               if (mcfID > 1)
+               {
+                  //make mcf classname different to make deployment successful
+                  mcfdef.setMcfClass(def.getDefaultValue() + mcfID + "ManagedConnectionfactory");
+               } 
+            }
 
-         if (def.isUseRa())
-         {
-            System.out.print(rb.getString("mcf.impl.raa") + "[Y]: ");
-            String raAssociation = in.readLine();
-            if (raAssociation == null || raAssociation.equals(""))
-               def.setImplRaAssociation(true);
-            else
+     
+            List<ConfigPropType> mcfProps = inputProperties("mcf", in, false);
+            mcfdef.setMcfConfigProps(mcfProps);
+   
+            if (def.isUseRa())
             {
-               if (raAssociation.equals("Y") || raAssociation.equals("y") || raAssociation.equals("Yes"))
-                  def.setImplRaAssociation(true);
+               System.out.print(rb.getString("mcf.impl.raa") + "[Y]: ");
+               String raAssociation = in.readLine();
+               if (raAssociation == null || raAssociation.equals(""))
+                  mcfdef.setImplRaAssociation(true);
                else
-                  def.setImplRaAssociation(false);
+               {
+                  if (raAssociation.equals("Y") || raAssociation.equals("y") || raAssociation.equals("Yes"))
+                     mcfdef.setImplRaAssociation(true);
+                  else
+                     mcfdef.setImplRaAssociation(false);
+               }
             }
-         }
-         
-         System.out.print(rb.getString("mc.class.name"));
-         System.out.print("[" + def.getMcClass() + "]: ");
-         String mcClassName = in.readLine();
-         if (mcClassName != null && !mcClassName.equals(""))
-            def.setMcClass(mcClassName);
-         
-         System.out.print(rb.getString("mcf.use.cci") + "[N]: ");
-         String useCciConnection = in.readLine();
-         if (useCciConnection == null)
-            def.setUseCciConnection(false);
-         else
-         {
-            if (useCciConnection.equals("Y") || useCciConnection.equals("y") || useCciConnection.equals("Yes"))
-               def.setUseCciConnection(true);
-            else
-               def.setUseCciConnection(false);
-         }
-         
-         if (!def.isUseCciConnection())
-         {
-            System.out.print(rb.getString("cf.interface.name"));
-            System.out.print("[" + def.getCfInterfaceClass() + "]: ");
-            String cfInterfaceName = in.readLine();
-            if (cfInterfaceName != null && !cfInterfaceName.equals(""))
-               def.setCfInterfaceClass(cfInterfaceName);
             
-            System.out.print(rb.getString("cf.class.name"));
-            System.out.print("[" + def.getCfClass() + "]: ");
-            String cfClassName = in.readLine();
-            if (cfClassName != null && !cfClassName.equals(""))
-               def.setCfClass(cfClassName);
-  
-            System.out.print(rb.getString("conn.interface.name"));
-            System.out.print("[" + def.getConnInterfaceClass() + "]: ");
-            String connInterfaceName = in.readLine();
-            if (connInterfaceName != null && !connInterfaceName.equals(""))
-               def.setConnInterfaceClass(connInterfaceName);
+            System.out.print(rb.getString("mc.class.name"));
+            System.out.print("[" + mcfdef.getMcClass() + "]: ");
+            String mcClassName = in.readLine();
+            if (mcClassName != null && !mcClassName.equals(""))
+               mcfdef.setMcClass(mcClassName);
             
-            System.out.print(rb.getString("conn.class.name"));
-            System.out.print("[" + def.getConnImplClass() + "]: ");
-            String connImplName = in.readLine();
-            if (connImplName != null && !connImplName.equals(""))
-               def.setConnImplClass(connImplName);
-            
-            System.out.print(rb.getString("connection.method.support") + "[N]: ");
-            String supportMethod = in.readLine();
-            if (supportMethod == null)
-               def.setDefineMethodInConnection(false);
+            System.out.print(rb.getString("mcf.use.cci") + "[N]: ");
+            String useCciConnection = in.readLine();
+            if (useCciConnection == null)
+               mcfdef.setUseCciConnection(false);
             else
             {
-               if (supportMethod.equals("Y") || supportMethod.equals("y") || supportMethod.equals("Yes"))
-                  def.setDefineMethodInConnection(true);
+               if (useCciConnection.equals("Y") || useCciConnection.equals("y") || useCciConnection.equals("Yes"))
+                  mcfdef.setUseCciConnection(true);
                else
-                  def.setDefineMethodInConnection(false);
+                  mcfdef.setUseCciConnection(false);
             }
-            if (def.isDefineMethodInConnection())
+            
+            if (!mcfdef.isUseCciConnection())
             {
-               def.setMethods(inputMethod(in));
+               System.out.print(rb.getString("cf.interface.name"));
+               System.out.print("[" + mcfdef.getCfInterfaceClass() + "]: ");
+               String cfInterfaceName = in.readLine();
+               if (cfInterfaceName != null && !cfInterfaceName.equals(""))
+                  mcfdef.setCfInterfaceClass(cfInterfaceName);
+               
+               System.out.print(rb.getString("cf.class.name"));
+               System.out.print("[" + mcfdef.getCfClass() + "]: ");
+               String cfClassName = in.readLine();
+               if (cfClassName != null && !cfClassName.equals(""))
+                  mcfdef.setCfClass(cfClassName);
+     
+               System.out.print(rb.getString("conn.interface.name"));
+               System.out.print("[" + mcfdef.getConnInterfaceClass() + "]: ");
+               String connInterfaceName = in.readLine();
+               if (connInterfaceName != null && !connInterfaceName.equals(""))
+                  mcfdef.setConnInterfaceClass(connInterfaceName);
+               
+               System.out.print(rb.getString("conn.class.name"));
+               System.out.print("[" + mcfdef.getConnImplClass() + "]: ");
+               String connImplName = in.readLine();
+               if (connImplName != null && !connImplName.equals(""))
+                  mcfdef.setConnImplClass(connImplName);
+               
+               System.out.print(rb.getString("connection.method.support") + "[N]: ");
+               String supportMethod = in.readLine();
+               if (supportMethod == null)
+                  mcfdef.setDefineMethodInConnection(false);
+               else
+               {
+                  if (supportMethod.equals("Y") || supportMethod.equals("y") || supportMethod.equals("Yes"))
+                     mcfdef.setDefineMethodInConnection(true);
+                  else
+                     mcfdef.setDefineMethodInConnection(false);
+               }
+               if (mcfdef.isDefineMethodInConnection())
+               {
+                  mcfdef.setMethods(inputMethod(in));
+               }
+            }
+            mcfDefs.add(mcfdef);
+            mcfID++;
+            moreMcf = false;
+
+            if (def.getVersion().equals("1.5") || def.getVersion().equals("1.6"))
+            {
+               System.out.print(rb.getString("more.mcf") + "[N]: ");
+               String inputMoreMcf = in.readLine();
+               if (inputMoreMcf != null && 
+                  (inputMoreMcf.equals("Y") || inputMoreMcf.equals("y") || inputMoreMcf.equals("Yes")))
+                  moreMcf = true;
             }
          }
+         while (moreMcf);
       }
 
       //inbound
@@ -495,7 +526,7 @@ public class Main
          }
       }
       
-      if (!def.isUseCciConnection())
+      if (!def.getVersion().equals("1.0") && !def.getMcfDefs().get(0).isUseCciConnection())
       {
          //generate mbean classes
          System.out.print(rb.getString("gen.mbean") + "[Y]: ");

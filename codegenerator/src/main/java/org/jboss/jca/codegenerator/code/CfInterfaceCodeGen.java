@@ -61,7 +61,10 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("package " + def.getRaPackage() + ";");
+      else
+         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
       writeEol(out);
       writeEol(out);
       out.write("import java.io.Serializable;");
@@ -82,7 +85,7 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getCfInterfaceClass();
+      return def.getMcfDefs().get(getNumOfMcf()).getCfInterfaceClass();
    }
    
    /**
@@ -104,7 +107,7 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return " + def.getConnInterfaceClass() + " instance");
+      out.write(" * @return " + def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + " instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @exception ResourceException Thrown if a connection can't be obtained");
@@ -114,7 +117,8 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("public " + def.getConnInterfaceClass() + " getConnection() throws ResourceException;");
+      out.write("public " + def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + 
+         " getConnection() throws ResourceException;");
       writeEol(out);
    }
 }

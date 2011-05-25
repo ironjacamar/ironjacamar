@@ -51,11 +51,11 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
       out.write("public interface " + getClassName(def));
       writeLeftCurlyBracket(out, 0);
       
-      if (def.isDefineMethodInConnection())
+      if (def.getMcfDefs().get(getNumOfMcf()).isDefineMethodInConnection())
       {
-         if (def.getMethods().size() > 0)
+         if (def.getMcfDefs().get(getNumOfMcf()).getMethods().size() > 0)
          {
-            for (MethodForConnection method : def.getMethods())
+            for (MethodForConnection method : def.getMcfDefs().get(getNumOfMcf()).getMethods())
             {
                writeIndent(out, indent);
                out.write("/**");
@@ -157,7 +157,10 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      out.write("package " + def.getRaPackage() + ";");
+      if (def.getMcfDefs().size() == 1)
+         out.write("package " + def.getRaPackage() + ";");
+      else
+         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
       writeEol(out);
       writeEol(out);
    }
@@ -170,6 +173,6 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return def.getConnInterfaceClass();
+      return def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass();
    }
 }

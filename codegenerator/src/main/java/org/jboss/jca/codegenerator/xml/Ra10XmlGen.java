@@ -115,27 +115,27 @@ public class Ra10XmlGen extends RaXmlGen
    {
       writeIndent(out, indent);
       out.write("<managedconnectionfactory-class>" + def.getRaPackage() + "." + 
-         def.getMcfClass() + "</managedconnectionfactory-class>");
+         def.getMcfDefs().get(0).getMcfClass() + "</managedconnectionfactory-class>");
       writeEol(out);
       writeEol(out);
 
-      if (!def.isUseCciConnection())
+      if (!def.getMcfDefs().get(0).isUseCciConnection())
       {
          writeIndent(out, indent);
          out.write("<connectionfactory-interface>" + def.getRaPackage() + "." + 
-            def.getCfInterfaceClass() + "</connectionfactory-interface>");
+            def.getMcfDefs().get(0).getCfInterfaceClass() + "</connectionfactory-interface>");
          writeEol(out);
          writeIndent(out, indent);
          out.write("<connectionfactory-impl-class>" + def.getRaPackage() + "." + 
-            def.getCfClass() + "</connectionfactory-impl-class>");
+            def.getMcfDefs().get(0).getCfClass() + "</connectionfactory-impl-class>");
          writeEol(out);
          writeIndent(out, indent);
          out.write("<connection-interface>" + def.getRaPackage() + "." + 
-            def.getConnInterfaceClass() + "</connection-interface>");
+            def.getMcfDefs().get(0).getConnInterfaceClass() + "</connection-interface>");
          writeEol(out);
          writeIndent(out, indent);
          out.write("<connection-impl-class>" + def.getRaPackage() + "." + 
-            def.getConnImplClass() + "</connection-impl-class>");
+            def.getMcfDefs().get(0).getConnImplClass() + "</connection-impl-class>");
          writeEol(out);
       }
       else
@@ -145,14 +145,14 @@ public class Ra10XmlGen extends RaXmlGen
          writeEol(out);
          writeIndent(out, indent);
          out.write("<connectionfactory-impl-class>" + def.getRaPackage() + "." + 
-            def.getCciConnFactoryClass() + "</connectionfactory-impl-class>");
+            def.getMcfDefs().get(0).getCciConnFactoryClass() + "</connectionfactory-impl-class>");
          writeEol(out);
          writeIndent(out, indent);
          out.write("<connection-interface>javax.resource.cci.Connection</connection-interface>");
          writeEol(out);
          writeIndent(out, indent);
          out.write("<connection-impl-class>" + def.getRaPackage() + "." + 
-            def.getCciConnClass() + "</connection-impl-class>");
+            def.getMcfDefs().get(0).getCciConnClass() + "</connection-impl-class>");
          writeEol(out);
       }
 
@@ -161,7 +161,7 @@ public class Ra10XmlGen extends RaXmlGen
       out.write("<transaction-support>" + def.getSupportTransaction() + "</transaction-support>");
       writeEol(out);
       
-      writeConfigPropsXml(def.getMcfConfigProps(), out, indent, false);
+      writeConfigPropsXml(def.getMcfDefs().get(0).getMcfConfigProps(), out, indent, false);
       
       writeIndent(out, indent);
       out.write("<reauthentication-support>" + def.isSupportReauthen() + "</reauthentication-support>");

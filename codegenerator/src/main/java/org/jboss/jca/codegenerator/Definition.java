@@ -64,12 +64,8 @@ public class Definition
    @XmlElement(name = "RaConfigProp") 
    private List<ConfigPropType> raConfigProps;
    
-   /** managed connection factory class name */
-   @XmlElement(name = "ManagedConnectionFactory")
-   private String mcfClass;
-   /** resource adapter configuration properties */
-   @XmlElement(name = "McfConfigProp") 
-   private List<ConfigPropType> mcfConfigProps;
+   /** mcf list */
+   private List<McfDef> mcfDefs;
    
    /** support transaction  */
    @XmlElement(name = "Transaction") 
@@ -84,42 +80,6 @@ public class Definition
    @XmlElement(name = "AuthenMechanism") 
    private List<AuthenMechanismType> authenMechanisms;
    
-   /** managed connection class name */
-   @XmlElement(name = "ManagedConnection")
-   private String mcClass;
-   /** connection interface name */
-   @XmlElement(name = "ConnectionInterface")
-   private String connInterfaceClass;
-   /** connection impl class name */
-   @XmlElement(name = "ConnectionImpl")
-   private String connImplClass;
-   /** connection factory interface name */
-   @XmlElement(name = "ConnectionFactoryInterface")
-   private String cfInterfaceClass;
-   /** connection factory class name */
-   @XmlElement(name = "ConnectionFactoryImpl")
-   private String cfClass;
-   
-   /** ResourceAdapterAssociation optional  */
-   @XmlElement(name = "ImplRaAssociation")
-   private boolean implRaAssociation;
-   /** ResourceAdapterAssociation optional  */
-   @XmlElement(name = "UseCciConnection")
-   private boolean useCciConnection;
-   
-   /** cci connection factory class name */
-   private String cciConnFactoryClass;
-   /** cci connection class name */
-   private String cciConnClass;
-   /** managed connection metadata class name */
-   private String mcMetaClass;
-   /** connection manage class name */
-   private String cmClass;
-   
-   /** connection metadata class name */
-   private String connMetaClass;
-   /** connection spec class name */
-   private String connSpecClass;
    /** resource adapter metadata class name */
    private String raMetaClass;
 
@@ -141,13 +101,6 @@ public class Definition
    /** Activation class name */
    @XmlElement(name = "Activation")
    private String activationClass;
-   
-   /** support self defined method in connection class  */
-   @XmlElement(name = "DefineMethod") 
-   private boolean defineMethodInConnection;
-   /** define methods */
-   @XmlElement(name = "Method") 
-   private List<MethodForConnection> methods;
 
    /** build  */
    @XmlElement(name = "build")
@@ -278,341 +231,25 @@ public class Definition
    }
 
    /**
-    * Set the mcfClass.
+    * Set the mcfDefs.
     * 
-    * @param mcfClass The mcfClass to set.
+    * @param mcfDefs The mcfDefs to set.
     */
-   public void setMcfClass(String mcfClass)
+   public void setMcfDefs(List<McfDef> mcfDefs)
    {
-      this.mcfClass = mcfClass;
+      this.mcfDefs = mcfDefs;
    }
 
    /**
-    * Get the mcfClass.
+    * Get the mcfDefs.
     * 
-    * @return the mcfClass.
+    * @return the mcfDefs.
     */
-   public String getMcfClass()
+   public List<McfDef> getMcfDefs()
    {
-      if (mcfClass == null || mcfClass.equals(""))
-      {
-         mcfClass = getDefaultValue() + "ManagedConnectionFactory";
-      }
-      return mcfClass;
-   }
-
-   /**
-    * Set the mcClass.
-    * 
-    * @param mcClass The mcClass to set.
-    */
-   public void setMcClass(String mcClass)
-   {
-      this.mcClass = mcClass;
-   }
-
-   /**
-    * Get the mcClass.
-    * 
-    * @return the mcClass.
-    */
-   public String getMcClass()
-   {
-      if (mcClass == null || mcClass.equals(""))
-      {
-         mcClass = getDefaultValue() + "ManagedConnection";
-      }
-      return mcClass;
-   }
-
-   /**
-    * Set the connInterfaceClass.
-    * 
-    * @param connInterfaceClass The connInterfaceClass to set.
-    */
-   public void setConnInterfaceClass(String connInterfaceClass)
-   {
-      this.connInterfaceClass = connInterfaceClass;
-   }
-
-   /**
-    * Get the connInterfaceClass.
-    * 
-    * @return the connInterfaceClass.
-    */
-   public String getConnInterfaceClass()
-   {
-      if (connInterfaceClass == null || connInterfaceClass.equals(""))
-      {
-         connInterfaceClass = getDefaultValue() + "Connection";
-      }
-      return connInterfaceClass;
-   }
-
-   /**
-    * Set the connImplClass.
-    * 
-    * @param connImplClass The connImplClass to set.
-    */
-   public void setConnImplClass(String connImplClass)
-   {
-      this.connImplClass = connImplClass;
-   }
-
-   /**
-    * Get the connImplClass.
-    * 
-    * @return the connImplClass.
-    */
-   public String getConnImplClass()
-   {
-      if (connImplClass == null || connImplClass.equals(""))
-      {
-         connImplClass = getDefaultValue() + "ConnectionImpl";
-      }
-      return connImplClass;
-   }
-
-   /**
-    * Set the mcfConfigProps.
-    * 
-    * @param mcfConfigProps The mcfConfigProps to set.
-    */
-   public void setMcfConfigProps(List<ConfigPropType> mcfConfigProps)
-   {
-      this.mcfConfigProps = mcfConfigProps;
-   }
-
-   /**
-    * Get the mcfConfigProps.
-    * 
-    * @return the mcfConfigProps.
-    */
-   public List<ConfigPropType> getMcfConfigProps()
-   {
-      return mcfConfigProps;
-   }
-
-   /**
-    * Set the implRaAssociation.
-    * 
-    * @param implRaAssociation The implRaAssociation to set.
-    */
-   public void setImplRaAssociation(boolean implRaAssociation)
-   {
-      this.implRaAssociation = implRaAssociation;
-   }
-
-   /**
-    * Get the implRaAssociation.
-    * 
-    * @return the implRaAssociation.
-    */
-   public boolean isImplRaAssociation()
-   {
-      return implRaAssociation;
-   }
-
-   /**
-    * Set the useCciConnection.
-    * 
-    * @param useCciConnection The useCciConnection to set.
-    */
-   public void setUseCciConnection(boolean useCciConnection)
-   {
-      this.useCciConnection = useCciConnection;
-   }
-
-   /**
-    * Get the useCciConnection.
-    * 
-    * @return the useCciConnection.
-    */
-   public boolean isUseCciConnection()
-   {
-      return useCciConnection;
+      return mcfDefs;
    }
    
-   /**
-    * Set the cciConnFactoryClass.
-    * 
-    * @param cciConnFactoryClass The cciConnFactoryClass to set.
-    */
-   public void setCciConnFactoryClass(String cciConnFactoryClass)
-   {
-      this.cciConnFactoryClass = cciConnFactoryClass;
-   }
-
-   /**
-    * Get the cciConnFactoryClass.
-    * 
-    * @return the cciConnFactoryClass.
-    */
-   public String getCciConnFactoryClass()
-   {
-      if (cciConnFactoryClass == null || cciConnFactoryClass.equals(""))
-         cciConnFactoryClass = getDefaultValue() + "CciConnectionFactory";
-      return cciConnFactoryClass;
-   }
-
-   /**
-    * Set the cciConnClass.
-    * 
-    * @param cciConnClass The cciConnClass to set.
-    */
-   public void setCciConnClass(String cciConnClass)
-   {
-      this.cciConnClass = cciConnClass;
-   }
-
-   /**
-    * Get the cciConnClass.
-    * 
-    * @return the cciConnClass.
-    */
-   public String getCciConnClass()
-   {
-      if (cciConnClass == null || cciConnClass.equals(""))
-         cciConnClass = getDefaultValue() + "CciConnection";
-      return cciConnClass;
-   }
-
-   /**
-    * Set the mcMetaClass.
-    * 
-    * @param mcMetaClass The mcMetaClass to set.
-    */
-   public void setMcMetaClass(String mcMetaClass)
-   {
-      this.mcMetaClass = mcMetaClass;
-   }
-
-   /**
-    * Get the mcMetaClass.
-    * 
-    * @return the mcMetaClass.
-    */
-   public String getMcMetaClass()
-   {
-      if (mcMetaClass == null || mcMetaClass.equals(""))
-         mcMetaClass = getDefaultValue() + "ManagedConnectionMetaData";
-      return mcMetaClass;
-   }
-
-   /**
-    * Set the cmClass.
-    * 
-    * @param cmClass The cmClass to set.
-    */
-   public void setCmClass(String cmClass)
-   {
-      this.cmClass = cmClass;
-   }
-
-   /**
-    * Get the cmClass.
-    * 
-    * @return the cmClass.
-    */
-   public String getCmClass()
-   {
-      if (cmClass == null || cmClass.equals(""))
-         cmClass = getDefaultValue() + "ConnectionManager";
-      return cmClass;
-   }
-
-   /**
-    * Set the cfClass.
-    * 
-    * @param cfClass The cfClass to set.
-    */
-   public void setCfClass(String cfClass)
-   {
-      this.cfClass = cfClass;
-   }
-
-   /**
-    * Get the cfClass.
-    * 
-    * @return the cfClass.
-    */
-   public String getCfClass()
-   {
-      if (cfClass == null || cfClass.equals(""))
-      {
-         cfClass =  getDefaultValue() + "ConnectionFactoryImpl";
-      }
-      return cfClass;
-   }
-
-   /**
-    * Set the cfInterfaceClass.
-    * 
-    * @param cfInterfaceClass The cfInterfaceClass to set.
-    */
-   public void setCfInterfaceClass(String cfInterfaceClass)
-   {
-      this.cfInterfaceClass = cfInterfaceClass;
-   }
-
-   /**
-    * Get the cfInterfaceClass.
-    * 
-    * @return the cfInterfaceClass.
-    */
-   public String getCfInterfaceClass()
-   {
-      if (cfInterfaceClass == null || cfInterfaceClass.equals(""))
-      {
-         cfInterfaceClass =  getDefaultValue() + "ConnectionFactory";
-      }
-      return cfInterfaceClass;
-   }
-
-   /**
-    * Set the connMetaClass.
-    * 
-    * @param connMetaClass The connMetaClass to set.
-    */
-   public void setConnMetaClass(String connMetaClass)
-   {
-      this.connMetaClass = connMetaClass;
-   }
-
-   /**
-    * Get the connMetaClass.
-    * 
-    * @return the connMetaClass.
-    */
-   public String getConnMetaClass()
-   {
-      if (connMetaClass == null || connMetaClass.equals(""))
-         connMetaClass = getDefaultValue() + "ConnectionMetaData";
-      return connMetaClass;
-   }
-
-   /**
-    * Set the connSpecClass.
-    * 
-    * @param connSpecClass The connSpecClass to set.
-    */
-   public void setConnSpecClass(String connSpecClass)
-   {
-      this.connSpecClass = connSpecClass;
-   }
-
-   /**
-    * Get the connSpecClass.
-    * 
-    * @return the connSpecClass.
-    */
-   public String getConnSpecClass()
-   {
-      if (connSpecClass == null || connSpecClass.equals(""))
-         connSpecClass = getDefaultValue() + "ConnectionSpec";
-      return connSpecClass;
-   }
-
    /**
     * Set the raMetaClass.
     * 
@@ -825,46 +462,6 @@ public class Definition
    public String getSupportTransaction()
    {
       return supportTransaction;
-   }
-
-   /**
-    * Set the defineMethodInConnection.
-    * 
-    * @param defineMethodInConnection The defineMethodInConnection to set.
-    */
-   public void setDefineMethodInConnection(boolean defineMethodInConnection)
-   {
-      this.defineMethodInConnection = defineMethodInConnection;
-   }
-
-   /**
-    * Get the defineMethodInConnection.
-    * 
-    * @return the defineMethodInConnection.
-    */
-   public boolean isDefineMethodInConnection()
-   {
-      return defineMethodInConnection;
-   }
-
-   /**
-    * Set the methods.
-    * 
-    * @param methods The methods to set.
-    */
-   public void setMethods(List<MethodForConnection> methods)
-   {
-      this.methods = methods;
-   }
-
-   /**
-    * Get the methods.
-    * 
-    * @return the methods.
-    */
-   public List<MethodForConnection> getMethods()
-   {
-      return methods;
    }
 
    /**

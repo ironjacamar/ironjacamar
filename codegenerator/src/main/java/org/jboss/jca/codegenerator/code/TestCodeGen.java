@@ -64,7 +64,7 @@ public class TestCodeGen extends AbstractCodeGen
       writeDeployment(def, out, indent);
       writeResource(def, out, indent);
       
-      if (def.isDefineMethodInConnection())
+      if (def.getMcfDefs().get(0).isDefineMethodInConnection())
       {
          writeTestMethod(def, out, indent);
       }
@@ -94,7 +94,7 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("import javax.annotation.Resource;");
       writeEol(out);
       writeEol(out);
-      out.write("import org.jboss.arquillian.api.Deployment;");
+      out.write("import org.jboss.arquillian.container.test.api.Deployment;");
       writeEol(out);
       out.write("import org.jboss.arquillian.junit.Arquillian;");
       writeEol(out);
@@ -112,6 +112,11 @@ public class TestCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import static org.junit.Assert.*;");
       writeEol(out);
+      writeEol(out);
+      if (def.getMcfDefs().size() == 1)
+         out.write("import " + def.getRaPackage() + ".*;");
+      else
+         out.write("import " + def.getRaPackage() + ".mcf0.*;");
       writeEol(out);
       writeEol(out);
    }
@@ -175,17 +180,21 @@ public class TestCodeGen extends AbstractCodeGen
       {
          out.write(def.getRaClass() + ".class, ");
       }
-      out.write(def.getMcfClass() + ".class, " + def.getMcClass() + ".class, ");
-      if (def.isUseCciConnection())
+      out.write(def.getMcfDefs().get(0).getMcfClass() + ".class, " + 
+         def.getMcfDefs().get(0).getMcClass() + ".class, ");
+      if (def.getMcfDefs().get(0).isUseCciConnection())
       {
-         out.write(def.getCciConnFactoryClass() + ".class, " + def.getCciConnFactoryClass() + ".class, " + 
-            def.getConnMetaClass() + ".class, " + def.getRaMetaClass() + ".class, " + 
-            def.getConnSpecClass() + ".class");
+         out.write(def.getMcfDefs().get(0).getCciConnFactoryClass() + ".class, " + 
+            def.getMcfDefs().get(0).getCciConnFactoryClass() + ".class, " + 
+            def.getMcfDefs().get(0).getConnMetaClass() + ".class, " + def.getRaMetaClass() + ".class, " + 
+            def.getMcfDefs().get(0).getConnSpecClass() + ".class");
       }
       else
       {
-         out.write(def.getCfInterfaceClass() + ".class, " + def.getCfClass() + ".class, " + 
-            def.getConnInterfaceClass() + ".class, " + def.getConnImplClass() + ".class");
+         out.write(def.getMcfDefs().get(0).getCfInterfaceClass() + ".class, " + 
+            def.getMcfDefs().get(0).getCfClass() + ".class, " + 
+            def.getMcfDefs().get(0).getConnInterfaceClass() + ".class, " + 
+            def.getMcfDefs().get(0).getConnImplClass() + ".class");
       }
       
       out.write(");");
@@ -224,7 +233,10 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("@Resource(mappedName = \"java:/eis/" + getClassName(def) + "\")");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private " + def.getCfInterfaceClass() + " connectionFactory;");
+      if (def.getMcfDefs().get(0).isUseCciConnection())
+         out.write("private javax.resource.cci.ConnectionFactory connectionFactory;");
+      else
+         out.write("private " + def.getMcfDefs().get(0).getCfInterfaceClass() + " connectionFactory;");
       writeEol(out);
       writeEol(out);
    }
@@ -264,7 +276,11 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("assertNotNull(connectionFactory);");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write(def.getConnInterfaceClass() + " connection = connectionFactory.getConnection();");
+      if (def.getMcfDefs().get(0).isUseCciConnection())
+         out.write("javax.resource.cci.Connection");
+      else
+         out.write(def.getMcfDefs().get(0).getConnInterfaceClass());
+      out.write(" connection = connectionFactory.getConnection();");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("assertNotNull(connection);");
@@ -283,7 +299,7 @@ public class TestCodeGen extends AbstractCodeGen
     */
    private void writeTestMethod(Definition def, Writer out, int indent) throws IOException
    {
-      for (MethodForConnection method : def.getMethods())
+      for (MethodForConnection method : def.getMcfDefs().get(0).getMethods())
       {
          writeIndent(out, indent);
          out.write("/**");
@@ -327,7 +343,11 @@ public class TestCodeGen extends AbstractCodeGen
          out.write("assertNotNull(connectionFactory);");
          writeEol(out);
          writeIndent(out, indent + 1);
-         out.write(def.getConnInterfaceClass() + " connection = connectionFactory.getConnection();");
+         if (def.getMcfDefs().get(0).isUseCciConnection())
+            out.write("javax.resource.cci.Connection");
+         else
+            out.write(def.getMcfDefs().get(0).getConnInterfaceClass());
+         out.write(" connection = connectionFactory.getConnection();");
          writeEol(out);
          writeIndent(out, indent + 1);
          out.write("assertNotNull(connection);");
