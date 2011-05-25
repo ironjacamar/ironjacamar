@@ -91,7 +91,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
    * enabled
    */
-   protected final Boolean enabled;
+   protected Boolean enabled;
 
    /**
    * jndiName
@@ -397,6 +397,12 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       else if (!validation.equals(other.validation))
          return false;
       return true;
+   }
+
+   @Override
+   public final void setEnabled(Boolean enabled)
+   {
+      this.enabled = enabled;
    }
 
 }

@@ -119,4 +119,11 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
     * @return The value
     */
    public String getDriver();
+
+   /**
+    * Set the enabled.
+    *
+    * @param enabled The enabled to set.
+    */
+   public void setEnabled(Boolean enabled);
 }
