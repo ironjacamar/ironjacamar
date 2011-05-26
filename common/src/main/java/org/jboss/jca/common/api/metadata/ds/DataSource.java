@@ -35,7 +35,11 @@ import java.util.Map;
  */
 public interface DataSource extends CommonDataSource
 {
-
+   /**
+    * Get the JTA setting.
+    * @return The value
+    */
+   public boolean isJTA();
 
    /**
     * Get the connectionUrl.
@@ -252,7 +256,12 @@ public interface DataSource extends CommonDataSource
       /** use-ccm attribute
       *
       */
-      USE_CCM("use-ccm");
+      USE_CCM("use-ccm"),
+
+      /**
+       * jta attribute
+       */
+      JTA("jta");
 
       private final String name;
 

@@ -423,15 +423,26 @@ public abstract class AbstractDsDeployer
          flushStrategy = ds.getPool().getFlushStrategy();
 
       // Select the correct connection manager
-      TransactionSupportLevel tsl = TransactionSupportLevel.LocalTransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager cm =
-         cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
-                                 ds.isUseCcm(), getCachedConnectionManager(),
-                                 flushStrategy,
-                                 allocationRetry, allocationRetryWaitMillis,
-                                 getTransactionIntegration(),
-                                 null, null, null, null, null);
+      ConnectionManager cm = null;
+
+      if (ds.isJTA())
+      {
+         cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
+                                      getSubjectFactory(securityDomain), securityDomain,
+                                      ds.isUseCcm(), getCachedConnectionManager(),
+                                      flushStrategy,
+                                      allocationRetry, allocationRetryWaitMillis,
+                                      getTransactionIntegration(),
+                                      null, null, null, null, null);
+      }
+      else
+      {
+         cm = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
+                                         getSubjectFactory(securityDomain), securityDomain,
+                                         ds.isUseCcm(), getCachedConnectionManager(),
+                                         flushStrategy, allocationRetry, allocationRetryWaitMillis);
+      }
 
       cm.setJndiName(jndiName);
 
@@ -855,6 +866,7 @@ public abstract class AbstractDsDeployer
          for (int i = 0; !found && i < methods.length; i++)
          {
             Method m = methods[i];
+            m.setAccessible(true);
 
             if (m.getName().equals(methodName) && m.getParameterTypes().length == 1)
             {

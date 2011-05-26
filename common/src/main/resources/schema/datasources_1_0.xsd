@@ -167,6 +167,15 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
+    <xs:attribute name="jta" type="xs:boolean" default="true" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Enable JTA integration
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attributeGroup ref="common-datasourceAttributes" />
   </xs:complexType>
   <xs:complexType name="xa-datasourceType">

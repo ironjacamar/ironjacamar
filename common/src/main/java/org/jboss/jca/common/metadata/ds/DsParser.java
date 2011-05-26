@@ -35,7 +35,6 @@ import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
-import org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.MetadataParser;
@@ -294,7 +293,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       boolean spy = false;
       boolean useCcm = true;
 
-      for (Attribute attribute : XaDataSource.Attribute.values())
+      for (XaDataSource.Attribute attribute : XaDataSource.Attribute.values())
       {
          switch (attribute)
          {
@@ -498,8 +497,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String jndiName = null;
       boolean spy = false;
       boolean useCcm = true;
+      boolean jta = true;
 
-      for (Attribute attribute : XaDataSource.Attribute.values())
+      for (DataSource.Attribute attribute : DataSource.Attribute.values())
       {
          switch (attribute)
          {
@@ -527,6 +527,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                useCcm = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
+            case JTA : {
+               jta = attributeAsBoolean(reader, attribute.getLocalName(), true);
+               break;
+            }
             default :
                break;
          }
@@ -545,7 +549,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                             connectionProperties, timeOutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                            enabled, jndiName, spy, useCcm, pool);
+                                            enabled, jndiName, spy, useCcm, jta, pool);
                }
                else
                {

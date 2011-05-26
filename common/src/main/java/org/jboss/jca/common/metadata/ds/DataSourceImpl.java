@@ -46,6 +46,8 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    /** The serialVersionUID */
    private static final long serialVersionUID = -5214100851560229431L;
 
+   private final boolean jta;
+
    private final String connectionUrl;
 
    private String driverClass;
@@ -79,17 +81,21 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param jndiName jndiName
     * @param spy spy
     * @param useccm useccm
+    * @param jta jta
     * @param pool pool
     * @throws ValidateException ValidateException
     */
    public DataSourceImpl(String connectionUrl, String driverClass, String driver,
-      TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, TimeOut timeOut,
-      DsSecurity security, Statement statement, Validation validation, String urlDelimiter,
-      String urlSelectorStrategyClassName, String newConnectionSql, boolean useJavaContext, String poolName,
-      boolean enabled, String jndiName, boolean spy, boolean useccm, CommonPool pool) throws ValidateException
+                         TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, 
+                         TimeOut timeOut, DsSecurity security, Statement statement, Validation validation, 
+                         String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
+                         boolean useJavaContext, String poolName, boolean enabled, String jndiName, 
+                         boolean spy, boolean useccm, boolean jta, CommonPool pool)
+      throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
             urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName, spy, useccm);
+      this.jta = jta;
       this.connectionUrl = connectionUrl;
       this.driverClass = driverClass;
       this.driver = driver;
@@ -105,6 +111,14 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       this.newConnectionSql = newConnectionSql;
       this.pool = pool;
       this.validate();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isJTA()
+   {
+      return jta;
    }
 
    /**

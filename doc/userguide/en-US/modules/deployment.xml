@@ -714,6 +714,12 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0\deploy
                   Enable the cached connection manager
                 </entry>
               </row>
+              <row>
+                <entry><code>jta</code></entry>
+                <entry>
+                  Enable JTA integration (only <code>&lt;datasource&gt;</code>)
+                </entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
