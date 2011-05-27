@@ -424,15 +424,22 @@ public class Main
       //inbound
       if (def.isSupportInbound())
       {
+         boolean defaultPackage = true;
          System.out.print(rb.getString("ml.interface.name"));
          System.out.print("[" + def.getMlClass() + "]: ");
          String mlClassName = in.readLine();
          if (mlClassName != null && !mlClassName.equals(""))
          {
             def.setMlClass(mlClassName);
-            setDefaultValue(def, mlClassName, "MessageListener");
-            setDefaultValue(def, mlClassName, "Ml");
+            if (mlClassName.indexOf(".") != -1)
+               defaultPackage = false;
+            else
+            {
+               setDefaultValue(def, mlClassName, "MessageListener");
+               setDefaultValue(def, mlClassName, "Ml");
+            }
          }
+         def.setDefaultPackageInbound(defaultPackage);
 
          System.out.print(rb.getString("as.class.name"));
          System.out.print("[" + def.getAsClass() + "]: ");
@@ -526,7 +533,9 @@ public class Main
          }
       }
       
-      if (!def.getVersion().equals("1.0") && !def.getMcfDefs().get(0).isUseCciConnection())
+      if (!def.getVersion().equals("1.0") && 
+         def.isSupportOutbound() &&
+         !def.getMcfDefs().get(0).isUseCciConnection())
       {
          //generate mbean classes
          System.out.print(rb.getString("gen.mbean") + "[Y]: ");

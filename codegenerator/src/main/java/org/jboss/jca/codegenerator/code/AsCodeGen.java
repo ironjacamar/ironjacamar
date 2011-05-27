@@ -48,8 +48,15 @@ public class AsCodeGen extends PropsCodeGen
    {
       if (def.isUseAnnotation())
       {
-         out.write("@Activation(messageListeners = { " + def.getRaPackage() + 
-            ".inflow." + def.getMlClass() + ".class })");
+         if (!def.isDefaultPackageInbound())
+         {
+            out.write("@Activation(messageListeners = { " + def.getMlClass() + ".class })");
+         }
+         else
+         {
+            out.write("@Activation(messageListeners = { " + def.getRaPackage() + 
+                  ".inflow." + def.getMlClass() + ".class })");
+         }
          writeEol(out);
       }
       out.write("public class " + getClassName(def) + " implements ActivationSpec");

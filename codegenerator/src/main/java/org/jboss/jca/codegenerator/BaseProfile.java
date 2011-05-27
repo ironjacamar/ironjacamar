@@ -83,7 +83,9 @@ public class BaseProfile implements Profile
       if (def.isSupportOutbound())
          generateIronjacamarXml(def, def.getOutputDir());
       
-      if (def.isGenMbean() && !def.getMcfDefs().get(0).isUseCciConnection())
+      if (def.isGenMbean() &&
+         def.isSupportOutbound() &&
+         !def.getMcfDefs().get(0).isUseCciConnection())
       {
          generateMBeanCode(def);
          generateMbeanXml(def, def.getOutputDir());
@@ -157,7 +159,8 @@ public class BaseProfile implements Profile
    {
       if (def.isSupportInbound())
       {
-         generateClassCode(def, "Ml", "inflow");
+         if (def.isDefaultPackageInbound())
+            generateClassCode(def, "Ml", "inflow");
          generateClassCode(def, "As", "inflow");
          generateClassCode(def, "Activation", "inflow");
          generatePackageHtml(def, def.getOutputDir(), "inflow");

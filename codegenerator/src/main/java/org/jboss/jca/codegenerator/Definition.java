@@ -101,6 +101,8 @@ public class Definition
    /** Activation class name */
    @XmlElement(name = "Activation")
    private String activationClass;
+   /** default package in inbound  */
+   private boolean defaultPackageInbound;
 
    /** build  */
    @XmlElement(name = "build")
@@ -670,5 +672,25 @@ public class Definition
    public boolean isAdminObjectImplRaAssociation()
    {
       return adminObjectImplRaAssociation;
+   }
+
+   /**
+    * Set the defaultPackageInbound.
+    * 
+    * @param defaultPackageInbound The defaultPackageInbound to set.
+    */
+   public void setDefaultPackageInbound(boolean defaultPackageInbound)
+   {
+      this.defaultPackageInbound = defaultPackageInbound;
+   }
+
+   /**
+    * Get the defaultPackageInbound.
+    * 
+    * @return the defaultPackageInbound.
+    */
+   public boolean isDefaultPackageInbound()
+   {
+      return defaultPackageInbound;
    }
 }

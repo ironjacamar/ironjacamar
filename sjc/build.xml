@@ -232,6 +232,12 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/lib">
+      <fileset dir="${lib.dir}/hornetq">
+        <include name="jboss-jms-api_1.1_spec.jar"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/system">
       <fileset dir="${target.dir}">
         <include name="*.war"/>

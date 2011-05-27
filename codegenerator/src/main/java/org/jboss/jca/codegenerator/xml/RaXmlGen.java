@@ -212,8 +212,15 @@ public abstract class RaXmlGen extends AbstractXmlGen
       out.write("<messagelistener>");
       writeEol(out);
       writeIndent(out, indent + 3);
-      out.write("<messagelistener-type>" + def.getRaPackage() + 
-         ".inflow." + def.getMlClass() + "</messagelistener-type>");
+      if (!def.isDefaultPackageInbound())
+      {
+         out.write("<messagelistener-type>" + def.getMlClass() + "</messagelistener-type>");
+      }
+      else
+      {
+         out.write("<messagelistener-type>" + def.getRaPackage() + 
+            ".inflow." + def.getMlClass() + "</messagelistener-type>");
+      }
       writeEol(out);
       writeIndent(out, indent + 3);
       out.write("<activationspec>");
