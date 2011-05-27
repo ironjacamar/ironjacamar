@@ -72,7 +72,7 @@ public class IronJacamarResourceComponent extends AbstractResourceComponent impl
       ResourcePackageDetails pkgDetail = report.getPackageDetails();
       ContentContext contentContext = getResourceContext().getContentContext();
       ContentServices contentServices = contentContext.getContentServices();
-      String tmpDir = System.getProperty("java.io.tmpdir");
+      String tmpDir = getUploadedDir();
       String fileName = pkgDetail.getFileName();
       if (!fileName.toLowerCase().endsWith(".rar") && !fileName.toLowerCase().endsWith("-ds.xml"))
       {

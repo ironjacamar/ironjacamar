@@ -387,5 +387,24 @@ public abstract class AbstractResourceComponent extends BaseResourceComponent
       }
       return null;
    }
+   
+   /**
+    * Gets Uploaded Dir.
+    * 
+    * @return directory where the RAR or -ds.xml will be uploaded to.
+    */
+   protected String getUploadedDir()
+   {
+      String uploadedDir = System.getProperty("jboss.server.temp.dir");
+      if (null == uploadedDir)
+      {
+         uploadedDir = System.getProperty("java.io.tmpdir");
+      }
+      if (null == uploadedDir)
+      {
+         uploadedDir = "/tmp";
+      }
+      return uploadedDir;
+   }
 
 }
