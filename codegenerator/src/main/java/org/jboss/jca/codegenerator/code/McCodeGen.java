@@ -155,6 +155,8 @@ public class McCodeGen extends AbstractCodeGen
       out.write("import java.util.logging.Logger;");
       writeEol(out);
       writeEol(out);
+      out.write("import javax.resource.NotSupportedException;");
+      writeEol(out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       out.write("import javax.resource.spi.ConnectionEvent;");
@@ -549,11 +551,19 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public LocalTransaction getLocalTransaction() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getLocalTransaction()\");");
-      writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write("return null;");
+      if (def.getSupportTransaction().equals("NoTransaction"))
+      {
+         writeIndent(out, indent + 1);
+         out.write("throw new NotSupportedException(\"LocalTransaction not supported\");");
+      }
+      else
+      {
+         writeIndent(out, indent + 1);
+         out.write("log.finest(\"getLocalTransaction()\");");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("return null;");
+      }
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -579,11 +589,20 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public XAResource getXAResource() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getXAResource()\");");
-      writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write("return null;");
+      if (def.getSupportTransaction().equals("NoTransaction"))
+      {
+         writeIndent(out, indent + 1);
+         out.write("throw new NotSupportedException(\"GetXAResource not supported not supported\");");
+      }
+      else
+      {
+         writeIndent(out, indent + 1);
+         out.write("log.finest(\"getXAResource()\");");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("return null;");
+      }
+
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
