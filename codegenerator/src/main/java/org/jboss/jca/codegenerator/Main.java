@@ -209,6 +209,11 @@ public class Main
             def.setSupportInbound(true);
          }
       }
+
+      //package name
+      System.out.print(rb.getString("package.name"));
+      String packageName = in.readLine();
+      def.setRaPackage(packageName);
       
       //transaction
       if (def.isSupportOutbound())
@@ -231,11 +236,23 @@ public class Main
          }
       }
       
-      //package name
-      System.out.print(rb.getString("package.name"));
-      String packageName = in.readLine();
-      def.setRaPackage(packageName);
-      
+      //reauthentication
+      if (def.isSupportOutbound() && !version.equals("1.0"))
+      {
+         System.out.print(rb.getString("support.reauthentication") + "[N]: ");
+         String reauth = in.readLine();
+         if (reauth == null || reauth.equals(""))
+            def.setSupportReauthen(false);
+         else if (reauth.equals("Y") || reauth.equals("y") || reauth.equals("Yes"))
+         {
+            def.setSupportReauthen(true);
+         }
+         else
+         {
+            def.setSupportReauthen(false);
+         }
+      }
+
       //support annotation
       if (version.equals("1.6"))
       {
