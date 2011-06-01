@@ -334,18 +334,7 @@ public class Main
                setDefaultValue(def, mcfClassName, mcfID + "ManagedConnectionfactory");
                setDefaultValue(def, mcfClassName, mcfID + "Mcf");
             }
-            /*
-            else
-            {
-               if (mcfID > 1)
-               {
-                  //make mcf classname different to make deployment successful
-                  mcfdef.setMcfClass(def.getDefaultValue() + mcfID + "ManagedConnectionfactory");
-               } 
-            }
-            */
 
-     
             List<ConfigPropType> mcfProps = inputProperties("mcf", in, false);
             mcfdef.setMcfConfigProps(mcfProps);
    
