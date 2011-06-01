@@ -258,15 +258,15 @@ public abstract class RaXmlGen extends AbstractXmlGen
       writeIndent(out, indent);
       out.write("<outbound-resourceadapter>");
       writeEol(out);
-      String mcfPackage;
+
       for (int num = 0; num < def.getMcfDefs().size(); num++)
       {
-         mcfPackage = def.getMcfDefs().size() == 1 ? "" : "mcf" + num + ".";
+
          writeIndent(out, indent + 1);
          out.write("<connection-definition>");
          writeEol(out);
          writeIndent(out, indent + 2);
-         out.write("<managedconnectionfactory-class>" + def.getRaPackage() + "." + mcfPackage +
+         out.write("<managedconnectionfactory-class>" + def.getRaPackage() + "." +
             def.getMcfDefs().get(num).getMcfClass() + "</managedconnectionfactory-class>");
          writeEol(out);
          writeConfigPropsXml(def.getMcfDefs().get(num).getMcfConfigProps(), out, indent + 2, false);
@@ -274,19 +274,19 @@ public abstract class RaXmlGen extends AbstractXmlGen
          if (!def.getMcfDefs().get(num).isUseCciConnection())
          {
             writeIndent(out, indent + 2);
-            out.write("<connectionfactory-interface>" + def.getRaPackage() + "." +  mcfPackage +
+            out.write("<connectionfactory-interface>" + def.getRaPackage() + "." +
                def.getMcfDefs().get(num).getCfInterfaceClass() + "</connectionfactory-interface>");
             writeEol(out);
             writeIndent(out, indent + 2);
-            out.write("<connectionfactory-impl-class>" + def.getRaPackage() + "." +  mcfPackage +
+            out.write("<connectionfactory-impl-class>" + def.getRaPackage() + "." +
                def.getMcfDefs().get(num).getCfClass() + "</connectionfactory-impl-class>");
             writeEol(out);
             writeIndent(out, indent + 2);
-            out.write("<connection-interface>" + def.getRaPackage() + "." +  mcfPackage +
+            out.write("<connection-interface>" + def.getRaPackage() + "." +
                def.getMcfDefs().get(num).getConnInterfaceClass() + "</connection-interface>");
             writeEol(out);
             writeIndent(out, indent + 2);
-            out.write("<connection-impl-class>" + def.getRaPackage() + "." +  mcfPackage +
+            out.write("<connection-impl-class>" + def.getRaPackage() + "." +
                def.getMcfDefs().get(num).getConnImplClass() + "</connection-impl-class>");
             writeEol(out);
          }
@@ -297,14 +297,14 @@ public abstract class RaXmlGen extends AbstractXmlGen
                "</connectionfactory-interface>");
             writeEol(out);
             writeIndent(out, indent + 2);
-            out.write("<connectionfactory-impl-class>" + def.getRaPackage() + "." +  mcfPackage +
+            out.write("<connectionfactory-impl-class>" + def.getRaPackage() + "." +
                def.getMcfDefs().get(num).getCciConnFactoryClass() + "</connectionfactory-impl-class>");
             writeEol(out);
             writeIndent(out, indent + 2);
             out.write("<connection-interface>javax.resource.cci.Connection</connection-interface>");
             writeEol(out);
             writeIndent(out, indent + 2);
-            out.write("<connection-impl-class>" + def.getRaPackage() + "." +  mcfPackage +
+            out.write("<connection-impl-class>" + def.getRaPackage() + "." +
                def.getMcfDefs().get(num).getCciConnClass() + "</connection-impl-class>");
             writeEol(out);
          }
