@@ -250,12 +250,9 @@ public class BaseProfile implements Profile
          String clazzName = this.getClass().getPackage().getName() + ".code." + className + "CodeGen";
 
          String javaFile = (String)McfDef.class.getMethod(
-               "get" + className + "Class").invoke(def.getMcfDefs().get(num), (Object[])null) + ".java";
+            "get" + className + "Class").invoke(def.getMcfDefs().get(num), (Object[])null) + ".java";
          FileWriter fw = null;
-         if (def.getMcfDefs().size() == 1)
-            fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
-         else
-            fw = Utils.createSrcFile(javaFile, def.getRaPackage() + ".mcf" + num, def.getOutputDir());
+         fw = Utils.createSrcFile(javaFile, def.getRaPackage(), def.getOutputDir());
          
          Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
          AbstractCodeGen codeGen = (AbstractCodeGen)clazz.newInstance();

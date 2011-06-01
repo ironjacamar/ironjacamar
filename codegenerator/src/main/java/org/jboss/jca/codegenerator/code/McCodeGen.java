@@ -139,10 +139,8 @@ public class McCodeGen extends AbstractCodeGen
    @Override
    public void writeImport(Definition def, Writer out) throws IOException
    {
-      if (def.getMcfDefs().size() == 1)
-         out.write("package " + def.getRaPackage() + ";");
-      else
-         out.write("package " + def.getRaPackage() + ".mcf" + getNumOfMcf() + ";");
+      out.write("package " + def.getRaPackage() + ";");
+
       writeEol(out);
       writeEol(out);
       out.write("import java.io.PrintWriter;");

@@ -5,12 +5,6 @@
 ${ra.props}
   <transaction-support>${transaction}</transaction-support>
   
-  <connection-definitions>
-    <connection-definition class-name="${mcf.class}" 
-      enabled="true" jndi-name="${jndi.name}" 
-      use-java-context="true" pool-name="${pool.name}">
-${mcf.props}
-    </connection-definition>
-  </connection-definitions>
+${mcfs}
 ${adminobjects}
 </ironjacamar>

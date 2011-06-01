@@ -113,10 +113,8 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("import static org.junit.Assert.*;");
       writeEol(out);
       writeEol(out);
-      if (def.getMcfDefs().size() == 1)
-         out.write("import " + def.getRaPackage() + ".*;");
-      else
-         out.write("import " + def.getRaPackage() + ".mcf0.*;");
+
+      out.write("import " + def.getRaPackage() + ".*;");
       writeEol(out);
       writeEol(out);
    }
@@ -211,6 +209,10 @@ public class TestCodeGen extends AbstractCodeGen
          writeEol(out);
       }
       writeIndent(out, indent + 1);
+      out.write("raa.addAsManifestResource(\"META-INF/ironjacamar.xml\", \"ironjacamar.xml\");");
+      writeEol(out);
+      writeEol(out);
+      writeIndent(out, indent + 1);
       out.write("return raa;");
       
       writeRightCurlyBracket(out, indent);
@@ -230,7 +232,7 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("/** Resource */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("@Resource(mappedName = \"java:/eis/" + getClassName(def) + "\")");
+      out.write("@Resource(mappedName = \"java:/eis/" + def.getMcfDefs().get(0).getMcfClass() + "\")");
       writeEol(out);
       writeIndent(out, indent);
       if (def.getMcfDefs().get(0).isUseCciConnection())

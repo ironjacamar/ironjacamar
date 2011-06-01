@@ -120,10 +120,8 @@ public class MbeanImplCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
 
-      if (def.getMcfDefs().size() == 1)
-         out.write("import " + def.getRaPackage() + ".*;");
-      else
-         out.write("import " + def.getRaPackage() + ".mcf0.*;");
+      out.write("import " + def.getRaPackage() + ".*;");
+
       writeEol(out);
       writeEol(out);
    }

@@ -59,9 +59,29 @@ public class IronjacamarXmlGen extends AbstractXmlGen
       List<ConfigPropType> raPropsList = def.getRaConfigProps();
       getPropsString(strRaProps, raPropsList, 2);
       
-      StringBuilder strMcfProps = new StringBuilder();
-      List<ConfigPropType> mcfPropsList = def.getMcfDefs().get(0).getMcfConfigProps();
-      getPropsString(strMcfProps, mcfPropsList, 6);
+      StringBuilder strMcf = new StringBuilder();
+      strMcf.append("  <connection-definitions>\n");
+      for (int num = 0; num < def.getMcfDefs().size(); num++)
+      {
+         strMcf.append("    <connection-definition class-name=\"");
+         strMcf.append(def.getRaPackage());
+         strMcf.append(".");
+         strMcf.append(def.getMcfDefs().get(num).getMcfClass());
+         strMcf.append("\" enabled=\"true\" "); 
+         strMcf.append("jndi-name=\"java:/eis/");
+         strMcf.append(def.getMcfDefs().get(num).getMcfClass());
+         strMcf.append("\" use-java-context=\"true\" ");
+         strMcf.append("pool-name=\"" + def.getMcfDefs().get(num).getMcfClass());
+         strMcf.append("\">\n");
+         
+         StringBuilder strMcfProps = new StringBuilder();
+         List<ConfigPropType> mcfPropsList = def.getMcfDefs().get(num).getMcfConfigProps();
+         getPropsString(strMcfProps, mcfPropsList, 6);
+         strMcf.append(strMcfProps.toString());
+         
+         strMcf.append("    </connection-definition>\n");
+      }
+      strMcf.append("  </connection-definitions>\n");
       
       StringBuilder strAo = new StringBuilder();
       if (def.isGenAdminObject())
@@ -85,13 +105,8 @@ public class IronjacamarXmlGen extends AbstractXmlGen
       Map<String, String> map = new HashMap<String, String>();
       map.put("ra.props", strRaProps.toString());
       map.put("transaction", def.getSupportTransaction());
-      if (def.getMcfDefs().size() == 1)
-         map.put("mcf.class", def.getRaPackage() + "." + def.getMcfDefs().get(0).getMcfClass());
-      else
-         map.put("mcf.class", def.getRaPackage() + ".mcf0." + def.getMcfDefs().get(0).getMcfClass());
-      map.put("jndi.name", "java:/eis/" + def.getDefaultValue());
-      map.put("pool.name", def.getDefaultValue());
-      map.put("mcf.props", strMcfProps.toString());
+
+      map.put("mcfs", strMcf.toString());
       map.put("adminobjects", strAo.toString());
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);

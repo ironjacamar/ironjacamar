@@ -108,7 +108,7 @@ public class McfDef
     */
    private String getDefaultValue()
    {
-      return def.getDefaultValue();
+      return def.getDefaultValue() + id;
    }
    
    /**

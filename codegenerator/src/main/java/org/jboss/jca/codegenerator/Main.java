@@ -331,9 +331,10 @@ public class Main
             if (mcfClassName != null && !mcfClassName.equals(""))
             {
                mcfdef.setMcfClass(mcfClassName);
-               setDefaultValue(def, mcfClassName, "ManagedConnectionfactory");
-               setDefaultValue(def, mcfClassName, "Mcf");
+               setDefaultValue(def, mcfClassName, mcfID + "ManagedConnectionfactory");
+               setDefaultValue(def, mcfClassName, mcfID + "Mcf");
             }
+            /*
             else
             {
                if (mcfID > 1)
@@ -342,6 +343,7 @@ public class Main
                   mcfdef.setMcfClass(def.getDefaultValue() + mcfID + "ManagedConnectionfactory");
                } 
             }
+            */
 
      
             List<ConfigPropType> mcfProps = inputProperties("mcf", in, false);
