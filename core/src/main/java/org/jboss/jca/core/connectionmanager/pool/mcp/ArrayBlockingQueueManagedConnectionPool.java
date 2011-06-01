@@ -125,7 +125,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     * {@inheritDoc}
     */
    public void initialize(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log)
+                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
    {
       if (mcf == null)
          throw new IllegalArgumentException("ManagedConnectionFactory is null");
@@ -139,9 +139,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (p == null)
          throw new IllegalArgumentException("Pool is null");
 
-      if (log == null)
-         throw new IllegalArgumentException("Logger is null");
-
       this.mcf = mcf;
       this.clf = clf;
       this.defaultSubject = subject;
@@ -149,7 +146,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.poolConfiguration = pc;
       this.maxSize = pc.getMaxSize();
       this.pool = p;
-      this.log = log;
+      this.log = pool.getLogger();
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayBlockingQueue<ConnectionListener>(this.maxSize, true);
       this.permits = new ConcurrentHashMap<ConnectionListener, ConnectionListener>(this.maxSize);

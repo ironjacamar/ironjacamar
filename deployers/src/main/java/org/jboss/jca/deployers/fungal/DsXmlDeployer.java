@@ -70,6 +70,9 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(DsXmlDeployer.class);
+
    /** jdbcLocal **/
    private String jdbcLocal;
 
@@ -87,8 +90,6 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
     */
    public DsXmlDeployer()
    {
-      super(Logger.getLogger(DsXmlDeployer.class));
-
       this.kernel = null;
       this.jdbcLocal = null;
       this.jdbcXA = null;
@@ -146,6 +147,14 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    public Kernel getKernel()
    {
       return kernel;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected Logger getLogger()
+   {
+      return log;
    }
 
    /**

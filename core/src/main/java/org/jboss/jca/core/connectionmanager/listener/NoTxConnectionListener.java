@@ -28,6 +28,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ManagedConnection;
 
+import org.jboss.logging.Logger;
 
 /**
  * NoTx Connection Listener.
@@ -38,6 +39,9 @@ import javax.resource.spi.ManagedConnection;
  */
 public class NoTxConnectionListener extends AbstractConnectionListener
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(NoTxConnectionListener.class);
+
    /**
     * Creates a new no-tx listener.
     * @param cm connection manager
@@ -55,6 +59,14 @@ public class NoTxConnectionListener extends AbstractConnectionListener
    /**
     * {@inheritDoc}
     */
+   protected Logger getLogger()
+   {
+      return log;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void connectionClosed(ConnectionEvent ce)
    {
       if (getCachedConnectionManager() != null)
@@ -65,7 +77,7 @@ public class NoTxConnectionListener extends AbstractConnectionListener
          }
          catch (Throwable t)
          {
-            getLog().info("Throwable from unregisterConnection", t);
+            log.debug("Throwable from unregisterConnection", t);
          }
       }
 

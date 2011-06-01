@@ -100,11 +100,10 @@ public abstract class AbstractDsDeployer
 
    /**
     * Create a new AbstractDsDeployer.
-    * @param log The logger
     */
-   public AbstractDsDeployer(Logger log)
+   public AbstractDsDeployer()
    {
-      this.log = log;
+      this.log = getLogger();
       this.transactionIntegration = null;
       this.ccm = null;
    }
@@ -927,6 +926,12 @@ public abstract class AbstractDsDeployer
     * @exception DeployException Thrown if the security domain can't be resolved
     */
    protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
+
+   /**
+    * Get the logger
+    * @return The value
+    */
+   protected abstract Logger getLogger();
 
    /**
     * Create a subject

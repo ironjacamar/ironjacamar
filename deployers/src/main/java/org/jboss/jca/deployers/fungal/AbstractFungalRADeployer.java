@@ -72,11 +72,10 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
     * Create a new AbstractResourceAdapterDeployer.
     *
     * @param validateClasses boolean to express if this instance will apply validation on classes structure
-    * @param log the right log where put messages
     */
-   public AbstractFungalRADeployer(boolean validateClasses, Logger log)
+   public AbstractFungalRADeployer(boolean validateClasses)
    {
-      super(validateClasses, log);
+      super(validateClasses);
       kernel = null;
    }
 

@@ -87,17 +87,16 @@ public class ManagedConnectionPoolFactory
     * @param cri the connection request info
     * @param pc the pool configuration
     * @param p The pool
-    * @param log The logger for the managed connection pool
     * @return The initialized managed connection pool
     * @exception Throwable Thrown in case of an error
     */
    public ManagedConnectionPool create(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                                       ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log) 
+                                       ConnectionRequestInfo cri, PoolConfiguration pc, Pool p) 
       throws Throwable
    {
       ManagedConnectionPool mcp = (ManagedConnectionPool)defaultImplementation.newInstance();
       
-      return init(mcp, mcf, clf, subject, cri, pc, p, log);
+      return init(mcp, mcf, clf, subject, cri, pc, p);
    }
 
    /**
@@ -110,13 +109,12 @@ public class ManagedConnectionPoolFactory
     * @param cri the connection request info
     * @param pc the pool configuration
     * @param p The pool
-    * @param log The logger for the managed connection pool
     * @return The initialized managed connection pool
     * @exception Throwable Thrown in case of an error
     */
    public ManagedConnectionPool create(String strategy, 
                                        ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                                       ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log)
+                                       ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
       throws Throwable
    {
       Class<?> clz = Class.forName(strategy, 
@@ -125,7 +123,7 @@ public class ManagedConnectionPoolFactory
       
       ManagedConnectionPool mcp = (ManagedConnectionPool)clz.newInstance();
       
-      return init(mcp, mcf, clf, subject, cri, pc, p, log);
+      return init(mcp, mcf, clf, subject, cri, pc, p);
    }
 
    /**
@@ -137,14 +135,13 @@ public class ManagedConnectionPoolFactory
     * @param cri the connection request info
     * @param pc the pool configuration
     * @param p The pool
-    * @param log The logger for the managed connection pool
     * @return The initialized managed connection pool
     */
    private ManagedConnectionPool init(ManagedConnectionPool mcp, 
                                       ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                                      ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log)
+                                      ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
    {
-      mcp.initialize(mcf, clf, subject, cri, pc, p, log);
+      mcp.initialize(mcf, clf, subject, cri, pc, p);
 
       return mcp;
    }

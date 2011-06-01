@@ -54,6 +54,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
+import org.jboss.logging.Logger;
 import org.jboss.util.NestedRuntimeException;
 import org.jboss.util.NotImplementedException;
 
@@ -131,6 +132,9 @@ import org.jboss.util.NotImplementedException;
  */
 public class TxConnectionManagerImpl extends AbstractConnectionManager implements TxConnectionManager
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(TxConnectionManager.class);
+
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
 
@@ -177,6 +181,15 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       this.txIntegration = txIntegration;
 
       setLocalTransactions(localTransactions);
+   }
+
+   /**
+    * Get the logger.
+    * @return The value
+    */
+   protected Logger getLogger()
+   {
+      return log;
    }
 
    /**
@@ -346,7 +359,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          JBossResourceException.rethrowAsResourceException("Error checking for a transaction.", t);
       }
 
-      getLog().tracef("getManagedConnection interleaving=%s , tx=%s", interleaving, trackByTransaction);  
+      log.tracef("getManagedConnection interleaving=%s , tx=%s", interleaving, trackByTransaction);  
       
       return super.getManagedConnection(trackByTransaction, subject, cri);
    }
@@ -408,7 +421,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       }
       catch (Throwable t)
       {
-         getLog().trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
+         log.trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
 
          throw new JBossResourceException("Could not enlist in transaction on entering meta-aware object!", t);
       }
@@ -432,13 +445,13 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       //if there are no more handles and tx is complete, we can return to pool.
       if (cl.isManagedConnectionFree())
       {
-         getLog().tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
+         log.tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
 
          returnManagedConnection(cl, false);
       }
       else
       {
-         getLog().tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
+         log.tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
       }
 
       // Rethrow the error
@@ -463,7 +476,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     
          if (xaResourceTimeout != 0)
          {
-            getLog().debug("XAResource transaction timeout cannot be set for local transactions: " + getJndiName());  
+            log.debug("XAResource transaction timeout cannot be set for local transactions: " + getJndiName());  
          }
       }      
       else
@@ -492,7 +505,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (eisProductVersion == null)
                eisProductVersion = getJndiName();
 
-            getLog().tracef("Generating XAResourceWrapper for TxConnectionManager (%s)", this);
+            log.tracef("Generating XAResourceWrapper for TxConnectionManager (%s)", this);
 
             xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
                                                                isSameRMOverride, 
@@ -501,7 +514,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          }
          else
          {
-            getLog().tracef("Not wrapping XAResource.");
+            log.tracef("Not wrapping XAResource.");
 
             xaResource = mc.getXAResource();
          }
@@ -511,7 +524,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             try
             {
                if (!xaResource.setTransactionTimeout(xaResourceTimeout))
-                  getLog().debug("XAResource does not support transaction timeout configuration: " + getJndiName());
+                  log.debug("XAResource does not support transaction timeout configuration: " + getJndiName());
             }
             catch (XAException e)
             {

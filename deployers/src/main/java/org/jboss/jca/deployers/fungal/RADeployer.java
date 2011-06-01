@@ -68,16 +68,23 @@ import com.github.fungal.spi.deployers.MultiStageDeployer;
  */
 public final class RADeployer extends AbstractFungalRADeployer implements Deployer, MultiStageDeployer, DeployerOrder
 {
-
    /** The logger */
-   static Logger log = Logger.getLogger(RADeployer.class);
+   private static Logger log = Logger.getLogger(RADeployer.class);
 
    /**
     * Constructor
     */
    public RADeployer()
    {
-      super(true, log);
+      super(true);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected Logger getLogger()
+   {
+      return log;
    }
 
    /**

@@ -95,6 +95,8 @@
   <dependencies>
     <!-- Maven doesn't handle dependencies well, so logging has to be first -->
     <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-common-impl-papaki,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-common,ironjacamar-deployers-fungal"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-generator" rev="${version.jboss.logging-generator}" conf="common"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-processor" rev="${version.jboss.logging-processor}" conf="common"/>
     <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common,ironjacamar-depchain"/>
 
     <!-- Keep these sorted -->

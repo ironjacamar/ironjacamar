@@ -47,7 +47,7 @@ import org.jboss.logging.Logger;
  */
 public abstract class AbstractConnectionListener implements ConnectionListener
 {
-   private final Logger log = Logger.getLogger(getClass());
+   private final Logger log;
    
    /** Log trace */
    protected boolean trace;
@@ -99,10 +99,11 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       this.pool = pool;
       this.internalManagedPoolContext = context;
       this.flushStrategy = flushStrategy;
+      this.log = getLogger();
       this.trace = log.isTraceEnabled();
       this.lastUse = System.currentTimeMillis();
    }
-   
+
    /**
     * Gets cached connection manager
     * @return cached connection manager
@@ -122,13 +123,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    }
    
    /**
-    * Gets logger.
-    * @return logger instance
+    * Get the logger
+    * @return The value
     */
-   protected Logger getLog()
-   {
-      return log;
-   }
+   protected abstract Logger getLogger();
    
    /**
     * {@inheritDoc}

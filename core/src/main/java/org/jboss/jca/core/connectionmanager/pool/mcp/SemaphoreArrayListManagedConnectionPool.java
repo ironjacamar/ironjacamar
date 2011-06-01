@@ -124,7 +124,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     * {@inheritDoc}
     */
    public void initialize(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log)
+                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
    {
       if (mcf == null)
          throw new IllegalArgumentException("ManagedConnectionFactory is null");
@@ -138,9 +138,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (p == null)
          throw new IllegalArgumentException("Pool is null");
 
-      if (log == null)
-         throw new IllegalArgumentException("Logger is null");
-
       this.mcf = mcf;
       this.clf = clf;
       this.defaultSubject = subject;
@@ -148,7 +145,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.poolConfiguration = pc;
       this.maxSize = pc.getMaxSize();
       this.pool = p;
-      this.log = log;
+      this.log = pool.getLogger();
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);

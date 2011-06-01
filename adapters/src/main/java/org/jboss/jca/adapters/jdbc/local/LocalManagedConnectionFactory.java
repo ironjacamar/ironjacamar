@@ -552,7 +552,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          //and is not spec compliant, or is the wrong class.
          driver = (Driver) clazz.newInstance();
          DriverManager.registerDriver(driver);
-         log.info("class loaded and instance created:" + driver);
+         log.debug("class loaded and instance created:" + driver);
 
          driverCache.put(url.substring(0, url.indexOf(":", 6)), driver);
          //We can even instantiate one, it must be the wrong class for the URL.
@@ -580,7 +580,6 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
       catch (Exception e)
       {
-         log.info("Driver not yet registered for url: " + url);
          if (trace)
             log.trace("Driver not yet registered for url: " + url);
          return false;

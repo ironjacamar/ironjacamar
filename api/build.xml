@@ -41,7 +41,7 @@
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            includeAntRuntime="false">
-      <!-- <compilerarg value="-Xlint"/> -->
+      <compilerarg value="-proc:none"/>
     </javac> 
 
   </target>

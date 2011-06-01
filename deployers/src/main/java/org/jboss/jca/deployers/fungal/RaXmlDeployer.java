@@ -75,7 +75,15 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
     */
    public RaXmlDeployer()
    {
-      super(false, log);
+      super(false);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected Logger getLogger()
+   {
+      return log;
    }
 
    /**

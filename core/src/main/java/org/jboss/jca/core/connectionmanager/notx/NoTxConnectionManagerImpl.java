@@ -35,6 +35,8 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
+import org.jboss.logging.Logger;
+
 /**
  * Non transactional connection manager implementation.
  *
@@ -43,6 +45,9 @@ import javax.transaction.SystemException;
  */
 public class NoTxConnectionManagerImpl extends AbstractConnectionManager implements NoTxConnectionManager
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(NoTxConnectionManager.class);
+
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
 
@@ -51,6 +56,15 @@ public class NoTxConnectionManagerImpl extends AbstractConnectionManager impleme
     */
    public NoTxConnectionManagerImpl()
    {
+   }
+
+   /**
+    * Get the logger.
+    * @return The value
+    */
+   protected Logger getLogger()
+   {
+      return log;
    }
 
    /**

@@ -199,6 +199,8 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${lib.dir}/common">
         <include name="*.jar"/>
+        <exclude name="jboss-logging-generator.jar"/>
+        <exclude name="jboss-logging-processor.jar"/>
       </fileset>
     </copy>
 

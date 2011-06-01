@@ -64,7 +64,7 @@ import org.jboss.security.SubjectFactory;
 public abstract class AbstractConnectionManager implements ConnectionManager
 {
    /** Log instance */
-   private final Logger log = Logger.getLogger(getClass());
+   private final Logger log;
 
    /** Log trace */
    private final boolean trace;
@@ -104,17 +104,15 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    protected AbstractConnectionManager()
    {
+      this.log = getLogger();
       this.trace = log.isTraceEnabled();
    }
 
    /**
-    * Gets log.
-    * @return log instance
+    * Get the logger.
+    * @return The value
     */
-   protected Logger getLog()
-   {
-      return log;
-   }
+   protected abstract Logger getLogger();
 
    /**
     * Set the pool.

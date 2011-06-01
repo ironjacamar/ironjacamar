@@ -36,6 +36,7 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
+import org.jboss.logging.Logger;
 import org.jboss.security.SecurityContext;
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
@@ -49,6 +50,8 @@ import org.jboss.security.SubjectFactory;
  */
 public class PoolBySubject extends AbstractPrefillPool
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(PoolBySubject.class);
    
    /**
     * Creates a new instance.
@@ -159,5 +162,13 @@ public class PoolBySubject extends AbstractPrefillPool
             return null;
          }
       });
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Logger getLogger()
+   {
+      return log;
    }
 }

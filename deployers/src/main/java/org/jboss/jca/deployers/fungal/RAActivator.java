@@ -73,10 +73,18 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
     */
    public RAActivator()
    {
-      super(false, log);
+      super(false);
       enabled = true;
       excludeArchives = null;
       deployments = null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected Logger getLogger()
+   {
+      return log;
    }
 
    /**

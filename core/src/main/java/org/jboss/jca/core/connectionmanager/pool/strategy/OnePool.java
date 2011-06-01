@@ -30,6 +30,8 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
+import org.jboss.logging.Logger;
+
 /**
  * Single pool implementation.
  * 
@@ -38,6 +40,9 @@ import javax.security.auth.Subject;
  */
 public class OnePool extends AbstractPrefillPool
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(OnePool.class);
+
    /**
     * Creates a new instance.
     * 
@@ -80,5 +85,13 @@ public class OnePool extends AbstractPrefillPool
    public boolean testConnection()
    {
       return internalTestConnection(null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Logger getLogger()
+   {
+      return log;
    }
 }

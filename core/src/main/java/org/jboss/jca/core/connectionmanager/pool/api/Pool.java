@@ -31,6 +31,8 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 import javax.transaction.Transaction;
 
+import org.jboss.logging.Logger;
+
 /**
  * A pool.
  *
@@ -92,4 +94,10 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
     * @param pool The pool
     */
    public void emptyManagedConnectionPool(ManagedConnectionPool pool);
+
+   /**
+    * Get the logger
+    * @return The value
+    */
+   public Logger getLogger();
 }

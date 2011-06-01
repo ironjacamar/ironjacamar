@@ -33,8 +33,6 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
-import org.jboss.logging.Logger;
-
 /**
  * Represents a managed connection pool, which manages all connection listeners
  *
@@ -51,10 +49,9 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @param cri The connection request info
     * @param pc The pool configuration
     * @param p The pool
-    * @param log The logger for the managed connection pool
     */
    public void initialize(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
-                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p, Logger log);
+                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p);
 
    /**
     * Returns a connection listener that wraps managed connection.

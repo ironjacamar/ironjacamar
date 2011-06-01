@@ -66,10 +66,10 @@ import org.jboss.logging.Logger;
 public abstract class AbstractPool implements Pool
 {
    /** The logger */
-   protected final Logger log = Logger.getLogger(getClass());
+   protected final Logger log;
 
    /** Is trace enabled */
-   private boolean trace = false;
+   private boolean trace;
 
    /** The managed connection pools, maps key --> pool */
    private final ConcurrentMap<Object, ManagedConnectionPool> mcpPools =
@@ -112,6 +112,7 @@ public abstract class AbstractPool implements Pool
       this.mcf = mcf;
       this.poolConfiguration = pc;
       this.noTxSeparatePools = noTxSeparatePools;
+      this.log = getLogger();
       this.trace = log.isTraceEnabled();
       this.statistics = new PoolStatisticsImpl(pc.getMaxSize(), mcpPools);
    }
@@ -165,7 +166,7 @@ public abstract class AbstractPool implements Pool
          if (mcp == null)
          {
             ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
-            ManagedConnectionPool newMcp = mcpf.create(mcf, clf, subject, cri, poolConfiguration, this, log);
+            ManagedConnectionPool newMcp = mcpf.create(mcf, clf, subject, cri, poolConfiguration, this);
 
             mcp = mcpPools.putIfAbsent(key, newMcp);
             if (mcp == null)
@@ -630,4 +631,10 @@ public abstract class AbstractPool implements Pool
    {
       return mcpPools;
    }
+
+   /**
+    * Get the logger
+    * @return The value
+    */
+   public abstract Logger getLogger();
 }

@@ -30,6 +30,8 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
+import org.jboss.logging.Logger;
+
 /**
  * Pool implementation that uses subject.
  * 
@@ -38,6 +40,8 @@ import javax.security.auth.Subject;
  */
 public class PoolByCri extends AbstractPool
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(PoolByCri.class);
    
    /**
     * Creates a new instance.
@@ -66,5 +70,13 @@ public class PoolByCri extends AbstractPool
    public boolean testConnection()
    {
       return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Logger getLogger()
+   {
+      return log;
    }
 }

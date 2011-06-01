@@ -130,13 +130,12 @@ public abstract class AbstractResourceAdapterDeployer
     *
     * @param validateClasses validateClasses validateClasses  boolean to express if this instance will
     * apply validation on classes structure
-    * @param log the right log where put messages
     */
-   public AbstractResourceAdapterDeployer(boolean validateClasses, Logger log)
+   public AbstractResourceAdapterDeployer(boolean validateClasses)
    {
       super();
-      this.log = log;
-      trace = log.isTraceEnabled();
+      this.log = getLogger();
+      this.trace = log.isTraceEnabled();
       this.validateClasses = validateClasses;
    }
 
@@ -2046,4 +2045,10 @@ public abstract class AbstractResourceAdapterDeployer
     */
    protected abstract Object initAndInject(String value, List<? extends ConfigProperty> cpm, ClassLoader cl)
       throws DeployException;
+
+   /**
+    * Get the logger
+    * @return The value
+    */
+   protected abstract Logger getLogger();
 }
