@@ -27,6 +27,7 @@ import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.statistics.StatisticsPlugin;
 
+import org.jboss.jca.rhq.core.IronJacamarResourceComponent;
 import org.jboss.jca.rhq.core.ManagementRepositoryManager;
 import org.jboss.jca.rhq.core.PoolResourceComponent;
 
@@ -44,13 +45,14 @@ import org.rhq.core.domain.measurement.MeasurementDataNumeric;
 import org.rhq.core.domain.measurement.MeasurementReport;
 import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
 import org.rhq.core.pluginapi.configuration.ConfigurationUpdateReport;
+import org.rhq.core.pluginapi.inventory.DeleteResourceFacet;
 
 /**
  * Represent <b>XA Datasource</b> in JCA container
  * 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  */
-public class DsResourceComponent extends PoolResourceComponent
+public class DsResourceComponent extends PoolResourceComponent implements DeleteResourceFacet
 {
    
    /** log */
@@ -184,6 +186,31 @@ public class DsResourceComponent extends PoolResourceComponent
             MeasurementDataNumeric dsStatisMetrics = new MeasurementDataNumeric(request, value);
             measurementReport.addData(dsStatisMetrics);
          }
+      }
+   }
+
+
+   /**
+    * {@inheritDoc}}
+    */
+   @Override
+   public void deleteResource() throws Exception
+   {
+      DataSource ds = getDataSource();
+      String jndiName = ds.getJndiName();
+      IronJacamarResourceComponent ironJacamarResCompo = 
+         (IronJacamarResourceComponent)this.getResourceContext().getParentResourceComponent();
+      try
+      {
+         if (!ironJacamarResCompo.unDeployDataSource(jndiName))
+         {
+            throw new IllegalStateException("Can not delete the DataSource with JndiName: " + jndiName);
+         }
+         logger.debug("Finished undeploy DataSource: " + jndiName);
+      }
+      catch (Throwable e)
+      {
+         throw new Exception(e);
       }
    }
    

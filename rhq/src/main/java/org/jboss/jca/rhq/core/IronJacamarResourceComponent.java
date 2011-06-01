@@ -21,11 +21,18 @@
  */
 package org.jboss.jca.rhq.core;
 
+import org.jboss.jca.core.api.management.DataSource;
+import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.rhq.util.ContainerHelper;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.content.PackageDetailsKey;
@@ -45,6 +52,11 @@ import org.rhq.core.pluginapi.inventory.CreateResourceReport;
  */
 public class IronJacamarResourceComponent extends AbstractResourceComponent implements CreateChildResourceFacet
 {
+   
+   /**
+    * Maps contains DataSource URL and associated jndis mappings.
+    */
+   private Map<URL, List<String>> dsURLJndiMap = new HashMap<URL, List<String>>();
 
    /**
     * loadResourceConfiguration
@@ -73,14 +85,22 @@ public class IronJacamarResourceComponent extends AbstractResourceComponent impl
       ContentContext contentContext = getResourceContext().getContentContext();
       ContentServices contentServices = contentContext.getContentServices();
       String tmpDir = getUploadedDir();
+      PackageDetailsKey pkgKey = pkgDetail.getKey();
+      String pkgTypeName = pkgKey.getPackageTypeName();
       String fileName = pkgDetail.getFileName();
-      if (!fileName.toLowerCase().endsWith(".rar") && !fileName.toLowerCase().endsWith("-ds.xml"))
+      if (pkgTypeName.equals("rar-file") && !fileName.toLowerCase().endsWith(".rar"))
       {
-         report.setErrorMessage(fileName + " is not a valid RAR or Datasource file.");
+         report.setErrorMessage(fileName + " is not a valid RAR file.");
          report.setStatus(CreateResourceStatus.FAILURE);
          return report;
       }
-      File outFile = new File(tmpDir, pkgDetail.getFileName()); // change to plugin configuration ??
+      else if (pkgTypeName.equals("ds-file") && !fileName.toLowerCase().endsWith("-ds.xml"))
+      {
+         report.setErrorMessage(fileName + " is not a valid DataSource file.");
+         report.setStatus(CreateResourceStatus.FAILURE);
+         return report;
+      }
+      File outFile = new File(tmpDir, fileName); // change to plugin configuration ??
       OutputStream output;
       try
       {
@@ -94,8 +114,22 @@ public class IronJacamarResourceComponent extends AbstractResourceComponent impl
             return report;
          }
          Deploy deployer = (Deploy)ContainerHelper.getEmbeddedDiscover();
-         deployer.deploy(outFile.toURI().toURL());
-         
+         URL url = outFile.toURI().toURL();
+         if (pkgTypeName.equals("ds-file"))
+         {
+            List<String> dsJndiNamesBeforeDeploy = this.getAllDataSourceJndiNames();
+            deployer.deploy(url);
+            List<String> dsJndiNamesAfterDeploy = this.getAllDataSourceJndiNames();
+            List<String> moreJndiNames = moreDeployedDsJndis(dsJndiNamesBeforeDeploy, dsJndiNamesAfterDeploy);
+            if (!moreJndiNames.isEmpty())
+            {
+               this.dsURLJndiMap.put(url, moreJndiNames);
+            }
+         }
+         else
+         {
+            deployer.deploy(url);
+         }
          String resKey = outFile.getName();
          
          // set resource key
@@ -115,4 +149,69 @@ public class IronJacamarResourceComponent extends AbstractResourceComponent impl
       }
       return report;
    }
+
+   /**
+    * Gets more DataSource jndis after a -ds.xml is deployed.
+    * 
+    * @param dsJndiNamesBeforeDeploy DataSource Jndis before the -ds.xml is deployed
+    * @param dsJndiNamesAfterDeploy  DataSource Jndis after the -ds.xml is deployed
+    * @return more DataSource Jndis.
+    */
+   private List<String> moreDeployedDsJndis(List<String> dsJndiNamesBeforeDeploy, List<String> dsJndiNamesAfterDeploy)
+   {
+      List<String> moreDsJndis = new ArrayList<String>();
+      for (String ds : dsJndiNamesAfterDeploy)
+      {
+         if (!dsJndiNamesBeforeDeploy.contains(ds))
+         {
+            moreDsJndis.add(ds);
+         }
+      }
+      return moreDsJndis;
+   }
+
+   /**
+    * Gets all DataSource JndiNames in current ManagementRepository.
+    * 
+    * @return all DataSource JndiNames
+    */
+   private List<String> getAllDataSourceJndiNames()
+   {
+      List<String> dsJndiNames = new ArrayList<String>();
+      ManagementRepository mr = ManagementRepositoryManager.getManagementRepository();
+      for (DataSource ds : mr.getDataSources())
+      {
+         dsJndiNames.add(ds.getJndiName());
+      }
+      return dsJndiNames;
+   }
+   
+   /**
+    * Removes the DataSource entry from the dsURLJndiMap after the DataSource is undeployed.
+    * 
+    * @param dsJndiName DataSource JndiName
+    * @return true if remove succeeds, false otherwise.
+    * @throws Throwable the exception
+    */
+   public boolean unDeployDataSource(String dsJndiName) throws Throwable
+   {
+      URL dsURL = null;
+      for (Map.Entry<URL, List<String>> dsEntry : this.dsURLJndiMap.entrySet())
+      {
+         if (dsEntry.getValue().contains(dsJndiName))
+         {
+            dsURL = dsEntry.getKey();
+            break;
+         }
+      }
+      if (dsURL != null)
+      {
+         Deploy deployer = (Deploy)ContainerHelper.getEmbeddedDiscover();
+         deployer.undeploy(dsURL);
+         this.dsURLJndiMap.remove(dsURL);
+         return true;
+      }
+      return false;
+   }
+   
 }

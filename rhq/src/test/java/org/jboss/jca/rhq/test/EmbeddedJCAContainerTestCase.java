@@ -95,6 +95,36 @@ public class EmbeddedJCAContainerTestCase
       }
       
    }
+   
+   /**
+    * Tests UnDeploy DataSource
+    * 
+    * @throws Throwable the exception
+    */
+   @Test
+   public void testUnDeployDataSource() throws Throwable
+   {
+      URL jdbcURL = DsTestCase.class.getResource("/jdbc-local.rar");
+      embedded.deploy(jdbcURL);
+      
+      URL dsURL = DsTestCase.class.getResource("/h2-ds.xml");
+      embedded.deploy(dsURL);
+      
+      InitialContext context = new InitialContext();
+      assertNotNull(context.lookup("java:/H2DS"));
+      
+      embedded.undeploy(dsURL);
+      try
+      {
+         context.lookup("java:/H2DS");
+         fail("DataSource of: java:/H2DS should be unboundded.");
+      }
+      catch (Exception e)
+      {
+         assertEquals(javax.naming.NameNotFoundException.class, e.getClass());
+      }
+      embedded.undeploy(jdbcURL);
+   }
 
    /**
     * Lifecycle start, before the suite is executed
