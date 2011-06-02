@@ -43,15 +43,18 @@ import javax.transaction.xa.XAResource;
  */
 public class MockManagedConnection implements ManagedConnection
 {
-   private int cleanUpCalled = 0;
+   private int cleanUpCalled;
    private Set<ConnectionEventListener> listeners;
+   private MockHandle handle;
 
    /**
     * Creates a new instance.
     */
    public MockManagedConnection()
    {
+      this.cleanUpCalled = 0;
       this.listeners = new HashSet<ConnectionEventListener>();
+      this.handle = new MockHandle();
    }
 
    /**
@@ -90,10 +93,9 @@ public class MockManagedConnection implements ManagedConnection
    /**
     * {@inheritDoc}
     */
-
    public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      return new MockHandle();
+      return handle;
    }
 
    /**

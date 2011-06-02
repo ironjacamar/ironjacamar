@@ -29,7 +29,6 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
-import org.jboss.jca.core.connectionmanager.transaction.TransactionKey;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
@@ -399,7 +398,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
                try
                {
-                  transactionSynchronizationRegistry.putResource(new TransactionKey(tx), cl);
+                  transactionSynchronizationRegistry.putResource(mcp, cl);
                }
                finally
                {

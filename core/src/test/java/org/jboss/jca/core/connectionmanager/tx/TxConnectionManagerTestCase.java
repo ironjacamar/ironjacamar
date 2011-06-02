@@ -22,7 +22,6 @@
 package org.jboss.jca.core.connectionmanager.tx;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
-import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.TxConnectionManager;
@@ -54,6 +53,8 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -98,6 +99,116 @@ public class TxConnectionManagerTestCase
          throw e;
       }
    }
+   
+   
+   /**
+    * testSuccessiveAllocateConnectionRequestsInTheSameTransactionReturnTheSameConnection
+    * @throws Throwable for exception
+    */
+   @Test
+   public void testSuccessiveAllocateConnectionRequestsInTheSameTransactionReturnTheSameConnection() throws Throwable
+   {
+      TransactionManager transactionManager = txConnectionManager.getTransactionIntegration().getTransactionManager();
+
+      assertNotNull(transactionManager);
+      try
+      {
+         transactionManager.begin();
+
+         Object handle1 = txConnectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
+         Object handle2 = txConnectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
+
+         assertSame(handle1, handle2);
+
+         transactionManager.commit();
+      }
+      catch (Throwable e)
+      {
+         transactionManager.rollback();
+         throw e;
+      }
+   }
+   
+
+   /**
+    * testSuccessiveAllocateConnectionRequestsInDifferentTransactionsReturnDifferentConnections
+    * @throws Throwable for exception
+    */
+   @Test
+   public void testSuccessiveAllocateConnectionRequestsInDifferentTransactionsReturnDifferentConnections() 
+      throws Throwable
+   {
+      TransactionManager transactionManager = txConnectionManager.getTransactionIntegration().getTransactionManager();
+      
+      assertNotNull(transactionManager);
+      Object handle1;
+      Object handle2;
+      try
+      {
+         transactionManager.begin();
+         
+         handle1 = txConnectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
+         
+         transactionManager.commit();
+      }
+      catch (Throwable e)
+      {
+         transactionManager.rollback();
+         throw e;
+      }
+      
+      try
+      {
+         transactionManager.begin();
+          
+         handle2 = txConnectionManager.allocateConnection(mcf, new MockConnectionRequestInfo());
+         
+         transactionManager.commit();
+      }
+      catch (Throwable e)
+      {
+         transactionManager.rollback();
+         throw e;
+      }
+       
+      assertNotSame(handle1, handle2);
+   }
+
+   /**
+    * testAllocateConnectionRequestsToDifferntConnectionManagrsInTheSameTransactionReturnDifferentConnections
+    * @throws Throwable for exception
+    */
+   @Test
+   public void testAllocateConnectionRequestsToDifferntConnectionManagrsInTheSameTransactionReturnDifferentConnections()
+      throws Throwable
+   {
+      TransactionManager transactionManager = txConnectionManager.getTransactionIntegration().getTransactionManager();
+
+      TxConnectionManager txConnectionManager1 = txConnectionManager;
+      ManagedConnectionFactory mcf1 = mcf;
+      
+      ManagedConnectionFactory mcf2 = new MockManagedConnectionFactory();
+      TxConnectionManager txConnectionManager2 = buildTxConnectionManager(mcf2);
+      
+      assertNotNull(transactionManager);
+      try
+      {
+         transactionManager.begin();
+         
+         Object handle1 = txConnectionManager1.allocateConnection(mcf1, new MockConnectionRequestInfo());
+         Object handle2 = txConnectionManager2.allocateConnection(mcf2, new MockConnectionRequestInfo());
+
+         assertNotSame(handle1, handle2);
+         
+         transactionManager.commit();
+      }
+      catch (Throwable e)
+      {
+         transactionManager.rollback();
+         throw e;
+      }
+   
+   } 
 
    /**
     * testGetTimeLeftBeforeTrsTimeout.
@@ -304,22 +415,25 @@ public class TxConnectionManagerTestCase
       embedded.deploy(naming);
       embedded.deploy(transaction);
 
-      TransactionIntegration ti = embedded.lookup("TransactionIntegration", TransactionIntegration.class);
-      assertNotNull(ti);
 
       mcf = new MockManagedConnectionFactory();
+      txConnectionManager = buildTxConnectionManager(mcf);
+   }
+
+   private static TxConnectionManager buildTxConnectionManager(ManagedConnectionFactory mcf) throws Throwable
+   {
+      TransactionIntegration ti = embedded.lookup("TransactionIntegration", TransactionIntegration.class);
+      assertNotNull(ti);
+      
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
-
+    
       Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
-
+      
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-      ConnectionManager connectionManager = 
-         cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-                                 null, null, false, null, FlushStrategy.FAILING_CONNECTION_ONLY,
-                                 null, null, ti, null, null, null, null, null);
-
-      txConnectionManager = (TxConnectionManager) connectionManager;
+      return (TxConnectionManager) cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
+                                   null, null, false, null, FlushStrategy.FAILING_CONNECTION_ONLY,
+                                   null, null, ti, null, null, null, null, null);
    }
 
    /**

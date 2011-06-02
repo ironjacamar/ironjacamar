@@ -30,7 +30,6 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
-import org.jboss.jca.core.connectionmanager.transaction.TransactionKey;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.HashSet;
@@ -346,9 +345,9 @@ public abstract class AbstractPool implements Pool
 
       // Are we doing track by transaction ?
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
-      Object trackByTx = tsr != null ? tsr.getTransactionKey() : null;
+      Object transactionKey = tsr != null ? tsr.getTransactionKey() : null;
 
-      if (trackByTransaction == null || trackByTx == null)
+      if (trackByTransaction == null || transactionKey == null)
       {
          return getSimpleConnection(subject, cri, mcp);
       }
@@ -356,7 +355,7 @@ public abstract class AbstractPool implements Pool
       // Transaction old connections
       if (cl == null)
       {
-         cl = getTransactionOldConnection(trackByTransaction);
+         cl = getTransactionOldConnection(trackByTransaction, mcp);
       }
 
       // Creates a new connection with given transaction
@@ -421,10 +420,11 @@ public abstract class AbstractPool implements Pool
     * This method is package protected beacause it is intended only for test case use.
     * Please don't use it in your production code.
     * @param trackByTransaction transaction instance
+    * @param mcp the managed connection pool associated with the desired connection listener
     * @return connection listener instance
     * @throws ResourceException Thrown if an error occurs
     */
-   ConnectionListener getTransactionOldConnection(Transaction trackByTransaction)
+   ConnectionListener getTransactionOldConnection(Transaction trackByTransaction, ManagedConnectionPool mcp)
       throws ResourceException
    {
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
@@ -441,7 +441,7 @@ public abstract class AbstractPool implements Pool
       try
       {
          // Already got one
-         ConnectionListener cl = (ConnectionListener)tsr.getResource(new TransactionKey(trackByTransaction));
+         ConnectionListener cl = (ConnectionListener)tsr.getResource(mcp);
          if (cl != null)
          {
             log.tracef("Previous connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
@@ -494,7 +494,7 @@ public abstract class AbstractPool implements Pool
       {
          // Check we weren't racing with another transaction
          ConnectionListener other =
-            (ConnectionListener)tsr.getResource(new TransactionKey(trackByTransaction));
+            (ConnectionListener)tsr.getResource(mcp);
 
          if (other != null)
          {
@@ -508,7 +508,7 @@ public abstract class AbstractPool implements Pool
 
          // This is the connection for this transaction
          cl.setTrackByTx(true);
-         tsr.putResource(new TransactionKey(trackByTransaction), cl);
+         tsr.putResource(mcp, cl);
 
          log.tracef("Using connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
 

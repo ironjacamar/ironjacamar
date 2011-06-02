@@ -30,8 +30,6 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
-import org.jboss.logging.Logger;
-
 /**
  * Factory to create a managed connection pool
  *
