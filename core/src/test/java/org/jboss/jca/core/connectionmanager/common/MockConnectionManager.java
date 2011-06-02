@@ -32,6 +32,8 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
+import org.jboss.logging.Logger;
+
 /**
  * Mock connection manager.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
@@ -40,6 +42,9 @@ import javax.transaction.SystemException;
  */
 public class MockConnectionManager extends AbstractConnectionManager
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(MockConnectionManager.class);
+
    /** Serial version UID */
    private static final long serialVersionUID = 1L;
 
@@ -48,6 +53,14 @@ public class MockConnectionManager extends AbstractConnectionManager
     */
    public MockConnectionManager()
    {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Logger getLogger()
+   {
+      return log;
    }
 
    /**
