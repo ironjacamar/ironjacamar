@@ -497,9 +497,10 @@
     <checkstyle config="${tools.dir}/checkstyle/checkstyle.xml"
                 failOnViolation="false"
                 classpathref="checkstyle.lib.path.id">
-      <fileset dir="${basedir}"
-               includes="**/*.java"
-	       excludes="${build.dir}/**/*.java"/>
+      <fileset dir="${basedir}">
+        <include name="**/*.java"/>
+        <exclude name="build/**/*.java"/>
+      </fileset>
       <formatter type="plain"/>
       <formatter type="xml" toFile="${reports.dir}/checkstyle/checkstyle-result.xml"/>
     </checkstyle>

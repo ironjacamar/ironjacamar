@@ -17,6 +17,7 @@
         <!ENTITY schemas SYSTEM "modules/schemas.xml">
         <!ENTITY sample SYSTEM "modules/sample.xml">
         <!ENTITY datasources SYSTEM "modules/datasources.xml">
+        <!ENTITY logging SYSTEM "modules/logging.xml">
         ]>
 <book lang="en">
    <bookinfo>
@@ -65,5 +66,7 @@
    &sample;
 
    &datasources;
+
+   &logging;
 
 </book>

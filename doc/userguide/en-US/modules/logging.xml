@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix id="logging_codes">
+  <title>Logging codes</title>
+
+  <section id="logging_codes_core">
+    <title>Core: 00001 - 05000</title>
+
+    <table frame="all">
+      <title>Logging codes for core</title>
+      <tgroup cols="3" align="left" colsep="1" rowsep="1">
+        <colspec colname="c1" colwidth="*"/>
+        <colspec colname="c2" colwidth="*"/>
+        <colspec colname="c3" colwidth="6*"/>
+        <thead>
+          <row>
+            <entry align="left">Code</entry>
+            <entry align="left">Level</entry>
+            <entry align="left">Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>00100</entry>
+            <entry><code>INFO</code></entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry>00101</entry>
+            <entry><code>INFO</code></entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry>00102</entry>
+            <entry><code>INFO</code></entry>
+            <entry></entry>
+          </row>
+          <row>
+            <entry>00103</entry>
+            <entry><code>INFO</code></entry>
+            <entry></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+
+  <section id="logging_codes_common">
+    <title>Common: 05001 - 10000</title>
+
+    <table frame="all">
+      <title>Logging codes for common</title>
+      <tgroup cols="3" align="left" colsep="1" rowsep="1">
+        <colspec colname="c1" colwidth="*"/>
+        <colspec colname="c2" colwidth="*"/>
+        <colspec colname="c3" colwidth="6*"/>
+        <thead>
+          <row>
+            <entry align="left">Code</entry>
+            <entry align="left">Level</entry>
+            <entry align="left">Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>05001</entry>
+            <entry></entry>
+            <entry></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+
+  <section id="logging_codes_deployers">
+    <title>Deployers: 10001 - 15000</title>
+
+    <table frame="all">
+      <title>Logging codes for common</title>
+      <tgroup cols="3" align="left" colsep="1" rowsep="1">
+        <colspec colname="c1" colwidth="*"/>
+        <colspec colname="c2" colwidth="*"/>
+        <colspec colname="c3" colwidth="6*"/>
+        <thead>
+          <row>
+            <entry align="left">Code</entry>
+            <entry align="left">Level</entry>
+            <entry align="left">Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>10001</entry>
+            <entry></entry>
+            <entry></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+
+  <section id="logging_codes_adapters">
+    <title>Adapters: 90001 - 99999</title>
+
+    <table frame="all">
+      <title>Logging codes for common</title>
+      <tgroup cols="3" align="left" colsep="1" rowsep="1">
+        <colspec colname="c1" colwidth="*"/>
+        <colspec colname="c2" colwidth="*"/>
+        <colspec colname="c2" colwidth="6*"/>
+        <thead>
+          <row>
+            <entry align="left">Code</entry>
+            <entry align="left">Level</entry>
+            <entry align="left">Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>90001</entry>
+            <entry></entry>
+            <entry></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+
+</appendix>

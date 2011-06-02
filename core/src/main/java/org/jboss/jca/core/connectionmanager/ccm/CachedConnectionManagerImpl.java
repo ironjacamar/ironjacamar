@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.ccm;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
@@ -59,7 +60,11 @@ import org.jboss.util.Strings;
 public class CachedConnectionManagerImpl implements CachedConnectionManager
 {
    /** Log instance */
-   private static Logger log = Logger.getLogger(CachedConnectionManagerImpl.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
+                                                           CachedConnectionManager.class.getName());
+   
+   /** Trace */
+   private static boolean trace = log.isTraceEnabled();
 
    /** Debugging flag */
    private boolean debug = false;
@@ -137,7 +142,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    {
       KeyConnectionAssociation key = peekMetaAwareObject();
 
-      log.tracef("user tx started, key: %s", key);
+      if (trace)
+         log.tracef("user tx started, key: %s", key);
 
       if (key != null)
       {
@@ -186,7 +192,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       LinkedList<Object> stack = currentObjects.get();
       KeyConnectionAssociation oldKey = (KeyConnectionAssociation) stack.removeLast();
 
-      log.tracef("popped object: %s", Strings.defaultToString(oldKey));
+      if (trace)
+         log.tracef("popped object: %s", Strings.defaultToString(oldKey));
 
       if (!stack.contains(oldKey))
       {
@@ -223,7 +230,9 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       KeyConnectionAssociation key = peekMetaAwareObject();
 
-      log.tracef("registering connection from connection manager: %s, connection : %s, key: %s", cm, connection, key);
+      if (trace)
+         log.tracef("registering connection from connection manager: %s, connection : %s, key: %s",
+                    cm, connection, key);
 
       if (key != null)
       {
@@ -266,7 +275,9 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       KeyConnectionAssociation key = peekMetaAwareObject();
 
-      log.tracef("unregistering connection from connection manager: %s, connection: %s, key: %s", cm, connection, key);
+      if (trace)
+         log.tracef("unregistering connection from connection manager: %s, connection: %s, key: %s",
+                    cm, connection, key);
 
       if (key == null)
          return;
@@ -303,14 +314,16 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       LinkedList<Object> stack = currentObjects.get();
       if (stack == null)
       {
-         log.tracef("new stack for key: %s", Strings.defaultToString(rawKey));
+         if (trace)
+            log.tracef("new stack for key: %s", Strings.defaultToString(rawKey));
 
          stack = new LinkedList<Object>();
          currentObjects.set(stack);
       }
       else
       {
-         log.tracef("old stack for key: %s", Strings.defaultToString(rawKey));
+         if (trace)
+            log.tracef("old stack for key: %s", Strings.defaultToString(rawKey));
       }
 
       KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
@@ -399,7 +412,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    public void unregisterConnectionCacheListener(ConnectionCacheListener cm)
    {
-      log.tracef("unregisterConnectionCacheListener: %s", cm);
+      if (trace)
+         log.tracef("unregisterConnectionCacheListener: %s", cm);
 
       Iterator<ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> it =
          objectToConnectionManagerMap.values().iterator();
@@ -517,23 +531,23 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
          {
             if (exception != null)
             {
-               log.info("Closing a connection for you.  Please close them yourself: " + connectionHandle, exception);
+               log.closingConnection(connectionHandle, exception);
             }
             else
             {
-               log.info("Closing a connection for you.  Please close them yourself: " + connectionHandle);
+               log.closingConnection(connectionHandle);
             }
 
             m.invoke(connectionHandle, new Object[]{});
          }
          catch (Throwable t)
          {
-            log.info("Throwable trying to close a connection for you, please close it yourself", t);
+            log.closingConnectionThrowable(t);
          }
       }
       catch (NoSuchMethodException nsme)
       {
-         log.info("Could not find a close method on alleged connection objects.  Please close your own connections.");
+         log.closingConnectionNoClose(connectionHandle.getClass().getName());
       }
    }
 

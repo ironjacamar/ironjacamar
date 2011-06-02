@@ -59,7 +59,7 @@
          indexMetaInf="true"
          update="true"
          level="9"
-         includes="**/common/**">
+         excludes="**/fungal/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers - Common"/>
         <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
