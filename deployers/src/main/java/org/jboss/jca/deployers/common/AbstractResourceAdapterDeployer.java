@@ -1740,10 +1740,10 @@ public abstract class AbstractResourceAdapterDeployer
             log.debug("Activated: " + url.toExternalForm());
          }
 
-         Object[] aoObjs = aos.toArray(new Object[aos.size()]);
-         String[] aoJndis = aoJndiNames.toArray(new String[aoJndiNames.size()]);
-         Object[] cfObjs = cfs.toArray(new Object[cfs.size()]);
-         String[] cfJndis = cfJndiNames.toArray(new String[cfJndiNames.size()]);
+         Object[] cfObjs = cfs.size() > 0 ? cfs.toArray(new Object[cfs.size()]) : null;
+         String[] cfJndis = cfJndiNames.size() > 0 ? cfJndiNames.toArray(new String[cfJndiNames.size()]) : null;
+         Object[] aoObjs = aos.size() > 0 ? aos.toArray(new Object[aos.size()]) : null;
+         String[] aoJndis = aoJndiNames.size() > 0 ? aoJndiNames.toArray(new String[aoJndiNames.size()]) : null;
          
          return new CommonDeployment(url, deploymentName, activateDeployment,
                                      resourceAdapter, resourceAdapterKey,
