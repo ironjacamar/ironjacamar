@@ -32,8 +32,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.metadata.BeanDescriptor;
 
-import org.jboss.logging.Logger;
-
 /**
  * Serializable validator
  *
@@ -44,9 +42,6 @@ public class SerializableValidator implements Validator, Serializable
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
-
-   /** The logger */
-   private static Logger log = Logger.getLogger(SerializableValidator.class);
 
    /** The validator */
    private transient Validator validator;

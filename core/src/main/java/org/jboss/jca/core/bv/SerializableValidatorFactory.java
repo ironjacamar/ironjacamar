@@ -34,8 +34,6 @@ import javax.validation.Validator;
 import javax.validation.ValidatorContext;
 import javax.validation.ValidatorFactory;
 
-import org.jboss.logging.Logger;
-
 /**
  * Serializable validator factory
  *
@@ -46,9 +44,6 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
-
-   /** The logger */
-   private static Logger log = Logger.getLogger(SerializableValidatorFactory.class);
 
    /** The validator factory */
    private transient ValidatorFactory validatorFactory;

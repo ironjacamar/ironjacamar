@@ -30,8 +30,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.jboss.logging.Logger;
-
 /**
  * Bean validation implementation backed by Hibernate Validator
  *
@@ -40,9 +38,6 @@ import org.jboss.logging.Logger;
  */
 public class BeanValidation
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(BeanValidation.class);
-
    /** Validator factory */
    private static final String VALIDATOR_FACTORY = "java:/ValidatorFactory";
 

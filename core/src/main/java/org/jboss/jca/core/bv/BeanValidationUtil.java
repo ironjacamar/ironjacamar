@@ -27,8 +27,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.jboss.logging.Logger;
-
 /**
  * Bean validation utility
  *
@@ -37,9 +35,6 @@ import org.jboss.logging.Logger;
  */
 public class BeanValidationUtil
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(BeanValidationUtil.class);
-
    /**
     * Constructor
     */
