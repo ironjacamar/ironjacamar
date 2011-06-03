@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
@@ -62,7 +63,7 @@ import org.jboss.threads.ExecutionTimedOutException;
 public class WorkManagerImpl implements WorkManager
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(WorkManagerImpl.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, WorkManagerImpl.class.getName());
    
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();

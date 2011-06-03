@@ -22,6 +22,8 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreLogger;
+
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,7 +66,8 @@ import org.jboss.security.auth.callback.JASPICallbackHandler;
 public class WorkWrapper implements Runnable
 {
    /** The log */
-   private static Logger log = Logger.getLogger(WorkWrapper.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
+      WorkWrapper.class.getName());
 
    /** Whether we are tracing */
    private static boolean trace = log.isTraceEnabled();
@@ -317,14 +320,14 @@ public class WorkWrapper implements Runnable
          }
          catch (Throwable t)
          {
-            log.error("SecurityContext setup failed: " + t.getMessage(), t);
+            log.securityContextSetupFailed(t);
             fireWorkContextSetupFailed(ctx);
             throw new WorkException("SecurityContext setup failed: " + t.getMessage(), t);
          }
       }
       else if (securityContext != null && workManager.getCallbackSecurity() == null)
       {
-         log.error("SecurityContext setup failed since CallbackSecurity was null");
+         log.securityContextSetupFailedCallbackSecurityNull();
          fireWorkContextSetupFailed(ctx);
          throw new WorkException("SecurityContext setup failed since CallbackSecurity was null");
       }

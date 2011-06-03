@@ -75,4 +75,22 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 103, value = "Could not find a close method on alleged connection object (%s). " +
             "Please close your own connections.")
    public void closingConnectionNoClose(String clz);
+   
+   
+   // WORK MANAGER (200)
+
+   /**
+    * SecurityContext setup failed
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 201, value = "SecurityContext setup failed: %s")
+   public void securityContextSetupFailed(@Cause Throwable t);
+   
+   /**
+    * SecurityContext setup failed since CallbackSecurity was null
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 202, value = "SecurityContext setup failed since CallbackSecurity was null")
+   public void securityContextSetupFailedCallbackSecurityNull();
 }
