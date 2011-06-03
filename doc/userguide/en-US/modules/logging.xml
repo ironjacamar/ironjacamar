@@ -99,7 +99,7 @@
   </section>
 
   <section id="logging_codes_adapters">
-    <title>Adapters: 90001 - 99999</title>
+    <title>Adapters: 95001 - 99999</title>
 
     <table frame="all">
       <title>Logging codes for common</title>
@@ -116,7 +116,7 @@
         </thead>
         <tbody>
           <row>
-            <entry>90001</entry>
+            <entry>95001</entry>
             <entry></entry>
             <entry></entry>
           </row>

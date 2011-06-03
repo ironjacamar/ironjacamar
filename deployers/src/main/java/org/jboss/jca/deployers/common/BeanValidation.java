@@ -22,6 +22,8 @@
 
 package org.jboss.jca.deployers.common;
 
+import org.jboss.jca.deployers.DeployersLogger;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -44,7 +46,7 @@ import org.jboss.logging.Logger;
  */
 public class BeanValidation
 {
-   private static Logger log = Logger.getLogger(BeanValidation.class);
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, BeanValidation.class.getName());
 
    private static boolean trace = log.isTraceEnabled();
 

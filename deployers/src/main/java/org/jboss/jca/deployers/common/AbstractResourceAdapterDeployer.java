@@ -57,6 +57,7 @@ import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
+import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
 import org.jboss.jca.validator.Key;
@@ -99,7 +100,6 @@ import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
-import org.jboss.logging.Logger;
 import org.jboss.security.SecurityContext;
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
@@ -113,7 +113,7 @@ import org.jboss.security.SubjectFactory;
 public abstract class AbstractResourceAdapterDeployer
 {
    /** the logger **/
-   protected final Logger log;
+   protected final DeployersLogger log;
 
    /** trace boolean check */
    protected final boolean trace;
@@ -249,7 +249,7 @@ public abstract class AbstractResourceAdapterDeployer
             }
             catch (IOException ioe)
             {
-               log.warn(ioe.getMessage(), ioe);
+               log.validationReportFailure(ioe.getMessage(), ioe);
             }
             finally
             {
@@ -394,7 +394,7 @@ public abstract class AbstractResourceAdapterDeployer
 
             if (cd.getClassName() != null && !clz.equals(cd.getClassName()))
             {
-               log.warn("Only one connection definition found with a mismatch in class-name: " + cd);
+               log.connectionDefinitionMismatch(cd.getClassName());
                return null;
             }
 
@@ -433,7 +433,7 @@ public abstract class AbstractResourceAdapterDeployer
 
             if (cao.getClassName() != null && !clz.equals(cao.getClassName()))
             {
-               log.warn("Only one admin object found with a mismatch in class-name: " + cao);
+               log.adminObjectMismatch(cao.getClassName());
                return null;
             }
 
@@ -760,7 +760,7 @@ public abstract class AbstractResourceAdapterDeployer
       {
          // Notify regarding license terms
          if (cmd != null && cmd.getLicense() != null && cmd.getLicense().isLicenseRequired())
-            log.info("Required license terms for " + url.toExternalForm());
+            log.requiredLicenseTerms(url.toExternalForm());
 
          String mgtUniqueId = url.getFile();
          if (mgtUniqueId.indexOf("/") != -1)
@@ -1067,7 +1067,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                      if (cf == null)
                      {
-                        log.error("ConnectionFactory is null");
+                        log.nullConnectionFactory();
                      }
                      else
                      {
@@ -1527,7 +1527,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                                  if (cf == null)
                                  {
-                                    log.error("ConnectionFactory is null");
+                                    log.nullConnectionFactory();
                                  }
                                  else
                                  {
@@ -1733,7 +1733,7 @@ public abstract class AbstractResourceAdapterDeployer
 
          if (activateDeployment)
          {
-            log.info("Deployed: " + url.toExternalForm());
+            log.deployed(url.toExternalForm());
          }
          else
          {
@@ -1862,7 +1862,7 @@ public abstract class AbstractResourceAdapterDeployer
             }
             catch (Throwable t)
             {
-               log.error("Exception during createSubject()" + t.getMessage(), t);
+               log.subjectCreationError(t.getMessage(), t);
             }
 
             return null;
@@ -2050,5 +2050,5 @@ public abstract class AbstractResourceAdapterDeployer
     * Get the logger
     * @return The value
     */
-   protected abstract Logger getLogger();
+   protected abstract DeployersLogger getLogger();
 }

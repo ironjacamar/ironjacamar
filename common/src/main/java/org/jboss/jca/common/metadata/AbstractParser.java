@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata;
 
+import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
@@ -60,7 +61,7 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 public abstract class AbstractParser
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(AbstractParser.class);
+   private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, AbstractParser.class.getName());
 
    /**
     * convert an xml element in boolean value. Empty elements results with true (tag presence is sufficient condition)

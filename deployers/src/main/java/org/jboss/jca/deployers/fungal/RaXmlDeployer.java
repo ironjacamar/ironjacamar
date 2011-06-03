@@ -30,6 +30,7 @@ import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
+import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.deployers.common.CommonDeployment;
 
 import java.io.File;
@@ -65,7 +66,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
       DeployerOrder,
       DeployerPhases
 {
-   private static Logger log = Logger.getLogger(RaXmlDeployer.class);
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, RaXmlDeployer.class.getName());
 
    /** The list of generated deployments */
    private List<Deployment> deployments;
@@ -81,7 +82,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
    /**
     * {@inheritDoc}
     */
-   protected Logger getLogger()
+   protected DeployersLogger getLogger()
    {
       return log;
    }

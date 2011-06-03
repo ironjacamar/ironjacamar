@@ -24,13 +24,12 @@ package org.jboss.jca.deployers.common;
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
+import org.jboss.jca.deployers.DeployersLogger;
 
 import java.net.URL;
 import java.util.Arrays;
 
 import javax.resource.spi.ResourceAdapter;
-
-import org.jboss.logging.Logger;
 
 /**
  *
@@ -68,7 +67,7 @@ public class CommonDeployment
 
    private final ClassLoader cl;
 
-   private final Logger log;
+   private final DeployersLogger log;
 
    /**
     * Create a new Deployment.
@@ -94,7 +93,7 @@ public class CommonDeployment
                            Object[] aos, String[] aoJndiNames,
                            XAResourceRecovery[] recoveryModules,
                            Connector connector, DataSource[] dataSources,
-                           ClassLoader cl, Logger log)
+                           ClassLoader cl, DeployersLogger log)
    {
       super();
       this.url = url;
@@ -244,7 +243,7 @@ public class CommonDeployment
     *
     * @return the log.
     */
-   public final Logger getLog()
+   public final DeployersLogger getLog()
    {
       return log;
    }

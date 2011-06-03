@@ -52,6 +52,7 @@ import org.jboss.jca.core.spi.statistics.Statistics;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
+import org.jboss.jca.deployers.DeployersLogger;
 
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -69,7 +70,6 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
-import org.jboss.logging.Logger;
 import org.jboss.security.SecurityContext;
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
@@ -84,7 +84,7 @@ import org.jboss.security.SubjectFactory;
 public abstract class AbstractDsDeployer
 {
    /** log **/
-   protected Logger log;
+   protected DeployersLogger log;
 
    /** The transaction integration */
    protected TransactionIntegration transactionIntegration;
@@ -931,7 +931,7 @@ public abstract class AbstractDsDeployer
     * Get the logger
     * @return The value
     */
-   protected abstract Logger getLogger();
+   protected abstract DeployersLogger getLogger();
 
    /**
     * Create a subject

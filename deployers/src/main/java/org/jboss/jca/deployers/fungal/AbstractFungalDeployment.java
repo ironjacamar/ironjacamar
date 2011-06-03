@@ -29,6 +29,7 @@ import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
+import org.jboss.jca.deployers.DeployersLogger;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -50,7 +51,7 @@ import com.github.fungal.spi.deployers.Deployment;
 public abstract class AbstractFungalDeployment implements Deployment
 {
    /** The logger */
-   protected Logger log;
+   protected DeployersLogger log;
 
    /** The deployment */
    protected URL deployment;
@@ -141,7 +142,7 @@ public abstract class AbstractFungalDeployment implements Deployment
                                    XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                                    ManagementRepository managementRepository, Connector connector,
                                    MBeanServer server, List<ObjectName> objectNames,
-                                   ClassLoader cl, Logger log)
+                                   ClassLoader cl, DeployersLogger log)
    {
       this.deployment = deployment;
       this.deploymentName = deploymentName;

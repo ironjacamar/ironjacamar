@@ -22,6 +22,7 @@
 
 package org.jboss.jca.common.metadata;
 
+import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.metadata.ironjacamar.IronJacamarParser;
@@ -42,7 +43,7 @@ import org.jboss.logging.Logger;
  */
 public class MetadataFactory
 {
-   private static Logger log = Logger.getLogger(MetadataFactory.class);
+   private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, MetadataFactory.class.getName());
 
    /**
     * Constructor
@@ -74,13 +75,10 @@ public class MetadataFactory
             result = (new RaParser()).parse(input);
 
             log.debugf("Total parse for %s took %d ms", url, (System.currentTimeMillis() - start));
-
-            //log.tracef("successufully deployed $s", result.toString());
-
          }
          catch (Exception e)
          {
-            log.errorf(e, "Error during parsing: %s", url);
+            log.parsingErrorRaXml(url, e);
             throw e;
          }
          finally
@@ -122,12 +120,10 @@ public class MetadataFactory
             result = (new IronJacamarParser()).parse(input);
 
             log.debugf("Total parse for %s took %d ms", url, (System.currentTimeMillis() - start));
-
-            log.tracef("successufully deployed %s", result.toString());
          }
          catch (Exception e)
          {
-            log.error("Error during parsing: " + url, e);
+            log.parsingErrorIronJacamarXml(url, e);
             throw e;
          }
          finally

@@ -35,6 +35,7 @@ import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.deployers.common.AbstractDsDeployer;
 import org.jboss.jca.deployers.common.CommonDeployment;
 
@@ -71,7 +72,7 @@ import com.github.fungal.spi.deployers.Deployment;
 public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(DsXmlDeployer.class);
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, DsXmlDeployer.class.getName());
 
    /** jdbcLocal **/
    private String jdbcLocal;
@@ -152,7 +153,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    /**
     * {@inheritDoc}
     */
-   protected Logger getLogger()
+   protected DeployersLogger getLogger()
    {
       return log;
    }

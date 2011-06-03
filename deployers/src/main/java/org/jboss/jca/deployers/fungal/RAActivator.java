@@ -28,6 +28,7 @@ import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
+import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.deployers.common.CommonDeployment;
 
 import java.io.File;
@@ -54,10 +55,10 @@ import com.github.fungal.spi.deployers.Deployment;
 public final class RAActivator extends AbstractFungalRADeployer implements DeployerPhases
 {
    /** The logger */
-   static Logger log = Logger.getLogger(RAActivator.class);
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, RAActivator.class.getName());
 
    /** Trace enabled */
-   static boolean trace = log.isTraceEnabled();
+   private static boolean trace = log.isTraceEnabled();
 
    /** Enabled */
    private boolean enabled;
@@ -82,7 +83,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    /**
     * {@inheritDoc}
     */
-   protected Logger getLogger()
+   protected DeployersLogger getLogger()
    {
       return log;
    }

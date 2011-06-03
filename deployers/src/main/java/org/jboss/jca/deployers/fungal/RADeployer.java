@@ -38,6 +38,7 @@ import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
+import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.deployers.common.CommonDeployment;
 
 import java.io.File;
@@ -69,7 +70,7 @@ import com.github.fungal.spi.deployers.MultiStageDeployer;
 public final class RADeployer extends AbstractFungalRADeployer implements Deployer, MultiStageDeployer, DeployerOrder
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(RADeployer.class);
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, RADeployer.class.getName());
 
    /**
     * Constructor
@@ -82,7 +83,7 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
    /**
     * {@inheritDoc}
     */
-   protected Logger getLogger()
+   protected DeployersLogger getLogger()
    {
       return log;
    }

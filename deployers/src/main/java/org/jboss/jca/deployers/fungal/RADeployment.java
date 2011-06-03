@@ -29,6 +29,7 @@ import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
+import org.jboss.jca.deployers.DeployersLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +39,6 @@ import java.util.List;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
-
-import org.jboss.logging.Logger;
 
 import com.github.fungal.api.util.FileUtil;
 
@@ -86,7 +85,7 @@ public class RADeployment extends AbstractFungalDeployment
                        File tmpDirectory,
                        ManagementRepository managementRepository, Connector connector,
                        MBeanServer server, List<ObjectName> objectNames,
-                       ClassLoader cl, Logger log)
+                       ClassLoader cl, DeployersLogger log)
    {
       super(deployment, deploymentName, activator, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
             cfs, cfJndis, aos, aoJndis, recoveryModules, recoveryRegistry, managementRepository,

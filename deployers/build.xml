@@ -43,7 +43,19 @@
            optimize="${javac.optimize}"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
+      <compilerarg value="-AgeneratedTranslationFilesPath=${build.deployers.dir}/impl"/>
+    </javac>
+
+    <javac srcdir="${build.deployers.dir}/impl"
+           destdir="${build.deployers.dir}/impl"
+           classpathref="sjc.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
+      <compilerarg value="-Xlint"/>
     </javac> 
+
   </target>
 
   <!-- ================================= 

@@ -28,6 +28,7 @@ import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
+import org.jboss.jca.deployers.DeployersLogger;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -48,7 +49,8 @@ import com.github.fungal.spi.deployers.Deployment;
 public class DsXmlDeployment implements Deployment
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(DsXmlDeployment.class);
+   private static DeployersLogger log = 
+      Logger.getMessageLogger(DeployersLogger.class, DsXmlDeployment.class.getName());
 
    /** The deployment */
    private URL deployment;

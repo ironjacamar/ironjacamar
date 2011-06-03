@@ -22,6 +22,7 @@
 
 package org.jboss.jca.common.annotations;
 
+import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
@@ -86,7 +87,7 @@ import org.jboss.logging.Logger;
  */
 public class Annotations
 {
-   private static Logger log = Logger.getLogger(Annotations.class);
+   private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, Annotations.class.getName());
 
    private static boolean trace = log.isTraceEnabled();
 
@@ -200,8 +201,6 @@ public class Annotations
       ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository, classLoader,
          configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ADMIN_OBJECT));
 
-      //log.debug("ConnectorMetadata " + md);
-
       // @Connector
       Connector conn = processConnector(annotationRepository, xmlResourceAdapterClass,
             connectionDefinitions, configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.RA),
@@ -248,7 +247,7 @@ public class Annotations
             // JBJCA-240
             if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
             {
-               log.fatal("No @Connector was found and no definition in the ra.xml metadata either");
+               log.noConnector();
                throw new ValidateException("No @Connector defined");
             }
          }
@@ -257,8 +256,7 @@ public class Annotations
             // JBJCA-240
             if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
             {
-               log.fatal("More than one @Connector was found but the correct one " +
-                         "wasn't defined in the ra.xml metadata");
+               log.moreThanOneConnector();
                throw new ValidateException("More than one @Connector defined");
             }
          }

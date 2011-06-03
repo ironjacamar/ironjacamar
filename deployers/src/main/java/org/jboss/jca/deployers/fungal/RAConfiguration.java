@@ -35,18 +35,12 @@ import java.io.PrintStream;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jboss.logging.Logger;
-
 /**
  * A configuration for the resource adapter deployer chain
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class RAConfiguration implements Configuration
 {
-   private static Logger log = Logger.getLogger(RAConfiguration.class);
-
-   private static boolean trace = log.isTraceEnabled();
-
    /** The transaction integration */
    private TransactionIntegration transactionIntegration = null;
 

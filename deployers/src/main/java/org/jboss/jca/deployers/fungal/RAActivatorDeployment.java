@@ -29,6 +29,7 @@ import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
+import org.jboss.jca.deployers.DeployersLogger;
 
 import java.net.URL;
 import java.util.List;
@@ -36,8 +37,6 @@ import java.util.List;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
-
-import org.jboss.logging.Logger;
 
 /**
  * A resource adapter activator deployment for JCA/SJC
@@ -75,7 +74,7 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
                                 XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                                 ManagementRepository managementRepository, Connector connector,
                                 MBeanServer server, List<ObjectName> objectNames,
-                                ClassLoader cl, Logger log)
+                                ClassLoader cl, DeployersLogger log)
    {
       super(deployment, deploymentName, true, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
             cfs, cfJndis, aos, aoJndis, recoveryModules, recoveryRegistry, managementRepository,
