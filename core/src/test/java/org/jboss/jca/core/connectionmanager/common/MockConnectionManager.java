@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.common;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
@@ -43,7 +44,7 @@ import org.jboss.logging.Logger;
 public class MockConnectionManager extends AbstractConnectionManager
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(MockConnectionManager.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, MockConnectionManager.class.getName());
 
    /** Serial version UID */
    private static final long serialVersionUID = 1L;
@@ -58,7 +59,7 @@ public class MockConnectionManager extends AbstractConnectionManager
    /**
     * {@inheritDoc}
     */
-   public Logger getLogger()
+   public CoreLogger getLogger()
    {
       return log;
    }
