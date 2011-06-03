@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
@@ -52,7 +53,6 @@ import javax.security.auth.Subject;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
-import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
 
 /**
@@ -64,10 +64,10 @@ import org.jboss.security.SubjectFactory;
 public abstract class AbstractConnectionManager implements ConnectionManager
 {
    /** Log instance */
-   private final Logger log;
+   private final CoreLogger log;
 
    /** Log trace */
-   private final boolean trace;
+   protected boolean trace;
 
    /** The pool */
    private Pool pool;
@@ -112,7 +112,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     * Get the logger.
     * @return The value
     */
-   protected abstract Logger getLogger();
+   protected abstract CoreLogger getLogger();
 
    /**
     * Set the pool.
@@ -416,7 +416,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       catch (Throwable t)
       {
-         log.warn("Error during tidy up connection" + cl, t);
+         log.errorDuringTidyUpConnection(cl.toString(), t);
          kill = true;
       }
 
@@ -435,7 +435,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
          else
          {
-            log.warn("resourceException returning connection: " + cl.getManagedConnection(), re);
+            log.resourceExceptionReturningConnection(cl.getManagedConnection().toString(), re);
          }
       }
    }
@@ -480,7 +480,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
          catch (ResourceException re)
          {
-            log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem" + re);
+            if (trace)
+               log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem" + re);
             returnManagedConnection(cl, true);
          }
          JBossResourceException.rethrowAsResourceException(
@@ -508,7 +509,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       // nothing to do
       if (unsharableResources.contains(jndiName))
       {
-         log.trace("disconnect for unshareable connection: nothing to do");
+         if (trace)
+            log.trace("disconnect for unshareable connection: nothing to do");
          return;
       }
 
@@ -539,7 +541,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       // nothing to do
       if (unsharableResources.contains(jndiName))
       {
-         log.trace("reconnect for unshareable connection: nothing to do");
+         if (trace)
+            log.trace("reconnect for unshareable connection: nothing to do");
          return;
       }
 
@@ -552,8 +555,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          if (cr.getConnectionListener() != null)
          {
             //This might well be an error.
-            log.warn("reconnecting a connection handle that still has a managedConnection! "
-                  + cr.getConnectionListener().getManagedConnection() + " " + cr.getConnection());
+            log.reconnectingConnectionHandleHasManagedConnection(
+               cr.getConnectionListener().getManagedConnection().toString(),
+               cr.getConnection());
          }
          ConnectionListener cl = criToCLMap.get(cr.getCri());
          if (cl == null)
@@ -616,7 +620,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       catch (Throwable t)
       {
-         log.warn("Unchecked throwable in managedConnectionDisconnected() cl=" + cl, t);
+         log.uncheckedThrowableInManagedConnectionDisconnected(cl.toString(), t);
       }
    }
 
@@ -697,7 +701,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
       }
 
-      log.tracef("Subject: %s", subject);
+      if (trace)
+         log.tracef("Subject: %s", subject);
 
       return subject;
    }

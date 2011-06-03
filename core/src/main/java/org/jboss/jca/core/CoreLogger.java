@@ -170,4 +170,76 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = ERROR)
    @Message(id = 313, value = "There is something wrong with the pooling?")
    public void somethingWrongWithPooling(@Cause Throwable t);
+   
+   
+   // CONNECTION MANAGER (400)
+
+   /**
+    * Error during tidy up connection
+    * @param cl The ConnectionListener name
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 401, value = "Error during tidy up connection: %s")
+   public void errorDuringTidyUpConnection(String cl, @Cause Throwable t);
+   
+   /**
+    * resourceException in returning connection
+    * @param mc The ManagedConnection name
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 402, value = "resourceException in returning connection: %s")
+   public void resourceExceptionReturningConnection(String mc, @Cause Throwable t);
+   
+   /**
+    * reconnecting a connection handle that still has a managedConnection
+    * @param mc The ManagedConnection name
+    * @param connection connection object
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 403, value = "reconnecting a connection handle that still has a managedConnection! %s %s")
+   public void reconnectingConnectionHandleHasManagedConnection(String mc, Object connection);
+
+   /**
+    * Unchecked throwable in managedConnectionDisconnected()
+    * @param cl The ConnectionListener name
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 404, value = "Unchecked throwable in managedConnectionDisconnected() cl= %s")
+   public void uncheckedThrowableInManagedConnectionDisconnected(String cl, @Cause Throwable t);
+   
+   
+   // TRANSACTION SYNCHRONIZER (500)
+
+   /**
+    * Thread is not the enlisting thread
+    * @param currentThread current thread
+    * @param enlistingThread enlisting thread
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 501, value = "thread %s is not the enlisting thread %s")
+   public void threadIsnotEnlistingThread(String currentThread, String enlistingThread, @Cause Throwable t);
+   
+   /**
+    * Transaction error in before completion
+    * @param transaction transaction
+    * @param synch Synchronization 
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 502, value = "Transaction %s error in before completion %s")
+   public void transactionErrorInBeforeCompletion(String transaction, String synch, @Cause Throwable t);
+   
+   /**
+    * Transaction error in after completion
+    * @param transaction transaction
+    * @param synch Synchronization 
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 503, value = "Transaction %s error in after completion %s")
+   public void transactionErrorInAfterCompletion(String transaction, String synch, @Cause Throwable t);
 }

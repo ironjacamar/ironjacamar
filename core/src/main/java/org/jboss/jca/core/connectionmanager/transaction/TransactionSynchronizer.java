@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.core.connectionmanager.transaction;
 
+import org.jboss.jca.core.CoreLogger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,7 +52,7 @@ import org.jboss.logging.Logger;
 public class TransactionSynchronizer implements Synchronization
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(TransactionSynchronizer.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
    /** The transaction synchronizations */
    private static ConcurrentMap<Transaction, TransactionSynchronizer> txSynchs =
@@ -167,8 +169,8 @@ public class TransactionSynchronizer implements Synchronization
 
       if (enlistingThread == null || enlistingThread != currentThread)
       {
-         log.warn("Thread " + currentThread + " not the enlisting thread " + enlistingThread,
-                  new Exception("STACKTRACE"));
+         log.threadIsnotEnlistingThread(currentThread.toString(), enlistingThread.toString(), 
+            new Exception("STACKTRACE"));
          return;
       }
 
@@ -326,7 +328,7 @@ public class TransactionSynchronizer implements Synchronization
       }
       catch (Throwable t)
       {
-         log.warn("Transaction " + tx + " error in before completion " + synch, t);
+         log.transactionErrorInBeforeCompletion(tx.toString(), synch.toString(), t);
       }
    }
 
@@ -344,7 +346,7 @@ public class TransactionSynchronizer implements Synchronization
       }
       catch (Throwable t)
       {
-         log.warn("Transaction " + tx + " error in after completion " + synch, t);
+         log.transactionErrorInAfterCompletion(tx.toString(), synch.toString(), t);
       }
    }   
 }

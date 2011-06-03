@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.notx;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
@@ -46,7 +47,7 @@ import org.jboss.logging.Logger;
 public class NoTxConnectionManagerImpl extends AbstractConnectionManager implements NoTxConnectionManager
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(NoTxConnectionManager.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, NoTxConnectionManager.class.getName());
 
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
@@ -62,7 +63,7 @@ public class NoTxConnectionManagerImpl extends AbstractConnectionManager impleme
     * Get the logger.
     * @return The value
     */
-   protected Logger getLogger()
+   protected CoreLogger getLogger()
    {
       return log;
    }

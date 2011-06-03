@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.tx;
 
 import org.jboss.jca.common.JBossResourceException;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.TxConnectionManager;
@@ -132,7 +133,7 @@ import org.jboss.util.NotImplementedException;
 public class TxConnectionManagerImpl extends AbstractConnectionManager implements TxConnectionManager
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(TxConnectionManager.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TxConnectionManager.class.getName());
 
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
@@ -186,7 +187,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     * Get the logger.
     * @return The value
     */
-   protected Logger getLogger()
+   protected CoreLogger getLogger()
    {
       return log;
    }
@@ -358,7 +359,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          JBossResourceException.rethrowAsResourceException("Error checking for a transaction.", t);
       }
 
-      log.tracef("getManagedConnection interleaving=%s , tx=%s", interleaving, trackByTransaction);  
+      if (trace)
+         log.tracef("getManagedConnection interleaving=%s , tx=%s", interleaving, trackByTransaction);  
       
       return super.getManagedConnection(trackByTransaction, subject, cri);
    }
@@ -420,7 +422,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       }
       catch (Throwable t)
       {
-         log.trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
+         if (trace)
+            log.trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
 
          throw new JBossResourceException("Could not enlist in transaction on entering meta-aware object!", t);
       }
@@ -444,13 +447,15 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       //if there are no more handles and tx is complete, we can return to pool.
       if (cl.isManagedConnectionFree())
       {
-         log.tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
+         if (trace)
+            log.tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
 
          returnManagedConnection(cl, false);
       }
       else
       {
-         log.tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
+         if (trace)
+            log.tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
       }
 
       // Rethrow the error
@@ -504,7 +509,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (eisProductVersion == null)
                eisProductVersion = getJndiName();
 
-            log.tracef("Generating XAResourceWrapper for TxConnectionManager (%s)", this);
+            if (trace)
+               log.tracef("Generating XAResourceWrapper for TxConnectionManager (%s)", this);
 
             xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
                                                                isSameRMOverride, 
@@ -513,7 +519,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          }
          else
          {
-            log.tracef("Not wrapping XAResource.");
+            if (trace)
+               log.tracef("Not wrapping XAResource.");
 
             xaResource = mc.getXAResource();
          }
