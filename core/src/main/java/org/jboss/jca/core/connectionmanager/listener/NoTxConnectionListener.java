@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.listener;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
@@ -40,7 +41,8 @@ import org.jboss.logging.Logger;
 public class NoTxConnectionListener extends AbstractConnectionListener
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(NoTxConnectionListener.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
+      NoTxConnectionListener.class.getName());
 
    /**
     * Creates a new no-tx listener.
@@ -59,7 +61,7 @@ public class NoTxConnectionListener extends AbstractConnectionListener
    /**
     * {@inheritDoc}
     */
-   protected Logger getLogger()
+   protected CoreLogger getLogger()
    {
       return log;
    }

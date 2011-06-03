@@ -93,4 +93,81 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = ERROR)
    @Message(id = 202, value = "SecurityContext setup failed since CallbackSecurity was null")
    public void securityContextSetupFailedCallbackSecurityNull();
+   
+   
+   // CONNECTION MANAGER LISTENER (300)
+
+   /**
+    * Registered a null handle for managedConnection
+    * @param managedConnection The managedConnection instance
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 301, value = "Registered a null handle for managedConnection: %s")
+   public void registeredNullHandleManagedConnection(String managedConnection);
+   
+   /**
+    * Unregistered handle that was not registered
+    * @param handle Unregistered handle
+    * @param managedConnection The managedConnection instance
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 302, value = "Unregistered handle that was not registered! %s" + 
+         " for managedConnection: %s")
+   public void unregisteredHandleNotRegistered(Object handle, String managedConnection);
+   
+   /**
+    * Unregistered a null handle for managedConnection
+    * @param managedConnection The managedConnection instance
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 303, value = "Registered a null handle for managedConnection: %s")
+   public void unregisteredNullHandleManagedConnection(String managedConnection);
+
+   /**
+    * Connection error occured
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 305, value = "Connection error occured: %s")
+   public void connectionErrorOccured(@Cause Throwable t);
+   
+   /**
+    * Unknown Connection error occured
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 306, value = "Unknown Connection error occured: %s")
+   public void unknownConnectionErrorOccured(@Cause Throwable t);
+   
+   
+   /**
+    * Notified of error on a different managed connection
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 307, value = "Notified of error on a different managed connection?")
+   public void notifiedErrorDifferentManagedConnection();
+
+   /**
+    * throwable from unregister connection
+    * @param t The exception
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 311, value = "throwable from unregister connection")
+   public void throwableFromUnregisterConnection(@Cause Throwable t);
+
+   /**
+    * Error while closing connection handle
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 312, value = "Error while closing connection handle")
+   public void errorWhileClosingConnectionHandle(@Cause Throwable t);
+
+   /**
+    * There is something wrong with the pooling
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 313, value = "There is something wrong with the pooling?")
+   public void somethingWrongWithPooling(@Cause Throwable t);
 }

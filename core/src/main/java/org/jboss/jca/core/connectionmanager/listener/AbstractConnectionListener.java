@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.listener;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -35,8 +36,6 @@ import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
-import org.jboss.logging.Logger;
-
 /**
  * Abstract implementation of the {@link ConnectionListener} interface
  * contract.
@@ -47,7 +46,7 @@ import org.jboss.logging.Logger;
  */
 public abstract class AbstractConnectionListener implements ConnectionListener
 {
-   private final Logger log;
+   private final CoreLogger log;
    
    /** Log trace */
    protected boolean trace;
@@ -126,7 +125,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * Get the logger
     * @return The value
     */
-   protected abstract Logger getLogger();
+   protected abstract CoreLogger getLogger();
    
    /**
     * {@inheritDoc}
@@ -217,7 +216,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       }
       else
       {
-         log.info("Registered a null handle for managedConnection: " + managedConnection);
+         log.registeredNullHandleManagedConnection(managedConnection.toString());
       }
    }
 
@@ -261,13 +260,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       {
          if (!connectionHandles.remove(handle))
          {
-            log.info("Unregistered handle that was not registered! " + handle + " for managedConnection: " + 
-                     managedConnection);
+            log.unregisteredHandleNotRegistered(handle, managedConnection.toString());
          }
       }
       else
       {
-         log.info("Unregistered a null handle for managedConnection: " + managedConnection);
+         log.unregisteredNullHandleManagedConnection(managedConnection.toString());
       }
       
       if (trace)
@@ -329,12 +327,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
                cause = new Exception("No exception was reported");  
             }
             
-            log.warn("Connection error occured: " + this, cause);
+            log.connectionErrorOccured(cause);
          }
          else
          {
             Throwable cause = new Exception("No exception was reported");
-            log.warn("Unknown Connection error occured: " + this, cause);
+            log.unknownConnectionErrorOccured(cause);
          }
       }
       
@@ -349,7 +347,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       
       if (event != null && event.getSource() != getManagedConnection())
       {
-         log.warn("Notified of error on a different managed connection?");  
+         log.notifiedErrorDifferentManagedConnection();
       }
       
       getConnectionManager().returnManagedConnection(this, true);      
