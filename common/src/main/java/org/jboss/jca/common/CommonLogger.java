@@ -44,7 +44,7 @@ public interface CommonLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = ERROR)
-   @Message(id = 05001, value = "Parsing error of ra.xml file: %s")
+   @Message(id = 5001, value = "Parsing error of ra.xml file: %s")
    public void parsingErrorRaXml(String url, @Cause Throwable t);
 
    /**
@@ -53,21 +53,21 @@ public interface CommonLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = ERROR)
-   @Message(id = 05002, value = "Parsing error of ironjacamar.xml file: %s")
+   @Message(id = 5002, value = "Parsing error of ironjacamar.xml file: %s")
    public void parsingErrorIronJacamarXml(String url, @Cause Throwable t);
 
    /**
     * No connector
     */
    @LogMessage(level = ERROR)
-   @Message(id = 05003, value = "No @Connector was found and no definition in the ra.xml metadata either")
+   @Message(id = 5003, value = "No @Connector was found and no definition in the ra.xml metadata either")
    public void noConnector();
 
    /**
     * More than one connector
     */
    @LogMessage(level = ERROR)
-   @Message(id = 05004, value = "More than one @Connector was found but the correct one " +
+   @Message(id = 5004, value = "More than one @Connector was found but the correct one " +
             "wasn't defined in the ra.xml metadata")
    public void moreThanOneConnector();
 }
