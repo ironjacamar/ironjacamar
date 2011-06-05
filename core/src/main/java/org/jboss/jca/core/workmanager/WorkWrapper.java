@@ -320,7 +320,7 @@ public class WorkWrapper implements Runnable
          }
          catch (Throwable t)
          {
-            log.securityContextSetupFailed(t);
+            log.securityContextSetupFailed(t.getMessage(), t);
             fireWorkContextSetupFailed(ctx);
             throw new WorkException("SecurityContext setup failed: " + t.getMessage(), t);
          }

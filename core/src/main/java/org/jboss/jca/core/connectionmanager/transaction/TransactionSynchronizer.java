@@ -169,7 +169,7 @@ public class TransactionSynchronizer implements Synchronization
 
       if (enlistingThread == null || enlistingThread != currentThread)
       {
-         log.threadIsnotEnlistingThread(currentThread.toString(), enlistingThread.toString(), 
+         log.threadIsnotEnlistingThread(currentThread, enlistingThread, 
             new Exception("STACKTRACE"));
          return;
       }
@@ -328,7 +328,7 @@ public class TransactionSynchronizer implements Synchronization
       }
       catch (Throwable t)
       {
-         log.transactionErrorInBeforeCompletion(tx.toString(), synch.toString(), t);
+         log.transactionErrorInBeforeCompletion(tx, synch, t);
       }
    }
 
@@ -346,7 +346,7 @@ public class TransactionSynchronizer implements Synchronization
       }
       catch (Throwable t)
       {
-         log.transactionErrorInAfterCompletion(tx.toString(), synch.toString(), t);
+         log.transactionErrorInAfterCompletion(tx, synch, t);
       }
    }   
 }

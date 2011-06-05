@@ -216,7 +216,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       }
       else
       {
-         log.registeredNullHandleManagedConnection(managedConnection.toString());
+         log.registeredNullHandleManagedConnection(managedConnection);
       }
    }
 
@@ -260,12 +260,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       {
          if (!connectionHandles.remove(handle))
          {
-            log.unregisteredHandleNotRegistered(handle, managedConnection.toString());
+            log.unregisteredHandleNotRegistered(handle, managedConnection);
          }
       }
       else
       {
-         log.unregisteredNullHandleManagedConnection(managedConnection.toString());
+         log.unregisteredNullHandleManagedConnection(managedConnection);
       }
       
       if (trace)
@@ -327,12 +327,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
                cause = new Exception("No exception was reported");  
             }
             
-            log.connectionErrorOccured(cause);
+            log.connectionErrorOccured(cause.getMessage(), cause);
          }
          else
          {
             Throwable cause = new Exception("No exception was reported");
-            log.unknownConnectionErrorOccured(cause);
+            log.unknownConnectionErrorOccured(cause.getMessage(), cause);
          }
       }
       

@@ -81,11 +81,12 @@ public interface CoreLogger extends BasicLogger
 
    /**
     * SecurityContext setup failed
+    * @param description throwable description
     * @param t The exception
     */
    @LogMessage(level = ERROR)
    @Message(id = 201, value = "SecurityContext setup failed: %s")
-   public void securityContextSetupFailed(@Cause Throwable t);
+   public void securityContextSetupFailed(String description, @Cause Throwable t);
    
    /**
     * SecurityContext setup failed since CallbackSecurity was null
@@ -102,8 +103,8 @@ public interface CoreLogger extends BasicLogger
     * @param managedConnection The managedConnection instance
     */
    @LogMessage(level = INFO)
-   @Message(id = 301, value = "Registered a null handle for managedConnection: %s")
-   public void registeredNullHandleManagedConnection(String managedConnection);
+   @Message(id = 301, value = "Registered a null handle for managed connection: %s")
+   public void registeredNullHandleManagedConnection(Object managedConnection);
    
    /**
     * Unregistered handle that was not registered
@@ -113,31 +114,33 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = INFO)
    @Message(id = 302, value = "Unregistered handle that was not registered! %s" + 
          " for managedConnection: %s")
-   public void unregisteredHandleNotRegistered(Object handle, String managedConnection);
+   public void unregisteredHandleNotRegistered(Object handle, Object managedConnection);
    
    /**
     * Unregistered a null handle for managedConnection
     * @param managedConnection The managedConnection instance
     */
    @LogMessage(level = INFO)
-   @Message(id = 303, value = "Registered a null handle for managedConnection: %s")
-   public void unregisteredNullHandleManagedConnection(String managedConnection);
+   @Message(id = 303, value = "Registered a null handle for managed connection: %s")
+   public void unregisteredNullHandleManagedConnection(Object managedConnection);
 
    /**
     * Connection error occured
+    * @param description throwable description
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 305, value = "Connection error occured: %s")
-   public void connectionErrorOccured(@Cause Throwable t);
+   @Message(id = 305, value = "Connection error occured %s")
+   public void connectionErrorOccured(String description, @Cause Throwable t);
    
    /**
     * Unknown Connection error occured
+    * @param description throwable description
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 306, value = "Unknown Connection error occured: %s")
-   public void unknownConnectionErrorOccured(@Cause Throwable t);
+   @Message(id = 306, value = "Unknown connection error occured %s")
+   public void unknownConnectionErrorOccured(String description, @Cause Throwable t);
    
    
    /**
@@ -152,7 +155,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = INFO)
-   @Message(id = 311, value = "throwable from unregister connection")
+   @Message(id = 311, value = "Throwable from unregister connection")
    public void throwableFromUnregisterConnection(@Cause Throwable t);
 
    /**
@@ -181,7 +184,7 @@ public interface CoreLogger extends BasicLogger
     */
    @LogMessage(level = WARN)
    @Message(id = 401, value = "Error during tidy up connection: %s")
-   public void errorDuringTidyUpConnection(String cl, @Cause Throwable t);
+   public void errorDuringTidyUpConnection(Object cl, @Cause Throwable t);
    
    /**
     * resourceException in returning connection
@@ -189,8 +192,8 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 402, value = "resourceException in returning connection: %s")
-   public void resourceExceptionReturningConnection(String mc, @Cause Throwable t);
+   @Message(id = 402, value = "ResourceException in returning connection: %s")
+   public void resourceExceptionReturningConnection(Object mc, @Cause Throwable t);
    
    /**
     * reconnecting a connection handle that still has a managedConnection
@@ -198,8 +201,8 @@ public interface CoreLogger extends BasicLogger
     * @param connection connection object
     */
    @LogMessage(level = WARN)
-   @Message(id = 403, value = "reconnecting a connection handle that still has a managedConnection! %s %s")
-   public void reconnectingConnectionHandleHasManagedConnection(String mc, Object connection);
+   @Message(id = 403, value = "Reconnecting a connection handle that still has a managedConnection! %s %s")
+   public void reconnectingConnectionHandleHasManagedConnection(Object mc, Object connection);
 
    /**
     * Unchecked throwable in managedConnectionDisconnected()
@@ -208,7 +211,7 @@ public interface CoreLogger extends BasicLogger
     */
    @LogMessage(level = WARN)
    @Message(id = 404, value = "Unchecked throwable in managedConnectionDisconnected() cl= %s")
-   public void uncheckedThrowableInManagedConnectionDisconnected(String cl, @Cause Throwable t);
+   public void uncheckedThrowableInManagedConnectionDisconnected(Object cl, @Cause Throwable t);
    
    
    // TRANSACTION SYNCHRONIZER (500)
@@ -220,8 +223,8 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 501, value = "thread %s is not the enlisting thread %s")
-   public void threadIsnotEnlistingThread(String currentThread, String enlistingThread, @Cause Throwable t);
+   @Message(id = 501, value = "Thread %s is not the enlisting thread %s")
+   public void threadIsnotEnlistingThread(Object currentThread, Object enlistingThread, @Cause Throwable t);
    
    /**
     * Transaction error in before completion
@@ -231,7 +234,7 @@ public interface CoreLogger extends BasicLogger
     */
    @LogMessage(level = WARN)
    @Message(id = 502, value = "Transaction %s error in before completion %s")
-   public void transactionErrorInBeforeCompletion(String transaction, String synch, @Cause Throwable t);
+   public void transactionErrorInBeforeCompletion(Object transaction, Object synch, @Cause Throwable t);
    
    /**
     * Transaction error in after completion
@@ -241,5 +244,5 @@ public interface CoreLogger extends BasicLogger
     */
    @LogMessage(level = WARN)
    @Message(id = 503, value = "Transaction %s error in after completion %s")
-   public void transactionErrorInAfterCompletion(String transaction, String synch, @Cause Throwable t);
+   public void transactionErrorInAfterCompletion(Object transaction, Object synch, @Cause Throwable t);
 }

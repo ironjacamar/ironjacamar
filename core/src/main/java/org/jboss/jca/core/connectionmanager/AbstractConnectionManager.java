@@ -416,7 +416,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       catch (Throwable t)
       {
-         log.errorDuringTidyUpConnection(cl.toString(), t);
+         log.errorDuringTidyUpConnection(cl, t);
          kill = true;
       }
 
@@ -435,7 +435,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
          else
          {
-            log.resourceExceptionReturningConnection(cl.getManagedConnection().toString(), re);
+            log.resourceExceptionReturningConnection(cl.getManagedConnection(), re);
          }
       }
    }
@@ -556,7 +556,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          {
             //This might well be an error.
             log.reconnectingConnectionHandleHasManagedConnection(
-               cr.getConnectionListener().getManagedConnection().toString(),
+               cr.getConnectionListener().getManagedConnection(),
                cr.getConnection());
          }
          ConnectionListener cl = criToCLMap.get(cr.getCri());
@@ -620,7 +620,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       catch (Throwable t)
       {
-         log.uncheckedThrowableInManagedConnectionDisconnected(cl.toString(), t);
+         log.uncheckedThrowableInManagedConnectionDisconnected(cl, t);
       }
    }
 
