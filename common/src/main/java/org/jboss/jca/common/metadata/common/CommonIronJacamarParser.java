@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.common;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
@@ -38,6 +39,8 @@ import java.util.HashMap;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Messages;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -50,6 +53,8 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  */
 public abstract class CommonIronJacamarParser extends AbstractParser
 {
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    /**
     *
@@ -112,12 +117,11 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                break;
             }
             default :
-               throw new ParserException("Unexpected attribute:" + attribute.getLocalName() + "at " +
-                                         reader.getLocalName());
+               throw new ParserException(bundle.unexpectedAttribute(attribute.getLocalName(), reader.getLocalName()));
          }
       }
       if (jndiName == null || jndiName.trim().equals(""))
-         throw new ParserException("Missing jndiName mandatory attribute");
+         throw new ParserException(bundle.missingJndiName(reader.getLocalName()));
 
       while (reader.hasNext())
       {
@@ -134,7 +138,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
                   if (CommonConnDef.Tag.forName(reader.getLocalName()) == CommonConnDef.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -160,16 +164,14 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                   }
                   case XA_POOL : {
                      if (pool != null)
-                        throw new ParserException("You cannot define more than one pool or xa-poll in same"
-                                                  + " connection-definition");
+                        throw new ParserException(bundle.multiplePools());
                      pool = parseXaPool(reader);
                      isXa = true;
                      break;
                   }
                   case POOL : {
                      if (pool != null)
-                        throw new ParserException("You cannot define more than one pool or xa-poll in same"
-                                                  + " connection-definition");
+                        throw new ParserException(bundle.multiplePools());
                      pool = parsePool(reader);
                      break;
                   }
@@ -178,13 +180,13 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private CommonValidation parseValidation(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -207,7 +209,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
                   if (CommonValidation.Tag.forName(reader.getLocalName()) == CommonValidation.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -228,13 +230,13 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private CommonTimeOut parseTimeOut(XMLStreamReader reader, boolean isXa) throws XMLStreamException,
@@ -261,7 +263,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
                   if (CommonTimeOut.Tag.forName(reader.getLocalName()) == CommonTimeOut.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -287,19 +289,18 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                   }
                   case XARESOURCETIMEOUT : {
                      if (!isXa)
-                        throw new ParserException("Element:" + reader.getLocalName() +
-                                                  "cannot be set without an xa-pool");
+                        throw new ParserException(bundle.unsupportedElement(reader.getLocalName()));
                      xaResourceTimeout = elementAsInteger(reader);
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    /**
@@ -352,12 +353,11 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                break;
             }
             default :
-               throw new ParserException("Unexpected attribute:" + attribute.getLocalName() + "at " +
-                                         reader.getLocalName());
+               throw new ParserException(bundle.unexpectedAttribute(attribute.getLocalName(), reader.getLocalName()));
          }
       }
       if (jndiName == null || jndiName.trim().equals(""))
-         throw new ParserException("Missing jndiName mandatory attribute");
+         throw new ParserException(bundle.missingJndiName(reader.getLocalName()));
 
       while (reader.hasNext())
       {
@@ -374,7 +374,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
                   if (CommonAdminObject.Tag.forName(reader.getLocalName()) == CommonAdminObject.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -387,13 +387,13 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
 }

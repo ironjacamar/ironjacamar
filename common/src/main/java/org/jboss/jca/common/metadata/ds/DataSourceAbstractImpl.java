@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
@@ -29,6 +30,8 @@ import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -42,6 +45,9 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -5612846950298960159L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    /**
    * transactionIsolation
@@ -278,11 +284,11 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected void partialCommonValidation() throws ValidateException
    {
       if (this.jndiName == null)
-         throw new ValidateException("jndiName (xml attribure " + DataSource.Attribute.JNDINAME.getLocalName() +
-                                     ") is required in " + this.getClass().getCanonicalName());
+         throw new ValidateException(bundle.requiredAttributeMissing(DataSource.Attribute.JNDINAME.getLocalName(),
+                                                                     this.getClass().getCanonicalName()));
       if (this.poolName == null)
-         throw new ValidateException("poolName (xml attribure " + DataSource.Attribute.POOL_NAME.getLocalName() +
-                                     ") is required in " + this.getClass().getCanonicalName());
+         throw new ValidateException(bundle.requiredAttributeMissing(DataSource.Attribute.POOL_NAME.getLocalName(),
+                                                                     this.getClass().getCanonicalName()));
 
       if (this.timeOut != null)
          this.timeOut.validate();

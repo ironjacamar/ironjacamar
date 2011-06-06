@@ -52,6 +52,7 @@ import org.jboss.jca.core.spi.statistics.Statistics;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
+import org.jboss.jca.deployers.DeployersBundle;
 import org.jboss.jca.deployers.DeployersLogger;
 
 import java.lang.reflect.Method;
@@ -70,6 +71,7 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
+import org.jboss.logging.Messages;
 import org.jboss.security.SecurityContext;
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
@@ -83,6 +85,9 @@ import org.jboss.security.SubjectFactory;
  */
 public abstract class AbstractDsDeployer
 {
+   /** The bundle */
+   private static DeployersBundle bundle = Messages.getBundle(DeployersBundle.class);
+
    /** log **/
    protected DeployersLogger log;
 
@@ -326,7 +331,7 @@ public abstract class AbstractDsDeployer
       }
       catch (Throwable t)
       {
-         throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
+         throw new DeployException(bundle.deploymentFailed(url.toExternalForm()), t);
       }
    }
 

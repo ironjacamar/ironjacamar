@@ -21,9 +21,12 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -37,6 +40,9 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 7816717816552118419L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final Extension validConnectionChecker;
 
@@ -140,8 +146,8 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    public void validate() throws ValidateException
    {
       if (this.backgroundValidationMinutes != null && this.backgroundValidationMinutes < 0)
-         throw new ValidateException("backgroundValidationMinutes (xml attribure " +
-                                     Validation.Tag.BACKGROUNDVALIDATIONMINUTES + ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(Validation.Tag.BACKGROUNDVALIDATIONMINUTES.getLocalName()));
+
       if (this.validConnectionChecker != null)
          try
          {
@@ -149,8 +155,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          }
          catch (ValidateException ve)
          {
-            throw new ValidateException("validCoonnectionChecker (xml tag" + Validation.Tag.VALIDCONNECTIONCHECKER +
-                                        ") not valid. See the cause exception for more details", ve);
+            throw new ValidateException(bundle.invalidTag(Validation.Tag.VALIDCONNECTIONCHECKER.getLocalName()), ve);
          }
       if (this.exceptionSorter != null)
          try
@@ -159,8 +164,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          }
          catch (ValidateException ve)
          {
-            throw new ValidateException("exceptionSorter (xml tag" + Validation.Tag.EXCEPTIONSORTER +
-                                        ") not valid. See the cause exception for more details", ve);
+            throw new ValidateException(bundle.invalidTag(Validation.Tag.EXCEPTIONSORTER.getLocalName()), ve);
          }
       if (this.staleConnectionChecker != null)
          try
@@ -169,8 +173,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          }
          catch (ValidateException ve)
          {
-            throw new ValidateException("staleConnectionChecker (xml tag" + Validation.Tag.STALECONNECTIONCHECKER +
-                                        ") not valid. See the cause exception for more details", ve);
+            throw new ValidateException(bundle.invalidTag(Validation.Tag.STALECONNECTIONCHECKER.getLocalName()), ve);
          }
    }
 

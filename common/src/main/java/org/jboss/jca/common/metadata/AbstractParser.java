@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
@@ -47,6 +48,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -62,6 +64,9 @@ public abstract class AbstractParser
 {
    /** The logger */
    private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, AbstractParser.class.getName());
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    /**
     * convert an xml element in boolean value. Empty elements results with true (tag presence is sufficient condition)
@@ -83,8 +88,7 @@ public abstract class AbstractParser
       }
       else
       {
-         throw new ParserException(elementtext + " isn't a valid boolean for element " + reader.getLocalName() +
-                                   ". We accept only \"true\" or \"false\" as boolean value");
+         throw new ParserException(bundle.elementAsBoolean(elementtext, reader.getLocalName()));
       }
    }
 
@@ -113,11 +117,8 @@ public abstract class AbstractParser
       }
       else
       {
-         throw new ParserException(attributeString + " isn't a valid boolean for attribute " + attributeName +
-                                   " of element " + reader.getLocalName() +
-                                   ". We accept only \"true\" or \"false\" as boolean value");
+         throw new ParserException(bundle.attributeAsBoolean(attributeString, reader.getLocalName()));
       }
-
    }
 
    /**
@@ -210,7 +211,7 @@ public abstract class AbstractParser
       }
       catch (NumberFormatException nfe)
       {
-         throw new ParserException(elementtext + " isn't a valid number for element " + reader.getLocalName());
+         throw new ParserException(bundle.notValidNumber(elementtext, reader.getLocalName()));
       }
       return integerValue;
    }
@@ -235,7 +236,7 @@ public abstract class AbstractParser
       }
       catch (NumberFormatException nfe)
       {
-         throw new ParserException(elementtext + " isn't a valid number for element " + reader.getLocalName());
+         throw new ParserException(bundle.notValidNumber(elementtext, reader.getLocalName()));
       }
 
       return longValue;
@@ -257,7 +258,7 @@ public abstract class AbstractParser
       if (result != FlushStrategy.UNKNOWN)
          return result;
 
-      throw new ParserException(elementtext + " isn't a valid flush strategy");
+      throw new ParserException(bundle.notValidFlushStrategy(elementtext));
    }
 
    /**
@@ -294,7 +295,7 @@ public abstract class AbstractParser
                {
                   if (CommonPool.Tag.forName(reader.getLocalName()) == CommonPool.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -324,13 +325,13 @@ public abstract class AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    /**
@@ -366,7 +367,7 @@ public abstract class AbstractParser
                {
                   if (CommonSecurity.Tag.forName(reader.getLocalName()) == CommonSecurity.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -388,13 +389,13 @@ public abstract class AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    /**
@@ -438,7 +439,7 @@ public abstract class AbstractParser
                {
                   if (CommonXaPool.Tag.forName(reader.getLocalName()) == CommonXaPool.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -487,13 +488,13 @@ public abstract class AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    /**
@@ -604,7 +605,7 @@ public abstract class AbstractParser
                {
                   if (Credential.Tag.forName(reader.getLocalName()) == Credential.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -625,13 +626,13 @@ public abstract class AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
 
@@ -679,7 +680,7 @@ public abstract class AbstractParser
                {
                   if (Recovery.Tag.forName(reader.getLocalName()) == Recovery.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -697,13 +698,13 @@ public abstract class AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    /**
@@ -747,8 +748,7 @@ public abstract class AbstractParser
                {
                   if (className == null)
                   {
-                     throw new ParserException("mandatory class-name attribute missing in " +
-                                               enclosingTag);
+                     throw new ParserException(bundle.missingClassName(enclosingTag));
                   }
 
                   return new Extension(className, properties);
@@ -757,7 +757,7 @@ public abstract class AbstractParser
                {
                   if (Extension.Tag.forName(reader.getLocalName()) == Extension.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -772,13 +772,13 @@ public abstract class AbstractParser
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private static class SecurityActions

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
@@ -37,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.logging.Messages;
+
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
@@ -46,6 +49,9 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
    /**
     */
    private static final long serialVersionUID = 4841095296099713549L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final String resourceadapterClass;
 
@@ -272,14 +278,16 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
    public void validate() throws ValidateException
    {
       boolean inboundOrOutbound = false;
+
       if (this.getOutboundResourceadapter() != null && this.getOutboundResourceadapter().validationAsBoolean())
          inboundOrOutbound = true;
+
       if (this.getInboundResourceadapter() != null && this.getInboundResourceadapter().validationAsBoolean() &&
           this.getResourceadapterClass() != null)
          inboundOrOutbound = true;
-      if (!inboundOrOutbound)
-         throw new ValidateException("ResourceAdapter metadata should contains inbound or outbound at least");
 
+      if (!inboundOrOutbound)
+         throw new ValidateException(bundle.invalidMetadataForResourceAdapter());
    }
 
    @Override

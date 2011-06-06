@@ -21,8 +21,11 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -33,9 +36,11 @@ import org.jboss.jca.common.api.validator.ValidateException;
  */
 public class StatementImpl implements Statement
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = 3361665706947342366L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final Boolean sharePreparedStatements;
 
@@ -146,8 +151,7 @@ public class StatementImpl implements Statement
    public void validate() throws ValidateException
    {
       if (this.preparedStatementsCacheSize != null && this.preparedStatementsCacheSize < 0)
-         throw new ValidateException("preparedStatementsCacheSize (xml attribure " + Tag.PREPAREDSTATEMENTCACHESIZE +
-                                     ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(Tag.PREPAREDSTATEMENTCACHESIZE.getLocalName()));
    }
 }
 

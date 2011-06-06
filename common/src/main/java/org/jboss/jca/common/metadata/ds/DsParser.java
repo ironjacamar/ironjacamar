@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Extension;
@@ -50,6 +51,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Messages;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -62,6 +65,8 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  */
 public class DsParser extends AbstractParser implements MetadataParser<DataSources>
 {
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    @Override
    public DataSources parse(InputStream xmlInputStream) throws Exception
@@ -114,7 +119,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   break;
                }
                default :
-                  throw new ParserException("Unexpected element:" + reader.getLocalName());
+                  throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
             }
 
             break;
@@ -148,7 +153,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -169,20 +174,18 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case DRIVER : {
-//                     if (!driversMatched)
-//                        throw new ParserException("Unexpected element:" + reader.getLocalName());
                      Driver driver = parseDriver(reader);
                      drivers.put(driver.getName(), driver);
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private Driver parseDriver(XMLStreamReader reader) throws XMLStreamException, ParserException,
@@ -240,7 +243,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   if (Driver.Tag.forName(reader.getLocalName()) == Driver.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -257,13 +260,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private XaDataSource parseXADataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
@@ -345,7 +348,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   if (XaDataSource.Tag.forName(reader.getLocalName()) == XaDataSource.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -406,13 +409,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private DsSecurity parseDsSecurity(XMLStreamReader reader) throws XMLStreamException, ParserException,
@@ -438,7 +441,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   if (DsSecurity.Tag.forName(reader.getLocalName()) == DsSecurity.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -464,13 +467,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
@@ -555,7 +558,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -616,13 +619,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private Validation parseValidationSetting(XMLStreamReader reader) throws XMLStreamException, ParserException,
@@ -654,7 +657,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   if (Validation.Tag.forName(reader.getLocalName()) == Validation.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -696,13 +699,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private TimeOut parseTimeOutSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
@@ -734,7 +737,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   if (TimeOut.Tag.forName(reader.getLocalName()) == TimeOut.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -775,13 +778,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private Statement parseStatementSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
@@ -806,7 +809,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   if (Statement.Tag.forName(reader.getLocalName()) == Statement.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -829,13 +832,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    /**

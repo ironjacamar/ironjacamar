@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Icon;
@@ -35,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.logging.Messages;
+
 /**
  *
  * A Connector.
@@ -47,6 +50,9 @@ public abstract class ConnectorAbstractmpl implements Connector
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -2054156739973617322L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    /**
     * vendor name
@@ -300,7 +306,7 @@ public abstract class ConnectorAbstractmpl implements Connector
 
       //make sure all need metadata parsered and processed after annotation handle
       if (ra == null)
-         throw new ValidateException("ResourceAdapter metadata should be defined");
+         throw new ValidateException(bundle.noMetadataForResourceAdapter());
 
       //make sure ra metadata contains inbound or outbound at least
       ra.validate();

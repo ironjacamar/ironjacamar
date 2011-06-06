@@ -21,8 +21,11 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -33,9 +36,11 @@ import org.jboss.jca.common.api.validator.ValidateException;
  */
 public class DriverImpl implements Driver
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = 6228505574424288182L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final String name;
 
@@ -129,8 +134,8 @@ public class DriverImpl implements Driver
    public void validate() throws ValidateException
    {
       if (this.name == null || this.name.trim().length() == 0)
-         throw new ValidateException("name (xml attribute " + Attribute.NAME + ") is required in " +
-                                     this.getClass().getCanonicalName());
+         throw new ValidateException(bundle.requiredAttributeMissing(Attribute.NAME.getLocalName(), 
+                                                                     this.getClass().getCanonicalName()));
 
    }
 

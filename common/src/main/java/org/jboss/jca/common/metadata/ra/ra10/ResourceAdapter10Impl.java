@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ra.ra10;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.jboss.logging.Messages;
+
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
@@ -47,6 +50,9 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 6841574517370539456L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final XsdString managedConnectionFactoryClass;
 
@@ -373,7 +379,7 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
             || this.getManagedConnectionFactoryClass().getValue().trim().equals(""))
       {
 
-         throw new ValidateException("ManagedConnectionFactoryClass should be defined");
+         throw new ValidateException(bundle.missingValue("managed-connection-factory-class"));
       }
 
    }

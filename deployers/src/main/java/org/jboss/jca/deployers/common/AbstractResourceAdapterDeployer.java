@@ -57,6 +57,7 @@ import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
+import org.jboss.jca.deployers.DeployersBundle;
 import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.FailureHelper;
@@ -100,6 +101,7 @@ import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
+import org.jboss.logging.Messages;
 import org.jboss.security.SecurityContext;
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
@@ -112,6 +114,9 @@ import org.jboss.security.SubjectFactory;
  */
 public abstract class AbstractResourceAdapterDeployer
 {
+   /** The bundle */
+   private static DeployersBundle bundle = Messages.getBundle(DeployersBundle.class);
+
    /** the logger **/
    protected final DeployersLogger log;
 
@@ -338,12 +343,12 @@ public abstract class AbstractResourceAdapterDeployer
       }
       catch (InvocationTargetException ite)
       {
-         throw new DeployException("Unable to start " + resourceAdapter.getClass().getName(),
+         throw new DeployException(bundle.unableToStartResourceAdapter(resourceAdapter.getClass().getName()),
                                    ite.getTargetException());
       }
       catch (Throwable t)
       {
-         throw new DeployException("Unable to start " + resourceAdapter.getClass().getName(), t);
+         throw new DeployException(bundle.unableToStartResourceAdapter(resourceAdapter.getClass().getName()), t);
       }
    }
 
@@ -370,7 +375,7 @@ public abstract class AbstractResourceAdapterDeployer
             }
             catch (Throwable t)
             {
-               throw new DeployException("Unable to associate " + object.getClass().getName(), t);
+               throw new DeployException(bundle.unableToAssociate(object.getClass().getName()), t);
             }
          }
       }
@@ -403,7 +408,7 @@ public abstract class AbstractResourceAdapterDeployer
 
          // If there are multiple definitions the MCF class name is mandatory
          if (clz == null)
-            throw new IllegalArgumentException("ManagedConnectionFactory must be defined in class-name");
+            throw new IllegalArgumentException(bundle.undefinedManagedConnectionFactory());
 
          for (org.jboss.jca.common.api.metadata.common.CommonConnDef cd : defs)
          {
@@ -442,7 +447,7 @@ public abstract class AbstractResourceAdapterDeployer
 
          // If there are multiple definitions the admin object class name is mandatory
          if (clz == null)
-            throw new IllegalArgumentException("AdminObject must be defined in class-name");
+            throw new IllegalArgumentException(bundle.undefinedAdminObject());
 
          for (org.jboss.jca.common.api.metadata.common.CommonAdminObject cao : defs)
          {
@@ -690,7 +695,7 @@ public abstract class AbstractResourceAdapterDeployer
                               }
                               catch (Throwable t)
                               {
-                                 throw new DeployException("Failed to bind admin object", t);
+                                 throw new DeployException(bundle.failedToBindAdminObject(ao.getClass().getName()), t);
                               }
                            }
                         }
@@ -1763,14 +1768,14 @@ public abstract class AbstractResourceAdapterDeployer
          if ((getConfiguration().getArchiveValidationFailOnWarn() && hasFailuresLevel(failures, Severity.WARNING)) ||
              (getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
          {
-            throw new DeployException("Deployment " + url.toExternalForm() + " failed",
+            throw new DeployException(bundle.deploymentFailed(url.toExternalForm()),
                                       new ValidatorException(printFailuresLog(url.getPath(), new Validator(),
                                          failures, null), failures));
          }
          else
          {
             printFailuresLog(url.getPath(), new Validator(), failures, null);
-            throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
+            throw new DeployException(bundle.deploymentFailed(url.toExternalForm()), t);
          }
       }
    }

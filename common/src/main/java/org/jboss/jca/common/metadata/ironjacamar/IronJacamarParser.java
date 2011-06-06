@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ironjacamar;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
@@ -39,6 +40,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Messages;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -51,6 +54,8 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  */
 public class IronJacamarParser extends CommonIronJacamarParser implements MetadataParser<IronJacamar>
 {
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    @Override
    public IronJacamar parse(InputStream xmlInputStream) throws Exception
@@ -96,7 +101,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
 
                break;
@@ -138,7 +143,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                {
                   if (IronJacamar.Tag.forName(reader.getLocalName()) == IronJacamar.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -187,13 +192,13 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    /**

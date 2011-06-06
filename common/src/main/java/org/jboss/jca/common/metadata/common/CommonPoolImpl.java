@@ -21,9 +21,12 @@
  */
 package org.jboss.jca.common.metadata.common;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -37,6 +40,9 @@ public class CommonPoolImpl implements CommonPool
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -8705723067326455982L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    /**
     * minPoolSize
@@ -145,10 +151,12 @@ public class CommonPoolImpl implements CommonPool
    public void validate() throws ValidateException
    {
       if (this.maxPoolSize != null && this.maxPoolSize < 0)
-         throw new ValidateException("maxPoolSize (xml tag " + Tag.MAXPOOLSIZE + ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(Tag.MAXPOOLSIZE.getLocalName()));
+
       if (this.minPoolSize != null && this.minPoolSize < 0)
-         throw new ValidateException("minPoolSize (xml tag " + Tag.MIN_POOL_SIZE + ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(Tag.MIN_POOL_SIZE.getLocalName()));
+
       if (this.flushStrategy == null)
-         throw new ValidateException("flushStrategy (xml tag " + Tag.FLUSH_STRATEGY + ") cannot be null");
+         throw new ValidateException(bundle.nullValue(Tag.FLUSH_STRATEGY.getLocalName()));
    }
 }

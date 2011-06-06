@@ -21,8 +21,11 @@
  */
 package org.jboss.jca.common.metadata.common;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -33,9 +36,11 @@ import org.jboss.jca.common.api.validator.ValidateException;
  */
 public class CommonTimeOutImpl implements CommonTimeOut
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = 7351813875143571341L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    /** blockingTimeoutMillis **/
    protected final Long blockingTimeoutMillis;
@@ -202,19 +207,18 @@ public class CommonTimeOutImpl implements CommonTimeOut
    private void partialCommonValidate() throws ValidateException
    {
       if (this.allocationRetry != null && this.allocationRetry < 0)
-         throw new ValidateException("allocationRetry (xml attribure " + Tag.ALLOCATIONRETRY + ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(Tag.ALLOCATIONRETRY.getLocalName()));
+
       if (this.blockingTimeoutMillis != null && this.blockingTimeoutMillis < 0)
-         throw new ValidateException("blockingTimeoutMillis (xml attribure " + Tag.BLOCKINGTIMEOUTMILLIS +
-                                     ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(Tag.BLOCKINGTIMEOUTMILLIS.getLocalName()));
+
       if (this.allocationRetryWaitMillis != null && this.allocationRetryWaitMillis < 0)
-         throw new ValidateException("allocationRetryWaitMillis (xml attribure " + Tag.ALLOCATIONRETRYWAITMILLIS +
-                                     ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(Tag.ALLOCATIONRETRYWAITMILLIS.getLocalName()));
+
       if (this.idleTimeoutMinutes != null && this.idleTimeoutMinutes < 0)
-         throw new ValidateException("idleTimeoutMinutes (xml attribure " + Tag.IDLETIMEOUTMINUTES +
-                                     ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(Tag.IDLETIMEOUTMINUTES.getLocalName()));
+
       if (this.xaResourceTimeout != null && this.xaResourceTimeout < 0)
-         throw new ValidateException("xaResourceTimeout (xml attribure " + Tag.XARESOURCETIMEOUT + ") cannot be < 0");
-
+         throw new ValidateException(bundle.invalidNegative(Tag.XARESOURCETIMEOUT.getLocalName()));
    }
-
 }

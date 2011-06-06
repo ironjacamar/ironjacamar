@@ -22,6 +22,7 @@
 
 package org.jboss.jca.common.annotations;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
@@ -79,6 +80,7 @@ import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.work.WorkContext;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * The annotation processor for JCA 1.6
@@ -87,6 +89,7 @@ import org.jboss.logging.Logger;
  */
 public class Annotations
 {
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
    private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, Annotations.class.getName());
 
    private static boolean trace = log.isTraceEnabled();
@@ -157,7 +160,7 @@ public class Annotations
       throws Exception
    {
       if (annotationRepository == null)
-         throw new ValidateException("AnnotationRepository reference is null");
+         throw new ValidateException(bundle.annotationRepositoryNull());
       /* Process
          -------
          javax.resource.spi.Activation
@@ -248,7 +251,7 @@ public class Annotations
             if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
             {
                log.noConnector();
-               throw new ValidateException("No @Connector defined");
+               throw new ValidateException(bundle.noConnectorDefined());
             }
          }
          else
@@ -257,7 +260,7 @@ public class Annotations
             if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
             {
                log.moreThanOneConnector();
-               throw new ValidateException("More than one @Connector defined");
+               throw new ValidateException(bundle.moreThanOneConnectorDefined());
             }
          }
       }
@@ -474,7 +477,7 @@ public class Annotations
                   configProperties);
          }
          else
-            throw new ValidateException("More than one @ConnectionDefinitions defined");
+            throw new ValidateException(bundle.moreThanOneConnectionDefinitionsDefined());
       }
       return null;
 
@@ -945,7 +948,7 @@ public class Annotations
          }
       }
 
-      throw new IllegalArgumentException("Unknown annotation: " + annotation);
+      throw new IllegalArgumentException(bundle.unknownAnnotation(annotation));
    }
 
    /**
@@ -1020,6 +1023,6 @@ public class Annotations
          }
       }
 
-      throw new IllegalArgumentException("Unknown annotation: " + annotation);
+      throw new IllegalArgumentException(bundle.unknownAnnotation(annotation));
    }
 }

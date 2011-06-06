@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
@@ -35,6 +36,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.logging.Messages;
+
 /**
  *
  * A DataSourceImpl.
@@ -46,6 +49,9 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -1401087499308709724L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final HashMap<String, String> xaDataSourceProperty;
 
@@ -273,11 +279,12 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    {
       if ((this.xaDataSourceClass == null || this.xaDataSourceClass.trim().length() == 0) &&
           (this.driver == null || this.driver.trim().length() == 0))
-         throw new ValidateException("xaDataSourceClass (xml tag " + Tag.XADATASOURCECLASS + ") is required");
-      if (this.xaDataSourceProperty.isEmpty())
-         throw new ValidateException("at least one xaDataSourceProperty (xml tag " + Tag.XADATASOURCEPROPERTY +
-                                     ") is required ");
+         throw new ValidateException(bundle.requiredElementMissing(Tag.XADATASOURCECLASS.getLocalName(),
+                                                                   this.getClass().getCanonicalName()));
 
+      if (this.xaDataSourceProperty.isEmpty())
+         throw new ValidateException(bundle.requiredElementMissing(Tag.XADATASOURCEPROPERTY.getLocalName(),
+                                                                   this.getClass().getCanonicalName()));
    }
 
    @Override

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.resourceadapter;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
@@ -40,6 +41,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Messages;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -52,6 +55,9 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  */
 public class ResourceAdapterParser extends CommonIronJacamarParser implements MetadataParser<ResourceAdapters>
 {
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
+
    @Override
    public ResourceAdapters parse(InputStream xmlInputStream) throws Exception
    {
@@ -104,7 +110,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                   break;
                }
                default :
-                  throw new ParserException("Unexpected element:" + reader.getLocalName());
+                  throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
             }
 
             break;
@@ -135,7 +141,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                {
                   if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -148,13 +154,13 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException,
@@ -181,7 +187,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                {
                   if (ResourceAdapter.Tag.forName(reader.getLocalName()) == ResourceAdapter.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -234,13 +240,13 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    /**

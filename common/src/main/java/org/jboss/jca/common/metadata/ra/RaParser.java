@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ra;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
@@ -79,6 +80,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Messages;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -91,6 +94,8 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  */
 public class RaParser extends AbstractParser implements MetadataParser<Connector>
 {
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    @Override
    public Connector parse(InputStream xmlInputStream) throws Exception
@@ -136,7 +141,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                         break;
                      }
                      default :
-                        throw new ParserException("Unexpected element:" + reader.getLocalName());
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                   }
 
                }
@@ -149,7 +154,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                         break;
                      }
                      default :
-                        throw new ParserException("Unexpected element:" + reader.getLocalName());
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                   }
                }
                else
@@ -161,7 +166,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                         break;
                      }
                      default :
-                        throw new ParserException("Unexpected element:" + reader.getLocalName());
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                   }
                }
 
@@ -213,7 +218,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (Connector10.Tag.forName(reader.getLocalName()) == Connector10.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -264,13 +269,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private Connector parseConnector15(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -302,7 +307,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (Connector15.Tag.forName(reader.getLocalName()) == Connector15.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -343,13 +348,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private Connector parseConnector16(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -390,7 +395,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (Connector16.Tag.forName(reader.getLocalName()) == Connector16.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -440,13 +445,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private Icon parseIcon(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -474,7 +479,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (Icon.Tag.forName(reader.getLocalName()) == Icon.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -492,13 +497,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   }
 
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private ResourceAdapter1516 parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException,
@@ -532,7 +537,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) == ResourceAdapter1516.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -568,13 +573,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   }
 
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private ResourceAdapter10 parseResourceAdapter10(XMLStreamReader reader) throws XMLStreamException,
@@ -614,7 +619,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (ResourceAdapter10.Tag.forName(reader.getLocalName()) == ResourceAdapter10.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -665,13 +670,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   }
 
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private InboundResourceAdapter parseInboundResourceadapter(XMLStreamReader reader) throws XMLStreamException,
@@ -698,7 +703,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (InboundResourceAdapter.Tag.forName(reader.getLocalName()) == InboundResourceAdapter.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -711,13 +716,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private Messageadapter parseMessageAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -745,7 +750,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (Messageadapter.Tag.forName(reader.getLocalName()) == Messageadapter.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -758,13 +763,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private MessageListener parseMessageListener(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -793,7 +798,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (MessageListener.Tag.forName(reader.getLocalName()) == MessageListener.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -810,13 +815,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private Activationspec15 parseActivationspec(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -855,7 +860,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (Activationspec16.Tag.forName(reader.getLocalName()) == Activationspec16.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -876,13 +881,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private RequiredConfigProperty parseRequiredConfigProperty(XMLStreamReader reader) throws XMLStreamException,
@@ -913,7 +918,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (RequiredConfigProperty.Tag.forName(reader.getLocalName()) == RequiredConfigProperty.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -930,13 +935,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private OutboundResourceAdapter parseOutboundResourceadapter(XMLStreamReader reader) throws XMLStreamException,
@@ -971,7 +976,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) == OutboundResourceAdapter.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -996,13 +1001,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private ConnectionDefinition parseConncetionDefinition(XMLStreamReader reader) throws XMLStreamException,
@@ -1039,7 +1044,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -1072,13 +1077,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private AuthenticationMechanism parseAuthenticationMechanism(XMLStreamReader reader) throws XMLStreamException,
@@ -1113,7 +1118,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (AuthenticationMechanism.Tag.forName(reader.getLocalName()) == AuthenticationMechanism.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -1134,13 +1139,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private AdminObject parseAdminObject(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -1170,7 +1175,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (AdminObject.Tag.forName(reader.getLocalName()) == AdminObject.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -1191,13 +1196,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private ConfigProperty parseConfigProperty(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -1244,7 +1249,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (ConfigProperty16.Tag.forName(reader.getLocalName()) == ConfigProperty16.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -1281,13 +1286,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private SecurityPermission parseSecurityPermission(XMLStreamReader reader) throws XMLStreamException,
@@ -1318,7 +1323,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (SecurityPermission.Tag.forName(reader.getLocalName()) == SecurityPermission.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -1335,13 +1340,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private LicenseType parseLicense(XMLStreamReader reader) throws XMLStreamException, ParserException
@@ -1365,7 +1370,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   if (LicenseType.Tag.forName(reader.getLocalName()) == LicenseType.Tag.UNKNOWN)
                   {
-                     throw new ParserException("unexpected end tag" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
                }
                break;
@@ -1382,13 +1387,13 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
-                     throw new ParserException("Unexpected element:" + reader.getLocalName());
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
          }
       }
-      throw new ParserException("Reached end of xml document unexpectedly");
+      throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
    private XsdString elementAsXsdString(XMLStreamReader reader) throws XMLStreamException

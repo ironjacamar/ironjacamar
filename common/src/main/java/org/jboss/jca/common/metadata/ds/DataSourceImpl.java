@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
@@ -34,6 +35,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.logging.Messages;
+
 /**
  *
  * A DataSourceImpl.
@@ -45,6 +48,9 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -5214100851560229431L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final boolean jta;
 
@@ -301,14 +307,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    public void validate() throws ValidateException
    {
       if (this.connectionUrl == null || this.connectionUrl.trim().length() == 0)
-         throw new ValidateException("connectionUrl (xml tag " + Tag.CONNECTIONURL + ") is required in " +
-                                     this.getClass().getCanonicalName());
+         throw new ValidateException(bundle.requiredElementMissing(Tag.CONNECTIONURL.getLocalName(), 
+                                                                   this.getClass().getCanonicalName()));
+
       if ((this.driverClass == null || this.driverClass.trim().length() == 0) &&
           (this.driver == null || this.driver.trim().length() == 0))
-         throw new ValidateException("driverClass (xml tag " + Tag.DRIVERCLASS + ") is required in " +
-                                     this.getClass().getCanonicalName() + "if no driver (xml tag " + Tag.DRIVER +
-                                     ") is not specified");
-
+         throw new ValidateException(bundle.requiredElementMissing(Tag.DRIVERCLASS.getLocalName(), 
+                                                                   this.getClass().getCanonicalName()));
    }
 
    /**

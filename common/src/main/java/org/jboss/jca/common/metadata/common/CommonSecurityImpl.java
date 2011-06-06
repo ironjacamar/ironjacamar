@@ -21,9 +21,11 @@
  */
 package org.jboss.jca.common.metadata.common;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.validator.ValidateException;
 
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -34,9 +36,11 @@ import org.jboss.jca.common.api.validator.ValidateException;
  */
 public class CommonSecurityImpl implements CommonSecurity
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = -5842402120520191086L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final String securityDomainManaged;
 
@@ -152,15 +156,11 @@ public class CommonSecurityImpl implements CommonSecurity
       {
          if (securityDomainAndApplicationManaged != null && !securityDomainAndApplicationManaged.trim().equals(""))
          {
-            throw new ValidateException(
-                                        "cannot construct a CommonSecurity having set both security-domain-managed "
-                                           + "and security-domain-and-application-managed ");
+            throw new ValidateException(bundle.invalidSecurityConfiguration());
          }
          if (applicationManaged)
          {
-            throw new ValidateException(
-                                        "cannot construct a CommonSecurity having set both security-domain-managed "
-                                           + "and appliction-managed ");
+            throw new ValidateException(bundle.invalidSecurityConfiguration());
          }
       }
       else
@@ -169,20 +169,14 @@ public class CommonSecurityImpl implements CommonSecurity
          {
             if (applicationManaged)
             {
-               throw new ValidateException(
-                                           "cannot construct a CommonSecurity having set "
-                                              + "both security-domain-and-application-managed "
-                                              + "and appliction-managed ");
+               throw new ValidateException(bundle.invalidSecurityConfiguration());
             }
          }
          else
          {
             if (!applicationManaged)
             {
-               throw new ValidateException(
-                                           "cannot construct a CommonSecurity object with security-domain-managed "
-                                              + "and security-domain-and-application-managed not set and "
-                                              + "appliction-managed not set or false");
+               throw new ValidateException(bundle.invalidSecurityConfiguration());
             }
          }
       }

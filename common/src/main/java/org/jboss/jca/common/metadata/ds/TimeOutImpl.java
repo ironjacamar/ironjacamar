@@ -21,8 +21,11 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -35,6 +38,9 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -8797718258493768716L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final Boolean setTxQuertTimeout;
 
@@ -156,10 +162,9 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    public void validate() throws ValidateException
    {
       if (this.queryTimeout != null && this.queryTimeout < 0)
-         throw new ValidateException("queryTimeout (xml attribure " + TimeOut.Tag.QUERYTIMEOUT + ") cannot be < 0");
+         throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.QUERYTIMEOUT.getLocalName()));
+
       if (this.useTryLock != null && this.useTryLock < 0)
-         throw new ValidateException("useTryLock (xml attribure " + TimeOut.Tag.USETRYLOCK + ") cannot be < 0");
-
+         throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.USETRYLOCK.getLocalName()));
    }
-
 }
