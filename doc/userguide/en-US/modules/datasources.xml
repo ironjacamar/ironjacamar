@@ -2,7 +2,8 @@
 <appendix id="ex_datasources">
   <title>Datasources</title>
 
-  <para></para>
+  <para>The datasource schema can found at <ulink
+     url="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd"/>.</para>
 
   <section id="ex_datasources_postgresql">
     <title>PosgreSQL</title>
