@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.pool.api;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
@@ -30,8 +31,6 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 import javax.transaction.Transaction;
-
-import org.jboss.logging.Logger;
 
 /**
  * A pool.
@@ -99,5 +98,5 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
     * Get the logger
     * @return The value
     */
-   public Logger getLogger();
+   public CoreLogger getLogger();
 }

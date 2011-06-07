@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
 
@@ -41,7 +42,7 @@ import org.jboss.logging.Logger;
 public class PoolByCri extends AbstractPool
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(PoolByCri.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, PoolByCri.class.getName());
    
    /**
     * Creates a new instance.
@@ -75,7 +76,7 @@ public class PoolByCri extends AbstractPool
    /**
     * {@inheritDoc}
     */
-   public Logger getLogger()
+   public CoreLogger getLogger()
    {
       return log;
    }

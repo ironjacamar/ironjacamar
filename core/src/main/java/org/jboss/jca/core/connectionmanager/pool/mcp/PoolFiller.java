@@ -24,8 +24,6 @@ package org.jboss.jca.core.connectionmanager.pool.mcp;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.jboss.logging.Logger;
-
 /**
  * PoolFiller
  * 
@@ -37,8 +35,6 @@ import org.jboss.logging.Logger;
  */
 class PoolFiller implements Runnable
 {
-   /** Log instance */
-   private static Logger log = Logger.getLogger(PoolFiller.class);
 
    /** Singleton instance */
    private static final PoolFiller FILLER = new PoolFiller();

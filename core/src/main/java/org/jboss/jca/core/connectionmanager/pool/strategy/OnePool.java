@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
@@ -41,7 +42,7 @@ import org.jboss.logging.Logger;
 public class OnePool extends AbstractPrefillPool
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(OnePool.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, OnePool.class.getName());
 
    /**
     * Creates a new instance.
@@ -90,7 +91,7 @@ public class OnePool extends AbstractPrefillPool
    /**
     * {@inheritDoc}
     */
-   public Logger getLogger()
+   public CoreLogger getLogger()
    {
       return log;
    }

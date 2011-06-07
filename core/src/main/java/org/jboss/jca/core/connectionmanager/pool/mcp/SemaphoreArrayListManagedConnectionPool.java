@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.common.JBossResourceException;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
@@ -64,7 +65,7 @@ import org.jboss.util.UnreachableStatementException;
 public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectionPool
 {
    /** The log */
-   private Logger log;
+   private CoreLogger log;
 
    /** Whether trace is enabled */
    private boolean trace;
@@ -272,7 +273,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      // connection died while being checked.  We need to
                      // distinguish these cases, but for now we always
                      // destroy the connection.
-                     log.warn("Destroying connection that could not be successfully matched: " + cl);
+                     log.destroyingConnectionNotSuccessfullyMatched(cl);
 
                      synchronized (cls)
                      {
@@ -284,7 +285,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   }
                   catch (Throwable t)
                   {
-                     log.warn("Throwable while trying to match ManagedConnection, destroying connection: " + cl, t);
+                     log.throwableWhileTryingMatchManagedConnectionThenDestroyingConnection(cl, t);
 
                      synchronized (cls)
                      {
@@ -299,7 +300,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   // if we should continue attempting to acquire a connection
                   if (poolConfiguration.isUseFastFail())
                   {
-                     log.trace("Fast failing for connection attempt. No more attempts will be made to " +
+                     if (trace)
+                        log.trace("Fast failing for connection attempt. No more attempts will be made to " +
                                "acquire connection from pool and a new connection will be created immeadiately");
                      break;
                   }
@@ -329,7 +331,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             }
             catch (Throwable t)
             {
-               log.warn("Throwable while attempting to get a new connection: " + cl, t);
+               log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
                // Return permit and rethrow
                synchronized (cls)
@@ -391,7 +393,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
       catch (ResourceException re)
       {
-         log.warn("ResourceException cleaning up ManagedConnection: " + cl, re);
+         log.resourceExceptionCleaningUpManagedConnection(cl, re);
          kill = true;
       }
 
@@ -406,7 +408,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          // This is really an error
          if (!kill && isSize(poolConfiguration.getMaxSize() + 1))
          {
-            log.warn("Destroying returned connection, maximum pool size exceeded " + cl);
+            log.destroyingReturnedConnectionMaximumPoolSizeExceeded(cl);
             kill = true;
          }
 
@@ -430,7 +432,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             }
             else
             {
-               log.warn("Attempt to return connection twice (ignored): " + cl, new Throwable("STACKTRACE"));
+               log.attemptReturnConnectionTwice(cl, new Throwable("STACKTRACE"));
             }
          }
 
@@ -649,7 +651,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   }
                   catch (ResourceException re)
                   {
-                     log.warn("Unable to fill pool ", re);
+                     log.unableFillPool(re);
                      return;
                   }
                }
@@ -661,7 +663,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
          catch (InterruptedException ignored)
          {
-            log.trace("Interrupted while requesting permit in fillToMin");
+            if (trace)
+               log.trace("Interrupted while requesting permit in fillToMin");
          }
       }
    }
@@ -808,8 +811,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   }
                   else
                   {
-                     log.warn("Warning: background validation was specified with a non " +
-                              "compliant ManagedConnectionFactory interface.");
+                     log.backgroundValidationNonCompliantManagedConnectionFactory();
                   }
                }
                finally

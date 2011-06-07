@@ -22,6 +22,8 @@
 
 package org.jboss.jca.core.connectionmanager.pool.idle;
 
+import org.jboss.jca.core.CoreLogger;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +44,7 @@ import org.jboss.logging.Logger;
 public class IdleRemover
 {
    /**Logger instance*/
-   private static Logger logger = Logger.getLogger(IdleRemover.class);
+   private static CoreLogger logger = Logger.getMessageLogger(CoreLogger.class, IdleRemover.class.getName());
    
    /**Validator thread name*/
    private static final String VALIDATOR_THREAD_NAME = "JBossConnectionValidator";
@@ -230,17 +232,17 @@ public class IdleRemover
          }
          catch (InterruptedException e)
          {
-            logger.info("run: ConnectionValidator has been interrupted, returning");
+            logger.returningConnectionValidatorInterrupted();
             
             return;  
          }
          catch (RuntimeException e)
          {
-            logger.warn("run: ConnectionValidator ignored unexpected runtime exception", e);
+            logger.connectionValidatorIgnoredUnexpectedRuntimeException(e);
          }
          catch (Exception e)
          {
-            logger.warn("run: ConnectionValidator ignored unexpected error", e);
+            logger.connectionValidatorIgnoredUnexpectedError(e);
          }         
          finally
          {

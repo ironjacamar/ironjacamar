@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
@@ -46,7 +47,7 @@ import org.jboss.logging.Logger;
 public class ReauthPool extends AbstractPool
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(ReauthPool.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, ReauthPool.class.getName());
 
    /**
     * Creates a new instance.
@@ -94,7 +95,7 @@ public class ReauthPool extends AbstractPool
    /**
     * {@inheritDoc}
     */
-   public Logger getLogger()
+   public CoreLogger getLogger()
    {
       return log;
    }

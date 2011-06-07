@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.validator;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import java.security.AccessController;
@@ -46,7 +47,7 @@ import org.jboss.logging.Logger;
 public class ConnectionValidator
 {
    /**Logger instance*/
-   private static Logger logger = Logger.getLogger(ConnectionValidator.class);
+   private static CoreLogger logger = Logger.getMessageLogger(CoreLogger.class, ConnectionValidator.class.getName());
    
    /**Validator thread name*/
    private static final String VALIDATOR_THREAD_NAME = "JBossConnectionValidator";
@@ -278,17 +279,17 @@ public class ConnectionValidator
          }
          catch (InterruptedException e)
          {
-            logger.info("run: ConnectionValidator has been interrupted, returning");
+            logger.returningConnectionValidatorInterrupted();
             
             return;  
          }
          catch (RuntimeException e)
          {
-            logger.warn("run: ConnectionValidator ignored unexpected runtime exception", e);
+            logger.connectionValidatorIgnoredUnexpectedRuntimeException(e);
          }
          catch (Exception e)
          {
-            logger.warn("run: ConnectionValidator ignored unexpected error", e);
+            logger.connectionValidatorIgnoredUnexpectedError(e);
          }         
          finally
          {

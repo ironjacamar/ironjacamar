@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.common.JBossResourceException;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
@@ -62,7 +63,7 @@ import org.jboss.logging.Logger;
 public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectionPool
 {
    /** The log */
-   private Logger log;
+   private CoreLogger log;
 
    /** Whether trace is enabled */
    private boolean trace;
@@ -258,7 +259,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             }
             catch (Throwable t)
             {
-               log.warn("Throwable while attempting to get a new connection: " + cl, t);
+               log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
                JBossResourceException.rethrowAsResourceException("Unexpected throwable while trying " + 
                                                                  "to create a connection: " + cl, t);
@@ -305,7 +306,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                }
                catch (Throwable t)
                {
-                  log.warn("Throwable while attempting to get a new connection: " + cl, t);
+                  log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
                   JBossResourceException.rethrowAsResourceException("Unexpected throwable while trying to " +
                                                                     "create a connection: " + cl, t);
@@ -354,7 +355,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             // connection died while being checked.  We need to
             // distinguish these cases, but for now we always
             // destroy the connection.
-            log.warn("Destroying connection that could not be successfully matched: " + cl + " for: " + mcf);
+            log.destroyingConnectionNotSuccessfullyMatched(cl, mcf);
             
             checkedOut.remove(cl);
             
@@ -363,7 +364,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          }
          catch (Throwable t)
          {
-            log.warn("Throwable while trying to match ManagedConnection, destroying connection: " + cl, t);
+            log.throwableWhileTryingMatchManagedConnection(cl, t);
          
             checkedOut.remove(cl);
             
@@ -406,7 +407,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
       catch (ResourceException re)
       {
-         log.warn("ResourceException cleaning up ManagedConnection: " + cl, re);
+         log.resourceExceptionCleaningUpManagedConnection(cl, re);
          kill = true;
       }
 
@@ -419,7 +420,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       // This is really an error
       if (!kill && cls.size() >= poolConfiguration.getMaxSize())
       {
-         log.warn("Destroying returned connection, maximum pool size exceeded " + cl);
+         log.destroyingReturnedConnectionMaximumPoolSizeExceeded(cl);
          kill = true;
       }
 
@@ -451,7 +452,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          }
          else
          {
-            log.warn("Attempt to return connection twice (ignored): " + cl, new Throwable("STACKTRACE"));
+            log.attemptReturnConnectionTwice(cl, new Throwable("STACKTRACE"));
          }
       }
 
@@ -637,7 +638,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          }
          catch (ResourceException re)
          {
-            log.warn("Unable to fill pool ", re);
+            log.unableFillPool(re);
             destroy = true;
          }
          finally
@@ -777,8 +778,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                }
                else
                {
-                  log.warn("Warning: Background validation was specified with a non compliant " +
-                           "ManagedConnectionFactory interface.");
+                  log.backgroundValidationNonCompliantManagedConnectionFactory();
                }
             }
             finally

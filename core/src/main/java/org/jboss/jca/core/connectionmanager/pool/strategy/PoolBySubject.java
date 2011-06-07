@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.strategy;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
@@ -51,7 +52,7 @@ import org.jboss.security.SubjectFactory;
 public class PoolBySubject extends AbstractPrefillPool
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(PoolBySubject.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, PoolBySubject.class.getName());
    
    /**
     * Creates a new instance.
@@ -156,7 +157,7 @@ public class PoolBySubject extends AbstractPrefillPool
             }
             catch (Throwable t)
             {
-               log.error("Exception during createSubject()" + t.getMessage(), t);
+               log.exceptionDuringCreateSubject(t.getMessage(), t);
             }
 
             return null;
@@ -167,7 +168,7 @@ public class PoolBySubject extends AbstractPrefillPool
    /**
     * {@inheritDoc}
     */
-   public Logger getLogger()
+   public CoreLogger getLogger()
    {
       return log;
    }

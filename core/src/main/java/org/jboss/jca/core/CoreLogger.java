@@ -245,4 +245,125 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 503, value = "Transaction %s error in after completion %s")
    public void transactionErrorInAfterCompletion(Object transaction, Object synch, @Cause Throwable t);
+   
+
+   // POOL MANAGER (600)
+
+   /**
+    * ConnectionValidator has been interrupted
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 601, value = "run: ConnectionValidator has been interrupted, returning")
+   public void returningConnectionValidatorInterrupted();
+   
+   /**
+    * ConnectionValidator ignored unexpected runtime exception
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 602, value = "run: ConnectionValidator ignored unexpected runtime exception")
+   public void connectionValidatorIgnoredUnexpectedRuntimeException(@Cause Throwable t);
+   
+   /**
+    * ConnectionValidator ignored unexpected error
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 603, value = "run: ConnectionValidator ignored unexpected error")
+   public void connectionValidatorIgnoredUnexpectedError(@Cause Throwable t);
+   
+   /**
+    * Throwable while attempting to get a new connection
+    * @param cl The ConnectionListener
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 604, value = "Throwable while attempting to get a new connection: %s")
+   public void throwableWhileAttemptingGetNewGonnection(Object cl, @Cause Throwable t);
+
+   /**
+    * Destroying connection that could not be successfully matched
+    * @param cl The ConnectionListener
+    * @param mcf managed connection factory
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 605, value = "Destroying connection that could not be successfully matched %s for: %s")
+   public void destroyingConnectionNotSuccessfullyMatched(Object cl, Object mcf);
+   
+   /**
+    * Throwable while trying to match ManagedConnection, destroying connection
+    * @param cl The ConnectionListener
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 606, value = "Throwable while trying to match ManagedConnection, destroying connection: %s")
+   public void throwableWhileTryingMatchManagedConnection(Object cl, @Cause Throwable t);
+   
+   /**
+    * ResourceException cleaning up ManagedConnection
+    * @param cl The ConnectionListener
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 607, value = "ResourceException cleaning up ManagedConnection: %s")
+   public void resourceExceptionCleaningUpManagedConnection(Object cl, @Cause Throwable t);
+   
+   /**
+    * Destroying returned connection, maximum pool size exceeded
+    * @param cl The ConnectionListener
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 608, value = "Destroying returned connection, maximum pool size exceeded %s")
+   public void destroyingReturnedConnectionMaximumPoolSizeExceeded(Object cl);
+   
+   /**
+    * Attempt to return connection twice
+    * @param cl The ConnectionListener
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 609, value = "Attempt to return connection twice (ignored): %s")
+   public void attemptReturnConnectionTwice(Object cl, @Cause Throwable t);
+   
+   /**
+    * Unable to fill pool
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 610, value = "Unable to fill pool")
+   public void unableFillPool(@Cause Throwable t);
+   
+   /**
+    * Background validation was specified with a non compliant ManagedConnectionFactory interface
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 611, value = "Warning: Background validation was specified with a non compliant " +
+         "ManagedConnectionFactory interface.")
+   public void backgroundValidationNonCompliantManagedConnectionFactory();
+   
+   /**
+    * Destroying connection that could not be successfully matched
+    * @param cl The ConnectionListener
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 612, value = "Destroying connection that could not be successfully matched: %s")
+   public void destroyingConnectionNotSuccessfullyMatched(Object cl);
+   
+   /**
+    * Throwable while trying to match ManagedConnection, destroying connection
+    * @param cl The ConnectionListener
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 613, value = "Throwable while trying to match ManagedConnection, destroying connection: %s")
+   public void throwableWhileTryingMatchManagedConnectionThenDestroyingConnection(Object cl, @Cause Throwable t);
+
+   /**
+    * Exception during createSubject()
+    * @param description throwable description
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 614, value = "Exception during createSubject() %s")
+   public void exceptionDuringCreateSubject(String description, @Cause Throwable t);
 }
