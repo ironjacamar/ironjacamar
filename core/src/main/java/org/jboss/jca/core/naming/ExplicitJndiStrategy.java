@@ -40,7 +40,6 @@ import javax.resource.Referenceable;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
-import org.jboss.util.naming.Util;
 
 /**
  * An explicit JNDI strategy that requires a JNDI for each connection factory

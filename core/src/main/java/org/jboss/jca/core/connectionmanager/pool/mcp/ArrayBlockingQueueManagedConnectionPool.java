@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
-import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
@@ -265,8 +264,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             {
                log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
-               JBossResourceException.rethrowAsResourceException("Unexpected throwable while trying " + 
-                                                                 "to create a connection: " + cl, t);
+               throw new ResourceException("Unexpected throwable while trying to create a connection: " + cl, t);
             }
          }
       }
@@ -312,8 +310,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                {
                   log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
-                  JBossResourceException.rethrowAsResourceException("Unexpected throwable while trying to " +
-                                                                    "create a connection: " + cl, t);
+                  throw new ResourceException("Unexpected throwable while trying to create a connection: " + cl, t);
                }
             }
          }
@@ -375,12 +372,11 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             doDestroy(cl);
             cl = null;
 
-            JBossResourceException.rethrowAsResourceException("Unexpected throwable while trying " +
-                                                              "to create a connection: " + cl, t);
+            throw new ResourceException("Unexpected throwable while trying to create a connection: " + cl, t);
          }
       }
 
-      throw new JBossResourceException(bundle.shouldNeverHappen(), new Throwable("STACKTRACE"));
+      throw new ResourceException(bundle.shouldNeverHappen(), new Throwable("STACKTRACE"));
    }
 
    /**

@@ -28,9 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.jboss.util.Strings;
-
-
 /**
  * The class <code>KeyConnectionAssociation</code> wraps objects so they may be used in hashmaps
  * based on their object identity rather than equals implementation. Used for keys.
@@ -76,7 +73,7 @@ final class KeyConnectionAssociation
     */
    public String toString()
    {
-      return Strings.defaultToString(metaAwareObject);
+      return metaAwareObject.getClass().getName() + '@' + Integer.toHexString(System.identityHashCode(metaAwareObject));
    }
    
    /**

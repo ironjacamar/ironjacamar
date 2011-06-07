@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.connectionmanager;
 
-import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
@@ -385,8 +384,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                }
                catch (InterruptedException ie)
                {
-                  JBossResourceException.rethrowAsResourceException("getManagedConnection retry wait was interrupted " +
-                        jndiName, ie);
+                  throw new ResourceException("getManagedConnection retry wait was interrupted " + jndiName, ie);
                }
             }
          }
@@ -489,8 +487,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem" + re);
             returnManagedConnection(cl, true);
          }
-         JBossResourceException.rethrowAsResourceException(
-               "Unchecked throwable in ManagedConnection.getConnection() cl=" + cl, t);
+         throw new ResourceException("Unchecked throwable in ManagedConnection.getConnection() cl=" + cl, t);
       }
 
       // Associate managed connection with the connection
@@ -607,8 +604,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       catch (Throwable t)
       {
          disconnectManagedConnection(cl);
-         JBossResourceException.rethrowAsResourceException("Unchecked throwable in managedConnectionReconnected() cl="
-               + cl, t);
+         throw new ResourceException("Unchecked throwable in managedConnectionReconnected() cl=" + cl, t);
       }
    }
 

@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.core.connectionmanager.tx;
 
-import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
@@ -57,8 +56,6 @@ import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
-import org.jboss.util.NestedRuntimeException;
-import org.jboss.util.NotImplementedException;
 
 /**
  * The TxConnectionManager is a JBoss ConnectionManager
@@ -361,7 +358,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       }
       catch (Throwable t)
       {
-         JBossResourceException.rethrowAsResourceException("Error checking for a transaction.", t);
+         throw new ResourceException("Error checking for a transaction.", t);
       }
 
       if (trace)
@@ -430,7 +427,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          if (trace)
             log.trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
 
-         throw new JBossResourceException(bundle.notEnlistInTransactionOnEnteringMetaAwareObject(), t);
+         throw new ResourceException(bundle.notEnlistInTransactionOnEnteringMetaAwareObject(), t);
       }
    }
 
@@ -466,8 +463,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       // Rethrow the error
       if (throwable != null)
       {
-         JBossResourceException.rethrowAsResourceException(
-               "Could not delist resource, probably a transaction rollback? ", throwable);  
+         throw new ResourceException("Could not delist resource, probably a transaction rollback?", throwable);  
       }      
    }
 
@@ -539,7 +535,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             }
             catch (XAException e)
             {
-               throw new JBossResourceException(bundle.unableSetXAResourceTransactionTimeout(getJndiName()), e);
+               throw new ResourceException(bundle.unableSetXAResourceTransactionTimeout(getJndiName()), e);
             }
          }
       }
@@ -569,7 +565,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     */
    public int getTransactionTimeout() throws SystemException
    {
-      throw new NotImplementedException("NYI: getTransactionTimeout()");
+      throw new RuntimeException("NYI: getTransactionTimeout()");
    }
 
    /**
@@ -594,7 +590,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       if (t instanceof RollbackException)
          throw new IllegalStateException(context + " tx=" + tx + " marked for rollback.");
 
-      throw new NestedRuntimeException(context + " tx=" + tx + " got unexpected error ", t);
+      throw new RuntimeException(context + " tx=" + tx + " got unexpected error ", t);
    }
 
 

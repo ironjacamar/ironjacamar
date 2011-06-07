@@ -52,7 +52,6 @@ import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
-import org.jboss.util.Strings;
 
 /**
  * CacheConnectionManager.
@@ -197,7 +196,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       KeyConnectionAssociation oldKey = (KeyConnectionAssociation) stack.removeLast();
 
       if (trace)
-         log.tracef("popped object: %s", Strings.defaultToString(oldKey));
+         log.tracef("popped object: %s", oldKey);
 
       if (!stack.contains(oldKey))
       {
@@ -319,7 +318,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       if (stack == null)
       {
          if (trace)
-            log.tracef("new stack for key: %s", Strings.defaultToString(rawKey));
+            log.tracef("new stack for key: %s", rawKey);
 
          stack = new LinkedList<Object>();
          currentObjects.set(stack);
@@ -327,7 +326,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       else
       {
          if (trace)
-            log.tracef("old stack for key: %s", Strings.defaultToString(rawKey));
+            log.tracef("old stack for key: %s", rawKey);
       }
 
       KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);

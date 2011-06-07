@@ -40,7 +40,6 @@ import javax.resource.Referenceable;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
-import org.jboss.util.naming.Util;
 
 /**
  * A simple JNDI strategy that bind a single connection factory under the

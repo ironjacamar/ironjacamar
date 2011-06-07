@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
-import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
@@ -311,7 +310,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       }
       catch (Throwable t)
       {
-         JBossResourceException.rethrowAsResourceException("Error in delist!", t);
+         throw new ResourceException("Error in delist!", t);
       }
    }
 
@@ -416,7 +415,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          }
          catch (Throwable t)
          {
-            JBossResourceException.rethrowAsResourceException("Unfinished local transaction - " +
+            throw new ResourceException("Unfinished local transaction - " +
                   "error getting local transaction from " + this, t);
          }
          if (local == null)

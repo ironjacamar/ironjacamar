@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
-import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
@@ -52,8 +51,6 @@ import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Messages;
-
-import org.jboss.util.UnreachableStatementException;
 
 /**
  * The internal pool implementation
@@ -346,9 +343,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                permits.release();
 
-               JBossResourceException.rethrowAsResourceException("Unexpected throwable while trying to " +
-                                                                 "create a connection: " + cl, t);
-               throw new UnreachableStatementException();
+               throw new ResourceException("Unexpected throwable while trying to create a connection: " + cl, t);
             }
          }
          else

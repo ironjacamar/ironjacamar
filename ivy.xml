@@ -140,7 +140,7 @@
       <artifact name="hornetq-ra" type="rar" conf="hornetq"/>
     </dependency>
     <dependency org="org.javassist" name="javassist" rev="${version.javassist}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain"/>
+    <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss" name="jboss-transaction-spi" rev="${version.jboss.ts.spi}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="tools"/>
     <dependency org="org.jboss.arquillian.config" name="arquillian-config-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
