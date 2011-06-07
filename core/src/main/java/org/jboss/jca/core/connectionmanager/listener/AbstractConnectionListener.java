@@ -327,12 +327,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
                cause = new Exception("No exception was reported");  
             }
             
-            log.connectionErrorOccured(cause.getMessage(), cause);
+            log.connectionErrorOccured(this, cause);
          }
          else
          {
             Throwable cause = new Exception("No exception was reported");
-            log.unknownConnectionErrorOccured(cause.getMessage(), cause);
+            log.unknownConnectionErrorOccured(this, cause);
          }
       }
       

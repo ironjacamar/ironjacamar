@@ -126,21 +126,21 @@ public interface CoreLogger extends BasicLogger
 
    /**
     * Connection error occured
-    * @param description throwable description
+    * @param cl AbstractConnectionListener instance
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 305, value = "Connection error occured %s")
-   public void connectionErrorOccured(String description, @Cause Throwable t);
+   @Message(id = 305, value = "Connection error occured: %s")
+   public void connectionErrorOccured(Object cl, @Cause Throwable t);
    
    /**
     * Unknown Connection error occured
-    * @param description throwable description
+    * @param cl AbstractConnectionListener instance
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 306, value = "Unknown connection error occured %s")
-   public void unknownConnectionErrorOccured(String description, @Cause Throwable t);
+   @Message(id = 306, value = "Unknown connection error occured: %s")
+   public void unknownConnectionErrorOccured(Object cl, @Cause Throwable t);
    
    
    /**
