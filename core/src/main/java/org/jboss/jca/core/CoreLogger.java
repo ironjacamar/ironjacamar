@@ -201,7 +201,7 @@ public interface CoreLogger extends BasicLogger
     * @param connection connection object
     */
    @LogMessage(level = WARN)
-   @Message(id = 403, value = "Reconnecting a connection handle that still has a managedConnection! %s %s")
+   @Message(id = 403, value = "Reconnecting a connection handle that still has a managed connection! %s %s")
    public void reconnectingConnectionHandleHasManagedConnection(Object mc, Object connection);
 
    /**
@@ -210,7 +210,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 404, value = "Unchecked throwable in managedConnectionDisconnected() cl= %s")
+   @Message(id = 404, value = "Unchecked throwable in managedConnectionDisconnected() cl=%s")
    public void uncheckedThrowableInManagedConnectionDisconnected(Object cl, @Cause Throwable t);
    
    
@@ -253,7 +253,7 @@ public interface CoreLogger extends BasicLogger
     * ConnectionValidator has been interrupted
     */
    @LogMessage(level = INFO)
-   @Message(id = 601, value = "run: ConnectionValidator has been interrupted, returning")
+   @Message(id = 601, value = "ConnectionValidator has been interrupted - returning")
    public void returningConnectionValidatorInterrupted();
    
    /**
@@ -261,7 +261,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 602, value = "run: ConnectionValidator ignored unexpected runtime exception")
+   @Message(id = 602, value = "ConnectionValidator ignored unexpected runtime exception")
    public void connectionValidatorIgnoredUnexpectedRuntimeException(@Cause Throwable t);
    
    /**
@@ -269,7 +269,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 603, value = "run: ConnectionValidator ignored unexpected error")
+   @Message(id = 603, value = "ConnectionValidator ignored unexpected error")
    public void connectionValidatorIgnoredUnexpectedError(@Cause Throwable t);
    
    /**
@@ -287,7 +287,7 @@ public interface CoreLogger extends BasicLogger
     * @param mcf managed connection factory
     */
    @LogMessage(level = WARN)
-   @Message(id = 605, value = "Destroying connection that could not be successfully matched %s for: %s")
+   @Message(id = 605, value = "Destroying connection that could not be successfully matched %s for %s")
    public void destroyingConnectionNotSuccessfullyMatched(Object cl, Object mcf);
    
    /**

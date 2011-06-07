@@ -221,7 +221,7 @@ public interface CoreBundle
     * @param obj transaction instance
     * @return The value
     */
-   @Message(id = 456, value = "Transaction is not active: tx= ")
+   @Message(id = 456, value = "Transaction is not active: tx=%s")
    public String transactionNotActive(Object obj);
    
    /**
