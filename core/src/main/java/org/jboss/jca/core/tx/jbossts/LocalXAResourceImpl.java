@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.tx.jbossts;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.spi.transaction.local.LocalXAException;
@@ -42,8 +43,10 @@ import org.jboss.logging.Logger;
 public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastResource
 {
    /** Log instance */
-   private static Logger log = Logger.getLogger(LocalXAResourceImpl.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, LocalXAResourceImpl.class.getName());
 
+   private static boolean trace = log.isTraceEnabled();
+   
    /** Connection listener */
    private ConnectionListener cl;
 
@@ -87,7 +90,8 @@ public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastRe
     */
    public void start(Xid xid, int flags) throws XAException
    {
-      log.tracef("start(%s, %s)", xid, flags);  
+      if (trace)
+         log.tracef("start(%s, %s)", xid, flags);  
       
       if (currentXid != null && flags == XAResource.TMNOFLAGS)
       {
@@ -125,7 +129,8 @@ public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastRe
     */
    public void end(Xid xid, int flags) throws XAException
    {
-      log.tracef("end(%s,%s)", xid, flags);  
+      if (trace)
+         log.tracef("end(%s,%s)", xid, flags);  
    }
 
    /**
@@ -184,8 +189,7 @@ public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastRe
    {
       if (!warned)
       {
-         log.warn("Prepare called on a local tx. Use of local transactions on a jta transaction with more " +
-               "than one branch may result in inconsistent data in some cases of failure.");  
+         log.prepareCalledOnLocaltx();  
       }
       warned = true;
       

@@ -227,7 +227,7 @@ public class UsersRoles implements Callback
          }
          else
          {
-            log.NoUsersPropertiesFound();
+            log.noUsersPropertiesFound();
          }
       }
       catch (IOException ioe)
@@ -310,7 +310,7 @@ public class UsersRoles implements Callback
          }
          else
          {
-            log.NoUsersPropertiesFound();
+            log.noUsersPropertiesFound();
          }
       }
       catch (IOException ioe)

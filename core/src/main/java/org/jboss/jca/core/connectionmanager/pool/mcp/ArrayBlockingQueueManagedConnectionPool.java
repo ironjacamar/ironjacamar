@@ -53,8 +53,6 @@ import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
-import org.jboss.logging.Logger;
-
 /**
  * A managed connection pool implementation using ArrayBlockingQueue
  *

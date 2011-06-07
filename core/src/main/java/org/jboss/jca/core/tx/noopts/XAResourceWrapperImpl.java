@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.tx.noopts;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper;
 
 import javax.transaction.xa.XAException;
@@ -37,7 +38,7 @@ import org.jboss.logging.Logger;
 public class XAResourceWrapperImpl implements XAResourceWrapper
 {
    /** Log instance */
-   private static Logger log = Logger.getLogger(XAResourceWrapperImpl.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, XAResourceWrapperImpl.class.getName());
    
    /** The XA resource */
    private XAResource xaResource;

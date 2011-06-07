@@ -50,7 +50,6 @@ import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
-import org.jboss.logging.Logger;
 import org.jboss.util.UnreachableStatementException;
 
 /**

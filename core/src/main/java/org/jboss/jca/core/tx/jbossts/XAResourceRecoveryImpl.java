@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.tx.jbossts;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
@@ -53,7 +54,7 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
                                                org.jboss.tm.XAResourceRecovery
 {
    /** Log instance */
-   private static Logger log = Logger.getLogger(XAResourceRecoveryImpl.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, XAResourceRecoveryImpl.class.getName());
 
    private final TransactionIntegration ti;
 

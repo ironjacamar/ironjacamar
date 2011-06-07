@@ -36,7 +36,6 @@ import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
 
-import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
 
 /**
@@ -47,9 +46,6 @@ import org.jboss.security.SubjectFactory;
  */
 public class TransactionIntegrationImpl implements TransactionIntegration
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(TransactionIntegrationImpl.class);
-
    /** The transaction manager */
    private TransactionManager tm;
 

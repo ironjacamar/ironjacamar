@@ -23,17 +23,12 @@ package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 
-import org.jboss.logging.Logger;
-
 /**
  * An XAResourceRecoveryRegistry implementation
  */
 public class XAResourceRecoveryRegistryImpl
    implements org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(XAResourceRecoveryRegistryImpl.class);
-
    /** Delegator */
    private org.jboss.tm.XAResourceRecoveryRegistry delegator;
 

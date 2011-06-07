@@ -27,8 +27,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.logging.Logger;
-
 /**
  * UserTransactionRegistry implementation
  * 
@@ -36,9 +34,6 @@ import org.jboss.logging.Logger;
  */
 public class UserTransactionRegistryImpl implements org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(UserTransactionRegistryImpl.class);
-
    /** The delegator */
    private org.jboss.tm.usertx.UserTransactionRegistry delegator;
 

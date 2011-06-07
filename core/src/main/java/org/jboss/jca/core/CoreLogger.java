@@ -400,7 +400,7 @@ public interface CoreLogger extends BasicLogger
     */
    @LogMessage(level = WARN)
    @Message(id = 1001, value = "No users.properties were found")
-   public void NoUsersPropertiesFound();
+   public void noUsersPropertiesFound();
 
    /**
     * Error while loading users.properties
@@ -409,4 +409,14 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = ERROR)
    @Message(id = 1002, value = "Error while loading users.properties")
    public void errorWhileLoadingUsersProperties(@Cause Throwable t);
+   
+   // TRANSCATION (1100)
+
+   /**
+    * Prepare called on a local tx
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 1101, value = "Prepare called on a local tx. Use of local transactions on a jta " +
+         "transaction with more than one branch may result in inconsistent data in some cases of failure.")
+   public void prepareCalledOnLocaltx();
 }
