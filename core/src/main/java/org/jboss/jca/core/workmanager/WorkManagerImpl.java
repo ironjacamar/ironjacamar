@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.security.Callback;
@@ -52,6 +53,7 @@ import javax.resource.spi.work.WorkListener;
 import javax.resource.spi.work.WorkRejectedException;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 import org.jboss.threads.BlockingExecutor;
 import org.jboss.threads.ExecutionTimedOutException;
 
@@ -67,7 +69,10 @@ public class WorkManagerImpl implements WorkManager
    
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
-
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /**Work run method name*/
    private static final String RUN_METHOD_NAME = "run";
    
@@ -238,17 +243,18 @@ public class WorkManagerImpl implements WorkManager
                       WorkListener workListener) 
       throws WorkException
    {
-      log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
+      if (trace)
+         log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
       {
          if (work == null)
-            throw new WorkRejectedException("Work is null");
+            throw new WorkRejectedException(bundle.workIsNull());
 
          if (startTimeout < 0)
-            throw new WorkRejectedException("StartTimeout is negative: " + startTimeout);
+            throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
 
          checkAndVerifyWork(work, execContext);
       
@@ -298,7 +304,7 @@ public class WorkManagerImpl implements WorkManager
       catch (InterruptedException ie)
       {
          Thread.currentThread().interrupt();
-         exception = new WorkRejectedException("Interrupted while requesting permit");
+         exception = new WorkRejectedException(bundle.interruptedWhileRequestingPermit());
       }
       finally
       {
@@ -342,10 +348,10 @@ public class WorkManagerImpl implements WorkManager
       try
       {
          if (work == null)
-            throw new WorkRejectedException("Work is null");
+            throw new WorkRejectedException(bundle.workIsNull());
 
          if (startTimeout < 0)
-            throw new WorkRejectedException("StartTimeout is negative: " + startTimeout);
+            throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
 
          long started = System.currentTimeMillis();
 
@@ -399,7 +405,7 @@ public class WorkManagerImpl implements WorkManager
       catch (InterruptedException ie)
       {
          Thread.currentThread().interrupt();
-         exception = new WorkRejectedException("Interrupted while requesting permit");
+         exception = new WorkRejectedException(bundle.interruptedWhileRequestingPermit());
       }
       finally
       {
@@ -445,10 +451,10 @@ public class WorkManagerImpl implements WorkManager
       try
       {
          if (work == null)
-            throw new WorkRejectedException("Work is null");
+            throw new WorkRejectedException(bundle.workIsNull());
 
          if (startTimeout < 0)
-            throw new WorkRejectedException("StartTimeout is negative: " + startTimeout);
+            throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
 
          checkAndVerifyWork(work, execContext);
       
@@ -494,7 +500,7 @@ public class WorkManagerImpl implements WorkManager
       catch (InterruptedException ie)
       {
          Thread.currentThread().interrupt();
-         exception = new WorkRejectedException("Interrupted while requesting permit");
+         exception = new WorkRejectedException(bundle.interruptedWhileRequestingPermit());
       }
       finally
       {
@@ -570,8 +576,7 @@ public class WorkManagerImpl implements WorkManager
           //Implements WorkContextProvider and not-null ExecutionContext
          if (executionContext != null)
          {
-            throw new WorkRejectedException("Work execution context must be null because " +
-               "work instance implements WorkContextProvider!");
+            throw new WorkRejectedException(bundle.workExecutionContextMustNullImplementsWorkContextProvider());
          }          
       }      
    }
@@ -593,7 +598,7 @@ public class WorkManagerImpl implements WorkManager
      
          if (!result)
          {
-            throw new WorkException(workClass.getName() + ": Run method is synchronized");
+            throw new WorkException(bundle.runMethodIsSynchronized(workClass.getName()));
          }
       
          result = verifyWorkMethods(workClass, RELEASE_METHOD_NAME, null, workClass.getName() + 
@@ -601,7 +606,7 @@ public class WorkManagerImpl implements WorkManager
       
          if (!result)
          {
-            throw new WorkException(workClass.getName() + ": Release method is synchronized");
+            throw new WorkException(bundle.releaseMethodIsSynchronized(workClass.getName()));
          }
 
          validatedWork.add(work.getClass().getName());
@@ -686,7 +691,7 @@ public class WorkManagerImpl implements WorkManager
                   
                   fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                   
-                  throw new WorkCompletedException("Unsupported WorkContext class : " + context.getClass().getName(), 
+                  throw new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()), 
                       WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                }
                // Duplicate checks
@@ -704,8 +709,8 @@ public class WorkManagerImpl implements WorkManager
 
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                         
-                        throw new WorkCompletedException("Duplicate TransactionWorkContext class : " + 
-                           context.getClass().getName(), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        throw new WorkCompletedException(bundle.duplicateTransactionWorkContextClass(
+                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -724,9 +729,8 @@ public class WorkManagerImpl implements WorkManager
                         
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
 
-                        throw new WorkCompletedException("Duplicate SecurityWorkContext class : " + 
-                                                         context.getClass().getName(), 
-                                                         WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        throw new WorkCompletedException(bundle.duplicateSecurityWorkContextClass(
+                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -745,9 +749,8 @@ public class WorkManagerImpl implements WorkManager
 
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                         
-                        throw new WorkCompletedException("Duplicate HintWorkContext class : " + 
-                                                         context.getClass().getName(), 
-                                                         WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        throw new WorkCompletedException(bundle.duplicateHintWorkContextClass(
+                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -759,8 +762,7 @@ public class WorkManagerImpl implements WorkManager
                   {
                      fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                      
-                     throw new WorkCompletedException("Unsupported WorkContext class : " + 
-                                                      context.getClass().getName(), 
+                     throw new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()), 
                                                       WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                   }
                }

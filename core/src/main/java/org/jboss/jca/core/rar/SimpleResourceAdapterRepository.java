@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.rar.Endpoint;
@@ -47,6 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * A simple implementation of the resource adapter repository
@@ -54,7 +56,10 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class SimpleResourceAdapterRepository implements ResourceAdapterRepository
-{
+{   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
       SimpleResourceAdapterRepository.class.getName());
@@ -120,7 +125,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          throw new IllegalArgumentException("Key is null");
 
       if (!rars.keySet().contains(key))
-         throw new NotFoundException(key + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(key));
 
       rars.remove(key);
    }
@@ -232,12 +237,12 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          throw new IllegalArgumentException("UniqueId is empty");
 
       if (!rars.containsKey(uniqueId))
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       WeakReference<ResourceAdapter> ra = rars.get(uniqueId);
 
       if (ra.get() == null)
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       return new EndpointImpl(ra);
    }
@@ -255,12 +260,12 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          throw new IllegalArgumentException("UniqueId is empty");
 
       if (!rars.containsKey(uniqueId))
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       WeakReference<ResourceAdapter> ra = rars.get(uniqueId);
 
       if (ra.get() == null)
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       if (mdr == null)
          throw new IllegalStateException("MDR is null");
@@ -289,12 +294,12 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          }
          catch (Throwable t)
          {
-            throw new NotFoundException("Unable to lookup resource adapter in MDR: " + uniqueId, t);
+            throw new NotFoundException(bundle.unableLookupResourceAdapterInMDR(uniqueId), t);
          }
       }
 
       if (md == null)
-         throw new NotFoundException("Unable to lookup resource adapter in MDR: " + uniqueId);
+         throw new NotFoundException(bundle.unableLookupResourceAdapterInMDR(uniqueId));
 
       if (md.getResourceadapter() != null && md.getResourceadapter() instanceof ResourceAdapter1516)
       {

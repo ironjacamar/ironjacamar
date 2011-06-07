@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.common.JBossResourceException;
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
@@ -50,6 +51,8 @@ import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
+import org.jboss.logging.Messages;
+
 import org.jboss.util.UnreachableStatementException;
 
 /**
@@ -68,7 +71,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
    /** Whether trace is enabled */
    private boolean trace;
-
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** The managed connection factory */
    private ManagedConnectionFactory mcf;
 
@@ -238,7 +244,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   if (shutdown.get())
                   {
                      permits.release();
-                     throw new RetryableUnavailableException("The pool has been shutdown");
+                     throw new RetryableUnavailableException(bundle.thePoolHasBeenShutdown());
                   }
 
                   int clsSize = cls.size();
@@ -348,8 +354,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          else
          {
             // We timed out
-            throw new ResourceException("No ManagedConnections available within configured blocking timeout ( "
-                  + poolConfiguration.getBlockingTimeout() + " [ms] )");
+            throw new ResourceException(bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
+                  poolConfiguration.getBlockingTimeout()));
          }
 
       }
@@ -357,7 +363,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          long end = System.currentTimeMillis() - startWait;
          statistics.deltaTotalBlockingTime(end);
-         throw new ResourceException("Interrupted while requesting permit! Waited " + end + " ms");
+         throw new ResourceException(bundle.interruptedWhileRequestingPermit(end));
       }
    }
 

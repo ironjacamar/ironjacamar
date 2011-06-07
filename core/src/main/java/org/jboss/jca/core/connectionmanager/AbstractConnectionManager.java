@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
@@ -53,6 +54,8 @@ import javax.security.auth.Subject;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
+import org.jboss.logging.Messages;
+
 import org.jboss.security.SubjectFactory;
 
 /**
@@ -68,7 +71,10 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
    /** Log trace */
    protected boolean trace;
-
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** The pool */
    private Pool pool;
 
@@ -337,7 +343,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (shutdown.get())
       {
-         throw new ResourceException("The connection manager is shutdown " + jndiName);
+         throw new ResourceException(bundle.connectionManagerIsShutdown(jndiName));
       }
 
       // First attempt
@@ -356,7 +362,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
             {
                if (shutdown.get())
                {
-                  throw new ResourceException("The connection manager is shutdown " + jndiName);
+                  throw new ResourceException(bundle.connectionManagerIsShutdown(jndiName));
                }
 
                if (trace)
@@ -387,7 +393,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
 
       // If we get here all retries failed, throw the lastest failure
-      throw new ResourceException("Unable to get managed connection for " + jndiName, failure);
+      throw new ResourceException(bundle.unableGetManagedConnection(jndiName), failure);
    }
 
    /**
@@ -449,14 +455,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       //Check for pooling!
       if (pool == null)
       {
-         throw new ResourceException("You are trying to use a connection factory that has been shut down: " +
-               "ManagedConnectionFactory is null.");
+         throw new ResourceException(bundle.tryingUseConnectionFactoryShutDown());
       }
 
       //it is an explicit spec requirement that equals be used for matching rather than ==.
       if (!pool.getManagedConnectionFactory().equals(mcf))
       {
-         throw new ResourceException("Wrong ManagedConnectionFactory sent to allocateConnection!");
+         throw new ResourceException(bundle.wrongManagedConnectionFactorySentToAllocateConnection());
       }
 
       // Pick a managed connection from the pool
@@ -714,7 +719,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    private void writeObject(ObjectOutputStream out) throws IOException
    {
-      throw new IOException("This method is not supported");
+      throw new IOException(bundle.thisMethodNotSupported());
    }
 
    /**
@@ -725,7 +730,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
    {
-      throw new IOException("This method is not supported");
+      throw new IOException(bundle.thisMethodNotSupported());
    }
 
    /**
@@ -734,6 +739,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    private void readObjectNoData() throws ObjectStreamException
    {
-      throw new NotSerializableException("This method is not supported");
+      throw new NotSerializableException(bundle.thisMethodNotSupported());
    }
 }

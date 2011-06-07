@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 
 import java.security.Principal;
@@ -51,6 +52,7 @@ import javax.security.auth.message.callback.PasswordValidationCallback;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
@@ -71,6 +73,9 @@ public class WorkWrapper implements Runnable
 
    /** Whether we are tracing */
    private static boolean trace = log.isTraceEnabled();
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
    /** The work */
    private Work work;
@@ -322,14 +327,14 @@ public class WorkWrapper implements Runnable
          {
             log.securityContextSetupFailed(t.getMessage(), t);
             fireWorkContextSetupFailed(ctx);
-            throw new WorkException("SecurityContext setup failed: " + t.getMessage(), t);
+            throw new WorkException(bundle.securityContextSetupFailed(t.getMessage()), t);
          }
       }
       else if (securityContext != null && workManager.getCallbackSecurity() == null)
       {
          log.securityContextSetupFailedCallbackSecurityNull();
          fireWorkContextSetupFailed(ctx);
-         throw new WorkException("SecurityContext setup failed since CallbackSecurity was null");
+         throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityWasNull());
       }
       
       //Fires Context setup complete

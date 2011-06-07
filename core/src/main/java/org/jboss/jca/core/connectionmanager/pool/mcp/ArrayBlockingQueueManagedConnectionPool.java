@@ -23,6 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.common.JBossResourceException;
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
@@ -53,6 +54,8 @@ import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
+import org.jboss.logging.Messages;
+
 /**
  * A managed connection pool implementation using ArrayBlockingQueue
  *
@@ -65,6 +68,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
    /** Whether trace is enabled */
    private boolean trace;
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
    /** The managed connection factory */
    private ManagedConnectionFactory mcf;
@@ -221,7 +227,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (getAvailableConnections() > 0)
       {
          if (shutdown.get())
-            throw new RetryableUnavailableException("The pool has been shutdown");
+            throw new RetryableUnavailableException(bundle.thePoolHasBeenShutdown());
          
          cl = cls.peek();
          if (cl != null)
@@ -233,7 +239,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             catch (InterruptedException ie)
             {
                long end = System.currentTimeMillis() - startWait;
-               throw new ResourceException("Interrupted while requesting connection! Waited " + end + " ms");
+               throw new ResourceException(bundle.interruptedWhileRequestingConnection(end));
             }
          }
          else
@@ -271,14 +277,14 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             cl = cls.poll(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS);
 
             if (shutdown.get())
-               throw new RetryableUnavailableException("The pool has been shutdown");
+               throw new RetryableUnavailableException(bundle.thePoolHasBeenShutdown());
          }
          catch (InterruptedException ie)
          {
             if (!poolConfiguration.isUseFastFail())
             {
-               throw new ResourceException("No ManagedConnections available within configured blocking timeout ( "
-                                           + poolConfiguration.getBlockingTimeout() + " [ms] )");
+               throw new ResourceException(bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
+                     poolConfiguration.getBlockingTimeout()));
             }
             else
             {
@@ -374,7 +380,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          }
       }
 
-      throw new JBossResourceException("This should never happen", new Throwable("STACKTRACE"));
+      throw new JBossResourceException(bundle.shouldNeverHappen(), new Throwable("STACKTRACE"));
    }
 
    /**

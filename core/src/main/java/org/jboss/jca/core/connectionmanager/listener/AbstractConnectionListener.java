@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.listener;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
@@ -35,6 +36,8 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
+
+import org.jboss.logging.Messages;
 
 /**
  * Abstract implementation of the {@link ConnectionListener} interface
@@ -50,6 +53,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    
    /** Log trace */
    protected boolean trace;
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
    /** Connection Manager */
    private final ConnectionManager cm;
@@ -395,7 +401,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
          return 0;
 
       if (!(o instanceof AbstractConnectionListener))
-         throw new ClassCastException("Not correct type: " + o.getClass().getName());
+         throw new ClassCastException(bundle.notCorrectTypeWhenClassCast(o.getClass().getName()));
 
       final AbstractConnectionListener acl = (AbstractConnectionListener)o;
 

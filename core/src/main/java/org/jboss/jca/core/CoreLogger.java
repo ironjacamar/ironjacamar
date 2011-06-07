@@ -419,4 +419,7 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 1101, value = "Prepare called on a local tx. Use of local transactions on a jta " +
          "transaction with more than one branch may result in inconsistent data in some cases of failure.")
    public void prepareCalledOnLocaltx();
+   
+   
+   // METADATA REPOSITORY (1200)
 }

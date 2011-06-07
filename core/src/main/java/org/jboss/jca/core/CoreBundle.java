@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core;
 
-import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Message;
+import org.jboss.logging.MessageBundle;
 
 /**
  * The core bundle.
@@ -33,4 +33,418 @@ import org.jboss.logging.Message;
 @MessageBundle(projectCode = "IJ")
 public interface CoreBundle
 {
+
+   // CACHED CONNECTION MANAGER (100)
+
+   /**
+    * Some connections were not closed
+    * @return The value
+    */
+   @Message(id = 151, value = "Some connections were not closed, see the log for the allocation stacktraces")
+   public String someConnectionsWereNotClosed();
+   
+   // WORK MANAGER (200)
+   
+   /**
+    * SecurityContext setup failed
+    * @param message The throwable description
+    * @return The value
+    */
+   @Message(id = 251, value = "SecurityContext setup failed: %s")
+   public String securityContextSetupFailed(String message);
+   
+   /**
+    * SecurityContext setup failed since CallbackSecurity was null
+    * @return The value
+    */
+   @Message(id = 252, value = "SecurityContext setup failed since CallbackSecurity was null")
+   public String securityContextSetupFailedSinceCallbackSecurityWasNull();
+   
+   /**
+    * Work is null
+    * @return The value
+    */
+   @Message(id = 253, value = "Work is null")
+   public String workIsNull();
+   
+   /**
+    * StartTimeout is negative
+    * @param startTimeout timeout of start
+    * @return The value
+    */
+   @Message(id = 254, value = "StartTimeout is negative: %s")
+   public String startTimeoutIsNegative(long startTimeout);
+   
+   /**
+    * Interrupted while requesting permit
+    * @return The value
+    */
+   @Message(id = 255, value = "Interrupted while requesting permit")
+   public String interruptedWhileRequestingPermit();
+   
+   /**
+    * Work execution context must be null because work instance implements WorkContextProvider
+    * @return The value
+    */
+   @Message(id = 256, value = "Work execution context must be null because " +
+         "work instance implements WorkContextProvider!")
+   public String workExecutionContextMustNullImplementsWorkContextProvider();
+
+   /**
+    * Run method is synchronized
+    * @param classname class name of work
+    * @return The value
+    */
+   @Message(id = 257, value = "%s: Run method is synchronized")
+   public String runMethodIsSynchronized(String classname);
+
+   /**
+    * Release method is synchronized
+    * @param classname class name of work
+    * @return The value
+    */
+   @Message(id = 258, value = "%s: Release method is synchronized")
+   public String releaseMethodIsSynchronized(String classname);
+
+   /**
+    * Unsupported WorkContext class
+    * @param classname class name of work
+    * @return The value
+    */
+   @Message(id = 259, value = "Unsupported WorkContext class: %s")
+   public String unsupportedWorkContextClass(String classname);
+
+   /**
+    * Duplicate TransactionWorkContext class
+    * @param classname class name of work
+    * @return The value
+    */
+   @Message(id = 260, value = "Duplicate TransactionWorkContext class: %s")
+   public String duplicateTransactionWorkContextClass(String classname);
+
+   /**
+    * Duplicate SecurityWorkContext class
+    * @param classname class name of work
+    * @return The value
+    */
+   @Message(id = 261, value = "Duplicate SecurityWorkContext class: %s")
+   public String duplicateSecurityWorkContextClass(String classname);
+
+   /**
+    * Duplicate HintWorkContext class
+    * @param classname class name of work
+    * @return The value
+    */
+   @Message(id = 262, value = "Duplicate HintWorkContext class: %s")
+   public String duplicateHintWorkContextClass(String classname);
+   
+   
+   // CONNECTION MANAGER LISTENER (300)
+
+   /**
+    * Not correct type in class cast
+    * @param classname class name of work
+    * @return The value
+    */
+   @Message(id = 351, value = "Not correct type: %s")
+   public String notCorrectTypeWhenClassCast(String classname);
+
+   /**
+    * Failure to delist resource
+    * @param obj listener instance
+    * @return The value
+    */
+   @Message(id = 352, value = "Failure to delist resource: %s")
+   public String failureDelistResource(Object obj);
+
+   /**
+    * Unfinished local transaction but managed connection does not provide a local transaction
+    * @param obj listener instance
+    * @return The value
+    */
+   @Message(id = 353, value = "Unfinished local transaction but managed connection does not " +
+                  "provide a local transaction: %s")
+   public String unfinishedLocalTransactionNotProvideLocalTransaction(Object obj);
+
+   /**
+    * System exception when failedToEnlist equals currentTx
+    * @param throwable throwable instance
+    * @param currentTx current transaction instance
+    * @return The value
+    */
+   @Message(id = 354, value = "%s tx=%s")
+   public String systemExceptionWhenFailedToEnlistEqualsCurrentTx(Object throwable, Object currentTx);
+   
+   
+   // CONNECTION MANAGER (400)
+
+   /**
+    * The connection manager is shutdown 
+    * @param jndiName jndi name
+    * @return The value
+    */
+   @Message(id = 451, value = "The connection manager is shutdown: %s")
+   public String connectionManagerIsShutdown(String jndiName);
+
+   /**
+    * Unable to get managed connection for 
+    * @param jndiName jndi name
+    * @return The value
+    */
+   @Message(id = 452, value = "Unable to get managed connection for %s")
+   public String unableGetManagedConnection(String jndiName);
+   
+   /**
+    * You are trying to use a connection factory that has been shut down ManagedConnectionFactory is null
+    * @return The value
+    */
+   @Message(id = 453, value = "You are trying to use a connection factory that has been shut down: " +
+         "ManagedConnectionFactory is null.")
+   public String tryingUseConnectionFactoryShutDown();
+   
+   /**
+    * Wrong ManagedConnectionFactory sent to allocateConnection
+    * @return The value
+    */
+   @Message(id = 454, value = "Wrong ManagedConnectionFactory sent to allocateConnection!")
+   public String wrongManagedConnectionFactorySentToAllocateConnection();
+   
+   /**
+    * This method is not supported
+    * @return The value
+    */
+   @Message(id = 455, value = "This method is not supported")
+   public String thisMethodNotSupported();
+   
+   /**
+    * Transaction is not active
+    * @param obj transaction instance
+    * @return The value
+    */
+   @Message(id = 456, value = "Transaction is not active: tx= ")
+   public String transactionNotActive(Object obj);
+   
+   /**
+    * Could not enlist in transaction on entering meta-aware object
+    * @return The value
+    */
+   @Message(id = 457, value = "Could not enlist in transaction on entering meta-aware object!")
+   public String notEnlistInTransactionOnEnteringMetaAwareObject();
+
+   /**
+    * Unable to set XAResource transaction timeout
+    * @param jndiName jndi name
+    * @return The value
+    */
+   @Message(id = 458, value = "Unable to set XAResource transaction timeout: %s")
+   public String unableSetXAResourceTransactionTimeout(String jndiName);
+      
+   // TRANSACTION SYNCHRONIZER (500)
+   
+   // POOL MANAGER (600)
+   
+   /**
+    * Unable to get managed connection pool
+    * @return The value
+    */
+   @Message(id = 651, value = "Unable to get managed connection pool")
+   public String unableGetManagedConnectionPool();
+   
+   /**
+    * Unable to obtain lock
+    * @return The value
+    */
+   @Message(id = 652, value = "Unable to obtain lock")
+   public String unableObtainLock();
+   
+   /**
+    * The pool has been shutdown
+    * @return The value
+    */
+   @Message(id = 653, value = "The pool has been shutdown")
+   public String thePoolHasBeenShutdown();
+
+   /**
+    * Interrupted while requesting connection
+    * @param end time of end
+    * @return The value
+    */
+   @Message(id = 654, value = "Interrupted while requesting connection! Waited %s ms")
+   public String interruptedWhileRequestingConnection(long end);
+
+   /**
+    * No ManagedConnections available within configured blocking timeout
+    * @param blockingTimeout timeout of blocking
+    * @return The value
+    */
+   @Message(id = 655, value = "No ManagedConnections available within configured blocking timeout (  %s [ms] )")
+   public String noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(long blockingTimeout);
+
+   /**
+    * This should never happen
+    * @return The value
+    */
+   @Message(id = 656, value = "This should never happen")
+   public String shouldNeverHappen();
+
+   /**
+    * Interrupted while requesting permit
+    * @param end time of end
+    * @return The value
+    */
+   @Message(id = 657, value = "Interrupted while requesting permit! Waited %s ms")
+   public String interruptedWhileRequestingPermit(long end);
+   
+   // NAMING (700)
+
+   /**
+    * Deployment failed since jndi name is already deployed
+    * @param className class name
+    * @param jndiName jndi name
+    * @return The value
+    */
+   @Message(id = 751, value = "Deployment %s failed, %s is already deployed")
+   public String deploymentFailedSinceJndiNameHasDeployed(String className, String jndiName);
+   
+   // RESOURCE ADPATER REPOSITORY (800)
+   
+   /**
+    * ResourceAdapter instance not active
+    * @return The value
+    */
+   @Message(id = 851, value = "ResourceAdapter instance not active")
+   public String resourceAdapterInstanceNotActive();
+   
+   /**
+    * Validation exception
+    * @return The value
+    */
+   @Message(id = 852, value = "Validation exception")
+   public String validationException();
+   
+   /**
+    * The activation spec class is no longer available
+    * @return The value
+    */
+   @Message(id = 853, value = "The activation spec class is no longer available")
+   public String activationSpecClassNotAvailable();
+   
+   /**
+    * The resource adapter is no longer available
+    * @return The value
+    */
+   @Message(id = 854, value = "The resource adapter is no longer available")
+   public String resourceAdapterNotAvailable();
+   
+   /**
+    * Key isn't registered
+    * @param key key name
+    * @return The value
+    */
+   @Message(id = 855, value = "%s isn't registered")
+   public String keyNotRegistered(String key);
+   
+   /**
+    * Unable to lookup resource adapter in MDR
+    * @param uniqueId key name
+    * @return The value
+    */
+   @Message(id = 856, value = "Unable to lookup resource adapter in MDR: %s")
+   public String unableLookupResourceAdapterInMDR(String uniqueId);
+   
+   // RECOVERY (900)
+   
+   /**
+    * Error during connection close
+    * @return The value
+    */
+   @Message(id = 951, value = "Error during connection close")
+   public String errorDuringConnectionClose();
+   
+   // SECURITY (1000)
+
+   
+   // TRANSCATION (1100)
+
+   /**
+    * Trying to start a new tx when old is not complete
+    * @param oldXid old xid
+    * @param newXid new xid
+    * @param flags flags
+    * @return The value
+    */
+   @Message(id = 1151, value = "Trying to start a new tx when old is not complete! old: %s, new %s, flags %s")
+   public String tryingStartNewTxWhenOldNotComplete(Object oldXid, Object newXid, int flags);
+
+   /**
+    * Trying to start a new tx with wrong flags
+    * @param xid xid
+    * @param flags flags
+    * @return The value
+    */
+   @Message(id = 1152, value = "Trying to start a new tx with wrong flags! new %s, flags %s")
+   public String tryingStartNewTxWithWrongFlags(Object xid, int flags);
+   
+   /**
+    * Error trying to start local tx
+    * @return The value
+    */
+   @Message(id = 1153, value = "Error trying to start local tx")
+   public String errorTryingStartLocalTx();
+   
+   /**
+    * Throwable trying to start local transaction
+    * @return The value
+    */
+   @Message(id = 1154, value = "Throwable trying to start local transaction!")
+   public String throwableTryingStartLocalTx();
+
+   /**
+    * Wrong xid in commit
+    * @param currentXid current xid
+    * @param xid xid
+    * @return The value
+    */
+   @Message(id = 1155, value = "Wrong xid in commit: expected: %s, got: %s")
+   public String wrongXidInCommit(Object currentXid, Object xid);
+   
+   /**
+    * Could not commit local tx
+    * @return The value
+    */
+   @Message(id = 1156, value = "Could not commit local tx")
+   public String couldNotCommitLocalTx();
+   
+   /**
+    * Forget not supported in local tx
+    * @return The value
+    */
+   @Message(id = 1157, value = "Forget not supported in local tx")
+   public String forgetNotSupportedInLocalTx();
+   
+   /**
+    * No recover with local-tx only resource managers
+    * @return The value
+    */
+   @Message(id = 1158, value = "No recover with local-tx only resource managers")
+   public String noRecoverWithLocalTxResourceManagers();
+   
+   /**
+    * Wrong xid in rollback
+    * @param currentXid current xid
+    * @param xid xid
+    * @return The value
+    */
+   @Message(id = 1159, value = "Wrong xid in rollback: expected: %s, got: %s")
+   public String wrongXidInRollback(Object currentXid, Object xid);
+
+   
+   /**
+    * Could not rollback local tx
+    * @return The value
+    */
+   @Message(id = 1160, value = "Could not rollback local tx")
+   public String couldNotRollbackLocalTx();
+   
+   // METADATA REPOSITORY (1200)
 }

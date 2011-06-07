@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.rar;
 
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.bv.BeanValidationUtil;
 import org.jboss.jca.core.spi.rar.Endpoint;
 
@@ -36,6 +37,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
+import org.jboss.logging.Messages;
+
 /**
  * An endpoint representation
  * 
@@ -45,7 +48,10 @@ public class EndpointImpl implements Endpoint
 {
    /** The reference to the resource adapter instance */
    private WeakReference<ResourceAdapter> ra;
-
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /**
     * Constructor
     * @param ra The resource adapter reference
@@ -71,7 +77,7 @@ public class EndpointImpl implements Endpoint
       ResourceAdapter rar = ra.get();
 
       if (rar == null)
-         throw new ResourceException("ResourceAdapter instance not active");
+         throw new ResourceException(bundle.resourceAdapterInstanceNotActive());
 
       spec.validate();
 
@@ -80,7 +86,7 @@ public class EndpointImpl implements Endpoint
 
       if (errors != null && errors.size() > 0)
       {
-         throw new ResourceException("Validation exception", new ConstraintViolationException(errors));
+         throw new ResourceException(bundle.validationException(), new ConstraintViolationException(errors));
       }
 
       rar.endpointActivation(endpointFactory, spec);
@@ -101,7 +107,7 @@ public class EndpointImpl implements Endpoint
       ResourceAdapter rar = ra.get();
 
       if (rar == null)
-         throw new ResourceException("ResourceAdapter instance not active");
+         throw new ResourceException(bundle.resourceAdapterInstanceNotActive());
 
       rar.endpointDeactivation(endpointFactory, spec);
    }

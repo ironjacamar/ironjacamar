@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool;
 
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
@@ -50,6 +51,8 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
+import org.jboss.logging.Messages;
+
 /**
  * Abstract pool implementation.
  * <p>
@@ -68,7 +71,10 @@ public abstract class AbstractPool implements Pool
 
    /** Is trace enabled */
    private boolean trace;
-
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** The managed connection pools, maps key --> pool */
    private final ConcurrentMap<Object, ManagedConnectionPool> mcpPools =
       new ConcurrentHashMap<Object, ManagedConnectionPool>();
@@ -178,7 +184,7 @@ public abstract class AbstractPool implements Pool
       }
       catch (Throwable t)
       {
-         throw new ResourceException("Unable to get managed connection pool", t);
+         throw new ResourceException(bundle.unableGetManagedConnectionPool(), t);
       }
    }
 
@@ -437,7 +443,7 @@ public abstract class AbstractPool implements Pool
       }
       catch (InterruptedException ie)
       {
-         throw new ResourceException("Unable to obtain lock", ie);
+         throw new ResourceException(bundle.unableObtainLock(), ie);
       }
       try
       {
@@ -491,7 +497,7 @@ public abstract class AbstractPool implements Pool
       }
       catch (InterruptedException ie)
       {
-         throw new ResourceException("Unable to obtain lock", ie);
+         throw new ResourceException(bundle.unableObtainLock(), ie);
       }
       try
       {

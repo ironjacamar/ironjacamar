@@ -23,6 +23,7 @@ package org.jboss.jca.core.connectionmanager.listener;
 
 import org.jboss.jca.common.JBossResourceException;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -46,6 +47,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * Tx connection listener.
@@ -57,7 +59,10 @@ public class TxConnectionListener extends AbstractConnectionListener
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
       TxConnectionListener.class.getName());
-
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /**Transaction synch. instance*/
    private TransactionSynchronization transactionSynchronization;
 
@@ -299,7 +304,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                   synchronizer.removeEnlisted(synchronization);
                if (!tx.delistResource(getXAResource(), XAResource.TMSUSPEND))
                {
-                  throw new ResourceException("Failure to delist resource: " + this);
+                  throw new ResourceException(bundle.failureDelistResource(this));
                }
             }
          }
@@ -415,8 +420,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                   "error getting local transaction from " + this, t);
          }
          if (local == null)
-            throw new ResourceException("Unfinished local transaction but managed connection does not " +
-                  "provide a local transaction. " + this);
+            throw new ResourceException(bundle.unfinishedLocalTransactionNotProvideLocalTransaction(this));
          else
          {
             local.rollback();
@@ -539,7 +543,8 @@ public class TxConnectionListener extends AbstractConnectionListener
             // could have been enlisted by a different thread
             if (enlistError == failedToEnlist)
             {
-               throw new SystemException(failedToEnlist + " tx=" + this.currentTx);
+               throw new SystemException(bundle.systemExceptionWhenFailedToEnlistEqualsCurrentTx(
+                     failedToEnlist, this.currentTx));
             }
             else
             {

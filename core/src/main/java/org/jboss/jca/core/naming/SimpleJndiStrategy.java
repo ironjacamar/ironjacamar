@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.naming;
 
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 
@@ -38,6 +39,7 @@ import javax.naming.StringRefAddr;
 import javax.resource.Referenceable;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 import org.jboss.util.naming.Util;
 
 /**
@@ -53,7 +55,10 @@ public class SimpleJndiStrategy implements JndiStrategy
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, SimpleJndiStrategy.class.getName());
 
    private static boolean trace = log.isTraceEnabled();
-
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** JNDI prefix for connection factories */
    private static final String CF_JNDI_PREFIX = "java:/eis/";
 
@@ -146,7 +151,7 @@ public class SimpleJndiStrategy implements JndiStrategy
          ref.add(new StringRefAddr("name", jndiName));
 
          if (objs.putIfAbsent(qualifiedName(jndiName, className), cf) != null)
-            throw new Exception("Deployment " + className + " failed, " + jndiName + " is already deployed");
+            throw new Exception(bundle.deploymentFailedSinceJndiNameHasDeployed(className, jndiName));
 
          Referenceable referenceable = (Referenceable)cf;
          referenceable.setReference(ref);
@@ -318,7 +323,7 @@ public class SimpleJndiStrategy implements JndiStrategy
          ref.add(new StringRefAddr("name", jndiName));
 
          if (objs.putIfAbsent(qualifiedName(jndiName, className), ao) != null)
-            throw new Exception("Deployment " + className + " failed, " + jndiName + " is already deployed");
+            throw new Exception(bundle.deploymentFailedSinceJndiNameHasDeployed(className, jndiName));
 
          Referenceable referenceable = (Referenceable)ao;
          referenceable.setReference(ref);

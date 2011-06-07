@@ -24,6 +24,7 @@ package org.jboss.jca.core.mdr;
 
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.spi.mdr.AlreadyExistsException;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
@@ -38,6 +39,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.jboss.logging.Messages;
+
 /**
  * A simple implementation of the metadata repository
  * 
@@ -45,6 +48,9 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class SimpleMetadataRepository implements MetadataRepository
 {
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** Resource adapter templates */
    private ConcurrentMap<String, Connector> raTemplates;
 
@@ -89,7 +95,7 @@ public class SimpleMetadataRepository implements MetadataRepository
       // The IronJacamar metadata object can be null
 
       if (raTemplates.containsKey(uniqueId))
-         throw new AlreadyExistsException(uniqueId + " already registered");
+         throw new AlreadyExistsException(bundle.keyNotRegistered(uniqueId));
 
       raTemplates.put(uniqueId, md);
       raRoots.put(uniqueId, root);
@@ -108,7 +114,7 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new IllegalArgumentException("UniqueId is empty");
 
       if (!raTemplates.containsKey(uniqueId))
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       raTemplates.remove(uniqueId);
       raRoots.remove(uniqueId);
@@ -141,7 +147,7 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new IllegalArgumentException("UniqueId is empty");
 
       if (!raTemplates.containsKey(uniqueId))
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       Connector md = raTemplates.get(uniqueId);
 
@@ -169,7 +175,7 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new IllegalArgumentException("UniqueId is empty");
 
       if (!raRoots.containsKey(uniqueId))
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       return raRoots.get(uniqueId);
    }
@@ -186,7 +192,7 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new IllegalArgumentException("UniqueId is empty");
 
       if (!ironJacamar.containsKey(uniqueId))
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       return ironJacamar.get(uniqueId);
    }
@@ -259,7 +265,7 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new IllegalArgumentException("Jndi is empty");
 
       if (!jndiMappings.containsKey(uniqueId))
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       Map<String, List<String>> mappings = jndiMappings.get(uniqueId);
 
@@ -310,7 +316,7 @@ public class SimpleMetadataRepository implements MetadataRepository
          throw new IllegalArgumentException("UniqueId is empty");
 
       if (!jndiMappings.containsKey(uniqueId))
-         throw new NotFoundException(uniqueId + " isn't registered");
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
       Map<String, List<String>> mappings = jndiMappings.get(uniqueId);
 

@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.rar;
 
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.spi.rar.Activation;
 import org.jboss.jca.core.spi.rar.NotFoundException;
 
@@ -33,13 +34,18 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
 
+import org.jboss.logging.Messages;
+
 /**
  * An activation implementation
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class ActivationImpl implements Activation
-{
+{   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** Resource adapter */
    private WeakReference<ResourceAdapter> rar;
 
@@ -95,12 +101,12 @@ public class ActivationImpl implements Activation
       Class<?> clz = activationSpecClass.get();
 
       if (clz == null)
-         throw new NotFoundException("The activation spec class is no longer available");
+         throw new NotFoundException(bundle.activationSpecClassNotAvailable());
 
       ResourceAdapter ra = rar.get();
 
       if (ra == null)
-         throw new NotFoundException("The resource adapter is no longer available");
+         throw new NotFoundException(bundle.resourceAdapterNotAvailable());
 
       ActivationSpec instance = ActivationSpec.class.cast(clz.newInstance());
       instance.setResourceAdapter(ra);

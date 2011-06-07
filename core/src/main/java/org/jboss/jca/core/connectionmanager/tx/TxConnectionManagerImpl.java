@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.tx;
 
 import org.jboss.jca.common.JBossResourceException;
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
@@ -55,6 +56,7 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 import org.jboss.util.NestedRuntimeException;
 import org.jboss.util.NotImplementedException;
 
@@ -137,7 +139,10 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
-
+   
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** Transaction manager instance */
    private transient TransactionManager transactionManager;
 
@@ -346,7 +351,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          Transaction tx = transactionManager.getTransaction();
          if (tx != null && !TxUtils.isActive(tx))
          {
-            throw new ResourceException("Transaction is not active: tx=" + tx);  
+            throw new ResourceException(bundle.transactionNotActive(tx));  
          }
          
          if (!interleaving)
@@ -425,7 +430,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          if (trace)
             log.trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
 
-         throw new JBossResourceException("Could not enlist in transaction on entering meta-aware object!", t);
+         throw new JBossResourceException(bundle.notEnlistInTransactionOnEnteringMetaAwareObject(), t);
       }
    }
 
@@ -534,7 +539,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             }
             catch (XAException e)
             {
-               throw new JBossResourceException("Unable to set XAResource transaction timeout: " + getJndiName(), e);
+               throw new JBossResourceException(bundle.unableSetXAResourceTransactionTimeout(getJndiName()), e);
             }
          }
       }

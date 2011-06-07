@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.ccm;
 
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
@@ -50,6 +51,7 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 import org.jboss.util.Strings;
 
 /**
@@ -62,10 +64,12 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    /** Log instance */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
                                                            CachedConnectionManager.class.getName());
-   
    /** Trace */
    private static boolean trace = log.isTraceEnabled();
 
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   
    /** Debugging flag */
    private boolean debug = false;
 
@@ -204,7 +208,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       {
          if (closeAll(oldKey.getCMToConnectionsMap()) && error)
          {
-            throw new ResourceException("Some connections were not closed, see the log for the allocation stacktraces");
+            throw new ResourceException(bundle.someConnectionsWereNotClosed());
          }
       }
    }
