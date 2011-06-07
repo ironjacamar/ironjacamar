@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.naming;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 
 import java.util.Hashtable;
@@ -46,7 +47,7 @@ import org.jboss.util.naming.Util;
  */
 public class ExplicitJndiStrategy implements JndiStrategy
 {
-   private static Logger log = Logger.getLogger(ExplicitJndiStrategy.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, ExplicitJndiStrategy.class.getName());
 
    private static boolean trace = log.isTraceEnabled();
 
@@ -220,7 +221,7 @@ public class ExplicitJndiStrategy implements JndiStrategy
       }
       catch (Throwable t)
       {
-         log.warn("Exception during unbind", t);
+         log.exceptionDuringUnbind(t);
       }
       finally
       {
@@ -385,7 +386,7 @@ public class ExplicitJndiStrategy implements JndiStrategy
       }
       catch (Throwable t)
       {
-         log.warn("Exception during unbind", t);
+         log.exceptionDuringUnbind(t);
       }
       finally
       {

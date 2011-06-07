@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.recovery;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 
 import java.lang.reflect.Method;
@@ -38,7 +39,7 @@ import org.jboss.logging.Logger;
 public class DefaultRecoveryPlugin implements RecoveryPlugin
 {
    /** Log instance */
-   private static Logger log = Logger.getLogger(DefaultRecoveryPlugin.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, DefaultRecoveryPlugin.class.getName());
 
    /**
     * Constructor
@@ -88,7 +89,7 @@ public class DefaultRecoveryPlugin implements RecoveryPlugin
             }
             catch (ResourceException re)
             {
-               log.warn("Error during connection close", re);
+               log.exceptionDuringConnectionClose(re);
                throw new ResourceException("Error during connection close", re);
             }
          }

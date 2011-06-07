@@ -365,5 +365,48 @@ public interface CoreLogger extends BasicLogger
     */
    @LogMessage(level = ERROR)
    @Message(id = 614, value = "Exception during createSubject() %s")
-   public void exceptionDuringCreateSubject(String description, @Cause Throwable t);
+   public void exceptionDuringCreateSubject(String description, @Cause Throwable t);   
+
+   
+   // NAMING (700)
+
+   /**
+    * Exception during unbind
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 701, value = "Exception during unbind")
+   public void exceptionDuringUnbind(@Cause Throwable t);
+   
+   
+   // RESOURCE ADPATER REPOSITORY (800)
+   
+   
+   // RECOVERY (900)
+
+   /**
+    * Error during connection close
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 901, value = "Error during connection close")
+   public void exceptionDuringConnectionClose(@Cause Throwable t);
+   
+   
+   // SECURITY (1000)
+
+   /**
+    * No users.properties were found
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 1001, value = "No users.properties were found")
+   public void NoUsersPropertiesFound();
+
+   /**
+    * Error while loading users.properties
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 1002, value = "Error while loading users.properties")
+   public void errorWhileLoadingUsersProperties(@Cause Throwable t);
 }

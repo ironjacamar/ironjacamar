@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.NotFoundException;
@@ -55,7 +56,8 @@ import org.jboss.logging.Logger;
 public class SimpleResourceAdapterRepository implements ResourceAdapterRepository
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(SimpleResourceAdapterRepository.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
+      SimpleResourceAdapterRepository.class.getName());
 
    /** Resource adapters */
    private Map<String, WeakReference<ResourceAdapter>> rars;

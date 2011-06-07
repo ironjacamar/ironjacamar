@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.security;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.security.Callback;
 
 import java.io.File;
@@ -51,7 +52,7 @@ public class UsersRoles implements Callback
    private static final long serialVersionUID = 1L;
 
    /** Log instance */
-   private static Logger log = Logger.getLogger(UsersRoles.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, UsersRoles.class.getName());
 
    /** Trace */
    private static boolean trace = log.isTraceEnabled();
@@ -226,12 +227,12 @@ public class UsersRoles implements Callback
          }
          else
          {
-            log.warn("No users.properties were found");
+            log.NoUsersPropertiesFound();
          }
       }
       catch (IOException ioe)
       {
-         log.error("Error while loading users.properties", ioe);
+         log.errorWhileLoadingUsersProperties(ioe);
       }
       finally
       {
@@ -309,12 +310,12 @@ public class UsersRoles implements Callback
          }
          else
          {
-            log.warn("No roles.properties were found");
+            log.NoUsersPropertiesFound();
          }
       }
       catch (IOException ioe)
       {
-         log.error("Error while loading roles.properties", ioe);
+         log.errorWhileLoadingUsersProperties(ioe);
       }
       finally
       {

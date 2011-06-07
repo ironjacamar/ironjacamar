@@ -29,8 +29,6 @@ import java.util.Hashtable;
 import javax.naming.Context;
 import javax.naming.Name;
 
-import org.jboss.logging.Logger;
-
 /**
  * A noop JNDI strategy
  * 
@@ -38,8 +36,6 @@ import org.jboss.logging.Logger;
  */
 public class NoopJndiStrategy implements JndiStrategy
 {
-   private static Logger log = Logger.getLogger(NoopJndiStrategy.class);
-
    /**
     * Constructor
     */
