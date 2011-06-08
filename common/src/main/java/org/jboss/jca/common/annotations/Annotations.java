@@ -197,9 +197,6 @@ public class Annotations
       InboundResourceAdapter inboundRA = processActivation(annotationRepository,
             configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ACTIVATION_SPEC));
 
-      // @AuthenticationMechanism
-      //md = processAuthenticationMechanism(md, annotationRepository);
-
       // @AdministeredObject
       ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository, classLoader,
          configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ADMIN_OBJECT));
