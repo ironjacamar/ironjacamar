@@ -410,6 +410,21 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 1002, value = "Error while loading users.properties")
    public void errorWhileLoadingUsersProperties(@Cause Throwable t);
    
+   /**
+    * No roles.properties were found
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 1003, value = "No roles.properties were found")
+   public void noRolesPropertiesFound();
+
+   /**
+    * Error while loading roles.properties
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 1004, value = "Error while loading roles.properties")
+   public void errorWhileLoadingRolesProperties(@Cause Throwable t);
+   
    // TRANSCATION (1100)
 
    /**

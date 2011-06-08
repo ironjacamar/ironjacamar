@@ -310,12 +310,12 @@ public class UsersRoles implements Callback
          }
          else
          {
-            log.noUsersPropertiesFound();
+            log.noRolesPropertiesFound();
          }
       }
       catch (IOException ioe)
       {
-         log.errorWhileLoadingUsersProperties(ioe);
+         log.errorWhileLoadingRolesProperties(ioe);
       }
       finally
       {
