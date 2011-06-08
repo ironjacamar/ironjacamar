@@ -156,13 +156,28 @@ public interface CoreBundle
     */
    @Message(id = 352, value = "Failure to delist resource: %s")
    public String failureDelistResource(Object obj);
-
+   
+   /**
+    * Error in delist
+    * @return The value
+    */
+   @Message(id = 353, value = "Error in delist!")
+   public String errorInDelist();
+   
+   /**
+    * Unfinished local transaction - error getting local transaction from
+    * @param obj listener instance
+    * @return The value
+    */
+   @Message(id = 354, value = "Unfinished local transaction - error getting local transaction from %s")
+   public String unfinishedLocalTransaction(Object obj);
+   
    /**
     * Unfinished local transaction but managed connection does not provide a local transaction
     * @param obj listener instance
     * @return The value
     */
-   @Message(id = 353, value = "Unfinished local transaction but managed connection does not " +
+   @Message(id = 355, value = "Unfinished local transaction but managed connection does not " +
                   "provide a local transaction: %s")
    public String unfinishedLocalTransactionNotProvideLocalTransaction(Object obj);
 
@@ -172,7 +187,7 @@ public interface CoreBundle
     * @param currentTx current transaction instance
     * @return The value
     */
-   @Message(id = 354, value = "%s tx=%s")
+   @Message(id = 356, value = "%s tx=%s")
    public String systemExceptionWhenFailedToEnlistEqualsCurrentTx(Object throwable, Object currentTx);
    
    
@@ -187,18 +202,26 @@ public interface CoreBundle
    public String connectionManagerIsShutdown(String jndiName);
 
    /**
+    * Method getManagedConnection retry wait was interrupted
+    * @param jndiName jndi name
+    * @return The value
+    */
+   @Message(id = 452, value = "Method getManagedConnection retry wait was interrupted: %s")
+   public String getManagedConnectionRetryWaitInterrupted(String jndiName);
+   
+   /**
     * Unable to get managed connection for 
     * @param jndiName jndi name
     * @return The value
     */
-   @Message(id = 452, value = "Unable to get managed connection for %s")
+   @Message(id = 453, value = "Unable to get managed connection for %s")
    public String unableGetManagedConnection(String jndiName);
    
    /**
     * You are trying to use a connection factory that has been shut down ManagedConnectionFactory is null
     * @return The value
     */
-   @Message(id = 453, value = "You are trying to use a connection factory that has been shut down: " +
+   @Message(id = 454, value = "You are trying to use a connection factory that has been shut down: " +
          "ManagedConnectionFactory is null.")
    public String tryingUseConnectionFactoryShutDown();
    
@@ -206,14 +229,30 @@ public interface CoreBundle
     * Wrong ManagedConnectionFactory sent to allocateConnection
     * @return The value
     */
-   @Message(id = 454, value = "Wrong ManagedConnectionFactory sent to allocateConnection!")
+   @Message(id = 455, value = "Wrong ManagedConnectionFactory sent to allocateConnection!")
    public String wrongManagedConnectionFactorySentToAllocateConnection();
+
+   /**
+    * Unchecked throwable in ManagedConnection.getConnection()
+    * @param obj ConnectionListener instance
+    * @return The value
+    */
+   @Message(id = 456, value = "Unchecked throwable in ManagedConnection.getConnection() cl=%s")
+   public String uncheckedThrowableInManagedConnectionGetConnection(Object obj);
+
+   /**
+    * Unchecked throwable in managedConnectionReconnected()
+    * @param obj ConnectionListener instance
+    * @return The value
+    */
+   @Message(id = 457, value = "Unchecked throwable in managedConnectionReconnected() cl=%s")
+   public String uncheckedThrowableInManagedConnectionReconnected(Object obj);
    
    /**
     * This method is not supported
     * @return The value
     */
-   @Message(id = 455, value = "This method is not supported")
+   @Message(id = 458, value = "This method is not supported")
    public String thisMethodNotSupported();
    
    /**
@@ -221,22 +260,36 @@ public interface CoreBundle
     * @param obj transaction instance
     * @return The value
     */
-   @Message(id = 456, value = "Transaction is not active: tx=%s")
+   @Message(id = 459, value = "Transaction is not active: tx=%s")
    public String transactionNotActive(Object obj);
+   
+   /**
+    * Error checking for a transaction.
+    * @return The value
+    */
+   @Message(id = 460, value = "Error checking for a transaction.")
+   public String errorCheckingForTransaction();
    
    /**
     * Could not enlist in transaction on entering meta-aware object
     * @return The value
     */
-   @Message(id = 457, value = "Could not enlist in transaction on entering meta-aware object!")
+   @Message(id = 461, value = "Could not enlist in transaction on entering meta-aware object!")
    public String notEnlistInTransactionOnEnteringMetaAwareObject();
-
+   
+   /**
+    * Could not delist resource, probably a transaction rollback
+    * @return The value
+    */
+   @Message(id = 462, value = "Could not delist resource, probably a transaction rollback?")
+   public String couldNotDelistResourceThenTransactionRollback();
+   
    /**
     * Unable to set XAResource transaction timeout
     * @param jndiName jndi name
     * @return The value
     */
-   @Message(id = 458, value = "Unable to set XAResource transaction timeout: %s")
+   @Message(id = 463, value = "Unable to set XAResource transaction timeout: %s")
    public String unableSetXAResourceTransactionTimeout(String jndiName);
       
    // TRANSACTION SYNCHRONIZER (500)
@@ -294,6 +347,14 @@ public interface CoreBundle
     */
    @Message(id = 657, value = "Interrupted while requesting permit! Waited %s ms")
    public String interruptedWhileRequestingPermit(long end);
+   
+   /**
+    * Unexpected throwable while trying to create a connection:
+    * @param obj connection listener instance
+    * @return The value
+    */
+   @Message(id = 658, value = "Unexpected throwable while trying to create a connection: %s")
+   public String unexpectedThrowableWhileTryingCreateConnection(Object obj);
    
    // NAMING (700)
 

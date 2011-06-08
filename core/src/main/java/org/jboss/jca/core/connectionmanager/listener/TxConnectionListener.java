@@ -310,7 +310,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       }
       catch (Throwable t)
       {
-         throw new ResourceException("Error in delist!", t);
+         throw new ResourceException(bundle.errorInDelist(), t);
       }
    }
 
@@ -415,8 +415,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          }
          catch (Throwable t)
          {
-            throw new ResourceException("Unfinished local transaction - " +
-                  "error getting local transaction from " + this, t);
+            throw new ResourceException(bundle.unfinishedLocalTransaction(this), t);
          }
          if (local == null)
             throw new ResourceException(bundle.unfinishedLocalTransactionNotProvideLocalTransaction(this));

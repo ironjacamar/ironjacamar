@@ -358,7 +358,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       }
       catch (Throwable t)
       {
-         throw new ResourceException("Error checking for a transaction.", t);
+         throw new ResourceException(bundle.errorCheckingForTransaction(), t);
       }
 
       if (trace)
@@ -463,7 +463,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       // Rethrow the error
       if (throwable != null)
       {
-         throw new ResourceException("Could not delist resource, probably a transaction rollback?", throwable);  
+         throw new ResourceException(bundle.couldNotDelistResourceThenTransactionRollback(), throwable);  
       }      
    }
 

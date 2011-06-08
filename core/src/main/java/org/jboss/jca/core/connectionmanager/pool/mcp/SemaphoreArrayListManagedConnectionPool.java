@@ -343,7 +343,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                permits.release();
 
-               throw new ResourceException("Unexpected throwable while trying to create a connection: " + cl, t);
+               throw new ResourceException(bundle.unexpectedThrowableWhileTryingCreateConnection(cl), t);
             }
          }
          else

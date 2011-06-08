@@ -384,7 +384,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                }
                catch (InterruptedException ie)
                {
-                  throw new ResourceException("getManagedConnection retry wait was interrupted " + jndiName, ie);
+                  throw new ResourceException(bundle.getManagedConnectionRetryWaitInterrupted(jndiName), ie);
                }
             }
          }
@@ -487,7 +487,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem" + re);
             returnManagedConnection(cl, true);
          }
-         throw new ResourceException("Unchecked throwable in ManagedConnection.getConnection() cl=" + cl, t);
+         throw new ResourceException(bundle.uncheckedThrowableInManagedConnectionGetConnection(cl), t);
       }
 
       // Associate managed connection with the connection
@@ -604,7 +604,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       catch (Throwable t)
       {
          disconnectManagedConnection(cl);
-         throw new ResourceException("Unchecked throwable in managedConnectionReconnected() cl=" + cl, t);
+         throw new ResourceException(bundle.uncheckedThrowableInManagedConnectionReconnected(cl), t);
       }
    }
 

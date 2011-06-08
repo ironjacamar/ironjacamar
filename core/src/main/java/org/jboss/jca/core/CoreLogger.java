@@ -121,7 +121,7 @@ public interface CoreLogger extends BasicLogger
     * @param managedConnection The managedConnection instance
     */
    @LogMessage(level = INFO)
-   @Message(id = 303, value = "Registered a null handle for managed connection: %s")
+   @Message(id = 303, value = "Unregistered a null handle for managed connection: %s")
    public void unregisteredNullHandleManagedConnection(Object managedConnection);
 
    /**

@@ -264,7 +264,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             {
                log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
-               throw new ResourceException("Unexpected throwable while trying to create a connection: " + cl, t);
+               throw new ResourceException(bundle.unexpectedThrowableWhileTryingCreateConnection(cl), t);
             }
          }
       }
@@ -310,7 +310,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                {
                   log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
-                  throw new ResourceException("Unexpected throwable while trying to create a connection: " + cl, t);
+                  throw new ResourceException(bundle.unexpectedThrowableWhileTryingCreateConnection(cl), t);
                }
             }
          }
@@ -372,7 +372,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             doDestroy(cl);
             cl = null;
 
-            throw new ResourceException("Unexpected throwable while trying to create a connection: " + cl, t);
+            throw new ResourceException(bundle.unexpectedThrowableWhileTryingCreateConnection(cl), t);
          }
       }
 
