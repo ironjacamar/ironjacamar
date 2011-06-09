@@ -50,7 +50,6 @@ import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
 
-import org.jboss.logging.Logger;
 import org.jboss.security.SubjectFactory;
 
 import com.github.fungal.api.Kernel;

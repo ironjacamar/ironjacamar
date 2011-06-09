@@ -40,8 +40,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
-import org.jboss.logging.Logger;
-
 import com.github.fungal.spi.deployers.Deployment;
 
 /**
