@@ -76,7 +76,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertNull(connectionManager.getCachedConnectionManager());
-      connectionManager.setCachedConnectionManager(new CachedConnectionManagerImpl(null));
+      connectionManager.setCachedConnectionManager(new CachedConnectionManagerImpl(null, null));
       assertNotNull(connectionManager.getCachedConnectionManager());
    }
 

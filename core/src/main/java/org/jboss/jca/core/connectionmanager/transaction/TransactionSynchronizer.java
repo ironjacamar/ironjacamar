@@ -34,6 +34,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.jboss.logging.Logger;
 
@@ -182,11 +183,13 @@ public class TransactionSynchronizer implements Synchronization
     * Get a registered transaction synchronizer.
     *
     * @param tx the transaction
+    * @param tsr the transaction synchronization registry
     * @throws SystemException sys. exception
     * @throws RollbackException rollback exception
     * @return the registered transaction synchronizer for this transaction
     */
-   public static TransactionSynchronizer getRegisteredSynchronizer(Transaction tx) 
+   public static TransactionSynchronizer getRegisteredSynchronizer(Transaction tx, 
+                                                                   TransactionSynchronizationRegistry tsr)
       throws SystemException, RollbackException
    {
       TransactionSynchronizer result = txSynchs.get(tx);
@@ -197,12 +200,19 @@ public class TransactionSynchronizer implements Synchronization
          if (result == null)
          {
             result = newResult;
-            tx.registerSynchronization(result);
+            if (tsr != null)
+            {
+               tsr.registerInterposedSynchronization(result);
+            }
+            else
+            {
+               tx.registerSynchronization(result);
+            }
          }
       }
       return result;
    }
-   
+
    /**
     * Check whether we have a CCM synchronization
     * 
@@ -220,18 +230,21 @@ public class TransactionSynchronizer implements Synchronization
    
    /**
     * Register a new CCM synchronization
-    * 
+    *
     * @param tx the transaction
     * @param synch the synchronization
+    * @param tsr the transaction synchronization registry
     * @throws Exception e
     */
-   public static void registerCCMSynchronization(Transaction tx, Synchronization synch) 
+   public static void registerCCMSynchronization(Transaction tx,
+                                                 Synchronization synch,
+                                                 TransactionSynchronizationRegistry tsr)
       throws Exception
    {
-      TransactionSynchronizer ts = getRegisteredSynchronizer(tx);
+      TransactionSynchronizer ts = getRegisteredSynchronizer(tx, tsr);
       ts.ccmSynch = synch;
    }
-   
+
    /**
     * Lock for the given transaction
     * 

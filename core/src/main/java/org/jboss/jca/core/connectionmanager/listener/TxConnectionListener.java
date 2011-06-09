@@ -226,7 +226,9 @@ public class TxConnectionListener extends AbstractConnectionListener
                log.trace("Get synchronizer " + this + " threadTx=" + threadTx);
             }
 
-            synchronizer = TransactionSynchronizer.getRegisteredSynchronizer(threadTx);
+            synchronizer =
+               TransactionSynchronizer.getRegisteredSynchronizer(threadTx,
+                  getConnectionManager().getTransactionIntegration().getTransactionSynchronizationRegistry());
          }
          catch (Throwable t)
          {
@@ -298,9 +300,15 @@ public class TxConnectionListener extends AbstractConnectionListener
             transactionSynchronization = null;
             if (TxUtils.isUncommitted(tx))
             {
-               TransactionSynchronizer synchronizer = TransactionSynchronizer.getRegisteredSynchronizer(tx);
+               TransactionSynchronizer synchronizer =
+                  TransactionSynchronizer.getRegisteredSynchronizer(tx,
+                                                                    getConnectionManager().
+                                                                    getTransactionIntegration().
+                                                                    getTransactionSynchronizationRegistry());
+
                if (synchronization.enlisted)
                   synchronizer.removeEnlisted(synchronization);
+
                if (!tx.delistResource(getXAResource(), XAResource.TMSUSPEND))
                {
                   throw new ResourceException(bundle.failureDelistResource(this));

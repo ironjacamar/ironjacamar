@@ -540,4 +540,47 @@ public class PoolStatisticsImpl implements PoolStatistics
          mcp.getStatistics().clear();
       }
    }
+
+   /**
+    * toString
+    * @return The value
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("PoolStatistics@").append(Integer.toHexString(System.identityHashCode(this)));
+
+      sb.append("[");
+
+      sb.append(ACTIVE_COUNT).append("=").append(getActiveCount());
+      sb.append(",");
+      sb.append(AVAILABLE_COUNT).append("=").append(getAvailableCount());
+      sb.append(",");
+      sb.append(AVERAGE_BLOCKING_TIME).append("=").append(getAverageBlockingTime());
+      sb.append(",");
+      sb.append(AVERAGE_CREATION_TIME).append("=").append(getAverageCreationTime());
+      sb.append(",");
+      sb.append(CREATED_COUNT).append("=").append(getCreatedCount());
+      sb.append(",");
+      sb.append(DESTROYED_COUNT).append("=").append(getDestroyedCount());
+      sb.append(",");
+      sb.append(MAX_CREATION_TIME).append("=").append(getMaxCreationTime());
+      sb.append(",");
+      sb.append(MAX_USED_COUNT).append("=").append(getMaxUsedCount());
+      sb.append(",");
+      sb.append(MAX_WAIT_COUNT).append("=").append(getMaxWaitCount());
+      sb.append(",");
+      sb.append(MAX_WAIT_TIME).append("=").append(getMaxWaitTime());
+      sb.append(",");
+      sb.append(TIMED_OUT).append("=").append(getTimedOut());
+      sb.append(",");
+      sb.append(TOTAL_BLOCKING_TIME).append("=").append(getTotalBlockingTime());
+      sb.append(",");
+      sb.append(TOTAL_CREATION_TIME).append("=").append(getTotalCreationTime());
+
+      sb.append("]");
+      
+      return sb.toString();
+   }
 }

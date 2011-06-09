@@ -49,6 +49,7 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
@@ -76,7 +77,9 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    private boolean error = false;
 
    /** Transaction Manager instance */
-   private final TransactionManager transactionManager;
+   private TransactionManager transactionManager;
+
+   private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
 
    /**
     * ThreadLocal that holds current calling meta-programming aware
@@ -105,10 +108,13 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    /**
     * Creates a new instance.
     * @param transactionManager The transaction manager
+    * @param transactionSynchronizationRegistry the transaction synchronization registry
     */
-   public CachedConnectionManagerImpl(final TransactionManager transactionManager)
+   public CachedConnectionManagerImpl(TransactionManager transactionManager,
+                                      TransactionSynchronizationRegistry transactionSynchronizationRegistry)
    {
       this.transactionManager = transactionManager;
+      this.transactionSynchronizationRegistry = transactionSynchronizationRegistry;
    }
 
    /**
@@ -118,6 +124,15 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    public TransactionManager getTransactionManager()
    {
       return transactionManager;
+   }
+
+   /**
+    * Gets transaction synchronization registry
+    * @return TransactionSynchronizationRegistry
+    */
+   public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
+   {
+      return transactionSynchronizationRegistry;
    }
 
    /**
@@ -198,10 +213,12 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       if (trace)
          log.tracef("popped object: %s", oldKey);
 
+      /*
       if (!stack.contains(oldKey))
       {
          disconnect(oldKey, unsharableResources);
       }
+      */
 
       if (debug)
       {
@@ -330,10 +347,12 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       }
 
       KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
+      /*
       if (!stack.contains(key))
       {
          reconnect(key, unsharableResources);
       }
+      */
 
       stack.addLast(key);
    }
@@ -493,7 +512,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
                if (cas == null && createIfNotFound && TxUtils.isActive(tx))
                {
                   cas = new CloseConnectionSynchronization();
-                  TransactionSynchronizer.registerCCMSynchronization(tx, cas);
+                  TransactionSynchronizer.registerCCMSynchronization(tx, cas, transactionSynchronizationRegistry);
                }
 
                return cas;
