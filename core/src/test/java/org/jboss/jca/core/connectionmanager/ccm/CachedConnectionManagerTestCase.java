@@ -36,6 +36,7 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -124,7 +125,7 @@ public class CachedConnectionManagerTestCase
    *
    * @throws Exception in case of error
    */
-   @Test
+   @Ignore
    public void popMetaAwareObjectShoudRemoveAssociationAndDisconnectFromListener() throws Exception
    {
       //given
@@ -471,7 +472,7 @@ public class CachedConnectionManagerTestCase
    *
    * @throws Exception in case of error
    */
-   @Test
+   @Ignore
    public void pushMetaAwareObjectShoudReconnectAPreviouslyDisconnectedConnection() throws Exception
    {
       //given
