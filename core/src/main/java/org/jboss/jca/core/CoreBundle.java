@@ -28,7 +28,7 @@ import org.jboss.logging.MessageBundle;
 /**
  * The core bundle.
  *
- * Message ids ranging from 00001 to 05000 inclusively.
+ * Message ids ranging from 000000 to 009999 inclusively.
  */
 @MessageBundle(projectCode = "IJ")
 public interface CoreBundle

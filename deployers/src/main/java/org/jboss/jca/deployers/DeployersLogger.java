@@ -35,7 +35,7 @@ import static org.jboss.logging.Logger.Level.WARN;
 /**
  * The deployers logger.
  *
- * Message ids ranging from 10001 to 15000 inclusively.
+ * Message ids ranging from 020000 to 029999 inclusively.
  */
 @MessageLogger(projectCode = "IJ")
 public interface DeployersLogger extends BasicLogger
@@ -47,7 +47,7 @@ public interface DeployersLogger extends BasicLogger
     * @param url The license url
     */
    @LogMessage(level = INFO)
-   @Message(id = 10001, value = "Required license terms for %s")
+   @Message(id = 20001, value = "Required license terms for %s")
    public void requiredLicenseTerms(String url);
 
    /**
@@ -55,7 +55,7 @@ public interface DeployersLogger extends BasicLogger
     * @param url The url
     */
    @LogMessage(level = INFO)
-   @Message(id = 10002, value = "Deployed: %s")
+   @Message(id = 20002, value = "Deployed: %s")
    public void deployed(String url);
 
    /**
@@ -64,7 +64,7 @@ public interface DeployersLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 10003, value = "Failure during validation report generation: %s")
+   @Message(id = 20003, value = "Failure during validation report generation: %s")
    public void validationReportFailure(String detail, @Cause Throwable t);
 
    /**
@@ -72,7 +72,7 @@ public interface DeployersLogger extends BasicLogger
     * @param clz The class name
     */
    @LogMessage(level = WARN)
-   @Message(id = 10004, value = "Only one connection definition found with a mismatch in class-name: %s")
+   @Message(id = 20004, value = "Only one connection definition found with a mismatch in class-name: %s")
    public void connectionDefinitionMismatch(String clz);
 
    /**
@@ -80,14 +80,14 @@ public interface DeployersLogger extends BasicLogger
     * @param clz The class name
     */
    @LogMessage(level = WARN)
-   @Message(id = 10005, value = "Only one admin object found with a mismatch in class-name: %s")
+   @Message(id = 20005, value = "Only one admin object found with a mismatch in class-name: %s")
    public void adminObjectMismatch(String clz);
 
    /**
     * Null connection factory
     */
    @LogMessage(level = ERROR)
-   @Message(id = 10006, value = "ConnectionFactory is null")
+   @Message(id = 20006, value = "ConnectionFactory is null")
    public void nullConnectionFactory();
 
    /**
@@ -96,6 +96,6 @@ public interface DeployersLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = ERROR)
-   @Message(id = 10007, value = "Exception during createSubject(): %s")
+   @Message(id = 20007, value = "Exception during createSubject(): %s")
    public void subjectCreationError(String detail, @Cause Throwable t);
 }

@@ -35,7 +35,7 @@ import static org.jboss.logging.Logger.Level.WARN;
 /**
  * The core logger.
  *
- * Message ids ranging from 00001 to 05000 inclusively.
+ * Message ids ranging from 000000 to 009999 inclusively.
  */
 @MessageLogger(projectCode = "IJ")
 public interface CoreLogger extends BasicLogger

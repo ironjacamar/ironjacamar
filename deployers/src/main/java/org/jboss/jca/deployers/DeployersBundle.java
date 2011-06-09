@@ -28,7 +28,7 @@ import org.jboss.logging.Message;
 /**
  * The deployers bundle.
  *
- * Message ids ranging from 10001 to 15000 inclusively.
+ * Message ids ranging from 020000 to 029999 inclusively.
  */
 @MessageBundle(projectCode = "IJ")
 public interface DeployersBundle
@@ -38,7 +38,7 @@ public interface DeployersBundle
     * @param clz The class name
     * @return The value
     */
-   @Message(id = 10008, value = "Unable to start %s")
+   @Message(id = 20051, value = "Unable to start %s")
    public String unableToStartResourceAdapter(String clz);
 
    /**
@@ -46,21 +46,21 @@ public interface DeployersBundle
     * @param clz The class name
     * @return The value
     */
-   @Message(id = 10009, value = "Unable to associate %s")
+   @Message(id = 20052, value = "Unable to associate %s")
    public String unableToAssociate(String clz);
 
    /**
     * Undefined managed connection factory
     * @return The value
     */
-   @Message(id = 10010, value = "ManagedConnectionFactory must be defined in class-name")
+   @Message(id = 20053, value = "ManagedConnectionFactory must be defined in class-name")
    public String undefinedManagedConnectionFactory();
 
    /**
     * Undefined managed connection factory
     * @return The value
     */
-   @Message(id = 10011, value = "AdminObject must be defined in class-name")
+   @Message(id = 20054, value = "AdminObject must be defined in class-name")
    public String undefinedAdminObject();
 
    /**
@@ -68,7 +68,7 @@ public interface DeployersBundle
     * @param clz The class name
     * @return The value
     */
-   @Message(id = 10012, value = "Failed to bind admin object %s")
+   @Message(id = 20055, value = "Failed to bind admin object %s")
    public String failedToBindAdminObject(String clz);
 
    /**
@@ -76,6 +76,6 @@ public interface DeployersBundle
     * @param url The url
     * @return The value
     */
-   @Message(id = 10013, value = "Deployment failed: %s")
+   @Message(id = 20056, value = "Deployment failed: %s")
    public String deploymentFailed(String url);
 }
