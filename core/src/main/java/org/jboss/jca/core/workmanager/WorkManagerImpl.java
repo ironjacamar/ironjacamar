@@ -316,6 +316,9 @@ public class WorkManagerImpl implements WorkManager
                workListener.workRejected(event);
             }
 
+            if (trace)
+               log.tracef("Exception %s for %s", exception, this);
+
             throw exception;
          }
 
@@ -417,6 +420,9 @@ public class WorkManagerImpl implements WorkManager
                workListener.workRejected(event);
             }
 
+            if (trace)
+               log.tracef("Exception %s for %s", exception, this);
+
             throw exception;
          }
 
@@ -511,6 +517,9 @@ public class WorkManagerImpl implements WorkManager
                WorkEvent event = new WorkEvent(this, WorkEvent.WORK_REJECTED, work, exception);
                workListener.workRejected(event);
             }
+
+            if (trace)
+               log.tracef("Exception %s for %s", exception, this);
 
             throw exception;
          }
@@ -643,8 +652,11 @@ public class WorkManagerImpl implements WorkManager
    {
       if (wrapper.getWorkException() != null)
       {
+         if (trace)
+            log.tracef("Exception %s for %s", wrapper.getWorkException(), this);
+
          throw wrapper.getWorkException();  
-      }      
+      }
    }
 
    /**
@@ -856,17 +868,19 @@ public class WorkManagerImpl implements WorkManager
       for (Class<? extends WorkContext> supportedWorkContext : SUPPORTED_WORK_CONTEXT_CLASSES)
       {
          // Assignable or not
-         if (adaptorWorkContext.isAssignableFrom(supportedWorkContext))
+         if (supportedWorkContext.isAssignableFrom(adaptorWorkContext))
          {
-            // Supported by the server
-            if (adaptorWorkContext.equals(supportedWorkContext))
+            Class clz = adaptorWorkContext;
+
+            while (clz != null)
             {
-               return adaptorWorkContext;
-            }
-            else
-            {
-               // Fallback to super class
-               return (Class<T>) adaptorWorkContext.getSuperclass();
+               // Supported by the server
+               if (clz.equals(supportedWorkContext))
+               {
+                  return clz;
+               }
+
+               clz = clz.getSuperclass();
             }
          }
       }

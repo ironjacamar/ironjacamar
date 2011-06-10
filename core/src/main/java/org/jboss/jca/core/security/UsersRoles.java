@@ -75,6 +75,9 @@ public class UsersRoles implements Callback
    /** roles.properties name */
    private String rolesProperties;
 
+   /** The domain */
+   private String domain;
+
    /**
     * Constructor
     */
@@ -84,6 +87,7 @@ public class UsersRoles implements Callback
       roles = new HashMap<String, Set<String>>();
       usersProperties = null;
       rolesProperties = null;
+      domain = "work";
    }
 
    /**
@@ -120,6 +124,24 @@ public class UsersRoles implements Callback
    public void setRolesProperties(String value)
    {
       rolesProperties = value;
+   }
+
+   /**
+    * Get the domain
+    * @return The value
+    */
+   public String getDomain()
+   {
+      return domain;
+   }
+
+   /**
+    * Set the domain
+    * @param v The value
+    */
+   public void setDomain(String v)
+   {
+      this.domain = v;
    }
 
    /**
