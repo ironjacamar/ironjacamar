@@ -196,6 +196,9 @@ public class WorkWrapper implements Runnable
       if (trace)
          log.trace("Starting work " + this);  
 
+      ClassLoader oldCL = SecurityActions.getThreadContextClassLoader();
+      SecurityActions.setThreadContextClassLoader(work.getClass().getClassLoader());
+
       org.jboss.security.SecurityContext oldSC = SecurityContextAssociation.getSecurityContext();
 
       try
@@ -226,6 +229,7 @@ public class WorkWrapper implements Runnable
          }
 
          SecurityContextAssociation.setSecurityContext(oldSC);
+         SecurityActions.setThreadContextClassLoader(oldCL);
 
          if (startedLatch != null)
          {
@@ -237,7 +241,7 @@ public class WorkWrapper implements Runnable
             completedLatch.countDown();
 
          if (trace)
-            log.trace("Executed work " + this);  
+            log.trace("Executed work " + this);
       }
    }
 
@@ -277,7 +281,8 @@ public class WorkWrapper implements Runnable
       {
          try
          {
-            org.jboss.security.SecurityContext sc = SecurityContextFactory.createSecurityContext("work");  
+            org.jboss.security.SecurityContext sc = 
+               SecurityContextFactory.createSecurityContext(workManager.getCallbackSecurity().getDomain());
             SecurityContextAssociation.setSecurityContext(sc);
 
             // Setup callbacks
@@ -461,6 +466,9 @@ public class WorkWrapper implements Runnable
          workContexts = new HashMap<Class<? extends WorkContext>, WorkContext>(1);
       }
 
+      if (trace)
+         log.tracef("Adding work context %s for %s", workContextClass, this);  
+
       workContexts.put(workContextClass, workContext);
    }
    
@@ -472,6 +480,9 @@ public class WorkWrapper implements Runnable
    {
       if (workContext != null && workContext instanceof WorkContextLifecycleListener)
       {
+         if (trace)
+            log.tracef("WorkContextSetupComplete(%s) for %s", workContext, this);  
+
          WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
          listener.contextSetupComplete();   
       }
@@ -485,6 +496,9 @@ public class WorkWrapper implements Runnable
    {
       if (workContext != null && workContext instanceof WorkContextLifecycleListener)
       {
+         if (trace)
+            log.tracef("WorkContextSetupFailed(%s) for %s", workContext, this);  
+
          WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
          listener.contextSetupFailed(WorkContextErrorCodes.CONTEXT_SETUP_FAILED);   
       }
@@ -507,11 +521,14 @@ public class WorkWrapper implements Runnable
          buffer.append(" txTimeout=").append(executionContext.getTransactionTimeout());
       }
 
-      if (workListener != null)
-         buffer.append(" workListener=").append(workListener);
-      if (exception != null)
-         buffer.append(" exception=").append(exception);
+      buffer.append(" workListener=").append(workListener);
+
+      buffer.append(" workContexts=").append(workContexts);
+
+      buffer.append(" exception=").append(exception);
+
       buffer.append("]");
+
       return buffer.toString();
    }
 }

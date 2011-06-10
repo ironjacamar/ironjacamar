@@ -20,43 +20,54 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.spi.security;
+package org.jboss.jca.core.workmanager;
 
-import java.io.Serializable;
-import java.util.Set;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * This SPI interface represents the the users and their passwords and roles in
- * the container environment
- * 
+ * Privileged Blocks
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Rev: 97162 $
  */
-public interface Callback extends Serializable
+class SecurityActions
 {
    /**
-    * Get the domain
-    * @return The domain
+    * Constructor
     */
-   public String getDomain();
+   private SecurityActions()
+   {
+   }
 
    /**
-    * Get the users
-    * @return A set of user names
+    * Get the thread context class loader
+    * @return The class loader
     */
-   public Set<String> getUsers();
+   static ClassLoader getThreadContextClassLoader()
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      {
+         @Override
+         public ClassLoader run()
+         {
+            return Thread.currentThread().getContextClassLoader();
+         }
+      });
+   }
 
    /**
-    * Get the credential for an user
-    * @param user The user name
-    * @return The credential; <code>null</code> if user doesn't exists
+    * Set the thread context class loader
+    * @param cl The class loader
     */
-   public char[] getCredential(String user);
-
-   /**
-    * Get the roles for an user
-    * @param user The user name
-    * @return A set of roles; <code>null</code> if user doesn't exists or no roles
-    */
-   public String[] getRoles(String user);
+   static void setThreadContextClassLoader(final ClassLoader cl)
+   {
+      AccessController.doPrivileged(new PrivilegedAction<Object>()
+      {
+         @Override
+         public Object run()
+         {
+            Thread.currentThread().setContextClassLoader(cl);
+            return null;
+         }
+      });
+   }
 }
