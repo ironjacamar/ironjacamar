@@ -856,7 +856,7 @@ public class WorkManagerImpl implements WorkManager
       for (Class<? extends WorkContext> supportedWorkContext : SUPPORTED_WORK_CONTEXT_CLASSES)
       {
          // Assignable or not
-         if (supportedWorkContext.isAssignableFrom(adaptorWorkContext))
+         if (adaptorWorkContext.isAssignableFrom(supportedWorkContext))
          {
             // Supported by the server
             if (adaptorWorkContext.equals(supportedWorkContext))
