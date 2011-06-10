@@ -103,6 +103,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       XMLStreamReader reader = null;
 
       XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+      inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
       reader = inputFactory.createXMLStreamReader(xmlInputStream);
       return parse(reader);
    }
@@ -691,7 +692,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) == 
+               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) ==
                    ResourceAdapter1516.Tag.INBOUND_RESOURCEADAPTER)
                {
 
@@ -736,7 +737,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (InboundResourceAdapter.Tag.forName(reader.getLocalName()) == 
+               if (InboundResourceAdapter.Tag.forName(reader.getLocalName()) ==
                    InboundResourceAdapter.Tag.MESSAGEADAPTER)
                {
                   //trimming collections
@@ -959,7 +960,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) == 
+               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) ==
                    ResourceAdapter1516.Tag.OUTBOUND_RESOURCEADAPTER)
                {
 
@@ -1027,7 +1028,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) == 
+               if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) ==
                    OutboundResourceAdapter.Tag.CONNECTION_DEFINITION)
                {
 
@@ -1101,7 +1102,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) == 
+               if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) ==
                    OutboundResourceAdapter.Tag.AUTHENTICATION_MECHANISM)
                {
 
@@ -1309,7 +1310,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) == 
+               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) ==
                    ResourceAdapter1516.Tag.SECURITY_PERMISSION)
                {
                   //trimming collections
