@@ -23,6 +23,7 @@
 package org.jboss.jca.adapters.jdbc;
 
 import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
+import org.jboss.jca.adapters.jdbc.util.ReentrantLock;
 
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
@@ -39,7 +40,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantLock;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
@@ -274,6 +274,32 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
     */
    public void cleanup() throws ResourceException
    {
+      boolean isActive = false;
+
+      if (lock.hasQueuedThreads())
+      {
+         Collection<Thread> threads = lock.getQueuedThreads();
+         for (Thread thread : threads)
+         {
+            Throwable t = new Throwable("Thread waiting for lock during cleanup");
+            t.setStackTrace(thread.getStackTrace());
+
+            mcf.log.warn(t.getMessage(), t);
+         }
+
+         isActive = true;
+      }
+
+      if (lock.isLocked())
+      {
+         Throwable t = new Throwable("Lock owned during cleanup");
+         t.setStackTrace(lock.getOwner().getStackTrace());
+
+         mcf.log.warn(t.getMessage(), t);
+
+         isActive = true;
+      }
+
       synchronized (handles)
       {
          for (Iterator<WrappedConnection> i = handles.iterator(); i.hasNext();)
@@ -302,11 +328,17 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
             }
          }
       }
-      // I'm recreating the lock object when we return to the pool
-      // because it looks too nasty to expect the connection handle
-      // to unlock properly in certain race conditions
-      // where the dissociation of the managed connection is "random".
-      lock = new ReentrantLock(true);
+
+      if (isActive)
+      {
+         // I'm recreating the lock object when we return to the pool
+         // because it looks too nasty to expect the connection handle
+         // to unlock properly in certain race conditions
+         // where the dissociation of the managed connection is "random".
+         //lock = new ReentrantLock(true);
+
+         throw new ResourceException("Still active locks");
+      }
    }
 
    /**
