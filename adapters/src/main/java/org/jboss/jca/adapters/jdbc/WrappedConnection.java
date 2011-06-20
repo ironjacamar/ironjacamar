@@ -100,9 +100,17 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    void setManagedConnection(final BaseWrapperManagedConnection mc)
    {
       this.mc = mc;
+      this.lockCount = 0;
 
       if (mc != null)
+      {
          trackStatements = mc.getTrackStatements();
+      }
+      else
+      {
+         // Reset lockedMC reference once the connection is returned to the pool
+         lockedMC = null;
+      }
    }
 
    /**
