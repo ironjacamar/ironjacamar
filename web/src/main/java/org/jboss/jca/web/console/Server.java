@@ -24,6 +24,7 @@ package org.jboss.jca.web.console;
 import java.beans.IntrospectionException;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,19 +58,24 @@ public class Server
    private static Logger log = Logger.getLogger(Server.class);
    private static boolean trace = log.isTraceEnabled();
 
-   private static final String DOMAIN = "iron.jacamar";
-
    private static MBeanServer mbeanServer = null;
 
    /**
-    * Get the MBeanServer instance
+    * Get the platform MBeanServer instance
     * @return The instance
     */
    public static MBeanServer getMBeanServer()
    {
-      if (mbeanServer != null)
-         return mbeanServer;
+      return ManagementFactory.getPlatformMBeanServer();
+   }
 
+   /**
+    * Get the MBeanServer instance
+    * @param domain The domain
+    * @return The instance
+    */
+   public static MBeanServer getMBeanServer(String domain)
+   {
       try
       {
          ArrayList<MBeanServer> l = MBeanServerFactory.findMBeanServer(null);
@@ -84,9 +90,8 @@ public class Server
                {
                   for (String d : domains)
                   {
-                     if (DOMAIN.equals(d))
+                     if (domain.equals(d))
                      {
-                        mbeanServer = ms;
                         return ms;
                      }
                   }
