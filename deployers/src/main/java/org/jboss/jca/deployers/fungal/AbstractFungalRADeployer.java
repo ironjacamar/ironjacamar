@@ -403,244 +403,245 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                                                      MBeanServer server)
       throws JMException
    {
-      if (server == null)
-         throw new IllegalArgumentException("MBeanServer is null");
-
-      List<ObjectName> ons = new ArrayList<ObjectName>();
+      List<ObjectName> ons = null;
 
       if (mgtConnector != null)
       {
-         String baseName = server.getDefaultDomain() + ":deployment=" + mgtConnector.getUniqueId();
-
-         if (mgtConnector.getResourceAdapter() != null)
+         if (server != null)
          {
-            org.jboss.jca.core.api.management.ResourceAdapter mgtRa = mgtConnector.getResourceAdapter();
+            ons = new ArrayList<ObjectName>();
+            String baseName = server.getDefaultDomain() + ":deployment=" + mgtConnector.getUniqueId();
 
-            if (mgtRa.getResourceAdapter() != null)
+            if (mgtConnector.getResourceAdapter() != null)
             {
-               Set<String> writeable = new HashSet<String>();
-               Set<String> excludeAttributes = new HashSet<String>();
+               org.jboss.jca.core.api.management.ResourceAdapter mgtRa = mgtConnector.getResourceAdapter();
 
-               for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtRa.getConfigProperties())
+               if (mgtRa.getResourceAdapter() != null)
                {
-                  String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
-                  if (mgtCp.getName().length() > 1)
-                     mgtCpName += mgtCp.getName().substring(1);
+                  Set<String> writeable = new HashSet<String>();
+                  Set<String> excludeAttributes = new HashSet<String>();
 
-                  if (mgtCp.isDynamic())
-                     writeable.add(mgtCpName);
+                  for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtRa.getConfigProperties())
+                  {
+                     String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
+                     if (mgtCp.getName().length() > 1)
+                        mgtCpName += mgtCp.getName().substring(1);
 
-                  if (mgtCp.isConfidential())
-                     excludeAttributes.add(mgtCpName);
-               }
+                     if (mgtCp.isDynamic())
+                        writeable.add(mgtCpName);
 
-               String raName = baseName + ",type=ResourceAdapter,class=" +
-                  getClassName(mgtRa.getResourceAdapter().getClass().getName());
+                     if (mgtCp.isConfidential())
+                        excludeAttributes.add(mgtCpName);
+                  }
 
-               DynamicMBean raDMB = JMX.createMBean(mgtRa.getResourceAdapter(),
-                                                    "Resource adapter",
-                                                    writeable,
-                                                    null,
-                                                    excludeAttributes,
-                                                    null);
-               ObjectName raON = new ObjectName(raName);
-
-               server.registerMBean(raDMB, raON);
-
-               ons.add(raON);
-
-               if (mgtRa.getStatistics() != null)
-               {
-                  String raSName = baseName + ",type=ResourceAdapterStatistics,class=" +
+                  String raName = baseName + ",type=ResourceAdapter,class=" +
                      getClassName(mgtRa.getResourceAdapter().getClass().getName());
 
-                  Set<String> writeStatAttributes = new HashSet<String>();
-                  writeStatAttributes.add("Enabled");
-                  Set<String> excludeStatAttributes = new HashSet<String>();
-                  excludeStatAttributes.add("Names");
-                  Set<String> excludeStatOperations = new HashSet<String>();
-                  excludeStatOperations.add("delta(.)*");
+                  DynamicMBean raDMB = JMX.createMBean(mgtRa.getResourceAdapter(),
+                                                       "Resource adapter",
+                                                       writeable,
+                                                       null,
+                                                       excludeAttributes,
+                                                       null);
+                  ObjectName raON = new ObjectName(raName);
 
-                  DynamicMBean raSDMB = JMX.createMBean(mgtRa.getStatistics(),
-                                                        "Resource adapter statistics",
-                                                        writeStatAttributes, null,
-                                                        excludeStatAttributes, excludeStatOperations);
-                  ObjectName raSON = new ObjectName(raSName);
+                  server.registerMBean(raDMB, raON);
                   
-                  server.registerMBean(raSDMB, raSON);
+                  ons.add(raON);
 
-                  ons.add(raSON);
+                  if (mgtRa.getStatistics() != null)
+                  {
+                     String raSName = baseName + ",type=ResourceAdapterStatistics,class=" +
+                        getClassName(mgtRa.getResourceAdapter().getClass().getName());
+
+                     Set<String> writeStatAttributes = new HashSet<String>();
+                     writeStatAttributes.add("Enabled");
+                     Set<String> excludeStatAttributes = new HashSet<String>();
+                     excludeStatAttributes.add("Names");
+                     Set<String> excludeStatOperations = new HashSet<String>();
+                     excludeStatOperations.add("delta(.)*");
+                     
+                     DynamicMBean raSDMB = JMX.createMBean(mgtRa.getStatistics(),
+                                                           "Resource adapter statistics",
+                                                           writeStatAttributes, null,
+                                                           excludeStatAttributes, excludeStatOperations);
+                     ObjectName raSON = new ObjectName(raSName);
+                     
+                     server.registerMBean(raSDMB, raSON);
+                     
+                     ons.add(raSON);
+                  }
                }
             }
-         }
 
-         for (org.jboss.jca.core.api.management.ConnectionFactory mgtCf :
-                 mgtConnector.getConnectionFactories())
-         {
-            if (mgtCf.getManagedConnectionFactory() != null)
+            for (org.jboss.jca.core.api.management.ConnectionFactory mgtCf :
+                    mgtConnector.getConnectionFactories())
             {
-               org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf = mgtCf.getManagedConnectionFactory();
-               Set<String> writeable = new HashSet<String>();
-               Set<String> excludeAttributes = new HashSet<String>();
-
-               for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtMcf.getConfigProperties())
+               if (mgtCf.getManagedConnectionFactory() != null)
                {
-                  String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
-                  if (mgtCp.getName().length() > 1)
-                     mgtCpName += mgtCp.getName().substring(1);
+                  org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf = mgtCf.getManagedConnectionFactory();
+                  Set<String> writeable = new HashSet<String>();
+                  Set<String> excludeAttributes = new HashSet<String>();
 
-                  if (mgtCp.isDynamic())
-                     writeable.add(mgtCpName);
+                  for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtMcf.getConfigProperties())
+                  {
+                     String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
+                     if (mgtCp.getName().length() > 1)
+                        mgtCpName += mgtCp.getName().substring(1);
 
-                  if (mgtCp.isConfidential())
-                     excludeAttributes.add(mgtCpName);
-               }
+                     if (mgtCp.isDynamic())
+                        writeable.add(mgtCpName);
 
-               String mcfName = baseName + ",type=ManagedConnectionFactory,class=" +
-                  getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName());
+                     if (mgtCp.isConfidential())
+                        excludeAttributes.add(mgtCpName);
+                  }
 
-               DynamicMBean mcfDMB = JMX.createMBean(mgtMcf.getManagedConnectionFactory(),
-                                                     "Managed connection factory",
-                                                     writeable,
-                                                     null,
-                                                     excludeAttributes,
-                                                     null);
-               ObjectName mcfON = new ObjectName(mcfName);
-
-               server.registerMBean(mcfDMB, mcfON);
-
-               ons.add(mcfON);
-
-               if (mgtMcf.getStatistics() != null)
-               {
-                  String mcfSName = baseName + ",type=ManagedConnectionFactoryStatistics,class=" +
+                  String mcfName = baseName + ",type=ManagedConnectionFactory,class=" +
                      getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName());
 
-                  Set<String> writeStatAttributes = new HashSet<String>();
-                  writeStatAttributes.add("Enabled");
-                  Set<String> excludeStatAttributes = new HashSet<String>();
-                  excludeStatAttributes.add("Names");
-                  Set<String> excludeStatOperations = new HashSet<String>();
-                  excludeStatOperations.add("delta(.)*");
+                  DynamicMBean mcfDMB = JMX.createMBean(mgtMcf.getManagedConnectionFactory(),
+                                                        "Managed connection factory",
+                                                        writeable,
+                                                        null,
+                                                        excludeAttributes,
+                                                        null);
+                  ObjectName mcfON = new ObjectName(mcfName);
 
-                  DynamicMBean mcfSDMB = JMX.createMBean(mgtMcf.getStatistics(),
-                                                         "Managed connection factory statistics",
-                                                         writeStatAttributes, null,
-                                                         excludeStatAttributes, excludeStatOperations);
-                  ObjectName mcfSON = new ObjectName(mcfSName);
+                  server.registerMBean(mcfDMB, mcfON);
 
-                  server.registerMBean(mcfSDMB, mcfSON);
+                  ons.add(mcfON);
 
-                  ons.add(mcfSON);
+                  if (mgtMcf.getStatistics() != null)
+                  {
+                     String mcfSName = baseName + ",type=ManagedConnectionFactoryStatistics,class=" +
+                        getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName());
+
+                     Set<String> writeStatAttributes = new HashSet<String>();
+                     writeStatAttributes.add("Enabled");
+                     Set<String> excludeStatAttributes = new HashSet<String>();
+                     excludeStatAttributes.add("Names");
+                     Set<String> excludeStatOperations = new HashSet<String>();
+                     excludeStatOperations.add("delta(.)*");
+                     
+                     DynamicMBean mcfSDMB = JMX.createMBean(mgtMcf.getStatistics(),
+                                                            "Managed connection factory statistics",
+                                                            writeStatAttributes, null,
+                                                            excludeStatAttributes, excludeStatOperations);
+                     ObjectName mcfSON = new ObjectName(mcfSName);
+                     
+                     server.registerMBean(mcfSDMB, mcfSON);
+
+                     ons.add(mcfSON);
+                  }
                }
-            }
 
-            if (mgtCf.getPoolConfiguration() != null)
-            {
-               String mcfPCName = baseName + ",type=ConnectionFactory,class=" +
-                  getClassName(mgtCf.getConnectionFactory().getClass().getName()) +
-                  ",subcategory=PoolConfiguration";
-
-               DynamicMBean mcfPCDMB = JMX.createMBean(mgtCf.getPoolConfiguration(), "Pool configuration");
-               ObjectName mcfPCON = new ObjectName(mcfPCName);
-
-               server.registerMBean(mcfPCDMB, mcfPCON);
-
-               ons.add(mcfPCON);
-            }
-
-            if (mgtCf.getPool() != null)
-            {
-               String cfPName = baseName + ",type=ConnectionFactory,class=" +
-                  getClassName(mgtCf.getConnectionFactory().getClass().getName()) + ",subcategory=Pool";
-
-               DynamicMBean cfPDMB = JMX.createMBean(mgtCf.getPool(), "Pool");
-               ObjectName cfPON = new ObjectName(cfPName);
-
-               server.registerMBean(cfPDMB, cfPON);
-
-               ons.add(cfPON);
-
-               if (mgtCf.getPool().getStatistics() != null)
+               if (mgtCf.getPoolConfiguration() != null)
                {
-                  String cfPSName = baseName + ",type=ConnectionFactory,class=" +
-                     getClassName(mgtCf.getConnectionFactory().getClass().getName()) + ",subcategory=PoolStatistics";
-
-                  Set<String> writeStatAttributes = new HashSet<String>();
-                  writeStatAttributes.add("Enabled");
-                  Set<String> excludeStatAttributes = new HashSet<String>();
-                  excludeStatAttributes.add("Names");
-                  Set<String> excludeStatOperations = new HashSet<String>();
-                  excludeStatOperations.add("delta(.)*");
-
-                  DynamicMBean cfPSDMB = JMX.createMBean(mgtCf.getPool().getStatistics(), "Pool statistics",
-                                                         writeStatAttributes, null,
-                                                         excludeStatAttributes, excludeStatOperations);
-                  ObjectName cfPSON = new ObjectName(cfPSName);
+                  String mcfPCName = baseName + ",type=ConnectionFactory,class=" +
+                     getClassName(mgtCf.getConnectionFactory().getClass().getName()) +
+                     ",subcategory=PoolConfiguration";
                   
-                  server.registerMBean(cfPSDMB, cfPSON);
+                  DynamicMBean mcfPCDMB = JMX.createMBean(mgtCf.getPoolConfiguration(), "Pool configuration");
+                  ObjectName mcfPCON = new ObjectName(mcfPCName);
+                  
+                  server.registerMBean(mcfPCDMB, mcfPCON);
+                  
+                  ons.add(mcfPCON);
+               }
 
-                  ons.add(cfPSON);
+               if (mgtCf.getPool() != null)
+               {
+                  String cfPName = baseName + ",type=ConnectionFactory,class=" +
+                     getClassName(mgtCf.getConnectionFactory().getClass().getName()) + ",subcategory=Pool";
+                  
+                  DynamicMBean cfPDMB = JMX.createMBean(mgtCf.getPool(), "Pool");
+                  ObjectName cfPON = new ObjectName(cfPName);
+                  
+                  server.registerMBean(cfPDMB, cfPON);
+                  
+                  ons.add(cfPON);
+                  
+                  if (mgtCf.getPool().getStatistics() != null)
+                  {
+                     String cfPSName = baseName + ",type=ConnectionFactory,class=" +
+                        getClassName(mgtCf.getConnectionFactory().getClass().getName()) + ",subcategory=PoolStatistics";
+
+                     Set<String> writeStatAttributes = new HashSet<String>();
+                     writeStatAttributes.add("Enabled");
+                     Set<String> excludeStatAttributes = new HashSet<String>();
+                     excludeStatAttributes.add("Names");
+                     Set<String> excludeStatOperations = new HashSet<String>();
+                     excludeStatOperations.add("delta(.)*");
+
+                     DynamicMBean cfPSDMB = JMX.createMBean(mgtCf.getPool().getStatistics(), "Pool statistics",
+                                                            writeStatAttributes, null,
+                                                            excludeStatAttributes, excludeStatOperations);
+                     ObjectName cfPSON = new ObjectName(cfPSName);
+                  
+                     server.registerMBean(cfPSDMB, cfPSON);
+                     
+                     ons.add(cfPSON);
+                  }
                }
             }
-         }
 
-         for (org.jboss.jca.core.api.management.AdminObject mgtAo : mgtConnector.getAdminObjects())
-         {
-            if (mgtAo.getAdminObject() != null)
+            for (org.jboss.jca.core.api.management.AdminObject mgtAo : mgtConnector.getAdminObjects())
             {
-               Set<String> writeable = new HashSet<String>();
-               Set<String> excludeAttributes = new HashSet<String>();
-
-               for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtAo.getConfigProperties())
+               if (mgtAo.getAdminObject() != null)
                {
-                  String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
-                  if (mgtCp.getName().length() > 1)
-                     mgtCpName += mgtCp.getName().substring(1);
+                  Set<String> writeable = new HashSet<String>();
+                  Set<String> excludeAttributes = new HashSet<String>();
 
-                  if (mgtCp.isDynamic())
-                     writeable.add(mgtCpName);
+                  for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtAo.getConfigProperties())
+                  {
+                     String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
+                     if (mgtCp.getName().length() > 1)
+                        mgtCpName += mgtCp.getName().substring(1);
 
-                  if (mgtCp.isConfidential())
-                     excludeAttributes.add(mgtCpName);
-               }
+                     if (mgtCp.isDynamic())
+                        writeable.add(mgtCpName);
 
-               String aoName = baseName + ",type=AdminObject,class=" +
-                  getClassName(mgtAo.getAdminObject().getClass().getName());
+                     if (mgtCp.isConfidential())
+                        excludeAttributes.add(mgtCpName);
+                  }
 
-               DynamicMBean aoDMB = JMX.createMBean(mgtAo.getAdminObject(),
-                                                    "Admin object",
-                                                    writeable,
-                                                    null,
-                                                    excludeAttributes,
-                                                    null);
-               ObjectName aoON = new ObjectName(aoName);
-
-               server.registerMBean(aoDMB, aoON);
-
-               ons.add(aoON);
-               
-               if (mgtAo.getStatistics() != null)
-               {
-                  String aoSName = baseName + ",type=AdminObjectStatistics,class=" +
+                  String aoName = baseName + ",type=AdminObject,class=" +
                      getClassName(mgtAo.getAdminObject().getClass().getName());
 
-                  Set<String> writeStatAttributes = new HashSet<String>();
-                  writeStatAttributes.add("Enabled");
-                  Set<String> excludeStatAttributes = new HashSet<String>();
-                  excludeStatAttributes.add("Names");
-                  Set<String> excludeStatOperations = new HashSet<String>();
-                  excludeStatOperations.add("delta(.)*");
+                  DynamicMBean aoDMB = JMX.createMBean(mgtAo.getAdminObject(),
+                                                       "Admin object",
+                                                       writeable,
+                                                       null,
+                                                       excludeAttributes,
+                                                       null);
+                  ObjectName aoON = new ObjectName(aoName);
 
-                  DynamicMBean aoSDMB = JMX.createMBean(mgtAo.getStatistics(),
-                                                        "Admin object statistics",
-                                                        writeStatAttributes, null,
-                                                        excludeStatAttributes, excludeStatOperations);
-                  ObjectName aoSON = new ObjectName(aoSName);
-
-                  server.registerMBean(aoSDMB, aoSON);
+                  server.registerMBean(aoDMB, aoON);
                   
-                  ons.add(aoSON);
+                  ons.add(aoON);
+                  
+                  if (mgtAo.getStatistics() != null)
+                  {
+                     String aoSName = baseName + ",type=AdminObjectStatistics,class=" +
+                        getClassName(mgtAo.getAdminObject().getClass().getName());
+
+                     Set<String> writeStatAttributes = new HashSet<String>();
+                     writeStatAttributes.add("Enabled");
+                     Set<String> excludeStatAttributes = new HashSet<String>();
+                     excludeStatAttributes.add("Names");
+                     Set<String> excludeStatOperations = new HashSet<String>();
+                     excludeStatOperations.add("delta(.)*");
+
+                     DynamicMBean aoSDMB = JMX.createMBean(mgtAo.getStatistics(),
+                                                           "Admin object statistics",
+                                                           writeStatAttributes, null,
+                                                           excludeStatAttributes, excludeStatOperations);
+                     ObjectName aoSON = new ObjectName(aoSName);
+                     
+                     server.registerMBean(aoSDMB, aoSON);
+                     
+                     ons.add(aoSON);
+                  }
                }
             }
          }

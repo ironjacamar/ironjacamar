@@ -71,6 +71,7 @@ public class Main
          KernelConfiguration kernelConfiguration = new KernelConfiguration();
          kernelConfiguration = kernelConfiguration.name("iron.jacamar");
          kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
+         kernelConfiguration = kernelConfiguration.management(true);
          kernelConfiguration = kernelConfiguration.parallelDeploy(false);
          kernelConfiguration = kernelConfiguration.remoteAccess(true);
          kernelConfiguration = kernelConfiguration.eventListener(new PreClassLoaderEventListener());
@@ -78,6 +79,7 @@ public class Main
          kernelConfiguration = kernelConfiguration.command(new Shutdown());
          kernelConfiguration = kernelConfiguration.deploymentOrder(new DeploymentOrder(order));
          kernelConfiguration = kernelConfiguration.remoteJmxAccess(true);
+         kernelConfiguration = kernelConfiguration.usePlatformMBeanServer(true);
 
          String home = SecurityActions.getSystemProperty("iron.jacamar.home");
          if (home != null)

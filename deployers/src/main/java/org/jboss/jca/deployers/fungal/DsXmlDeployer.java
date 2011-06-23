@@ -372,48 +372,69 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                                                    MBeanServer server)
       throws JMException
    {
-      if (server == null)
-         throw new IllegalArgumentException("MBeanServer is null");
-
-      List<ObjectName> ons = new ArrayList<ObjectName>();
+      List<ObjectName> ons = null;
 
       if (mgtDses != null)
       {
-         for (org.jboss.jca.core.api.management.DataSource mgtDs : mgtDses)
+         if (server != null)
          {
-            String jndiName = mgtDs.getJndiName();
-            if (jndiName.indexOf("/") != -1)
-               jndiName = jndiName.substring(jndiName.lastIndexOf("/") + 1);
-
-            String baseName = server.getDefaultDomain() + ":deployment=" + jndiName;
-
-            if (mgtDs.getPoolConfiguration() != null)
+            ons = new ArrayList<ObjectName>();
+            for (org.jboss.jca.core.api.management.DataSource mgtDs : mgtDses)
             {
-               String dsPCName = baseName + ",type=PoolConfigutation";
+               String jndiName = mgtDs.getJndiName();
+               if (jndiName.indexOf("/") != -1)
+                  jndiName = jndiName.substring(jndiName.lastIndexOf("/") + 1);
 
-               DynamicMBean dsPCDMB = JMX.createMBean(mgtDs.getPoolConfiguration(), "Pool configuration");
-               ObjectName dsPCON = new ObjectName(dsPCName);
+               String baseName = server.getDefaultDomain() + ":deployment=" + jndiName;
 
-               server.registerMBean(dsPCDMB, dsPCON);
-
-               ons.add(dsPCON);
-            }
-
-            if (mgtDs.getPool() != null)
-            {
-               String dsPName = baseName + ",type=Pool";
-
-               DynamicMBean dsPDMB = JMX.createMBean(mgtDs.getPool(), "Pool");
-               ObjectName dsPON = new ObjectName(dsPName);
-
-               server.registerMBean(dsPDMB, dsPON);
-
-               ons.add(dsPON);
-
-               if (mgtDs.getPool().getStatistics() != null)
+               if (mgtDs.getPoolConfiguration() != null)
                {
-                  String dsPSName = baseName + ",type=PoolStatistics";
+                  String dsPCName = baseName + ",type=PoolConfigutation";
 
+                  DynamicMBean dsPCDMB = JMX.createMBean(mgtDs.getPoolConfiguration(), "Pool configuration");
+                  ObjectName dsPCON = new ObjectName(dsPCName);
+
+                  server.registerMBean(dsPCDMB, dsPCON);
+
+                  ons.add(dsPCON);
+               }
+
+               if (mgtDs.getPool() != null)
+               {
+                  String dsPName = baseName + ",type=Pool";
+
+                  DynamicMBean dsPDMB = JMX.createMBean(mgtDs.getPool(), "Pool");
+                  ObjectName dsPON = new ObjectName(dsPName);
+
+                  server.registerMBean(dsPDMB, dsPON);
+
+                  ons.add(dsPON);
+
+                  if (mgtDs.getPool().getStatistics() != null)
+                  {
+                     String dsPSName = baseName + ",type=PoolStatistics";
+
+                     Set<String> writeAttributes = new HashSet<String>();
+                     writeAttributes.add("Enabled");
+                     Set<String> excludeAttributes = new HashSet<String>();
+                     excludeAttributes.add("Names");
+                     Set<String> excludeOperations = new HashSet<String>();
+                     excludeOperations.add("delta(.)*");
+
+                     DynamicMBean dsPSDMB = JMX.createMBean(mgtDs.getPool().getStatistics(), "PoolStatistics",
+                                                            writeAttributes, null,
+                                                            excludeAttributes, excludeOperations);
+                     ObjectName dsPSON = new ObjectName(dsPSName);
+
+                     server.registerMBean(dsPSDMB, dsPSON);
+
+                  ons.add(dsPSON);
+                  }
+               }
+
+               if (mgtDs.getStatistics() != null)
+               {
+                  String dsSName = baseName + ",type=Statistics";
                   Set<String> writeAttributes = new HashSet<String>();
                   writeAttributes.add("Enabled");
                   Set<String> excludeAttributes = new HashSet<String>();
@@ -421,33 +442,14 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                   Set<String> excludeOperations = new HashSet<String>();
                   excludeOperations.add("delta(.)*");
 
-                  DynamicMBean dsPSDMB = JMX.createMBean(mgtDs.getPool().getStatistics(), "PoolStatistics",
-                                                         writeAttributes, null, excludeAttributes, excludeOperations);
-                  ObjectName dsPSON = new ObjectName(dsPSName);
+                  DynamicMBean dsSDMB = JMX.createMBean(mgtDs.getStatistics(), "Statistics",
+                                                        writeAttributes, null, excludeAttributes, excludeOperations);
+                  ObjectName dsSON = new ObjectName(dsSName);
 
-                  server.registerMBean(dsPSDMB, dsPSON);
-
-                  ons.add(dsPSON);
+                  server.registerMBean(dsSDMB, dsSON);
+                  
+                  ons.add(dsSON);
                }
-            }
-
-            if (mgtDs.getStatistics() != null)
-            {
-               String dsSName = baseName + ",type=Statistics";
-               Set<String> writeAttributes = new HashSet<String>();
-               writeAttributes.add("Enabled");
-               Set<String> excludeAttributes = new HashSet<String>();
-               excludeAttributes.add("Names");
-               Set<String> excludeOperations = new HashSet<String>();
-               excludeOperations.add("delta(.)*");
-
-               DynamicMBean dsSDMB = JMX.createMBean(mgtDs.getStatistics(), "Statistics",
-                                                     writeAttributes, null, excludeAttributes, excludeOperations);
-               ObjectName dsSON = new ObjectName(dsSName);
-
-               server.registerMBean(dsSDMB, dsSON);
-
-               ons.add(dsSON);
             }
          }
       }

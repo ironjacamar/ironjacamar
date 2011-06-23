@@ -100,6 +100,7 @@ class EmbeddedJCA implements Embedded
       kernelConfiguration = kernelConfiguration.name("iron.jacamar");
       kernelConfiguration = kernelConfiguration.home(null);
       kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
+      kernelConfiguration = kernelConfiguration.management(false);
       kernelConfiguration = kernelConfiguration.parallelDeploy(false);
       kernelConfiguration = kernelConfiguration.remoteAccess(false);
       kernelConfiguration = kernelConfiguration.hotDeployment(false);
