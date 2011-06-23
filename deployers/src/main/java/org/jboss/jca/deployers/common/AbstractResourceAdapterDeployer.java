@@ -1790,13 +1790,13 @@ public abstract class AbstractResourceAdapterDeployer
    {
       if (javaContext != null)
       {
-         if (javaContext.booleanValue() && !jndiName.startsWith("java:/"))
+         if (javaContext.booleanValue() && !jndiName.startsWith("java:"))
          {
-            jndiName = "java:/" + jndiName;
+            jndiName = "java:" + jndiName;
          }
-         else if (!javaContext.booleanValue() && jndiName.startsWith("java:/"))
+         else if (!javaContext.booleanValue() && jndiName.startsWith("java:"))
          {
-            jndiName = jndiName.substring(7);
+            jndiName = jndiName.substring(6);
          }
       }
 
