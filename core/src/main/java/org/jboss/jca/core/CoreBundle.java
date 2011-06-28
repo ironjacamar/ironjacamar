@@ -138,6 +138,12 @@ public interface CoreBundle
    @Message(id = 262, value = "Duplicate HintWorkContext class: %s")
    public String duplicateHintWorkContextClass(String classname);
    
+   /**
+    * WorkManager shutdown
+    * @return The value
+    */
+   @Message(id = 263, value = "WorkManager is shutting down")
+   public String workmanagerShutdown();
    
    // CONNECTION MANAGER LISTENER (300)
 
