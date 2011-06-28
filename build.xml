@@ -330,6 +330,7 @@
     <ant dir="codegenerator" inheritRefs="true" target="jars"/>
     <ant dir="adapters" inheritRefs="true" target="jars"/>
     <ant dir="rhq" inheritRefs="true" target="jars"/>
+    <ant dir="as" inheritRefs="true" target="jars"/>
   </target>
   
   <!-- ================================= 
@@ -347,6 +348,7 @@
     <ant dir="codegenerator" inheritRefs="true" target="docs"/>
     <ant dir="adapters" inheritRefs="true" target="docs"/>
     <ant dir="rhq" inheritRefs="true" target="docs"/>
+    <ant dir="as" inheritRefs="true" target="docs"/>
   </target>
   
   <!-- ================================= 
@@ -418,6 +420,7 @@
     <ant dir="embedded" inheritRefs="true" target="artifacts"/>
     <ant dir="codegenerator" inheritRefs="true" target="artifacts"/>
     <ant dir="adapters" inheritRefs="true" target="artifacts"/>
+    <ant dir="as" inheritRefs="true" target="artifacts"/>
   </target>
   
   <!-- ================================= 
@@ -553,6 +556,7 @@
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
+      <class location="${target.dir}/${name}-as.jar" />
       <class location="${target.dir}/${name}-codegenerator.jar" />
       <class location="${target.dir}/${name}-common-api.jar" />
       <class location="${target.dir}/${name}-common-impl.jar" />
@@ -612,6 +616,7 @@
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
+      <class location="${target.dir}/${name}-as.jar" />
       <class location="${target.dir}/${name}-codegenerator.jar" />
       <class location="${target.dir}/${name}-common-api.jar" />
       <class location="${target.dir}/${name}-common-impl.jar" />
@@ -1159,7 +1164,7 @@ mvn install:install-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifa
     <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
   
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-impl-papaki,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-deployers-common,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
+                  conf="${name}-as,${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-impl-papaki,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-deployers-common,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
                   sync="true"/>
 
     <delete file="${target.dir}/deploy.sh"/>
@@ -1175,6 +1180,21 @@ REPOSITORY='-Durl=${repositoryurl} -DrepositoryId=${repositoryid}'
 PWD=`pwd`
 VERSION=${version}
 </concat>
+
+    <!-- ironjacamar-as -->
+    <delete file="${target.dir}/${name}-as.xml"/>
+    <ivy:makepom artifactName="${name}-as" 
+                 conf="${name}-as"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-as.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-as" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-as" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-as" extension="jar"/>
 
     <!-- ironjacamar-codegenerator -->
     <delete file="${target.dir}/${name}-codegenerator.xml"/>

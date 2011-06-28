@@ -33,7 +33,7 @@
     </description>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;mail->default;;tools->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-impl-papaki->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;rhq->default;hornetq->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;mail->default;;tools->default;ironjacamar-as->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-impl-papaki->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;rhq->default;hornetq->default">
     <conf name="arquillian" transitive="false"/>
     <conf name="common" transitive="false"/>
     <conf name="embedded" transitive="false"/>
@@ -45,6 +45,7 @@
     <conf name="tools" transitive="false"/>
     <conf name="rhq" transitive="false"/>
 
+    <conf name="ironjacamar-as" transitive="false"/>
     <conf name="ironjacamar-codegenerator" transitive="false"/>
     <conf name="ironjacamar-common-api" transitive="false"/>
     <conf name="ironjacamar-common-impl" transitive="false"/>
@@ -69,6 +70,7 @@
   </configurations>
 
   <publications>
+    <artifact name="ironjacamar-as" type="jar"/>
     <artifact name="ironjacamar-codegenerator" type="jar"/>
     <artifact name="ironjacamar-common-api" type="jar"/>
     <artifact name="ironjacamar-common-impl" type="jar"/>

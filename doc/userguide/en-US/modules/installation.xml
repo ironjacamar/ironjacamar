@@ -74,4 +74,43 @@ ironjacamar-1.0.0
 
    </section>
 
+   <section id="installas">
+     <title>JBoss Application Server</title>
+
+     <para>
+       The IronJacamar provides the Java EE Connector Architecture (JCA) container
+       for JBoss Application Server 7 and future versions.
+     </para>
+
+     <para>
+       The container can be updated in the JBoss Application Server by using the 
+       <code>as-upgrader.sh</code> script in the <code>doc/as</code> directory.
+       This will allow an easy installation of IronJacamar patch releases to fix bugs
+       in the application server environment.
+     </para>
+
+     <para>
+       The script can be used, like:
+     </para>
+
+     <programlisting>
+./as-upgrader.sh 1.0.0.Final /path/to/as7/installation
+     </programlisting>
+
+     <para>
+       where <code>1.0.0.Final</code> is the version identifier of the IronJacamar container
+       and the path points to the top-level directory of the JBoss Application Server installation.
+     </para>
+
+     <para>
+       You can get an overview of all IronJacamar releases by browsing our
+       <ulink url="http://repository.jboss.org/nexus/content/groups/public/org/jboss/ironjacamar/">Nexus</ulink> repository.
+     </para>
+
+     <warning>
+       Make sure that you understand the version policies specified in the developer guide before upgrading
+     </warning>
+
+   </section>
+
 </chapter>
