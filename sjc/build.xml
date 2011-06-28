@@ -106,6 +106,7 @@
     <mkdir dir="${target.dir}/sjc/config"/>
     <mkdir dir="${target.dir}/sjc/config/bootstrap"/>
     <mkdir dir="${target.dir}/sjc/doc"/>
+    <mkdir dir="${target.dir}/sjc/doc/as"/>
     <mkdir dir="${target.dir}/sjc/doc/codegenerator"/>
     <mkdir dir="${target.dir}/sjc/doc/datasources"/>
     <mkdir dir="${target.dir}/sjc/doc/validator"/>
@@ -173,13 +174,11 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${target.dir}">
         <include name="*.jar"/>
+        <exclude name="${name}-as.jar"/>
         <exclude name="${name}-codegenerator.jar"/>
-        <exclude name="${name}-deployers-main.jar"/>
-        <exclude name="${name}-deployers-rar.jar"/>
         <exclude name="${name}-embedded-arquillian.jar"/>
         <exclude name="${name}-embedded.jar"/>
         <exclude name="${name}-sjc.jar"/>
-        <exclude name="${name}-standalone.jar"/>
         <exclude name="${name}-web-console.jar"/>
       </fileset>
     </copy>
@@ -251,6 +250,18 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/doc/as">
+      <fileset dir="${target.dir}">
+        <include name="${name}-as.jar"/>
+      </fileset>
+    </copy>
+    <copy todir="${target.dir}/sjc/doc/as">
+      <fileset dir="../as/src/main/resources/">
+        <include name="**/*.sh"/>
+        <include name="**/*.bat"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/doc/datasources" flatten="true">
       <fileset dir="../common/src/test/resources/ds/example">
         <include name="*.xml"/>
@@ -283,10 +294,10 @@
 
     <copy todir="${target.dir}/sjc/doc/samples">
       <fileset dir="../doc/samples"/>
-
     </copy>
 
     <chmod dir="${target.dir}/sjc/bin" perm="ugo+rx" includes="**/*.sh"/>
+    <chmod dir="${target.dir}/sjc/doc/as" perm="ugo+rx" includes="**/*.sh"/>
     <chmod dir="${target.dir}/sjc/doc/codegenerator" perm="ugo+rx" includes="**/*.sh"/>
     <chmod dir="${target.dir}/sjc/doc/validator" perm="ugo+rx" includes="**/*.sh"/>
 
