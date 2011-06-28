@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.HintsContext;
@@ -101,6 +102,12 @@ public class WorkManagerImpl implements WorkManager
    /** Security module for callback */
    private Callback callbackSecurity;
 
+   /** Shutdown */
+   private AtomicBoolean shutdown;
+
+   /** Active work wrappers */
+   private Set<WorkWrapper> activeWorkWrappers;
+
    /**Default supported workcontext types*/
    static
    {
@@ -116,6 +123,8 @@ public class WorkManagerImpl implements WorkManager
    {
       specCompliant = true;
       validatedWork = new HashSet<String>();
+      shutdown = new AtomicBoolean(false);
+      activeWorkWrappers = new HashSet<WorkWrapper>();
    }
    
    /**
@@ -246,6 +255,9 @@ public class WorkManagerImpl implements WorkManager
       if (trace)
          log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
+      if (shutdown.get())
+         throw new WorkRejectedException(bundle.workmanagerShutdown());
+
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
@@ -323,7 +335,9 @@ public class WorkManagerImpl implements WorkManager
          }
 
          if (wrapper != null)
+         {
             checkWorkCompletionException(wrapper);
+         }
       }
    }
    
@@ -345,6 +359,9 @@ public class WorkManagerImpl implements WorkManager
       throws WorkException
    {
       log.tracef("startWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
+
+      if (shutdown.get())
+         throw new WorkRejectedException(bundle.workmanagerShutdown());
 
       WorkException exception = null;
       WorkWrapper wrapper = null;
@@ -452,6 +469,9 @@ public class WorkManagerImpl implements WorkManager
    {
       log.tracef("scheduleWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
+      if (shutdown.get())
+         throw new WorkRejectedException(bundle.workmanagerShutdown());
+
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
@@ -526,6 +546,62 @@ public class WorkManagerImpl implements WorkManager
 
          if (wrapper != null)
             checkWorkCompletionException(wrapper);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown()
+   {
+      shutdown.set(true);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void shutdown()
+   {
+      prepareShutdown();
+
+      synchronized (activeWorkWrappers)
+      {
+         for (WorkWrapper ww : activeWorkWrappers)
+         {
+            ww.getWork().release();
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isShutdown()
+   {
+      return shutdown.get();
+   }
+
+   /**
+    * Add work wrapper to active set
+    * @param ww The work wrapper
+    */
+   void addWorkWrapper(WorkWrapper ww)
+   {
+      synchronized (activeWorkWrappers)
+      {
+         activeWorkWrappers.add(ww);
+      }
+   }
+
+   /**
+    * Remove work wrapper from active set
+    * @param ww The work wrapper
+    */
+   void removeWorkWrapper(WorkWrapper ww)
+   {
+      synchronized (activeWorkWrappers)
+      {
+         activeWorkWrappers.remove(ww);
       }
    }
 

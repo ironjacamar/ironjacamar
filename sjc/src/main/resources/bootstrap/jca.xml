@@ -112,6 +112,8 @@
 
     <!-- The callback security module -->
     <property name="CallbackSecurity"><inject bean="UsersRoles"/></property>
+
+    <destroy method="shutdown"/>
   </bean>
   
   <!-- Default Bootstrap context -->
