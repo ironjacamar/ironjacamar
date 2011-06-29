@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.api.workmanager;
 
+import org.jboss.jca.core.spi.graceful.GracefulShutdown;
 import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
@@ -30,7 +31,7 @@ import org.jboss.threads.BlockingExecutor;
 /**
  * The JBoss specific work manager interface
  */
-public interface WorkManager extends javax.resource.spi.work.WorkManager, Cloneable
+public interface WorkManager extends javax.resource.spi.work.WorkManager, GracefulShutdown, Cloneable
 {
    /**
     * Retrieve the executor for short running tasks

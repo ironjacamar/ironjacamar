@@ -27,6 +27,8 @@
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+
+    <destroy method="shutdown"/>
   </bean>
 
 </deployment>

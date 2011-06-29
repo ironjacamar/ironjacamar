@@ -12,7 +12,7 @@
       <para>Each release is labelled with a version number and an identifier.</para>
 
       <programlisting>
-ironjacamar-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
+ironjacamar-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;.&lt;identifier&gt;
       </programlisting>
 
       <para>where</para>
@@ -31,7 +31,7 @@ ironjacamar-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
            Identifier: The identifier. Identifies the level of the quality of the release.
            <itemizedlist spacing="compact">
              <listitem>
-               None / Final: Stable release
+               Final: Stable release
              </listitem>
              <listitem>
                CR: Candidate for Release quality. The implementation is functional complete.
@@ -49,7 +49,7 @@ ironjacamar-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;[.&lt;identifier&gt;]
       <para>An example</para>
 
       <programlisting>
-ironjacamar-1.0.0.tar.gz
+ironjacamar-1.0.0.Final.tar.gz
       </programlisting>
 
       <para>which is the first stable release of the project.</para>
@@ -76,6 +76,12 @@ ironjacamar-1.0.0.tar.gz
             </row>
           </thead>
           <tbody>
+            <row>
+              <entry><code>ironjacamar-as</code></entry>
+              <entry>
+                JBoss Application Server integration tools
+              </entry>
+            </row>
             <row>
               <entry><code>ironjacamar-codegenerator</code></entry>
               <entry>
@@ -119,6 +125,12 @@ ironjacamar-1.0.0.tar.gz
               </entry>
             </row>
             <row>
+              <entry><code>ironjacamar-depchain</code></entry>
+              <entry>
+                The dependency chain for the IronJacamar container
+              </entry>
+            </row>
+            <row>
               <entry><code>ironjacamar-deployers-common</code></entry>
               <entry>
                 The common classes for the deployer chains
@@ -140,6 +152,12 @@ ironjacamar-1.0.0.tar.gz
               <entry><code>ironjacamar-embedded-arquillian</code></entry>
               <entry>
                 The Arquillian extension for the embedded module
+              </entry>
+            </row>
+            <row>
+              <entry><code>ironjacamar-jdbc</code></entry>
+              <entry>
+                The core library for the JDBC resource adapters
               </entry>
             </row>
             <row>

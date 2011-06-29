@@ -90,7 +90,7 @@ public class WorkWrapper implements Runnable
    private WorkListener workListener;   
 
    /** The work manager */
-   private org.jboss.jca.core.api.workmanager.WorkManager workManager;
+   private WorkManagerImpl workManager;
 
    /** The blocked time */
    private long blockedTime;
@@ -115,7 +115,7 @@ public class WorkWrapper implements Runnable
     * @param completedLatch The latch for when work has completed
     * @throws IllegalArgumentException for null work, execution context or a negative start timeout
     */
-   public WorkWrapper(org.jboss.jca.core.api.workmanager.WorkManager workManager, 
+   public WorkWrapper(WorkManagerImpl workManager, 
                       Work work, 
                       ExecutionContext executionContext, 
                       WorkListener workListener,
@@ -204,6 +204,7 @@ public class WorkWrapper implements Runnable
       try
       {
          start();
+         workManager.addWorkWrapper(this);
 
          if (startedLatch != null)
             startedLatch.countDown();
@@ -220,6 +221,7 @@ public class WorkWrapper implements Runnable
       } 
       finally
       {
+         workManager.removeWorkWrapper(this);
          work.release();
 
          if (workListener != null)
