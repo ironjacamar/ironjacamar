@@ -8,7 +8,7 @@
       <para>The IronJacamar container is started by entering the bin/ directory</para>
 
      <programlisting>
-cd ironjacamar-1.0.0/bin
+cd ironjacamar-1.0.0.Final/bin
      </programlisting>
 
      <para>and executing</para>

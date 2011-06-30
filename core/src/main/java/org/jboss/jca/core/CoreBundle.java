@@ -87,7 +87,7 @@ public interface CoreBundle
     * @return The value
     */
    @Message(id = 256, value = "Work execution context must be null because " +
-         "work instance implements WorkContextProvider!")
+         "work instance implements WorkContextProvider")
    public String workExecutionContextMustNullImplementsWorkContextProvider();
 
    /**
@@ -167,7 +167,7 @@ public interface CoreBundle
     * Error in delist
     * @return The value
     */
-   @Message(id = 353, value = "Error in delist!")
+   @Message(id = 353, value = "Error in delist")
    public String errorInDelist();
    
    /**
@@ -193,7 +193,7 @@ public interface CoreBundle
     * @param currentTx current transaction instance
     * @return The value
     */
-   @Message(id = 356, value = "%s tx=%s")
+   @Message(id = 356, value = "Failed to enlist: %s tx=%s")
    public String systemExceptionWhenFailedToEnlistEqualsCurrentTx(Object throwable, Object currentTx);
    
    
@@ -228,14 +228,14 @@ public interface CoreBundle
     * @return The value
     */
    @Message(id = 454, value = "You are trying to use a connection factory that has been shut down: " +
-         "ManagedConnectionFactory is null.")
+         "ManagedConnectionFactory is null")
    public String tryingUseConnectionFactoryShutDown();
    
    /**
     * Wrong ManagedConnectionFactory sent to allocateConnection
     * @return The value
     */
-   @Message(id = 455, value = "Wrong ManagedConnectionFactory sent to allocateConnection!")
+   @Message(id = 455, value = "Wrong ManagedConnectionFactory sent to allocateConnection")
    public String wrongManagedConnectionFactorySentToAllocateConnection();
 
    /**
@@ -273,21 +273,21 @@ public interface CoreBundle
     * Error checking for a transaction.
     * @return The value
     */
-   @Message(id = 460, value = "Error checking for a transaction.")
+   @Message(id = 460, value = "Error checking for a transaction")
    public String errorCheckingForTransaction();
    
    /**
     * Could not enlist in transaction on entering meta-aware object
     * @return The value
     */
-   @Message(id = 461, value = "Could not enlist in transaction on entering meta-aware object!")
+   @Message(id = 461, value = "Could not enlist in transaction on entering meta-aware object")
    public String notEnlistInTransactionOnEnteringMetaAwareObject();
    
    /**
     * Could not delist resource, probably a transaction rollback
     * @return The value
     */
-   @Message(id = 462, value = "Could not delist resource, probably a transaction rollback?")
+   @Message(id = 462, value = "Could not delist resource, probably a transaction rollback")
    public String couldNotDelistResourceThenTransactionRollback();
    
    /**
@@ -328,7 +328,7 @@ public interface CoreBundle
     * @param end time of end
     * @return The value
     */
-   @Message(id = 654, value = "Interrupted while requesting connection! Waited %s ms")
+   @Message(id = 654, value = "Interrupted while requesting connection: Waited %s ms")
    public String interruptedWhileRequestingConnection(long end);
 
    /**
@@ -336,7 +336,7 @@ public interface CoreBundle
     * @param blockingTimeout timeout of blocking
     * @return The value
     */
-   @Message(id = 655, value = "No ManagedConnections available within configured blocking timeout (  %s [ms] )")
+   @Message(id = 655, value = "No managed connections available within configured blocking timeout (%s [ms])")
    public String noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(long blockingTimeout);
 
    /**
@@ -351,7 +351,7 @@ public interface CoreBundle
     * @param end time of end
     * @return The value
     */
-   @Message(id = 657, value = "Interrupted while requesting permit! Waited %s ms")
+   @Message(id = 657, value = "Interrupted while requesting permit: Waited %s ms")
    public String interruptedWhileRequestingPermit(long end);
    
    /**
@@ -379,7 +379,7 @@ public interface CoreBundle
     * ResourceAdapter instance not active
     * @return The value
     */
-   @Message(id = 851, value = "ResourceAdapter instance not active")
+   @Message(id = 851, value = "Resource adapter instance not active")
    public String resourceAdapterInstanceNotActive();
    
    /**
@@ -440,7 +440,7 @@ public interface CoreBundle
     * @param flags flags
     * @return The value
     */
-   @Message(id = 1151, value = "Trying to start a new tx when old is not complete! old: %s, new %s, flags %s")
+   @Message(id = 1151, value = "Trying to start a new transaction when old is not complete: Old: %s, New %s, Flags %s")
    public String tryingStartNewTxWhenOldNotComplete(Object oldXid, Object newXid, int flags);
 
    /**
@@ -449,21 +449,21 @@ public interface CoreBundle
     * @param flags flags
     * @return The value
     */
-   @Message(id = 1152, value = "Trying to start a new tx with wrong flags! new %s, flags %s")
+   @Message(id = 1152, value = "Trying to start a new transaction with wrong flags: New %s, Flags %s")
    public String tryingStartNewTxWithWrongFlags(Object xid, int flags);
    
    /**
     * Error trying to start local tx
     * @return The value
     */
-   @Message(id = 1153, value = "Error trying to start local tx")
+   @Message(id = 1153, value = "Error trying to start local transaction")
    public String errorTryingStartLocalTx();
    
    /**
     * Throwable trying to start local transaction
     * @return The value
     */
-   @Message(id = 1154, value = "Throwable trying to start local transaction!")
+   @Message(id = 1154, value = "Throwable trying to start local transaction")
    public String throwableTryingStartLocalTx();
 
    /**
@@ -472,28 +472,28 @@ public interface CoreBundle
     * @param xid xid
     * @return The value
     */
-   @Message(id = 1155, value = "Wrong xid in commit: expected: %s, got: %s")
+   @Message(id = 1155, value = "Wrong xid in commit: Expected: %s, Got: %s")
    public String wrongXidInCommit(Object currentXid, Object xid);
    
    /**
     * Could not commit local tx
     * @return The value
     */
-   @Message(id = 1156, value = "Could not commit local tx")
+   @Message(id = 1156, value = "Could not commit local transaction")
    public String couldNotCommitLocalTx();
    
    /**
     * Forget not supported in local tx
     * @return The value
     */
-   @Message(id = 1157, value = "Forget not supported in local tx")
+   @Message(id = 1157, value = "Forget not supported in local transaction")
    public String forgetNotSupportedInLocalTx();
    
    /**
     * No recover with local-tx only resource managers
     * @return The value
     */
-   @Message(id = 1158, value = "No recover with local-tx only resource managers")
+   @Message(id = 1158, value = "No recovery for LocalTransaction only resource manager")
    public String noRecoverWithLocalTxResourceManagers();
    
    /**
@@ -502,7 +502,7 @@ public interface CoreBundle
     * @param xid xid
     * @return The value
     */
-   @Message(id = 1159, value = "Wrong xid in rollback: expected: %s, got: %s")
+   @Message(id = 1159, value = "Wrong xid in rollback: Expected: %s, Got: %s")
    public String wrongXidInRollback(Object currentXid, Object xid);
 
    
@@ -510,7 +510,7 @@ public interface CoreBundle
     * Could not rollback local tx
     * @return The value
     */
-   @Message(id = 1160, value = "Could not rollback local tx")
+   @Message(id = 1160, value = "Could not rollback local transaction")
    public String couldNotRollbackLocalTx();
    
    // METADATA REPOSITORY (1200)
