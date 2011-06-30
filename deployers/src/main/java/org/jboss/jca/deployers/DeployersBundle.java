@@ -57,7 +57,7 @@ public interface DeployersBundle
    public String undefinedManagedConnectionFactory();
 
    /**
-    * Undefined managed connection factory
+    * Undefined admin object
     * @return The value
     */
    @Message(id = 20054, value = "AdminObject must be defined in class-name")

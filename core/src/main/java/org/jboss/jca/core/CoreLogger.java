@@ -48,7 +48,7 @@ public interface CoreLogger extends BasicLogger
     * @param handle The hande
     */
    @LogMessage(level = INFO)
-   @Message(id = 100, value = "Closing a connection for you.  Please close them yourself: %s")
+   @Message(id = 100, value = "Closing a connection for you. Please close them yourself: %s")
    public void closingConnection(Object handle);
 
    /**
@@ -73,7 +73,7 @@ public interface CoreLogger extends BasicLogger
     */
    @LogMessage(level = INFO)
    @Message(id = 103, value = "Could not find a close method on alleged connection object (%s). " +
-            "Please close your own connections.")
+            "Please close your own connections")
    public void closingConnectionNoClose(String clz);
    
    
@@ -112,8 +112,8 @@ public interface CoreLogger extends BasicLogger
     * @param managedConnection The managedConnection instance
     */
    @LogMessage(level = INFO)
-   @Message(id = 302, value = "Unregistered handle that was not registered! %s" + 
-         " for managedConnection: %s")
+   @Message(id = 302, value = "Unregistered handle that was not registered: %s" + 
+         " for managed connection: %s")
    public void unregisteredHandleNotRegistered(Object handle, Object managedConnection);
    
    /**
@@ -147,7 +147,7 @@ public interface CoreLogger extends BasicLogger
     * Notified of error on a different managed connection
     */
    @LogMessage(level = WARN)
-   @Message(id = 307, value = "Notified of error on a different managed connection?")
+   @Message(id = 307, value = "Notified of error on a different managed connection")
    public void notifiedErrorDifferentManagedConnection();
 
    /**
@@ -171,7 +171,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = ERROR)
-   @Message(id = 313, value = "There is something wrong with the pooling?")
+   @Message(id = 313, value = "There is something wrong with the pooling")
    public void somethingWrongWithPooling(@Cause Throwable t);
    
    
@@ -201,7 +201,7 @@ public interface CoreLogger extends BasicLogger
     * @param connection connection object
     */
    @LogMessage(level = WARN)
-   @Message(id = 403, value = "Reconnecting a connection handle that still has a managed connection! %s %s")
+   @Message(id = 403, value = "Reconnecting a connection handle that still has a managed connection: %s %s")
    public void reconnectingConnectionHandleHasManagedConnection(Object mc, Object connection);
 
    /**
@@ -233,7 +233,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 502, value = "Transaction %s error in before completion %s")
+   @Message(id = 502, value = "Transaction %s error in beforeCompletion %s")
    public void transactionErrorInBeforeCompletion(Object transaction, Object synch, @Cause Throwable t);
    
    /**
@@ -243,7 +243,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 503, value = "Transaction %s error in after completion %s")
+   @Message(id = 503, value = "Transaction %s error in afterCompletion %s")
    public void transactionErrorInAfterCompletion(Object transaction, Object synch, @Cause Throwable t);
    
 
@@ -253,7 +253,7 @@ public interface CoreLogger extends BasicLogger
     * ConnectionValidator has been interrupted
     */
    @LogMessage(level = INFO)
-   @Message(id = 601, value = "ConnectionValidator has been interrupted - returning")
+   @Message(id = 601, value = "ConnectionValidator has been interrupted")
    public void returningConnectionValidatorInterrupted();
    
    /**
@@ -296,7 +296,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 606, value = "Throwable while trying to match ManagedConnection, destroying connection: %s")
+   @Message(id = 606, value = "Throwable while trying to match managed connection, destroying connection: %s")
    public void throwableWhileTryingMatchManagedConnection(Object cl, @Cause Throwable t);
    
    /**
@@ -305,7 +305,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 607, value = "ResourceException cleaning up ManagedConnection: %s")
+   @Message(id = 607, value = "ResourceException cleaning up managed connection: %s")
    public void resourceExceptionCleaningUpManagedConnection(Object cl, @Cause Throwable t);
    
    /**
@@ -322,7 +322,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 609, value = "Attempt to return connection twice (ignored): %s")
+   @Message(id = 609, value = "Attempt to return connection twice: %s")
    public void attemptReturnConnectionTwice(Object cl, @Cause Throwable t);
    
    /**
@@ -338,7 +338,7 @@ public interface CoreLogger extends BasicLogger
     */
    @LogMessage(level = WARN)
    @Message(id = 611, value = "Warning: Background validation was specified with a non compliant " +
-         "ManagedConnectionFactory interface.")
+         "ManagedConnectionFactory interface")
    public void backgroundValidationNonCompliantManagedConnectionFactory();
    
    /**
@@ -355,7 +355,7 @@ public interface CoreLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = WARN)
-   @Message(id = 613, value = "Throwable while trying to match ManagedConnection, destroying connection: %s")
+   @Message(id = 613, value = "Throwable while trying to match managed connection, destroying connection: %s")
    public void throwableWhileTryingMatchManagedConnectionThenDestroyingConnection(Object cl, @Cause Throwable t);
 
    /**
@@ -431,8 +431,8 @@ public interface CoreLogger extends BasicLogger
     * Prepare called on a local tx
     */
    @LogMessage(level = WARN)
-   @Message(id = 1101, value = "Prepare called on a local tx. Use of local transactions on a jta " +
-         "transaction with more than one branch may result in inconsistent data in some cases of failure.")
+   @Message(id = 1101, value = "Prepare called on a local tx. Use of local transactions on a JTA " +
+         "transaction with more than one branch may result in inconsistent data in some cases of failure")
    public void prepareCalledOnLocaltx();
    
    

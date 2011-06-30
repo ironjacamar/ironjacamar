@@ -20,24 +20,510 @@
         </thead>
         <tbody>
           <row>
-            <entry>000100</entry>
+            <entry>100</entry>
             <entry><code>INFO</code></entry>
-            <entry></entry>
+            <entry>Closing a connection for you. Please close them yourself</entry>
           </row>
           <row>
-            <entry>000101</entry>
+            <entry>102</entry>
             <entry><code>INFO</code></entry>
-            <entry></entry>
+            <entry>Throwable trying to close a connection for you, please close it yourself</entry>
           </row>
           <row>
-            <entry>000102</entry>
+            <entry>103</entry>
             <entry><code>INFO</code></entry>
-            <entry></entry>
+            <entry>Could not find a close method on alleged connection object. Please close your own connections</entry>
           </row>
           <row>
-            <entry>000103</entry>
+            <entry>151</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Some connections were not closed, see the log for the allocation stacktraces</entry>
+          </row>
+          <row>
+            <entry>201</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>SecurityContext setup failed</entry>
+          </row>
+          <row>
+            <entry>202</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>SecurityContext setup failed since CallbackSecurity was null</entry>
+          </row>
+          <row>
+            <entry>251</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>SecurityContext setup failed</entry>
+          </row>
+          <row>
+            <entry>252</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>SecurityContext setup failed since CallbackSecurity was null</entry>
+          </row>
+          <row>
+            <entry>253</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Work is null</entry>
+          </row>
+          <row>
+            <entry>254</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>StartTimeout is negative</entry>
+          </row>
+          <row>
+            <entry>255</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Interrupted while requesting permit</entry>
+          </row>
+          <row>
+            <entry>256</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Work execution context must be null because work instance implements WorkContextProviderStartTimeout is negative</entry>
+          </row>
+          <row>
+            <entry>257</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Run method is synchronized</entry>
+          </row>
+          <row>
+            <entry>258</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Release method is synchronized</entry>
+          </row>
+          <row>
+            <entry>259</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unsupported WorkContext class</entry>
+          </row>
+          <row>
+            <entry>260</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Duplicate TransactionWorkContext class</entry>
+          </row>
+          <row>
+            <entry>261</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Duplicate SecurityWorkContext class</entry>
+          </row>
+          <row>
+            <entry>262</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Duplicate HintWorkContext class</entry>
+          </row>
+          <row>
+            <entry>263</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>WorkManager is shutting down</entry>
+          </row>
+          <row>
+            <entry>301</entry>
             <entry><code>INFO</code></entry>
-            <entry></entry>
+            <entry>Registered a null handle for managed connection</entry>
+          </row>
+          <row>
+            <entry>302</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Unregistered handle that was not registered</entry>
+          </row>
+          <row>
+            <entry>303</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Unregistered a null handle for managed connection</entry>
+          </row>
+          <row>
+            <entry>305</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Connection error occured</entry>
+          </row>
+          <row>
+            <entry>306</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Unknown connection error occured</entry>
+          </row>
+          <row>
+            <entry>307</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Notified of error on a different managed connection</entry>
+          </row>
+          <row>
+            <entry>311</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Throwable from unregister connection</entry>
+          </row>
+          <row>
+            <entry>312</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Error while closing connection handle</entry>
+          </row>
+          <row>
+            <entry>313</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>There is something wrong with the pooling</entry>
+          </row>
+          <row>
+            <entry>351</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Not correct type</entry>
+          </row>
+          <row>
+            <entry>352</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Failure to delist resource</entry>
+          </row>
+          <row>
+            <entry>353</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error in delist</entry>
+          </row>
+          <row>
+            <entry>354</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unfinished local transaction - error getting local transaction</entry>
+          </row>
+          <row>
+            <entry>355</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unfinished local transaction but managed connection does not provide a local transaction</entry>
+          </row>
+          <row>
+            <entry>356</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Failed to enlist</entry>
+          </row>
+          <row>
+            <entry>401</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error during tidy up connection</entry>
+          </row>
+          <row>
+            <entry>402</entry>
+            <entry><code>WARN</code></entry>
+            <entry>ResourceException in returning connection</entry>
+          </row>
+          <row>
+            <entry>403</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Reconnecting a connection handle that still has a managed connection</entry>
+          </row>
+          <row>
+            <entry>404</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Unchecked throwable in managedConnectionDisconnected()</entry>
+          </row>
+          <row>
+            <entry>451</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>The connection manager is shutdown</entry>
+          </row>
+          <row>
+            <entry>452</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Method getManagedConnection retry wait was interrupted</entry>
+          </row>
+          <row>
+            <entry>453</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to get managed connection</entry>
+          </row>
+          <row>
+            <entry>454</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You are trying to use a connection factory that has been shut down: ManagedConnectionFactory is null</entry>
+          </row>
+          <row>
+            <entry>455</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Wrong ManagedConnectionFactory sent to allocateConnection</entry>
+          </row>
+          <row>
+            <entry>456</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unchecked throwable in ManagedConnection.getConnection()</entry>
+          </row>
+          <row>
+            <entry>457</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unchecked throwable in managedConnectionReconnected()</entry>
+          </row>
+          <row>
+            <entry>458</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>This method is not supported</entry>
+          </row>
+          <row>
+            <entry>459</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Transaction is not active</entry>
+          </row>
+          <row>
+            <entry>460</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error checking for a transaction</entry>
+          </row>
+          <row>
+            <entry>461</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Could not enlist in transaction on entering meta-aware object</entry>
+          </row>
+          <row>
+            <entry>462</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Could not delist resource, probably a transaction rollback</entry>
+          </row>
+          <row>
+            <entry>463</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to set XAResource transaction timeout</entry>
+          </row>
+          <row>
+            <entry>501</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Thread is not the enlisting thread</entry>
+          </row>
+          <row>
+            <entry>502</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Transaction error in beforeCompletion</entry>
+          </row>
+          <row>
+            <entry>503</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Transaction error in afterCompletion</entry>
+          </row>
+          <row>
+            <entry>601</entry>
+            <entry><code>INFO</code></entry>
+            <entry>ConnectionValidator has been interrupted</entry>
+          </row>
+          <row>
+            <entry>602</entry>
+            <entry><code>WARN</code></entry>
+            <entry>ConnectionValidator ignored unexpected runtime exception</entry>
+          </row>
+          <row>
+            <entry>603</entry>
+            <entry><code>WARN</code></entry>
+            <entry>ConnectionValidator ignored unexpected error</entry>
+          </row>
+          <row>
+            <entry>604</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Throwable while attempting to get a new connection</entry>
+          </row>
+          <row>
+            <entry>605</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Destroying connection that could not be successfully matched</entry>
+          </row>
+          <row>
+            <entry>606</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Throwable while trying to match managed connection, destroying connection</entry>
+          </row>
+          <row>
+            <entry>607</entry>
+            <entry><code>WARN</code></entry>
+            <entry>ResourceException cleaning up managed connection</entry>
+          </row>
+          <row>
+            <entry>608</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Destroying returned connection, maximum pool size exceeded</entry>
+          </row>
+          <row>
+            <entry>609</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Attempt to return connection twice</entry>
+          </row>
+          <row>
+            <entry>610</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Unable to fill pool</entry>
+          </row>
+          <row>
+            <entry>611</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Warning: Background validation was specified with a non compliant ManagedConnectionFactory interface</entry>
+          </row>
+          <row>
+            <entry>612</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Destroying connection that could not be successfully matched</entry>
+          </row>
+          <row>
+            <entry>613</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Throwable while trying to match managed connection, destroying connection</entry>
+          </row>
+          <row>
+            <entry>614</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Exception during createSubject()</entry>
+          </row>
+          <row>
+            <entry>651</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to get managed connection pool</entry>
+          </row>
+          <row>
+            <entry>652</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to obtain lock</entry>
+          </row>
+          <row>
+            <entry>653</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>The pool has been shutdown</entry>
+          </row>
+          <row>
+            <entry>654</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Interrupted while requesting connection</entry>
+          </row>
+          <row>
+            <entry>655</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>No managed connections available within configured blocking timeout</entry>
+          </row>
+          <row>
+            <entry>656</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>This should never happen</entry>
+          </row>
+          <row>
+            <entry>657</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Interrupted while requesting permit</entry>
+          </row>
+          <row>
+            <entry>658</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unexpected throwable while trying to create a connection</entry>
+          </row>
+          <row>
+            <entry>701</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Exception during unbind</entry>
+          </row>
+          <row>
+            <entry>751</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Deployment failed</entry>
+          </row>
+          <row>
+            <entry>851</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Resource adapter instance not active</entry>
+          </row>
+          <row>
+            <entry>852</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Validation exception</entry>
+          </row>
+          <row>
+            <entry>853</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>The activation spec class is no longer available</entry>
+          </row>
+          <row>
+            <entry>854</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>The resource adapter is no longer available</entry>
+          </row>
+          <row>
+            <entry>855</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Key isn't registered</entry>
+          </row>
+          <row>
+            <entry>856</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to lookup resource adapter in MDR</entry>
+          </row>
+          <row>
+            <entry>901</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error during connection close</entry>
+          </row>
+          <row>
+            <entry>951</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error during connection close</entry>
+          </row>
+          <row>
+            <entry>1001</entry>
+            <entry><code>WARN</code></entry>
+            <entry>No users.properties were found</entry>
+          </row>
+          <row>
+            <entry>1002</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Error while loading users.properties</entry>
+          </row>
+          <row>
+            <entry>1003</entry>
+            <entry><code>WARN</code></entry>
+            <entry>No roles.properties were found</entry>
+          </row>
+          <row>
+            <entry>1004</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Error while loading roles.properties</entry>
+          </row>
+          <row>
+            <entry>1011</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Prepare called on a local tx. Use of local transactions on a JTA
+            transaction with more than one branch may result in inconsistent data in some cases of failure</entry>
+          </row>
+          <row>
+            <entry>1151</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Trying to start a new transaction when old is not complete</entry>
+          </row>
+          <row>
+            <entry>1152</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Trying to start a new transaction with wrong flags</entry>
+          </row>
+          <row>
+            <entry>1153</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error trying to start local transaction</entry>
+          </row>
+          <row>
+            <entry>1154</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Throwable trying to start local transaction</entry>
+          </row>
+          <row>
+            <entry>1155</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Wrong xid in commit</entry>
+          </row>
+          <row>
+            <entry>1156</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Could not commit local transaction</entry>
+          </row>
+          <row>
+            <entry>1157</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Forget not supported in local transaction</entry>
+          </row>
+          <row>
+            <entry>1158</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>No recovery for LocalTransaction only resource manager</entry>
+          </row>
+          <row>
+            <entry>1159</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Wrong xid in rollback</entry>
+          </row>
+          <row>
+            <entry>1160</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Could not rollback local transaction</entry>
           </row>
         </tbody>
       </tgroup>
@@ -62,9 +548,154 @@
         </thead>
         <tbody>
           <row>
-            <entry>010000</entry>
-            <entry></entry>
-            <entry></entry>
+            <entry>10001</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Parsing error of ra.xml file</entry>
+          </row>
+          <row>
+            <entry>10002</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Parsing error of ironjacamar.xml file</entry>
+          </row>
+          <row>
+            <entry>10003</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>No @Connector was found and no definition in the ra.xml metadata either</entry>
+          </row>
+          <row>
+            <entry>10004</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>More than one @Connector was found but the correct one wasn't defined in the ra.xml metadata</entry>
+          </row>
+          <row>
+            <entry>10051</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>AnnotationRepository reference is null</entry>
+          </row>
+          <row>
+            <entry>10052</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>No @Connector defined</entry>
+          </row>
+          <row>
+            <entry>10053</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>More than @Connector defined</entry>
+          </row>
+          <row>
+            <entry>10054</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>More than one @ConnectionDefinitions defined</entry>
+          </row>
+          <row>
+            <entry>10055</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unknown annotation</entry>
+          </row>
+          <row>
+            <entry>10056</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Element isn't a valid boolean</entry>
+          </row>
+          <row>
+            <entry>10057</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Attribute isn't a valid boolean</entry>
+          </row>
+          <row>
+            <entry>10058</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Element isn't a valid number</entry>
+          </row>
+          <row>
+            <entry>10059</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid flush strategy</entry>
+          </row>
+          <row>
+            <entry>10060</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unexpected end tag</entry>
+          </row>
+          <row>
+            <entry>10061</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unexpected element</entry>
+          </row>
+          <row>
+            <entry>10062</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Reached end of xml document unexpectedly</entry>
+          </row>
+          <row>
+            <entry>10063</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Mandatory class-name attribute missing</entry>
+          </row>
+          <row>
+            <entry>10064</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unexpected attribute</entry>
+          </row>
+          <row>
+            <entry>10065</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Missing mandatory jndi-name attribute</entry>
+          </row>
+          <row>
+            <entry>10066</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You cannot define more than one pool or xa-pool in same connection-definition</entry>
+          </row>
+          <row>
+            <entry>10067</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Element cannot be set without an xa-pool</entry>
+          </row>
+          <row>
+            <entry>10068</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Missing required attribute</entry>
+          </row>
+          <row>
+            <entry>10069</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Missing required element</entry>
+          </row>
+          <row>
+            <entry>10070</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid negative value</entry>
+          </row>
+          <row>
+            <entry>10071</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Tag is not valid</entry>
+          </row>
+          <row>
+            <entry>10072</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Tag cannot be undefined</entry>
+          </row>
+          <row>
+            <entry>10073</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid &lt;security&gt; configuration</entry>
+          </row>
+          <row>
+            <entry>10074</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>The resource adapter metadata must be defined</entry>
+          </row>
+          <row>
+            <entry>10075</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>The resource adapter metadata must contain either an outbound or inbound configuration</entry>
+          </row>
+          <row>
+            <entry>10076</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Tag must be defined</entry>
           </row>
         </tbody>
       </tgroup>
@@ -75,7 +706,7 @@
     <title>Deployers: 020000 - 029999</title>
 
     <table frame="all">
-      <title>Logging codes for common</title>
+      <title>Logging codes for deployers</title>
       <tgroup cols="3" align="left" colsep="1" rowsep="1">
         <colspec colname="c1" colwidth="*"/>
         <colspec colname="c2" colwidth="*"/>
@@ -89,9 +720,69 @@
         </thead>
         <tbody>
           <row>
-            <entry>20000</entry>
-            <entry></entry>
-            <entry></entry>
+            <entry>20001</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Required license terms</entry>
+          </row>
+          <row>
+            <entry>20002</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Deployed</entry>
+          </row>
+          <row>
+            <entry>20003</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Failure during validation report generation</entry>
+          </row>
+          <row>
+            <entry>20004</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Only one connection definition found with a mismatch in class-name</entry>
+          </row>
+          <row>
+            <entry>20005</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Only one admin object found with a mismatch in class-name</entry>
+          </row>
+          <row>
+            <entry>20006</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>ConnectionFactory is null</entry>
+          </row>
+          <row>
+            <entry>20007</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Exception during createSubject()</entry>
+          </row>
+          <row>
+            <entry>20051</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to start</entry>
+          </row>
+          <row>
+            <entry>20052</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to associate</entry>
+          </row>
+          <row>
+            <entry>20053</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>ManagedConnectionFactory must be defined in class-name</entry>
+          </row>
+          <row>
+            <entry>20054</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>AdminObject must be defined in class-name</entry>
+          </row>
+          <row>
+            <entry>20055</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Failed to bind admin object</entry>
+          </row>
+          <row>
+            <entry>20056</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Deployment failed</entry>
           </row>
         </tbody>
       </tgroup>

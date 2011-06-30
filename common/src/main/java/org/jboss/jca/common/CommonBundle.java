@@ -151,7 +151,7 @@ public interface CommonBundle
     * @param value The value
     * @return The value
     */
-   @Message(id = 10065, value = "Missing jndi-name mandatory attribute: %s")
+   @Message(id = 10065, value = "Missing mandatory jndi-name attribute: %s")
    public String missingJndiName(String value);
 
    /**
