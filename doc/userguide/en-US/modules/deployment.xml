@@ -1396,6 +1396,12 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
             </thead>
             <tbody>
               <row>
+                <entry><code>driver-class</code></entry>
+                <entry>
+                  The fully qualified class name of the driver class
+                </entry>
+              </row>
+              <row>
                 <entry><code>xa-datasource-class</code></entry>
                 <entry>
                   The fully qualified class name of the XA datasource class
