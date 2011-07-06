@@ -59,73 +59,138 @@
     <title>Overview</title>
 
     <para>
-      The Java Connector Architecture specification consists of a number of components:
+      The Java EE Connector Architecture features three different types of resource adapters
 
-      <mediaobject>
-        <imageobject>
-          <imagedata fileref="images/overview.png" align="center"/>
-        </imageobject>
-      </mediaobject>
-    </para>
-
-    <para>
-      The application uses the
-
-      <itemizedlist spacing="compact">
+      <itemizedlist>
         <listitem>
-          ConnectionFactory: The connection factory is looked up in Java Naming and Directory Interface (JNDI)
-          and is used to create a connection.
+          Outbound: The resource adapter allows the application to communicate to the Enterprise Information System (EIS).
         </listitem>
         <listitem>
-          Connection: The connection contains the Enterprise Information System (EIS) specific operations.
+          Inbound: The resource adapter allows messages to flow from the Enterprise Information System (EIS) to the application.
+        </listitem>
+        <listitem>
+          Bi-directional: The resource adapter features both an outbound and an inbound part.
         </listitem>
       </itemizedlist>
-    </para>
-
-    <para>
-      The resource adapter also contains
-
-      <itemizedlist spacing="compact">
-        <listitem>
-          ManagedConnectionFactory: The managed connection factory creates managed connections.
-        </listitem>
-        <listitem>
-          ManagedConnection: The managed connection represents a physical connection to the target
-          Enterprise Information System (EIS). The managed connection notfies the application server
-          of events such as connection closed and connection error.
-        </listitem>
-      </itemizedlist>
-    </para>
-
-    <para>
-      IronJacamar - the application server - contains
-
-      <itemizedlist spacing="compact">
-        <listitem>
-          ConnectionManager: The connection manager handles all managed connections in regards to
-          pooling, transaction and security.
-        </listitem>
-        <listitem>
-          ConnectionEventListener: The connection event listener allows the connection manager to know
-          the status of each managed connection.
-        </listitem>
-      </itemizedlist>
-    </para>
-
-    <para>
-      The above overview covers a scenario for an outbound resource adapter. A resource adapter can
-      also contain an inbound part which handles information flowing from the Enterprise Information
-      System (EIS) to the application.
-    </para>
-
-    <para>
-      Last, a resource adapter can also be bi-directional which means that it has both outbound and
-      inbound properties.
     </para>
 
     <para>
       For more information about Java EE Connector Architecture see the specification.
     </para>
+
+    <section id="overview_outbound">
+      <title>Outbound resource adapter</title>
+
+      <para>
+        The Java Connector Architecture specification consists of a number of outbound components:
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/outbound.png" align="center"/>
+          </imageobject>
+        </mediaobject>
+      </para>
+
+      <para>
+        The application uses the
+
+        <itemizedlist>
+          <listitem>
+            ConnectionFactory: The connection factory is looked up in Java Naming and Directory Interface (JNDI)
+            and is used to create a connection.
+          </listitem>
+          <listitem>
+            Connection: The connection contains the Enterprise Information System (EIS) specific operations.
+          </listitem>
+        </itemizedlist>
+      </para>
+
+      <para>
+        The resource adapter contains
+        
+        <itemizedlist>
+          <listitem>
+            ManagedConnectionFactory: The managed connection factory creates managed connections.
+          </listitem>
+          <listitem>
+            ManagedConnection: The managed connection represents a physical connection to the target
+            Enterprise Information System (EIS). The managed connection notfies the application server
+            of events such as connection closed and connection error.
+          </listitem>
+        </itemizedlist>
+      </para>
+      
+      <para>
+        IronJacamar - the application server - contains
+        
+        <itemizedlist>
+          <listitem>
+            ConnectionManager: The connection manager handles all managed connections in regards to
+            pooling, transaction and security.
+          </listitem>
+          <listitem>
+            ConnectionEventListener: The connection event listener allows the connection manager to know
+            the status of each managed connection.
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
+    <section id="overview_inbound">
+      <title>Inbound resource adapter</title>
+
+      <para>
+        The Java Connector Architecture specification consists of a number of inbound components:
+        
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/inbound.png" align="center"/>
+          </imageobject>
+        </mediaobject>
+      </para>
+
+      <para>
+        The application uses the
+
+        <itemizedlist>
+          <listitem>
+            ActivationSpec: The activation specification specifies the different properties that the
+            application is looking for from the resource adapter and hence the Enterprise Information System (EIS).
+            This specification can be hidden from the user by a facade provided by the application server.
+          </listitem>
+        </itemizedlist>
+      </para>
+
+      <para>
+        The resource adapter contains
+        
+        <itemizedlist>
+          <listitem>
+            ResourceAdapter: The resource adapter provides the activation point for inbound communication.
+          </listitem>
+          <listitem>
+            Resource adapter specific: The resource adapter specific code handles communication with the
+            Enterprise Information System (EIS) and deliver messages through the MessageEndpointFactory.
+          </listitem>
+        </itemizedlist>
+      </para>
+      
+      <para>
+        IronJacamar - the application server - contains
+        
+        <itemizedlist>
+          <listitem>
+            MessageEndpointFactory: The MessageEndpointFactory is registered with the ResourceAdapter instance
+            and creates the MessageEndpoint instances.
+          </listitem>
+          <listitem>
+            MessageEndpoint: The MessageEndpoint contains the actual message from the Enterprise Information System (EIS)
+            which the application uses. This could for example be a message driven Enterprise JavaBean (EJB/MDB).
+          </listitem>
+        </itemizedlist>
+      </para>
+
+    </section>
 
   </section>
 
