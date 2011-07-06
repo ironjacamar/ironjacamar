@@ -123,21 +123,21 @@
   <property name="version.jboss.common" value="2.2.17.GA"/>
   <property name="version.jboss.jaspi.api" value="1.0.0.Final"/>
   <property name="version.jboss.jms.api" value="1.0.0.Beta1"/>
-  <property name="version.jboss.logging" value="3.0.0.CR1"/>
+  <property name="version.jboss.logging" value="3.0.0.GA"/>
   <property name="version.jboss.logging-generator" value="1.0.0.Beta7"/>
   <property name="version.jboss.logging-processor" value="1.0.0.Beta7"/>
   <property name="version.jboss.logmanager" value="1.2.0.CR9"/>
   <property name="version.jboss.naming" value="5.0.3.GA"/>
   <property name="version.jboss.netty" value="3.2.1.Final"/>
   <property name="version.jboss.papaki" value="1.0.0.Beta3"/>
-  <property name="version.jboss.picketbox" value="4.0.0.Beta4"/>
+  <property name="version.jboss.picketbox" value="4.0.0.CR1"/>
   <property name="version.jboss.security" value="2.1.0.20090318"/>
   <property name="version.jboss.shrinkwrap" value="1.0.0-beta-3"/>
   <property name="version.jboss.shrinkwrap.descriptors" value="1.0.0-beta-1"/>
   <property name="version.jboss.slf4j" value="1.0.2.GA"/>
-  <property name="version.jboss.slf4j.logmanager" value="1.0.0.CR3"/>
-  <property name="version.jboss.stdio" value="1.0.0.CR3"/>
-  <property name="version.jboss.threads" value="2.0.0.CR7"/>
+  <property name="version.jboss.slf4j.logmanager" value="1.0.0.GA"/>
+  <property name="version.jboss.stdio" value="1.0.0.GA"/>
+  <property name="version.jboss.threads" value="2.0.0.GA"/>
   <property name="version.jboss.ts" value="4.15.1.Final"/>
   <property name="version.jboss.ts.spi" value="7.0.0.CR1"/>
   <property name="version.jdepend" value="2.9.1"/>
@@ -152,7 +152,7 @@
   <property name="version.mail-api" value="1.4.4"/>
   <property name="version.maven" value="2.2.1"/>
   <property name="version.rhq" value="4.0.0.Beta1"/>
-  <property name="version.slf4j" value="1.5.8"/>
+  <property name="version.slf4j" value="1.6.1"/>
   <property name="version.transaction.api" value="1.0.0.Final"/>
   <property name="version.validation-api" value="1.0.0.GA"/>
 
