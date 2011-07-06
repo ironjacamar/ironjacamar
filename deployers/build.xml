@@ -31,24 +31,40 @@
   <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile">
-    <mkdir dir="${build.deployers.dir}" />
-    <mkdir dir="${build.deployers.dir}/impl" />
-
+  <target name="compile-fungal" unless="brew">
     <javac srcdir="src/main"
            destdir="${build.deployers.dir}/impl"
-           classpathref="sjc.lib.path.id"
+           classpathref="main.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
+           includes="**/fungal/**"
            optimize="${javac.optimize}"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
       <compilerarg value="-AgeneratedTranslationFilesPath=${build.deployers.dir}/impl"/>
     </javac>
+  </target>
 
+  <target name="compile-base">
+    <mkdir dir="${build.deployers.dir}" />
+    <mkdir dir="${build.deployers.dir}/impl" />
+    <javac srcdir="src/main"
+           destdir="${build.deployers.dir}/impl"
+           classpathref="main.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           excludes="**/fungal/**"
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-AgeneratedTranslationFilesPath=${build.deployers.dir}/impl"/>
+    </javac>
+  </target>
+
+  <target name="compile" depends="compile-base,compile-fungal">
     <javac srcdir="${build.deployers.dir}/impl"
            destdir="${build.deployers.dir}/impl"
-           classpathref="sjc.lib.path.id"
+           classpathref="main.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
@@ -61,7 +77,7 @@
   <!-- ================================= 
        Target: jars 
        ================================= -->
-  <target name="jars" depends="compile">
+  <target name="jars-base">
     <mkdir dir="${build.deployers.dir}/jars" />
 
     <!-- Common -->
@@ -79,6 +95,8 @@
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
+  </target>
+  <target name="jars" depends="compile,jars-base" unless="brew">
 
     <!-- Fungal -->
     <jar destfile="${target.dir}/${name}-deployers-fungal.jar"
@@ -173,7 +191,7 @@
              sourcepath="src/main/java"
              destdir="${target.dir}/docs/deployers"
              doclet="org.jboss.apiviz.APIviz"
-             docletpathref="sjc.lib.path.id"
+             docletpathref="main.lib.path.id"
              author="true"
              version="true"
              windowtitle="IronJacamar Deployers"
@@ -181,7 +199,7 @@
              use="true"
              additionalparam="-author -version"
              classpath="${build.deployers.dir}/impl"
-             classpathref="sjc.lib.path.id"
+             classpathref="main.lib.path.id"
              bottom="Copyright &#169; 2008-2009 Red Hat Middleware LLC (http://www.jboss.com/)">
       <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
@@ -312,8 +330,7 @@
   <!-- ================================= 
        Target: artifacts
        ================================= -->
-  <target name="artifacts" depends="jars">
-
+  <target name="artifacts-base">
     <!-- Common -->
     <jar destfile="${target.dir}/${name}-deployers-common-sources.jar"
          basedir="src/main/java"
@@ -334,7 +351,7 @@
     <mkdir dir="${build.deployers.dir}/docs/common"/>
     <javadoc destdir="${build.deployers.dir}/docs/common"
              doclet="org.jboss.apiviz.APIviz"
-             docletpathref="sjc.lib.path.id"
+             docletpathref="main.lib.path.id"
              author="true"
              version="true"
              windowtitle="IronJacamar Deployers - Common"
@@ -342,7 +359,7 @@
              use="true"
              additionalparam="-author -version"
              classpath="${build.deployers.dir}"
-             classpathref="sjc.lib.path.id"
+             classpathref="main.lib.path.id"
              bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
@@ -368,7 +385,9 @@
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
+  </target>
 
+  <target name="artifacts" depends="jars,artifacts-base" unless="brew">
     <!-- Fungal -->
     <jar destfile="${target.dir}/${name}-deployers-fungal-sources.jar"
          basedir="src/main/java"
@@ -388,7 +407,7 @@
     <mkdir dir="${build.deployers.dir}/docs/fungal"/>
     <javadoc destdir="${build.deployers.dir}/docs/fungal"
              doclet="org.jboss.apiviz.APIviz"
-             docletpathref="sjc.lib.path.id"
+             docletpathref="main.lib.path.id"
              author="true"
              version="true"
              windowtitle="IronJacamar Deployers - Fungal"
@@ -396,7 +415,7 @@
              use="true"
              additionalparam="-author -version"
              classpath="${build.deployers.dir}"
-             classpathref="sjc.lib.path.id"
+             classpathref="main.lib.path.id"
              bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">

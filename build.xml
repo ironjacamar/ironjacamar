@@ -159,7 +159,7 @@
   <!-- ================================= 
        Paths              
        ================================= -->
-  <path id="sjc.lib.path.id">
+  <path id="main.lib.path.id">
     <fileset dir="${lib.dir}/common">
       <include name="**/*.jar"/>
     </fileset>
@@ -184,14 +184,19 @@
     <fileset dir="${lib.dir}/tools">
       <include name="**/*.jar"/>
     </fileset>
+    <fileset dir="${lib.dir}/rhq">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${target.dir}">
       <include name="**/*.jar"/>
     </fileset>
   </path>
 
-  <path id="rhq.lib.path.id">
-    <path refid="sjc.lib.path.id"/>
-    <fileset dir="${lib.dir}/rhq">
+  <path id="brew.lib.path.id">
+    <fileset dir="${lib.dir}/brew">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${target.dir}">
       <include name="**/*.jar"/>
     </fileset>
   </path>
@@ -290,7 +295,7 @@
   <!-- ================================= 
        Target: init              
        ================================= -->
-  <target name="init">
+  <target name="init" depends="init-brew-path">
     <fail message="IronJacamar requires JDK6+" unless="HAVE_JDK_1.6"/>
   
     <ivy:settings file="${basedir}/ivy.settings.xml"/>
@@ -302,7 +307,13 @@
   <!-- ================================= 
        Target: resolve              
        ================================= -->
-  <target name="resolve" depends="init">
+  <target name="resolve-brew" if="brew">
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
+                  conf="brew"
+                  sync="true"/>
+  </target>
+
+  <target name="resolve" depends="init,resolve-brew" unless="brew">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
                   conf="common,sjc,embedded,arquillian,jetty,hornetq,mail,rhq,test,tools"
                   sync="true"/>
@@ -318,17 +329,20 @@
   <!-- ================================= 
        Target: jars
        ================================= -->
-  <target name="jars" depends="resolve">
+  <target name="jars-base">
     <ant dir="api" inheritRefs="true" target="jars"/>
     <ant dir="common" inheritRefs="true" target="jars"/>
     <ant dir="core" inheritRefs="true" target="jars"/>
     <ant dir="validator" inheritRefs="true" target="jars"/>
     <ant dir="deployers" inheritRefs="true" target="jars"/>
+    <ant dir="adapters" inheritRefs="true" target="jars"/>
+  </target>
+
+  <target name="jars" depends="resolve,jars-base" unless="brew">
     <ant dir="embedded" inheritRefs="true" target="jars"/>
     <ant dir="web" inheritRefs="true" target="jars"/>
     <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="codegenerator" inheritRefs="true" target="jars"/>
-    <ant dir="adapters" inheritRefs="true" target="jars"/>
     <ant dir="rhq" inheritRefs="true" target="jars"/>
     <ant dir="as" inheritRefs="true" target="jars"/>
   </target>
@@ -336,17 +350,20 @@
   <!-- ================================= 
        Target: docs
        ================================= -->
-  <target name="docs" depends="jars">
+  <target name="docs-base">
     <ant dir="api" inheritRefs="true" target="docs"/>
     <ant dir="common" inheritRefs="true" target="docs"/>
     <ant dir="core" inheritRefs="true" target="docs"/>
     <ant dir="validator" inheritRefs="true" target="docs"/>
     <ant dir="deployers" inheritRefs="true" target="docs"/>
+    <ant dir="adapters" inheritRefs="true" target="docs"/>
+  </target>
+
+  <target name="docs" depends="jars,docs-base" unless="brew">
     <ant dir="embedded" inheritRefs="true" target="docs"/>
     <ant dir="web" inheritRefs="true" target="docs"/>
     <ant dir="sjc" inheritRefs="true" target="docs"/>
     <ant dir="codegenerator" inheritRefs="true" target="docs"/>
-    <ant dir="adapters" inheritRefs="true" target="docs"/>
     <ant dir="rhq" inheritRefs="true" target="docs"/>
     <ant dir="as" inheritRefs="true" target="docs"/>
   </target>
@@ -411,15 +428,18 @@
   <!-- ================================= 
        Target: artifacts
        ================================= -->
-  <target name="artifacts" depends="resolve">
+  <target name="artifacts-base">
     <ant dir="api" inheritRefs="true" target="artifacts"/>
     <ant dir="common" inheritRefs="true" target="artifacts"/>
     <ant dir="core" inheritRefs="true" target="artifacts"/>
     <ant dir="validator" inheritRefs="true" target="artifacts"/>
     <ant dir="deployers" inheritRefs="true" target="artifacts"/>
+    <ant dir="adapters" inheritRefs="true" target="artifacts"/>
+  </target>
+
+  <target name="artifacts" depends="resolve,artifacts-base" unless="brew">
     <ant dir="embedded" inheritRefs="true" target="artifacts"/>
     <ant dir="codegenerator" inheritRefs="true" target="artifacts"/>
-    <ant dir="adapters" inheritRefs="true" target="artifacts"/>
     <ant dir="as" inheritRefs="true" target="artifacts"/>
   </target>
   
@@ -1160,13 +1180,7 @@ mvn install:install-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifa
     </sequential>
   </macrodef>
 
-  <target name="nexus" depends="clean,artifacts">
-    <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
-  
-    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-as,${name}-codegenerator,${name}-common-api,${name}-common-impl,${name}-common-impl-papaki,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-deployers-common,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
-                  sync="true"/>
-
+  <target name="nexus-base">
     <delete file="${target.dir}/deploy.sh"/>
     <delete file="${target.dir}/install.sh"/>
 
@@ -1181,35 +1195,24 @@ PWD=`pwd`
 VERSION=${version}
 </concat>
 
-    <!-- ironjacamar-as -->
-    <delete file="${target.dir}/${name}-as.xml"/>
-    <ivy:makepom artifactName="${name}-as" 
-                 conf="${name}-as"
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
+                  conf="${name}-common-api,${name}-common-impl,${name}-common-spi,${name}-core-api,${name}-core-impl,${name}-deployers-common,${name}-validator"
+                  sync="true"/>
+
+    <!-- ironjacamar-spec-api -->
+    <delete file="${target.dir}/${name}-spec-api.xml"/>
+    <ivy:makepom artifactName="${name}-spec-api" 
+                 conf="${name}-spec-api"
                  ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-as.xml"
+                 pomfile="${target.dir}/${name}-spec-api.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
                  templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
-      <mapping conf="${name}-as" scope="runtime"/>
+      <mapping conf="${name}-spec-api" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="deploy.sh" artifact="${name}-as" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-as" extension="jar"/>
-
-    <!-- ironjacamar-codegenerator -->
-    <delete file="${target.dir}/${name}-codegenerator.xml"/>
-    <ivy:makepom artifactName="${name}-codegenerator" 
-                 conf="${name}-codegenerator"
-                 ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-codegenerator.xml"
-                 headerFile="${tools.dir}/mvn/HEADER"
-                 templatefile="${tools.dir}/mvn/pom.template"
-                 printIvyInfo="false">
-      <mapping conf="${name}-codegenerator" scope="runtime"/>
-    </ivy:makepom>
-
-    <deploy-file file="deploy.sh" artifact="${name}-codegenerator" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-codegenerator" extension="jar"/>
+    <deploy-file file="deploy.sh" artifact="${name}-spec-api" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-spec-api" extension="jar"/>
 
     <!-- ironjacamar-common-api -->
     <delete file="${target.dir}/${name}-common-api.xml"/>
@@ -1243,22 +1246,6 @@ VERSION=${version}
 
     <deploy-file file="deploy.sh" artifact="${name}-common-impl" extension="jar"/>
     <install-file file="install.sh" artifact="${name}-common-impl" extension="jar"/>
-
-    <!-- ironjacamar-common-impl-papaki -->
-    <delete file="${target.dir}/${name}-common-impl-papaki.xml"/>
-    <ivy:makepom artifactName="${name}-common-impl-papaki" 
-                 conf="${name}-common-impl-papaki"
-                 ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-common-impl-papaki.xml"
-                 headerFile="${tools.dir}/mvn/HEADER"
-                 templatefile="${tools.dir}/mvn/pom.template"
-                 printIvyInfo="false">
-      <mapping conf="${name}-common-impl-papaki" scope="runtime"/>
-      <dependency artifact="${name}-common-spi" scope="runtime"/>
-    </ivy:makepom>
-
-    <deploy-file file="deploy.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
 
     <!-- ironjacamar-common-spi -->
     <delete file="${target.dir}/${name}-common-spi.xml"/>
@@ -1309,6 +1296,110 @@ VERSION=${version}
     <deploy-file file="deploy.sh" artifact="${name}-core-impl" extension="jar"/>
     <install-file file="install.sh" artifact="${name}-core-impl" extension="jar"/>
 
+    <!-- ironjacamar-deployers-common -->
+    <delete file="${target.dir}/${name}-deployers-common.xml"/>
+    <ivy:makepom artifactName="${name}-deployers-common" 
+                 conf="${name}-deployers-common"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-deployers-common.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-deployers-common" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-deployers-common" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-deployers-common" extension="jar"/>
+
+    <!-- ironjacamar-validator -->
+    <delete file="${target.dir}/${name}-validator.xml"/>
+    <ivy:makepom artifactName="${name}-validator" 
+                 conf="${name}-validator"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-validator.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-validator" scope="runtime"/>
+      <dependency artifact="${name}-common-api" scope="runtime"/>
+      <dependency artifact="${name}-common-impl" scope="runtime"/>
+      <dependency artifact="${name}-common-spi" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-validator" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-validator" extension="jar"/>
+
+    <!-- ironjacamar-jdbc -->
+    <delete file="${target.dir}/${name}-jdbc.xml"/>
+    <ivy:makepom artifactName="${name}-jdbc" 
+                conf="${name}-jdbc"
+                ivyfile="${basedir}/ivy.xml" 
+                pomfile="${target.dir}/${name}-jdbc.xml"
+                headerFile="${tools.dir}/mvn/HEADER"
+                templatefile="${tools.dir}/mvn/pom.template"
+                printIvyInfo="false">
+      <mapping conf="${name}-jdbc" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-jdbc" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-jdbc" extension="jar"/>
+  	
+  </target>
+
+  <target name="nexus" depends="clean,artifacts,nexus-base" unless="brew">
+    <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
+  
+    <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
+                  conf="${name}-as,${name}-codegenerator,${name}-common-impl-papaki,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
+                  sync="true"/>
+
+    <!-- ironjacamar-as -->
+    <delete file="${target.dir}/${name}-as.xml"/>
+    <ivy:makepom artifactName="${name}-as" 
+                 conf="${name}-as"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-as.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-as" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-as" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-as" extension="jar"/>
+
+    <!-- ironjacamar-codegenerator -->
+    <delete file="${target.dir}/${name}-codegenerator.xml"/>
+    <ivy:makepom artifactName="${name}-codegenerator" 
+                 conf="${name}-codegenerator"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-codegenerator.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-codegenerator" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-codegenerator" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-codegenerator" extension="jar"/>
+
+    <!-- ironjacamar-common-impl-papaki -->
+    <delete file="${target.dir}/${name}-common-impl-papaki.xml"/>
+    <ivy:makepom artifactName="${name}-common-impl-papaki" 
+                 conf="${name}-common-impl-papaki"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-common-impl-papaki.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-common-impl-papaki" scope="runtime"/>
+      <dependency artifact="${name}-common-spi" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-common-impl-papaki" extension="jar"/>
+
     <!-- ironjacamar-depchain -->
     <delete file="${target.dir}/${name}-depchain.xml"/>
     <ivy:makepom artifactName="${name}-depchain" 
@@ -1327,21 +1418,6 @@ mvn -s ${mavensettings} org.apache.maven.plugins:maven-deploy-plugin:2.6:deploy-
 <concat destfile="${target.dir}/install.sh" append="true" force="true" eol="unix">
 mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depchain.xml -DuniqueVersion=false $REPOSITORY
 </concat>
-
-    <!-- ironjacamar-deployers-common -->
-    <delete file="${target.dir}/${name}-deployers-common.xml"/>
-    <ivy:makepom artifactName="${name}-deployers-common" 
-                 conf="${name}-deployers-common"
-                 ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-deployers-common.xml"
-                 headerFile="${tools.dir}/mvn/HEADER"
-                 templatefile="${tools.dir}/mvn/pom.template"
-                 printIvyInfo="false">
-      <mapping conf="${name}-deployers-common" scope="runtime"/>
-    </ivy:makepom>
-
-    <deploy-file file="deploy.sh" artifact="${name}-deployers-common" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-deployers-common" extension="jar"/>
 
     <!-- ironjacamar-deployers-fungal -->
     <delete file="${target.dir}/${name}-deployers-fungal.xml"/>
@@ -1394,40 +1470,6 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
     <deploy-file file="deploy.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
     <install-file file="install.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
 
-    <!-- ironjacamar-spec-api -->
-    <delete file="${target.dir}/${name}-spec-api.xml"/>
-    <ivy:makepom artifactName="${name}-spec-api" 
-                 conf="${name}-spec-api"
-                 ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-spec-api.xml"
-                 headerFile="${tools.dir}/mvn/HEADER"
-                 templatefile="${tools.dir}/mvn/pom.template"
-                 printIvyInfo="false">
-      <mapping conf="${name}-spec-api" scope="runtime"/>
-    </ivy:makepom>
-
-    <deploy-file file="deploy.sh" artifact="${name}-spec-api" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-spec-api" extension="jar"/>
-
-    <!-- ironjacamar-validator -->
-    <delete file="${target.dir}/${name}-validator.xml"/>
-    <ivy:makepom artifactName="${name}-validator" 
-                 conf="${name}-validator"
-                 ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-validator.xml"
-                 headerFile="${tools.dir}/mvn/HEADER"
-                 templatefile="${tools.dir}/mvn/pom.template"
-                 printIvyInfo="false">
-      <mapping conf="${name}-validator" scope="runtime"/>
-      <dependency artifact="${name}-common-api" scope="runtime"/>
-      <dependency artifact="${name}-common-impl" scope="runtime"/>
-      <dependency artifact="${name}-common-spi" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
-    </ivy:makepom>
-
-    <deploy-file file="deploy.sh" artifact="${name}-validator" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-validator" extension="jar"/>
-
     <!-- ironjacamar-validator-ant -->
     <delete file="${target.dir}/${name}-validator-ant.xml"/>
     <ivy:makepom artifactName="${name}-validator-ant" 
@@ -1476,21 +1518,6 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
     <deploy-file file="deploy.sh" artifact="${name}-validator-maven" extension="jar"/>
     <install-file file="install.sh" artifact="${name}-validator-maven" extension="jar"/>
 
-    <!-- ironjacamar-jdbc -->
-    <delete file="${target.dir}/${name}-jdbc.xml"/>
-    <ivy:makepom artifactName="${name}-jdbc" 
-                conf="${name}-jdbc"
-                ivyfile="${basedir}/ivy.xml" 
-                pomfile="${target.dir}/${name}-jdbc.xml"
-                headerFile="${tools.dir}/mvn/HEADER"
-                templatefile="${tools.dir}/mvn/pom.template"
-                printIvyInfo="false">
-      <mapping conf="${name}-jdbc" scope="runtime"/>
-    </ivy:makepom>
-
-    <deploy-file file="deploy.sh" artifact="${name}-jdbc" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-jdbc" extension="jar"/>
-  	
     <!-- jdbc-local -->
     <delete file="${target.dir}/jdbc-local.xml"/>
     <ivy:makepom artifactName="jdbc-local" 
@@ -1539,6 +1566,12 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
     <chmod file="${target.dir}/deploy.sh" perm="755"/>
     <chmod file="${target.dir}/install.sh" perm="755"/>
 
+  </target>
+
+  <target name="init-brew-path" if="brew">
+    <path id="main.lib.path.id">
+      <path refid="brew.lib.path.id"/>
+    </path>
   </target>
 
 </project>
