@@ -36,6 +36,7 @@
     <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getCoordinatorEnvironmentBean"/>
     <property name="enableStatistics">false</property>
     <property name="defaultTimeout">300</property>
+    <property name="transactionStatusManagerEnable">false</property>
   </bean>
 
   <bean name="ActionStoreObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
