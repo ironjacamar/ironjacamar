@@ -126,7 +126,7 @@
   <property name="version.jboss.logging" value="3.0.0.GA"/>
   <property name="version.jboss.logging-generator" value="1.0.0.Beta7"/>
   <property name="version.jboss.logging-processor" value="1.0.0.Beta7"/>
-  <property name="version.jboss.logmanager" value="1.2.0.CR9"/>
+  <property name="version.jboss.logmanager" value="1.2.0.GA"/>
   <property name="version.jboss.naming" value="5.0.3.GA"/>
   <property name="version.jboss.netty" value="3.2.1.Final"/>
   <property name="version.jboss.papaki" value="1.0.0.Beta3"/>
