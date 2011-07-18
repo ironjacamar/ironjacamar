@@ -284,7 +284,9 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
 
          List<ObjectName> ons = null;
          if (c.isActivateDeployment())
-            ons = registerManagementView(c.getConnector(), kernel.getMBeanServer());
+            ons = registerManagementView(c.getConnector(),
+                                         kernel.getMBeanServer(),
+                                         kernel.getName());
 
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();

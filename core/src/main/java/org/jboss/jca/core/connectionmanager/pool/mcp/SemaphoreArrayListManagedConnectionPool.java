@@ -249,7 +249,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   {
                      cl = cls.remove(clsSize - 1);
                      checkedOut.add(cl);
-                     statistics.setMaxUsedCount(maxSize - permits.availablePermits());
+                     statistics.setInUsedCount(checkedOut.size());
                   }
                }
                if (cl != null)
@@ -280,6 +280,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      synchronized (cls)
                      {
                         checkedOut.remove(cl);
+                        statistics.setInUsedCount(checkedOut.size());
                      }
 
                      doDestroy(cl);
@@ -292,6 +293,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      synchronized (cls)
                      {
                         checkedOut.remove(cl);
+                        statistics.setInUsedCount(checkedOut.size());
                      }
 
                      doDestroy(cl);
@@ -321,7 +323,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                synchronized (cls)
                {
                   checkedOut.add(cl);
-                  statistics.setMaxUsedCount(maxSize - permits.availablePermits());
+                  statistics.setInUsedCount(checkedOut.size());
                }
 
                if (trace)
@@ -339,6 +341,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                synchronized (cls)
                {
                   checkedOut.remove(cl);
+                  statistics.setInUsedCount(checkedOut.size());
                }
 
                permits.release();
@@ -404,6 +407,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             kill = true;
 
          checkedOut.remove(cl);
+         statistics.setInUsedCount(checkedOut.size());
 
          // This is really an error
          if (!kill && isSize(poolConfiguration.getMaxSize() + 1))
@@ -488,7 +492,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   destroy = new ArrayList<ConnectionListener>(1);
 
                destroy.add(cl);
+
+               if (clPermits.containsKey(cl))
+               {
+                  clPermits.remove(cl);
+                  permits.release();
+               }
             }
+
+            statistics.setInUsedCount(checkedOut.size());
          }
 
          // Destroy connections in the pool
@@ -646,7 +658,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                            log.trace("Filling pool cl=" + cl);
 
                         cls.add(cl);
-                        statistics.setMaxUsedCount(maxSize - permits.availablePermits());
+                        statistics.setInUsedCount(checkedOut.size() + 1);
                      }
                   }
                   catch (ResourceException re)

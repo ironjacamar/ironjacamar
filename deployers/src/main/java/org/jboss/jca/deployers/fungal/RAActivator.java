@@ -273,7 +273,9 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
 
          CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd);
 
-         List<ObjectName> ons = registerManagementView(c.getConnector(), kernel.getMBeanServer());
+         List<ObjectName> ons = registerManagementView(c.getConnector(),
+                                                       kernel.getMBeanServer(),
+                                                       kernel.getName());
 
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          ResourceAdapterRepository resourceAdapterRepository =

@@ -211,7 +211,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                                                           uniqueJdbcLocalId, uniqueJdbcXAId,
                                                           dataSources, parent);
 
-         List<ObjectName> onames = registerManagementView(c.getDataSources(), kernel.getMBeanServer());
+         List<ObjectName> onames = registerManagementView(c.getDataSources(),
+                                                          kernel.getMBeanServer(),
+                                                          kernel.getName());
 
          return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
                                     c.getCfs(), c.getCfJndiNames(),
@@ -365,11 +367,12 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
     * Register management view of datasources in JMX
     * @param mgtDses The management view of the datasources
     * @param server The MBeanServer instance
+    * @param domain The management domain
     * @return The ObjectName's generated for these datasources
     * @exception JMException Thrown in case of an error
     */
    private List<ObjectName> registerManagementView(org.jboss.jca.core.api.management.DataSource[] mgtDses,
-                                                   MBeanServer server)
+                                                   MBeanServer server, String domain)
       throws JMException
    {
       List<ObjectName> ons = null;
@@ -385,7 +388,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                if (jndiName.indexOf("/") != -1)
                   jndiName = jndiName.substring(jndiName.lastIndexOf("/") + 1);
 
-               String baseName = server.getDefaultDomain() + ":deployment=" + jndiName;
+               String baseName = domain + ":deployment=" + jndiName;
 
                if (mgtDs.getPoolConfiguration() != null)
                {

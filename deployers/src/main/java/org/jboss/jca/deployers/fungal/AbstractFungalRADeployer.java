@@ -396,11 +396,12 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
     * Register management view of a connector in JMX
     * @param mgtConnector The management view of the connector
     * @param server The MBeanServer instance
+    * @param domain The management domain
     * @return The ObjectName's generated for this connector
     * @exception JMException Thrown in case of an error
     */
    protected List<ObjectName> registerManagementView(org.jboss.jca.core.api.management.Connector mgtConnector,
-                                                     MBeanServer server)
+                                                     MBeanServer server, String domain)
       throws JMException
    {
       List<ObjectName> ons = null;
@@ -410,7 +411,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
          if (server != null)
          {
             ons = new ArrayList<ObjectName>();
-            String baseName = server.getDefaultDomain() + ":deployment=" + mgtConnector.getUniqueId();
+            String baseName = domain + ":deployment=" + mgtConnector.getUniqueId();
 
             if (mgtConnector.getResourceAdapter() != null)
             {
