@@ -55,6 +55,23 @@ class SecurityActions
    }
 
    /**
+    * Get a system property
+    * @param name The property name
+    * @param value The default property value
+    * @return The property value
+    */
+   static String getSystemProperty(final String name, final String value)
+   {
+      return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      {
+         public Object run()
+         {
+            return System.getProperty(name, value);
+         }
+      });
+   }
+
+   /**
     * Set a system property
     * @param name The property name
     * @param value The property value
