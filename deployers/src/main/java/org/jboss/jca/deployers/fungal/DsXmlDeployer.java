@@ -86,6 +86,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    /** Metadata repository */
    protected MetadataRepository mdr;
 
+   /** Driver registry */
+   protected DriverRegistry driverRegistry;
+
    /**
     * Constructor
     */
@@ -94,6 +97,8 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       this.kernel = null;
       this.jdbcLocal = null;
       this.jdbcXA = null;
+      this.mdr = null;
+      this.driverRegistry = null;
    }
 
    /**
@@ -156,6 +161,15 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    protected DeployersLogger getLogger()
    {
       return log;
+   }
+
+   /**
+    * Set the driver registry
+    * @param value The value
+    */
+   public void setDriverRegistry(DriverRegistry value)
+   {
+      driverRegistry = value;
    }
 
    /**
@@ -303,6 +317,23 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       log.infof("Bound data source at: %s", jndi);
 
       return result;
+   }
+
+   /**
+    * Get the driver
+    * @param driverName The name of the driver
+    * @param moduleId The id of the module
+    * @return The driver class name; or <code>null</code> if not found
+    */
+   @Override
+   protected String getDriver(String driverName, String moduleId)
+   {
+      String driver = driverRegistry.getDriver(driverName);
+
+      if (driver == null)
+         driver = driverRegistry.getDriver(moduleId);
+
+      return driver;
    }
 
    /**
