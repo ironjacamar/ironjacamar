@@ -751,7 +751,8 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>driver</code></entry>
                 <entry>
-                  An unique name for the JDBC driver specified in the drivers section
+                  An unique name for the JDBC driver specified in the drivers section.
+                  Or the name of the .jar file if deployed as standalone deployment
                 </entry>
               </row>
               <row>
@@ -859,8 +860,8 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>driver</code></entry>
                 <entry>
-                  An unique reference to the classloader module which contains the JDBC driver
-                   The accepted format is driverName#majorVersion.minorVersion
+                  An unique name for the JDBC driver specified in the drivers section.
+                  Or the name of the .jar file if deployed as standalone deployment
                 </entry>
               </row>
               <row>
@@ -1364,7 +1365,10 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>module</code></entry>
                 <entry>
-                  The module definition for the JDBC driver
+                  The module definition for the JDBC driver. The format of a module inside
+                  JBoss Application Server 7+ is <code>com.h2database.h2</code> which will
+                  map to the H2 installation under <code>modules/com/h2database/h2/main</code>.
+                  The format for IronJacamar Standalone/Embedded is the name of the .jar file
                 </entry>
               </row>
               <row>

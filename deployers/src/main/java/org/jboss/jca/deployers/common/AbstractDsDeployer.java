@@ -239,8 +239,28 @@ public abstract class AbstractDsDeployer
                         if (dataSource.getDriverClass() == null && dataSource.getDriver() != null &&
                             dataSource instanceof DataSourceImpl)
                         {
-                           ((DataSourceImpl) dataSource).forceDriverClass(dataSources.getDriver(dataSource
-                              .getDriver()).getDriverClass());
+                           String driverClass = null;
+
+                           if (dataSources.getDriver(dataSource.getDriver()) != null)
+                              driverClass = dataSources.getDriver(dataSource.getDriver()).getDriverClass();
+
+                           if (driverClass != null)
+                              ((DataSourceImpl) dataSource).forceDriverClass(driverClass);
+                        }
+
+                        if (dataSource.getDriverClass() == null && dataSource.getDriver() != null &&
+                            dataSource instanceof DataSourceImpl)
+                        {
+                           String driverName = dataSource.getDriver();
+                           String moduleId = null;
+
+                           if (dataSources.getDriver(dataSource.getDriver()) != null)
+                              moduleId = dataSources.getDriver(dataSource.getDriver()).getModule();
+
+                           String driverClass = getDriver(driverName, moduleId);
+
+                           if (driverClass != null)
+                              ((DataSourceImpl) dataSource).forceDriverClass(driverClass);
                         }
 
                         Object cf = deployDataSource(dataSource, jndiName,
@@ -356,6 +376,17 @@ public abstract class AbstractDsDeployer
       }
 
       return jndiName;
+   }
+
+   /**
+    * Get the driver
+    * @param driverName The name of the driver
+    * @param moduleId The id of the module
+    * @return The driver class name; or <code>null</code> if not found
+    */
+   protected String getDriver(String driverName, String moduleId)
+   {
+      return null;
    }
 
    /**
