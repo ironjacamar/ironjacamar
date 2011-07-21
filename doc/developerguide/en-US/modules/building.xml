@@ -161,4 +161,18 @@ cd target/sjc/bin
     </programlisting>
 
   </section>
+
+  <section id="creating_a_patch">
+    <title>Creating a patch</title>
+
+    <para>
+      Our user guide explains in the "I would like to implement a feature" section how to get 
+      started on a writing a new feature or submitting a patch to the project. 
+    </para>
+
+    <para>
+      All patches should be created in a unified diff format.
+    </para>
+  </section>
+
 </chapter>
