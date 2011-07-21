@@ -787,7 +787,7 @@
 
   <xs:complexType name="extensionType">
     <xs:sequence>
-      <xs:element name="config-property" type="config-propertyType"></xs:element>
+      <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded"></xs:element>
     </xs:sequence>
     <xs:attribute name="class-name" type="xs:token" use="required"></xs:attribute>
   </xs:complexType>
