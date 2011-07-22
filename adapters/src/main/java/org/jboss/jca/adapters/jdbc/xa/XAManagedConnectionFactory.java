@@ -23,6 +23,7 @@
 package org.jboss.jca.adapters.jdbc.xa;
 
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
+import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 
 import java.beans.PropertyEditor;
@@ -251,9 +252,44 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       }
 
       XADataSource xads = null;
+      Class<?> clazz = null;
+
       try
       {
-         Class<?> clazz = getClassLoaderPlugin().getClassLoader().loadClass(getXADataSourceClass());
+         clazz = Class.forName(getXADataSourceClass(), true, getClassLoaderPlugin().getClassLoader());
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         // Ignore
+      }
+
+      if (clazz == null)
+      {
+         try
+         {
+            clazz = Class.forName(getXADataSourceClass(), true, new TCClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Ignore
+         }
+      }
+
+      if (clazz == null)
+      {
+         try
+         {
+            clazz = Class.forName(getXADataSourceClass(), true, XAManagedConnectionFactory.class.getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            throw new ResourceException("Class not found for XADataSource " + getXADataSourceClass(), cnfe);
+         }
+      }
+
+
+      try
+      {
          xads = (XADataSource)clazz.newInstance();
          final Class<?>[] noClasses = new Class<?>[]{};
          for (Iterator<?> i = xaProps.keySet().iterator(); i.hasNext();)
@@ -305,10 +341,6 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             setter.invoke(xads, new Object[]{editor.getValue()});
 
          }
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         throw new ResourceException("Class not found for XADataSource " + getXADataSourceClass(), cnfe);
       }
       catch (InstantiationException ie)
       {

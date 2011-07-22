@@ -98,7 +98,7 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
       log = Logger.getLogger(OracleValidConnectionChecker.class);
 
       Class<?> oracleConnection =
-         Thread.currentThread().getContextClassLoader().loadClass("oracle.jdbc.driver.OracleConnection");
+         Class.forName("oracle.jdbc.driver.OracleConnection", true, getClass().getClassLoader());
       ping = oracleConnection.getMethod("pingDatabase", new Class<?>[] {Integer.TYPE});
    }
 

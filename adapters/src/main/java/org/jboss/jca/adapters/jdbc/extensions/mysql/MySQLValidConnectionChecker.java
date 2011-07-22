@@ -155,8 +155,7 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
       log = Logger.getLogger(MySQLValidConnectionChecker.class);
       driverHasPingMethod = false;
 
-      Class<?> mysqlConnection =
-         Thread.currentThread().getContextClassLoader().loadClass("com.mysql.jdbc.Connection");
+      Class<?> mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, getClass().getClassLoader());
 
       ping = mysqlConnection.getMethod("ping", new Class<?>[] {});
 
