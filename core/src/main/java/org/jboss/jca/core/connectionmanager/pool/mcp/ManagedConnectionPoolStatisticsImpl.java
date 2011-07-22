@@ -71,6 +71,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private AtomicInteger timedOut;
    private AtomicLong totalBlockingTime;
    private AtomicLong totalCreationTime;
+   private AtomicInteger inUseCount;
 
    /**
     * Constructor
@@ -140,6 +141,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.timedOut = new AtomicInteger(0);
       this.totalBlockingTime = new AtomicLong(0);
       this.totalCreationTime = new AtomicLong(0);
+      this.inUseCount = new AtomicInteger(0);
    }
 
    /**
@@ -282,7 +284,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public int getAvailableCount()
    {
-      return maxPoolSize - getActiveCount();
+      return maxPoolSize - inUseCount.get();
    }
 
    /**
@@ -340,6 +342,16 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    public int getMaxUsedCount()
    {
       return maxUsedCount.get() != Integer.MIN_VALUE ? maxUsedCount.get() : 0;
+   }
+
+   /**
+    * Set in used count
+    * @param v The value
+    */
+   public void setInUsedCount(int v)
+   {
+      inUseCount.set(v);
+      setMaxUsedCount(v);
    }
 
    /**

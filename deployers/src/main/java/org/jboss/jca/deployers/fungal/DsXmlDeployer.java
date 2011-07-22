@@ -86,6 +86,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    /** Metadata repository */
    protected MetadataRepository mdr;
 
+   /** Driver registry */
+   protected DriverRegistry driverRegistry;
+
    /**
     * Constructor
     */
@@ -94,6 +97,8 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       this.kernel = null;
       this.jdbcLocal = null;
       this.jdbcXA = null;
+      this.mdr = null;
+      this.driverRegistry = null;
    }
 
    /**
@@ -159,6 +164,15 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    }
 
    /**
+    * Set the driver registry
+    * @param value The value
+    */
+   public void setDriverRegistry(DriverRegistry value)
+   {
+      driverRegistry = value;
+   }
+
+   /**
     * Deploy
     * @param url The url
     * @param parent The parent classloader
@@ -211,7 +225,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                                                           uniqueJdbcLocalId, uniqueJdbcXAId,
                                                           dataSources, parent);
 
-         List<ObjectName> onames = registerManagementView(c.getDataSources(), kernel.getMBeanServer());
+         List<ObjectName> onames = registerManagementView(c.getDataSources(),
+                                                          kernel.getMBeanServer(),
+                                                          kernel.getName());
 
          return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
                                     c.getCfs(), c.getCfJndiNames(),
@@ -304,6 +320,23 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    }
 
    /**
+    * Get the driver
+    * @param driverName The name of the driver
+    * @param moduleId The id of the module
+    * @return The driver class name; or <code>null</code> if not found
+    */
+   @Override
+   protected String getDriver(String driverName, String moduleId)
+   {
+      String driver = driverRegistry.getDriver(driverName);
+
+      if (driver == null)
+         driver = driverRegistry.getDriver(moduleId);
+
+      return driver;
+   }
+
+   /**
     * Start
     */
    public void start()
@@ -365,11 +398,12 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
     * Register management view of datasources in JMX
     * @param mgtDses The management view of the datasources
     * @param server The MBeanServer instance
+    * @param domain The management domain
     * @return The ObjectName's generated for these datasources
     * @exception JMException Thrown in case of an error
     */
    private List<ObjectName> registerManagementView(org.jboss.jca.core.api.management.DataSource[] mgtDses,
-                                                   MBeanServer server)
+                                                   MBeanServer server, String domain)
       throws JMException
    {
       List<ObjectName> ons = null;
@@ -385,7 +419,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                if (jndiName.indexOf("/") != -1)
                   jndiName = jndiName.substring(jndiName.lastIndexOf("/") + 1);
 
-               String baseName = server.getDefaultDomain() + ":deployment=" + jndiName;
+               String baseName = domain + ":deployment=" + jndiName;
 
                if (mgtDs.getPoolConfiguration() != null)
                {

@@ -741,10 +741,45 @@ public abstract class BaseWrapperManagedConnectionFactory
 
       if (reauthPluginClassName == null || reauthPluginClassName.trim().equals(""))
          throw new IllegalStateException("ReauthPlugin class name not defined");
+      
+      Class<?> clz = null;
 
       try
       {
-         Class<?> clz = Class.forName(reauthPluginClassName, true, Thread.currentThread().getContextClassLoader());
+         clz = Class.forName(reauthPluginClassName, true, getClassLoaderPlugin().getClassLoader());
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         // Not found
+      }
+
+      if (clz == null)
+      {
+         try
+         {
+            clz = Class.forName(reauthPluginClassName, true, new TCClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
+      }
+
+      if (clz == null)
+      {
+         try
+         {
+            clz = Class.forName(reauthPluginClassName, true, 
+                                BaseWrapperManagedConnectionFactory.class.getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            throw new ResourceException("Error during loading reauth plugin", cnfe);
+         }
+      }
+
+      try
+      {
          reauthPlugin = (ReauthPlugin)clz.newInstance();
 
          if (reauthPluginProperties != null)
@@ -771,7 +806,7 @@ public abstract class BaseWrapperManagedConnectionFactory
             }
          }
 
-         reauthPlugin.initialize(Thread.currentThread().getContextClassLoader());
+         reauthPlugin.initialize(BaseWrapperManagedConnectionFactory.class.getClassLoader());
       }
       catch (Throwable t)
       {
@@ -834,33 +869,57 @@ public abstract class BaseWrapperManagedConnectionFactory
    public Object loadClass(String className, Object constructorParameter)
    {
       Object result = null;
+
+      if (className == null || className.trim().equals(""))
+      {
+         log.error("Unable to load undefined URLSelectStrategy");
+         return null;
+      }
+
+      Class<?> clz = null;
       try
       {
-         Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
-         Class<?> param[] = {java.util.List.class};
-         Constructor<?> cnstructor = clazz.getDeclaredConstructor(param);
-         Object consParameter[] = {constructorParameter};
-         result = cnstructor.newInstance(consParameter);
+         clz = Class.forName(className, true, getClassLoaderPlugin().getClassLoader());
       }
       catch (ClassNotFoundException cnfe)
       {
-         log.error("Class not found for URLSelectStrategy :" + className);
+         // Not found
       }
-      catch (InstantiationException ie)
+
+      if (clz == null)
       {
-         log.error("Could not instantiate URLSelectorStrategy type :" + className);
+         try
+         {
+            clz = Class.forName(className, true, new TCClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
       }
-      catch (IllegalAccessException iae)
+
+      if (clz == null)
       {
-         log.error("Check for the constructor with List parameter for URLSelectStrategy class as " + className);
+         try
+         {
+            clz = Class.forName(className, true, BaseWrapperManagedConnectionFactory.class.getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            log.error("Unable to load: " + className);
+         }
       }
-      catch (InvocationTargetException ite)
+
+      try
       {
-         log.error("Constructor Invocation failing for URLSelectorStrategy " + className);
+         Class<?> param[] = {java.util.List.class};
+         Constructor<?> constructor = clz.getDeclaredConstructor(param);
+         Object consParameter[] = {constructorParameter};
+         result = constructor.newInstance(consParameter);
       }
-      catch (NoSuchMethodException nsme)
+      catch (Throwable t)
       {
-         log.error("Constructor or Method mismatch in URLSelectorStrategy :" + className);
+         log.error("URLSelectStrategy:" + t.getMessage(), t);
       }
 
       return result;
@@ -975,6 +1034,69 @@ public abstract class BaseWrapperManagedConnectionFactory
    }
 
    /**
+    * Load plugin class
+    * @param plugin The plugin class name
+    * @param props Optional properties that should be injected
+    * @return The configured object
+    * @exception Exception Thrown if the plugin couldn't be loaded
+    */
+   Object loadPlugin(String plugin, Properties props) throws Exception
+   {
+      if (plugin == null)
+         throw new Exception("Plugin is null");
+
+      if (plugin.trim().equals(""))
+         throw new Exception("Plugin isn't defined");
+
+      Class<?> clz = null;
+      try
+      {
+         clz = Class.forName(plugin, true, getClassLoaderPlugin().getClassLoader());
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         // Not found
+      }
+
+      if (clz == null)
+      {
+         try
+         {
+            clz = Class.forName(plugin, true, new TCClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
+      }
+
+      if (clz == null)
+      {
+         try
+         {
+            clz = Class.forName(plugin, true, BaseWrapperManagedConnectionFactory.class.getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            throw new Exception("Unable to load: " + plugin);
+         }
+      }
+
+      Object result = clz.newInstance();
+
+      if (props != null)
+      {
+         Injection injection = new Injection();
+         for (Entry<Object, Object> prop : props.entrySet())
+         {
+            injection.inject(result, (String)prop.getKey(), (String)prop.getValue());
+         }
+      }
+
+      return result;
+   }
+
+   /**
     * Is the exception fatal
     * @param e The exception
     * @return True if fatal; otherwise false
@@ -990,15 +1112,18 @@ public abstract class BaseWrapperManagedConnectionFactory
          {
             try
             {
-               ClassLoader cl = Thread.currentThread().getContextClassLoader();
-               Class<?> clazz = cl.loadClass(exceptionSorterClassName);
-               exceptionSorter = (ExceptionSorter)clazz.newInstance();
-               Injection injection = new Injection();
-               for (Entry<Object, Object> prop : exceptionSorterProps.entrySet())
+               Object o = loadPlugin(exceptionSorterClassName, exceptionSorterProps);
+
+               if (o != null && o instanceof ExceptionSorter)
                {
-                  injection.inject(exceptionSorter, (String)prop.getKey(), (String)prop.getValue());
+                  exceptionSorter = (ExceptionSorter)o;
+                  return exceptionSorter.isExceptionFatal(e);
                }
-               return exceptionSorter.isExceptionFatal(e);
+               else
+               {
+                  log.warn("Disabling exception sorter");
+                  exceptionSorter = new NullExceptionSorter();
+               }
             }
             catch (Exception e2)
             {
@@ -1030,19 +1155,22 @@ public abstract class BaseWrapperManagedConnectionFactory
       {
          try
          {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            Class<?> clazz = cl.loadClass(validConnectionCheckerClassName);
-            connectionChecker = (ValidConnectionChecker) clazz.newInstance();
-            Injection injection = new Injection();
-            for (Entry<Object, Object> prop : validConnectionCheckerProps.entrySet())
+            Object o = loadPlugin(validConnectionCheckerClassName, validConnectionCheckerProps);
+
+            if (o != null && o instanceof ValidConnectionChecker)
             {
-               injection.inject(connectionChecker, (String)prop.getKey(), (String)prop.getValue());
+               connectionChecker = (ValidConnectionChecker)o;
+               return connectionChecker.isValidConnection(c);
             }
-            return connectionChecker.isValidConnection(c);
+            else
+            {
+               log.warn("Disabling valid connection checker");
+               connectionChecker = new NullValidConnectionChecker();
+            }
          }
          catch (Exception e)
          {
-            log.warn("Exception trying to create connection checker (disabling):", e);
+            log.warn("Exception trying to create valid connection checker (disabling):", e);
             connectionChecker = new NullValidConnectionChecker();
          }
       }
@@ -1073,19 +1201,22 @@ public abstract class BaseWrapperManagedConnectionFactory
       {
          try
          {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            Class<?> clazz = cl.loadClass(staleConnectionCheckerClassName);
-            staleConnectionChecker = (StaleConnectionChecker)clazz.newInstance();
-            Injection injection = new Injection();
-            for (Entry<Object, Object> prop : staleConnectionCheckerProps.entrySet())
+            Object o = loadPlugin(staleConnectionCheckerClassName, staleConnectionCheckerProps);
+
+            if (o != null && o instanceof StaleConnectionChecker)
             {
-               injection.inject(staleConnectionChecker, (String)prop.getKey(), (String)prop.getValue());
+               staleConnectionChecker = (StaleConnectionChecker)o;
+               return staleConnectionChecker.isStaleConnection(e);
             }
-            return staleConnectionChecker.isStaleConnection(e);
+            else
+            {
+               log.warn("Disabling stale connection checker");
+               staleConnectionChecker = new NullStaleConnectionChecker();
+            }
          }
          catch (Exception ex2)
          {
-            log.warn("exception trying to create stale connection checker (disabling) " +
+            log.warn("Exception trying to create stale connection checker (disabling) " +
                      staleConnectionCheckerClassName, ex2);
 
             staleConnectionChecker = new NullStaleConnectionChecker();

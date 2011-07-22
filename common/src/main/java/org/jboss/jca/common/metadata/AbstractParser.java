@@ -419,7 +419,7 @@ public abstract class AbstractParser
       boolean isSameRmOverrideValue = false;
       boolean padXid = false;
       boolean noTxSeparatePool = false;
-      boolean wrapXaDataSource = false;
+      boolean wrapXaDataSource = true;
       boolean useStrictMin = false;
 
       while (reader.hasNext())

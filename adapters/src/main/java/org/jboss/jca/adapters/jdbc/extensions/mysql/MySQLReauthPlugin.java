@@ -51,12 +51,35 @@ public class MySQLReauthPlugin implements ReauthPlugin
     */
    public synchronized void initialize(ClassLoader cl) throws SQLException
    {
+      Class<?> mysqlConnection = null;
+
       try
       {
-         Class<?> mysqlConnection = cl.loadClass("com.mysql.jdbc.Connection");
+         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+         mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, tccl);
+      }
+      catch (ClassNotFoundException cnfe) 
+      {
+         // Ignore
+      }
+
+      if (mysqlConnection == null)
+      {
+         try
+         {
+            mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, cl);
+         }
+         catch (Throwable t) 
+         {
+            throw new SQLException("Cannot resolve com.mysq.jdbc.Connection changeUser method", t);
+         }
+      }
+
+      try
+      {
          changeUser = mysqlConnection.getMethod("changeUser", new Class[] {String.class, String.class});
-      } 
-      catch (Throwable t) 
+      }
+      catch (Throwable t)
       {
          throw new SQLException("Cannot resolve com.mysq.jdbc.Connection changeUser method", t);
       }

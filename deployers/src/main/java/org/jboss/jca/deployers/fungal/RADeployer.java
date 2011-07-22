@@ -171,7 +171,9 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
 
          List<ObjectName> ons = null;
          if (c.isActivateDeployment())
-            ons = registerManagementView(c.getConnector(), kernel.getMBeanServer());
+            ons = registerManagementView(c.getConnector(),
+                                         kernel.getMBeanServer(),
+                                         kernel.getName());
 
          JndiStrategy jndiStrategy = ((RAConfiguration) getConfiguration()).getJndiStrategy();
          MetadataRepository metadataRepository = ((RAConfiguration) getConfiguration()).getMetadataRepository();

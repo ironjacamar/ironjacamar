@@ -205,7 +205,7 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
       log = Logger.getLogger(MySQLReplicationValidConnectionChecker.class);
 
       // Load connection class
-      Class<?> mysqlConnection = Thread.currentThread().getContextClassLoader().loadClass(CONNECTION_CLASS);
+      Class<?> mysqlConnection = Class.forName(CONNECTION_CLASS, true, getClass().getClassLoader());
 
       // Check for Java 6 compatibility and use isValid on the connection
       try
