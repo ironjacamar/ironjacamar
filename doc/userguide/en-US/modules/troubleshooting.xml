@@ -52,8 +52,8 @@ ant clean cobertura
         </listitem>
       </orderedlist>
 
-      <para>when done, create a JIRA task (Patch) in our JIRA environment. See the developer guide for
-        additional details.</para>
+      <para>when done, create a JIRA task (Feature Request) in our JIRA environment and attach the unified
+        diff formatted patch. See the developer guide for additional details.</para>
 
       <para>Happy Coding !</para>
 
