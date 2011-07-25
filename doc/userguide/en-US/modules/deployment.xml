@@ -1419,6 +1419,169 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
 
       </section>
 
+      <section id="deployingds_extensions">
+        <title>Datasource extensions</title>
+
+        <para>
+          The datasource deployments can make use of a couple of extensions in the JDBC resource adapter
+          to improve the connection validation and checking if an exception should reestablish
+          the connection in question.
+        </para>
+
+        <para>
+          The extensions include
+
+          <itemizedlist>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.spi.ExceptionSorter</code>: Plugin to check if a 
+              <code>SQLException</code> is fatal for the connection on which it was thrown.
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.spi.StaleConnection</code>: Plugin to wrap stale 
+              <code>SQLException</code>'s in a <code>org.jboss.jca.adapters.jdbc.StaleConnectionException</code>.
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.spi.ValidConnection</code>: Plugin to Check if a connection is
+              valid for use by the application.
+            </listitem>
+          </itemizedlist>
+
+        </para>
+
+        <para>
+          Configuration of the extensions are done by using
+
+          <itemizedlist>
+            <listitem>
+              The <code>&lt;exception-sorter&gt;</code> tag for an <code>ExceptionSorter</code>
+            </listitem>
+            <listitem>
+              The <code>&lt;stale-connection-checker&gt;</code> tag for a <code>StaleConnection</code>
+            </listitem>
+            <listitem>
+              The <code>&lt;valid-connection-checker&gt;</code> tag for a <code>ValidConnection</code> 
+            </listitem>
+          </itemizedlist>
+
+        </para>
+
+        <para>
+          IronJacamar features implementations of these extensions for a couple of popular databases.
+          Contributions in this area are most welcome either generic solutions or for a specific database.
+        </para>
+
+        <para>
+          Informix:
+
+          <itemizedlist spacing="compact">
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.informix.InformixExceptionSorter</code>
+            </listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          Microsoft SQLServer:
+
+          <itemizedlist spacing="compact">
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker</code>
+            </listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          PostgreSQL:
+
+          <itemizedlist spacing="compact">
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker</code>
+            </listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          MySQL:
+
+          <itemizedlist spacing="compact">
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLReplicationValidConnectionChecker</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker</code>
+            </listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          IBM DB2:
+
+          <itemizedlist spacing="compact">
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.db2.DB2ExceptionSorter</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.db2.DB2StaleConnectionChecker</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.db2.DB2ValidConnectionChecker</code>
+            </listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          Generic:
+
+          <itemizedlist spacing="compact">
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.novendor.NullExceptionSorter</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.novendor.NullStaleConnectionChecker</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.novendor.NullValidConnectionChecker</code>
+            </listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          Sybase:
+
+          <itemizedlist spacing="compact">
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseExceptionSorter</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseValidConnectionChecker</code>
+            </listitem>
+          </itemizedlist>
+        </para>
+
+        <para>
+          Oracle:
+
+          <itemizedlist spacing="compact">
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.oracle.OracleStaleConnectionChecker</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker</code>
+            </listitem>
+          </itemizedlist>
+        </para>
+
+      </section>
+
    </section>
 
 </chapter>
