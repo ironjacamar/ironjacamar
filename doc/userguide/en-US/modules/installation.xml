@@ -103,8 +103,8 @@ ironjacamar-1.0.0.Final
      </para>
 
      <para>
-       You can get an overview of all IronJacamar releases by browsing our
-       <ulink url="http://repository.jboss.org/nexus/content/groups/public/org/jboss/ironjacamar/">Nexus</ulink> repository.
+       You can get an overview of all IronJacamar releases by searching our
+       <ulink url="https://repository.jboss.org/nexus/">Nexus</ulink> repository.
      </para>
 
      <warning>
