@@ -35,12 +35,14 @@ import org.jboss.jca.core.spi.rar.NotFoundException;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -64,6 +66,9 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
       SimpleResourceAdapterRepository.class.getName());
 
+   /** The approved types */
+   private static Set<Class<?>> approvedTypes;
+
    /** Resource adapters */
    private Map<String, WeakReference<ResourceAdapter>> rars;
 
@@ -72,6 +77,29 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
 
    /** The metadata repository */
    private MetadataRepository mdr;
+
+   // We include the primitive types because we can handle those
+   static
+   {
+      approvedTypes = new HashSet<Class<?>>();
+      approvedTypes.add(boolean.class);
+      approvedTypes.add(Boolean.class);
+      approvedTypes.add(byte.class);
+      approvedTypes.add(Byte.class);
+      approvedTypes.add(short.class);
+      approvedTypes.add(Short.class);
+      approvedTypes.add(int.class);
+      approvedTypes.add(Integer.class);
+      approvedTypes.add(long.class);
+      approvedTypes.add(Long.class);
+      approvedTypes.add(float.class);
+      approvedTypes.add(Float.class);
+      approvedTypes.add(double.class);
+      approvedTypes.add(Double.class);
+      approvedTypes.add(char.class);
+      approvedTypes.add(Character.class);
+      approvedTypes.add(String.class);
+   }
 
    /**
     * Constructor
@@ -350,6 +378,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          Set<String> requiredConfigProperties = new HashSet<String>();
 
          Activationspec15 as = ml.getActivationspec();
+         Class<?> asClz = Class.forName(as.getActivationspecClass().getValue(), true, cl);
 
          List<? extends ConfigProperty> cps = as.getConfigProperties();
          if (cps != null && cps.size() > 0)
@@ -363,6 +392,8 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
             }
          }
 
+         configProperties.putAll(introspectActivationSpec(asClz));
+
          List<? extends RequiredConfigProperty> rcps = as.getRequiredConfigProperties();
          if (rcps != null && rcps.size() > 0)
          {
@@ -373,8 +404,6 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
                requiredConfigProperties.add(name);
             }
          }
-
-         Class<?> asClz = Class.forName(as.getActivationspecClass().getValue(), true, cl);
 
          ActivationImpl a = new ActivationImpl(rar,
                                                asClz,
@@ -389,5 +418,45 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          ie.initCause(cnfe);
          throw ie;
       }
+   }
+
+   /**
+    * Introspect an activation spec class for config-property's
+    * @param clz The class
+    * @return The introspected map
+    */
+   private Map<String, Class<?>> introspectActivationSpec(Class<?> clz)
+   {
+      Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+
+      if (clz != null)
+      {
+         Method[] methods = clz.getMethods();
+         if (methods != null && methods.length > 0)
+         {
+            for (int i = 0; i < methods.length; i++)
+            {
+               Method m = methods[i];
+
+               if (m.getName().startsWith("set") && m.getParameterTypes().length == 1)
+               {
+                  Class<?> parameterType = m.getParameterTypes()[0];
+                  
+                  if (approvedTypes.contains(parameterType))
+                  {
+                     String n = m.getName().substring(3);
+                     String name = n.substring(0, 1).toLowerCase(Locale.US);
+
+                     if (n.length() > 1)
+                        name = name.concat(n.substring(1));
+
+                     result.put(name, parameterType);
+                  }
+               }
+            }
+         }
+      }
+
+      return result;
    }
 }

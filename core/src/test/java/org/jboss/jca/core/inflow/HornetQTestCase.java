@@ -24,6 +24,7 @@ package org.jboss.jca.core.inflow;
 
 import org.jboss.jca.core.inflow.support.HornetQMessageEndpoint;
 import org.jboss.jca.core.inflow.support.HornetQMessageEndpointFactory;
+import org.jboss.jca.core.spi.rar.Activation;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.MessageListener;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
@@ -168,8 +169,19 @@ public class HornetQTestCase
          assertEquals(1, listeners.size());
 
          MessageListener listener = listeners.get(0);
+         Activation activation = listener.getActivation();
 
-         ActivationSpec as = listener.getActivation().createInstance();
+         log.debug("Activation=" + activation);
+
+         assertNotNull(activation);
+
+         assertNotNull(activation.getConfigProperties());
+         assertTrue(activation.getConfigProperties().size() > 0);
+
+         assertNotNull(activation.getRequiredConfigProperties());
+         assertTrue(activation.getRequiredConfigProperties().size() > 0);
+
+         ActivationSpec as = activation.createInstance();
          assertNotNull(as);
          assertNotNull(as.getResourceAdapter());
 
