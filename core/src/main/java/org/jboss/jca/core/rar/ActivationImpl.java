@@ -113,4 +113,23 @@ public class ActivationImpl implements Activation
 
       return instance;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("ActivationImpl@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[rar=").append(rar != null ? rar.get() : "null");
+      sb.append(" activationSpecClass=").append(activationSpecClass != null ? activationSpecClass.get() : "null");
+      sb.append(" configProperties=").append(configProperties);
+      sb.append(" requiredConfigProperties=").append(requiredConfigProperties);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }
