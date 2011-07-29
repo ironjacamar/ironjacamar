@@ -191,9 +191,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    private Driver parseDriver(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-
-      String xaDataSourceClass = null;
       String driverClass = null;
+      String dataSourceClass = null;
+      String xaDataSourceClass = null;
 
       //attributes reading
 
@@ -237,7 +237,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DRIVER)
                {
 
-                  return new DriverImpl(name, majorVersion, minorVersion, module, driverClass, xaDataSourceClass);
+                  return new DriverImpl(name, majorVersion, minorVersion, module, 
+                                        driverClass, dataSourceClass, xaDataSourceClass);
                }
                else
                {
@@ -251,6 +252,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case START_ELEMENT : {
                switch (Driver.Tag.forName(reader.getLocalName()))
                {
+                  case DATASOURCECLASS : {
+                     dataSourceClass = elementAsString(reader);
+                     break;
+                  }
                   case XADATASOURCECLASS : {
                      xaDataSourceClass = elementAsString(reader);
                      break;
@@ -481,6 +486,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
       String connectionUrl = null;
       String driverClass = null;
+      String dataSourceClass = null;
       String driver = null;
       TransactionIsolation transactionIsolation = null;
       Map<String, String> connectionProperties = new HashMap<String, String>();
@@ -548,7 +554,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DATASOURCE)
                {
 
-                  return new DataSourceImpl(connectionUrl, driverClass, driver, transactionIsolation,
+                  return new DataSourceImpl(connectionUrl, driverClass, dataSourceClass, driver, transactionIsolation,
                                             connectionProperties, timeOutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
@@ -576,6 +582,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case DRIVERCLASS : {
                      driverClass = elementAsString(reader);
+                     break;
+                  }
+                  case DATASOURCECLASS : {
+                     dataSourceClass = elementAsString(reader);
                      break;
                   }
                   case DRIVER : {

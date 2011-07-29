@@ -58,6 +58,15 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="datasource-class" type="xs:token" maxOccurs="1" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              The fully qualifed name of the JDBC datasource class Ex: <datasource-class>org.h2.jdbcx.JdbcDataSource</datasource-class>
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="driver" type="xs:token" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
@@ -848,8 +857,6 @@
       </xs:annotation>
     </xs:attribute>
   </xs:complexType>
-  
-
 
   <xs:complexType name="driverType">
     <xs:sequence>
@@ -862,6 +869,15 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="datasource-class" type="xs:token" maxOccurs="1" minOccurs="0">
+      <xs:annotation>
+          <xs:documentation>
+           <![CDATA[[
+              The fully qualifed name of the javax.sql.DataSource implementation 
+              class.
+             ]]>
+          </xs:documentation>
+        </xs:annotation></xs:element>
       <xs:element name="xa-datasource-class" type="xs:token" maxOccurs="1" minOccurs="0">
       <xs:annotation>
           <xs:documentation>

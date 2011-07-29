@@ -263,6 +263,20 @@ public abstract class AbstractDsDeployer
                               ((DataSourceImpl) dataSource).forceDriverClass(driverClass);
                         }
 
+                        if (dataSource.getDriverClass() == null && dataSource.getDataSourceClass() == null &&
+                            dataSource.getDriver() != null && dataSource instanceof DataSourceImpl)
+                        {
+                           String driverName = dataSource.getDriver();
+
+                           if (dataSources.getDriver(driverName) != null)
+                           {
+                              String dataSourceClass = dataSources.getDriver(driverName).getDataSourceClass();
+
+                              if (dataSources != null)
+                                 ((DataSourceImpl) dataSource).forceDataSourceClass(dataSourceClass);
+                           }
+                        }
+
                         Object cf = deployDataSource(dataSource, jndiName,
                                                      uniqueJdbcLocalId, mgtDataSource, jdbcLocalDeploymentCl);
 

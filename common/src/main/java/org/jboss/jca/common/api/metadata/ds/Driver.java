@@ -73,6 +73,12 @@ public interface Driver extends JCAMetadata, ValidatableMetadata
     */
    public String getDriverClass();
 
+   /**
+    * Get the DataSourceClass.
+    *
+    * @return the DataSourceClass.
+    */
+   public String getDataSourceClass();
 
    /**
     * Get the XaDataSourceClass.
@@ -81,15 +87,13 @@ public interface Driver extends JCAMetadata, ValidatableMetadata
     */
    public String getXaDataSourceClass();
 
-
-
    /**
-   *
-   * A Tag.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
+    *
+    * A Tag.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
    public enum Tag
    {
       /** always first
@@ -101,6 +105,12 @@ public interface Driver extends JCAMetadata, ValidatableMetadata
        * driverClass tag
        */
       DRIVERCLASS("driver-class"),
+
+      /**
+       * DatasourceClass tag
+       */
+      DATASOURCECLASS("datasource-class"),
+
       /**
        * xaDatasourceClass tag
        */
