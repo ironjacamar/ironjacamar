@@ -24,6 +24,7 @@ package org.jboss.jca.adapters.jdbc.local;
 
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
 import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
+import org.jboss.jca.adapters.jdbc.util.Injection;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -45,22 +46,26 @@ import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
-
+import javax.sql.DataSource;
 
 /**
  * LocalManagedConnectionFactory
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
- * @version $Revision: 73443 $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionFactory
 {
-   private static final long serialVersionUID = 4698955390505160469L;
+   private static final long serialVersionUID = -2751268690794983375L;
 
    private String driverClass;
 
+   private String dataSourceClass;
+
    private transient Driver driver;
+
+   private transient DataSource dataSource;
 
    private String connectionURL;
 
@@ -85,10 +90,10 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    public Object createConnectionFactory(ConnectionManager cm) throws ResourceException
    {
       // check some invariants before they come back to haunt us
-      if (driverClass == null)
+      if (driverClass == null && dataSourceClass == null)
          throw new ResourceException("driverClass is null");
 
-      if (connectionURL == null)
+      if (connectionURL == null && driverClass != null)
          throw new ResourceException("connectionURL is null");
 
       return super.createConnectionFactory(cm);
@@ -135,6 +140,27 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    public synchronized void setDriverClass(final String driverClass)
    {
       this.driverClass = driverClass;
+      driver = null;
+   }
+
+   /**
+    * Get the DataSourceClass value.
+    *
+    * @return the DataSourceClass value.
+    */
+   public String getDataSourceClass()
+   {
+      return dataSourceClass;
+   }
+
+   /**
+    * Set the DataSourceClass value.
+    *
+    * @param dataSourceClass The new DataSourceClass value.
+    */
+   public synchronized void setDataSourceClass(final String dataSourceClass)
+   {
+      this.dataSourceClass = dataSourceClass;
       driver = null;
    }
 
@@ -216,12 +242,22 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       Connection con = null;
       try
       {
-         String url = getConnectionURL();
-         Driver d = getDriver(url);
-         con = d.connect(url, copy);
-         if (con == null)
-            throw new ResourceException("Wrong driver class [" + d.getClass() + "] for this connection URL [" + url +
-                                        "]");
+         if (driverClass != null)
+         {
+            String url = getConnectionURL();
+            Driver d = getDriver(url);
+            con = d.connect(url, copy);
+            if (con == null)
+               throw new ResourceException("Wrong driver class [" + d.getClass() + "] for this connection URL [" +
+                                           url + "]");
+         }
+         else
+         {
+            DataSource d = getDataSource();
+            con = d.getConnection(copy.getProperty("user"), copy.getProperty("password"));
+            if (con == null)
+               throw new ResourceException("Unable to create connection from datasource");
+         }
 
          return new LocalManagedConnection(this, con, props, transactionIsolation, preparedStatementCacheSize);
       }
@@ -246,6 +282,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       throws ResourceException
    {
       boolean trace = log.isTraceEnabled();
+      
+      if (driverClass == null || driverClass.trim().equals(""))
+         throw new ResourceException("HALocalManagedConnection only supported with <driver-class>");
 
       // try to get a connection as many times as many urls we have in the list
       for (int i = 0; i < urlSelector.getCustomSortedUrls().size(); ++i)
@@ -485,6 +524,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       int result = 17;
       result = result * 37 + ((connectionURL == null) ? 0 : connectionURL.hashCode());
       result = result * 37 + ((driverClass == null) ? 0 : driverClass.hashCode());
+      result = result * 37 + ((dataSourceClass == null) ? 0 : dataSourceClass.hashCode());
       result = result * 37 + ((userName == null) ? 0 : userName.hashCode());
       result = result * 37 + ((password == null) ? 0 : password.hashCode());
       result = result * 37 + transactionIsolation;
@@ -505,7 +545,10 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
       LocalManagedConnectionFactory otherMcf = (LocalManagedConnectionFactory) other;
 
-      return this.connectionURL.equals(otherMcf.connectionURL) && this.driverClass.equals(otherMcf.driverClass)
+      return this.connectionURL.equals(otherMcf.connectionURL)
+         && ((this.driverClass == null) ? otherMcf.driverClass == null : this.driverClass.equals(otherMcf.driverClass))
+         && ((this.dataSourceClass == null) ? otherMcf.dataSourceClass == null : 
+             this.dataSourceClass.equals(otherMcf.dataSourceClass))
          && ((this.userName == null) ? otherMcf.userName == null : this.userName.equals(otherMcf.userName))
          && ((this.password == null) ? otherMcf.password == null : this.password.equals(otherMcf.password))
          && this.transactionIsolation == otherMcf.transactionIsolation;
@@ -528,6 +571,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       {
          return driver;
       }
+
       if (trace)
          log.trace("Checking driver for URL: " + url);
 
@@ -536,26 +580,27 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          throw new ResourceException("No Driver class specified (url = " + url + ")!");
       }
 
-      // Check if the driver is already loaded, if not then try to load it
+      String driverKey = url.substring(0, url.indexOf(":", 6));
 
-      driver = driverCache.get(url.substring(0, url.indexOf(":", 6)));
+      // Check if the driver is already loaded, if not then try to load it
+      driver = driverCache.get(driverKey);
+      if (driver != null)
+         return driver;
 
       try
       {
-         //try to load the class... this should register with DriverManager.
+         // Load class to trigger static initialization of the driver
          Class<?> clazz = Class.forName(driverClass, true, getClassLoaderPlugin().getClassLoader());
+
          if (isDriverLoadedForURL(url))
-            //return immediately, some drivers (Cloudscape) do not let you create an instance.
             return driver;
 
-         //We loaded the class, but either it didn't register
-         //and is not spec compliant, or is the wrong class.
-         driver = (Driver) clazz.newInstance();
-         DriverManager.registerDriver(driver);
-         log.debug("class loaded and instance created:" + driver);
+         driver = (Driver)clazz.newInstance();
 
-         driverCache.put(url.substring(0, url.indexOf(":", 6)), driver);
-         //We can even instantiate one, it must be the wrong class for the URL.
+         DriverManager.registerDriver(driver);
+         log.debug("Driver loaded and instance created:" + driver);
+
+         driverCache.put(driverKey, driver);
       }
       catch (Exception e)
       {
@@ -574,14 +619,17 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       {
          Thread.currentThread().setContextClassLoader(getClassLoaderPlugin().getClassLoader());
          driver = DriverManager.getDriver(url);
+
          if (trace)
             log.trace("Driver already registered for url: " + url);
+
          return true;
       }
       catch (Exception e)
       {
          if (trace)
             log.trace("Driver not yet registered for url: " + url);
+
          return false;
       }
       finally
@@ -597,5 +645,51 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    protected String internalGetConnectionURL()
    {
       return connectionURL;
+   }
+
+   /**
+    * Get the datasource instance
+    * @return The handle
+    * @exception ResourceException Thrown if an error occurs
+    */
+   private synchronized DataSource getDataSource() throws ResourceException
+   {
+      if (dataSource == null)
+      {
+         if (dataSourceClass == null || dataSourceClass.trim().equals(""))
+            throw new ResourceException("DataSourceClass not defined");
+
+         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+         try
+         {
+            Thread.currentThread().setContextClassLoader(getClassLoaderPlugin().getClassLoader());
+
+            Class<?> clz = Class.forName(dataSourceClass, true, getClassLoaderPlugin().getClassLoader());
+            dataSource = (DataSource)clz.newInstance();
+
+            if (connectionProps != null)
+            {
+               Injection injector = new Injection();
+               Iterator<Map.Entry<Object, Object>> it = connectionProps.entrySet().iterator();
+               while (it.hasNext())
+               {
+                  Map.Entry<Object, Object> entry = it.next();
+                  String key = (String)entry.getKey();
+                  String value = (String)entry.getValue();
+                  injector.inject(dataSource, key, value);
+               }
+            }
+         }
+         catch (Throwable t)
+         {
+            throw new ResourceException("Failed to load datasource: " + dataSourceClass, t);
+         }
+         finally
+         {
+            Thread.currentThread().setContextClassLoader(tccl);
+         }
+      }
+
+      return dataSource;
    }
 }

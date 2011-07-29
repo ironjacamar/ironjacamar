@@ -729,6 +729,13 @@ public class Merger
                   }
                   break;
                }
+               case DATASOURCECLASS : {
+                  if (ds != null && ds.getDataSourceClass() != null)
+                  {
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getDataSourceClass()));
+                  }
+                  break;
+               }
                case URLPROPERTY :
                case CONNECTIONPROPERTIES : {
                   if (ds != null && ds.getConnectionProperties() != null)
@@ -847,6 +854,8 @@ public class Merger
          UNKNOWN(null, null, null),
          /** DRIVERCLASS **/
          DRIVERCLASS("DriverClass", "java.lang.String", "The jdbc driver class."),
+         /** DATASOURCECLASS **/
+         DATASOURCECLASS("DataSourceClass", "java.lang.String", "The jdbc datasource class."),
          /** CONNECTIONURL **/
          CONNECTIONURL("ConnectionURL", "java.lang.String", "The jdbc connection url class."),
          /** CONNECTIONPROPERTIES **/

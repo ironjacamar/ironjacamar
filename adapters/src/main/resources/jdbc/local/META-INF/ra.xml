@@ -48,6 +48,11 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
           <config-property-type>java.lang.String</config-property-type>
         </config-property>
         <config-property>
+          <description>The jdbc datasource class.</description>
+          <config-property-name>DataSourceClass</config-property-name>
+          <config-property-type>java.lang.String</config-property-type>
+        </config-property>
+        <config-property>
           <description>The jdbc connection url class.</description>
           <config-property-name>ConnectionURL</config-property-name>
           <config-property-type>java.lang.String</config-property-type>

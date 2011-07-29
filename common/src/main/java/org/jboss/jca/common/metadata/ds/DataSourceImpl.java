@@ -58,6 +58,8 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
    private String driverClass;
 
+   private String dataSourceClass;
+
    private final String driver;
 
    private final HashMap<String, String> connectionProperties;
@@ -71,6 +73,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     *
     * @param connectionUrl connectionUrl
     * @param driverClass driverClass
+    * @param dataSourceClass dataSourceClass
     * @param driver driver
     * @param transactionIsolation transactionIsolation
     * @param connectionProperties connectionProperties
@@ -91,7 +94,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param pool pool
     * @throws ValidateException ValidateException
     */
-   public DataSourceImpl(String connectionUrl, String driverClass, String driver,
+   public DataSourceImpl(String connectionUrl, String driverClass, String dataSourceClass, String driver,
                          TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, 
                          TimeOut timeOut, DsSecurity security, Statement statement, Validation validation, 
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
@@ -104,6 +107,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       this.jta = jta;
       this.connectionUrl = connectionUrl;
       this.driverClass = driverClass;
+      this.dataSourceClass = dataSourceClass;
       this.driver = driver;
       if (connectionProperties != null)
       {
@@ -147,6 +151,17 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    public final String getDriverClass()
    {
       return driverClass;
+   }
+
+   /**
+    * Get the dataSourceClass.
+    *
+    * @return the dataSourceClass.
+    */
+   @Override
+   public final String getDataSourceClass()
+   {
+      return dataSourceClass;
    }
 
    /**
@@ -235,6 +250,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       result = prime * result + ((connectionUrl == null) ? 0 : connectionUrl.hashCode());
       result = prime * result + ((driver == null) ? 0 : driver.hashCode());
       result = prime * result + ((driverClass == null) ? 0 : driverClass.hashCode());
+      result = prime * result + ((dataSourceClass == null) ? 0 : dataSourceClass.hashCode());
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
       result = prime * result + ((pool == null) ? 0 : pool.hashCode());
       return result;
@@ -278,6 +294,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       }
       else if (!driverClass.equals(other.driverClass))
          return false;
+      if (dataSourceClass == null)
+      {
+         if (other.dataSourceClass != null)
+            return false;
+      }
+      else if (!dataSourceClass.equals(other.dataSourceClass))
+         return false;
       if (newConnectionSql == null)
       {
          if (other.newConnectionSql != null)
@@ -298,19 +321,21 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    @Override
    public String toString()
    {
-      return "DataSourceImpl [connectionUrl=" + connectionUrl + ", driverClass=" + driverClass + ", driver=" +
-             driver + ", connectionProperties=" + connectionProperties + ", newConnectionSql=" + newConnectionSql +
-             ", pool=" + pool + "]";
+      return "DataSourceImpl [connectionUrl=" + connectionUrl + ", driverClass=" + driverClass +
+         ", dataSourceClass=" + dataSourceClass + ", driver=" + driver +
+         ", connectionProperties=" + connectionProperties + ", newConnectionSql=" + newConnectionSql +
+         ", pool=" + pool + "]";
    }
 
    @Override
    public void validate() throws ValidateException
    {
-      if (this.connectionUrl == null || this.connectionUrl.trim().length() == 0)
+      if (this.driverClass != null && (this.connectionUrl == null || this.connectionUrl.trim().length() == 0))
          throw new ValidateException(bundle.requiredElementMissing(Tag.CONNECTIONURL.getLocalName(), 
                                                                    this.getClass().getCanonicalName()));
-
+      
       if ((this.driverClass == null || this.driverClass.trim().length() == 0) &&
+          (this.dataSourceClass == null || this.dataSourceClass.trim().length() == 0) &&
           (this.driver == null || this.driver.trim().length() == 0))
          throw new ValidateException(bundle.requiredElementMissing(Tag.DRIVERCLASS.getLocalName(), 
                                                                    this.getClass().getCanonicalName()));
@@ -324,5 +349,15 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    public final void forceDriverClass(String driverClass)
    {
       this.driverClass = driverClass;
+   }
+
+   /**
+    * Set the dataSourceClass.
+    *
+    * @param dataSourceClass The dataSourceClass to set.
+    */
+   public final void forceDataSourceClass(String dataSourceClass)
+   {
+      this.dataSourceClass = dataSourceClass;
    }
 }

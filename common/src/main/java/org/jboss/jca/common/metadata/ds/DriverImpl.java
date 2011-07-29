@@ -53,6 +53,8 @@ public class DriverImpl implements Driver
 
    private final String driverClass;
 
+   private final String dataSourceClass;
+
    private final String xaDataSourceClass;
 
    /**
@@ -63,11 +65,12 @@ public class DriverImpl implements Driver
     * @param minorVersion minorVersion
     * @param module module
     * @param driverClass driverClass
+    * @param dataSourceClass xaDataSourceClass
     * @param xaDataSourceClass xaDataSourceClass
     * @throws ValidateException in case name is not specified
     */
    public DriverImpl(String name, Integer majorVersion, Integer minorVersion, String module, String driverClass,
-      String xaDataSourceClass)
+                     String dataSourceClass, String xaDataSourceClass)
       throws ValidateException
    {
       super();
@@ -76,6 +79,7 @@ public class DriverImpl implements Driver
       this.minorVersion = minorVersion;
       this.module = module;
       this.driverClass = driverClass;
+      this.dataSourceClass = dataSourceClass;
       this.xaDataSourceClass = xaDataSourceClass;
       this.validate();
    }
@@ -120,6 +124,17 @@ public class DriverImpl implements Driver
    }
 
    /**
+    * Get the dataSourceClass.
+    *
+    * @return the value
+    */
+   @Override
+   public final String getDataSourceClass()
+   {
+      return dataSourceClass;
+   }
+
+   /**
     * Get the xsDataSourceClass.
     *
     * @return the xsDataSourceClass.
@@ -155,7 +170,8 @@ public class DriverImpl implements Driver
    public String toString()
    {
       return "DriverImpl [name=" + name + ", minorVersion=" + minorVersion + ", majorVersion=" + majorVersion +
-             ", module=" + module + ", driverClass=" + driverClass + ", xaDataSourceClass=" + xaDataSourceClass + "]";
+         ", module=" + module + ", driverClass=" + driverClass + ", dataSourceClass=" + dataSourceClass + 
+         ", xaDataSourceClass=" + xaDataSourceClass + "]";
    }
 
    @Override
@@ -168,6 +184,7 @@ public class DriverImpl implements Driver
       result = prime * result + ((minorVersion == null) ? 0 : minorVersion.hashCode());
       result = prime * result + ((module == null) ? 0 : module.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((dataSourceClass == null) ? 0 : dataSourceClass.hashCode());
       result = prime * result + ((xaDataSourceClass == null) ? 0 : xaDataSourceClass.hashCode());
       return result;
    }
@@ -216,6 +233,13 @@ public class DriverImpl implements Driver
             return false;
       }
       else if (!name.equals(other.name))
+         return false;
+      if (dataSourceClass == null)
+      {
+         if (other.dataSourceClass != null)
+            return false;
+      }
+      else if (!dataSourceClass.equals(other.dataSourceClass))
          return false;
       if (xaDataSourceClass == null)
       {

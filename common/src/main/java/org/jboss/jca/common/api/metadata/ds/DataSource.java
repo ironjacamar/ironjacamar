@@ -56,6 +56,13 @@ public interface DataSource extends CommonDataSource
    public String getDriverClass();
 
    /**
+    * Get the dataSourceClass.
+    *
+    * @return the value.
+    */
+   public String getDataSourceClass();
+
+   /**
     * Get the connectionProperties.
     *
     * @return the connectionProperties.
@@ -126,6 +133,10 @@ public interface DataSource extends CommonDataSource
       * driverClass tag
       */
       DRIVERCLASS("driver-class"),
+      /**
+      * dataSourceClass tag
+      */
+      DATASOURCECLASS("datasource-class"),
       /**
       * module tag
       */
