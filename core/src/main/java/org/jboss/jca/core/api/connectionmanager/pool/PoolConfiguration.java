@@ -48,8 +48,8 @@ public class PoolConfiguration
    /** Background validation */
    private AtomicBoolean backgroundValidation;
    
-   /** Background validation - minutes */
-   private AtomicInteger backgroundValidationMinutes;
+   /** Background validation - millis */
+   private AtomicLong backgroundValidationMillis;
    
    /** Prefill pool*/
    private AtomicBoolean prefill;
@@ -73,7 +73,7 @@ public class PoolConfiguration
       blockingTimeout = new AtomicLong(30000);
       idleTimeout = new AtomicLong(1000 * 60 * 30);
       backgroundValidation = new AtomicBoolean(false);
-      backgroundValidationMinutes = new AtomicInteger(0);
+      backgroundValidationMillis = new AtomicLong(0);
       prefill = new AtomicBoolean(false);
       strictMin = new AtomicBoolean(false);
       useFastFail = new AtomicBoolean(false);
@@ -166,30 +166,21 @@ public class PoolConfiguration
    }
 
    /**
-    * Get the background validation minutes setting
+    * Get the background validation millis setting
     * @return The value
     */
-   public int getBackgroundValidationMinutes()
+   public long getBackgroundValidationMillis()
    {
-      return backgroundValidationMinutes.get();
+      return backgroundValidationMillis.get();
    }
 
    /**
-    * Set the background validation minutes setting
+    * Set the background validation millis setting
     * @param v The value
     */
-   public void setBackgroundValidationMinutes(int v)
+   public void setBackgroundValidationMillis(long v)
    {
-      this.backgroundValidationMinutes.set(v);
-   }
-
-   /**
-    * Get the background validation interval in milliseconds
-    * @return The interval
-    */
-   public long getBackgroundValidationInterval()
-   {
-      return backgroundValidationMinutes.get() * 60000L;
+      this.backgroundValidationMillis.set(v);
    }
 
    /**
@@ -255,7 +246,7 @@ public class PoolConfiguration
       sb.append(" blockingTimeout=").append(blockingTimeout.get());
       sb.append(" idleTimeout=").append(idleTimeout.get());
       sb.append(" backgroundValidation=").append(backgroundValidation.get());
-      sb.append(" backgroundValidationMinutes=").append(backgroundValidationMinutes.get());
+      sb.append(" backgroundValidationMillis=").append(backgroundValidationMillis.get());
       sb.append(" prefill=").append(prefill.get());
       sb.append(" strictMin=").append(strictMin.get());
       sb.append(" useFastFail=").append(useFastFail.get());

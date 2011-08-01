@@ -11,7 +11,7 @@
       <!-- ********************************************** -->
       <!-- THIS FIELD IS CAUSING THE FAIL OF RELATED TEST -->
       <!-- ********************************************** -->
-      <background-validation-minutes>-1</background-validation-minutes>
+      <background-validation-millis>-1</background-validation-millis>
     </validation>
   </datasource>
 </datasources>

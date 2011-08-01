@@ -58,7 +58,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     * Create a new ValidationImpl.
     *
     * @param backgroundValidation backgroundValidation
-    * @param backgroundValidationMinutes backgroundValidationMinutes
+    * @param backgroundValidationMillis backgroundValidationMillis
     * @param useFastFail useFastFail
     * @param validConnectionChecker validConnectionChecker
     * @param checkValidConnectionSql checkValidConnectionSql
@@ -67,11 +67,11 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
     * @param exceptionSorter exceptionSorter
     * @throws ValidateException ValidateException
     */
-   public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMinutes, Boolean useFastFail,
+   public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMillis, Boolean useFastFail,
       Extension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
       Extension staleConnectionChecker, Extension exceptionSorter) throws ValidateException
    {
-      super(backgroundValidation, backgroundValidationMinutes, useFastFail);
+      super(backgroundValidation, backgroundValidationMillis, useFastFail);
       this.validConnectionChecker = validConnectionChecker;
       this.checkValidConnectionSql = checkValidConnectionSql;
       this.validateOnMatch = validateOnMatch;
@@ -145,8 +145,8 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    @Override
    public void validate() throws ValidateException
    {
-      if (this.backgroundValidationMinutes != null && this.backgroundValidationMinutes < 0)
-         throw new ValidateException(bundle.invalidNegative(Validation.Tag.BACKGROUNDVALIDATIONMINUTES.getLocalName()));
+      if (this.backgroundValidationMillis != null && this.backgroundValidationMillis < 0)
+         throw new ValidateException(bundle.invalidNegative(Validation.Tag.BACKGROUNDVALIDATIONMILLIS.getLocalName()));
 
       if (this.validConnectionChecker != null)
          try

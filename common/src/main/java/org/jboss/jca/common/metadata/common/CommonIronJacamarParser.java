@@ -193,7 +193,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    {
       boolean useFastFail = false;
       boolean backgroundValidation = false;
-      Long backgroundValidationMinutes = null;
+      Long backgroundValidationMillis = null;
 
       while (reader.hasNext())
       {
@@ -203,7 +203,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                if (CommonConnDef.Tag.forName(reader.getLocalName()) == CommonConnDef.Tag.VALIDATION)
                {
 
-                  return new CommonValidationImpl(backgroundValidation, backgroundValidationMinutes, useFastFail);
+                  return new CommonValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail);
                }
                else
                {
@@ -217,8 +217,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
             case START_ELEMENT : {
                switch (CommonValidation.Tag.forName(reader.getLocalName()))
                {
-                  case BACKGROUNDVALIDATIONMINUTES : {
-                     backgroundValidationMinutes = elementAsLong(reader);
+                  case BACKGROUNDVALIDATIONMILLIS : {
+                     backgroundValidationMillis = elementAsLong(reader);
                      break;
                   }
                   case BACKGROUNDVALIDATION : {

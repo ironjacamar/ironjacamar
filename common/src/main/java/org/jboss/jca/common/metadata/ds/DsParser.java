@@ -643,7 +643,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
       boolean validateOnMatch = false;
       boolean useFastFail = false;
-      Long backgroundValidationMinutes = null;
+      Long backgroundValidationMillis = null;
       Extension staleConnectionChecker = null;
       boolean backgroundValidation = false;
       String checkValidConnectionSql = null;
@@ -658,7 +658,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.VALIDATION)
                {
 
-                  return new ValidationImpl(backgroundValidation, backgroundValidationMinutes, useFastFail,
+                  return new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail,
                                             validConnectionChecker, checkValidConnectionSql, validateOnMatch,
                                             staleConnectionChecker, exceptionSorter);
 
@@ -680,8 +680,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      backgroundValidation = elementAsBoolean(reader);
                      break;
                   }
-                  case BACKGROUNDVALIDATIONMINUTES : {
-                     backgroundValidationMinutes = elementAsLong(reader);
+                  case BACKGROUNDVALIDATIONMILLIS : {
+                     backgroundValidationMillis = elementAsLong(reader);
                      break;
                   }
                   case CHECKVALIDCONNECTIONSQL : {
