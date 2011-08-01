@@ -451,12 +451,12 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="background-validation-minutes" type="xs:nonNegativeInteger" minOccurs="0">
+      <xs:element name="background-validation-millis" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              The background-validation-minutes element specifies the amount of 
-              time, in minutes, that background validation will run. 
+              The background-validation-millis element specifies the amount of 
+              time, in millis, that background validation will run. 
              ]]>
           </xs:documentation>
         </xs:annotation>

@@ -69,13 +69,9 @@ public abstract class PoolResourceComponent extends AbstractResourceComponent
       PropertySimple isBackGroundValidateProp = new PropertySimple("background-validation", doBackGroundValidation);
       config.put(isBackGroundValidateProp);
       
-      Long bvInterval = Long.valueOf(poolConfig.getBackgroundValidationInterval());
-      PropertySimple backGroundValidateIntervalProp = new PropertySimple("background-validation-millis", bvInterval);
-      config.put(backGroundValidateIntervalProp);
-      
-      Integer bvMinutes = Integer.valueOf(poolConfig.getBackgroundValidationMinutes());
-      PropertySimple backGroundValidateMintuesProp = new PropertySimple("background-validation-minutes", bvMinutes);
-      config.put(backGroundValidateMintuesProp);
+      Long bvMillis = Long.valueOf(poolConfig.getBackgroundValidationMillis());
+      PropertySimple backGroundValidateMillisProp = new PropertySimple("background-validation-millis", bvMillis);
+      config.put(backGroundValidateMillisProp);
       
       Long blTimeout = Long.valueOf(poolConfig.getBlockingTimeout());
       PropertySimple blockingTimeoutProp = new PropertySimple("blocking-timeout-millis", blTimeout);
@@ -116,9 +112,9 @@ public abstract class PoolResourceComponent extends AbstractResourceComponent
       
       // background-validation-millis
       
-      // background-validation-minutes
-      Integer backGroundValidMinutes = Integer.valueOf(config.getSimpleValue("background-validation-minutes", "0"));
-      poolConfig.setBackgroundValidationMinutes(backGroundValidMinutes.intValue());
+      // background-validation-millis
+      Long backGroundValidMillis = Long.valueOf(config.getSimpleValue("background-validation-millis", "0"));
+      poolConfig.setBackgroundValidationMillis(backGroundValidMillis.intValue());
 
       // blocking-timeout-millis
       Long blockTimeoutMillis = Long.valueOf(config.getSimpleValue("blocking-timeout-millis", "30000"));

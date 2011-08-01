@@ -182,13 +182,13 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          IdleRemover.registerPool(this, poolConfiguration.getIdleTimeout());
       }
       
-      if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationInterval() > 0)
+      if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
       {
          log.debug("Registering for background validation at interval " + 
-                   poolConfiguration.getBackgroundValidationInterval());
+                   poolConfiguration.getBackgroundValidationMillis());
          
          //Register validation
-         ConnectionValidator.registerPool(this, poolConfiguration.getBackgroundValidationInterval());
+         ConnectionValidator.registerPool(this, poolConfiguration.getBackgroundValidationMillis());
       }
 
       shutdown.set(false);
@@ -806,7 +806,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          ConnectionListener cl = iter.next();
          long lastCheck = cl.getLastValidatedTime();
 
-         if ((System.currentTimeMillis() - lastCheck) >= poolConfiguration.getBackgroundValidationInterval())
+         if ((System.currentTimeMillis() - lastCheck) >= poolConfiguration.getBackgroundValidationMillis())
          {
             result = cl;
             cls.remove(cl);

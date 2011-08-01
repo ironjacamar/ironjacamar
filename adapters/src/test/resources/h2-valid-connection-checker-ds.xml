@@ -15,7 +15,7 @@
       <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.spi.testimpl.TestValidConnectionChecker"></valid-connection-checker>
       <validate-on-match>true</validate-on-match>
       <background-validation>true</background-validation>
-      <background-validation-minutes>1</background-validation-minutes>
+      <background-validation-millis>1000</background-validation-millis>
     </validation>
   </datasource>
 </datasources>

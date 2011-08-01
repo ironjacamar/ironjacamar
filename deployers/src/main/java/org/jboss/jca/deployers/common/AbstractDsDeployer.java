@@ -888,8 +888,8 @@ public abstract class AbstractDsDeployer
          if (vp.isBackgroundValidation() != null)
             pc.setBackgroundValidation(vp.isBackgroundValidation().booleanValue());
 
-         if (vp.getBackgroundValidationMinutes() != null)
-            pc.setBackgroundValidationMinutes(vp.getBackgroundValidationMinutes().intValue());
+         if (vp.getBackgroundValidationMillis() != null)
+            pc.setBackgroundValidationMillis(vp.getBackgroundValidationMillis().intValue());
 
          if (vp.isUseFastFail() != null)
             pc.setUseFastFail(vp.isUseFastFail());

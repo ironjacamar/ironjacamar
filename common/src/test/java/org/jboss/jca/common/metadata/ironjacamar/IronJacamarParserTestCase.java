@@ -435,7 +435,7 @@ public class IronJacamarParserTestCase
 
             //validation default
             CommonValidation v = connDef.getValidation();
-            assertThat(v.getBackgroundValidationMinutes(), new IsNull<Long>());
+            assertThat(v.getBackgroundValidationMillis(), new IsNull<Long>());
             assertThat(v.isBackgroundValidation(), is(false));
             assertThat(v.isUseFastFail(), is(false));
 
@@ -498,7 +498,7 @@ public class IronJacamarParserTestCase
 
             //validation default
             CommonValidation v = connDef.getValidation();
-            assertThat(v.getBackgroundValidationMinutes(), new IsNull<Long>());
+            assertThat(v.getBackgroundValidationMillis(), new IsNull<Long>());
             assertThat(v.isBackgroundValidation(), is(false));
             assertThat(v.isUseFastFail(), is(false));
 

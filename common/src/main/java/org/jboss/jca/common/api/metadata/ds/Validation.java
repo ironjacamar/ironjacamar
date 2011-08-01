@@ -106,9 +106,9 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
       */
       BACKGROUNDVALIDATION("background-validation"),
       /**
-      * backgroundValidationMinutes tag
+      * backgroundValidationMillis tag
       */
-      BACKGROUNDVALIDATIONMINUTES("background-validation-minutes"),
+      BACKGROUNDVALIDATIONMILLIS("background-validation-millis"),
       /**
       * useFastFail tag
       */

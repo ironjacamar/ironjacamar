@@ -39,8 +39,8 @@ public class CommonValidationImpl implements CommonValidation
    /** backgroundValidation **/
    protected final Boolean backgroundValidation;
 
-   /** backgroundValidationMinutes **/
-   protected final Long backgroundValidationMinutes;
+   /** backgroundValidationMillis **/
+   protected final Long backgroundValidationMillis;
 
    /** useFastFail **/
    protected final Boolean useFastFail;
@@ -49,14 +49,14 @@ public class CommonValidationImpl implements CommonValidation
     * Create a new SValidationImpl.
     *
     * @param backgroundValidation backgroundValidation
-    * @param backgroundValidationMinutes backgroundValidationMinutes
+    * @param backgroundValidationMillis backgroundValidationMillis
     * @param useFastFail useFastFail
     */
-   public CommonValidationImpl(Boolean backgroundValidation, Long backgroundValidationMinutes, Boolean useFastFail)
+   public CommonValidationImpl(Boolean backgroundValidation, Long backgroundValidationMillis, Boolean useFastFail)
    {
       super();
       this.backgroundValidation = backgroundValidation;
-      this.backgroundValidationMinutes = backgroundValidationMinutes;
+      this.backgroundValidationMillis = backgroundValidationMillis;
       this.useFastFail = useFastFail;
    }
 
@@ -72,14 +72,14 @@ public class CommonValidationImpl implements CommonValidation
    }
 
    /**
-    * Get the backgroundValidationMinutes.
+    * Get the backgroundValidationMillis.
     *
-    * @return the backgroundValidationMinutes.
+    * @return the backgroundValidationMillis.
     */
    @Override
-   public final Long getBackgroundValidationMinutes()
+   public final Long getBackgroundValidationMillis()
    {
-      return backgroundValidationMinutes;
+      return backgroundValidationMillis;
    }
 
    /**
@@ -99,7 +99,7 @@ public class CommonValidationImpl implements CommonValidation
       final int prime = 31;
       int result = 1;
       result = prime * result + ((backgroundValidation == null) ? 0 : backgroundValidation.hashCode());
-      result = prime * result + ((backgroundValidationMinutes == null) ? 0 : backgroundValidationMinutes.hashCode());
+      result = prime * result + ((backgroundValidationMillis == null) ? 0 : backgroundValidationMillis.hashCode());
       result = prime * result + ((useFastFail == null) ? 0 : useFastFail.hashCode());
       return result;
    }
@@ -121,12 +121,12 @@ public class CommonValidationImpl implements CommonValidation
       }
       else if (!backgroundValidation.equals(other.backgroundValidation))
          return false;
-      if (backgroundValidationMinutes == null)
+      if (backgroundValidationMillis == null)
       {
-         if (other.backgroundValidationMinutes != null)
+         if (other.backgroundValidationMillis != null)
             return false;
       }
-      else if (!backgroundValidationMinutes.equals(other.backgroundValidationMinutes))
+      else if (!backgroundValidationMillis.equals(other.backgroundValidationMillis))
          return false;
       if (useFastFail == null)
       {
@@ -141,8 +141,8 @@ public class CommonValidationImpl implements CommonValidation
    @Override
    public String toString()
    {
-      return "SValidationImpl [backgroundValidation=" + backgroundValidation + ", backgroundValidationMinutes=" +
-             backgroundValidationMinutes + ", useFastFail=" + useFastFail + "]";
+      return "SValidationImpl [backgroundValidation=" + backgroundValidation + ", backgroundValidationMillis=" +
+             backgroundValidationMillis + ", useFastFail=" + useFastFail + "]";
    }
 
 }

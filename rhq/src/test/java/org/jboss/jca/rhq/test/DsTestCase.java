@@ -123,7 +123,6 @@ public class DsTestCase
       assertEquals("20", config.getSimpleValue("max-pool-size", null));
       assertEquals("false", config.getSimpleValue("background-validation", null));
       assertEquals("0", config.getSimpleValue("background-validation-millis", null));
-      assertEquals("0", config.getSimpleValue("background-validation-minutes", null));
       assertEquals("30000", config.getSimpleValue("blocking-timeout-millis", null));
       assertEquals("30", config.getSimpleValue("idle-timeout-minutes", null));
       assertEquals("false", config.getSimpleValue("prefill", null));
@@ -161,7 +160,7 @@ public class DsTestCase
       int oldMinPoolSize = poolConfig.getMinSize();
       int oldMaxPoolSize = poolConfig.getMaxSize();
       boolean oldBackgroundValidation = poolConfig.isBackgroundValidation();
-      int oldBackgroundValidationTime = poolConfig.getBackgroundValidationMinutes();
+      long oldBackgroundValidationTime = poolConfig.getBackgroundValidationMillis();
       long oldBlockingTimeout = poolConfig.getBlockingTimeout();
       long oldIdleTimeout = poolConfig.getIdleTimeout();
       boolean oldPreFill = poolConfig.isPrefill();
@@ -170,14 +169,14 @@ public class DsTestCase
       
       int minPoolSize = 5;
       int maxPoolSize = 15;
-      int backValidationTime = 30;
+      long backValidationTime = 30000;
       long blockingTimeout = 10000;
       long idleTimeOut = 15;
       
       config.put(new PropertySimple("min-pool-size", minPoolSize));
       config.put(new PropertySimple("max-pool-size", maxPoolSize));
       config.put(new PropertySimple("background-validation", true));
-      config.put(new PropertySimple("background-validation-minutes", backValidationTime));
+      config.put(new PropertySimple("background-validation-millis", backValidationTime));
       config.put(new PropertySimple("blocking-timeout-millis", blockingTimeout));
       config.put(new PropertySimple("idle-timeout-minutes", idleTimeOut));
       config.put(new PropertySimple("prefill", false));
@@ -190,7 +189,7 @@ public class DsTestCase
       assertEquals(minPoolSize, poolConfig.getMinSize());
       assertEquals(maxPoolSize, poolConfig.getMaxSize());
       assertTrue(poolConfig.isBackgroundValidation());
-      assertEquals(backValidationTime, poolConfig.getBackgroundValidationMinutes());
+      assertEquals(backValidationTime, poolConfig.getBackgroundValidationMillis());
       assertEquals(blockingTimeout, poolConfig.getBlockingTimeout());
       assertEquals(idleTimeOut * 60 * 1000L, poolConfig.getIdleTimeout());
       assertFalse(poolConfig.isPrefill());
@@ -198,7 +197,7 @@ public class DsTestCase
       assertTrue(poolConfig.isUseFastFail());
       
       poolConfig.setBackgroundValidation(oldBackgroundValidation);
-      poolConfig.setBackgroundValidationMinutes(oldBackgroundValidationTime);
+      poolConfig.setBackgroundValidationMillis(oldBackgroundValidationTime);
       poolConfig.setBlockingTimeout(oldBlockingTimeout);
       poolConfig.setIdleTimeout(oldIdleTimeout);
       poolConfig.setMaxSize(oldMaxPoolSize);
