@@ -625,6 +625,129 @@ java:/eis/ao/&lt;deploymentName&gt;
         
      </section>
 
+      <section id="deployingra_extensions">
+        <title>Resource adapter extensions</title>
+
+        <para>
+          A resource adapter can make use of a couple of Java EE Connector Architecture extensions in 
+          the IronJacamar container in order to improve the integration.
+        </para>
+
+        <para>
+          The extensions include
+
+          <itemizedlist>
+            <listitem>
+              <code>org.jboss.jca.core.spi.recovery.RecoveryPlugin</code>: Plugin to provide feedback
+              to the recovery module inside IronJacamar.
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.core.spi.statistics.Statistics</code>: Plugin to identify a resource
+              adapter component (<code>ResourceAdapter</code>, <code>ManagedConnectionFactory</code> and
+              admin object) that provides statistics.
+            </listitem>
+          </itemizedlist>
+
+        </para>
+
+        <para>
+          The following sections will describe these extensions points.
+        </para>
+
+        <section id="deployingra_extensions_recovery">
+          <title>Recovery extension</title>
+          
+          <para>
+            The IronJacamar recovery extension allows the resource adapter deployment to give feedback
+            to the container if a <code>ManagedConnection</code> can be used for recovery. This extension
+            is used as part of XA recovery in the environment, and should therefore be implemented by all
+            resource adapters capable of working in an <code>XATransaction</code> sematics.
+          </para>
+
+          <para>
+            The interface <code>org.jboss.core.spi.recovery.RecoveryPlugin</code> located in the 
+            <code>ironjacamar-core-api</code> artifact makes up the SPI for the extension.
+          </para>
+
+          <para>
+            The interface contains two methods that should be implemented in a resource adapter specific
+            manner.
+          </para>
+
+          <para>
+            The method
+
+            <programlisting>
+public boolean isValid(Object c) throws ResourceException;
+            </programlisting>
+
+            will return <code>true</code> if the connection can be used for recovery.
+          </para>
+
+          <para>
+            The method
+
+            <programlisting>
+public void close(Object c) throws ResourceException;
+            </programlisting>
+
+            will close a connection that was used for recovery.
+          </para>
+
+          <para>
+            The recovery extension is activated by adding a recovery element to the deployment
+
+            <programlisting>
+&lt;recovery&gt;
+   &lt;recovery-plugin&gt;com.mycompany.myproject.RecoveryPluginImpl&lt;/recovery-plugin&gt;
+&lt;/recovery&gt;
+            </programlisting>
+
+          </para>
+
+          <note>
+            The IronJacamar container will use a default implementation of the recovery SPI if an
+            implementation isn't specified by the deployment.
+          </note>
+          
+        </section>
+
+        <section id="deployingra_extensions_statistics">
+          <title>Statistics extension</title>
+          
+          <para>
+            The IronJacamar statistics extension allows a resource adapter to expose statistics to
+            the container and hence to the environment where IronJacamar is running. Statistics can
+            be enabled for <code>ResourceAdapter</code>, <code>ManagedConnectionFactory</code> and
+            admin object instances.
+          </para>
+
+          <para>
+            The extension include two interfaces <code>org.jboss.core.spi.statistics.Statistics</code>
+            and <code>org.jboss.core.spi.statistics.StatisticsPlugin</code>. Both these interfaces are
+            located in the <code>ironjacamar-core-api</code> artifact.
+          </para>
+
+          <para>
+            The <code>Statistics</code> interface will mark a resource adapter component as statistics capable
+            and return the statistics plugin implementation instance.
+          </para>
+
+          <para>
+            The <code>StatisticsPlugin</code> interface contains methods to expose and describe each statistic
+            that the plugin makes available. This information will then be made available to the environment
+            where the IronJacamar container is running using the environment's prefered mechanism.
+          </para>
+
+          <note>
+            The IronJacamar container will only expose core statistics for a deployment if no implementation
+            of this extension is available.
+          </note>
+
+        </section>
+
+      </section>
+
    </section>
 
    <!-- Datasources -->
