@@ -567,7 +567,12 @@ public abstract class AbstractResourceAdapterDeployer
                            List<? extends ConfigProperty> cpm = mlMD.getActivationspec().getConfigProperties();
                            String asClass = mlMD.getActivationspec().getActivationspecClass().getValue();
 
-                           ActivationSpec as = (ActivationSpec)initAndInject(asClass, cpm, cl);
+                           Object oa = initAndInject(asClass, cpm, cl);
+
+                           if (oa == null || !(oa instanceof ActivationSpec))
+                              throw new DeployException(bundle.invalidActivationSpec(asClass));
+
+                           ActivationSpec as = (ActivationSpec)oa;
 
                            if (trace)
                            {
@@ -623,7 +628,7 @@ public abstract class AbstractResourceAdapterDeployer
          ResourceAdapter1516 ra1516 = (ResourceAdapter1516) cmd.getResourceadapter();
          if (ra1516 != null && ra1516.getAdminObjects() != null)
          {
-            List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminObjects();
+            List<AdminObject> aoMetas = ra1516.getAdminObjects();
             if (aoMetas.size() > 0)
             {
 
@@ -805,8 +810,13 @@ public abstract class AbstractResourceAdapterDeployer
                   {
                      if (activateDeployment)
                      {
-                        resourceAdapter = (ResourceAdapter) initAndInject(ra1516.getResourceadapterClass(),
-                           ra1516.getConfigProperties(), cl);
+                        String raClz = ra1516.getResourceadapterClass();
+                        Object or = initAndInject(raClz, ra1516.getConfigProperties(), cl);
+
+                        if (or == null || !(or instanceof ResourceAdapter))
+                           throw new DeployException(bundle.invalidResourceAdapter(raClz));
+
+                        resourceAdapter = (ResourceAdapter)or;
 
                         if (trace)
                         {
@@ -854,8 +864,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                   if (ijCD == null || ijCD.isEnabled() || (cdRaXml != null && cdRaXml.isEnabled()))
                   {
-                     ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(ra10
-                        .getManagedConnectionFactoryClass().getValue(), ra10.getConfigProperties(), cl);
+                     String mcfClz = ra10.getManagedConnectionFactoryClass().getValue();
+                     Object om = initAndInject(mcfClz, ra10.getConfigProperties(), cl);
+
+                     if (om == null || !(om instanceof ManagedConnectionFactory))
+                        throw new DeployException(bundle.invalidManagedConnectionFactory(mcfClz));
+
+                     ManagedConnectionFactory mcf = (ManagedConnectionFactory)om;
 
                      if (trace)
                      {
@@ -967,7 +982,7 @@ public abstract class AbstractResourceAdapterDeployer
                      }
                      else
                      {
-                        tsmd = ((ResourceAdapter10) cmd.getResourceadapter()).getTransactionSupport();
+                        tsmd = ra10.getTransactionSupport();
                      }
 
                      TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
@@ -1220,8 +1235,13 @@ public abstract class AbstractResourceAdapterDeployer
 
                               if (ijCD == null || ijCD.isEnabled() || (cdRaXml != null && cdRaXml.isEnabled()))
                               {
-                                 ManagedConnectionFactory mcf = (ManagedConnectionFactory) initAndInject(cdMeta
-                                    .getManagedConnectionFactoryClass().getValue(), cdMeta.getConfigProperties(), cl);
+                                 String mcfClz = cdMeta.getManagedConnectionFactoryClass().getValue();
+                                 Object om = initAndInject(mcfClz, cdMeta.getConfigProperties(), cl);
+
+                                 if (om == null || !(om instanceof ManagedConnectionFactory))
+                                    throw new DeployException(bundle.invalidManagedConnectionFactory(mcfClz));
+
+                                 ManagedConnectionFactory mcf = (ManagedConnectionFactory)om;
 
                                  if (trace)
                                  {

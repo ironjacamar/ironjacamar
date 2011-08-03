@@ -784,6 +784,21 @@
             <entry><code>EXCEPTION</code></entry>
             <entry>Deployment failed</entry>
           </row>
+          <row>
+            <entry>20057</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid ManagedConnectionFactory class</entry>
+          </row>
+          <row>
+            <entry>20058</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid ActivationSpec class</entry>
+          </row>
+          <row>
+            <entry>20059</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid ResourceAdapter class</entry>
+          </row>
         </tbody>
       </tgroup>
     </table>
