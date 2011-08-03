@@ -78,4 +78,28 @@ public interface DeployersBundle
     */
    @Message(id = 20056, value = "Deployment failed: %s")
    public String deploymentFailed(String url);
+
+   /**
+    * Invalid managed connection factory
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 20057, value = "Invalid ManagedConnectionFactory class: %s")
+   public String invalidManagedConnectionFactory(String clz);
+
+   /**
+    * Invalid activation spec
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 20058, value = "Invalid ActivationSpec class: %s")
+   public String invalidActivationSpec(String clz);
+
+   /**
+    * Invalid resource adapter
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 20059, value = "Invalid ResourceAdapter class: %s")
+   public String invalidResourceAdapter(String clz);
 }
