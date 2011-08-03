@@ -166,9 +166,9 @@ public class Validation
             FailureHelper fh = new FailureHelper(failures);
             File reportDirectory = new File(output);
 
-            if (!reportDirectory.mkdirs())
+            if (!reportDirectory.exists() && !reportDirectory.mkdirs())
             {
-               throw new IOException(output + " can't be created");
+               throw new IOException("The output directory '" + output + "' can't be created");
             }
 
             String reportName = url.getFile();
