@@ -112,7 +112,7 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
       /**
       * useFastFail tag
       */
-      USEFASTFAIL("useFastFail"),
+      USEFASTFAIL("use-fast-fail"),
       /**
       * staleConnectionCheckerClassName tag
       */
