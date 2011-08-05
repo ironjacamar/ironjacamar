@@ -102,9 +102,6 @@ import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Messages;
-import org.jboss.security.SecurityContext;
-import org.jboss.security.SecurityContextAssociation;
-import org.jboss.security.SecurityContextFactory;
 import org.jboss.security.SubjectFactory;
 
 /**
@@ -1988,21 +1985,6 @@ public abstract class AbstractResourceAdapterDeployer
          {
             try
             {
-               // Create a security context on the association
-               SecurityContext securityContext = SecurityContextFactory.createSecurityContext(securityDomain);
-               SecurityContextAssociation.setSecurityContext(securityContext);
-               
-               // Unauthenticated
-               Subject unauthenticated = new Subject();
-                  
-               // Leave the subject empty as we don't have any information to do the
-               // authentication with - and we only need it to be able to get the
-               // real subject from the SubjectFactory
-               
-               // Set the authenticated subject
-               securityContext.getSubjectInfo().setAuthenticatedSubject(unauthenticated);
-
-               // Use the unauthenticated subject to get the real subject instance
                Subject subject = subjectFactory.createSubject(securityDomain);
 
                Set<PasswordCredential> pcs = subject.getPrivateCredentials(PasswordCredential.class);
