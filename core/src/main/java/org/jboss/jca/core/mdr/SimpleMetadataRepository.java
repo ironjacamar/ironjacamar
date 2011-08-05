@@ -325,4 +325,24 @@ public class SimpleMetadataRepository implements MetadataRepository
 
       return Collections.unmodifiableMap(mappings);
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("SimpleMetadataRepository@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[");
+      sb.append(" raTemplates=").append(raTemplates);
+      sb.append(" raRoots=").append(raRoots);
+      sb.append(" ironJacamar=").append(ironJacamar);
+      sb.append(" jndiMappings=").append(jndiMappings);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

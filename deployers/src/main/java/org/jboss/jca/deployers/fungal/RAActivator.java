@@ -24,6 +24,9 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
+import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
@@ -34,8 +37,11 @@ import org.jboss.jca.deployers.common.CommonDeployment;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.management.ObjectName;
 
@@ -145,6 +151,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          MetadataRepository mdr = ((RAConfiguration) getConfiguration()).getMetadataRepository();
 
          Set<String> rarDeployments = mdr.getResourceAdapters();
+         Set<String> configuredRars = getConfiguredResourceAdapters(mdr);
 
          for (String deployment : rarDeployments)
          {
@@ -162,7 +169,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
                }
             }
 
-            if (include && !mdr.hasJndiMappings(deployment))
+            if (include && !configuredRars.contains(deployment))
             {
                // If there isn't any JNDI mappings then the archive isn't active
                // so activate it
@@ -213,6 +220,56 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    @Override
    public void postUndeploy() throws Throwable
    {
+   }
+
+   /**
+    * Get the set of configured resource adapters
+    * @param mdr The metadata repository
+    * @return The resource adapters
+    */
+   private Set<String> getConfiguredResourceAdapters(MetadataRepository mdr)
+   {
+      Set<String> configured = new HashSet<String>();
+
+      SortedSet<String> deployments = new TreeSet<String>(new RAActivatorComparator());
+      for (String entry : mdr.getResourceAdapters())
+      {
+         deployments.add(entry);
+      }
+
+      for (String deployment : deployments)
+      {
+         if (deployment.endsWith(".rar"))
+         {
+            if (mdr.hasJndiMappings(deployment))
+               configured.add(deployment);
+         }
+         else if (deployment.endsWith("-ra.xml"))
+         {
+            configured.add(deployment);
+            try
+            {
+               Connector raXml = mdr.getResourceAdapter(deployment);
+
+               for (String entry : mdr.getResourceAdapters())
+               {
+                  if (entry.endsWith(".rar"))
+                  {
+                     Connector entryXml = mdr.getResourceAdapter(entry);
+
+                     if (raXml.equals(entryXml))
+                        configured.add(entry);
+                  }
+               }
+            }
+            catch (Throwable t)
+            {
+               log.debug("Ignoring: " + deployment);
+            }
+         }
+      }
+
+      return configured;
    }
 
    /**
@@ -317,6 +374,34 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    @Override
    protected boolean checkActivation(Connector cmd, IronJacamar ijmd)
    {
-      return true;
+      if (cmd == null)
+         return false;
+
+      if (ijmd != null)
+         return true;
+
+      ResourceAdapter ra = cmd.getResourceadapter();
+
+      if (ra == null)
+         return false;
+
+      if (ra instanceof ResourceAdapter10)
+      {
+         return true;
+      }
+      else
+      {
+         ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
+         int mcfs = 0;
+         int aos = ra1516.getAdminObjects() != null ? ra1516.getAdminObjects().size() : 0;
+
+         if (ra1516.getOutboundResourceadapter() != null)
+         {
+            mcfs = ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null ?
+               ra1516.getOutboundResourceadapter().getConnectionDefinitions().size() : 0;
+         }
+
+         return mcfs <= 1 && aos <= 1;
+      }
    }
 }

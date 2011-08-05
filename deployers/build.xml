@@ -179,6 +179,16 @@
           includes="org/jboss/jca/test/deployers/spec/rars/ra16annoconfprop/*.class"/>
        <fileset dir="src/test/resources/ra16annoconfprop.rar"/>
     </jar>
+    <jar destfile="${build.deployers.dir}/multiple-full.rar">
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/multiple/*.class"/>
+       <fileset dir="src/test/resources/multiple-full.rar"/>
+    </jar>
+    <jar destfile="${build.deployers.dir}/multiple-partial.rar">
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/multiple/*.class"/>
+       <fileset dir="src/test/resources/multiple-partial.rar"/>
+    </jar>
    
   </target>
 
