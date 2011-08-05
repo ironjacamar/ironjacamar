@@ -120,6 +120,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
    /** Destroyed */
    protected boolean destroyed = false;
 
+   /** Metadata */
+   protected ManagedConnectionMetaData metadata;
+
    static
    {
       Class<?> connectionFactory = null;
@@ -202,6 +205,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       underlyingReadOnly = readOnly;
       jdbcReadOnly = readOnly;
       jdbcTransactionIsolation = this.transactionIsolation;
+
+      metadata = new ManagedConnectionMetaDataImpl(con, props.getProperty("user"));
    }
 
    /**
@@ -259,7 +264,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
     */
    public ManagedConnectionMetaData getMetaData() throws ResourceException
    {
-      return null;
+      return metadata;
    }
 
    /**
