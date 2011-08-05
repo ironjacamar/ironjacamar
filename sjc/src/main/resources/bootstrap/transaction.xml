@@ -91,7 +91,9 @@
 
   <bean name="XATerminator" class="com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator"/>
 
-  <bean name="TransactionSynchronizationRegistry" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple"/>
+  <bean name="TransactionSynchronizationRegistry" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple">
+    <depends>JTAEnvironmentBean</depends>
+  </bean>
 
   <bean name="TxControl" class="com.arjuna.ats.arjuna.coordinator.TxControl"/>
 
