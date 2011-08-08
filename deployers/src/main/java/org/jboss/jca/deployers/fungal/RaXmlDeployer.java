@@ -264,6 +264,9 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
          IronJacamar ijmd = mdr.getIronJacamar(deployment.toExternalForm());
          File root = mdr.getRoot(deployment.toExternalForm());
 
+         if (cmd != null)
+            cmd = (Connector)cmd.copy();
+
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(raxml, cmd);
          // Create classloader
          URL[] urls = getUrls(root);

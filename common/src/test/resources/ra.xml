@@ -10,19 +10,46 @@
     <eis-type>TS EIS</eis-type>
     <resourceadapter-version>1.0</resourceadapter-version>
     <resourceadapter>
-        <resourceadapter-class>
-            com.sun.ts.tests.common.connector.whitebox.multianno.MAResourceAdapterImpl
-        </resourceadapter-class>
-        <config-property>
-            <config-property-name>overRide</config-property-name>
-            <config-property-type>java.lang.String</config-property-type>
-            <config-property-value>VAL_FROM_DD</config-property-value>
-        </config-property>
+      <resourceadapter-class>
+        com.sun.ts.tests.common.connector.whitebox.multianno.MAResourceAdapterImpl
+      </resourceadapter-class>
+      <config-property>
+        <config-property-name>overRide</config-property-name>
+        <config-property-type>java.lang.String</config-property-type>
+        <config-property-value>VAL_FROM_DD</config-property-value>
+      </config-property>
       <outbound-resourceadapter>
         <connection-definition>
             <managedconnectionfactory-class>
                 com.sun.ts.tests.common.connector.whitebox.multianno.MAManagedConnectionFactory
             </managedconnectionfactory-class>
+            <config-property>
+              <config-property-name>cp</config-property-name>
+              <config-property-type>java.lang.String</config-property-type>
+              <config-property-value>1</config-property-value>
+            </config-property>
+            <connectionfactory-interface>
+                com.sun.ts.tests.common.connector.whitebox.TSConnectionFactory
+            </connectionfactory-interface>
+            <connectionfactory-impl-class>
+                com.sun.ts.tests.common.connector.whitebox.TSEISDataSource
+            </connectionfactory-impl-class>
+            <connection-interface>
+                com.sun.ts.tests.common.connector.whitebox.TSConnection
+            </connection-interface>
+            <connection-impl-class>
+                com.sun.ts.tests.common.connector.whitebox.TSEISConnection
+            </connection-impl-class>
+        </connection-definition>
+        <connection-definition>
+            <managedconnectionfactory-class>
+                com.sun.ts.tests.common.connector.whitebox.multianno.MAManagedConnectionFactory2
+            </managedconnectionfactory-class>
+            <config-property>
+              <config-property-name>cp</config-property-name>
+              <config-property-type>java.lang.String</config-property-type>
+              <config-property-value>2</config-property-value>
+            </config-property>
             <connectionfactory-interface>
                 com.sun.ts.tests.common.connector.whitebox.TSConnectionFactory
             </connectionfactory-interface>
@@ -43,5 +70,25 @@
         </authentication-mechanism>
         <reauthentication-support>false</reauthentication-support>
       </outbound-resourceadapter>
+      <adminobject>
+         <adminobject-interface>com.sun.ts.tests.common.connector.whitebox.AdminObject1</adminobject-interface>
+         <adminobject-class>com.sun.ts.tests.common.connector.whitebox.AdminObject1Impl</adminobject-class>
+         <config-property>
+            <config-property-name>acp</config-property-name>
+            <config-property-type>java.lang.String</config-property-type>
+            <config-property-value></config-property-value>
+         </config-property>
+
+      </adminobject>
+      <adminobject>
+         <adminobject-interface>com.sun.ts.tests.common.connector.whitebox.AdminObject2</adminobject-interface>
+         <adminobject-class>com.sun.ts.tests.common.connector.whitebox.AdminObject2Impl</adminobject-class>
+         <config-property>
+            <config-property-name>acp</config-property-name>
+            <config-property-type>java.lang.String</config-property-type>
+            <config-property-value></config-property-value>
+         </config-property>
+
+      </adminobject>
     </resourceadapter>
 </connector>
