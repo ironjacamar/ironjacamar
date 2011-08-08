@@ -480,7 +480,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             {
                if (mgtCf.getManagedConnectionFactory() != null)
                {
-                  org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf = mgtCf.getManagedConnectionFactory();
+                  org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf = 
+                     mgtCf.getManagedConnectionFactory();
                   Set<String> writeable = new HashSet<String>();
                   Set<String> excludeAttributes = new HashSet<String>();
 
