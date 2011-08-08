@@ -462,7 +462,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
                      server.registerMBean(dsPSDMB, dsPSON);
 
-                  ons.add(dsPSON);
+                     ons.add(dsPSON);
                   }
                }
 

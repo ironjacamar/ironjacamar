@@ -61,7 +61,7 @@ public class DriverRegistry
 
    /**
     * Set the classloader
-    * @param value The value
+    * @param cl The value
     */
    public void setScanClassLoader(ClassLoader cl)
    {
@@ -70,6 +70,7 @@ public class DriverRegistry
 
    /**
     * Get driver for a module
+    * @param module The module definition
     * @return The driver; <code>null</code> if not defined
     */
    public String getDriver(String module)
