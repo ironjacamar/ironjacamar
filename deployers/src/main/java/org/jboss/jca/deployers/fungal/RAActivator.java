@@ -23,7 +23,10 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
+import org.jboss.jca.common.api.metadata.ra.AdminObject;
+import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
@@ -257,7 +260,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
                   {
                      Connector entryXml = mdr.getResourceAdapter(entry);
 
-                     if (raXml.equals(entryXml))
+                     if (sameStructure(raXml, entryXml))
                         configured.add(entry);
                   }
                }
@@ -270,6 +273,152 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
       }
 
       return configured;
+   }
+
+   /**
+    * Check if two connector defines the same structures
+    * @param c1 The first connector
+    * @param c2 The second connector
+    * @return True if same structure; otherwise false
+    */
+   private boolean sameStructure(Connector c1, Connector c2)
+   {
+      if (c1 == null || c1.getResourceadapter() == null)
+         return false;
+
+      if (c2 == null || c2.getResourceadapter() == null)
+         return false;
+
+      ResourceAdapter ra1 = c1.getResourceadapter();
+      ResourceAdapter ra2 = c2.getResourceadapter();
+
+      if (ra1 instanceof ResourceAdapter10 && ra2 instanceof ResourceAdapter10)
+      {
+         ResourceAdapter10 ra110 = (ResourceAdapter10)ra1;
+         ResourceAdapter10 ra210 = (ResourceAdapter10)ra2;
+
+         return ra110.getManagedConnectionFactoryClass().getValue().
+            equals(ra210.getManagedConnectionFactoryClass().getValue());
+      }
+      else if (ra1 instanceof ResourceAdapter1516 && ra2 instanceof ResourceAdapter1516)
+      {
+         ResourceAdapter1516 ra11516 = (ResourceAdapter1516)ra1;
+         ResourceAdapter1516 ra21516 = (ResourceAdapter1516)ra2;
+
+         Set<String> clzRa1 = new HashSet<String>();
+         Set<String> clzMcf1 = new HashSet<String>();
+         Set<String> clzAo1 = new HashSet<String>();
+         Set<String> clzAS1 = new HashSet<String>();
+
+         if (ra11516.getResourceadapterClass() != null)
+            clzRa1.add(ra11516.getResourceadapterClass());
+
+         if (ra11516.getOutboundResourceadapter() != null)
+         {
+            if (ra11516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+            {
+               for (ConnectionDefinition cd : ra11516.getOutboundResourceadapter().getConnectionDefinitions())
+               {
+                  clzMcf1.add(cd.getManagedConnectionFactoryClass().getValue());
+               }
+            }
+         }
+
+         if (ra11516.getAdminObjects() != null)
+         {
+            for (AdminObject ao : ra11516.getAdminObjects())
+            {
+               clzAo1.add(ao.getAdminobjectClass().getValue());
+            }
+         }
+
+         if (ra11516.getInboundResourceadapter() != null &&
+             ra11516.getInboundResourceadapter().getMessageadapter() != null &&
+             ra11516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null)
+         {
+            for (MessageListener ml : ra11516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
+            {
+               clzAS1.add(ml.getActivationspec().getActivationspecClass().getValue());
+            }
+         }
+
+         Set<String> clzRa2 = new HashSet<String>();
+         Set<String> clzMcf2 = new HashSet<String>();
+         Set<String> clzAo2 = new HashSet<String>();
+         Set<String> clzAS2 = new HashSet<String>();
+
+         if (ra21516.getResourceadapterClass() != null)
+            clzRa2.add(ra21516.getResourceadapterClass());
+
+         if (ra21516.getOutboundResourceadapter() != null)
+         {
+            if (ra21516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+            {
+               for (ConnectionDefinition cd : ra21516.getOutboundResourceadapter().getConnectionDefinitions())
+               {
+                  clzMcf2.add(cd.getManagedConnectionFactoryClass().getValue());
+               }
+            }
+         }
+
+         if (ra21516.getAdminObjects() != null)
+         {
+            for (AdminObject ao : ra21516.getAdminObjects())
+            {
+               clzAo2.add(ao.getAdminobjectClass().getValue());
+            }
+         }
+
+         if (ra21516.getInboundResourceadapter() != null &&
+             ra21516.getInboundResourceadapter().getMessageadapter() != null &&
+             ra21516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null)
+         {
+            for (MessageListener ml : ra21516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
+            {
+               clzAS2.add(ml.getActivationspec().getActivationspecClass().getValue());
+            }
+         }
+
+         if (clzRa1.size() != clzRa2.size())
+            return false;
+
+         if (clzMcf1.size() != clzMcf2.size())
+            return false;
+
+         if (clzAo1.size() != clzAo2.size())
+            return false;
+
+         if (clzAS1.size() != clzAS2.size())
+            return false;
+
+         for (String s : clzRa1)
+         {
+            if (!clzRa2.contains(s))
+               return false;
+         }
+
+         for (String s : clzMcf1)
+         {
+            if (!clzMcf2.contains(s))
+               return false;
+         }
+
+         for (String s : clzAo1)
+         {
+            if (!clzAo2.contains(s))
+               return false;
+         }
+
+         for (String s : clzAS1)
+         {
+            if (!clzAS2.contains(s))
+               return false;
+         }
+
+         return true;
+      }
+
+      return false;
    }
 
    /**
@@ -326,6 +475,9 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          Connector cmd = metadataRepository.getResourceAdapter(url.toExternalForm());
          IronJacamar ijmd = metadataRepository.getIronJacamar(url.toExternalForm());
 
+         if (cmd != null)
+            cmd = (Connector)cmd.copy();
+
          cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
 
          CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd);
@@ -377,13 +529,50 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
       if (cmd == null)
          return false;
 
-      if (ijmd != null)
-         return true;
-
       ResourceAdapter ra = cmd.getResourceadapter();
 
       if (ra == null)
          return false;
+
+      if (ijmd != null)
+      {
+         if (ra instanceof ResourceAdapter10)
+         {
+            return true;
+         }
+         else
+         {
+            ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
+
+            int mcfs = ijmd.getConnectionDefinitions() != null ? ijmd.getConnectionDefinitions().size() : 0;
+            int aos = ijmd.getAdminObjects() != null ? ijmd.getAdminObjects().size() : 0;
+            boolean inflow = false;
+
+            if (mcfs == 0)
+            {
+               if (ra1516.getOutboundResourceadapter() != null)
+               {
+                  mcfs = ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null ?
+                     ra1516.getOutboundResourceadapter().getConnectionDefinitions().size() : 0;
+               }
+            }
+
+            if (aos == 0)
+            {
+               aos = ra1516.getAdminObjects() != null ? ra1516.getAdminObjects().size() : 0;
+            }
+
+            if (ra1516.getInboundResourceadapter() != null &&
+                ra1516.getInboundResourceadapter().getMessageadapter() != null &&
+                ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
+                ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
+            {
+               inflow = true;
+            }
+
+            return mcfs >= 1 || aos >= 1 || inflow;
+         }
+      }
 
       if (ra instanceof ResourceAdapter10)
       {

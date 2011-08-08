@@ -25,7 +25,6 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
-import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
@@ -45,9 +44,6 @@ import javax.resource.spi.ResourceAdapter;
  */
 public class RaXmlDeployment extends AbstractFungalDeployment
 {
-   /** The resource adapter deployment */
-   private URL raDeployment;
-
    /**
     * Constructor
     * @param deployment The deployment
@@ -85,54 +81,5 @@ public class RaXmlDeployment extends AbstractFungalDeployment
       super(deployment, deploymentName, true, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
             cfs, cfJndis, aos, aoJndis, recoveryModules, recoveryRegistry, managementRepository, 
             connector, server, objectNames, cl, log);
-
-      this.raDeployment = raDeployment;
-   }
-
-   /**
-    * Stop
-    */
-   @Override
-   public void stop()
-   {
-      super.stop();
-
-      log.debug("Undeploying: " + deployment.toExternalForm());
-
-      if (mdr != null && cfs != null && cfJndis != null)
-      {
-         for (int i = 0; i < cfs.length; i++)
-         {
-            try
-            {
-               String cf = cfs[i].getClass().getName();
-               String jndi = cfJndis[i];
-
-               mdr.unregisterJndiMapping(raDeployment.toExternalForm(), cf, jndi);
-            }
-            catch (NotFoundException nfe)
-            {
-               log.warn("Exception during unregistering deployment", nfe);
-            }
-         }
-      }
-
-      if (mdr != null && aos != null && aoJndis != null)
-      {
-         for (int i = 0; i < aos.length; i++)
-         {
-            try
-            {
-               String ao = aos[i].getClass().getName();
-               String jndi = aoJndis[i];
-
-               mdr.unregisterJndiMapping(raDeployment.toExternalForm(), ao, jndi);
-            }
-            catch (NotFoundException nfe)
-            {
-               log.warn("Exception during unregistering deployment", nfe);
-            }
-         }
-      }
    }
 }
