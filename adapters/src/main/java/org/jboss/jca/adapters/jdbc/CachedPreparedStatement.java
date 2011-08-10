@@ -38,6 +38,8 @@ import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jboss.logging.Logger;
+
 /**
  * Wrapper class for cached PreparedStatements.  Keeps a refcount.  When this refcount reaches 0,
  * it will close ps.
@@ -49,6 +51,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class CachedPreparedStatement extends JBossWrapper implements PreparedStatement
 {
    private static final long serialVersionUID = 2085461257386274373L;
+   protected static Logger log = Logger.getLogger(CachedPreparedStatement.class);
+   protected static boolean trace = log.isTraceEnabled();
    
    private PreparedStatement ps;
    private AtomicBoolean cached = new AtomicBoolean(true);
@@ -437,6 +441,22 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
    }
 
    /**
+    * Close prepared statement
+    * @exception SQLException Thrown if an error occurs
+    */
+   private void closePreparedStatement() throws SQLException
+   {
+      if (trace)
+      {
+         Throwable t = new Throwable("PreparedStatement.close() called");
+         t.setStackTrace(Thread.currentThread().getStackTrace());
+         log.trace(t.getMessage(), t);
+      }
+
+      ps.close();
+   }
+
+   /**
     * Age out
     * @exception SQLException Thrown if an error occurs
     */
@@ -444,7 +464,7 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
    {
       cached.set(false);
       if (inUse.get() == 0)
-         ps.close();
+         closePreparedStatement();
    }
 
    /**
@@ -457,7 +477,7 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
       {
          if (!cached.get())
          {
-            ps.close();
+            closePreparedStatement();
          }
          else
          {
