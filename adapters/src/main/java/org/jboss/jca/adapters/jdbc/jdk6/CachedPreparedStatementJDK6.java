@@ -33,7 +33,7 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 
 /**
- * CachedPreparedStatementJDK5.
+ * CachedPreparedStatementJDK6.
  * 
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
  * @version $Revision: 85945 $
