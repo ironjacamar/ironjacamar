@@ -708,8 +708,21 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      validConnectionChecker = parseExtension(reader, currTag.getLocalName());
                      break;
                   }
-                  default :
-                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                  default : {
+                     if (reader.getLocalName().equals("background-validation-minutes"))
+                     {
+                        Integer backgroundValidationMinutes = elementAsInteger(reader);
+                        backgroundValidationMillis = backgroundValidationMinutes.intValue() * 60000L;
+                     }
+                     else if (reader.getLocalName().equals("useFastFail"))
+                     {
+                        useFastFail = elementAsBoolean(reader);
+                     }
+                     else
+                     {
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                     }
+                  }
                }
                break;
             }

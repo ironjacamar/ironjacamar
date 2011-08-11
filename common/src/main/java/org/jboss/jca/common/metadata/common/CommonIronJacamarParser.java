@@ -229,8 +229,21 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      useFastFail = elementAsBoolean(reader);
                      break;
                   }
-                  default :
-                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                  default : {
+                     if (reader.getLocalName().equals("background-validation-minutes"))
+                     {
+                        Integer backgroundValidationMinutes = elementAsInteger(reader);
+                        backgroundValidationMillis = backgroundValidationMinutes.intValue() * 60000L;
+                     }
+                     else if (reader.getLocalName().equals("useFastFail"))
+                     {
+                        useFastFail = elementAsBoolean(reader);
+                     }
+                     else
+                     {
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                     }
+                  }
                }
                break;
             }
