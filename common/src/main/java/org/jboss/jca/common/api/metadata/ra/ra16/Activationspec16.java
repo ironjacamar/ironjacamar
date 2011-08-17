@@ -41,7 +41,6 @@ public interface Activationspec16 extends Activationspec15
    /**
     * @return configProperty
     */
-   @Override
    public abstract List<? extends ConfigProperty> getConfigProperties();
 
    @Override
@@ -54,12 +53,12 @@ public interface Activationspec16 extends Activationspec15
    public abstract String toString();
 
    /**
-   *
-   * A Tag.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
+    *
+    * A Tag.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
    public enum Tag
    {
       /** always first
@@ -101,6 +100,14 @@ public interface Activationspec16 extends Activationspec15
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }
@@ -172,6 +179,12 @@ public interface Activationspec16 extends Activationspec15
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
-
 }

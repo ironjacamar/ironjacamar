@@ -72,5 +72,27 @@ public class ResourceAdaptersImpl implements ResourceAdapters
       return Collections.unmodifiableList(resourceAdapters);
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+      sb.append("<resource-adapters>");
+
+      if (resourceAdapters != null && resourceAdapters.size() > 0)
+      {
+         for (ResourceAdapter ra : resourceAdapters)
+         {
+            sb.append(ra);
+         }
+      }
+
+      sb.append("</resource-adapters>");
+
+      return sb.toString();
+   }
 }
 

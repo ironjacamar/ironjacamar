@@ -101,10 +101,10 @@ public interface ResourceAdapter extends CommonIronJacamar
        */
       ADMIN_OBJECTS("admin-objects"),
 
-     /**
-      * admin-objects tag
-      */
-     ADMIN_OBJECT("admin-object");
+      /**
+       * admin-objects tag
+       */
+      ADMIN_OBJECT("admin-object");
 
       private final String name;
 
@@ -125,6 +125,14 @@ public interface ResourceAdapter extends CommonIronJacamar
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }

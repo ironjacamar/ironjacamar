@@ -128,13 +128,6 @@ public class CredentialImpl implements Credential
       return true;
    }
 
-   @Override
-   public String toString()
-   {
-      return "DsSecurityImpl [userName=" + userName + ", password=" + password + ", securityDomain=" +
-             securityDomain + "]";
-   }
-
    /**
     * Get the securityDomainManaged.
     *
@@ -145,8 +138,6 @@ public class CredentialImpl implements Credential
    {
       return securityDomain;
    }
-
-
 
    @Override
    public void validate() throws ValidateException

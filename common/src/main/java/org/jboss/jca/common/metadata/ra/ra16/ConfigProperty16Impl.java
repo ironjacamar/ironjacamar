@@ -223,11 +223,54 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
    @Override
    public String toString()
    {
-      return "ConfigProperty [description=" + description + ", configPropertyName=" + configPropertyName
-            + ", configPropertyType=" + configPropertyType + ", configPropertyValue=" + configPropertyValue
-            + ", configPropertyIgnore=" + configPropertyIgnore + ", configPropertySupportsDynamicUpdates="
-            + configPropertySupportsDynamicUpdates + ", configPropertyConfidential=" + configPropertyConfidential
-            + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<config-property");
+      if (id != null)
+         sb.append(" ").append(ConfigProperty16.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      // description
+
+      sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_NAME).append(">");
+      sb.append(configPropertyName);
+      sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_NAME).append(">");
+
+      sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_TYPE).append(">");
+      sb.append(configPropertyType);
+      sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_TYPE).append(">");
+
+      if (!XsdString.isNull(configPropertyValue))
+      {
+         sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_VALUE).append(">");
+         sb.append(configPropertyValue);
+         sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_VALUE).append(">");
+      }
+
+      if (configPropertyIgnore != null)
+      {
+         sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_IGNORE).append(">");
+         sb.append(configPropertyIgnore);
+         sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_IGNORE).append(">");
+      }
+
+      if (configPropertySupportsDynamicUpdates != null)
+      {
+         sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_SUPPORT_DYNAMIC_UPDATE).append(">");
+         sb.append(configPropertySupportsDynamicUpdates);
+         sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_SUPPORT_DYNAMIC_UPDATE).append(">");
+      }
+
+      if (configPropertyConfidential != null)
+      {
+         sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_CONFIDENTIAL).append(">");
+         sb.append(configPropertyConfidential);
+         sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_CONFIDENTIAL).append(">");
+      }
+
+      sb.append("</config-property>");
+
+      return sb.toString();
    }
 
    @Override

@@ -299,11 +299,43 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    @Override
    public String toString()
    {
-      return "ConnectionDefinition [managedconnectionfactoryClass=" + managedconnectionfactoryClass +
-             ", configProperty=" + configProperties + ", connectionfactoryInterface=" +
-             connectionfactoryInterface + ", connectionfactoryImplClass=" + connectionfactoryImplClass +
-             ", connectionInterface=" + connectionInterface + ", connectionImplClass=" + connectionImplClass +
-             ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+      sb.append("<connection-definition");
+      if (id != null)
+         sb.append(" ").append(ConnectionDefinition.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      sb.append("<" + ConnectionDefinition.Tag.MANAGED_CONNECTIONFACTORY_CLASS + ">");
+      sb.append(managedconnectionfactoryClass);
+      sb.append("</" + ConnectionDefinition.Tag.MANAGED_CONNECTIONFACTORY_CLASS + ">");
+
+      if (configProperties != null)
+      {
+         for (ConfigProperty cp : configProperties)
+         {
+            sb.append(cp);
+         }
+      }
+
+      sb.append("<" + ConnectionDefinition.Tag.CONNECTIONFACTORY_INTERFACE + ">");
+      sb.append(connectionfactoryInterface);
+      sb.append("</" + ConnectionDefinition.Tag.CONNECTIONFACTORY_INTERFACE + ">");
+
+      sb.append("<" + ConnectionDefinition.Tag.CONNECTIONFACTORY_IMPL_CLASS + ">");
+      sb.append(connectionfactoryImplClass);
+      sb.append("</" + ConnectionDefinition.Tag.CONNECTIONFACTORY_IMPL_CLASS + ">");
+
+      sb.append("<" + ConnectionDefinition.Tag.CONNECTION_INTERFACE + ">");
+      sb.append(connectionInterface);
+      sb.append("</" + ConnectionDefinition.Tag.CONNECTION_INTERFACE + ">");
+
+      sb.append("<" + ConnectionDefinition.Tag.CONNECTION_IMPL_CLASS + ">");
+      sb.append(connectionImplClass);
+      sb.append("</" + ConnectionDefinition.Tag.CONNECTION_IMPL_CLASS + ">");
+
+      sb.append("</connection-definition>");
+
+      return sb.toString();
    }
 
    @Override

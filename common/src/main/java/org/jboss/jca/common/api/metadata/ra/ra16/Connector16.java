@@ -161,6 +161,14 @@ public interface Connector16 extends Connector15
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
       private static final Map<String, Tag> MAP;
 
       static
@@ -238,5 +246,12 @@ public interface Connector16 extends Connector15
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
 }

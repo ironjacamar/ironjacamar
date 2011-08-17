@@ -187,8 +187,32 @@ public class AdminObjectImpl implements AdminObject
    @Override
    public String toString()
    {
-      return "Adminobject [adminobjectInterface=" + adminobjectInterface + ", adminobjectClass=" +
-             adminobjectClass + ", configProperty=" + configProperties + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<adminobject");
+      if (id != null)
+         sb.append(" ").append(AdminObject.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      sb.append("<").append(AdminObject.Tag.ADMINOBJECT_INTERFACE).append(">");
+      sb.append(adminobjectInterface);
+      sb.append("</").append(AdminObject.Tag.ADMINOBJECT_INTERFACE).append(">");
+
+      sb.append("<").append(AdminObject.Tag.ADMINOBJECT_CLASS).append(">");
+      sb.append(adminobjectClass);
+      sb.append("</").append(AdminObject.Tag.ADMINOBJECT_CLASS).append(">");
+
+      if (configProperties != null)
+      {
+         for (ConfigProperty cp : configProperties)
+         {
+            sb.append(cp);
+         }
+      }
+
+      sb.append("</adminobject>");
+      
+      return sb.toString();
    }
 
    @Override

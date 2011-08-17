@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-
 /**
  *
  * A DatasourcesImpl.
@@ -123,6 +122,7 @@ public class DatasourcesImpl implements DataSources
       int result = 1;
       result = prime * result + ((datasource == null) ? 0 : datasource.hashCode());
       result = prime * result + ((xaDataSource == null) ? 0 : xaDataSource.hashCode());
+      result = prime * result + ((drivers == null) ? 0 : drivers.hashCode());
       return result;
    }
 
@@ -150,19 +150,61 @@ public class DatasourcesImpl implements DataSources
       }
       else if (!xaDataSource.equals(other.xaDataSource))
          return false;
+      if (drivers == null)
+      {
+         if (other.drivers != null)
+            return false;
+      }
+      else if (!drivers.equals(other.drivers))
+         return false;
       return true;
    }
 
    @Override
    public String toString()
    {
-      return "DatasourcesImpl [datasource=" + datasource + ", xaDataSource=" + xaDataSource + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+      sb.append("<datasources>");
+
+      if (datasource != null && datasource.size() > 0)
+      {
+         for (DataSource ds : datasource)
+         {
+            sb.append(ds);
+         }
+      }
+
+      if (xaDataSource != null && xaDataSource.size() > 0)
+      {
+         for (XaDataSource xads : xaDataSource)
+         {
+            sb.append(xads);
+         }
+      }
+
+      if (drivers != null && drivers.size() > 0)
+      {
+         sb.append("<").append(DataSources.Tag.DRIVERS).append(">");
+
+         for (Driver d : drivers.values())
+         {
+            sb.append(d);
+         }
+
+         sb.append("</").append(DataSources.Tag.DRIVERS).append(">");
+      }
+
+      sb.append("</datasources>");
+
+      return sb.toString();
    }
 
    @Override
    public void validate() throws ValidateException
    {
-      //always validate if all contetents are validating
+      //always validate if all content is validating
       for (DataSource ds : this.datasource)
       {
          ds.validate();
@@ -184,5 +226,4 @@ public class DatasourcesImpl implements DataSources
    {
       return Collections.unmodifiableList(new ArrayList<Driver>(drivers.values()));
    }
-
 }

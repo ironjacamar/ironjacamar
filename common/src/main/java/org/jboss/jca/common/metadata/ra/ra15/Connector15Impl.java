@@ -125,9 +125,46 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
    @Override
    public String toString()
    {
-      return "Connector15Impl [resourceadapterVersion=" + resourceadapterVersion + ", vendorName=" + vendorName
-            + ", eisType=" + eisType + ", license=" + license + ", resourceadapter=" + resourceadapter + ", id=" + id
-            + ", description=" + description + ", displayName=" + displayName + ", icon=" + icon + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+      sb.append("<").append("connector");
+      sb.append(" " + Connector15.Attribute.VERSION + "=\"1.5\"");
+      if (id != null)
+         sb.append(" " + Connector15.Attribute.ID + "=\"" + id + "\"");
+      sb.append(">");
+
+      // description, displayName, icon
+
+      if (!XsdString.isNull(vendorName))
+      {
+         sb.append("<" + Connector15.Tag.VENDORNAME + ">");
+         sb.append(vendorName);
+         sb.append("</" + Connector15.Tag.VENDORNAME + ">");
+      }
+
+      if (!XsdString.isNull(eisType))
+      {
+         sb.append("<" + Connector15.Tag.EIS_TYPE + ">");
+         sb.append(eisType);
+         sb.append("</" + Connector15.Tag.EIS_TYPE + ">");
+      }
+
+      if (!XsdString.isNull(resourceadapterVersion))
+      {
+         sb.append("<" + Connector15.Tag.RESOURCEADPTER_VERSION + ">");
+         sb.append(resourceadapterVersion);
+         sb.append("</" + Connector15.Tag.RESOURCEADPTER_VERSION + ">");
+      }
+
+      if (license != null)
+         sb.append(license);
+
+      sb.append(resourceadapter);
+
+      sb.append("</").append("connector").append(">");
+
+      return sb.toString();
    }
 
    @Override

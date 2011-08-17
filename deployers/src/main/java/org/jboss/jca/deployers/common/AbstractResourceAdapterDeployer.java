@@ -43,6 +43,7 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
+import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
@@ -622,20 +623,24 @@ public abstract class AbstractResourceAdapterDeployer
                   if (mlMD.getActivationspec() != null &&
                       mlMD.getActivationspec().getActivationspecClass().getValue() != null)
                   {
+                     List<? extends ConfigProperty> asCps = null;
+                     if (mlMD.getActivationspec() instanceof Activationspec16)
+                     {
+                        asCps = ((Activationspec16)mlMD.getActivationspec()).getConfigProperties();
+                     }
+
                      failures = validateArchive(
                         url,
                         Arrays.asList((Validate) new ValidateClass(Key.ACTIVATION_SPEC, mlMD.getActivationspec()
-                           .getActivationspecClass().getValue(), cl, mlMD.getActivationspec().getConfigProperties())),
-                        failures);
+                           .getActivationspecClass().getValue(), cl, asCps)), failures);
                      if (!(getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures,
                         Severity.ERROR)))
                      {
                         if (activateDeployment)
                         {
-                           List<? extends ConfigProperty> cpm = mlMD.getActivationspec().getConfigProperties();
                            String asClass = mlMD.getActivationspec().getActivationspecClass().getValue();
 
-                           Object oa = initAndInject(asClass, cpm, cl);
+                           Object oa = initAndInject(asClass, asCps, cl);
 
                            if (oa == null || !(oa instanceof ActivationSpec))
                               throw new DeployException(bundle.invalidActivationSpec(asClass));
@@ -651,7 +656,7 @@ public abstract class AbstractResourceAdapterDeployer
                            // Associate for validation
                            associateResourceAdapter(resourceAdapter, as);
 
-                           archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, as, cpm));
+                           archiveValidationObjects.add(new ValidateObject(Key.ACTIVATION_SPEC, as, asCps));
                         }
                      }
                   }
@@ -877,6 +882,14 @@ public abstract class AbstractResourceAdapterDeployer
 
          // Check metadata for JNDI information and activate explicit
          boolean activateDeployment = checkActivation(cmd, ijmd);
+
+         if (log.isTraceEnabled())
+         {
+            log.tracef("Connector=%s", cmd);
+            log.tracef("IronJacamar=%s", ijmd);
+            log.tracef("RaXML=%s", raxml);
+            log.tracef("ActivateDeployment=%s", activateDeployment);
+         }
 
          // Create objects and inject values
          if (cmd != null)
@@ -1157,7 +1170,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                            interleaving = ijXaPool.isInterleaving();
                            isSameRMOverride = ijXaPool.isSameRmOverride();
-                           wrapXAResource = ijXaPool.isWrapXaDataSource();
+                           wrapXAResource = ijXaPool.isWrapXaResource();
                            padXid = ijXaPool.isPadXid();
                         }
 
@@ -1174,7 +1187,7 @@ public abstract class AbstractResourceAdapterDeployer
                                  isSameRMOverride = ijXaPool.isSameRmOverride();
 
                               if (wrapXAResource == null)
-                                 wrapXAResource = ijXaPool.isWrapXaDataSource();
+                                 wrapXAResource = ijXaPool.isWrapXaResource();
 
                               if (padXid == null)
                                  padXid = ijXaPool.isPadXid();
@@ -1554,7 +1567,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                                        interleaving = cdRaXmlXaPool.isInterleaving();
                                        isSameRMOverride = cdRaXmlXaPool.isSameRmOverride();
-                                       wrapXAResource = cdRaXmlXaPool.isWrapXaDataSource();
+                                       wrapXAResource = cdRaXmlXaPool.isWrapXaResource();
                                        padXid = cdRaXmlXaPool.isPadXid();
                                        recoveryMD = cdRaXml.getRecovery();
                                     }
@@ -1570,7 +1583,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           isSameRMOverride = ijXaPool.isSameRmOverride();
 
                                        if (wrapXAResource == null)
-                                          wrapXAResource = ijXaPool.isWrapXaDataSource();
+                                          wrapXAResource = ijXaPool.isWrapXaResource();
 
                                        if (padXid == null)
                                           padXid = ijXaPool.isPadXid();

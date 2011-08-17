@@ -212,6 +212,14 @@ public interface ResourceAdapter10 extends ResourceAdapter, MergeableMetadata<Re
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
       private static final Map<String, Tag> MAP;
 
       static
@@ -279,6 +287,12 @@ public interface ResourceAdapter10 extends ResourceAdapter, MergeableMetadata<Re
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
-
 }

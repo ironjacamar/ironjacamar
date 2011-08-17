@@ -169,9 +169,48 @@ public class DriverImpl implements Driver
    @Override
    public String toString()
    {
-      return "DriverImpl [name=" + name + ", minorVersion=" + minorVersion + ", majorVersion=" + majorVersion +
-         ", module=" + module + ", driverClass=" + driverClass + ", dataSourceClass=" + dataSourceClass + 
-         ", xaDataSourceClass=" + xaDataSourceClass + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<driver");
+
+      if (name != null)
+         sb.append(" ").append(Driver.Attribute.NAME).append("=\"").append(name).append("\"");
+
+      if (module != null)
+         sb.append(" ").append(Driver.Attribute.MODULE).append("=\"").append(module).append("\"");
+
+      if (majorVersion != null)
+         sb.append(" ").append(Driver.Attribute.MAJOR_VERSION).append("=\"").append(majorVersion).append("\"");
+
+      if (minorVersion != null)
+         sb.append(" ").append(Driver.Attribute.MINOR_VERSION).append("=\"").append(minorVersion).append("\"");
+
+      sb.append(">");
+
+      if (driverClass != null)
+      {
+         sb.append("<").append(Driver.Tag.DRIVERCLASS).append(">");
+         sb.append(driverClass);
+         sb.append("</").append(Driver.Tag.DRIVERCLASS).append(">");
+      }
+
+      if (dataSourceClass != null)
+      {
+         sb.append("<").append(Driver.Tag.DATASOURCECLASS).append(">");
+         sb.append(dataSourceClass);
+         sb.append("</").append(Driver.Tag.DATASOURCECLASS).append(">");
+      }
+
+      if (xaDataSourceClass != null)
+      {
+         sb.append("<").append(Driver.Tag.XADATASOURCECLASS).append(">");
+         sb.append(xaDataSourceClass);
+         sb.append("</").append(Driver.Tag.XADATASOURCECLASS).append(">");
+      }
+
+      sb.append("</driver>");
+
+      return sb.toString();
    }
 
    @Override

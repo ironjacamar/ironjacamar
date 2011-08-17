@@ -70,6 +70,14 @@ public enum FlushStrategy
       return name;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return name;
+   }
+
    private static final Map<String, FlushStrategy> MAP;
    
    static

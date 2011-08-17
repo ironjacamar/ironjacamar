@@ -31,14 +31,32 @@ public enum TransactionSupportEnum
    /**
     * NoTransaction
     */
-   NoTransaction,
+   NoTransaction("NoTransaction"),
    /**
     * LocalTransaction
     */
-   LocalTransaction,
+   LocalTransaction("LocalTransaction"),
    /**
     * XATransaction
     */
-   XATransaction;
+   XATransaction("XATransaction");
 
+   private String value;
+
+   /**
+    * Constructor
+    * @param value The value
+    */
+   TransactionSupportEnum(String value)
+   {
+      this.value = value;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return value;
+   }
 }

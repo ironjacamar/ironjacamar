@@ -43,7 +43,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
 
    private final Boolean padXid;
 
-   private final Boolean wrapXaDataSource;
+   private final Boolean wrapXaResource;
 
    private final Boolean noTxSeparatePool;
 
@@ -59,7 +59,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
     * @param isSameRmOverride isSameRmOverride
     * @param interleaving interleaving
     * @param padXid padXid
-    * @param wrapXaDataSource wrapXaDataSource
+    * @param wrapXaResource wrapXaResource
     * @param noTxSeparatePool noTxSeparatePool
     * @throws ValidateException ValidateException
     */
@@ -67,14 +67,14 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
                            Boolean prefill, Boolean useStrictMin,
                            FlushStrategy flushStrategy,
                            Boolean isSameRmOverride, Boolean interleaving, 
-                           Boolean padXid, Boolean wrapXaDataSource,
+                           Boolean padXid, Boolean wrapXaResource,
                            Boolean noTxSeparatePool) throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
       this.isSameRmOverride = isSameRmOverride;
       this.interleaving = interleaving;
       this.padXid = padXid;
-      this.wrapXaDataSource = wrapXaDataSource;
+      this.wrapXaResource = wrapXaResource;
       this.noTxSeparatePool = noTxSeparatePool;
    }
 
@@ -112,14 +112,14 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
    }
 
    /**
-    * Get the wrapXaDataSource.
+    * Get the wrapXaResource.
     *
-    * @return the wrapXaDataSource.
+    * @return the wrapXaResource.
     */
    @Override
-   public final Boolean isWrapXaDataSource()
+   public final Boolean isWrapXaResource()
    {
-      return wrapXaDataSource;
+      return wrapXaResource;
    }
 
    /**
@@ -142,7 +142,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
       result = prime * result + ((isSameRmOverride == null) ? 0 : isSameRmOverride.hashCode());
       result = prime * result + ((noTxSeparatePool == null) ? 0 : noTxSeparatePool.hashCode());
       result = prime * result + ((padXid == null) ? 0 : padXid.hashCode());
-      result = prime * result + ((wrapXaDataSource == null) ? 0 : wrapXaDataSource.hashCode());
+      result = prime * result + ((wrapXaResource == null) ? 0 : wrapXaResource.hashCode());
       return result;
    }
 
@@ -184,22 +184,99 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
       }
       else if (!padXid.equals(other.padXid))
          return false;
-      if (wrapXaDataSource == null)
+      if (wrapXaResource == null)
       {
-         if (other.wrapXaDataSource != null)
+         if (other.wrapXaResource != null)
             return false;
       }
-      else if (!wrapXaDataSource.equals(other.wrapXaDataSource))
+      else if (!wrapXaResource.equals(other.wrapXaResource))
          return false;
       return true;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public String toString()
    {
-      return "CommonXaPoolImpl [isSameRmOverride=" + isSameRmOverride + ", interleaving=" + interleaving +
-             ", padXid=" + padXid + ", wrapXaDataSource=" + wrapXaDataSource + ", noTxSeparatePool=" +
-             noTxSeparatePool + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<xa-pool>");
+
+      if (minPoolSize != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.MIN_POOL_SIZE).append(">");
+         sb.append(minPoolSize);
+         sb.append("</").append(CommonXaPool.Tag.MIN_POOL_SIZE).append(">");
+      }
+
+      if (maxPoolSize != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.MAX_POOL_SIZE).append(">");
+         sb.append(maxPoolSize);
+         sb.append("</").append(CommonXaPool.Tag.MAX_POOL_SIZE).append(">");
+      }
+
+      if (prefill != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.PREFILL).append(">");
+         sb.append(prefill);
+         sb.append("</").append(CommonXaPool.Tag.PREFILL).append(">");
+      }
+
+      if (useStrictMin != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.USE_STRICT_MIN).append(">");
+         sb.append(useStrictMin);
+         sb.append("</").append(CommonXaPool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (flushStrategy != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.FLUSH_STRATEGY).append(">");
+         sb.append(flushStrategy);
+         sb.append("</").append(CommonXaPool.Tag.FLUSH_STRATEGY).append(">");
+      }
+
+      if (isSameRmOverride != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.ISSAMERMOVERRIDEVALUE).append(">");
+         sb.append(isSameRmOverride);
+         sb.append("</").append(CommonXaPool.Tag.ISSAMERMOVERRIDEVALUE).append(">");
+      }
+
+      if (interleaving != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.INTERLEAVING).append(">");
+         sb.append(interleaving);
+         sb.append("</").append(CommonXaPool.Tag.INTERLEAVING).append(">");
+      }
+
+      if (noTxSeparatePool != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.NO_TX_SEPARATE_POOLS).append(">");
+         sb.append(noTxSeparatePool);
+         sb.append("</").append(CommonXaPool.Tag.NO_TX_SEPARATE_POOLS).append(">");
+      }
+
+      if (padXid != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.PAD_XID).append(">");
+         sb.append(padXid);
+         sb.append("</").append(CommonXaPool.Tag.PAD_XID).append(">");
+      }
+
+      if (wrapXaResource != null)
+      {
+         sb.append("<").append(CommonXaPool.Tag.WRAP_XA_RESOURCE).append(">");
+         sb.append(wrapXaResource);
+         sb.append("</").append(CommonXaPool.Tag.WRAP_XA_RESOURCE).append(">");
+      }
+
+      sb.append("</xa-pool>");
+      
+      return sb.toString();
    }
 }
 

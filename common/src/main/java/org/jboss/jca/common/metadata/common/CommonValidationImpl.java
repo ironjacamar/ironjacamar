@@ -141,8 +141,33 @@ public class CommonValidationImpl implements CommonValidation
    @Override
    public String toString()
    {
-      return "SValidationImpl [backgroundValidation=" + backgroundValidation + ", backgroundValidationMillis=" +
-             backgroundValidationMillis + ", useFastFail=" + useFastFail + "]";
-   }
+      StringBuilder sb = new StringBuilder(1024);
 
+      sb.append("<validation>");
+
+      if (backgroundValidation != null)
+      {
+         sb.append("<").append(CommonValidation.Tag.BACKGROUNDVALIDATION).append(">");
+         sb.append(backgroundValidation);
+         sb.append("</").append(CommonValidation.Tag.BACKGROUNDVALIDATION).append(">");
+      }
+
+      if (backgroundValidationMillis != null)
+      {
+         sb.append("<").append(CommonValidation.Tag.BACKGROUNDVALIDATIONMILLIS).append(">");
+         sb.append(backgroundValidationMillis);
+         sb.append("</").append(CommonValidation.Tag.BACKGROUNDVALIDATIONMILLIS).append(">");
+      }
+
+      if (useFastFail != null)
+      {
+         sb.append("<").append(CommonValidation.Tag.USEFASTFAIL).append(">");
+         sb.append(useFastFail);
+         sb.append("</").append(CommonValidation.Tag.USEFASTFAIL).append(">");
+      }
+
+      sb.append("</validation>");
+      
+      return sb.toString();
+   }
 }

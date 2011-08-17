@@ -353,7 +353,7 @@ public class Merger
                                                                      authenticationMechanism, connectioDefProperties,
                                                                      reauthenticationSupport, securityPermissions, id);
 
-         Connector newConnector = new Connector10Impl(moduleName, vendorName, eisType, resourceadapterVersion,
+         Connector newConnector = new Connector10Impl(vendorName, eisType, resourceadapterVersion,
                                                       license, resourceadapter, description, displayNames, icons, id);
 
          return newConnector.merge(connector);

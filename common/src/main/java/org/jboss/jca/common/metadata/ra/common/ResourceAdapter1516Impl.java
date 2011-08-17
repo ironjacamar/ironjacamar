@@ -268,10 +268,53 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
    @Override
    public String toString()
    {
-      return "ResourceAdapter [resourceadapterClass=" + resourceadapterClass + ", configProperties=" +
-             configProperties + ", outboundResourceadapter=" + outboundResourceadapter +
-             ", inboundResourceadapter=" + inboundResourceadapter + ", adminobjects=" + adminobjects +
-             ", securityPermission=" + securityPermissions + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<").append("resourceadapter");
+      if (id != null)
+         sb.append(" ").append(ResourceAdapter1516.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      if (resourceadapterClass != null)
+      {
+         sb.append("<").append(ResourceAdapter1516.Tag.RESOURCEADAPTER_CLASS).append(">");
+         sb.append(resourceadapterClass);
+         sb.append("</").append(ResourceAdapter1516.Tag.RESOURCEADAPTER_CLASS).append(">");
+      }
+
+      if (configProperties != null)
+      {
+         for (ConfigProperty cp : configProperties)
+         {
+            sb.append(cp);
+         }
+      }
+
+      if (outboundResourceadapter != null)
+         sb.append(outboundResourceadapter);
+
+      if (inboundResourceadapter != null)
+         sb.append(inboundResourceadapter);
+
+      if (adminobjects != null)
+      {
+         for (AdminObject ao : adminobjects)
+         {
+            sb.append(ao);
+         }
+      }
+
+      if (securityPermissions != null)
+      {
+         for (SecurityPermission sp : securityPermissions)
+         {
+            sb.append(sp);
+         }
+      }
+
+      sb.append("</resourceadapter>");
+
+      return sb.toString();
    }
 
    @Override

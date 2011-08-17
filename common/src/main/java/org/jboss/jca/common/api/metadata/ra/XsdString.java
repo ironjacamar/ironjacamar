@@ -151,7 +151,7 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    @Override
    public String toString()
    {
-      return "XsdString [value=" + value + ", id=" + id + "]";
+      return value;
    }
 
    /**

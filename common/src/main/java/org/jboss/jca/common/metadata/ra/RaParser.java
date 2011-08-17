@@ -189,13 +189,12 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private Connector parseConnector10(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       LicenseType license = null;
-      String id = reader.getAttributeValue(null, Connector16.Attribute.ID.getLocalName());;
+      String id = reader.getAttributeValue(null, Connector10.Attribute.ID.getLocalName());;
       ArrayList<Icon> icon = new ArrayList<Icon>();
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
       XsdString eisType = NULL_XSDSTRING;
       ResourceAdapter10 resourceadapter = null;
       XsdString vendorName = NULL_XSDSTRING;
-      String moduleName = null;
       ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
       XsdString resourceadapterVersion = NULL_XSDSTRING;
       while (reader.hasNext())
@@ -211,7 +210,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   description.trimToSize();
 
                   //building and returning object
-                  return new Connector10Impl(moduleName, vendorName, eisType, resourceadapterVersion, license,
+                  return new Connector10Impl(vendorName, eisType, resourceadapterVersion, license,
                                              resourceadapter, description, displayName, icon, id);
 
                }
@@ -227,10 +226,6 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
             case START_ELEMENT : {
                switch (Connector10.Tag.forName(reader.getLocalName()))
                {
-                  case MODULENAME : {
-                     moduleName = reader.getElementText().trim();
-                     break;
-                  }
                   case VENDORNAME : {
                      vendorName = elementAsXsdString(reader);
                      break;
@@ -243,7 +238,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      license = parseLicense(reader);
                      break;
                   }
-                  case RESOURCEADPTER_VERSION : {
+                  case VERSION : {
                      resourceadapterVersion = elementAsXsdString(reader);
                   }
                      break;
@@ -263,8 +258,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      icon.add(parseIcon(reader));
                      break;
                   }
-                  case SPEC_VERSION :
-                  case VERSION : {
+                  case SPEC_VERSION : {
                      //ignore
                      elementAsLocalizedXsdString(reader);
                      break;

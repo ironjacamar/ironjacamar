@@ -303,7 +303,7 @@ public abstract class AbstractParser
             case START_ELEMENT : {
                switch (CommonPool.Tag.forName(reader.getLocalName()))
                {
-                  case MAXPOOLSIZE : {
+                  case MAX_POOL_SIZE : {
                      maxPoolSize = elementAsInteger(reader);
                      break;
                   }
@@ -447,7 +447,7 @@ public abstract class AbstractParser
             case START_ELEMENT : {
                switch (CommonXaPool.Tag.forName(reader.getLocalName()))
                {
-                  case MAXPOOLSIZE : {
+                  case MAX_POOL_SIZE : {
                      maxPoolSize = elementAsInteger(reader);
                      break;
                   }

@@ -107,8 +107,36 @@ public class Activationspec16Impl extends Activationspec15Impl implements Activa
    @Override
    public String toString()
    {
-      return "Activationspec [configProperty=" + configProperties + ", activationspecClass=" + activationspecClass
-            + ", requiredConfigProperty=" + requiredConfigProperty + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<activationspec");
+      if (id != null)
+         sb.append(" ").append(Activationspec16.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      sb.append("<").append(Activationspec16.Tag.ACTIVATIONSPEC_CLASS).append(">");
+      sb.append(activationspecClass);
+      sb.append("</").append(Activationspec16.Tag.ACTIVATIONSPEC_CLASS).append(">");
+
+      if (requiredConfigProperty != null)
+      {
+         for (RequiredConfigProperty rcp : requiredConfigProperty)
+         {
+            sb.append(rcp);
+         }
+      }
+
+      if (configProperties != null)
+      {
+         for (ConfigProperty cp : configProperties)
+         {
+            sb.append(cp);
+         }
+      }
+
+      sb.append("</activationspec>");
+
+      return sb.toString();
    }
 
    @Override

@@ -35,31 +35,19 @@ import java.util.Map;
  */
 public interface Connector10 extends Connector
 {
-
    /**
-    * @return moduleName
+    *
+    * A Tag.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
     */
-   public abstract String getModuleName();
-
-
-   /**
-   *
-   * A Tag.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
    public enum Tag
    {
       /** always first
        *
        */
       UNKNOWN(null),
-
-      /**
-       * module-name tag
-       */
-      MODULENAME("module-name"),
 
       /**
        * vendor-name tag
@@ -72,11 +60,6 @@ public interface Connector10 extends Connector
       EIS_TYPE("eis-type"),
 
       /**
-       * resourceadapter-version tag
-       */
-      RESOURCEADPTER_VERSION("resourceadapter-version"),
-
-      /**
        * license tag
        */
       LICENSE("license"),
@@ -85,7 +68,6 @@ public interface Connector10 extends Connector
        * resourceadapter tag
        */
       RESOURCEADAPTER("resourceadapter"),
-
 
       /**
        * spec-version TAG
@@ -131,6 +113,14 @@ public interface Connector10 extends Connector
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }
@@ -207,5 +197,12 @@ public interface Connector10 extends Connector
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
 }

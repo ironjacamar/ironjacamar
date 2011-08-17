@@ -30,11 +30,13 @@ import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.logging.Logger;
 import org.jboss.util.file.FileSuffixFilter;
 import org.jboss.util.file.FilenamePrefixFilter;
 
@@ -55,6 +57,8 @@ import static org.mockito.Matchers.isNull;
  */
 public class ResourceAdapterParserTestCase
 {
+   private static Logger log = Logger.getLogger(ResourceAdapterParserTestCase.class);
+
    /**
     * shouldParseAnyExample
     * @throws Exception in case of error
@@ -170,5 +174,43 @@ public class ResourceAdapterParserTestCase
             is.close();
       }
 
+   }
+
+   /**
+    * shouldParseXMLRepresentation
+    * @throws Exception in case of error
+    */
+   @Test
+   public void shouldParseXMLRepresentation() throws Exception
+   {
+      FileInputStream is = null;
+      ByteArrayInputStream bais = null;
+
+      //given
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      File xmlFile = new File(cl.getResource("resource-adapter/all-ra.xml").toURI());
+      try
+      {
+         is = new FileInputStream(xmlFile);
+         ResourceAdapterParser parser = new ResourceAdapterParser();
+         //when
+         ResourceAdapters ra1 = parser.parse(is);
+
+         String xmlRepresentation = ra1.toString();
+
+         log.debug(xmlRepresentation);
+
+         bais = new ByteArrayInputStream(xmlRepresentation.getBytes("UTF-8"));
+
+         ResourceAdapters ra2 = parser.parse(bais);
+      }
+      finally
+      {
+         if (is != null)
+            is.close();
+
+         if (bais != null)
+            bais.close();
+      }
    }
 }

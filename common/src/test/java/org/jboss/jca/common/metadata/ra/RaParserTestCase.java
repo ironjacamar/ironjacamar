@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -123,7 +124,7 @@ public class RaParserTestCase
          //when
          Connector connector = parser.parse(is);
          //then
-         assertThat(connector, instanceOf(Connector15.class));
+         assertThat(connector, instanceOf(Connector16.class));
          assertThat(connector.getVersion(), is(Version.V_16));
 
 
@@ -165,4 +166,44 @@ public class RaParserTestCase
 
    }
 
+   /**
+    * Parse of XML representation
+    * @throws Exception in case of error
+    */
+   @Test
+   public void shouldParseXMLRepresentation() throws Exception
+   {
+      FileInputStream is = null;
+      ByteArrayInputStream bais = null;
+      try
+      {
+         //given
+         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
+               .getResource("ra.xml").toURI());
+         is = new FileInputStream(xmlFile);
+         RaParser parser = new RaParser();
+         //when
+         Connector connector1 = parser.parse(is);
+
+         String xmlRepresentation = connector1.toString();
+         bais = new ByteArrayInputStream(xmlRepresentation.getBytes("UTF-8"));
+         Connector connector2 = parser.parse(bais);
+
+         //then
+         assertThat(connector1, instanceOf(Connector16.class));
+         assertThat(connector1.getVersion(), is(Version.V_16));
+
+         assertThat(connector2, instanceOf(Connector16.class));
+         assertThat(connector2.getVersion(), is(Version.V_16));
+      }
+      finally
+      {
+         if (is != null)
+            is.close();
+
+         if (bais != null)
+            bais.close();
+      }
+
+   }
 }

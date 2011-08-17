@@ -26,6 +26,9 @@ import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.validator.ValidateException;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import org.jboss.logging.Messages;
 
 /**
@@ -180,9 +183,129 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    @Override
    public String toString()
    {
-      return "ValidationImpl [validConnectionChecker=" + validConnectionChecker + ", checkValidConnectionSql=" +
-             checkValidConnectionSql + ", validateOnMatch=" + validateOnMatch + ", staleConnectionChecker=" +
-             staleConnectionChecker + ", exceptionSorter=" + exceptionSorter + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<validation>");
+
+      if (validConnectionChecker != null)
+      {
+         sb.append("<").append(Validation.Tag.VALIDCONNECTIONCHECKER);
+         sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
+         sb.append(validConnectionChecker.getClassName()).append("\"");
+         sb.append(">");
+
+         if (validConnectionChecker.getConfigPropertiesMap() != null &&
+             validConnectionChecker.getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               validConnectionChecker.getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               sb.append("<").append(Extension.Tag.CONFIG_PROPERTY);
+               sb.append(" name=\"").append(entry.getKey()).append("\">");
+               sb.append(entry.getValue());
+               sb.append("</").append(Extension.Tag.CONFIG_PROPERTY).append(">");
+            }
+         }
+
+         sb.append("</").append(Validation.Tag.VALIDCONNECTIONCHECKER).append(">");
+      }
+
+      if (checkValidConnectionSql != null)
+      {
+         sb.append("<").append(Validation.Tag.CHECKVALIDCONNECTIONSQL).append(">");
+         sb.append(checkValidConnectionSql);
+         sb.append("</").append(Validation.Tag.CHECKVALIDCONNECTIONSQL).append(">");
+      }
+
+      if (validateOnMatch != null)
+      {
+         sb.append("<").append(Validation.Tag.VALIDATEONMATCH).append(">");
+         sb.append(validateOnMatch);
+         sb.append("</").append(Validation.Tag.VALIDATEONMATCH).append(">");
+      }
+
+      if (backgroundValidation != null)
+      {
+         sb.append("<").append(Validation.Tag.BACKGROUNDVALIDATION).append(">");
+         sb.append(backgroundValidation);
+         sb.append("</").append(Validation.Tag.BACKGROUNDVALIDATION).append(">");
+      }
+
+      if (backgroundValidationMillis != null)
+      {
+         sb.append("<").append(Validation.Tag.BACKGROUNDVALIDATIONMILLIS).append(">");
+         sb.append(backgroundValidationMillis);
+         sb.append("</").append(Validation.Tag.BACKGROUNDVALIDATIONMILLIS).append(">");
+      }
+
+      if (useFastFail != null)
+      {
+         sb.append("<").append(Validation.Tag.USEFASTFAIL).append(">");
+         sb.append(useFastFail);
+         sb.append("</").append(Validation.Tag.USEFASTFAIL).append(">");
+      }
+
+      if (staleConnectionChecker != null)
+      {
+         sb.append("<").append(Validation.Tag.STALECONNECTIONCHECKER);
+         sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
+         sb.append(staleConnectionChecker.getClassName()).append("\"");
+         sb.append(">");
+
+         if (staleConnectionChecker.getConfigPropertiesMap() != null &&
+             staleConnectionChecker.getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               staleConnectionChecker.getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               sb.append("<").append(Extension.Tag.CONFIG_PROPERTY);
+               sb.append(" name=\"").append(entry.getKey()).append("\">");
+               sb.append(entry.getValue());
+               sb.append("</").append(Extension.Tag.CONFIG_PROPERTY).append(">");
+            }
+         }
+
+         sb.append("</").append(Validation.Tag.STALECONNECTIONCHECKER).append(">");
+      }
+
+      if (exceptionSorter != null)
+      {
+         sb.append("<").append(Validation.Tag.EXCEPTIONSORTER);
+         sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
+         sb.append(exceptionSorter.getClassName()).append("\"");
+         sb.append(">");
+
+         if (exceptionSorter.getConfigPropertiesMap() != null &&
+             exceptionSorter.getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               exceptionSorter.getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               sb.append("<").append(Extension.Tag.CONFIG_PROPERTY);
+               sb.append(" name=\"").append(entry.getKey()).append("\">");
+               sb.append(entry.getValue());
+               sb.append("</").append(Extension.Tag.CONFIG_PROPERTY).append(">");
+            }
+         }
+
+         sb.append("</").append(Validation.Tag.EXCEPTIONSORTER).append(">");
+      }
+
+      sb.append("</validation>");
+
+      return sb.toString();
    }
 
    @Override

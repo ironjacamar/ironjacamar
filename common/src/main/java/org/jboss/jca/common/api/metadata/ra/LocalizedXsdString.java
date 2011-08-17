@@ -126,7 +126,7 @@ public class LocalizedXsdString extends XsdString implements LocalizedMetadata
    @Override
    public String toString()
    {
-      return "LocalizedXsdString [lang=" + lang + ", value=" + value + ", id=" + id + "]";
+      return value;
    }
 
    @Override

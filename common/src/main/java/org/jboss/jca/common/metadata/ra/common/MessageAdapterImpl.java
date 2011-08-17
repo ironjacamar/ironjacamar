@@ -156,7 +156,24 @@ public class MessageAdapterImpl implements Messageadapter
    @Override
    public String toString()
    {
-      return "MessageAdapter [messagelisteners=" + messagelisteners + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<messageadapter");
+      if (id != null)
+         sb.append(" ").append(Messageadapter.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      if (messagelisteners != null)
+      {
+         for (MessageListener ml : messagelisteners)
+         {
+            sb.append(ml);
+         }
+      }
+
+      sb.append("</messageadapter>");
+      
+      return sb.toString();
    }
 
    @Override

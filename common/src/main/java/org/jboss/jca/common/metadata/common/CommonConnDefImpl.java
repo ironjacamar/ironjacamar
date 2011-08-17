@@ -31,6 +31,7 @@ import org.jboss.jca.common.api.metadata.common.Recovery;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -360,10 +361,66 @@ public class CommonConnDefImpl implements CommonConnDef
    @Override
    public String toString()
    {
-      return "CommonConnDefImpl [configProperties=" + configProperties + ", className=" + className + ", jndiName=" +
-             jndiName + ", poolName=" + poolName + ", enabled=" + enabled + ", useJavaContext=" + useJavaContext +
-             ", useCcm=" + useCcm + ", pool=" + pool + ", timeOut=" + timeOut + ", validation=" + validation +
-             ", security=" + security + ", recovery=" + recovery + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<connection-definition");
+
+      if (className != null)
+         sb.append(" ").append(CommonConnDef.Attribute.CLASS_NAME).append("=\"").append(className).append("\"");
+
+      if (jndiName != null)
+         sb.append(" ").append(CommonConnDef.Attribute.JNDINAME).append("=\"").append(jndiName).append("\"");
+
+      if (enabled != null)
+         sb.append(" ").append(CommonConnDef.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
+
+      if (useJavaContext != null)
+      {
+         sb.append(" ").append(CommonConnDef.Attribute.USEJAVACONTEXT);
+         sb.append("=\"").append(useJavaContext).append("\"");
+      }
+
+      if (poolName != null)
+         sb.append(" ").append(CommonConnDef.Attribute.POOL_NAME).append("=\"").append(poolName).append("\"");
+
+      if (useCcm != null)
+         sb.append(" ").append(CommonConnDef.Attribute.USECCM).append("=\"").append(useCcm).append("\"");
+
+      sb.append(">");
+
+      if (configProperties != null && configProperties.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = configProperties.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            sb.append("<").append(CommonConnDef.Tag.CONFIG_PROPERTY);
+            sb.append(" name=\"").append(entry.getKey()).append("\">");
+            sb.append(entry.getValue());
+            sb.append("</").append(CommonConnDef.Tag.CONFIG_PROPERTY).append(">");
+         }
+      }
+
+      if (pool != null)
+         sb.append(pool);
+
+
+      if (security != null)
+         sb.append(security);
+
+      if (timeOut != null)
+         sb.append(timeOut);
+
+      if (validation != null)
+         sb.append(validation);
+
+      if (recovery != null)
+         sb.append(recovery);
+
+      sb.append("</connection-definition>");
+      
+      return sb.toString();
    }
 
    /**
@@ -376,5 +433,4 @@ public class CommonConnDefImpl implements CommonConnDef
    {
       return recovery;
    }
-
 }

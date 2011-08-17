@@ -288,13 +288,6 @@ public abstract class ConnectorAbstractmpl implements Connector
       return true;
    }
 
-   @Override
-   public String toString()
-   {
-      return "Connector [vendorName=" + vendorName + ", eisType=" + eisType + ", license=" + license
-            + ", resourceadapter=" + resourceadapter + ", id=" + id + "]";
-   }
-
    /**
     * Validate specification metadata
     * @exception ValidateException Thrown if an error occurs
@@ -310,7 +303,6 @@ public abstract class ConnectorAbstractmpl implements Connector
 
       //make sure ra metadata contains inbound or outbound at least
       ra.validate();
-
    }
 
    /**
@@ -322,14 +314,14 @@ public abstract class ConnectorAbstractmpl implements Connector
    @Override
    public Connector merge(MergeableMetadata<?> inputMd) throws Exception
    {
-      {
-         return this;
-
-      }
+      return this;
    }
-
 
    @Override
    public abstract CopyableMetaData copy();
 
+   /**
+    * {@inheritDoc}
+    */
+   public abstract String toString();
 }

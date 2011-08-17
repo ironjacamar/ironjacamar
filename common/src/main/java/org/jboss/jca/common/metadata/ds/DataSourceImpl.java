@@ -33,6 +33,7 @@ import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.jboss.logging.Messages;
@@ -321,10 +322,120 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    @Override
    public String toString()
    {
-      return "DataSourceImpl [connectionUrl=" + connectionUrl + ", driverClass=" + driverClass +
-         ", dataSourceClass=" + dataSourceClass + ", driver=" + driver +
-         ", connectionProperties=" + connectionProperties + ", newConnectionSql=" + newConnectionSql +
-         ", pool=" + pool + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<datasource");
+
+      if (jndiName != null)
+         sb.append(" ").append(DataSource.Attribute.JNDINAME).append("=\"").append(jndiName).append("\"");
+
+      if (poolName != null)
+         sb.append(" ").append(DataSource.Attribute.POOL_NAME).append("=\"").append(poolName).append("\"");
+
+      if (enabled != null)
+         sb.append(" ").append(DataSource.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
+
+      if (useJavaContext != null)
+         sb.append(" ").append(DataSource.Attribute.USEJAVACONTEXT).append("=\"").append(useJavaContext).append("\"");
+
+      if (spy)
+         sb.append(" ").append(DataSource.Attribute.SPY).append("=\"").append(spy).append("\"");
+
+      if (useCcm)
+         sb.append(" ").append(DataSource.Attribute.USE_CCM).append("=\"").append(useCcm).append("\"");
+
+      if (jta)
+         sb.append(" ").append(DataSource.Attribute.JTA).append("=\"").append(jta).append("\"");
+
+      sb.append(">");
+
+      if (connectionUrl != null)
+      {
+         sb.append("<").append(DataSource.Tag.CONNECTIONURL).append(">");
+         sb.append(connectionUrl);
+         sb.append("</").append(DataSource.Tag.CONNECTIONURL).append(">");
+      }
+
+      if (driverClass != null)
+      {
+         sb.append("<").append(DataSource.Tag.DRIVERCLASS).append(">");
+         sb.append(driverClass);
+         sb.append("</").append(DataSource.Tag.DRIVERCLASS).append(">");
+      }
+
+      if (dataSourceClass != null)
+      {
+         sb.append("<").append(DataSource.Tag.DATASOURCECLASS).append(">");
+         sb.append(dataSourceClass);
+         sb.append("</").append(DataSource.Tag.DATASOURCECLASS).append(">");
+      }
+
+      if (driver != null)
+      {
+         sb.append("<").append(DataSource.Tag.DRIVER).append(">");
+         sb.append(driver);
+         sb.append("</").append(DataSource.Tag.DRIVER).append(">");
+      }
+
+      if (connectionProperties != null && connectionProperties.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = connectionProperties.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+            sb.append("<").append(DataSource.Tag.CONNECTIONPROPERTY);
+            sb.append(" name=\"").append(entry.getKey()).append("\">");
+            sb.append(entry.getValue());
+            sb.append("</").append(DataSource.Tag.CONNECTIONPROPERTY).append(">");
+         }
+      }
+
+      if (newConnectionSql != null)
+      {
+         sb.append("<").append(DataSource.Tag.NEWCONNECTIONSQL).append(">");
+         sb.append(newConnectionSql);
+         sb.append("</").append(DataSource.Tag.NEWCONNECTIONSQL).append(">");
+      }
+
+      if (transactionIsolation != null)
+      {
+         sb.append("<").append(DataSource.Tag.TRANSACTIONISOLATION).append(">");
+         sb.append(transactionIsolation);
+         sb.append("</").append(DataSource.Tag.TRANSACTIONISOLATION).append(">");
+      }
+
+      if (urlDelimiter != null)
+      {
+         sb.append("<").append(DataSource.Tag.URLDELIMITER).append(">");
+         sb.append(urlDelimiter);
+         sb.append("</").append(DataSource.Tag.URLDELIMITER).append(">");
+      }
+
+      if (urlSelectorStrategyClassName != null)
+      {
+         sb.append("<").append(DataSource.Tag.URLSELECTORSTRATEGYCLASSNAME).append(">");
+         sb.append(urlSelectorStrategyClassName);
+         sb.append("</").append(DataSource.Tag.URLSELECTORSTRATEGYCLASSNAME).append(">");
+      }
+
+      if (pool != null)
+         sb.append(pool);
+
+      if (security != null)
+         sb.append(security);
+
+      if (validation != null)
+         sb.append(validation);
+
+      if (timeOut != null)
+         sb.append(timeOut);
+
+      if (statement != null)
+         sb.append(statement);
+
+      sb.append("</datasource>");
+
+      return sb.toString();
    }
 
    @Override

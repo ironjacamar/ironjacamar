@@ -120,6 +120,14 @@ public interface CommonAdminObject extends JCAMetadata
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
       private static final Map<String, Tag> MAP;
 
       static
@@ -206,6 +214,14 @@ public interface CommonAdminObject extends JCAMetadata
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }

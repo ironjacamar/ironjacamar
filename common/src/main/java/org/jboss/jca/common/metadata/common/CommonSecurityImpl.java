@@ -111,9 +111,30 @@ public class CommonSecurityImpl implements CommonSecurity
    @Override
    public String toString()
    {
-      return "CommonSecurityImpl [securityDomainManaged=" + securityDomainManaged +
-             ", securityDomainAndApplicationManaged=" + securityDomainAndApplicationManaged +
-             ", applicationManaged=" + applicationManaged + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<security>");
+
+      if (applicationManaged)
+      {
+         sb.append("<").append(CommonSecurity.Tag.APPLICATION).append("/>");
+      }
+      else if (securityDomainManaged != null)
+      {
+         sb.append("<").append(CommonSecurity.Tag.SECURITY_DOMAIN).append(">");
+         sb.append(securityDomainManaged);
+         sb.append("</").append(CommonSecurity.Tag.SECURITY_DOMAIN).append(">");
+      }
+      else if (securityDomainAndApplicationManaged != null)
+      {
+         sb.append("<").append(CommonSecurity.Tag.SECURITY_DOMAIN_AND_APPLICATION).append(">");
+         sb.append(securityDomainAndApplicationManaged);
+         sb.append("</").append(CommonSecurity.Tag.SECURITY_DOMAIN_AND_APPLICATION).append(">");
+      }
+
+      sb.append("</security>");
+      
+      return sb.toString();
    }
 
    /**

@@ -142,7 +142,21 @@ public class InboundResourceAdapterImpl implements InboundResourceAdapter
    @Override
    public String toString()
    {
-      return "InboundResourceAdapter [messageadapter=" + messageadapter + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<").append("inbound-resourceadapter");
+      if (id != null)
+         sb.append(" ").append(InboundResourceAdapter.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      if (messageadapter != null)
+      {
+         sb.append(messageadapter);
+      }
+
+      sb.append("</inbound-resourceadapter>");
+
+      return sb.toString();
    }
 
    /**

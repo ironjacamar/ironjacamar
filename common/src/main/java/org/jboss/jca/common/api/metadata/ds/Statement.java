@@ -46,20 +46,39 @@ public interface Statement extends JCAMetadata, ValidatableMetadata
     */
    public enum TrackStatementsEnum
    {
-
       /**
-      * true
-      */
-      TRUE,
+       * true
+       */
+      TRUE("true"),
+
       /**
        * false
        */
-      FALSE,
+      FALSE("false"),
+
       /**
        * NOWARN
        */
-      NOWARN;
+      NOWARN("nowarn");
 
+      private String value;
+
+      /**
+       * Constructor
+       * @param v The value
+       */
+      TrackStatementsEnum(String v)
+      {
+         this.value = v;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return value;
+      }
    }
 
    /**
@@ -129,6 +148,14 @@ public interface Statement extends JCAMetadata, ValidatableMetadata
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }
