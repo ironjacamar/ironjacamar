@@ -165,8 +165,22 @@ public class MessageListenerImpl implements MessageListener
    @Override
    public String toString()
    {
-      return "MessageListener [messagelistenerType=" + messagelistenerType + ", activationspec=" + activationspec
-            + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<messagelistener");
+      if (id != null)
+         sb.append(" ").append(MessageListener.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      sb.append("<").append(MessageListener.Tag.MESSAGELISTENER_TYPE).append(">");
+      sb.append(messagelistenerType);
+      sb.append("</").append(MessageListener.Tag.MESSAGELISTENER_TYPE).append(">");
+
+      sb.append(activationspec);
+
+      sb.append("</messagelistener>");
+      
+      return sb.toString();
    }
 
    @Override

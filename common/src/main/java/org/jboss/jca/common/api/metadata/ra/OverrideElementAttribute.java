@@ -86,6 +86,14 @@ public enum OverrideElementAttribute
       return name;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return name;
+   }
+
    private static final Map<String, OverrideElementAttribute> MAP;
 
    static

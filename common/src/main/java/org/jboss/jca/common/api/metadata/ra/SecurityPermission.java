@@ -127,6 +127,14 @@ public interface SecurityPermission extends IdDecoratedMetadata, CopyableMetaDat
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
       private static final Map<String, Tag> MAP;
 
       static
@@ -194,6 +202,12 @@ public interface SecurityPermission extends IdDecoratedMetadata, CopyableMetaDat
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
-
 }

@@ -172,15 +172,39 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
    @Override
    public String toString()
    {
-      return "LicenseType [description=" + description + ", licenseRequired=" + licenseRequired + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<license");
+      if (id != null)
+         sb.append(" ").append(Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      if (description != null)
+      {
+         for (LocalizedXsdString s : description)
+         {
+            sb.append("<").append(Tag.DESCRIPTION).append(">");
+            sb.append(s);
+            sb.append("</").append(Tag.DESCRIPTION).append(">");            
+         }
+      }
+
+      sb.append("<").append(Tag.LICENSE_REQUIRED).append(">");
+      sb.append(licenseRequired);
+      sb.append("</").append(Tag.LICENSE_REQUIRED).append(">");
+
+      sb.append("</license>");
+
+      return sb.toString();
    }
+
    /**
-   *
-   * A Tag.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
+    *
+    * A Tag.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
    public enum Tag
    {
       /** always first
@@ -217,6 +241,14 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }
@@ -288,6 +320,13 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
 
    @Override

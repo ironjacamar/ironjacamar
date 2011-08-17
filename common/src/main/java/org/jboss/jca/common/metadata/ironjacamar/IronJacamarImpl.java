@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.metadata.common.CommonIronJacamarImpl;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -62,5 +63,79 @@ public class IronJacamarImpl extends CommonIronJacamarImpl implements IronJacama
             bootstrapContext);
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+      sb.append("<ironjacamar>");
+
+      if (beanValidationGroups != null && beanValidationGroups.size() > 0)
+      {
+         sb.append("<").append(IronJacamar.Tag.BEAN_VALIDATION_GROUPS).append(">");
+         for (String bvg : beanValidationGroups)
+         {
+            sb.append("<").append(IronJacamar.Tag.BEAN_VALIDATION_GROUP).append(">");
+            sb.append(bvg);
+            sb.append("</").append(IronJacamar.Tag.BEAN_VALIDATION_GROUP).append(">");
+         }
+         sb.append("</").append(IronJacamar.Tag.BEAN_VALIDATION_GROUPS).append(">");
+      }
+
+      if (bootstrapContext != null)
+      {
+         sb.append("<").append(IronJacamar.Tag.BOOTSTRAP_CONTEXT).append(">");
+         sb.append(bootstrapContext);
+         sb.append("</").append(IronJacamar.Tag.BOOTSTRAP_CONTEXT).append(">");
+      }
+
+      if (configProperties != null && configProperties.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = configProperties.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            sb.append("<").append(IronJacamar.Tag.CONFIG_PROPERTY);
+            sb.append(" name=\"").append(entry.getKey()).append("\">");
+            sb.append(entry.getValue());
+            sb.append("</").append(IronJacamar.Tag.CONFIG_PROPERTY).append(">");
+         }
+      }
+      
+      if (transactionSupport != null)
+      {
+         sb.append("<").append(IronJacamar.Tag.TRANSACTION_SUPPORT).append(">");
+         sb.append(transactionSupport);
+         sb.append("</").append(IronJacamar.Tag.TRANSACTION_SUPPORT).append(">");
+      }
+
+      if (connectionDefinitions != null && connectionDefinitions.size() > 0)
+      {
+         sb.append("<").append(IronJacamar.Tag.CONNECTION_DEFINITIONS).append(">");
+         for (CommonConnDef cd : connectionDefinitions)
+         {
+            sb.append(cd);
+         }
+         sb.append("</").append(IronJacamar.Tag.CONNECTION_DEFINITIONS).append(">");
+      }
+
+      if (adminObjects != null && adminObjects.size() > 0)
+      {
+         sb.append("<").append(IronJacamar.Tag.ADMIN_OBJECTS).append(">");
+         for (CommonAdminObject ao : adminObjects)
+         {
+            sb.append(ao);
+         }
+         sb.append("</").append(IronJacamar.Tag.ADMIN_OBJECTS).append(">");
+      }
+
+      sb.append("</ironjacamar>");
+      
+      return sb.toString();
+   }
 }
 

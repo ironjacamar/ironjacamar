@@ -90,12 +90,6 @@ public final class Extension implements JCAMetadata, ValidatableMetadata
    }
 
    @Override
-   public String toString()
-   {
-      return "JdbcAdapterExtension [className=" + className + ", configPropertiesMap=" + configPropertiesMap + "]";
-   }
-
-   @Override
    public int hashCode()
    {
       final int prime = 31;
@@ -177,6 +171,14 @@ public final class Extension implements JCAMetadata, ValidatableMetadata
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
       private static final Map<String, Tag> MAP;
 
       static
@@ -244,6 +246,13 @@ public final class Extension implements JCAMetadata, ValidatableMetadata
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
 
    @Override

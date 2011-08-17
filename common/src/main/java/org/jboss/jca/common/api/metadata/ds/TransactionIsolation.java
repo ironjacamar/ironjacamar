@@ -41,26 +41,44 @@ public enum TransactionIsolation
     * TRANSACTION_READ_UNCOMMITTED,
 
     */
-   TRANSACTION_READ_UNCOMMITTED,
+   TRANSACTION_READ_UNCOMMITTED("TRANSACTION_READ_UNCOMMITTED"),
    /**
     * TRANSACTION_READ_COMMITTED,
 
     */
-   TRANSACTION_READ_COMMITTED,
+   TRANSACTION_READ_COMMITTED("TRANSACTION_READ_COMMITTED"),
    /**
     * TRANSACTION_REPEATABLE_READ,
 
     */
-   TRANSACTION_REPEATABLE_READ,
+   TRANSACTION_REPEATABLE_READ("TRANSACTION_REPEATABLE_READ"),
    /**
     * TRANSACTION_SERIALIZABLE,
 
     */
-   TRANSACTION_SERIALIZABLE,
+   TRANSACTION_SERIALIZABLE("TRANSACTION_SERIALIZABLE"),
    /**
     * TRANSACTION_NONE;
 
     */
-   TRANSACTION_NONE;
+   TRANSACTION_NONE("TRANSACTION_NONE");
 
+   private String value;
+
+   /**
+    * Constructor
+    * @param v The value
+    */
+   TransactionIsolation(String v)
+   {
+      this.value = v;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return value;
+   }
 }

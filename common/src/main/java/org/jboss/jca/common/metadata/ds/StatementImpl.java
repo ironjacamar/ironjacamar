@@ -142,9 +142,32 @@ public class StatementImpl implements Statement
    @Override
    public String toString()
    {
-      return "StatementImpl [sharePreparedStatements=" + sharePreparedStatements +
-            ", preparedStatementsCacheSize=" + preparedStatementsCacheSize +
-            ", trackStatements=" + trackStatements + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<statement>");
+
+      if (trackStatements != null)
+      {
+         sb.append("<").append(Statement.Tag.TRACKSTATEMENTS).append(">");
+         sb.append(trackStatements);
+         sb.append("</").append(Statement.Tag.TRACKSTATEMENTS).append(">");
+      }
+
+      if (preparedStatementsCacheSize != null)
+      {
+         sb.append("<").append(Statement.Tag.PREPAREDSTATEMENTCACHESIZE).append(">");
+         sb.append(preparedStatementsCacheSize);
+         sb.append("</").append(Statement.Tag.PREPAREDSTATEMENTCACHESIZE).append(">");
+      }
+
+      if (sharePreparedStatements != null && Boolean.TRUE.equals(sharePreparedStatements))
+      {
+         sb.append("<").append(Statement.Tag.SHAREPREPAREDSTATEMENTS).append("/>");
+      }
+
+      sb.append("</statement>");
+
+      return sb.toString();
    }
 
    @Override

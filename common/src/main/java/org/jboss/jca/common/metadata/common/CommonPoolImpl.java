@@ -151,12 +151,61 @@ public class CommonPoolImpl implements CommonPool
    public void validate() throws ValidateException
    {
       if (this.maxPoolSize != null && this.maxPoolSize < 0)
-         throw new ValidateException(bundle.invalidNegative(Tag.MAXPOOLSIZE.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(Tag.MAX_POOL_SIZE.getLocalName()));
 
       if (this.minPoolSize != null && this.minPoolSize < 0)
          throw new ValidateException(bundle.invalidNegative(Tag.MIN_POOL_SIZE.getLocalName()));
 
       if (this.flushStrategy == null)
          throw new ValidateException(bundle.nullValue(Tag.FLUSH_STRATEGY.getLocalName()));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<pool>");
+
+      if (minPoolSize != null)
+      {
+         sb.append("<").append(CommonPool.Tag.MIN_POOL_SIZE).append(">");
+         sb.append(minPoolSize);
+         sb.append("</").append(CommonPool.Tag.MIN_POOL_SIZE).append(">");
+      }
+
+      if (maxPoolSize != null)
+      {
+         sb.append("<").append(CommonPool.Tag.MAX_POOL_SIZE).append(">");
+         sb.append(maxPoolSize);
+         sb.append("</").append(CommonPool.Tag.MAX_POOL_SIZE).append(">");
+      }
+
+      if (prefill != null)
+      {
+         sb.append("<").append(CommonPool.Tag.PREFILL).append(">");
+         sb.append(prefill);
+         sb.append("</").append(CommonPool.Tag.PREFILL).append(">");
+      }
+
+      if (useStrictMin != null)
+      {
+         sb.append("<").append(CommonPool.Tag.USE_STRICT_MIN).append(">");
+         sb.append(useStrictMin);
+         sb.append("</").append(CommonPool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (flushStrategy != null)
+      {
+         sb.append("<").append(CommonPool.Tag.FLUSH_STRATEGY).append(">");
+         sb.append(flushStrategy);
+         sb.append("</").append(CommonPool.Tag.FLUSH_STRATEGY).append(">");
+      }
+
+      sb.append("</pool>");
+      
+      return sb.toString();
    }
 }

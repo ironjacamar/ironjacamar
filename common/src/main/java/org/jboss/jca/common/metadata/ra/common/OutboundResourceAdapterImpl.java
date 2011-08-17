@@ -50,7 +50,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
 
    private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
-   private final boolean reauthenticationSupport;
+   private final Boolean reauthenticationSupport;
 
    private final String id;
 
@@ -63,7 +63,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
     */
    public OutboundResourceAdapterImpl(List<ConnectionDefinition> connectionDefinition,
       TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-      boolean reauthenticationSupport, String id)
+      Boolean reauthenticationSupport, String id)
    {
       super();
       if (connectionDefinition != null)
@@ -253,9 +253,46 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
    @Override
    public String toString()
    {
-      return "OutboundResourceAdapter [connectionDefinition=" + connectionDefinition + ", transactionSupport=" +
-             transactionSupport + ", authenticationMechanism=" + authenticationMechanism +
-             ", reauthenticationSupport=" + reauthenticationSupport + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<").append("outbound-resourceadapter");
+      if (id != null)
+         sb.append(" ").append(OutboundResourceAdapter.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      if (connectionDefinition != null)
+      {
+         for (ConnectionDefinition cd : connectionDefinition)
+         {
+            sb.append(cd);
+         }
+      }
+
+      if (transactionSupport != null)
+      {
+         sb.append("<").append(OutboundResourceAdapter.Tag.TRANSACTION_SUPPORT).append(">");
+         sb.append(transactionSupport);
+         sb.append("</").append(OutboundResourceAdapter.Tag.TRANSACTION_SUPPORT).append(">");
+      }
+
+      if (authenticationMechanism != null)
+      {
+         for (AuthenticationMechanism am : authenticationMechanism)
+         {
+            sb.append(am);
+         }
+      }
+
+      if (reauthenticationSupport != null)
+      {
+         sb.append("<").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT).append(">");
+         sb.append(reauthenticationSupport);
+         sb.append("</").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT).append(">");
+      }
+
+      sb.append("</outbound-resourceadapter>");
+
+      return sb.toString();
    }
 
    /**

@@ -34,6 +34,7 @@ import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.jboss.logging.Messages;
@@ -244,12 +245,106 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    @Override
    public String toString()
    {
-      return "XADataSourceImpl [xaDataSourceProperty=" + xaDataSourceProperty + ", xaDataSourceClass=" +
-             xaDataSourceClass + ", driver=" + driver + ", newConnectionSql=" + newConnectionSql + ", xaPool=" +
-             xaPool + ", transactionIsolation=" + transactionIsolation + ", timeOut=" + timeOut + ", security=" +
-             security + ", statement=" + statement + ", validation=" + validation + ", urlDelimiter=" + urlDelimiter +
-             ", urlSelectorStrategyClassName=" + urlSelectorStrategyClassName + ", useJavaContext=" + useJavaContext +
-             ", poolName=" + poolName + ", enabled=" + enabled + ", jndiName=" + jndiName + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<xa-datasource");
+
+      if (jndiName != null)
+         sb.append(" ").append(XaDataSource.Attribute.JNDINAME).append("=\"").append(jndiName).append("\"");
+
+      if (poolName != null)
+         sb.append(" ").append(XaDataSource.Attribute.POOL_NAME).append("=\"").append(poolName).append("\"");
+
+      if (enabled != null)
+         sb.append(" ").append(XaDataSource.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
+
+      if (useJavaContext != null)
+         sb.append(" ").append(XaDataSource.Attribute.USEJAVACONTEXT).append("=\"").append(useJavaContext).append("\"");
+
+      if (spy)
+         sb.append(" ").append(XaDataSource.Attribute.SPY).append("=\"").append(spy).append("\"");
+
+      if (useCcm)
+         sb.append(" ").append(XaDataSource.Attribute.USE_CCM).append("=\"").append(useCcm).append("\"");
+
+      sb.append(">");
+
+      if (xaDataSourceProperty != null && xaDataSourceProperty.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = xaDataSourceProperty.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+            sb.append("<").append(XaDataSource.Tag.XADATASOURCEPROPERTY);
+            sb.append(" name=\"").append(entry.getKey()).append("\">");
+            sb.append(entry.getValue());
+            sb.append("</").append(XaDataSource.Tag.XADATASOURCEPROPERTY).append(">");
+         }
+      }
+
+      if (xaDataSourceClass != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.XADATASOURCECLASS).append(">");
+         sb.append(xaDataSourceClass);
+         sb.append("</").append(XaDataSource.Tag.XADATASOURCECLASS).append(">");
+      }
+
+      if (driver != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.DRIVER).append(">");
+         sb.append(driver);
+         sb.append("</").append(XaDataSource.Tag.DRIVER).append(">");
+      }
+
+      if (urlDelimiter != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.URLDELIMITER).append(">");
+         sb.append(urlDelimiter);
+         sb.append("</").append(XaDataSource.Tag.URLDELIMITER).append(">");
+      }
+
+      if (urlSelectorStrategyClassName != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.URLSELECTORSTRATEGYCLASSNAME).append(">");
+         sb.append(urlSelectorStrategyClassName);
+         sb.append("</").append(XaDataSource.Tag.URLSELECTORSTRATEGYCLASSNAME).append(">");
+      }
+
+      if (newConnectionSql != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.NEWCONNECTIONSQL).append(">");
+         sb.append(newConnectionSql);
+         sb.append("</").append(XaDataSource.Tag.NEWCONNECTIONSQL).append(">");
+      }
+
+      if (transactionIsolation != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.TRANSACTIONISOLATION).append(">");
+         sb.append(transactionIsolation);
+         sb.append("</").append(XaDataSource.Tag.TRANSACTIONISOLATION).append(">");
+      }
+
+      if (xaPool != null)
+         sb.append(xaPool);
+
+      if (security != null)
+         sb.append(security);
+
+      if (validation != null)
+         sb.append(validation);
+
+      if (timeOut != null)
+         sb.append(timeOut);
+
+      if (statement != null)
+         sb.append(statement);
+
+      if (recovery != null)
+         sb.append(recovery);
+
+      sb.append("</xa-datasource>");
+
+      return sb.toString();
    }
 
    /**

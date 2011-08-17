@@ -48,12 +48,9 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
     */
    private static final long serialVersionUID = -6095735191032372517L;
 
-   private final String moduleName;
-
    private final XsdString resourceadapterVersion;
 
    /**
-    * @param moduleName name of the module
     * @param description descriptions of this connector
     * @param displayName name to display for this connecotro
     * @param icon icon representing this connectore
@@ -64,25 +61,13 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
     * @param resourceadapter full qualified name of the resource adapter
     * @param id XML ID
     */
-   public Connector10Impl(String moduleName, XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
+   public Connector10Impl(XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
          LicenseType license, ResourceAdapter resourceadapter, List<LocalizedXsdString> description,
          List<LocalizedXsdString> displayName,
          List<Icon> icon, String id)
    {
       super(vendorName, eisType, license, resourceadapter, description, displayName, icon, id);
-      this.moduleName = moduleName;
       this.resourceadapterVersion = resourceadapterVersion;
-
-
-   }
-
-   /**
-    * @return moduleName
-    */
-   @Override
-   public String getModuleName()
-   {
-      return moduleName;
    }
 
    /**
@@ -111,7 +96,6 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
       return result;
    }
 
@@ -125,28 +109,55 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
       if (!(obj instanceof Connector10Impl))
          return false;
       Connector10Impl other = (Connector10Impl) obj;
-      if (moduleName == null)
-      {
-         if (other.moduleName != null)
-            return false;
-      }
-      else if (!moduleName.equals(other.moduleName))
-         return false;
       return true;
    }
 
    @Override
    public String toString()
    {
-      return "Connector10Impl [moduleName=" + moduleName + ", vendorName=" + vendorName + ", eisType=" + eisType
-            + ", license=" + license + ", resourceadapter=" + resourceadapter + ", id=" + id + ", description="
-            + description + ", displayName=" + displayName + ", icon=" + icon + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+      sb.append("<").append("connector").append(">");
+
+      // description, displayName, icon
+
+      if (!XsdString.isNull(vendorName))
+      {
+         sb.append("<" + Connector10.Tag.VENDORNAME + ">");
+         sb.append(vendorName);
+         sb.append("</" + Connector10.Tag.VENDORNAME + ">");
+      }
+
+      sb.append("<" + Connector10.Tag.SPEC_VERSION + ">");
+      sb.append("1.0");
+      sb.append("</" + Connector10.Tag.SPEC_VERSION + ">");
+
+      if (!XsdString.isNull(eisType))
+      {
+         sb.append("<" + Connector10.Tag.EIS_TYPE + ">");
+         sb.append(eisType);
+         sb.append("</" + Connector10.Tag.EIS_TYPE + ">");
+      }
+
+      sb.append("<" + Connector10.Tag.VERSION + ">");
+      sb.append(resourceadapterVersion);
+      sb.append("</" + Connector10.Tag.VERSION + ">");
+
+      if (license != null)
+         sb.append(license);
+
+      sb.append(resourceadapter);
+
+      sb.append("</").append("connector").append(">");
+
+      return sb.toString();
    }
 
    @Override
    public CopyableMetaData copy()
    {
-      return new Connector10Impl(CopyUtil.cloneString(moduleName), CopyUtil.clone(vendorName),
+      return new Connector10Impl(CopyUtil.clone(vendorName),
             CopyUtil.clone(eisType), CopyUtil.clone(resourceadapterVersion), CopyUtil.clone(license),
             CopyUtil.clone(resourceadapter),
             CopyUtil.cloneList(description), CopyUtil.cloneList(displayName), CopyUtil.cloneList(icon),
@@ -163,7 +174,6 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
          XsdString newResourceadapterVersion = XsdString.isNull(this.resourceadapterVersion)
                ? input10.resourceadapterVersion : this.resourceadapterVersion;
          XsdString newEisType = XsdString.isNull(this.eisType) ? input10.eisType : this.eisType;
-         String newModuleName = this.moduleName == null ? input10.moduleName : this.moduleName;
          List<Icon> newIcons = MergeUtil.mergeList(this.icon, input10.icon);
          LicenseType newLicense = this.license == null ? input10.license : this.license.merge(input10.license);
          List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.description,
@@ -176,12 +186,9 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
                ? (ResourceAdapter10) input10.resourceadapter
                : ((ResourceAdapter10) this.resourceadapter)
                      .merge((ResourceAdapter10) input10.resourceadapter);
-         return new Connector10Impl(newModuleName, newVendorName, newEisType, newResourceadapterVersion, newLicense,
+         return new Connector10Impl(newVendorName, newEisType, newResourceadapterVersion, newLicense,
                newResourceadapter, newDescriptions, newDisplayNames, newIcons, null);
       }
       return this;
-
    }
-
-
 }

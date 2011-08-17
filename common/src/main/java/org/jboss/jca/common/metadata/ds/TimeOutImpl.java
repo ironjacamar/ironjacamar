@@ -42,7 +42,7 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   private final Boolean setTxQuertTimeout;
+   private final Boolean setTxQueryTimeout;
 
    private final Long queryTimeout;
 
@@ -56,18 +56,18 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
     * @param allocationRetry allocationRetry
     * @param allocationRetryWaitMillis allocationRetryWaitMillis
     * @param xaResourceTimeout xaResourceTimeout
-    * @param setTxQuertTimeout setTxQuertTimeout
+    * @param setTxQueryTimeout setTxQueryTimeout
     * @param queryTimeout queryTimeout
     * @param useTryLock useTryLock
     * @throws ValidateException ValidateException
     */
    public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
-      Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQuertTimeout, Long queryTimeout,
+      Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQueryTimeout, Long queryTimeout,
       Long useTryLock) throws ValidateException
    {
       super(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,
             xaResourceTimeout);
-      this.setTxQuertTimeout = setTxQuertTimeout;
+      this.setTxQueryTimeout = setTxQueryTimeout;
       this.queryTimeout = queryTimeout;
       this.useTryLock = useTryLock;
       this.validate();
@@ -81,7 +81,7 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    @Override
    public final Boolean isSetTxQueryTimeout()
    {
-      return setTxQuertTimeout;
+      return setTxQueryTimeout;
    }
 
    /**
@@ -112,7 +112,7 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((queryTimeout == null) ? 0 : queryTimeout.hashCode());
-      result = prime * result + ((setTxQuertTimeout == null) ? 0 : setTxQuertTimeout.hashCode());
+      result = prime * result + ((setTxQueryTimeout == null) ? 0 : setTxQueryTimeout.hashCode());
       result = prime * result + ((useTryLock == null) ? 0 : useTryLock.hashCode());
       return result;
    }
@@ -134,12 +134,12 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
       }
       else if (!queryTimeout.equals(other.queryTimeout))
          return false;
-      if (setTxQuertTimeout == null)
+      if (setTxQueryTimeout == null)
       {
-         if (other.setTxQuertTimeout != null)
+         if (other.setTxQueryTimeout != null)
             return false;
       }
-      else if (!setTxQuertTimeout.equals(other.setTxQuertTimeout))
+      else if (!setTxQueryTimeout.equals(other.setTxQueryTimeout))
          return false;
       if (useTryLock == null)
       {
@@ -154,8 +154,67 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    @Override
    public String toString()
    {
-      return "TimeOutImpl [setTxQuertTimeout=" + setTxQuertTimeout + ", queryTimeout=" + queryTimeout +
-             ", useTryLock=" + useTryLock + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<timeout>");
+
+      if (blockingTimeoutMillis != null)
+      {
+         sb.append("<").append(TimeOut.Tag.BLOCKINGTIMEOUTMILLIS).append(">");
+         sb.append(blockingTimeoutMillis);
+         sb.append("</").append(TimeOut.Tag.BLOCKINGTIMEOUTMILLIS).append(">");
+      }
+
+      if (idleTimeoutMinutes != null)
+      {
+         sb.append("<").append(TimeOut.Tag.IDLETIMEOUTMINUTES).append(">");
+         sb.append(idleTimeoutMinutes);
+         sb.append("</").append(TimeOut.Tag.IDLETIMEOUTMINUTES).append(">");
+      }
+
+      if (setTxQueryTimeout != null && Boolean.TRUE.equals(setTxQueryTimeout))
+      {
+         sb.append("<").append(TimeOut.Tag.SETTXQUERYTIMEOUT).append("/>");
+      }
+
+      if (queryTimeout != null)
+      {
+         sb.append("<").append(TimeOut.Tag.QUERYTIMEOUT).append(">");
+         sb.append(queryTimeout);
+         sb.append("</").append(TimeOut.Tag.QUERYTIMEOUT).append(">");
+      }
+
+      if (useTryLock != null)
+      {
+         sb.append("<").append(TimeOut.Tag.USETRYLOCK).append(">");
+         sb.append(useTryLock);
+         sb.append("</").append(TimeOut.Tag.USETRYLOCK).append(">");
+      }
+
+      if (allocationRetry != null)
+      {
+         sb.append("<").append(TimeOut.Tag.ALLOCATIONRETRY).append(">");
+         sb.append(allocationRetry);
+         sb.append("</").append(TimeOut.Tag.ALLOCATIONRETRY).append(">");
+      }
+
+      if (allocationRetryWaitMillis != null)
+      {
+         sb.append("<").append(TimeOut.Tag.ALLOCATIONRETRYWAITMILLIS).append(">");
+         sb.append(allocationRetryWaitMillis);
+         sb.append("</").append(TimeOut.Tag.ALLOCATIONRETRYWAITMILLIS).append(">");
+      }
+
+      if (xaResourceTimeout != null)
+      {
+         sb.append("<").append(TimeOut.Tag.XARESOURCETIMEOUT).append(">");
+         sb.append(xaResourceTimeout);
+         sb.append("</").append(TimeOut.Tag.XARESOURCETIMEOUT).append(">");
+      }
+
+      sb.append("</timeout>");
+
+      return sb.toString();
    }
 
    @Override

@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
+import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
@@ -380,15 +381,18 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          Activationspec15 as = ml.getActivationspec();
          Class<?> asClz = Class.forName(as.getActivationspecClass().getValue(), true, cl);
 
-         List<? extends ConfigProperty> cps = as.getConfigProperties();
-         if (cps != null && cps.size() > 0)
+         if (as instanceof Activationspec16)
          {
-            for (ConfigProperty cp : cps)
+            List<? extends ConfigProperty> cps = ((Activationspec16)as).getConfigProperties();
+            if (cps != null && cps.size() > 0)
             {
-               String name = cp.getConfigPropertyName().getValue();
-               Class<?> ct = Class.forName(cp.getConfigPropertyType().getValue(), true, cl);
+               for (ConfigProperty cp : cps)
+               {
+                  String name = cp.getConfigPropertyName().getValue();
+                  Class<?> ct = Class.forName(cp.getConfigPropertyType().getValue(), true, cl);
 
-               configProperties.put(name, ct);
+                  configProperties.put(name, ct);
+               }
             }
          }
 

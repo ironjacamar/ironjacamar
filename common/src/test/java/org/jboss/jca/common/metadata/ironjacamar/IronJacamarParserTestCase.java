@@ -33,17 +33,20 @@ import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.metadata.ParserException;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.logging.Logger;
 import org.jboss.util.file.FilenamePrefixFilter;
 
 import org.hamcrest.core.IsNull;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.isNull;
@@ -57,6 +60,8 @@ import static org.mockito.Matchers.isNull;
  */
 public class IronJacamarParserTestCase
 {
+   private static Logger log = Logger.getLogger(IronJacamarParserTestCase.class);
+
    /**
     * shouldParseAnyExample
     * @throws Exception in case of error
@@ -625,4 +630,46 @@ public class IronJacamarParserTestCase
       }
    }
 
+   /**
+    *
+    * shouldParseXMLRepresentation
+    * @throws Exception in case of error
+    */
+   @Test
+   public void shouldParseXMLRepresentation() throws Exception
+   {
+      FileInputStream is = null;
+      ByteArrayInputStream bais = null;
+
+      //given
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      File xmlFile = new File(cl.getResource("ironjacamar/ironjacamar-all.xml").toURI());
+      try
+      {
+         is = new FileInputStream(xmlFile);
+         IronJacamarParser parser = new IronJacamarParser();
+         //when
+         IronJacamar ij1 = parser.parse(is);
+
+         String xmlRepresentation = ij1.toString();
+
+         log.debug(xmlRepresentation);
+
+         bais = new ByteArrayInputStream(xmlRepresentation.getBytes("UTF-8"));
+
+         IronJacamar ij2 = parser.parse(bais);
+
+         //then
+         assertThat(ij1, instanceOf(IronJacamar.class));
+         assertThat(ij2, instanceOf(IronJacamar.class));
+      }
+      finally
+      {
+         if (is != null)
+            is.close();
+
+         if (bais != null)
+            bais.close();
+      }
+   }
 }

@@ -109,6 +109,14 @@ public interface Credential extends JCAMetadata, ValidatableMetadata
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
       private static final Map<String, Tag> MAP;
 
       static

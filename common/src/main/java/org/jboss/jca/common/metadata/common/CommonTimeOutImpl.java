@@ -198,11 +198,49 @@ public class CommonTimeOutImpl implements CommonTimeOut
    @Override
    public String toString()
    {
-      return "CommonTimeOutImpl [blockingTimeoutMillis=" + blockingTimeoutMillis + ", idleTimeoutMinutes=" +
-             idleTimeoutMinutes + ", allocationRetry=" + allocationRetry + ", allocationRetryWaitMillis=" +
-             allocationRetryWaitMillis + ", xaResourceTimeout=" + xaResourceTimeout + "]";
-   }
+      StringBuilder sb = new StringBuilder(1024);
 
+      sb.append("<timeout>");
+
+      if (blockingTimeoutMillis != null)
+      {
+         sb.append("<").append(CommonTimeOut.Tag.BLOCKINGTIMEOUTMILLIS).append(">");
+         sb.append(blockingTimeoutMillis);
+         sb.append("</").append(CommonTimeOut.Tag.BLOCKINGTIMEOUTMILLIS).append(">");
+      }
+
+      if (idleTimeoutMinutes != null)
+      {
+         sb.append("<").append(CommonTimeOut.Tag.IDLETIMEOUTMINUTES).append(">");
+         sb.append(idleTimeoutMinutes);
+         sb.append("</").append(CommonTimeOut.Tag.IDLETIMEOUTMINUTES).append(">");
+      }
+
+      if (allocationRetry != null)
+      {
+         sb.append("<").append(CommonTimeOut.Tag.ALLOCATIONRETRY).append(">");
+         sb.append(allocationRetry);
+         sb.append("</").append(CommonTimeOut.Tag.ALLOCATIONRETRY).append(">");
+      }
+
+      if (allocationRetryWaitMillis != null)
+      {
+         sb.append("<").append(CommonTimeOut.Tag.ALLOCATIONRETRYWAITMILLIS).append(">");
+         sb.append(allocationRetryWaitMillis);
+         sb.append("</").append(CommonTimeOut.Tag.ALLOCATIONRETRYWAITMILLIS).append(">");
+      }
+
+      if (xaResourceTimeout != null)
+      {
+         sb.append("<").append(CommonTimeOut.Tag.XARESOURCETIMEOUT).append(">");
+         sb.append(xaResourceTimeout);
+         sb.append("</").append(CommonTimeOut.Tag.XARESOURCETIMEOUT).append(">");
+      }
+
+      sb.append("</timeout>");
+      
+      return sb.toString();
+   }
 
    private void partialCommonValidate() throws ValidateException
    {

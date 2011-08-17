@@ -26,6 +26,9 @@ import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.common.CredentialImpl;
 
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  *
  * A DsSecurityImpl.
@@ -101,9 +104,56 @@ public class DsSecurityImpl extends CredentialImpl implements DsSecurity
    @Override
    public String toString()
    {
-      return "DsSecurityImpl [reauthPlugin=" + reauthPlugin + ", getUserName()=" + getUserName() +
-             ", getPassword()=" + getPassword() + ", getSecurityDomain()=" + getSecurityDomain() + "]";
-   }
+      StringBuilder sb = new StringBuilder();
 
+      sb.append("<security>");
+
+      if (getUserName() != null)
+      {
+         sb.append("<").append(DsSecurity.Tag.USERNAME).append(">");
+         sb.append(getUserName());
+         sb.append("</").append(DsSecurity.Tag.USERNAME).append(">");
+
+         sb.append("<").append(DsSecurity.Tag.PASSWORD).append(">");
+         sb.append(getPassword());
+         sb.append("</").append(DsSecurity.Tag.PASSWORD).append(">");
+      }
+      else if (getSecurityDomain() != null)
+      {
+         sb.append("<").append(DsSecurity.Tag.SECURITY_DOMAIN).append(">");
+         sb.append(getSecurityDomain());
+         sb.append("</").append(DsSecurity.Tag.SECURITY_DOMAIN).append(">");
+      }
+
+      if (getReauthPlugin() != null)
+      {
+         sb.append("<").append(DsSecurity.Tag.REAUTH_PLUGIN);
+         sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
+         sb.append(getReauthPlugin().getClassName()).append("\"");
+         sb.append(">");
+
+         if (getReauthPlugin().getConfigPropertiesMap() != null &&
+             getReauthPlugin().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it = getReauthPlugin().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               sb.append("<").append(Extension.Tag.CONFIG_PROPERTY);
+               sb.append(" name=\"").append(entry.getKey()).append("\">");
+               sb.append(entry.getValue());
+               sb.append("</").append(Extension.Tag.CONFIG_PROPERTY).append(">");
+            }
+         }
+
+         sb.append("</").append(DsSecurity.Tag.REAUTH_PLUGIN).append(">");
+      }
+
+      sb.append("</security>");
+
+      return sb.toString();
+   }
 }
 

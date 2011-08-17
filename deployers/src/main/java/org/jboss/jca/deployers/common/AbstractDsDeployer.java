@@ -224,6 +224,9 @@ public abstract class AbstractDsDeployer
 
                for (DataSource dataSource : ds)
                {
+                  if (log.isTraceEnabled())
+                     log.tracef("DataSource=%s", dataSource);
+
                   if (dataSource.isEnabled())
                   {
                      String jndiName = buildJndiName(dataSource.getJndiName(), dataSource.isUseJavaContext());
@@ -306,6 +309,9 @@ public abstract class AbstractDsDeployer
 
                for (XaDataSource xaDataSource : xads)
                {
+                  if (log.isTraceEnabled())
+                     log.tracef("XaDataSource=%s", xaDataSource);
+
                   if (xaDataSource.isEnabled())
                   {
                      String jndiName = buildJndiName(xaDataSource.getJndiName(), xaDataSource.isUseJavaContext());
@@ -625,7 +631,7 @@ public abstract class AbstractDsDeployer
       {
          interleaving = ds.getXaPool().isInterleaving();
          isSameRMOverride = ds.getXaPool().isSameRmOverride();
-         wrapXAResource = ds.getXaPool().isWrapXaDataSource();
+         wrapXAResource = ds.getXaPool().isWrapXaResource();
          padXid = ds.getXaPool().isPadXid();
       }
 

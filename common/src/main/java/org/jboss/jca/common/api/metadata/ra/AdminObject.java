@@ -137,6 +137,14 @@ public interface AdminObject extends IdDecoratedMetadata, CopyableMetaData
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
       private static final Map<String, Tag> MAP;
 
       static
@@ -204,6 +212,12 @@ public interface AdminObject extends IdDecoratedMetadata, CopyableMetaData
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
-
 }

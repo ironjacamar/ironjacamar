@@ -411,4 +411,8 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.enabled = enabled;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public abstract String toString();
 }

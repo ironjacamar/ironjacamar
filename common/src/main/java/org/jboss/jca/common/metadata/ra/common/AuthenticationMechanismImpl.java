@@ -203,8 +203,26 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
    @Override
    public String toString()
    {
-      return "AuthenticationMechanism [description=" + description + ", authenticationMechanismType="
-            + authenticationMechanismType + ", credentialInterface=" + credentialInterface + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<authentication-mechanism");
+      if (id != null)
+         sb.append(" ").append(AuthenticationMechanism.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+        
+      // description
+
+      sb.append("<").append(AuthenticationMechanism.Tag.AUTHENTICATION_MECHANISM_TYPE).append(">");
+      sb.append(authenticationMechanismType);
+      sb.append("</").append(AuthenticationMechanism.Tag.AUTHENTICATION_MECHANISM_TYPE).append(">");
+
+      sb.append("<").append(AuthenticationMechanism.Tag.CREDENTIAL_INTERFACE).append(">");
+      sb.append(credentialInterface);
+      sb.append("</").append(AuthenticationMechanism.Tag.CREDENTIAL_INTERFACE).append(">");
+
+      sb.append("</authentication-mechanism>");
+
+      return sb.toString();
    }
 
    @Override

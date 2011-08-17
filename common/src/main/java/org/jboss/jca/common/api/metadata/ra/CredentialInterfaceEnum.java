@@ -99,4 +99,12 @@ public enum CredentialInterfaceEnum
    {
       return fullQualifiedName;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return fullQualifiedName;
+   }
 }

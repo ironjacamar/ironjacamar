@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.ValidatableMetadata;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -147,7 +148,63 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
    @Override
    public String toString()
    {
-      return "Recovery [credential=" + credential + ", plugin=" + recoverPlugin + ", noRecovery=" + noRecovery + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<recovery");
+      if (noRecovery != null)
+         sb.append(" ").append(Attribute.NO_RECOVERY).append("=\"").append(noRecovery).append("\"");
+      sb.append(">");
+
+      if (credential != null)
+      {
+         sb.append("<").append(Tag.RECOVER_CREDENTIAL).append(">");
+         if (credential.getUserName() != null)
+         {
+            sb.append("<").append(Credential.Tag.USERNAME).append(">");
+            sb.append(credential.getUserName());
+            sb.append("</").append(Credential.Tag.USERNAME).append(">");
+
+            sb.append("<").append(Credential.Tag.PASSWORD).append(">");
+            sb.append(credential.getPassword());
+            sb.append("</").append(Credential.Tag.PASSWORD).append(">");
+         }
+         else
+         {
+            sb.append("<").append(Credential.Tag.SECURITY_DOMAIN).append(">");
+            sb.append(credential.getSecurityDomain());
+            sb.append("</").append(Credential.Tag.SECURITY_DOMAIN).append(">");
+         }
+         sb.append("</").append(Tag.RECOVER_CREDENTIAL).append(">");
+      }
+
+      if (recoverPlugin != null)
+      {
+         sb.append("<").append(Tag.RECOVER_PLUGIN);
+         sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
+         sb.append(recoverPlugin.getClassName()).append("\"");
+         sb.append(">");
+
+         if (recoverPlugin.getConfigPropertiesMap() != null && recoverPlugin.getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it = recoverPlugin.getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               sb.append("<").append(Extension.Tag.CONFIG_PROPERTY);
+               sb.append(" name=\"").append(entry.getKey()).append("\">");
+               sb.append(entry.getValue());
+               sb.append("</").append(Extension.Tag.CONFIG_PROPERTY).append(">");
+            }
+         }
+
+         sb.append("</").append(Tag.RECOVER_PLUGIN).append(">");
+      }
+
+      sb.append("</recovery>");
+      
+      return sb.toString();
    }
 
    /**
@@ -163,9 +220,6 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
        *
        */
       UNKNOWN(null),
-
-      /**
-       * pool tag
 
       /**
       * config-property tag
@@ -194,6 +248,14 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }
@@ -265,7 +327,13 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
-
 }
 

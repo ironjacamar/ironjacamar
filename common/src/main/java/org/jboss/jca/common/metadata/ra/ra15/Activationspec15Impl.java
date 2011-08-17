@@ -23,7 +23,6 @@ package org.jboss.jca.common.metadata.ra.ra15;
 
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
@@ -163,14 +162,28 @@ public class Activationspec15Impl implements Activationspec15
    @Override
    public String toString()
    {
-      return "Activationspec [activationspecClass=" + activationspecClass + ", requiredConfigProperty="
-            + requiredConfigProperty + ", id=" + id + "]";
-   }
+      StringBuilder sb = new StringBuilder();
 
-   @Override
-   public List<? extends ConfigProperty> getConfigProperties()
-   {
-      return null;
+      sb.append("<activationspec");
+      if (id != null)
+         sb.append(" ").append(Activationspec15.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      sb.append("<").append(Activationspec15.Tag.ACTIVATIONSPEC_CLASS).append(">");
+      sb.append(activationspecClass);
+      sb.append("</").append(Activationspec15.Tag.ACTIVATIONSPEC_CLASS).append(">");
+
+      if (requiredConfigProperty != null)
+      {
+         for (RequiredConfigProperty rcp : requiredConfigProperty)
+         {
+            sb.append(rcp);
+         }
+      }
+
+      sb.append("</activationspec>");
+
+      return sb.toString();
    }
 
    @Override

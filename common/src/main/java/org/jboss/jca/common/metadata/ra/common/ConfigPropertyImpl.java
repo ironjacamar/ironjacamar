@@ -212,8 +212,32 @@ public class ConfigPropertyImpl implements ConfigProperty
    @Override
    public String toString()
    {
-      return "ConfigPropertyImpl [description=" + description + ", configPropertyName=" + configPropertyName
-            + ", configPropertyType=" + configPropertyType + ", configPropertyValue=" + configPropertyValue + ", id="
-            + id + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<config-property");
+      if (id != null)
+         sb.append(" ").append(ConfigProperty.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      // description
+
+      sb.append("<").append(ConfigProperty.Tag.CONFIG_PROPERTY_NAME).append(">");
+      sb.append(configPropertyName);
+      sb.append("</").append(ConfigProperty.Tag.CONFIG_PROPERTY_NAME).append(">");
+
+      sb.append("<").append(ConfigProperty.Tag.CONFIG_PROPERTY_TYPE).append(">");
+      sb.append(configPropertyType);
+      sb.append("</").append(ConfigProperty.Tag.CONFIG_PROPERTY_TYPE).append(">");
+
+      if (!XsdString.isNull(configPropertyValue))
+      {
+         sb.append("<").append(ConfigProperty.Tag.CONFIG_PROPERTY_VALUE).append(">");
+         sb.append(configPropertyValue);
+         sb.append("</").append(ConfigProperty.Tag.CONFIG_PROPERTY_VALUE).append(">");
+      }
+
+      sb.append("</config-property>");
+
+      return sb.toString();
    }
 }

@@ -31,6 +31,7 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
+import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
 import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
@@ -355,22 +356,26 @@ public class Validation
                      && !mlMeta.getActivationspec().getActivationspecClass().equals(XsdString.NULL_XSDSTRING))
                {
 
-                  try
+                  if (mlMeta.getActivationspec() instanceof Activationspec16)
                   {
-                     Class<?> clazz = Class.forName(mlMeta.getActivationspec().getActivationspecClass().getValue(),
-                           true, cl);
-                     List<? extends ConfigProperty> configProperties = mlMeta.getActivationspec().getConfigProperties();
+                     try
+                     {
+                        Class<?> clazz = Class.forName(mlMeta.getActivationspec().getActivationspecClass().getValue(),
+                                                       true, cl);
+                        List<? extends ConfigProperty> configProperties = 
+                           ((Activationspec16)mlMeta.getActivationspec()).getConfigProperties();
 
-                     ValidateClass vc = new ValidateClass(Key.ACTIVATION_SPEC, clazz, configProperties);
-                     result.add(vc);
-                  }
-                  catch (ClassNotFoundException e)
-                  {
-                     Failure failure = new Failure(Severity.ERROR,
-                                                   rb.getString("uncategorized"),
-                                                   rb.getString("as.cnfe"),
-                                                   e.getMessage());
-                     failures.add(failure);
+                        ValidateClass vc = new ValidateClass(Key.ACTIVATION_SPEC, clazz, configProperties);
+                        result.add(vc);
+                     }
+                     catch (ClassNotFoundException e)
+                     {
+                        Failure failure = new Failure(Severity.ERROR,
+                                                      rb.getString("uncategorized"),
+                                                      rb.getString("as.cnfe"),
+                                                      e.getMessage());
+                        failures.add(failure);
+                     }
                   }
                }
             }

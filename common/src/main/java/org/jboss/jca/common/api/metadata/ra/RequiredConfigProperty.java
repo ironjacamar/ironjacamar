@@ -176,8 +176,25 @@ public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMeta
    @Override
    public String toString()
    {
-      return "RequiredConfigProperty [description=" + description + ", configPropertyName=" + configPropertyName
-            + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<required-config-property");
+      if (id != null)
+         sb.append(" ").append(Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      // description
+
+      if (!XsdString.isNull(configPropertyName))
+      {
+         sb.append("<").append(Tag.CONFIG_PROPERTY_NAME).append(">");
+         sb.append(configPropertyName);
+         sb.append("</").append(Tag.CONFIG_PROPERTY_NAME).append(">");
+      }
+
+      sb.append("</required-config-property>");
+
+      return sb.toString();
    }
 
    /**
@@ -223,6 +240,14 @@ public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMeta
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }
@@ -294,6 +319,13 @@ public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMeta
          return name;
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
    }
 
    @Override

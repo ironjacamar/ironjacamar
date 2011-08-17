@@ -182,11 +182,64 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
    @Override
    public String toString()
    {
-      return "Connector16Impl [moduleName=" + moduleName + ", requiredWorkContexts=" + requiredWorkContexts
-            + ", metadataComplete=" + metadataComplete + ", resourceadapterVersion=" + resourceadapterVersion
-            + ", vendorName=" + vendorName + ", eisType=" + eisType + ", license=" + license + ", resourceadapter="
-            + resourceadapter + ", id=" + id + ", description=" + description + ", displayName=" + displayName
-            + ", icon=" + icon + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+      sb.append("<").append("connector");
+      sb.append(" " + Connector16.Attribute.VERSION + "=\"1.6\"");
+      sb.append(" " + Connector16.Attribute.METADATA_COMPLETE + "=\"" + metadataComplete + "\"");
+      if (id != null)
+         sb.append(" " + Connector16.Attribute.ID + "=\"" + id + "\"");
+      sb.append(">");
+
+      if (moduleName != null)
+      {
+         sb.append("<" + Connector16.Tag.MODULENAME + ">");
+         sb.append(moduleName);
+         sb.append("</" + Connector16.Tag.MODULENAME + ">");
+      }
+
+      // description, displayName, icon
+
+      if (!XsdString.isNull(vendorName))
+      {
+         sb.append("<" + Connector16.Tag.VENDORNAME + ">");
+         sb.append(vendorName);
+         sb.append("</" + Connector16.Tag.VENDORNAME + ">");
+      }
+
+      if (!XsdString.isNull(eisType))
+      {
+         sb.append("<" + Connector16.Tag.EIS_TYPE + ">");
+         sb.append(eisType);
+         sb.append("</" + Connector16.Tag.EIS_TYPE + ">");
+      }
+
+      if (!XsdString.isNull(resourceadapterVersion))
+      {
+         sb.append("<" + Connector16.Tag.RESOURCEADPTER_VERSION + ">");
+         sb.append(resourceadapterVersion);
+         sb.append("</" + Connector16.Tag.RESOURCEADPTER_VERSION + ">");
+      }
+
+      if (license != null)
+         sb.append(license);
+
+      sb.append(resourceadapter);
+
+      if (requiredWorkContexts != null)
+      {
+         for (String rwc : requiredWorkContexts)
+         {
+            sb.append("<" + Connector16.Tag.REQUIRED_WORK_CONTEXT + ">");
+            sb.append(rwc);
+            sb.append("</" + Connector16.Tag.REQUIRED_WORK_CONTEXT + ">");
+         }
+      }
+
+      sb.append("</").append("connector").append(">");
+
+      return sb.toString();
    }
 
    @Override

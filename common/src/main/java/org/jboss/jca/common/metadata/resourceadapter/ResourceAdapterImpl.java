@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.metadata.common.CommonIronJacamarImpl;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -106,10 +107,77 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
    @Override
    public String toString()
    {
-      return "ResourceAdapterImpl [archive=" + archive + ", transactionSupport=" + transactionSupport +
-             ", configProperties=" + configProperties + ", adminObjects=" + adminObjects +
-             ", connectionDefinitions=" + connectionDefinitions + ", beanValidationGroups=" +
-             beanValidationGroups + ", bootstrapContext=" + bootstrapContext + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<resource-adapter>");
+
+      sb.append("<").append(ResourceAdapter.Tag.ARCHIVE).append(">");
+      sb.append(archive);
+      sb.append("</").append(ResourceAdapter.Tag.ARCHIVE).append(">");
+
+      if (beanValidationGroups != null && beanValidationGroups.size() > 0)
+      {
+         sb.append("<").append(ResourceAdapter.Tag.BEAN_VALIDATION_GROUPS).append(">");
+         for (String bvg : beanValidationGroups)
+         {
+            sb.append("<").append(ResourceAdapter.Tag.BEAN_VALIDATION_GROUP).append(">");
+            sb.append(bvg);
+            sb.append("</").append(ResourceAdapter.Tag.BEAN_VALIDATION_GROUP).append(">");
+         }
+         sb.append("</").append(ResourceAdapter.Tag.BEAN_VALIDATION_GROUPS).append(">");
+      }
+
+      if (bootstrapContext != null)
+      {
+         sb.append("<").append(ResourceAdapter.Tag.BOOTSTRAP_CONTEXT).append(">");
+         sb.append(bootstrapContext);
+         sb.append("</").append(ResourceAdapter.Tag.BOOTSTRAP_CONTEXT).append(">");
+      }
+
+      if (configProperties != null && configProperties.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = configProperties.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            sb.append("<").append(ResourceAdapter.Tag.CONFIG_PROPERTY);
+            sb.append(" name=\"").append(entry.getKey()).append("\">");
+            sb.append(entry.getValue());
+            sb.append("</").append(ResourceAdapter.Tag.CONFIG_PROPERTY).append(">");
+         }
+      }
+      
+      if (transactionSupport != null)
+      {
+         sb.append("<").append(ResourceAdapter.Tag.TRANSACTION_SUPPORT).append(">");
+         sb.append(transactionSupport);
+         sb.append("</").append(ResourceAdapter.Tag.TRANSACTION_SUPPORT).append(">");
+      }
+
+      if (connectionDefinitions != null && connectionDefinitions.size() > 0)
+      {
+         sb.append("<").append(ResourceAdapter.Tag.CONNECTION_DEFINITIONS).append(">");
+         for (CommonConnDef cd : connectionDefinitions)
+         {
+            sb.append(cd);
+         }
+         sb.append("</").append(ResourceAdapter.Tag.CONNECTION_DEFINITIONS).append(">");
+      }
+
+      if (adminObjects != null && adminObjects.size() > 0)
+      {
+         sb.append("<").append(ResourceAdapter.Tag.ADMIN_OBJECTS).append(">");
+         for (CommonAdminObject ao : adminObjects)
+         {
+            sb.append(ao);
+         }
+         sb.append("</").append(ResourceAdapter.Tag.ADMIN_OBJECTS).append(">");
+      }
+
+      sb.append("</resource-adapter>");
+      
+      return sb.toString();
    }
 }
 

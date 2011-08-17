@@ -173,8 +173,22 @@ public class SecurityPermissionImpl implements SecurityPermission
    @Override
    public String toString()
    {
-      return "SecurityPermission [description=" + description + ", securityPermissionSpec=" + securityPermissionSpec
-            + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<security-permission");
+      if (id != null)
+         sb.append(" ").append(SecurityPermission.Attribute.ID).append("=\"").append(id).append("\"");
+      sb.append(">");
+
+      // description
+
+      sb.append("<").append(SecurityPermission.Tag.SECURITY_PERMISSION_SPEC).append(">");
+      sb.append(securityPermissionSpec);
+      sb.append("</").append(SecurityPermission.Tag.SECURITY_PERMISSION_SPEC).append(">");
+
+      sb.append("</security-permission>");
+      
+      return sb.toString();
    }
 
    @Override

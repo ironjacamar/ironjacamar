@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -208,9 +209,47 @@ public class CommonAdminObjectImpl implements CommonAdminObject
    @Override
    public String toString()
    {
-      return "AdminObjectImpl [configProperties=" + configProperties + ", className=" + className + ", jndiName=" +
-             jndiName + ", poolName=" + poolName + ", enabled=" + enabled + ", useJavaContext=" + useJavaContext +
-             "]";
+      StringBuilder sb = new StringBuilder(1024);
+
+      sb.append("<admin-object");
+
+      if (className != null)
+         sb.append(" ").append(CommonAdminObject.Attribute.CLASS_NAME).append("=\"").append(className).append("\"");
+
+      if (jndiName != null)
+         sb.append(" ").append(CommonAdminObject.Attribute.JNDINAME).append("=\"").append(jndiName).append("\"");
+
+      if (enabled != null)
+         sb.append(" ").append(CommonAdminObject.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
+
+      if (useJavaContext != null)
+      {
+         sb.append(" ").append(CommonAdminObject.Attribute.USEJAVACONTEXT);
+         sb.append("=\"").append(useJavaContext).append("\"");
+      }
+
+      if (poolName != null)
+         sb.append(" ").append(CommonAdminObject.Attribute.POOL_NAME).append("=\"").append(poolName).append("\"");
+
+      sb.append(">");
+
+      if (configProperties != null && configProperties.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = configProperties.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            sb.append("<").append(CommonAdminObject.Tag.CONFIG_PROPERTY);
+            sb.append(" name=\"").append(entry.getKey()).append("\">");
+            sb.append(entry.getValue());
+            sb.append("</").append(CommonAdminObject.Tag.CONFIG_PROPERTY).append(">");
+         }
+      }
+
+      sb.append("</admin-object>");
+      
+      return sb.toString();
    }
 
    /**

@@ -94,7 +94,7 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
       /**
       * maxPoolSize tag
       */
-      MAXPOOLSIZE("max-pool-size"),
+      MAX_POOL_SIZE("max-pool-size"),
 
       /**
       * prefill tag
@@ -129,6 +129,14 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }

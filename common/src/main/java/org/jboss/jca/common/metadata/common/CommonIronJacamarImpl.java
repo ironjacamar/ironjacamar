@@ -259,13 +259,8 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
       return true;
    }
 
-   @Override
-   public String toString()
-   {
-      return "CommonIronJacamarImpl [transactionSupport=" + transactionSupport + ", configProperties=" +
-             configProperties + ", adminObjects=" + adminObjects + ", connectionDefinitions=" +
-             connectionDefinitions + ", beanValidationGroups=" + beanValidationGroups + ", bootstrapContext=" +
-             bootstrapContext + "]";
-   }
-
+   /**
+    * {@inheritDoc}
+    */
+   public abstract String toString();
 }

@@ -58,11 +58,11 @@ public interface CommonXaPool extends CommonPool
    public Boolean isPadXid();
 
    /**
-    * Get the wrapXaDataSource.
+    * Get the wrapXaResource.
     *
-    * @return the wrapXaDataSource.
+    * @return the wrapXaResource.
     */
-   public Boolean isWrapXaDataSource();
+   public Boolean isWrapXaResource();
 
    /**
     * Get the noTxSeparatePool.
@@ -94,7 +94,7 @@ public interface CommonXaPool extends CommonPool
       /**
       * maxPoolSize tag
       */
-      MAXPOOLSIZE("max-pool-size"),
+      MAX_POOL_SIZE("max-pool-size"),
       /**
       * prefill tag
       */
@@ -152,6 +152,14 @@ public interface CommonXaPool extends CommonPool
        * @return the local name
        */
       public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
       {
          return name;
       }

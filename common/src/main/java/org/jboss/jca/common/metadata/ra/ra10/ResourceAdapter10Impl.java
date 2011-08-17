@@ -364,12 +364,67 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    @Override
    public String toString()
    {
-      return "ResourceAdapter10 [managedConnectionFactoryClass=" + managedConnectionFactoryClass
-            + ", connectionFactoryInterface=" + connectionFactoryInterface + ", connectionFactoryImplClass="
-            + connectionFactoryImplClass + ", connectionInterface=" + connectionInterface + ", connectionImplClass="
-            + connectionImplClass + ", transactionSupport=" + transactionSupport + ", authenticationMechanism="
-            + authenticationMechanism + ", configProperties=" + configProperties + ", reauthenticationSupport="
-            + reauthenticationSupport + ", securityPermissions=" + securityPermissions + ", id=" + id + "]";
+      StringBuilder sb = new StringBuilder(1024);
+      sb.append("<").append("resourceadapter").append(">");
+
+      sb.append("<" + ResourceAdapter10.Tag.MANAGED_CONNECTIONFACTORY_CLASS + ">");
+      sb.append(managedConnectionFactoryClass);
+      sb.append("</" + ResourceAdapter10.Tag.MANAGED_CONNECTIONFACTORY_CLASS + ">");
+
+      sb.append("<" + ResourceAdapter10.Tag.CONNECTIONFACTORY_INTERFACE + ">");
+      sb.append(connectionFactoryInterface);
+      sb.append("</" + ResourceAdapter10.Tag.CONNECTIONFACTORY_INTERFACE + ">");
+
+      sb.append("<" + ResourceAdapter10.Tag.CONNECTIONFACTORY_IMPL_CLASS + ">");
+      sb.append(connectionFactoryImplClass);
+      sb.append("</" + ResourceAdapter10.Tag.CONNECTIONFACTORY_IMPL_CLASS + ">");
+
+      sb.append("<" + ResourceAdapter10.Tag.CONNECTION_INTERFACE + ">");
+      sb.append(connectionInterface);
+      sb.append("</" + ResourceAdapter10.Tag.CONNECTION_INTERFACE + ">");
+
+      sb.append("<" + ResourceAdapter10.Tag.CONNECTION_IMPL_CLASS + ">");
+      sb.append(connectionImplClass);
+      sb.append("</" + ResourceAdapter10.Tag.CONNECTION_IMPL_CLASS + ">");
+
+      sb.append("<" + ResourceAdapter10.Tag.TRANSACTION_SUPPORT + ">");
+      sb.append(transactionSupport);
+      sb.append("</" + ResourceAdapter10.Tag.TRANSACTION_SUPPORT + ">");
+
+      if (configProperties != null)
+      {
+         for (ConfigProperty cp : configProperties)
+         {
+            sb.append(cp);
+         }
+      }
+
+      if (authenticationMechanism != null)
+      {
+         for (AuthenticationMechanism am : authenticationMechanism)
+         {
+            sb.append(am);
+         }
+      }
+
+      if (reauthenticationSupport != null)
+      {
+         sb.append("<" + ResourceAdapter10.Tag.REAUTHENTICATION_SUPPORT + ">");
+         sb.append(reauthenticationSupport);
+         sb.append("</" + ResourceAdapter10.Tag.REAUTHENTICATION_SUPPORT + ">");
+      }
+
+      if (securityPermissions != null)
+      {
+         for (SecurityPermission sp : securityPermissions)
+         {
+            sb.append(sp);
+         }
+      }
+
+      sb.append("</").append("resourceadapter").append(">");
+
+      return sb.toString();
    }
 
    @Override
