@@ -66,6 +66,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** The log */
    private CoreLogger log;
 
+   /** Whether debug is enabled */
+   private boolean debug;
+   
    /** Whether trace is enabled */
    private boolean trace;
    
@@ -149,6 +152,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.maxSize = pc.getMaxSize();
       this.pool = p;
       this.log = pool.getLogger();
+      this.debug = log.isDebugEnabled();
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
@@ -223,6 +227,22 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
+      if (trace)
+      {
+         synchronized (cls)
+         {
+            String method = "getConnection(" + subject + ", " + cri + ")";
+            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                               mcf, clf, pool, poolConfiguration,
+                                                               cls, checkedOut, statistics));
+         }
+      }
+      else if (debug)
+      {
+         String method = "getConnection(" + subject + ", " + cri + ")";
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics));
+      }
+
       subject = (subject == null) ? defaultSubject : subject;
       cri = (cri == null) ? defaultCri : cri;
       long startWait = System.currentTimeMillis();
@@ -370,25 +390,35 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public void returnConnection(ConnectionListener cl, boolean kill)
    {
-      synchronized (cls)
+      if (trace)
       {
-         if (cl.getState() == ConnectionState.DESTROYED)
+         synchronized (cls)
          {
-            if (trace)
-               log.trace("ManagedConnection is being returned after it was destroyed" + cl);
-
-            if (clPermits.containsKey(cl))
-            {
-               clPermits.remove(cl);
-               permits.release();
-            }
-
-            return;
+            String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
+            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                               mcf, clf, pool, poolConfiguration,
+                                                               cls, checkedOut, statistics));
          }
       }
+      else if (debug)
+      {
+         String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics));
+      }
 
-      if (trace)
-         log.trace("putting ManagedConnection back into pool kill=" + kill + " cl=" + cl);
+      if (cl.getState() == ConnectionState.DESTROYED)
+      {
+         if (trace)
+            log.trace("ManagedConnection is being returned after it was destroyed: " + cl);
+
+         if (clPermits.containsKey(cl))
+         {
+            clPermits.remove(cl);
+            permits.release();
+         }
+
+         return;
+      }
 
       try
       {

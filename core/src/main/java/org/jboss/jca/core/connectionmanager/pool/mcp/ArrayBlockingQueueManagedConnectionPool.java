@@ -62,6 +62,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /** The log */
    private CoreLogger log;
 
+   /** Whether debug is enabled */
+   private boolean debug;
+   
    /** Whether trace is enabled */
    private boolean trace;
    
@@ -85,13 +88,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
    /** The pool */
    private Pool pool;
-
-   /** 
-    * Copy of the maximum size from the pooling parameters.
-    * Dynamic changes to this value are not compatible with
-    * the semaphore which cannot change be dynamically changed.
-    */
-   private int maxSize;
 
    /** The available connection event listeners */
    private ArrayBlockingQueue<ConnectionListener> cls;
@@ -135,13 +131,13 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.defaultSubject = subject;
       this.defaultCri = cri;
       this.poolConfiguration = pc;
-      this.maxSize = pc.getMaxSize();
       this.pool = p;
       this.log = pool.getLogger();
+      this.debug = log.isDebugEnabled();
       this.trace = log.isTraceEnabled();
-      this.cls = new ArrayBlockingQueue<ConnectionListener>(this.maxSize, true);
+      this.cls = new ArrayBlockingQueue<ConnectionListener>(pc.getMaxSize(), true);
       this.checkedOut = new ConcurrentSkipListSet<ConnectionListener>();
-      this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
+      this.statistics = new ManagedConnectionPoolStatisticsImpl(pc.getMaxSize());
   
       // Schedule managed connection pool for prefill
       if (pc.isPrefill() && p instanceof PrefillPool && pc.getMinSize() > 0)
@@ -198,6 +194,22 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
+      if (trace)
+      {
+         synchronized (cls)
+         {
+            String method = "getConnection(" + subject + ", " + cri + ")";
+            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                               mcf, clf, pool, poolConfiguration,
+                                                               cls, checkedOut, statistics));
+         }
+      }
+      else if (debug)
+      {
+         String method = "getConnection(" + subject + ", " + cri + ")";
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics));
+      }
+
       subject = (subject == null) ? defaultSubject : subject;
       cri = (cri == null) ? defaultCri : cri;
 
@@ -353,6 +365,22 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void returnConnection(ConnectionListener cl, boolean kill)
    {
+      if (trace)
+      {
+         synchronized (cls)
+         {
+            String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
+            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                               mcf, clf, pool, poolConfiguration,
+                                                               cls, checkedOut, statistics));
+         }
+      }
+      else if (debug)
+      {
+         String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics));
+      }
+
       if (cl.getState() == ConnectionState.DESTROYED)
       {
          if (trace)
@@ -360,9 +388,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
          return;
       }
-
-      if (trace)
-         log.trace("putting ManagedConnection back into pool kill=" + kill + " cl=" + cl);
 
       try
       {
