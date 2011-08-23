@@ -247,7 +247,7 @@ public interface CommonConnDef extends JCAMetadata
       /** jndiName attribute
         *
         */
-      JNDINAME("jndi-name"),
+      JNDI_NAME("jndi-name"),
 
       /** class-name attribute
       *
@@ -266,11 +266,11 @@ public interface CommonConnDef extends JCAMetadata
       /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context"),
+      USE_JAVA_CONTEXT("use-java-context"),
       /** use-ccm attribute
       *
       */
-      USECCM("use-ccm");
+      USE_CCM("use-ccm");
 
       private final String name;
 

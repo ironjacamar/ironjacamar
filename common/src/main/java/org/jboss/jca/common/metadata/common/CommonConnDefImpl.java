@@ -369,14 +369,14 @@ public class CommonConnDefImpl implements CommonConnDef
          sb.append(" ").append(CommonConnDef.Attribute.CLASS_NAME).append("=\"").append(className).append("\"");
 
       if (jndiName != null)
-         sb.append(" ").append(CommonConnDef.Attribute.JNDINAME).append("=\"").append(jndiName).append("\"");
+         sb.append(" ").append(CommonConnDef.Attribute.JNDI_NAME).append("=\"").append(jndiName).append("\"");
 
       if (enabled != null)
          sb.append(" ").append(CommonConnDef.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
 
       if (useJavaContext != null)
       {
-         sb.append(" ").append(CommonConnDef.Attribute.USEJAVACONTEXT);
+         sb.append(" ").append(CommonConnDef.Attribute.USE_JAVA_CONTEXT);
          sb.append("=\"").append(useJavaContext).append("\"");
       }
 
@@ -384,7 +384,7 @@ public class CommonConnDefImpl implements CommonConnDef
          sb.append(" ").append(CommonConnDef.Attribute.POOL_NAME).append("=\"").append(poolName).append("\"");
 
       if (useCcm != null)
-         sb.append(" ").append(CommonConnDef.Attribute.USECCM).append("=\"").append(useCcm).append("\"");
+         sb.append(" ").append(CommonConnDef.Attribute.USE_CCM).append("=\"").append(useCcm).append("\"");
 
       sb.append(">");
 

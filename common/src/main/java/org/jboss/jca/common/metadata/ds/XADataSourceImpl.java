@@ -92,7 +92,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
       Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
-      boolean useJavaContext, String poolName, boolean enabled, String jndiName, boolean spy, boolean useCcm,
+      Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, Boolean spy, Boolean useCcm,
       Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver, String newConnectionSql,
       CommonXaPool xaPool, Recovery recovery) throws ValidateException
    {
@@ -250,7 +250,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       sb.append("<xa-datasource");
 
       if (jndiName != null)
-         sb.append(" ").append(XaDataSource.Attribute.JNDINAME).append("=\"").append(jndiName).append("\"");
+         sb.append(" ").append(XaDataSource.Attribute.JNDI_NAME).append("=\"").append(jndiName).append("\"");
 
       if (poolName != null)
          sb.append(" ").append(XaDataSource.Attribute.POOL_NAME).append("=\"").append(poolName).append("\"");
@@ -259,7 +259,10 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          sb.append(" ").append(XaDataSource.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
 
       if (useJavaContext != null)
-         sb.append(" ").append(XaDataSource.Attribute.USEJAVACONTEXT).append("=\"").append(useJavaContext).append("\"");
+      {
+         sb.append(" ").append(XaDataSource.Attribute.USE_JAVA_CONTEXT);
+         sb.append("=\"").append(useJavaContext).append("\"");
+      }
 
       if (spy)
          sb.append(" ").append(XaDataSource.Attribute.SPY).append("=\"").append(spy).append("\"");
@@ -275,18 +278,18 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          while (it.hasNext())
          {
             Map.Entry<String, String> entry = it.next();
-            sb.append("<").append(XaDataSource.Tag.XADATASOURCEPROPERTY);
+            sb.append("<").append(XaDataSource.Tag.XA_DATASOURCE_PROPERTY);
             sb.append(" name=\"").append(entry.getKey()).append("\">");
             sb.append(entry.getValue());
-            sb.append("</").append(XaDataSource.Tag.XADATASOURCEPROPERTY).append(">");
+            sb.append("</").append(XaDataSource.Tag.XA_DATASOURCE_PROPERTY).append(">");
          }
       }
 
       if (xaDataSourceClass != null)
       {
-         sb.append("<").append(XaDataSource.Tag.XADATASOURCECLASS).append(">");
+         sb.append("<").append(XaDataSource.Tag.XA_DATASOURCE_CLASS).append(">");
          sb.append(xaDataSourceClass);
-         sb.append("</").append(XaDataSource.Tag.XADATASOURCECLASS).append(">");
+         sb.append("</").append(XaDataSource.Tag.XA_DATASOURCE_CLASS).append(">");
       }
 
       if (driver != null)
@@ -298,30 +301,30 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
       if (urlDelimiter != null)
       {
-         sb.append("<").append(XaDataSource.Tag.URLDELIMITER).append(">");
+         sb.append("<").append(XaDataSource.Tag.URL_DELIMITER).append(">");
          sb.append(urlDelimiter);
-         sb.append("</").append(XaDataSource.Tag.URLDELIMITER).append(">");
+         sb.append("</").append(XaDataSource.Tag.URL_DELIMITER).append(">");
       }
 
       if (urlSelectorStrategyClassName != null)
       {
-         sb.append("<").append(XaDataSource.Tag.URLSELECTORSTRATEGYCLASSNAME).append(">");
+         sb.append("<").append(XaDataSource.Tag.URL_SELECTOR_STRATEGY_CLASS_NAME).append(">");
          sb.append(urlSelectorStrategyClassName);
-         sb.append("</").append(XaDataSource.Tag.URLSELECTORSTRATEGYCLASSNAME).append(">");
+         sb.append("</").append(XaDataSource.Tag.URL_SELECTOR_STRATEGY_CLASS_NAME).append(">");
       }
 
       if (newConnectionSql != null)
       {
-         sb.append("<").append(XaDataSource.Tag.NEWCONNECTIONSQL).append(">");
+         sb.append("<").append(XaDataSource.Tag.NEW_CONNECTION_SQL).append(">");
          sb.append(newConnectionSql);
-         sb.append("</").append(XaDataSource.Tag.NEWCONNECTIONSQL).append(">");
+         sb.append("</").append(XaDataSource.Tag.NEW_CONNECTION_SQL).append(">");
       }
 
       if (transactionIsolation != null)
       {
-         sb.append("<").append(XaDataSource.Tag.TRANSACTIONISOLATION).append(">");
+         sb.append("<").append(XaDataSource.Tag.TRANSACTION_ISOLATION).append(">");
          sb.append(transactionIsolation);
-         sb.append("</").append(XaDataSource.Tag.TRANSACTIONISOLATION).append(">");
+         sb.append("</").append(XaDataSource.Tag.TRANSACTION_ISOLATION).append(">");
       }
 
       if (xaPool != null)
@@ -374,11 +377,11 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
    {
       if ((this.xaDataSourceClass == null || this.xaDataSourceClass.trim().length() == 0) &&
           (this.driver == null || this.driver.trim().length() == 0))
-         throw new ValidateException(bundle.requiredElementMissing(Tag.XADATASOURCECLASS.getLocalName(),
+         throw new ValidateException(bundle.requiredElementMissing(Tag.XA_DATASOURCE_CLASS.getLocalName(),
                                                                    this.getClass().getCanonicalName()));
 
       if (this.xaDataSourceProperty.isEmpty())
-         throw new ValidateException(bundle.requiredElementMissing(Tag.XADATASOURCEPROPERTY.getLocalName(),
+         throw new ValidateException(bundle.requiredElementMissing(Tag.XA_DATASOURCE_PROPERTY.getLocalName(),
                                                                    this.getClass().getCanonicalName()));
    }
 

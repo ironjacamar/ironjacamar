@@ -121,7 +121,7 @@ public interface ConnectionDefinition
       /**
        * managedconnectionfactory-class TAG
        */
-      MANAGED_CONNECTIONFACTORY_CLASS("managedconnectionfactory-class"),
+      MANAGEDCONNECTIONFACTORY_CLASS("managedconnectionfactory-class"),
 
       /**
        * config-property TAG

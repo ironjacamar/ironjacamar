@@ -147,23 +147,23 @@ public class CommonValidationImpl implements CommonValidation
 
       if (backgroundValidation != null)
       {
-         sb.append("<").append(CommonValidation.Tag.BACKGROUNDVALIDATION).append(">");
+         sb.append("<").append(CommonValidation.Tag.BACKGROUND_VALIDATION).append(">");
          sb.append(backgroundValidation);
-         sb.append("</").append(CommonValidation.Tag.BACKGROUNDVALIDATION).append(">");
+         sb.append("</").append(CommonValidation.Tag.BACKGROUND_VALIDATION).append(">");
       }
 
       if (backgroundValidationMillis != null)
       {
-         sb.append("<").append(CommonValidation.Tag.BACKGROUNDVALIDATIONMILLIS).append(">");
+         sb.append("<").append(CommonValidation.Tag.BACKGROUND_VALIDATION_MILLIS).append(">");
          sb.append(backgroundValidationMillis);
-         sb.append("</").append(CommonValidation.Tag.BACKGROUNDVALIDATIONMILLIS).append(">");
+         sb.append("</").append(CommonValidation.Tag.BACKGROUND_VALIDATION_MILLIS).append(">");
       }
 
       if (useFastFail != null)
       {
-         sb.append("<").append(CommonValidation.Tag.USEFASTFAIL).append(">");
+         sb.append("<").append(CommonValidation.Tag.USE_FAST_FAIL).append(">");
          sb.append(useFastFail);
-         sb.append("</").append(CommonValidation.Tag.USEFASTFAIL).append(">");
+         sb.append("</").append(CommonValidation.Tag.USE_FAST_FAIL).append(">");
       }
 
       sb.append("</validation>");

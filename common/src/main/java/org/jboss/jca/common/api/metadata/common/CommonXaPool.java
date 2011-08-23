@@ -113,7 +113,7 @@ public interface CommonXaPool extends CommonPool
       /**
        * isSameRmOverrideValue tag
        */
-      ISSAMERMOVERRIDEVALUE("is-same-rm-override"),
+      IS_SAME_RM_OVERRIDE("is-same-rm-override"),
       /**
       * interleaving tag
       */

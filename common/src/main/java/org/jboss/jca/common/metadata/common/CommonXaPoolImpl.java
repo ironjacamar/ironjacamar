@@ -241,9 +241,9 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
 
       if (isSameRmOverride != null)
       {
-         sb.append("<").append(CommonXaPool.Tag.ISSAMERMOVERRIDEVALUE).append(">");
+         sb.append("<").append(CommonXaPool.Tag.IS_SAME_RM_OVERRIDE).append(">");
          sb.append(isSameRmOverride);
-         sb.append("</").append(CommonXaPool.Tag.ISSAMERMOVERRIDEVALUE).append(">");
+         sb.append("</").append(CommonXaPool.Tag.IS_SAME_RM_OVERRIDE).append(">");
       }
 
       if (interleaving != null)

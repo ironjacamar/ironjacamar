@@ -73,15 +73,15 @@ public interface CommonValidation extends JCAMetadata
       /**
       backgroundValidation tag
       */
-      BACKGROUNDVALIDATION("background-validation"),
+      BACKGROUND_VALIDATION("background-validation"),
       /**
        * backgroundValidationMinutes tag
        */
-      BACKGROUNDVALIDATIONMILLIS("background-validation-millis"),
+      BACKGROUND_VALIDATION_MILLIS("background-validation-millis"),
       /**
       useFastFail tag
       */
-      USEFASTFAIL("use-fast-fail");
+      USE_FAST_FAIL("use-fast-fail");
 
       private final String name;
 

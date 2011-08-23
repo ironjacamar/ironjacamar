@@ -226,7 +226,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
             case START_ELEMENT : {
                switch (Connector10.Tag.forName(reader.getLocalName()))
                {
-                  case VENDORNAME : {
+                  case VENDOR_NAME : {
                      vendorName = elementAsXsdString(reader);
                      break;
                   }
@@ -310,7 +310,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
             case START_ELEMENT : {
                switch (Connector15.Tag.forName(reader.getLocalName()))
                {
-                  case VENDORNAME : {
+                  case VENDOR_NAME : {
                      vendorName = elementAsXsdString(reader);
                      break;
                   }
@@ -399,11 +399,11 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
                switch (Connector16.Tag.forName(reader.getLocalName()))
                {
-                  case MODULENAME : {
+                  case MODULE_NAME : {
                      moduleName = reader.getElementText().trim();
                      break;
                   }
-                  case VENDORNAME : {
+                  case VENDOR_NAME : {
                      vendorName = elementAsXsdString(reader);
                      break;
                   }
@@ -631,7 +631,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      authenticationMechanism.add(parseAuthenticationMechanism(reader));
                      break;
                   }
-                  case MANAGED_CONNECTIONFACTORY_CLASS : {
+                  case MANAGEDCONNECTIONFACTORY_CLASS : {
                      managedConnectionFactoryClass = elementAsXsdString(reader);
                      break;
                   }
@@ -1051,7 +1051,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      configProperty.add(parseConfigProperty(reader));
                      break;
                   }
-                  case MANAGED_CONNECTIONFACTORY_CLASS : {
+                  case MANAGEDCONNECTIONFACTORY_CLASS : {
                      managedconnectionfactoryClass = elementAsXsdString(reader);
                      break;
                   }

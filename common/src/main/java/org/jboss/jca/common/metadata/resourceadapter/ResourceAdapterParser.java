@@ -105,7 +105,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
             switch (Tag.forName(reader.getLocalName()))
             {
-               case RESOURCE_ADPTERS : {
+               case RESOURCE_ADAPTERS : {
                   adapters = parseResourceAdapters(reader);
                   break;
                }
@@ -132,7 +132,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (Tag.forName(reader.getLocalName()) == Tag.RESOURCE_ADPTERS)
+               if (Tag.forName(reader.getLocalName()) == Tag.RESOURCE_ADAPTERS)
                {
                   resourceAdapters.trimToSize();
                   return new ResourceAdaptersImpl(resourceAdapters);
@@ -149,7 +149,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
             case START_ELEMENT : {
                switch (ResourceAdapters.Tag.forName(reader.getLocalName()))
                {
-                  case RESOURCE_ADPTER : {
+                  case RESOURCE_ADAPTER : {
                      resourceAdapters.add(parseResourceAdapter(reader));
                      break;
                   }
@@ -178,7 +178,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.RESOURCE_ADPTER)
+               if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.RESOURCE_ADAPTER)
                {
                   return new ResourceAdapterImpl(archive, transactionSupport, connectionDefinitions, adminObjects,
                                                  configProperties, beanValidationGroups, bootstrapContext);
@@ -266,7 +266,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       /** jboss-ra tag name
        *
        */
-      RESOURCE_ADPTERS("resource-adapters");
+      RESOURCE_ADAPTERS("resource-adapters");
 
       private final String name;
 

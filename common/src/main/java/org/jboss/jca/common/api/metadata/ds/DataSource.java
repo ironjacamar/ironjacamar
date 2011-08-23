@@ -39,7 +39,7 @@ public interface DataSource extends CommonDataSource
     * Get the JTA setting.
     * @return The value
     */
-   public boolean isJTA();
+   public Boolean isJTA();
 
    /**
     * Get the connectionUrl.
@@ -128,15 +128,15 @@ public interface DataSource extends CommonDataSource
       /**
        * connection-url tag
        */
-      CONNECTIONURL("connection-url"),
+      CONNECTION_URL("connection-url"),
       /**
       * driverClass tag
       */
-      DRIVERCLASS("driver-class"),
+      DRIVER_CLASS("driver-class"),
       /**
       * dataSourceClass tag
       */
-      DATASOURCECLASS("datasource-class"),
+      DATASOURCE_CLASS("datasource-class"),
       /**
       * module tag
       */
@@ -144,11 +144,11 @@ public interface DataSource extends CommonDataSource
       /**
       * transactionIsolation tag
       */
-      TRANSACTIONISOLATION("transaction-isolation"),
+      TRANSACTION_ISOLATION("transaction-isolation"),
       /**
       * connectionProperty tag
       */
-      CONNECTIONPROPERTY("connection-property"),
+      CONNECTION_PROPERTY("connection-property"),
       /**
       * timeOut tag
       */
@@ -168,15 +168,15 @@ public interface DataSource extends CommonDataSource
       /**
       * urlDelimiter tag
       */
-      URLDELIMITER("url-delimiter"),
+      URL_DELIMITER("url-delimiter"),
       /**
       * urlSelectorStrategyClassName tag
       */
-      URLSELECTORSTRATEGYCLASSNAME("url-selector-strategy-className"),
+      URL_SELECTOR_STRATEGY_CLASS_NAME("url-selector-strategy-class-name"),
       /**
       * newConnectionSql tag
       */
-      NEWCONNECTIONSQL("new-connection-sql");
+      NEW_CONNECTION_SQL("new-connection-sql");
 
       private final String name;
 
@@ -251,7 +251,7 @@ public interface DataSource extends CommonDataSource
       /** jndiName attribute
        *
        */
-      JNDINAME("jndi-name"),
+      JNDI_NAME("jndi-name"),
 
       /** jndiName attribute
       *
@@ -265,7 +265,7 @@ public interface DataSource extends CommonDataSource
       /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context"),
+      USE_JAVA_CONTEXT("use-java-context"),
 
       /** spy attribute
       *

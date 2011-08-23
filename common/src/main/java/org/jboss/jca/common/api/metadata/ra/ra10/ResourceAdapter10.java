@@ -144,7 +144,7 @@ public interface ResourceAdapter10 extends ResourceAdapter, MergeableMetadata<Re
       /**
        * managedconnectionfactory-class TAG
        */
-      MANAGED_CONNECTIONFACTORY_CLASS("managedconnectionfactory-class"),
+      MANAGEDCONNECTIONFACTORY_CLASS("managedconnectionfactory-class"),
 
       /**
        * config-property TAG

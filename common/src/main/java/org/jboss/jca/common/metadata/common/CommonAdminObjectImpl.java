@@ -217,14 +217,14 @@ public class CommonAdminObjectImpl implements CommonAdminObject
          sb.append(" ").append(CommonAdminObject.Attribute.CLASS_NAME).append("=\"").append(className).append("\"");
 
       if (jndiName != null)
-         sb.append(" ").append(CommonAdminObject.Attribute.JNDINAME).append("=\"").append(jndiName).append("\"");
+         sb.append(" ").append(CommonAdminObject.Attribute.JNDI_NAME).append("=\"").append(jndiName).append("\"");
 
       if (enabled != null)
          sb.append(" ").append(CommonAdminObject.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
 
       if (useJavaContext != null)
       {
-         sb.append(" ").append(CommonAdminObject.Attribute.USEJAVACONTEXT);
+         sb.append(" ").append(CommonAdminObject.Attribute.USE_JAVA_CONTEXT);
          sb.append("=\"").append(useJavaContext).append("\"");
       }
 

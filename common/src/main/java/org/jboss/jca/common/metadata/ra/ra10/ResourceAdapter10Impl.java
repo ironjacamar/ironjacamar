@@ -367,9 +367,9 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       StringBuilder sb = new StringBuilder(1024);
       sb.append("<").append("resourceadapter").append(">");
 
-      sb.append("<" + ResourceAdapter10.Tag.MANAGED_CONNECTIONFACTORY_CLASS + ">");
+      sb.append("<" + ResourceAdapter10.Tag.MANAGEDCONNECTIONFACTORY_CLASS + ">");
       sb.append(managedConnectionFactoryClass);
-      sb.append("</" + ResourceAdapter10.Tag.MANAGED_CONNECTIONFACTORY_CLASS + ">");
+      sb.append("</" + ResourceAdapter10.Tag.MANAGEDCONNECTIONFACTORY_CLASS + ">");
 
       sb.append("<" + ResourceAdapter10.Tag.CONNECTIONFACTORY_INTERFACE + ">");
       sb.append(connectionFactoryInterface);

@@ -62,7 +62,7 @@ public interface ResourceAdapters extends JCAMetadata
       /** jboss-ra tag name
        *
        */
-      RESOURCE_ADPTER("resource-adapter");
+      RESOURCE_ADAPTER("resource-adapter");
 
       private final String name;
 

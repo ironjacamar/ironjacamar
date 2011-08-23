@@ -119,15 +119,15 @@ public interface Statement extends JCAMetadata, ValidatableMetadata
       /**
       * trackStatements tag
       */
-      TRACKSTATEMENTS("track-statements"),
+      TRACK_STATEMENTS("track-statements"),
       /**
       * preparedStatementCacheSize tag
       */
-      PREPAREDSTATEMENTCACHESIZE("prepared-statement-cache-size"),
+      PREPARED_STATEMENT_CACHE_SIZE("prepared-statement-cache-size"),
       /**
       * sharePreparedStatements tag
       */
-      SHAREPREPAREDSTATEMENTS("share-prepared-statements");
+      SHARE_PREPARED_STATEMENTS("share-prepared-statements");
 
       private final String name;
 

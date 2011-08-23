@@ -111,11 +111,11 @@ public interface XaDataSource extends CommonDataSource
       /**
       * xaDatasourceProperty tag
       */
-      XADATASOURCEPROPERTY("xa-datasource-property"),
+      XA_DATASOURCE_PROPERTY("xa-datasource-property"),
       /**
       * xaDatasourceClass tag
       */
-      XADATASOURCECLASS("xa-datasource-class"),
+      XA_DATASOURCE_CLASS("xa-datasource-class"),
       /**
       * module tag
       */
@@ -123,7 +123,7 @@ public interface XaDataSource extends CommonDataSource
       /**
       * transactionIsolation tag
       */
-      TRANSACTIONISOLATION("transaction-isolation"),
+      TRANSACTION_ISOLATION("transaction-isolation"),
       /**
       * timeOut tag
       */
@@ -143,15 +143,15 @@ public interface XaDataSource extends CommonDataSource
       /**
       * urlDelimiter tag
       */
-      URLDELIMITER("url-delimiter"),
+      URL_DELIMITER("url-delimiter"),
       /**
       * urlSelectorStrategyClassName tag
       */
-      URLSELECTORSTRATEGYCLASSNAME("url-selector-strategy-class-name"),
+      URL_SELECTOR_STRATEGY_CLASS_NAME("url-selector-strategy-class-name"),
       /**
       * newConnectionSql tag
       */
-      NEWCONNECTIONSQL("new-connection-sql"),
+      NEW_CONNECTION_SQL("new-connection-sql"),
 
       /**
        * xa-pool tag
@@ -234,7 +234,7 @@ public interface XaDataSource extends CommonDataSource
       /** jndiName attribute
        *
        */
-      JNDINAME("jndi-name"),
+      JNDI_NAME("jndi-name"),
 
       /** jndiName attribute
       *
@@ -248,7 +248,7 @@ public interface XaDataSource extends CommonDataSource
       /** use-java-context attribute
       *
       */
-      USEJAVACONTEXT("use-java-context"),
+      USE_JAVA_CONTEXT("use-java-context"),
 
       /** spy attribute
       *

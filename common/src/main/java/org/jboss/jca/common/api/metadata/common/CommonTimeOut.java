@@ -88,23 +88,23 @@ public interface CommonTimeOut extends JCAMetadata
       /**
       blockingTimeoutMillis tag
       */
-      BLOCKINGTIMEOUTMILLIS("blocking-timeout-millis"),
+      BLOCKING_TIMEOUT_MILLIS("blocking-timeout-millis"),
       /**
       idleTimeoutMinutes tag
       */
-      IDLETIMEOUTMINUTES("idle-timeout-minutes"),
+      IDLE_TIMEOUT_MINUTES("idle-timeout-minutes"),
       /**
        * xaResourceTimeout tag
        */
-      XARESOURCETIMEOUT("xa-resource-timeout"),
+      XA_RESOURCE_TIMEOUT("xa-resource-timeout"),
       /**
       allocationRetry tag
       */
-      ALLOCATIONRETRY("allocation-retry"),
+      ALLOCATION_RETRY("allocation-retry"),
       /**
       allocationRetryWaitMillis tag
       */
-      ALLOCATIONRETRYWAITMILLIS("allocation-retry-wait-millis");
+      ALLOCATION_RETRY_WAIT_MILLIS("allocation-retry-wait-millis");
 
       private final String name;
 

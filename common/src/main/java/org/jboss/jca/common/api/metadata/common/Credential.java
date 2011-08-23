@@ -75,7 +75,7 @@ public interface Credential extends JCAMetadata, ValidatableMetadata
       /**
        * userName tag
        */
-      USERNAME("user-name"),
+      USER_NAME("user-name"),
       /**
       * password tag
       */

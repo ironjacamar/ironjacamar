@@ -53,7 +53,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   private final boolean jta;
+   private final Boolean jta;
 
    private final String connectionUrl;
 
@@ -99,8 +99,8 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
                          TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, 
                          TimeOut timeOut, DsSecurity security, Statement statement, Validation validation, 
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
-                         boolean useJavaContext, String poolName, boolean enabled, String jndiName, 
-                         boolean spy, boolean useccm, boolean jta, CommonPool pool)
+                         Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, 
+                         Boolean spy, Boolean useccm, Boolean jta, CommonPool pool)
       throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
@@ -127,7 +127,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    /**
     * {@inheritDoc}
     */
-   public boolean isJTA()
+   public Boolean isJTA()
    {
       return jta;
    }
@@ -327,7 +327,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       sb.append("<datasource");
 
       if (jndiName != null)
-         sb.append(" ").append(DataSource.Attribute.JNDINAME).append("=\"").append(jndiName).append("\"");
+         sb.append(" ").append(DataSource.Attribute.JNDI_NAME).append("=\"").append(jndiName).append("\"");
 
       if (poolName != null)
          sb.append(" ").append(DataSource.Attribute.POOL_NAME).append("=\"").append(poolName).append("\"");
@@ -336,7 +336,10 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
          sb.append(" ").append(DataSource.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
 
       if (useJavaContext != null)
-         sb.append(" ").append(DataSource.Attribute.USEJAVACONTEXT).append("=\"").append(useJavaContext).append("\"");
+      {
+         sb.append(" ").append(DataSource.Attribute.USE_JAVA_CONTEXT);
+         sb.append("=\"").append(useJavaContext).append("\"");
+      }
 
       if (spy)
          sb.append(" ").append(DataSource.Attribute.SPY).append("=\"").append(spy).append("\"");
@@ -351,23 +354,23 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
       if (connectionUrl != null)
       {
-         sb.append("<").append(DataSource.Tag.CONNECTIONURL).append(">");
+         sb.append("<").append(DataSource.Tag.CONNECTION_URL).append(">");
          sb.append(connectionUrl);
-         sb.append("</").append(DataSource.Tag.CONNECTIONURL).append(">");
+         sb.append("</").append(DataSource.Tag.CONNECTION_URL).append(">");
       }
 
       if (driverClass != null)
       {
-         sb.append("<").append(DataSource.Tag.DRIVERCLASS).append(">");
+         sb.append("<").append(DataSource.Tag.DRIVER_CLASS).append(">");
          sb.append(driverClass);
-         sb.append("</").append(DataSource.Tag.DRIVERCLASS).append(">");
+         sb.append("</").append(DataSource.Tag.DRIVER_CLASS).append(">");
       }
 
       if (dataSourceClass != null)
       {
-         sb.append("<").append(DataSource.Tag.DATASOURCECLASS).append(">");
+         sb.append("<").append(DataSource.Tag.DATASOURCE_CLASS).append(">");
          sb.append(dataSourceClass);
-         sb.append("</").append(DataSource.Tag.DATASOURCECLASS).append(">");
+         sb.append("</").append(DataSource.Tag.DATASOURCE_CLASS).append(">");
       }
 
       if (driver != null)
@@ -383,39 +386,39 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
          while (it.hasNext())
          {
             Map.Entry<String, String> entry = it.next();
-            sb.append("<").append(DataSource.Tag.CONNECTIONPROPERTY);
+            sb.append("<").append(DataSource.Tag.CONNECTION_PROPERTY);
             sb.append(" name=\"").append(entry.getKey()).append("\">");
             sb.append(entry.getValue());
-            sb.append("</").append(DataSource.Tag.CONNECTIONPROPERTY).append(">");
+            sb.append("</").append(DataSource.Tag.CONNECTION_PROPERTY).append(">");
          }
       }
 
       if (newConnectionSql != null)
       {
-         sb.append("<").append(DataSource.Tag.NEWCONNECTIONSQL).append(">");
+         sb.append("<").append(DataSource.Tag.NEW_CONNECTION_SQL).append(">");
          sb.append(newConnectionSql);
-         sb.append("</").append(DataSource.Tag.NEWCONNECTIONSQL).append(">");
+         sb.append("</").append(DataSource.Tag.NEW_CONNECTION_SQL).append(">");
       }
 
       if (transactionIsolation != null)
       {
-         sb.append("<").append(DataSource.Tag.TRANSACTIONISOLATION).append(">");
+         sb.append("<").append(DataSource.Tag.TRANSACTION_ISOLATION).append(">");
          sb.append(transactionIsolation);
-         sb.append("</").append(DataSource.Tag.TRANSACTIONISOLATION).append(">");
+         sb.append("</").append(DataSource.Tag.TRANSACTION_ISOLATION).append(">");
       }
 
       if (urlDelimiter != null)
       {
-         sb.append("<").append(DataSource.Tag.URLDELIMITER).append(">");
+         sb.append("<").append(DataSource.Tag.URL_DELIMITER).append(">");
          sb.append(urlDelimiter);
-         sb.append("</").append(DataSource.Tag.URLDELIMITER).append(">");
+         sb.append("</").append(DataSource.Tag.URL_DELIMITER).append(">");
       }
 
       if (urlSelectorStrategyClassName != null)
       {
-         sb.append("<").append(DataSource.Tag.URLSELECTORSTRATEGYCLASSNAME).append(">");
+         sb.append("<").append(DataSource.Tag.URL_SELECTOR_STRATEGY_CLASS_NAME).append(">");
          sb.append(urlSelectorStrategyClassName);
-         sb.append("</").append(DataSource.Tag.URLSELECTORSTRATEGYCLASSNAME).append(">");
+         sb.append("</").append(DataSource.Tag.URL_SELECTOR_STRATEGY_CLASS_NAME).append(">");
       }
 
       if (pool != null)
@@ -442,13 +445,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
    public void validate() throws ValidateException
    {
       if (this.driverClass != null && (this.connectionUrl == null || this.connectionUrl.trim().length() == 0))
-         throw new ValidateException(bundle.requiredElementMissing(Tag.CONNECTIONURL.getLocalName(), 
+         throw new ValidateException(bundle.requiredElementMissing(Tag.CONNECTION_URL.getLocalName(), 
                                                                    this.getClass().getCanonicalName()));
       
       if ((this.driverClass == null || this.driverClass.trim().length() == 0) &&
           (this.dataSourceClass == null || this.dataSourceClass.trim().length() == 0) &&
           (this.driver == null || this.driver.trim().length() == 0))
-         throw new ValidateException(bundle.requiredElementMissing(Tag.DRIVERCLASS.getLocalName(), 
+         throw new ValidateException(bundle.requiredElementMissing(Tag.DRIVER_CLASS.getLocalName(), 
                                                                    this.getClass().getCanonicalName()));
    }
 
