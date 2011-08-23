@@ -7,4 +7,11 @@
   
    <config-property name="StringRAR">XMLOVERRIDE</config-property>
    
+   <connection-definitions>
+     <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutironjacamar.TestManagedConnectionFactory" 
+                            enabled="true" jndi-name="java:/eis/ra16inoutironjacamar" 
+                            pool-name="TMF">
+     </connection-definition>
+   </connection-definitions>
+
 </ironjacamar>

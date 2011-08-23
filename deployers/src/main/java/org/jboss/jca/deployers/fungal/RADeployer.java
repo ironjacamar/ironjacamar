@@ -45,7 +45,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -268,43 +267,14 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
 
          if (ijmd != null)
          {
-            Set<String> ijMcfClasses = new HashSet<String>();
-            Set<String> ijAoClasses = new HashSet<String>();
-
-            boolean mcfSingle = false;
-            boolean aoSingle = false;
-
-            boolean mcfOk = true;
-            boolean aoOk = true;
-
             if (ijmd.getConnectionDefinitions() != null)
             {
                for (org.jboss.jca.common.api.metadata.common.CommonConnDef def : ijmd.getConnectionDefinitions())
                {
                   String clz = def.getClassName();
-
-                  if (clz == null)
-                  {
-                     if (raMcfClasses.size() == 1)
-                     {
-                        mcfSingle = true;
-                     }
-                  }
-                  else
-                  {
-                     ijMcfClasses.add(clz);
-                  }
-               }
-            }
-
-            if (!mcfSingle)
-            {
-               Iterator<String> it = raMcfClasses.iterator();
-               while (mcfOk && it.hasNext())
-               {
-                  String clz = it.next();
-                  if (!ijMcfClasses.contains(clz))
-                     mcfOk = false;
+                  
+                  if (raMcfClasses.contains(clz))
+                     return true;
                }
             }
 
@@ -314,36 +284,13 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
                {
                   String clz = def.getClassName();
 
-                  if (clz == null)
-                  {
-                     if (raAoClasses.size() == 1)
-                     {
-                        aoSingle = true;
-                     }
-                  }
-                  else
-                  {
-                     ijAoClasses.add(clz);
-                  }
+                  if (raAoClasses.contains(clz))
+                     return true;
                }
             }
-
-            if (!aoSingle)
-            {
-               Iterator<String> it = raAoClasses.iterator();
-               while (aoOk && it.hasNext())
-               {
-                  String clz = it.next();
-                  if (!ijAoClasses.contains(clz))
-                     aoOk = false;
-               }
-            }
-
-            return mcfOk && aoOk;
          }
       }
 
       return false;
    }
-
 }

@@ -524,6 +524,12 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    }
 
    @Override
+   protected boolean requireExplicitJndiBindings()
+   {
+      return false;
+   }
+
+   @Override
    protected boolean checkActivation(Connector cmd, IronJacamar ijmd)
    {
       if (cmd == null)

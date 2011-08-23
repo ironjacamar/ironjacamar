@@ -444,11 +444,11 @@ public abstract class AbstractResourceAdapterDeployer
     * @param mcfs The managed connection facotries
     * @param defs The connection definitions
     * @return The metadata; <code>null</code> if none could be found
-    * @exception Exception Thrown if the deployment shouldn't be activated
+    * @exception DeployException Thrown in case of configuration error
     */
    protected org.jboss.jca.common.api.metadata.common.CommonConnDef findConnectionDefinition(String clz,
       List<String> mcfs,                                                                                             
-      List<org.jboss.jca.common.api.metadata.common.CommonConnDef> defs) throws Exception
+      List<org.jboss.jca.common.api.metadata.common.CommonConnDef> defs) throws DeployException
    {
       if (mcfs != null && defs != null)
       {
@@ -460,7 +460,7 @@ public abstract class AbstractResourceAdapterDeployer
             if (cd.getClassName() != null && !clz.equals(cd.getClassName()))
             {
                log.connectionDefinitionMismatch(cd.getClassName());
-               throw new Exception(clz + " not a valid connection definition");
+               throw new DeployException(clz + " not a valid connection definition");
             }
 
             return cd;
@@ -477,10 +477,7 @@ public abstract class AbstractResourceAdapterDeployer
          }
       }
 
-      if (mcfs != null && mcfs.size() == 1 && defs == null)
-         return null;
-
-      throw new Exception("No connection definition found");
+      return null;
    }
 
    /**
@@ -489,11 +486,11 @@ public abstract class AbstractResourceAdapterDeployer
     * @param aos The admin object classes
     * @param defs The admin object definitions
     * @return The metadata; <code>null</code> if none could be found
-    * @exception Exception Thrown if the deployment shouldn't be activated
+    * @exception DeployException Thrown in case of configuration error
     */
    protected org.jboss.jca.common.api.metadata.common.CommonAdminObject findAdminObject(String clz,
       List<String> aos,                                                                                             
-      List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> defs) throws Exception
+      List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> defs) throws DeployException
    {
       if (aos != null && defs != null)
       {
@@ -505,7 +502,7 @@ public abstract class AbstractResourceAdapterDeployer
             if (cao.getClassName() != null && !clz.equals(cao.getClassName()))
             {
                log.adminObjectMismatch(cao.getClassName());
-               throw new Exception(clz + " not a valid admin object");
+               throw new DeployException(clz + " not a valid admin object");
             }
 
             return cao;
@@ -522,10 +519,7 @@ public abstract class AbstractResourceAdapterDeployer
          }
       }
 
-      if (aos != null && aos.size() == 1 && defs == null)
-         return null;
-
-      throw new Exception("No admin object found");
+      return null;
    }
 
    /**
@@ -688,11 +682,11 @@ public abstract class AbstractResourceAdapterDeployer
     */
    protected Set<Failure> initAdminObject(Connector cmd, ClassLoader cl, List<Validate> archiveValidationObjects,
       List<Object> beanValidationObjects, Set<Failure> failures,
-         URL url, String deploymentName, boolean activateDeployment,
-         List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
-         List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
-         List<Object> aos, List<String> aoJndiNames,
-         org.jboss.jca.core.api.management.Connector mgtConnector)
+      URL url, String deploymentName, boolean activateDeployment,
+      List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
+      List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
+      List<Object> aos, List<String> aoJndiNames,
+      org.jboss.jca.core.api.management.Connector mgtConnector)
       throws DeployException
    {
       // AdminObject
@@ -720,22 +714,24 @@ public abstract class AbstractResourceAdapterDeployer
                      {
                         CommonAdminObject aoRaXml = null;
                         CommonAdminObject ijAO = null;
-                        boolean aoActivation = true;
+                        boolean aoActivation = false;
 
-                        try
-                        {
-                           if (aosRaXml != null || aosClz.size() == 1)
-                              aoRaXml = findAdminObject(aoMeta.getAdminobjectClass().getValue(),
-                                                        aosClz, aosRaXml);
+                        if (aosRaXml != null)
+                           aoRaXml = findAdminObject(aoMeta.getAdminobjectClass().getValue(),
+                                                     aosClz, aosRaXml);
 
-                           if (aosIronJacamar != null || aosClz.size() == 1)
-                              ijAO = findAdminObject(aoMeta.getAdminobjectClass().getValue(), 
-                                                     aosClz, aosIronJacamar);
-                        }
-                        catch (Exception e)
+                        if (aosIronJacamar != null)
+                           ijAO = findAdminObject(aoMeta.getAdminobjectClass().getValue(), 
+                                                  aosClz, aosIronJacamar);
+
+                        if (aoRaXml != null ||
+                            ijAO != null ||
+                            (!requireExplicitJndiBindings() &&
+                             aosRaXml == null &&
+                             aosIronJacamar == null &&
+                             aosClz.size() == 1))
                         {
-                           log.debug("No activation: " + aoMeta.getAdminobjectClass().getValue());
-                           aoActivation = false;
+                           aoActivation = true;
                         }
 
                         if (activateDeployment && aoActivation)
@@ -794,6 +790,10 @@ public abstract class AbstractResourceAdapterDeployer
                                  throw new DeployException(bundle.failedToBindAdminObject(ao.getClass().getName()), t);
                               }
                            }
+                        }
+                        else
+                        {
+                           log.debug("No activation: " + aoMeta.getAdminobjectClass().getValue());
                         }
                      }
                   }
@@ -950,36 +950,35 @@ public abstract class AbstractResourceAdapterDeployer
 
                CommonConnDef ijCD = null;
                CommonConnDef cdRaXml = null;
-               boolean mcfActivation = true;
+               boolean mcfActivation = false;
 
-               try
+               if (raxml != null)
                {
-                  List<CommonConnDef> cdDefs = null;
-
-                  if (raxml != null)
-                     cdDefs = raxml.getConnectionDefinitions();
+                  List<CommonConnDef> cdDefs = raxml.getConnectionDefinitions();
 
                   if (cdDefs != null)
                   {
                      cdRaXml = findConnectionDefinition(ra10.getManagedConnectionFactoryClass().getValue(),
                                                         mcfs, cdDefs);
                   }
+               }
 
-                  if (cdRaXml == null && ijmd != null)
+               if (cdRaXml == null && ijmd != null)
+               {
+                  List<CommonConnDef> cdDefs = ijmd.getConnectionDefinitions();
+
+                  if (cdDefs != null)
                   {
-                     cdDefs = ijmd.getConnectionDefinitions();
-
-                     if (cdDefs != null || mcfs.size() == 1)
-                     {
-                        ijCD = findConnectionDefinition(ra10.getManagedConnectionFactoryClass().getValue(),
-                                                        mcfs, cdDefs);
-                     }
+                     ijCD = findConnectionDefinition(ra10.getManagedConnectionFactoryClass().getValue(),
+                                                     mcfs, cdDefs);
                   }
                }
-               catch (Exception e)
+
+               if (cdRaXml != null ||
+                   ijCD != null ||
+                   (!requireExplicitJndiBindings() && raxml == null && ijmd == null && mcfs.size() == 1))
                {
-                  log.debug("No activation: " + ra10.getManagedConnectionFactoryClass().getValue());
-                  mcfActivation = false;
+                  mcfActivation = true;
                }
 
                if (activateDeployment && mcfActivation)
@@ -1312,6 +1311,10 @@ public abstract class AbstractResourceAdapterDeployer
                         }
                      }
                   }
+               } 
+               else
+               {
+                  log.debug("No activation: " + ra10.getManagedConnectionFactoryClass().getValue());
                }
             }
             else
@@ -1342,37 +1345,36 @@ public abstract class AbstractResourceAdapterDeployer
                         {
                            org.jboss.jca.common.api.metadata.common.CommonConnDef ijCD = null;
                            org.jboss.jca.common.api.metadata.common.CommonConnDef cdRaXml = null;
-                           boolean mcfActivation = true;
+                           boolean mcfActivation = false;
 
-                           try
+                           if (raxml != null)
                            {
-                              List<CommonConnDef> cdDefs = null;
-
-                              if (raxml != null)
-                                 cdDefs = raxml.getConnectionDefinitions();
-
+                              List<CommonConnDef> cdDefs = raxml.getConnectionDefinitions();
+                           
                               if (cdDefs != null)
                               {
                                  cdRaXml = findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass()
-                                    .getValue(), mcfs, cdDefs);
-                              }
-
-                              if (cdRaXml == null && ijmd != null)
-                              {
-                                 cdDefs = ijmd.getConnectionDefinitions();
-                                 
-                                 if (cdDefs != null || mcfs.size() == 1)
-                                 {
-                                    ijCD = 
-                                       findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(),
-                                                                mcfs, cdDefs);
-                                 }
+                                                                    .getValue(), mcfs, cdDefs);
                               }
                            }
-                           catch (Exception e)
+
+                           if (cdRaXml == null && ijmd != null)
                            {
-                              log.debug("No activation: " + cdMeta.getManagedConnectionFactoryClass().getValue());
-                              mcfActivation = false;
+                              List<CommonConnDef> cdDefs = ijmd.getConnectionDefinitions();
+                              
+                              if (cdDefs != null)
+                              {
+                                 ijCD = 
+                                    findConnectionDefinition(cdMeta.getManagedConnectionFactoryClass().getValue(),
+                                                             mcfs, cdDefs);
+                              }
+                           }
+
+                           if (cdRaXml != null ||
+                               ijCD != null ||
+                               (!requireExplicitJndiBindings() && raxml == null && ijmd == null && mcfs.size() == 1))
+                           {
+                              mcfActivation = true;
                            }
 
                            if (activateDeployment && mcfActivation)
@@ -1810,6 +1812,10 @@ public abstract class AbstractResourceAdapterDeployer
                                  }
                               }
                            }
+                           else
+                           {
+                              log.debug("No activation: " + cdMeta.getManagedConnectionFactoryClass().getValue());
+                           }
                         }
                      }
                   }
@@ -1965,6 +1971,15 @@ public abstract class AbstractResourceAdapterDeployer
       }
 
       return jndiName;
+   }
+
+   /**
+    * Require explicit JNDI bindings
+    * @return True if explicit JNDI bindings are required; otherwise false
+    */
+   protected boolean requireExplicitJndiBindings()
+   {
+      return true;
    }
 
    /**
