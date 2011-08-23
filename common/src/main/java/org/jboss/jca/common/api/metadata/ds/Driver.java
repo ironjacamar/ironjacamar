@@ -104,17 +104,17 @@ public interface Driver extends JCAMetadata, ValidatableMetadata
       /**
        * driverClass tag
        */
-      DRIVERCLASS("driver-class"),
+      DRIVER_CLASS("driver-class"),
 
       /**
        * DatasourceClass tag
        */
-      DATASOURCECLASS("datasource-class"),
+      DATASOURCE_CLASS("datasource-class"),
 
       /**
        * xaDatasourceClass tag
        */
-      XADATASOURCECLASS("xa-datasource-class");
+      XA_DATASOURCE_CLASS("xa-datasource-class");
 
       private final String name;
 

@@ -52,7 +52,7 @@ public interface Connector10 extends Connector
       /**
        * vendor-name tag
        */
-      VENDORNAME("vendor-name"),
+      VENDOR_NAME("vendor-name"),
 
       /**
        * eis-type tag

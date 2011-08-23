@@ -252,15 +252,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case START_ELEMENT : {
                switch (Driver.Tag.forName(reader.getLocalName()))
                {
-                  case DATASOURCECLASS : {
+                  case DATASOURCE_CLASS : {
                      dataSourceClass = elementAsString(reader);
                      break;
                   }
-                  case XADATASOURCECLASS : {
+                  case XA_DATASOURCE_CLASS : {
                      xaDataSourceClass = elementAsString(reader);
                      break;
                   }
-                  case DRIVERCLASS : {
+                  case DRIVER_CLASS : {
                      driverClass = elementAsString(reader);
                      break;
                   }
@@ -294,12 +294,12 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       //attributes reading
 
-      boolean useJavaContext = true;
+      Boolean useJavaContext = Boolean.TRUE;
       String poolName = null;
-      boolean enabled = true;
+      Boolean enabled = Boolean.TRUE;
       String jndiName = null;
-      boolean spy = false;
-      boolean useCcm = true;
+      Boolean spy = Boolean.FALSE;
+      Boolean useCcm = Boolean.TRUE;
 
       for (XaDataSource.Attribute attribute : XaDataSource.Attribute.values())
       {
@@ -309,7 +309,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                enabled = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
-            case JNDINAME : {
+            case JNDI_NAME : {
                jndiName = attributeAsString(reader, attribute.getLocalName());
                break;
             }
@@ -317,7 +317,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                poolName = attributeAsString(reader, attribute.getLocalName());
                break;
             }
-            case USEJAVACONTEXT : {
+            case USE_JAVA_CONTEXT : {
                useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
@@ -361,11 +361,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case START_ELEMENT : {
                switch (XaDataSource.Tag.forName(reader.getLocalName()))
                {
-                  case XADATASOURCEPROPERTY : {
+                  case XA_DATASOURCE_PROPERTY : {
                      xaDataSourceProperty.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
                   }
-                  case XADATASOURCECLASS : {
+                  case XA_DATASOURCE_CLASS : {
                      xaDataSourceClass = elementAsString(reader);
                      break;
                   }
@@ -377,19 +377,19 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      xaPool = parseXaPool(reader);
                      break;
                   }
-                  case NEWCONNECTIONSQL : {
+                  case NEW_CONNECTION_SQL : {
                      newConnectionSql = elementAsString(reader);
                      break;
                   }
-                  case URLDELIMITER : {
+                  case URL_DELIMITER : {
                      urlDelimiter = elementAsString(reader);
                      break;
                   }
-                  case URLSELECTORSTRATEGYCLASSNAME : {
+                  case URL_SELECTOR_STRATEGY_CLASS_NAME : {
                      urlSelectorStrategyClassName = elementAsString(reader);
                      break;
                   }
-                  case TRANSACTIONISOLATION : {
+                  case TRANSACTION_ISOLATION : {
                      transactionIsolation = TransactionIsolation.valueOf(elementAsString(reader));
                      break;
                   }
@@ -459,7 +459,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      password = elementAsString(reader);
                      break;
                   }
-                  case USERNAME : {
+                  case USER_NAME : {
                      userName = elementAsString(reader);
                      break;
                   }
@@ -500,13 +500,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       CommonPool pool = null;
 
       //attributes reading
-      boolean useJavaContext = true;
+      Boolean useJavaContext = Boolean.TRUE;
       String poolName = null;
-      boolean enabled = true;
+      Boolean enabled = Boolean.TRUE;
       String jndiName = null;
-      boolean spy = false;
-      boolean useCcm = true;
-      boolean jta = true;
+      Boolean spy = Boolean.FALSE;
+      Boolean useCcm = Boolean.TRUE;
+      Boolean jta = Boolean.TRUE;
 
       for (DataSource.Attribute attribute : DataSource.Attribute.values())
       {
@@ -516,7 +516,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                enabled = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
-            case JNDINAME : {
+            case JNDI_NAME : {
                jndiName = attributeAsString(reader, attribute.getLocalName());
                break;
             }
@@ -524,7 +524,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                poolName = attributeAsString(reader, attribute.getLocalName());
                break;
             }
-            case USEJAVACONTEXT : {
+            case USE_JAVA_CONTEXT : {
                useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
@@ -572,19 +572,19 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case START_ELEMENT : {
                switch (DataSource.Tag.forName(reader.getLocalName()))
                {
-                  case CONNECTIONPROPERTY : {
+                  case CONNECTION_PROPERTY : {
                      connectionProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
                   }
-                  case CONNECTIONURL : {
+                  case CONNECTION_URL : {
                      connectionUrl = elementAsString(reader);
                      break;
                   }
-                  case DRIVERCLASS : {
+                  case DRIVER_CLASS : {
                      driverClass = elementAsString(reader);
                      break;
                   }
-                  case DATASOURCECLASS : {
+                  case DATASOURCE_CLASS : {
                      dataSourceClass = elementAsString(reader);
                      break;
                   }
@@ -596,19 +596,19 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      pool = parsePool(reader);
                      break;
                   }
-                  case NEWCONNECTIONSQL : {
+                  case NEW_CONNECTION_SQL : {
                      newConnectionSql = elementAsString(reader);
                      break;
                   }
-                  case URLDELIMITER : {
+                  case URL_DELIMITER : {
                      urlDelimiter = elementAsString(reader);
                      break;
                   }
-                  case URLSELECTORSTRATEGYCLASSNAME : {
+                  case URL_SELECTOR_STRATEGY_CLASS_NAME : {
                      urlSelectorStrategyClassName = elementAsString(reader);
                      break;
                   }
-                  case TRANSACTIONISOLATION : {
+                  case TRANSACTION_ISOLATION : {
                      transactionIsolation = TransactionIsolation.valueOf(elementAsString(reader));
                      break;
                   }
@@ -641,11 +641,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    private Validation parseValidationSetting(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      boolean validateOnMatch = false;
-      boolean useFastFail = false;
+      Boolean validateOnMatch = Boolean.FALSE;
+      Boolean useFastFail = Boolean.FALSE;
       Long backgroundValidationMillis = null;
       Extension staleConnectionChecker = null;
-      boolean backgroundValidation = false;
+      Boolean backgroundValidation = Boolean.FALSE;
       String checkValidConnectionSql = null;
       Extension validConnectionChecker = null;
       Extension exceptionSorter = null;
@@ -676,35 +676,35 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                Validation.Tag currTag = Validation.Tag.forName(reader.getLocalName());
                switch (currTag)
                {
-                  case BACKGROUNDVALIDATION : {
+                  case BACKGROUND_VALIDATION : {
                      backgroundValidation = elementAsBoolean(reader);
                      break;
                   }
-                  case BACKGROUNDVALIDATIONMILLIS : {
+                  case BACKGROUND_VALIDATION_MILLIS : {
                      backgroundValidationMillis = elementAsLong(reader);
                      break;
                   }
-                  case CHECKVALIDCONNECTIONSQL : {
+                  case CHECK_VALID_CONNECTION_SQL : {
                      checkValidConnectionSql = elementAsString(reader);
                      break;
                   }
-                  case EXCEPTIONSORTER : {
+                  case EXCEPTION_SORTER : {
                      exceptionSorter = parseExtension(reader, currTag.getLocalName());
                      break;
                   }
-                  case STALECONNECTIONCHECKER : {
+                  case STALE_CONNECTION_CHECKER : {
                      staleConnectionChecker = parseExtension(reader, currTag.getLocalName());
                      break;
                   }
-                  case USEFASTFAIL : {
+                  case USE_FAST_FAIL : {
                      useFastFail = elementAsBoolean(reader);
                      break;
                   }
-                  case VALIDATEONMATCH : {
+                  case VALIDATE_ON_MATCH : {
                      validateOnMatch = elementAsBoolean(reader);
                      break;
                   }
-                  case VALIDCONNECTIONCHECKER : {
+                  case VALID_CONNECTION_CHECKER : {
                      validConnectionChecker = parseExtension(reader, currTag.getLocalName());
                      break;
                   }
@@ -724,7 +724,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       Long blockingTimeoutMillis = null;
       Long idleTimeoutMinutes = null;
-      boolean setTxQuertTimeout = false;
+      Boolean setTxQuertTimeout = Boolean.FALSE;
       Long queryTimeout = null;
       Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
@@ -755,35 +755,35 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case START_ELEMENT : {
                switch (TimeOut.Tag.forName(reader.getLocalName()))
                {
-                  case ALLOCATIONRETRY : {
+                  case ALLOCATION_RETRY : {
                      allocationRetry = elementAsInteger(reader);
                      break;
                   }
-                  case ALLOCATIONRETRYWAITMILLIS : {
+                  case ALLOCATION_RETRY_WAIT_MILLIS : {
                      allocationRetryWaitMillis = elementAsLong(reader);
                      break;
                   }
-                  case BLOCKINGTIMEOUTMILLIS : {
+                  case BLOCKING_TIMEOUT_MILLIS : {
                      blockingTimeoutMillis = elementAsLong(reader);
                      break;
                   }
-                  case IDLETIMEOUTMINUTES : {
+                  case IDLE_TIMEOUT_MINUTES : {
                      idleTimeoutMinutes = elementAsLong(reader);
                      break;
                   }
-                  case QUERYTIMEOUT : {
+                  case QUERY_TIMEOUT : {
                      queryTimeout = elementAsLong(reader);
                      break;
                   }
-                  case SETTXQUERYTIMEOUT : {
+                  case SET_TX_QUERY_TIMEOUT : {
                      setTxQuertTimeout = elementAsBoolean(reader);
                      break;
                   }
-                  case USETRYLOCK : {
+                  case USE_TRY_LOCK : {
                      useTryLock = elementAsLong(reader);
                      break;
                   }
-                  case XARESOURCETIMEOUT : {
+                  case XA_RESOURCE_TIMEOUT : {
                      xaResourceTimeout = elementAsInteger(reader);
                      break;
                   }
@@ -802,7 +802,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
 
       Long preparedStatementsCacheSize = null;
-      boolean sharePreparedStatements = false;
+      Boolean sharePreparedStatements = Boolean.FALSE;
       TrackStatementsEnum trackStatements = null;
 
       while (reader.hasNext())
@@ -827,17 +827,17 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case START_ELEMENT : {
                switch (Statement.Tag.forName(reader.getLocalName()))
                {
-                  case PREPAREDSTATEMENTCACHESIZE : {
+                  case PREPARED_STATEMENT_CACHE_SIZE : {
                      preparedStatementsCacheSize = elementAsLong(reader);
                      break;
                   }
-                  case TRACKSTATEMENTS : {
+                  case TRACK_STATEMENTS : {
                      String elementString = elementAsString(reader);
                      trackStatements = TrackStatementsEnum.valueOf(elementString == null ? "FALSE" : elementString
                         .toUpperCase(Locale.US));
                      break;
                   }
-                  case SHAREPREPAREDSTATEMENTS : {
+                  case SHARE_PREPARED_STATEMENTS : {
                      sharePreparedStatements = elementAsBoolean(reader);
                      break;
                   }

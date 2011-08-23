@@ -148,21 +148,21 @@ public class StatementImpl implements Statement
 
       if (trackStatements != null)
       {
-         sb.append("<").append(Statement.Tag.TRACKSTATEMENTS).append(">");
+         sb.append("<").append(Statement.Tag.TRACK_STATEMENTS).append(">");
          sb.append(trackStatements);
-         sb.append("</").append(Statement.Tag.TRACKSTATEMENTS).append(">");
+         sb.append("</").append(Statement.Tag.TRACK_STATEMENTS).append(">");
       }
 
       if (preparedStatementsCacheSize != null)
       {
-         sb.append("<").append(Statement.Tag.PREPAREDSTATEMENTCACHESIZE).append(">");
+         sb.append("<").append(Statement.Tag.PREPARED_STATEMENT_CACHE_SIZE).append(">");
          sb.append(preparedStatementsCacheSize);
-         sb.append("</").append(Statement.Tag.PREPAREDSTATEMENTCACHESIZE).append(">");
+         sb.append("</").append(Statement.Tag.PREPARED_STATEMENT_CACHE_SIZE).append(">");
       }
 
       if (sharePreparedStatements != null && Boolean.TRUE.equals(sharePreparedStatements))
       {
-         sb.append("<").append(Statement.Tag.SHAREPREPAREDSTATEMENTS).append("/>");
+         sb.append("<").append(Statement.Tag.SHARE_PREPARED_STATEMENTS).append("/>");
       }
 
       sb.append("</statement>");
@@ -174,7 +174,7 @@ public class StatementImpl implements Statement
    public void validate() throws ValidateException
    {
       if (this.preparedStatementsCacheSize != null && this.preparedStatementsCacheSize < 0)
-         throw new ValidateException(bundle.invalidNegative(Tag.PREPAREDSTATEMENTCACHESIZE.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(Tag.PREPARED_STATEMENT_CACHE_SIZE.getLocalName()));
    }
 }
 

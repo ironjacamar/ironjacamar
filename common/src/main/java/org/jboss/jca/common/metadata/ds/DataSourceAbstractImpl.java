@@ -107,12 +107,12 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
    * spy
    */
-   protected final boolean spy;
+   protected final Boolean spy;
 
    /**
    * use-ccm
    */
-   protected final boolean useCcm;
+   protected final Boolean useCcm;
 
    /**
     * Create a new DataSourceAbstractImpl.
@@ -135,7 +135,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
       DsSecurity security, Statement statement, Validation validation, String urlDelimiter,
       String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
-      boolean spy, boolean useCcm)
+      Boolean spy, Boolean useCcm)
       throws ValidateException
    {
       super();
@@ -258,7 +258,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     */
 
    @Override
-   public final boolean isSpy()
+   public final Boolean isSpy()
    {
       return spy;
    }
@@ -270,7 +270,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     */
 
    @Override
-   public final boolean isUseCcm()
+   public final Boolean isUseCcm()
    {
       return useCcm;
    }
@@ -284,7 +284,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected void partialCommonValidation() throws ValidateException
    {
       if (this.jndiName == null)
-         throw new ValidateException(bundle.requiredAttributeMissing(DataSource.Attribute.JNDINAME.getLocalName(),
+         throw new ValidateException(bundle.requiredAttributeMissing(DataSource.Attribute.JNDI_NAME.getLocalName(),
                                                                      this.getClass().getCanonicalName()));
       if (this.poolName == null)
          throw new ValidateException(bundle.requiredAttributeMissing(DataSource.Attribute.POOL_NAME.getLocalName(),

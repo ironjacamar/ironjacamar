@@ -77,15 +77,15 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Recovery recovery = null;
 
       //attributes reading
-      boolean useJavaContext = true;
+      Boolean useJavaContext = Boolean.TRUE;
       String className = null;
-      boolean enabled = true;
+      Boolean enabled = Boolean.TRUE;
       String jndiName = null;
       String poolName = null;
-      boolean useCcm = true;
+      Boolean useCcm = Boolean.TRUE;
       int attributeSize = reader.getAttributeCount();
 
-      boolean isXa = false;
+      Boolean isXa = Boolean.FALSE;
 
       for (int i = 0; i < attributeSize; i++)
       {
@@ -96,7 +96,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                enabled = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
-            case JNDINAME : {
+            case JNDI_NAME : {
                jndiName = attributeAsString(reader, attribute.getLocalName());
                break;
             }
@@ -108,11 +108,11 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                poolName = attributeAsString(reader, attribute.getLocalName());
                break;
             }
-            case USEJAVACONTEXT : {
+            case USE_JAVA_CONTEXT : {
                useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
-            case USECCM : {
+            case USE_CCM : {
                useCcm = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
@@ -191,8 +191,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
 
    private CommonValidation parseValidation(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      boolean useFastFail = false;
-      boolean backgroundValidation = false;
+      Boolean useFastFail = Boolean.FALSE;
+      Boolean backgroundValidation = Boolean.FALSE;
       Long backgroundValidationMillis = null;
 
       while (reader.hasNext())
@@ -217,15 +217,15 @@ public abstract class CommonIronJacamarParser extends AbstractParser
             case START_ELEMENT : {
                switch (CommonValidation.Tag.forName(reader.getLocalName()))
                {
-                  case BACKGROUNDVALIDATIONMILLIS : {
+                  case BACKGROUND_VALIDATION_MILLIS : {
                      backgroundValidationMillis = elementAsLong(reader);
                      break;
                   }
-                  case BACKGROUNDVALIDATION : {
+                  case BACKGROUND_VALIDATION : {
                      backgroundValidation = elementAsBoolean(reader);
                      break;
                   }
-                  case USEFASTFAIL : {
+                  case USE_FAST_FAIL : {
                      useFastFail = elementAsBoolean(reader);
                      break;
                   }
@@ -239,7 +239,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private CommonTimeOut parseTimeOut(XMLStreamReader reader, boolean isXa) throws XMLStreamException,
+   private CommonTimeOut parseTimeOut(XMLStreamReader reader, Boolean isXa) throws XMLStreamException,
       ParserException, ValidateException
    {
       Long blockingTimeoutMillis = null;
@@ -271,24 +271,24 @@ public abstract class CommonIronJacamarParser extends AbstractParser
             case START_ELEMENT : {
                switch (CommonTimeOut.Tag.forName(reader.getLocalName()))
                {
-                  case ALLOCATIONRETRYWAITMILLIS : {
+                  case ALLOCATION_RETRY_WAIT_MILLIS : {
                      allocationRetryWaitMillis = elementAsLong(reader);
                      break;
                   }
-                  case ALLOCATIONRETRY : {
+                  case ALLOCATION_RETRY : {
                      allocationRetry = elementAsInteger(reader);
                      break;
                   }
-                  case BLOCKINGTIMEOUTMILLIS : {
+                  case BLOCKING_TIMEOUT_MILLIS : {
                      blockingTimeoutMillis = elementAsLong(reader);
                      break;
                   }
-                  case IDLETIMEOUTMINUTES : {
+                  case IDLE_TIMEOUT_MINUTES : {
                      idleTimeoutMinutes = elementAsLong(reader);
                      break;
                   }
-                  case XARESOURCETIMEOUT : {
-                     if (!isXa)
+                  case XA_RESOURCE_TIMEOUT : {
+                     if (isXa != null && Boolean.FALSE.equals(isXa))
                         throw new ParserException(bundle.unsupportedElement(reader.getLocalName()));
                      xaResourceTimeout = elementAsInteger(reader);
                      break;
@@ -318,9 +318,9 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       HashMap<String, String> configProperties = new HashMap<String, String>();
 
       //attributes reading
-      boolean useJavaContext = true;
+      Boolean useJavaContext = Boolean.TRUE;
       String className = null;
-      boolean enabled = true;
+      Boolean enabled = Boolean.TRUE;
       String jndiName = null;
       String poolName = null;
 
@@ -336,7 +336,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                enabled = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
-            case JNDINAME : {
+            case JNDI_NAME : {
                jndiName = attributeAsString(reader, attribute.getLocalName());
                break;
             }
@@ -344,7 +344,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                className = attributeAsString(reader, attribute.getLocalName());
                break;
             }
-            case USEJAVACONTEXT : {
+            case USE_JAVA_CONTEXT : {
                useJavaContext = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }

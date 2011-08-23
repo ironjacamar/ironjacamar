@@ -194,18 +194,18 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
 
       if (moduleName != null)
       {
-         sb.append("<" + Connector16.Tag.MODULENAME + ">");
+         sb.append("<" + Connector16.Tag.MODULE_NAME + ">");
          sb.append(moduleName);
-         sb.append("</" + Connector16.Tag.MODULENAME + ">");
+         sb.append("</" + Connector16.Tag.MODULE_NAME + ">");
       }
 
       // description, displayName, icon
 
       if (!XsdString.isNull(vendorName))
       {
-         sb.append("<" + Connector16.Tag.VENDORNAME + ">");
+         sb.append("<" + Connector16.Tag.VENDOR_NAME + ">");
          sb.append(vendorName);
-         sb.append("</" + Connector16.Tag.VENDORNAME + ">");
+         sb.append("</" + Connector16.Tag.VENDOR_NAME + ">");
       }
 
       if (!XsdString.isNull(eisType))

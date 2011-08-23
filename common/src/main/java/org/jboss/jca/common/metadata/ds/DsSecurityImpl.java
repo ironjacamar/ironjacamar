@@ -110,9 +110,9 @@ public class DsSecurityImpl extends CredentialImpl implements DsSecurity
 
       if (getUserName() != null)
       {
-         sb.append("<").append(DsSecurity.Tag.USERNAME).append(">");
+         sb.append("<").append(DsSecurity.Tag.USER_NAME).append(">");
          sb.append(getUserName());
-         sb.append("</").append(DsSecurity.Tag.USERNAME).append(">");
+         sb.append("</").append(DsSecurity.Tag.USER_NAME).append(">");
 
          sb.append("<").append(DsSecurity.Tag.PASSWORD).append(">");
          sb.append(getPassword());

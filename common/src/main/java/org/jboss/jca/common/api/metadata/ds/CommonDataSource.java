@@ -104,7 +104,7 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
     * @return the spy.
     */
 
-   public boolean isSpy();
+   public Boolean isSpy();
 
    /**
     * Get the use-ccm.
@@ -112,7 +112,7 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
     * @return the use-ccm.
     */
 
-   public boolean isUseCcm();
+   public Boolean isUseCcm();
 
    /**
     * Get the driver

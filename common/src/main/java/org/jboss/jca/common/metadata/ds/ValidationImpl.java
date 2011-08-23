@@ -149,7 +149,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    public void validate() throws ValidateException
    {
       if (this.backgroundValidationMillis != null && this.backgroundValidationMillis < 0)
-         throw new ValidateException(bundle.invalidNegative(Validation.Tag.BACKGROUNDVALIDATIONMILLIS.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(Validation.Tag.BACKGROUND_VALIDATION_MILLIS.getLocalName()));
 
       if (this.validConnectionChecker != null)
          try
@@ -158,7 +158,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          }
          catch (ValidateException ve)
          {
-            throw new ValidateException(bundle.invalidTag(Validation.Tag.VALIDCONNECTIONCHECKER.getLocalName()), ve);
+            throw new ValidateException(bundle.invalidTag(Validation.Tag.VALID_CONNECTION_CHECKER.getLocalName()), ve);
          }
       if (this.exceptionSorter != null)
          try
@@ -167,7 +167,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          }
          catch (ValidateException ve)
          {
-            throw new ValidateException(bundle.invalidTag(Validation.Tag.EXCEPTIONSORTER.getLocalName()), ve);
+            throw new ValidateException(bundle.invalidTag(Validation.Tag.EXCEPTION_SORTER.getLocalName()), ve);
          }
       if (this.staleConnectionChecker != null)
          try
@@ -176,7 +176,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          }
          catch (ValidateException ve)
          {
-            throw new ValidateException(bundle.invalidTag(Validation.Tag.STALECONNECTIONCHECKER.getLocalName()), ve);
+            throw new ValidateException(bundle.invalidTag(Validation.Tag.STALE_CONNECTION_CHECKER.getLocalName()), ve);
          }
    }
 
@@ -189,7 +189,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
 
       if (validConnectionChecker != null)
       {
-         sb.append("<").append(Validation.Tag.VALIDCONNECTIONCHECKER);
+         sb.append("<").append(Validation.Tag.VALID_CONNECTION_CHECKER);
          sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
          sb.append(validConnectionChecker.getClassName()).append("\"");
          sb.append(">");
@@ -211,47 +211,47 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
             }
          }
 
-         sb.append("</").append(Validation.Tag.VALIDCONNECTIONCHECKER).append(">");
+         sb.append("</").append(Validation.Tag.VALID_CONNECTION_CHECKER).append(">");
       }
 
       if (checkValidConnectionSql != null)
       {
-         sb.append("<").append(Validation.Tag.CHECKVALIDCONNECTIONSQL).append(">");
+         sb.append("<").append(Validation.Tag.CHECK_VALID_CONNECTION_SQL).append(">");
          sb.append(checkValidConnectionSql);
-         sb.append("</").append(Validation.Tag.CHECKVALIDCONNECTIONSQL).append(">");
+         sb.append("</").append(Validation.Tag.CHECK_VALID_CONNECTION_SQL).append(">");
       }
 
       if (validateOnMatch != null)
       {
-         sb.append("<").append(Validation.Tag.VALIDATEONMATCH).append(">");
+         sb.append("<").append(Validation.Tag.VALIDATE_ON_MATCH).append(">");
          sb.append(validateOnMatch);
-         sb.append("</").append(Validation.Tag.VALIDATEONMATCH).append(">");
+         sb.append("</").append(Validation.Tag.VALIDATE_ON_MATCH).append(">");
       }
 
       if (backgroundValidation != null)
       {
-         sb.append("<").append(Validation.Tag.BACKGROUNDVALIDATION).append(">");
+         sb.append("<").append(Validation.Tag.BACKGROUND_VALIDATION).append(">");
          sb.append(backgroundValidation);
-         sb.append("</").append(Validation.Tag.BACKGROUNDVALIDATION).append(">");
+         sb.append("</").append(Validation.Tag.BACKGROUND_VALIDATION).append(">");
       }
 
       if (backgroundValidationMillis != null)
       {
-         sb.append("<").append(Validation.Tag.BACKGROUNDVALIDATIONMILLIS).append(">");
+         sb.append("<").append(Validation.Tag.BACKGROUND_VALIDATION_MILLIS).append(">");
          sb.append(backgroundValidationMillis);
-         sb.append("</").append(Validation.Tag.BACKGROUNDVALIDATIONMILLIS).append(">");
+         sb.append("</").append(Validation.Tag.BACKGROUND_VALIDATION_MILLIS).append(">");
       }
 
       if (useFastFail != null)
       {
-         sb.append("<").append(Validation.Tag.USEFASTFAIL).append(">");
+         sb.append("<").append(Validation.Tag.USE_FAST_FAIL).append(">");
          sb.append(useFastFail);
-         sb.append("</").append(Validation.Tag.USEFASTFAIL).append(">");
+         sb.append("</").append(Validation.Tag.USE_FAST_FAIL).append(">");
       }
 
       if (staleConnectionChecker != null)
       {
-         sb.append("<").append(Validation.Tag.STALECONNECTIONCHECKER);
+         sb.append("<").append(Validation.Tag.STALE_CONNECTION_CHECKER);
          sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
          sb.append(staleConnectionChecker.getClassName()).append("\"");
          sb.append(">");
@@ -273,12 +273,12 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
             }
          }
 
-         sb.append("</").append(Validation.Tag.STALECONNECTIONCHECKER).append(">");
+         sb.append("</").append(Validation.Tag.STALE_CONNECTION_CHECKER).append(">");
       }
 
       if (exceptionSorter != null)
       {
-         sb.append("<").append(Validation.Tag.EXCEPTIONSORTER);
+         sb.append("<").append(Validation.Tag.EXCEPTION_SORTER);
          sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
          sb.append(exceptionSorter.getClassName()).append("\"");
          sb.append(">");
@@ -300,7 +300,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
             }
          }
 
-         sb.append("</").append(Validation.Tag.EXCEPTIONSORTER).append(">");
+         sb.append("</").append(Validation.Tag.EXCEPTION_SORTER).append(">");
       }
 
       sb.append("</validation>");

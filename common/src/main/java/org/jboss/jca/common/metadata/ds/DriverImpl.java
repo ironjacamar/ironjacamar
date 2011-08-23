@@ -189,23 +189,23 @@ public class DriverImpl implements Driver
 
       if (driverClass != null)
       {
-         sb.append("<").append(Driver.Tag.DRIVERCLASS).append(">");
+         sb.append("<").append(Driver.Tag.DRIVER_CLASS).append(">");
          sb.append(driverClass);
-         sb.append("</").append(Driver.Tag.DRIVERCLASS).append(">");
+         sb.append("</").append(Driver.Tag.DRIVER_CLASS).append(">");
       }
 
       if (dataSourceClass != null)
       {
-         sb.append("<").append(Driver.Tag.DATASOURCECLASS).append(">");
+         sb.append("<").append(Driver.Tag.DATASOURCE_CLASS).append(">");
          sb.append(dataSourceClass);
-         sb.append("</").append(Driver.Tag.DATASOURCECLASS).append(">");
+         sb.append("</").append(Driver.Tag.DATASOURCE_CLASS).append(">");
       }
 
       if (xaDataSourceClass != null)
       {
-         sb.append("<").append(Driver.Tag.XADATASOURCECLASS).append(">");
+         sb.append("<").append(Driver.Tag.XA_DATASOURCE_CLASS).append(">");
          sb.append(xaDataSourceClass);
-         sb.append("</").append(Driver.Tag.XADATASOURCECLASS).append(">");
+         sb.append("</").append(Driver.Tag.XA_DATASOURCE_CLASS).append(">");
       }
 
       sb.append("</driver>");

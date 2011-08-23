@@ -76,7 +76,7 @@ public abstract class AbstractParser
     * @throws XMLStreamException StAX exception
     * @throws ParserException in case of non valid boolean for given element value
     */
-   protected boolean elementAsBoolean(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected Boolean elementAsBoolean(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       String elementtext = rawElementText(reader);
       String stringValue = getSubstitutionValue(elementtext);
@@ -102,7 +102,7 @@ public abstract class AbstractParser
     * @throws XMLStreamException StAX exception
     * @throws ParserException in case of not valid boolena for given attribute
     */
-   protected boolean attributeAsBoolean(XMLStreamReader reader, String attributeName, boolean defaultValue)
+   protected Boolean attributeAsBoolean(XMLStreamReader reader, String attributeName, Boolean defaultValue)
       throws XMLStreamException, ParserException
    {
       String attributeString = rawAttributeText(reader, attributeName);
@@ -276,8 +276,8 @@ public abstract class AbstractParser
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
-      boolean prefill = false;
-      boolean useStrictMin = false;
+      Boolean prefill = Boolean.FALSE;
+      Boolean useStrictMin = Boolean.FALSE;
       FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
 
       while (reader.hasNext())
@@ -413,14 +413,14 @@ public abstract class AbstractParser
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
-      boolean prefill = false;
+      Boolean prefill = Boolean.FALSE;
       FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
-      boolean interleaving = false;
-      boolean isSameRmOverrideValue = false;
-      boolean padXid = false;
-      boolean noTxSeparatePool = false;
-      boolean wrapXaDataSource = true;
-      boolean useStrictMin = false;
+      Boolean interleaving = Boolean.FALSE;
+      Boolean isSameRmOverride = Boolean.FALSE;
+      Boolean padXid = Boolean.FALSE;
+      Boolean noTxSeparatePool = Boolean.FALSE;
+      Boolean wrapXaDataSource = Boolean.TRUE;
+      Boolean useStrictMin = Boolean.FALSE;
 
       while (reader.hasNext())
       {
@@ -431,7 +431,7 @@ public abstract class AbstractParser
                {
 
                   return new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
-                                              isSameRmOverrideValue, interleaving, padXid,
+                                              isSameRmOverride, interleaving, padXid,
                                               wrapXaDataSource, noTxSeparatePool);
 
                }
@@ -459,8 +459,8 @@ public abstract class AbstractParser
                      interleaving = elementAsBoolean(reader);
                      break;
                   }
-                  case ISSAMERMOVERRIDEVALUE : {
-                     isSameRmOverrideValue = elementAsBoolean(reader);
+                  case IS_SAME_RM_OVERRIDE : {
+                     isSameRmOverride = elementAsBoolean(reader);
                      break;
                   }
                   case NO_TX_SEPARATE_POOLS : {
@@ -617,7 +617,7 @@ public abstract class AbstractParser
                      password = elementAsString(reader);
                      break;
                   }
-                  case USERNAME : {
+                  case USER_NAME : {
                      userName = elementAsString(reader);
                      break;
                   }
@@ -659,7 +659,7 @@ public abstract class AbstractParser
          switch (attribute)
          {
             case NO_RECOVERY : {
-               noRecovery = attributeAsBoolean(reader, attribute.getLocalName(), false);
+               noRecovery = attributeAsBoolean(reader, attribute.getLocalName(), Boolean.FALSE);
                break;
             }
             default :

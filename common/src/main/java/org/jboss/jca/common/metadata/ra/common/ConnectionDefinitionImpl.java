@@ -305,9 +305,9 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
          sb.append(" ").append(ConnectionDefinition.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      sb.append("<" + ConnectionDefinition.Tag.MANAGED_CONNECTIONFACTORY_CLASS + ">");
+      sb.append("<" + ConnectionDefinition.Tag.MANAGEDCONNECTIONFACTORY_CLASS + ">");
       sb.append(managedconnectionfactoryClass);
-      sb.append("</" + ConnectionDefinition.Tag.MANAGED_CONNECTIONFACTORY_CLASS + ">");
+      sb.append("</" + ConnectionDefinition.Tag.MANAGEDCONNECTIONFACTORY_CLASS + ">");
 
       if (configProperties != null)
       {

@@ -124,9 +124,9 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
 
       if (!XsdString.isNull(vendorName))
       {
-         sb.append("<" + Connector10.Tag.VENDORNAME + ">");
+         sb.append("<" + Connector10.Tag.VENDOR_NAME + ">");
          sb.append(vendorName);
-         sb.append("</" + Connector10.Tag.VENDORNAME + ">");
+         sb.append("</" + Connector10.Tag.VENDOR_NAME + ">");
       }
 
       sb.append("<" + Connector10.Tag.SPEC_VERSION + ">");

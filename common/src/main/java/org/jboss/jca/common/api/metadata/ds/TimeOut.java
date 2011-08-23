@@ -76,35 +76,35 @@ public interface TimeOut extends org.jboss.jca.common.api.metadata.common.Common
       /**
       * blockingTimeoutMillis tag
       */
-      BLOCKINGTIMEOUTMILLIS("blocking-timeout-millis"),
+      BLOCKING_TIMEOUT_MILLIS("blocking-timeout-millis"),
       /**
       * idleTimeoutMinutes tag
       */
-      IDLETIMEOUTMINUTES("idle-timeout-minutes"),
+      IDLE_TIMEOUT_MINUTES("idle-timeout-minutes"),
       /**
       * setTxQueryTimeout tag
       */
-      SETTXQUERYTIMEOUT("set-tx-query-timeout"),
+      SET_TX_QUERY_TIMEOUT("set-tx-query-timeout"),
       /**
       * queryTimeout tag
       */
-      QUERYTIMEOUT("query-timeout"),
+      QUERY_TIMEOUT("query-timeout"),
       /**
       * useTryLock tag
       */
-      USETRYLOCK("use-try-lock"),
+      USE_TRY_LOCK("use-try-lock"),
       /**
       * allocationRetry tag
       */
-      ALLOCATIONRETRY("allocation-retry"),
+      ALLOCATION_RETRY("allocation-retry"),
       /**
        * xaResourceTimeout tag
        */
-      XARESOURCETIMEOUT("xa-resource-timeout"),
+      XA_RESOURCE_TIMEOUT("xa-resource-timeout"),
       /**
       * allocationRetryWaitMillis tag
       */
-      ALLOCATIONRETRYWAITMILLIS("allocation-retry-wait-millis");
+      ALLOCATION_RETRY_WAIT_MILLIS("allocation-retry-wait-millis");
 
       private final String name;
 

@@ -91,12 +91,12 @@ public interface Connector16 extends Connector15
       /**
        * module-name tag
        */
-      MODULENAME("module-name"),
+      MODULE_NAME("module-name"),
 
       /**
        * vendor-name tag
        */
-      VENDORNAME("vendor-name"),
+      VENDOR_NAME("vendor-name"),
 
       /**
        * eis-type tag

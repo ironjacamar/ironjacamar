@@ -204,37 +204,37 @@ public class CommonTimeOutImpl implements CommonTimeOut
 
       if (blockingTimeoutMillis != null)
       {
-         sb.append("<").append(CommonTimeOut.Tag.BLOCKINGTIMEOUTMILLIS).append(">");
+         sb.append("<").append(CommonTimeOut.Tag.BLOCKING_TIMEOUT_MILLIS).append(">");
          sb.append(blockingTimeoutMillis);
-         sb.append("</").append(CommonTimeOut.Tag.BLOCKINGTIMEOUTMILLIS).append(">");
+         sb.append("</").append(CommonTimeOut.Tag.BLOCKING_TIMEOUT_MILLIS).append(">");
       }
 
       if (idleTimeoutMinutes != null)
       {
-         sb.append("<").append(CommonTimeOut.Tag.IDLETIMEOUTMINUTES).append(">");
+         sb.append("<").append(CommonTimeOut.Tag.IDLE_TIMEOUT_MINUTES).append(">");
          sb.append(idleTimeoutMinutes);
-         sb.append("</").append(CommonTimeOut.Tag.IDLETIMEOUTMINUTES).append(">");
+         sb.append("</").append(CommonTimeOut.Tag.IDLE_TIMEOUT_MINUTES).append(">");
       }
 
       if (allocationRetry != null)
       {
-         sb.append("<").append(CommonTimeOut.Tag.ALLOCATIONRETRY).append(">");
+         sb.append("<").append(CommonTimeOut.Tag.ALLOCATION_RETRY).append(">");
          sb.append(allocationRetry);
-         sb.append("</").append(CommonTimeOut.Tag.ALLOCATIONRETRY).append(">");
+         sb.append("</").append(CommonTimeOut.Tag.ALLOCATION_RETRY).append(">");
       }
 
       if (allocationRetryWaitMillis != null)
       {
-         sb.append("<").append(CommonTimeOut.Tag.ALLOCATIONRETRYWAITMILLIS).append(">");
+         sb.append("<").append(CommonTimeOut.Tag.ALLOCATION_RETRY_WAIT_MILLIS).append(">");
          sb.append(allocationRetryWaitMillis);
-         sb.append("</").append(CommonTimeOut.Tag.ALLOCATIONRETRYWAITMILLIS).append(">");
+         sb.append("</").append(CommonTimeOut.Tag.ALLOCATION_RETRY_WAIT_MILLIS).append(">");
       }
 
       if (xaResourceTimeout != null)
       {
-         sb.append("<").append(CommonTimeOut.Tag.XARESOURCETIMEOUT).append(">");
+         sb.append("<").append(CommonTimeOut.Tag.XA_RESOURCE_TIMEOUT).append(">");
          sb.append(xaResourceTimeout);
-         sb.append("</").append(CommonTimeOut.Tag.XARESOURCETIMEOUT).append(">");
+         sb.append("</").append(CommonTimeOut.Tag.XA_RESOURCE_TIMEOUT).append(">");
       }
 
       sb.append("</timeout>");
@@ -245,18 +245,18 @@ public class CommonTimeOutImpl implements CommonTimeOut
    private void partialCommonValidate() throws ValidateException
    {
       if (this.allocationRetry != null && this.allocationRetry < 0)
-         throw new ValidateException(bundle.invalidNegative(Tag.ALLOCATIONRETRY.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(Tag.ALLOCATION_RETRY.getLocalName()));
 
       if (this.blockingTimeoutMillis != null && this.blockingTimeoutMillis < 0)
-         throw new ValidateException(bundle.invalidNegative(Tag.BLOCKINGTIMEOUTMILLIS.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(Tag.BLOCKING_TIMEOUT_MILLIS.getLocalName()));
 
       if (this.allocationRetryWaitMillis != null && this.allocationRetryWaitMillis < 0)
-         throw new ValidateException(bundle.invalidNegative(Tag.ALLOCATIONRETRYWAITMILLIS.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(Tag.ALLOCATION_RETRY_WAIT_MILLIS.getLocalName()));
 
       if (this.idleTimeoutMinutes != null && this.idleTimeoutMinutes < 0)
-         throw new ValidateException(bundle.invalidNegative(Tag.IDLETIMEOUTMINUTES.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(Tag.IDLE_TIMEOUT_MINUTES.getLocalName()));
 
       if (this.xaResourceTimeout != null && this.xaResourceTimeout < 0)
-         throw new ValidateException(bundle.invalidNegative(Tag.XARESOURCETIMEOUT.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(Tag.XA_RESOURCE_TIMEOUT.getLocalName()));
    }
 }

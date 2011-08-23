@@ -160,56 +160,56 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
 
       if (blockingTimeoutMillis != null)
       {
-         sb.append("<").append(TimeOut.Tag.BLOCKINGTIMEOUTMILLIS).append(">");
+         sb.append("<").append(TimeOut.Tag.BLOCKING_TIMEOUT_MILLIS).append(">");
          sb.append(blockingTimeoutMillis);
-         sb.append("</").append(TimeOut.Tag.BLOCKINGTIMEOUTMILLIS).append(">");
+         sb.append("</").append(TimeOut.Tag.BLOCKING_TIMEOUT_MILLIS).append(">");
       }
 
       if (idleTimeoutMinutes != null)
       {
-         sb.append("<").append(TimeOut.Tag.IDLETIMEOUTMINUTES).append(">");
+         sb.append("<").append(TimeOut.Tag.IDLE_TIMEOUT_MINUTES).append(">");
          sb.append(idleTimeoutMinutes);
-         sb.append("</").append(TimeOut.Tag.IDLETIMEOUTMINUTES).append(">");
+         sb.append("</").append(TimeOut.Tag.IDLE_TIMEOUT_MINUTES).append(">");
       }
 
       if (setTxQueryTimeout != null && Boolean.TRUE.equals(setTxQueryTimeout))
       {
-         sb.append("<").append(TimeOut.Tag.SETTXQUERYTIMEOUT).append("/>");
+         sb.append("<").append(TimeOut.Tag.SET_TX_QUERY_TIMEOUT).append("/>");
       }
 
       if (queryTimeout != null)
       {
-         sb.append("<").append(TimeOut.Tag.QUERYTIMEOUT).append(">");
+         sb.append("<").append(TimeOut.Tag.QUERY_TIMEOUT).append(">");
          sb.append(queryTimeout);
-         sb.append("</").append(TimeOut.Tag.QUERYTIMEOUT).append(">");
+         sb.append("</").append(TimeOut.Tag.QUERY_TIMEOUT).append(">");
       }
 
       if (useTryLock != null)
       {
-         sb.append("<").append(TimeOut.Tag.USETRYLOCK).append(">");
+         sb.append("<").append(TimeOut.Tag.USE_TRY_LOCK).append(">");
          sb.append(useTryLock);
-         sb.append("</").append(TimeOut.Tag.USETRYLOCK).append(">");
+         sb.append("</").append(TimeOut.Tag.USE_TRY_LOCK).append(">");
       }
 
       if (allocationRetry != null)
       {
-         sb.append("<").append(TimeOut.Tag.ALLOCATIONRETRY).append(">");
+         sb.append("<").append(TimeOut.Tag.ALLOCATION_RETRY).append(">");
          sb.append(allocationRetry);
-         sb.append("</").append(TimeOut.Tag.ALLOCATIONRETRY).append(">");
+         sb.append("</").append(TimeOut.Tag.ALLOCATION_RETRY).append(">");
       }
 
       if (allocationRetryWaitMillis != null)
       {
-         sb.append("<").append(TimeOut.Tag.ALLOCATIONRETRYWAITMILLIS).append(">");
+         sb.append("<").append(TimeOut.Tag.ALLOCATION_RETRY_WAIT_MILLIS).append(">");
          sb.append(allocationRetryWaitMillis);
-         sb.append("</").append(TimeOut.Tag.ALLOCATIONRETRYWAITMILLIS).append(">");
+         sb.append("</").append(TimeOut.Tag.ALLOCATION_RETRY_WAIT_MILLIS).append(">");
       }
 
       if (xaResourceTimeout != null)
       {
-         sb.append("<").append(TimeOut.Tag.XARESOURCETIMEOUT).append(">");
+         sb.append("<").append(TimeOut.Tag.XA_RESOURCE_TIMEOUT).append(">");
          sb.append(xaResourceTimeout);
-         sb.append("</").append(TimeOut.Tag.XARESOURCETIMEOUT).append(">");
+         sb.append("</").append(TimeOut.Tag.XA_RESOURCE_TIMEOUT).append(">");
       }
 
       sb.append("</timeout>");
@@ -221,9 +221,9 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTime
    public void validate() throws ValidateException
    {
       if (this.queryTimeout != null && this.queryTimeout < 0)
-         throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.QUERYTIMEOUT.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.QUERY_TIMEOUT.getLocalName()));
 
       if (this.useTryLock != null && this.useTryLock < 0)
-         throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.USETRYLOCK.getLocalName()));
+         throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.USE_TRY_LOCK.getLocalName()));
    }
 }

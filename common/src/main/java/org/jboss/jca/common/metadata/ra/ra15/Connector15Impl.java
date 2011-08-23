@@ -138,9 +138,9 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
 
       if (!XsdString.isNull(vendorName))
       {
-         sb.append("<" + Connector15.Tag.VENDORNAME + ">");
+         sb.append("<" + Connector15.Tag.VENDOR_NAME + ">");
          sb.append(vendorName);
-         sb.append("</" + Connector15.Tag.VENDORNAME + ">");
+         sb.append("</" + Connector15.Tag.VENDOR_NAME + ">");
       }
 
       if (!XsdString.isNull(eisType))

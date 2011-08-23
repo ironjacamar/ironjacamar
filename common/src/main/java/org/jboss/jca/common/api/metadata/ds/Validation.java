@@ -91,36 +91,36 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
       /**
       * validConnectionCheckerClassName tag
       */
-      VALIDCONNECTIONCHECKER("valid-connection-checker"),
+      VALID_CONNECTION_CHECKER("valid-connection-checker"),
 
       /**
       * checkValidConnectionSql tag
       */
-      CHECKVALIDCONNECTIONSQL("check-valid-connection-sql"),
+      CHECK_VALID_CONNECTION_SQL("check-valid-connection-sql"),
       /**
       * validateOnMatch tag
       */
-      VALIDATEONMATCH("validate-on-match"),
+      VALIDATE_ON_MATCH("validate-on-match"),
       /**
       * backgroundValidation tag
       */
-      BACKGROUNDVALIDATION("background-validation"),
+      BACKGROUND_VALIDATION("background-validation"),
       /**
       * backgroundValidationMillis tag
       */
-      BACKGROUNDVALIDATIONMILLIS("background-validation-millis"),
+      BACKGROUND_VALIDATION_MILLIS("background-validation-millis"),
       /**
       * useFastFail tag
       */
-      USEFASTFAIL("use-fast-fail"),
+      USE_FAST_FAIL("use-fast-fail"),
       /**
       * staleConnectionCheckerClassName tag
       */
-      STALECONNECTIONCHECKER("stale-connection-checker"),
+      STALE_CONNECTION_CHECKER("stale-connection-checker"),
       /**
       * exceptionSorterClassName tag
       */
-      EXCEPTIONSORTER("exception-sorter");
+      EXCEPTION_SORTER("exception-sorter");
 
       private final String name;
 
