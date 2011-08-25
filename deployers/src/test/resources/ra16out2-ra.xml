@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resource-adapters>
+  <resource-adapter>
+    <archive>ra16out.rar</archive>
+    <connection-definitions>
+      <connection-definition jndi-name="java:/eis/ra16out1"
+                             class-name="org.jboss.jca.test.deployers.spec.rars.ra16out.TestManagedConnectionFactory">
+      </connection-definition>
+    </connection-definitions>
+    <connection-definitions>
+      <connection-definition jndi-name="java:/eis/ra16out2"
+                             class-name="org.jboss.jca.test.deployers.spec.rars.ra16out.TestManagedConnectionFactory">
+      </connection-definition>
+    </connection-definitions>
+  </resource-adapter>
+</resource-adapters>
