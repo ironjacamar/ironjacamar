@@ -3,6 +3,8 @@
 #.classpath
 standalone/**
 build.debug.xml
+.idea
+*.iml
 # /
 **/bin
 **/eclipse-target
