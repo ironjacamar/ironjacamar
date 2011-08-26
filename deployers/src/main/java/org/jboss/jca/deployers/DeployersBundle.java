@@ -102,4 +102,14 @@ public interface DeployersBundle
     */
    @Message(id = 20059, value = "Invalid ResourceAdapter class: %s")
    public String invalidResourceAdapter(String clz);
+
+   /**
+    * Unable to inject
+    * @param clz The class name
+    * @param name The name
+    * @param value
+    * @return The value
+    */
+   @Message(id = 20060, value = "Unable to inject: %s property: %s value: %s")
+   public String unableToInject(String clz, String name, String value);
 }

@@ -58,6 +58,7 @@ import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
+import org.jboss.jca.core.util.Injection;
 import org.jboss.jca.deployers.DeployersBundle;
 import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.validator.Failure;
@@ -85,8 +86,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
 
 import javax.resource.Referenceable;
@@ -750,10 +752,36 @@ public abstract class AbstractResourceAdapterDeployer
 
                         if (activateDeployment && adminObjects != null)
                         {
+                           Injection injector = new Injection();
+
                            for (CommonAdminObject adminObject : adminObjects)
                            {
                               Object ao = initAndInject(aoMeta.getAdminobjectClass().getValue(),
                                                         aoMeta.getConfigProperties(), cl);
+
+                              if (adminObject != null &&
+                                  adminObject.getConfigProperties() != null &&
+                                  adminObject.getConfigProperties().size() > 0)
+                              {
+                                 Iterator<Map.Entry<String, String>> it =
+                                    adminObject.getConfigProperties().entrySet().iterator();
+
+                                 while (it.hasNext())
+                                 {
+                                    Map.Entry<String, String> entry = it.next();
+                                    
+                                    try
+                                    {
+                                       injector.inject(ao, entry.getKey(), entry.getValue());
+                                    }
+                                    catch (Throwable t)
+                                    {
+                                       throw new DeployException(bundle.unableToInject(ao.getClass().getName(),
+                                                                                       entry.getKey(),
+                                                                                       entry.getValue()));
+                                    }
+                                 }
+                              }
 
                               if (trace)
                               {
@@ -929,6 +957,36 @@ public abstract class AbstractResourceAdapterDeployer
 
                         resourceAdapter = (ResourceAdapter)or;
 
+                        Map<String, String> raConfigProperties = null;
+
+                        if (raxml != null)
+                           raConfigProperties = raxml.getConfigProperties();
+
+                        if (raConfigProperties == null && ijmd != null)
+                           raConfigProperties = ijmd.getConfigProperties();
+
+                        if (raConfigProperties != null)
+                        {
+                           Injection injector = new Injection();
+                           Iterator<Map.Entry<String, String>> it = raConfigProperties.entrySet().iterator();
+
+                           while (it.hasNext())
+                           {
+                              Map.Entry<String, String> entry = it.next();
+                                    
+                              try
+                              {
+                                 injector.inject(resourceAdapter, entry.getKey(), entry.getValue());
+                              }
+                              catch (Throwable t)
+                              {
+                                 throw new DeployException(bundle.unableToInject(resourceAdapter.getClass().getName(),
+                                                                                 entry.getKey(),
+                                                                                 entry.getValue()));
+                              }
+                           }
+                        }
+
                         if (trace)
                         {
                            log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
@@ -1003,6 +1061,30 @@ public abstract class AbstractResourceAdapterDeployer
                            throw new DeployException(bundle.invalidManagedConnectionFactory(mcfClz));
 
                         ManagedConnectionFactory mcf = (ManagedConnectionFactory)om;
+
+                        if (connectionDefinition != null &&
+                            connectionDefinition.getConfigProperties() != null)
+                        {
+                           Injection injector = new Injection();
+                           Iterator<Map.Entry<String, String>> it =
+                              connectionDefinition.getConfigProperties().entrySet().iterator();
+
+                           while (it.hasNext())
+                           {
+                              Map.Entry<String, String> entry = it.next();
+                                    
+                              try
+                              {
+                                 injector.inject(mcf, entry.getKey(), entry.getValue());
+                              }
+                              catch (Throwable t)
+                              {
+                                 throw new DeployException(bundle.unableToInject(mcf.getClass().getName(),
+                                                                                 entry.getKey(),
+                                                                                 entry.getValue()));
+                              }
+                           }
+                        }
 
                         if (trace)
                         {
@@ -1347,6 +1429,30 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     ManagedConnectionFactory mcf = (ManagedConnectionFactory)om;
 
+                                    if (connectionDefinition != null &&
+                                        connectionDefinition.getConfigProperties() != null)
+                                    {
+                                       Injection injector = new Injection();
+                                       Iterator<Map.Entry<String, String>> it =
+                                          connectionDefinition.getConfigProperties().entrySet().iterator();
+
+                                       while (it.hasNext())
+                                       {
+                                          Map.Entry<String, String> entry = it.next();
+                                          
+                                          try
+                                          {
+                                             injector.inject(mcf, entry.getKey(), entry.getValue());
+                                          }
+                                          catch (Throwable t)
+                                          {
+                                             throw new DeployException(bundle.unableToInject(mcf.getClass().getName(),
+                                                                                             entry.getKey(),
+                                                                                             entry.getValue()));
+                                          }
+                                       }
+                                    }
+
                                     if (trace)
                                     {
                                        log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
@@ -1570,8 +1676,9 @@ public abstract class AbstractResourceAdapterDeployer
                                                                                     .getRecoverPlugin()
                                                                                     .getConfigPropertiesMap().size());
 
-                                                   for (Entry<String, String> property : recoveryMD.getRecoverPlugin()
-                                                           .getConfigPropertiesMap().entrySet())
+                                                   for (Map.Entry<String, String> property :
+                                                           recoveryMD.getRecoverPlugin().
+                                                           getConfigPropertiesMap().entrySet())
                                                    {
                                                       ConfigProperty c =
                                                          new ConfigPropertyImpl(null,
