@@ -101,6 +101,14 @@ public class AoImplCodeGen extends PropsCodeGen
       }
       writeLeftCurlyBracket(out, 0);
       int indent = 1;
+
+      writeIndent(out, indent);
+      out.write("/** Serial version uid */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("private static final long serialVersionUID = 1L;");
+      writeEol(out);
+      writeEol(out);
       
       if (def.isAdminObjectImplRaAssociation())
       {
