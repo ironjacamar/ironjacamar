@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec.rars.multiple;
+package org.jboss.jca.test.deployers.spec.rars.configproperty;
 
 import java.io.Serializable;
 
@@ -31,11 +31,11 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
 
 /**
- * MultipleAdminObject1Impl
+ * ConfigPropertyAdminObjectImpl
  *
  * @version $Revision: $
  */
-public class MultipleAdminObject1Impl implements MultipleAdminObject1,
+public class ConfigPropertyAdminObjectImpl implements ConfigPropertyAdminObjectInterface,
    ResourceAdapterAssociation, Referenceable, Serializable
 {
    /** Serial version uid */
@@ -47,33 +47,33 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
    /** Reference */
    private Reference reference;
 
-   /** Name */
-   private String name;
+   /** property */
+   private String property;
 
    /**
     * Default constructor
     */
-   public MultipleAdminObject1Impl()
+   public ConfigPropertyAdminObjectImpl()
    {
 
    }
 
    /** 
-    * Set name
-    * @param name The value
+    * Set property
+    * @param property The value
     */
-   public void setName(String name)
+   public void setProperty(String property)
    {
-      this.name = name;
+      this.property = property;
    }
 
    /** 
-    * Get name
+    * Get property
     * @return The value
     */
-   public String getName()
+   public String getProperty()
    {
-      return name;
+      return property;
    }
 
    /**
@@ -127,8 +127,8 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
    public int hashCode()
    {
       int result = 17;
-      if (name != null)
-         result += 31 * result + 7 * name.hashCode();
+      if (property != null)
+         result += 31 * result + 7 * property.hashCode();
       else
          result += 31 * result + 7;
       return result;
@@ -146,16 +146,16 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
          return false;
       if (other == this)
          return true;
-      if (!(other instanceof MultipleAdminObject1Impl))
+      if (!(other instanceof ConfigPropertyAdminObjectImpl))
          return false;
-      MultipleAdminObject1Impl obj = (MultipleAdminObject1Impl)other;
+      ConfigPropertyAdminObjectImpl obj = (ConfigPropertyAdminObjectImpl)other;
       boolean result = true; 
       if (result)
       {
-         if (name == null)
-            result = obj.getName() == null;
+         if (property == null)
+            result = obj.getProperty() == null;
          else
-            result = name.equals(obj.getName());
+            result = property.equals(obj.getProperty());
       }
       return result;
    }

@@ -38,6 +38,9 @@ import javax.resource.spi.ResourceAdapterAssociation;
 public class MultipleAdminObject2Impl implements MultipleAdminObject2,
    ResourceAdapterAssociation, Referenceable, Serializable
 {
+   /** Serial version uid */
+   private static final long serialVersionUID = 1L;
+
    /** The resource adapter */
    private ResourceAdapter ra;
 
