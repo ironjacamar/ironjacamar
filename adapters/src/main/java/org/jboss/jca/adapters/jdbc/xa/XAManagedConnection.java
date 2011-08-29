@@ -395,4 +395,12 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
    {
       return (errorCode == XAException.XAER_RMERR || errorCode == XAException.XAER_RMFAIL);      
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isXA()
+   {
+      return true;
+   }
 }
