@@ -176,4 +176,12 @@ public class LocalManagedConnection extends BaseWrapperManagedConnection impleme
          unlock();
       }
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isXA()
+   {
+      return false;
+   }
 }

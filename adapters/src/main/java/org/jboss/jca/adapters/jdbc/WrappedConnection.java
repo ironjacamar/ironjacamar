@@ -1550,6 +1550,15 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    }
 
    /**
+    * Returns true if the underlying connection is handled by an XA resource manager
+    * @return The value
+    */
+   public boolean isXA()
+   {
+      return mc.isXA();
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override

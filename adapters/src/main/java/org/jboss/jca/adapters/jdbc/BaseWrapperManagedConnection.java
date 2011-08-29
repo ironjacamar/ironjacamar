@@ -1090,4 +1090,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
 
       throw new ResourceException("SQLException", e);
    }
+
+   /**
+    * Returns true if the underlying connection is handled by an XA resource manager
+    * @return The value
+    */
+   public abstract boolean isXA();
 }
