@@ -1016,6 +1016,22 @@ public abstract class AbstractResourceAdapterDeployer
             {
                ResourceAdapter10 ra10 = (ResourceAdapter10) cmd.getResourceadapter();
 
+               if (raxml != null && raxml.getConfigProperties() != null && raxml.getConfigProperties().size() > 0)
+               {
+                  for (String s : raxml.getConfigProperties().keySet())
+                  {
+                     log.invalidConfigProperty(s);
+                  }
+               }
+
+               if (ijmd != null && ijmd.getConfigProperties() != null && ijmd.getConfigProperties().size() > 0)
+               {
+                  for (String s : ijmd.getConfigProperties().keySet())
+                  {
+                     log.invalidConfigProperty(s);
+                  }
+               }
+
                List<String> mcfs = findManagedConnectionFactories(ra10);
 
                Set<CommonConnDef> connectionDefinitions = null;
