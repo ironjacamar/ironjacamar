@@ -44,6 +44,7 @@
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
       <compilerarg value="-AgeneratedTranslationFilesPath=${build.core.dir}/impl"/>
+      <compilerarg value="-AtranslationFilesPath=${build.core.dir}/impl"/>
     </javac> 
 
     <copy file="src/main/java/org/jboss/jca/Version.java.in"
