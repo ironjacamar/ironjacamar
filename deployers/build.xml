@@ -42,6 +42,7 @@
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
       <compilerarg value="-AgeneratedTranslationFilesPath=${build.deployers.dir}/impl"/>
+      <compilerarg value="-AtranslationFilesPath=${build.deployers.dir}/impl"/>
     </javac>
   </target>
 
@@ -58,6 +59,7 @@
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
       <compilerarg value="-AgeneratedTranslationFilesPath=${build.deployers.dir}/impl"/>
+      <compilerarg value="-AtranslationFilesPath=${build.deployers.dir}/impl"/>
     </javac>
   </target>
 
