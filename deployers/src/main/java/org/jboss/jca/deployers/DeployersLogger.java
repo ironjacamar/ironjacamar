@@ -98,4 +98,12 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = ERROR)
    @Message(id = 20007, value = "Exception during createSubject(): %s")
    public void subjectCreationError(String detail, @Cause Throwable t);
+
+   /**
+    * Invalid config property
+    * @param cp The config property name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20008, value = "Invalid config-property: %s")
+   public void invalidConfigProperty(String cp);
 }
