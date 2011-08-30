@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.CommonBundle;
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Extension;
@@ -237,7 +238,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.DRIVER)
                {
 
-                  return new DriverImpl(name, majorVersion, minorVersion, module, 
+                  return new DriverImpl(name, majorVersion, minorVersion, module,
                                         driverClass, dataSourceClass, xaDataSourceClass);
                }
                else
@@ -294,12 +295,12 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       //attributes reading
 
-      Boolean useJavaContext = Boolean.TRUE;
+      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String poolName = null;
-      Boolean enabled = Boolean.TRUE;
+      Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
-      Boolean spy = Boolean.FALSE;
-      Boolean useCcm = Boolean.TRUE;
+      Boolean spy = Defaults.SPY;
+      Boolean useCcm = Defaults.USE_CCM;
 
       for (XaDataSource.Attribute attribute : XaDataSource.Attribute.values())
       {
@@ -500,13 +501,13 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       CommonPool pool = null;
 
       //attributes reading
-      Boolean useJavaContext = Boolean.TRUE;
+      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String poolName = null;
-      Boolean enabled = Boolean.TRUE;
+      Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
-      Boolean spy = Boolean.FALSE;
-      Boolean useCcm = Boolean.TRUE;
-      Boolean jta = Boolean.TRUE;
+      Boolean spy = Defaults.SPY;
+      Boolean useCcm = Defaults.USE_CCM;
+      Boolean jta = Defaults.JTA;
 
       for (DataSource.Attribute attribute : DataSource.Attribute.values())
       {
@@ -641,11 +642,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    private Validation parseValidationSetting(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      Boolean validateOnMatch = Boolean.FALSE;
-      Boolean useFastFail = Boolean.FALSE;
+      Boolean validateOnMatch = Defaults.VALIDATE_ON_MATCH;
+      Boolean useFastFail = Defaults.USE_CCM;
       Long backgroundValidationMillis = null;
       Extension staleConnectionChecker = null;
-      Boolean backgroundValidation = Boolean.FALSE;
+      Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       String checkValidConnectionSql = null;
       Extension validConnectionChecker = null;
       Extension exceptionSorter = null;
@@ -737,7 +738,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       Long blockingTimeoutMillis = null;
       Long idleTimeoutMinutes = null;
-      Boolean setTxQuertTimeout = Boolean.FALSE;
+      Boolean setTxQuertTimeout = Defaults.SET_TX_QUERY_TIMEOUT;
       Long queryTimeout = null;
       Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
@@ -815,7 +816,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
 
       Long preparedStatementsCacheSize = null;
-      Boolean sharePreparedStatements = Boolean.FALSE;
+      Boolean sharePreparedStatements = Defaults.SHARE_PREPARED_STATEMENTS;
       TrackStatementsEnum trackStatements = null;
 
       while (reader.hasNext())
