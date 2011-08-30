@@ -28,7 +28,9 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * Deadlock JDBC driver
@@ -100,6 +102,14 @@ public class DeadlockDriver implements Driver
    public boolean jdbcCompliant()
    {
       return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Logger getParentLogger() throws SQLFeatureNotSupportedException
+   {
+      throw new SQLFeatureNotSupportedException();
    }
 
    private boolean isOurUrl(final String url)

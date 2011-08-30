@@ -39,6 +39,7 @@ import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 /**
  * Test connection.
@@ -480,5 +481,42 @@ public class TestConnection implements Connection
    public <T> T unwrap(Class<T> iface)
    {
       return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setSchema(String schema) throws SQLException
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getSchema() throws SQLException
+   {
+      return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void abort(Executor executor) throws SQLException
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getNetworkTimeout() throws SQLException
+   {
+      return 0;
    }
 }
