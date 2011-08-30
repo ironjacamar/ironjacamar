@@ -171,6 +171,7 @@
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain,ironjacamar-embedded,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-api" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-impl" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
+    <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-spi" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-impl-base" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-spi" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logmanager" rev="${version.jboss.slf4j.logmanager}" conf="common,ironjacamar-depchain"/>
