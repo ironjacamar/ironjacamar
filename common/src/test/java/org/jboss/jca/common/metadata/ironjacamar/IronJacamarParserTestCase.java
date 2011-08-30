@@ -482,8 +482,8 @@ public class IronJacamarParserTestCase
 
             //pool default
             assertThat(connDef.isXa(), is(true));
-            assertThat(connDef.getPool().getMinPoolSize(), new IsNull<Integer>());
-            assertThat(connDef.getPool().getMaxPoolSize(), new IsNull<Integer>());
+            assertThat(connDef.getPool().getMinPoolSize(), is(0));
+            assertThat(connDef.getPool().getMaxPoolSize(), is(20));
             assertThat(connDef.getPool().isPrefill(), is(false));
             assertThat(connDef.getPool().isUseStrictMin(), is(false));
 
