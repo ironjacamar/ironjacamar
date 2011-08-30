@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata;
 
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.CommonLogger;
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
@@ -276,9 +277,9 @@ public abstract class AbstractParser
    {
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
-      Boolean prefill = Boolean.FALSE;
-      Boolean useStrictMin = Boolean.FALSE;
-      FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
+      Boolean prefill = Defaults.PREFILL;
+      Boolean useStrictMin = Defaults.USE_STRICT_MIN;
+      FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
 
       while (reader.hasNext())
       {
@@ -350,7 +351,7 @@ public abstract class AbstractParser
 
       String securityDomain = null;
       String securityDomainAndApplication = null;
-      boolean application = false;
+      boolean application = Defaults.APPLICATION_MANAGED_SECURITY;
 
       while (reader.hasNext())
       {
@@ -411,16 +412,16 @@ public abstract class AbstractParser
    protected CommonXaPool parseXaPool(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      Integer minPoolSize = null;
-      Integer maxPoolSize = null;
-      Boolean prefill = Boolean.FALSE;
-      FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
-      Boolean interleaving = Boolean.FALSE;
-      Boolean isSameRmOverride = Boolean.FALSE;
-      Boolean padXid = Boolean.FALSE;
-      Boolean noTxSeparatePool = Boolean.FALSE;
-      Boolean wrapXaDataSource = Boolean.TRUE;
-      Boolean useStrictMin = Boolean.FALSE;
+      Integer minPoolSize = Defaults.MIN_POOL_SIZE;
+      Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
+      Boolean prefill = Defaults.PREFILL;
+      FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
+      Boolean interleaving = Defaults.INTERLEAVING;
+      Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
+      Boolean padXid = Defaults.PAD_XID;
+      Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
+      Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
+      Boolean useStrictMin = Defaults.USE_STRICT_MIN;
 
       while (reader.hasNext())
       {
