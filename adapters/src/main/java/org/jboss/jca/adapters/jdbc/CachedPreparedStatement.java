@@ -51,7 +51,11 @@ import org.jboss.logging.Logger;
 public abstract class CachedPreparedStatement extends JBossWrapper implements PreparedStatement
 {
    private static final long serialVersionUID = 2085461257386274373L;
+
+   /** The logger */
    protected static Logger log = Logger.getLogger(CachedPreparedStatement.class);
+
+   /** Trace logging */
    protected static boolean trace = log.isTraceEnabled();
    
    private PreparedStatement ps;
