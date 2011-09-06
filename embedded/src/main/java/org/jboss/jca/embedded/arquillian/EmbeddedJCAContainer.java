@@ -52,9 +52,13 @@ public class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCACont
    /** EmbeddedJCA */
    private Embedded embedded;
 
-   /** Instance producer */
+   /** Context */
    @Inject @ContainerScoped
-   private InstanceProducer<Context> instanceProducer;
+   private InstanceProducer<Context> contextProducer;
+
+   /** Kernel */
+   @Inject @ContainerScoped
+   private InstanceProducer<Embedded> embeddedProducer;
 
    /**
     * Constructor
@@ -194,7 +198,8 @@ public class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCACont
       {
          embedded.startup();
 
-         instanceProducer.set(createContext());
+         contextProducer.set(createContext());
+         embeddedProducer.set(embedded);
       }
       catch (Throwable t)
       {
