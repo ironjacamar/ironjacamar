@@ -323,6 +323,22 @@ raa.setEnabled(true);
 
         </section>
 
+        <section id="embedded_usage_advanced_ironjacamar">
+          <title>IronJacamar integration</title>
+
+          <para>The code sample below shows how to use Arquillian to deploy a dynamic ShrinkWrap resource adapter archive
+            and inject the IronJacamar metadata repository into the test case such that assertions can be made.</para>
+
+          <para>The IronJacamar container features various components that makes up the entire Java EE Connector Architecture
+            container. The available list of components can be viewed in the configuration of the container or through
+            the management console under the <code>Kernel</code> category.</para>
+
+          <programlisting language="java">
+<xi:include parse="text" href="../../../embedded/src/test/java/org/jboss/jca/embedded/unit/InjectTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+          </programlisting>
+
+        </section>
+
       </section>
 
    </section>
