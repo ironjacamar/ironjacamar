@@ -59,10 +59,14 @@ public class ModuleXml
 
    /**
     * Get the API definiton
-    * @param version The version
+    * @param commonApiVersion The version
+    * @param commonSpiVersion The version
+    * @param coreApiVersion The version
     * @return The value
     */
-   public static List<String> getApi(String version)
+   public static List<String> getApi(String commonApiVersion,
+                                     String commonSpiVersion,
+                                     String coreApiVersion)
    {
       List<String> result = new ArrayList<String>();
 
@@ -75,9 +79,9 @@ public class ModuleXml
 
       result.add("<module xmlns=\"urn:jboss:module:1.0\" name=\"org.jboss.ironjacamar.api\">");
       result.add("  <resources>");
-      result.add("    <resource-root path=\"ironjacamar-common-api-" + version + ".jar\"/>");
-      result.add("    <resource-root path=\"ironjacamar-common-spi-" + version + ".jar\"/>");
-      result.add("    <resource-root path=\"ironjacamar-core-api-" + version + ".jar\"/>");
+      result.add("    <resource-root path=\"ironjacamar-common-api-" + commonApiVersion + ".jar\"/>");
+      result.add("    <resource-root path=\"ironjacamar-common-spi-" + commonSpiVersion + ".jar\"/>");
+      result.add("    <resource-root path=\"ironjacamar-core-api-" + coreApiVersion + ".jar\"/>");
       result.add("  </resources>");
 
       result.add("");
@@ -96,10 +100,16 @@ public class ModuleXml
 
    /**
     * Get the implementation definiton
-    * @param version The version
+    * @param commonImplVersion The version
+    * @param coreImplVersion The version
+    * @param deployersCommonVersion The version
+    * @param validatorVersion The version
     * @return The value
     */
-   public static List<String> getImplementation(String version)
+   public static List<String> getImplementation(String commonImplVersion,
+                                                String coreImplVersion,
+                                                String deployersCommonVersion,
+                                                String validatorVersion)
    {
       List<String> result = new ArrayList<String>();
 
@@ -112,10 +122,10 @@ public class ModuleXml
 
       result.add("<module xmlns=\"urn:jboss:module:1.0\" name=\"org.jboss.ironjacamar.impl\">");
       result.add("  <resources>");
-      result.add("    <resource-root path=\"ironjacamar-common-impl-" + version + ".jar\"/>");
-      result.add("    <resource-root path=\"ironjacamar-core-impl-" + version + ".jar\"/>");
-      result.add("    <resource-root path=\"ironjacamar-deployers-common-" + version + ".jar\"/>");
-      result.add("    <resource-root path=\"ironjacamar-validator-" + version + ".jar\"/>");
+      result.add("    <resource-root path=\"ironjacamar-common-impl-" + commonImplVersion + ".jar\"/>");
+      result.add("    <resource-root path=\"ironjacamar-core-impl-" + coreImplVersion + ".jar\"/>");
+      result.add("    <resource-root path=\"ironjacamar-deployers-common-" + deployersCommonVersion + ".jar\"/>");
+      result.add("    <resource-root path=\"ironjacamar-validator-" + validatorVersion + ".jar\"/>");
       result.add("  </resources>");
 
       result.add("");
@@ -143,10 +153,10 @@ public class ModuleXml
 
    /**
     * Get the JDBC definiton
-    * @param version The version
+    * @param jdbcVersion The version
     * @return The value
     */
-   public static List<String> getJdbc(String version)
+   public static List<String> getJdbc(String jdbcVersion)
    {
       List<String> result = new ArrayList<String>();
 
@@ -159,7 +169,7 @@ public class ModuleXml
 
       result.add("<module xmlns=\"urn:jboss:module:1.0\" name=\"org.jboss.ironjacamar.jdbcadapters\">");
       result.add("  <resources>");
-      result.add("    <resource-root path=\"ironjacamar-jdbc-" + version + ".jar\"/>");
+      result.add("    <resource-root path=\"ironjacamar-jdbc-" + jdbcVersion + ".jar\"/>");
       result.add("  </resources>");
 
       result.add("");

@@ -23,6 +23,7 @@ package org.jboss.jca.as.upgrader;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -107,5 +108,69 @@ public class Http
       }
 
       return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String get(String path)
+   {
+      boolean redirect = HttpURLConnection.getFollowRedirects();
+      HttpURLConnection.setFollowRedirects(true);
+
+      InputStream is = null;
+      ByteArrayOutputStream os = new ByteArrayOutputStream();
+      try
+      {
+         URL u = new URL(path);
+         URLConnection connection = u.openConnection();
+
+         connection.connect();
+
+         is = new BufferedInputStream(connection.getInputStream(), 8192);
+
+         int b;
+         while ((b = is.read()) != -1)
+         {
+            os.write(b);
+         }
+
+         os.flush();
+
+         return new String(os.toByteArray(), "UTF-8");
+      }
+      catch (Throwable t)
+      {
+         // Nothing to do
+      }
+      finally
+      {
+         if (is != null)
+         {
+            try
+            {
+               is.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+         if (os != null)
+         {
+            try
+            {
+               os.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+
+         HttpURLConnection.setFollowRedirects(redirect);
+      }
+
+      return "";
    }
 }

@@ -39,9 +39,13 @@ import java.io.OutputStream;
  */
 public class Main
 {
-   /** REpository */
-   public static final String REPOSITORY =
+   /** Release repository */
+   public static final String RELEASE_REPOSITORY =
       "http://repository.jboss.org/nexus/content/groups/public/org/jboss/ironjacamar";
+
+   /** Snapshot repository */
+   public static final String SNAPSHOT_REPOSITORY =
+      "http://repository.jboss.org/nexus/content/repositories/snapshots/org/jboss/ironjacamar";
 
    /**
     * API artifacts
@@ -157,19 +161,48 @@ public class Main
 
       toDirectory.mkdirs();
 
-      for (String artifact : API_ARTIFACTS)
+      if (version.endsWith("-SNAPSHOT"))
       {
-         downloadArtifact(artifact, version, toDirectory);
-      }
+         for (String artifact : API_ARTIFACTS)
+         {
+            String snapshotVersion = MavenMetadata.getVersion(SNAPSHOT_REPOSITORY + "/" + artifact + "/" +
+                                                              version + "/maven-metadata.xml");
 
-      for (String artifact : IMPLEMENTATION_ARTIFACTS)
-      {
-         downloadArtifact(artifact, version, toDirectory);
-      }
+            downloadSnapshotArtifact(artifact, version, snapshotVersion, toDirectory);
+         }
 
-      for (String artifact : JDBC_ARTIFACTS)
+         for (String artifact : IMPLEMENTATION_ARTIFACTS)
+         {
+            String snapshotVersion = MavenMetadata.getVersion(SNAPSHOT_REPOSITORY + "/" + artifact + "/" +
+                                                              version + "/maven-metadata.xml");
+
+            downloadSnapshotArtifact(artifact, version, snapshotVersion, toDirectory);
+         }
+
+         for (String artifact : JDBC_ARTIFACTS)
+         {
+            String snapshotVersion = MavenMetadata.getVersion(SNAPSHOT_REPOSITORY + "/" + artifact + "/" +
+                                                              version + "/maven-metadata.xml");
+
+            downloadSnapshotArtifact(artifact, version, snapshotVersion, toDirectory);
+         }
+      }
+      else
       {
-         downloadArtifact(artifact, version, toDirectory);
+         for (String artifact : API_ARTIFACTS)
+         {
+            downloadArtifact(artifact, version, toDirectory);
+         }
+
+         for (String artifact : IMPLEMENTATION_ARTIFACTS)
+         {
+            downloadArtifact(artifact, version, toDirectory);
+         }
+
+         for (String artifact : JDBC_ARTIFACTS)
+         {
+            downloadArtifact(artifact, version, toDirectory);
+         }
       }
 
       System.out.println("Download: Done");
@@ -184,12 +217,33 @@ public class Main
     * @param dest The destination
     * @exception Throwable If an error occurs
     */
-   private static void downloadArtifact(String name, String version, File destination) throws Throwable
+   private static void downloadArtifact(String name, String version, File destination)
+      throws Throwable
    {
       Http downloader = new Http();
 
-      String fileName = name + "-" + version + ".jar";
-      String path = REPOSITORY + "/" + name + "/" + version + "/" + fileName;
+      String fileName = name + "-" + version + ".jar";;
+      String path = RELEASE_REPOSITORY + "/" + name + "/" + version + "/" + fileName;;
+
+      if (!downloader.download(path, new File(destination, fileName)))
+         throw new IOException("Could not download: " + path);
+   }
+
+   /**
+    * Download snapshot artifact
+    * @param name The artifact name
+    * @param version The version
+    * @param snapshotVersion The snapshot version
+    * @param dest The destination
+    * @exception Throwable If an error occurs
+    */
+   private static void downloadSnapshotArtifact(String name, String version, String snapshotVersion, File destination)
+      throws Throwable
+   {
+      Http downloader = new Http();
+
+      String fileName = name + "-" + snapshotVersion + ".jar";;
+      String path = SNAPSHOT_REPOSITORY + "/" + name + "/" + version + "/" + fileName;;
 
       if (!downloader.download(path, new File(destination, fileName)))
          throw new IOException("Could not download: " + path);
@@ -248,7 +302,15 @@ public class Main
             int firstDot = name.indexOf(".");
             int jar = name.indexOf(".jar");
 
-            return name.substring(firstDot - 1, jar);
+            String s = name.substring(firstDot - 1, jar);
+            if (s.indexOf("-") == -1)
+            {
+               return s;
+            }
+            else
+            {
+               return s.substring(0, s.indexOf("-")) + "-SNAPSHOT";
+            }
          }
       }
 
@@ -398,15 +460,14 @@ public class Main
       File apiMain = new File(apiRoot, "main");
       apiMain.mkdirs();
 
-      for (String artifact : API_ARTIFACTS)
-      {
-         installArtifact(fromDirectory, artifact, version, apiMain);
-      }
+      String commonApiVersion = installArtifact(fromDirectory, API_ARTIFACTS[0], apiMain);
+      String commonSpiVersion = installArtifact(fromDirectory, API_ARTIFACTS[1], apiMain);
+      String coreApiVersion = installArtifact(fromDirectory, API_ARTIFACTS[2], apiMain);
 
       File apiModuleXml = new File(apiMain, "module.xml");
       FileWriter fw = new FileWriter(apiModuleXml);
 
-      for (String s : ModuleXml.getApi(version))
+      for (String s : ModuleXml.getApi(commonApiVersion, commonSpiVersion, coreApiVersion))
       {
          fw.write(s);
          fw.write("\n");
@@ -418,15 +479,16 @@ public class Main
       File implMain = new File(implRoot, "main");
       implMain.mkdirs();
 
-      for (String artifact : IMPLEMENTATION_ARTIFACTS)
-      {
-         installArtifact(fromDirectory, artifact, version, implMain);
-      }
+      String commonImplVersion = installArtifact(fromDirectory, IMPLEMENTATION_ARTIFACTS[0], implMain);
+      String coreImplVersion = installArtifact(fromDirectory, IMPLEMENTATION_ARTIFACTS[1], implMain);
+      String deployersCommonVersion = installArtifact(fromDirectory, IMPLEMENTATION_ARTIFACTS[2], implMain);
+      String validatorVersion = installArtifact(fromDirectory, IMPLEMENTATION_ARTIFACTS[3], implMain);
 
       File implModuleXml = new File(implMain, "module.xml");
       fw = new FileWriter(implModuleXml);
 
-      for (String s : ModuleXml.getImplementation(version))
+      for (String s : ModuleXml.getImplementation(commonImplVersion, coreImplVersion, 
+                                                  deployersCommonVersion, validatorVersion))
       {
          fw.write(s);
          fw.write("\n");
@@ -438,15 +500,12 @@ public class Main
       File jdbcMain = new File(jdbcRoot, "main");
       jdbcMain.mkdirs();
 
-      for (String artifact : JDBC_ARTIFACTS)
-      {
-         installArtifact(fromDirectory, artifact, version, jdbcMain);
-      }
+      String jdbcVersion = installArtifact(fromDirectory, JDBC_ARTIFACTS[0], jdbcMain);
 
       File jdbcModuleXml = new File(jdbcMain, "module.xml");
       fw = new FileWriter(jdbcModuleXml);
 
-      for (String s : ModuleXml.getJdbc(version))
+      for (String s : ModuleXml.getJdbc(jdbcVersion))
       {
          fw.write(s);
          fw.write("\n");
@@ -462,15 +521,30 @@ public class Main
     * Install artifact
     * @param from The from directory
     * @param artifact The artifact name
-    * @param version The version
     * @param to The to directory
+    * @return The version number
     * @exception Throwable If an error occurs
     */
-   private static void installArtifact(File from, String artifact, String version, File to) throws Throwable
+   private static String installArtifact(File from, String artifact, File to) throws Throwable
    {
-      File src = new File(from, artifact + "-" + version + ".jar");
-      File dest = new File(to, artifact + "-" + version + ".jar");
+      File[] files = from.listFiles();
 
-      copy(src, dest);
+      for (File f : files)
+      {
+         if (f.getName().startsWith(artifact))
+         {
+            File dest = new File(to, f.getName());
+            copy(f, dest);
+
+            String version = f.getName();
+
+            version = version.substring(artifact.length() + 1);
+            version = version.substring(0, version.length() - 4);
+
+            return version;
+         }
+      }
+
+      throw new IOException(artifact + " couldn't be found");
    }
 }
