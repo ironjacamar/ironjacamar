@@ -211,6 +211,7 @@ public abstract class AbstractDsDeployer
       {
          List<Object> cfs = new ArrayList<Object>(1);
          List<String> jndis = new ArrayList<String>(1);
+         List<ConnectionManager> cms = new ArrayList<ConnectionManager>(1);
          List<XAResourceRecovery> recoveryModules = new ArrayList<XAResourceRecovery>(1);
          List<org.jboss.jca.core.api.management.DataSource> mgts =
             new ArrayList<org.jboss.jca.core.api.management.DataSource>(1);
@@ -235,6 +236,8 @@ public abstract class AbstractDsDeployer
                      {
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(false);
+
+                        ConnectionManager[] cm = new ConnectionManager[1];
 
                         if (dataSource.getDriverClass() == null && dataSource.getDriver() != null &&
                             dataSource instanceof DataSourceImpl)
@@ -278,12 +281,13 @@ public abstract class AbstractDsDeployer
                         }
 
                         Object cf = deployDataSource(dataSource, jndiName,
-                                                     uniqueJdbcLocalId, mgtDataSource, jdbcLocalDeploymentCl);
+                                                     uniqueJdbcLocalId, cm, mgtDataSource, jdbcLocalDeploymentCl);
 
                         bindConnectionFactory(deploymentName, jndiName, cf);
 
                         cfs.add(cf);
                         jndis.add(jndiName);
+                        cms.add(cm[0]);
                         mgts.add(mgtDataSource);
                      }
                      catch (Throwable t)
@@ -320,7 +324,9 @@ public abstract class AbstractDsDeployer
                      {
                         org.jboss.jca.core.api.management.DataSource mgtDataSource =
                            new org.jboss.jca.core.api.management.DataSource(true);
-                        XAResourceRecovery recovery = null;
+
+                        XAResourceRecovery[] recovery = new XAResourceRecovery[1];
+                        ConnectionManager[] cm = new ConnectionManager[1];
 
                         if (xaDataSource.getXaDataSourceClass() == null && xaDataSource.getDriver() != null &&
                             xaDataSource instanceof XADataSourceImpl)
@@ -331,17 +337,18 @@ public abstract class AbstractDsDeployer
                         }
 
                         Object cf = deployXADataSource(xaDataSource,
-                                                       jndiName, uniqueJdbcXAId,
+                                                       jndiName, uniqueJdbcXAId, cm,
                                                        recovery,
                                                        mgtDataSource,
                                                        jdbcXADeploymentCl);
 
-                        recoveryModules.add(recovery);
+                        recoveryModules.add(recovery[0]);
 
                         bindConnectionFactory(deploymentName, jndiName, cf);
 
                         cfs.add(cf);
                         jndis.add(jndiName);
+                        cms.add(cm[0]);
                         mgts.add(mgtDataSource);
                      }
                      catch (Throwable t)
@@ -360,6 +367,7 @@ public abstract class AbstractDsDeployer
 
          return new CommonDeployment(url, deploymentName, true, null, null, cfs.toArray(new Object[cfs.size()]),
                                      jndis.toArray(new String[jndis.size()]),
+                                     cms.toArray(new ConnectionManager[cms.size()]),
                                      null, null,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
                                      null,
@@ -411,16 +419,15 @@ public abstract class AbstractDsDeployer
     * @param ds The datasource
     * @param jndiName The JNDI name
     * @param uniqueId The unique id for the resource adapter
+    * @param cma The connection manager array
     * @param mgtDs The management of a datasource
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployDataSource(DataSource ds, String jndiName, String uniqueId,
+   private Object deployDataSource(DataSource ds, String jndiName, String uniqueId, ConnectionManager[] cma,
                                    org.jboss.jca.core.api.management.DataSource mgtDs, ClassLoader cl) throws Throwable
    {
-      log.debug("DataSource=" + ds);
-
       ManagedConnectionFactory mcf = createMcf(ds, uniqueId, cl);
 
       initAndInjectClassLoaderPlugin(mcf, ds);
@@ -497,6 +504,7 @@ public abstract class AbstractDsDeployer
       }
 
       cm.setJndiName(jndiName);
+      cma[0] = cm;
 
       String poolName = null;
       if (ds.getPoolName() != null)
@@ -566,19 +574,18 @@ public abstract class AbstractDsDeployer
     * @param ds The datasource
     * @param jndiName The JNDI name
     * @param uniqueId The unique id for the resource adapter
+    * @param cma The connection manager array
     * @param recovery The recovery module
     * @param mgtDs The management of a datasource
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
-   private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId,
-                                     XAResourceRecovery recovery,
+   private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId, ConnectionManager[] cma,
+                                     XAResourceRecovery[] recovery,
                                      org.jboss.jca.core.api.management.DataSource mgtDs, ClassLoader cl)
       throws Throwable
    {
-      log.debug("XaDataSource=" + ds);
-
       ManagedConnectionFactory mcf = createMcf(ds, uniqueId, cl);
 
       initAndInjectClassLoaderPlugin(mcf, ds);
@@ -663,6 +670,7 @@ public abstract class AbstractDsDeployer
                                  xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
 
       cm.setJndiName(jndiName);
+      cma[0] = cm;
 
       String poolName = null;
       if (ds.getPoolName() != null)
@@ -803,7 +811,7 @@ public abstract class AbstractDsDeployer
          recoveryImpl.setJndiName(cm.getJndiName());
          getTransactionIntegration().getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
 
-         recovery = recoveryImpl;
+         recovery[0] = recoveryImpl;
       }
 
       // Prefill

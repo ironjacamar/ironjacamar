@@ -76,7 +76,7 @@ public class AbstractConnectionManagerTestCase
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertNull(connectionManager.getCachedConnectionManager());
-      connectionManager.setCachedConnectionManager(new CachedConnectionManagerImpl(null, null));
+      connectionManager.setCachedConnectionManager(new CachedConnectionManagerImpl(null, null, null));
       assertNotNull(connectionManager.getCachedConnectionManager());
    }
 
@@ -208,7 +208,7 @@ public class AbstractConnectionManagerTestCase
    public void testGetManagedConnectionInShutdownedManager() throws ResourceException
    {
       AbstractConnectionManager connectionManager = new MockConnectionManager();
-      connectionManager.setShutDown(true);
+      connectionManager.shutdown();
       connectionManager.getManagedConnection(null, null);
    }
 

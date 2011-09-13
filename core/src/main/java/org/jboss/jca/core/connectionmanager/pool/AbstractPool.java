@@ -276,6 +276,8 @@ public abstract class AbstractPool implements Pool
     */
    public void emptyManagedConnectionPool(ManagedConnectionPool pool)
    {
+      log.debug(poolName + ": emptyManagedConnectionPool(" + pool + ")");
+
       if (pool != null)
       {
          Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
@@ -306,6 +308,8 @@ public abstract class AbstractPool implements Pool
     */
    public void flush(boolean kill)
    {
+      log.debug(poolName + ": flush(" + kill + ")");
+
       Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
 
       Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
@@ -577,6 +581,8 @@ public abstract class AbstractPool implements Pool
     */
    public void shutdown()
    {
+      log.debug(poolName + ": shutdown");
+
       flush(true);
    }
 

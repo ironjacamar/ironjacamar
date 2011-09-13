@@ -28,6 +28,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.spi.transaction.TxUtils;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -81,6 +82,9 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
    private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
 
+   /** User transaction registry */
+   private UserTransactionRegistry userTransactionRegistry;
+
    /**
     * ThreadLocal that holds current calling meta-programming aware
     * object, used in case someone is idiotic enough to cache a
@@ -109,12 +113,15 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     * Creates a new instance.
     * @param transactionManager The transaction manager
     * @param transactionSynchronizationRegistry the transaction synchronization registry
+    * @param userTransactionRegistry The user transaction registry
     */
    public CachedConnectionManagerImpl(TransactionManager transactionManager,
-                                      TransactionSynchronizationRegistry transactionSynchronizationRegistry)
+                                      TransactionSynchronizationRegistry transactionSynchronizationRegistry,
+                                      UserTransactionRegistry userTransactionRegistry)
    {
       this.transactionManager = transactionManager;
       this.transactionSynchronizationRegistry = transactionSynchronizationRegistry;
+      this.userTransactionRegistry = userTransactionRegistry;
    }
 
    /**
@@ -151,6 +158,24 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    public void setError(boolean v)
    {
       error = v;
+   }
+
+   /**
+    * Start
+    */
+   public void start()
+   {
+      if (userTransactionRegistry != null)
+         userTransactionRegistry.addListener(this);
+   }
+
+   /**
+    * Stop
+    */
+   public void stop()
+   {
+      if (userTransactionRegistry != null)
+         userTransactionRegistry.removeListener(this);
    }
 
    /**

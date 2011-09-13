@@ -101,4 +101,9 @@ public interface ConnectionManager extends
     * @param c connection
     */
    public void unregisterAssociation(ConnectionListener cl, Object c);
+
+   /**
+    * Shutdown
+    */
+   public void shutdown();
 }

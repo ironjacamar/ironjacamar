@@ -24,6 +24,7 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
@@ -64,6 +65,9 @@ public class DsXmlDeployment implements Deployment
    /** The JNDI names */
    private String[] jndis;
 
+   /** The connection managers */
+   private ConnectionManager[] cms;
+
    /** XAResource recovery modules */
    private XAResourceRecovery[] recoveryModules;
 
@@ -91,6 +95,7 @@ public class DsXmlDeployment implements Deployment
     * @param deploymentName The unique deployment name
     * @param cfs The connection factories
     * @param jndis The JNDI names for the factories
+    * @param cms The connection managers
     * @param recoveryModules The recovery modules
     * @param recoveryRegistry The recovery registry
     * @param dataSources The management view of the datasources
@@ -101,7 +106,7 @@ public class DsXmlDeployment implements Deployment
     */
    public DsXmlDeployment(URL deployment, 
                           String deploymentName,
-                          Object[] cfs, String[] jndis,
+                          Object[] cfs, String[] jndis, ConnectionManager[] cms,
                           XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                           DataSource[] dataSources, ManagementRepository managementRepository,
                           List<ObjectName> onames, MBeanServer mbeanServer,
@@ -111,6 +116,7 @@ public class DsXmlDeployment implements Deployment
       this.deploymentName = deploymentName;
       this.cfs = cfs;
       this.jndis = jndis;
+      this.cms = cms;
       this.recoveryModules = recoveryModules;
       this.recoveryRegistry = recoveryRegistry;
       this.dataSources = dataSources;
@@ -175,6 +181,14 @@ public class DsXmlDeployment implements Deployment
          for (XAResourceRecovery recovery : recoveryModules)
          {
             recoveryRegistry.removeXAResourceRecovery(recovery);
+         }
+      }
+
+      if (cms != null)
+      {
+         for (ConnectionManager cm : cms)
+         {
+            cm.shutdown();
          }
       }
 

@@ -24,6 +24,7 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
@@ -81,6 +82,9 @@ public abstract class AbstractFungalDeployment implements Deployment
    /** The JNDI names of the connection factories */
    protected String[] cfJndis;
 
+   /** The connection managers */
+   protected ConnectionManager[] cfCMs;
+
    /** The admin objects */
    protected Object[] aos;
 
@@ -120,6 +124,7 @@ public abstract class AbstractFungalDeployment implements Deployment
     * @param resourceAdapterRepository The resource adapter repository
     * @param cfs The connection factories
     * @param cfJndis The JNDI names of the connection factories
+    * @param cfCMs The connection managers
     * @param aos The admin objects
     * @param aoJndis The JNDI names of the admin objects
     * @param recoveryModules The recovery modules
@@ -135,7 +140,7 @@ public abstract class AbstractFungalDeployment implements Deployment
                                    String raKey,
                                    JndiStrategy jndiStrategy, MetadataRepository metadataRepository, 
                                    ResourceAdapterRepository resourceAdapterRepository,
-                                   Object[] cfs, String[] cfJndis,
+                                   Object[] cfs, String[] cfJndis, ConnectionManager[] cfCMs,
                                    Object[] aos, String[] aoJndis,
                                    XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                                    ManagementRepository managementRepository, Connector connector,
@@ -152,6 +157,7 @@ public abstract class AbstractFungalDeployment implements Deployment
       this.rar = resourceAdapterRepository;
       this.cfs = cfs;
       this.cfJndis = cfJndis;
+      this.cfCMs = cfCMs;
       this.aos = aos;
       this.aoJndis = aoJndis;
       this.recoveryModules = recoveryModules;
@@ -252,6 +258,14 @@ public abstract class AbstractFungalDeployment implements Deployment
                {
                   log.warn("Exception during unregistering deployment", nfe);
                }
+            }
+         }
+
+         if (cfCMs != null)
+         {
+            for (ConnectionManager cm : cfCMs)
+            {
+               cm.shutdown();
             }
          }
 

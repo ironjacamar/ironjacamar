@@ -30,7 +30,6 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
-import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import java.io.IOException;
 import java.io.NotSerializableException;
@@ -95,9 +94,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Startup/ShutDown flag */
    private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
-   /** User transaction registry */
-   private UserTransactionRegistry userTransactionRegistry;
-
    /** Cached connection manager */
    private CachedConnectionManager cachedConnectionManager;
 
@@ -138,24 +134,12 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
 
    /**
-    * Set the user transaction registry
-    * @param utr The value
-    */
-   public void setUserTransactionRegistry(UserTransactionRegistry utr)
-   {
-      this.userTransactionRegistry = utr;
-   }
-
-   /**
     * Sets cached connection manager.
     * @param cachedConnectionManager cached connection manager
     */
    public void setCachedConnectionManager(CachedConnectionManager cachedConnectionManager)
    {
       this.cachedConnectionManager = cachedConnectionManager;
-
-      if (userTransactionRegistry != null && cachedConnectionManager != null)
-         userTransactionRegistry.addListener(cachedConnectionManager);
    }
 
    /**
@@ -168,18 +152,15 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
 
    /**
-    * Sets shut down flag.
-    * @param shutDown shut down flag
+    * Shutdown
     */
-   public void setShutDown(boolean shutDown)
+   public void shutdown()
    {
-      this.shutdown.set(shutDown);
+      getLogger().debug(jndiName + ": shutdown");
+      shutdown.set(true);
 
-      if (shutDown)
-      {
-         if (userTransactionRegistry != null && cachedConnectionManager != null)
-            userTransactionRegistry.removeListener(cachedConnectionManager);
-      }
+      if (pool != null)
+         pool.shutdown();
    }
 
    /**

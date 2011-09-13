@@ -23,6 +23,7 @@ package org.jboss.jca.deployers.common;
 
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.DataSource;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.deployers.DeployersLogger;
 
@@ -55,6 +56,8 @@ public class CommonDeployment
 
    private final String[] cfJndiNames;
 
+   private final ConnectionManager[] cfCMs;
+
    private final Object[] aos;
 
    private final String[] aoJndiNames;
@@ -79,6 +82,7 @@ public class CommonDeployment
     * @param resourceAdapterKey resourceAdapter key
     * @param cfs The connection factories
     * @param cfJndiNames The JNDI names for the connection factories
+    * @param cfCM The connection managers
     * @param aos The admin objects
     * @param aoJndiNames The JNDI names for the admin objects
     * @param recoveryModules The recovery modules
@@ -89,7 +93,7 @@ public class CommonDeployment
     */
    public CommonDeployment(URL url, String deploymentName, boolean activateDeployment,
                            ResourceAdapter resourceAdapter, String resourceAdapterKey,
-                           Object[] cfs, String[] cfJndiNames, 
+                           Object[] cfs, String[] cfJndiNames, ConnectionManager[] cfCM,
                            Object[] aos, String[] aoJndiNames,
                            XAResourceRecovery[] recoveryModules,
                            Connector connector, DataSource[] dataSources,
@@ -103,6 +107,7 @@ public class CommonDeployment
       this.resourceAdapterKey = resourceAdapterKey;
       this.cfs = cfs != null ? Arrays.copyOf(cfs, cfs.length) : null;
       this.cfJndiNames = cfJndiNames != null ? Arrays.copyOf(cfJndiNames, cfJndiNames.length) : null;
+      this.cfCMs = cfCM != null ? Arrays.copyOf(cfCM, cfCM.length) : null;
       this.aos = aos != null ? Arrays.copyOf(aos, aos.length) : null;
       this.aoJndiNames = aoJndiNames != null ? Arrays.copyOf(aoJndiNames, aoJndiNames.length) : null;
       this.recoveryModules = recoveryModules;
@@ -179,6 +184,16 @@ public class CommonDeployment
    public final String[] getCfJndiNames()
    {
       return cfJndiNames != null ? Arrays.copyOf(cfJndiNames, cfJndiNames.length) : null;
+   }
+
+   /**
+    * Get the connection managers.
+    *
+    * @return The value
+    */
+   public final ConnectionManager[] getConnectionManagers()
+   {
+      return cfCMs != null ? Arrays.copyOf(cfCMs, cfCMs.length) : null;
    }
 
    /**

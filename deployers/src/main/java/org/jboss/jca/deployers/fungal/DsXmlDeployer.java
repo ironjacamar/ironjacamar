@@ -230,7 +230,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                                                           kernel.getName());
 
          return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
-                                    c.getCfs(), c.getCfJndiNames(),
+                                    c.getCfs(), c.getCfJndiNames(), c.getConnectionManagers(),
                                     c.getRecovery(), getXAResourceRecoveryRegistry(),
                                     c.getDataSources(), getManagementRepository(),
                                     onames, kernel.getMBeanServer(),

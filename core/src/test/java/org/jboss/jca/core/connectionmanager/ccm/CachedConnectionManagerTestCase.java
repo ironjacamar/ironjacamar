@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.ccm;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -69,7 +70,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
       ConnectionCacheListener cm0 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm1 = mock(ConnectionCacheListener.class);
       ConnectionRecord cr0 = mock(ConnectionRecord.class);
@@ -112,7 +114,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
 
       ccm.getCurrentObjects().set(null);
       //then
@@ -131,7 +134,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
       ConnectionCacheListener cm0 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm1 = mock(ConnectionCacheListener.class);
       ConnectionRecord cr0 = mock(ConnectionRecord.class);
@@ -176,7 +180,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
 
       ccm.getCurrentObjects().set(null);
       //then (parameters are not important the key of this test is that given ccm have no associations
@@ -195,7 +200,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
       ConnectionCacheListener cm0 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm1 = mock(ConnectionCacheListener.class);
       ConnectionRecord cr0 = mock(ConnectionRecord.class);
@@ -242,7 +248,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
       ConnectionCacheListener cm0 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm1 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm2 = mock(ConnectionCacheListener.class);
@@ -293,7 +300,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
 
       ccm.getCurrentObjects().set(null);
       //then (parameters are not important the key of this test is that given ccm have no associations
@@ -312,7 +320,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
       ConnectionCacheListener cm0 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm1 = mock(ConnectionCacheListener.class);
       ConnectionRecord cr0 = mock(ConnectionRecord.class);
@@ -358,7 +367,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
       ConnectionCacheListener cm0 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm1 = mock(ConnectionCacheListener.class);
       ConnectionRecord cr0 = mock(ConnectionRecord.class);
@@ -406,7 +416,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
 
       //when
       ccm.pushMetaAwareObject(mock(Object.class), null);
@@ -428,7 +439,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
 
       ConnectionCacheListener cm0 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm1 = mock(ConnectionCacheListener.class);
@@ -478,7 +490,8 @@ public class CachedConnectionManagerTestCase
       //given
       TransactionManager tm = mock(TransactionManager.class);
       TransactionSynchronizationRegistry tsr = mock(TransactionSynchronizationRegistry.class);
-      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr);
+      UserTransactionRegistry utr = mock(UserTransactionRegistry.class);
+      CachedConnectionManagerImpl ccm = new CachedConnectionManagerImpl(tm, tsr, utr);
 
       ConnectionCacheListener cm0 = mock(ConnectionCacheListener.class);
       ConnectionCacheListener cm1 = mock(ConnectionCacheListener.class);
