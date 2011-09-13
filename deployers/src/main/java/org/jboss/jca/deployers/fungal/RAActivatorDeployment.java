@@ -24,6 +24,7 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
@@ -55,6 +56,7 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
     * @param resourceAdapterRepository The resource adapter repository
     * @param cfs The connection factories
     * @param cfJndis The JNDI names for the connection factories
+    * @param cfCMs The connection managers
     * @param aos The admin objects
     * @param aoJndis The JNDI names for the admin objects
     * @param recoveryModules The recovery modules
@@ -69,7 +71,7 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
    public RAActivatorDeployment(URL deployment, String deploymentName, ResourceAdapter ra, String raKey,
                                 JndiStrategy jndiStrategy,
                                 MetadataRepository mdr, ResourceAdapterRepository resourceAdapterRepository,
-                                Object[] cfs, String[] cfJndis, 
+                                Object[] cfs, String[] cfJndis, ConnectionManager[] cfCMs,
                                 Object[] aos, String[] aoJndis, 
                                 XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                                 ManagementRepository managementRepository, Connector connector,
@@ -77,7 +79,7 @@ public class RAActivatorDeployment extends AbstractFungalDeployment
                                 ClassLoader cl, DeployersLogger log)
    {
       super(deployment, deploymentName, true, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
-            cfs, cfJndis, aos, aoJndis, recoveryModules, recoveryRegistry, managementRepository,
+            cfs, cfJndis, cfCMs, aos, aoJndis, recoveryModules, recoveryRegistry, managementRepository,
             connector, server, objectNames, cl, log);
    }
 }

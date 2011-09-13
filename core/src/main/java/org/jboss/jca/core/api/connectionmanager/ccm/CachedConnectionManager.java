@@ -70,4 +70,14 @@ public interface CachedConnectionManager extends UserTransactionListener, Compon
     * @param connection connection handle
     */
    public void unregisterConnection(ConnectionCacheListener cm, Object connection);
+
+   /**
+    * Start
+    */
+   public void start();
+
+   /**
+    * Stop
+    */
+   public void stop();
 }

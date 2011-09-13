@@ -76,7 +76,8 @@ public class ConfigPropertyRaXmlTestCase
                     ConfigPropertyManagedConnection.class, ConfigPropertyConnectionFactory.class,
                     ConfigPropertyManagedConnectionMetaData.class,
                     ConfigPropertyConnectionFactoryImpl.class, ConfigPropertyConnection.class,
-                    ConfigPropertyConnectionImpl.class);
+                    ConfigPropertyConnectionImpl.class, ConfigPropertyAdminObjectInterface.class,
+                    ConfigPropertyAdminObjectImpl.class);
       raa.addAsLibrary(ja);
 
       raa.addAsManifestResource(deploymentName + "/META-INF/ra.xml", "ra.xml");

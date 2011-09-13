@@ -28,7 +28,6 @@ import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
-import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
@@ -103,7 +102,7 @@ public class ConnectionManagerFactory
                     useCcm, ccm,
                     flushStrategy,
                     allocationRetry, allocationRetryWaitMillis, 
-                    null, null);
+                    null);
       setNoTxProperties(cm);
 
       return cm;
@@ -180,7 +179,7 @@ public class ConnectionManagerFactory
                     useCcm, ccm,
                     flushStrategy,
                     allocationRetry, allocationRetryWaitMillis,
-                    txIntegration.getTransactionManager(), txIntegration.getUserTransactionRegistry());
+                    txIntegration.getTransactionManager());
       setTxProperties(cm, interleaving, xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
 
       return cm;
@@ -198,7 +197,6 @@ public class ConnectionManagerFactory
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
     * @param tm The transaction manager
-    * @param utr The user transaction registry
     */
    private void setProperties(AbstractConnectionManager cm,
                               Pool pool,
@@ -209,8 +207,7 @@ public class ConnectionManagerFactory
                               FlushStrategy flushStrategy,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
-                              TransactionManager tm,
-                              UserTransactionRegistry utr)
+                              TransactionManager tm)
    {
       pool.setConnectionListenerFactory(cm);
       cm.setPool(pool);
@@ -225,8 +222,6 @@ public class ConnectionManagerFactory
 
       if (allocationRetryWaitMillis != null)
          cm.setAllocationRetryWaitMillis(allocationRetryWaitMillis.longValue());
-
-      cm.setUserTransactionRegistry(utr);
 
       if (useCcm)
          cm.setCachedConnectionManager(ccm);

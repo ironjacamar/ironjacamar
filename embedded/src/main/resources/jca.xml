@@ -150,6 +150,7 @@
     <constructor>
       <parameter><inject bean="TransactionIntegration" property="TransactionManager"/></parameter>
       <parameter><inject bean="TransactionIntegration" property="TransactionSynchronizationRegistry"/></parameter>
+      <parameter><inject bean="TransactionIntegration" property="UserTransactionRegistry"/></parameter>
     </constructor>
     <property name="Debug">false</property>
     <property name="Error">false</property>

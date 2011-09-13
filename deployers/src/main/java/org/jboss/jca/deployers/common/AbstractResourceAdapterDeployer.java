@@ -916,6 +916,7 @@ public abstract class AbstractResourceAdapterDeployer
          List<Object> beanValidationObjects = new ArrayList<Object>();
          List<Object> cfs = new ArrayList<Object>();
          List<String> cfJndiNames = new ArrayList<String>();
+         List<ConnectionManager> cfCMs = new ArrayList<ConnectionManager>();
          List<Object> aos = new ArrayList<Object>();
          List<String> aoJndiNames = new ArrayList<String>();
          List<XAResourceRecovery> recoveryModules = new ArrayList<XAResourceRecovery>(1);
@@ -1305,6 +1306,7 @@ public abstract class AbstractResourceAdapterDeployer
                               cfJndiNames.add(jndiName);
 
                               cm.setJndiName(jndiName);
+                              cfCMs.add(cm);
                               
                               String poolName = null;
                               
@@ -1324,6 +1326,7 @@ public abstract class AbstractResourceAdapterDeployer
                               cfJndiNames.addAll(Arrays.asList(bindCfJndiNames));
                               
                               cm.setJndiName(bindCfJndiNames[0]);
+                              cfCMs.add(cm);
                               
                               String poolName = null;
                               
@@ -1721,16 +1724,15 @@ public abstract class AbstractResourceAdapterDeployer
 
                                              recoveryImpl =
                                                 getTransactionIntegration().
-                                                createXAResourceRecovery(mcf,
-                                                                         padXid,
-                                                                         isSameRMOverride,
-                                                                         wrapXAResource,
-                                                                         recoverUser,
-                                                                         recoverPassword,
-                                                                         recoverSecurityDomain,
-                                                                         getSubjectFactory(
-                                                                            recoverSecurityDomain),
-                                                                         plugin);
+                                                   createXAResourceRecovery(mcf,
+                                                                            padXid,
+                                                                            isSameRMOverride,
+                                                                            wrapXAResource,
+                                                                            recoverUser,
+                                                                            recoverPassword,
+                                                                            recoverSecurityDomain,
+                                                                            getSubjectFactory(recoverSecurityDomain),
+                                                                            plugin);
                                           }
                                        }
                                     }
@@ -1767,6 +1769,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           cfJndiNames.add(jndiName);
 
                                           cm.setJndiName(jndiName);
+                                          cfCMs.add(cm);
 
                                           String poolName = null;
                                           if (connectionDefinition != null)
@@ -1786,6 +1789,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           cfJndiNames.addAll(Arrays.asList(bindCfJndiNames));
 
                                           cm.setJndiName(bindCfJndiNames[0]);
+                                          cfCMs.add(cm);
 
                                           String poolName = null;
                                           if (connectionDefinition != null)
@@ -1946,12 +1950,13 @@ public abstract class AbstractResourceAdapterDeployer
 
          Object[] cfObjs = cfs.size() > 0 ? cfs.toArray(new Object[cfs.size()]) : null;
          String[] cfJndis = cfJndiNames.size() > 0 ? cfJndiNames.toArray(new String[cfJndiNames.size()]) : null;
+         ConnectionManager[] cfCM = cfCMs.size() > 0 ? cfCMs.toArray(new ConnectionManager[cfCMs.size()]) : null;
          Object[] aoObjs = aos.size() > 0 ? aos.toArray(new Object[aos.size()]) : null;
          String[] aoJndis = aoJndiNames.size() > 0 ? aoJndiNames.toArray(new String[aoJndiNames.size()]) : null;
          
          return new CommonDeployment(url, deploymentName, activateDeployment,
                                      resourceAdapter, resourceAdapterKey,
-                                     cfObjs, cfJndis,
+                                     cfObjs, cfJndis, cfCM,
                                      aoObjs, aoJndis,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),
                                      mgtConnector, null, cl, log);
