@@ -106,4 +106,26 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 20008, value = "Invalid config-property: %s")
    public void invalidConfigProperty(String cp);
+
+   /**
+    * Connection definition invalid
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20009, value = "Invalid connection definition with class-name: %s")
+   public void connectionDefinitionInvalid(String clz);
+
+   /**
+    * Connection definition class-name null
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 20010, value = "Connection definition with missing class-name")
+   public void connectionDefinitionNull();
+
+   /**
+    * Admin object class-name null
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 20011, value = "Admin object with missing class-name")
+   public void adminObjectNull();
 }

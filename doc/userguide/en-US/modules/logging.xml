@@ -760,6 +760,21 @@
             <entry>Invalid config property</entry>
           </row>
           <row>
+            <entry>20009</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Invalid connection definition</entry>
+          </row>
+          <row>
+            <entry>20010</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Connection definition with missing class-name</entry>
+          </row>
+          <row>
+            <entry>20011</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Admin object with missing class-name</entry>
+          </row>
+          <row>
             <entry>20051</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to start</entry>

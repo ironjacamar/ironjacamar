@@ -445,10 +445,12 @@ public abstract class AbstractResourceAdapterDeployer
     * @param clz The fully quilified class name for the managed connection factory
     * @param mcfs The managed connection facotries
     * @param defs The connection definitions
+    * @param cl The class loader
     * @return The metadata; <code>null</code> if none could be found
     * @exception DeployException Thrown in case of configuration error
     */
-   protected Set<CommonConnDef> findConnectionDefinitions(String clz, List<String> mcfs, List<CommonConnDef> defs)
+   protected Set<CommonConnDef> findConnectionDefinitions(String clz, List<String> mcfs, List<CommonConnDef> defs,
+                                                          ClassLoader cl)
       throws DeployException
    {
       Set<CommonConnDef> result = null;
@@ -466,10 +468,23 @@ public abstract class AbstractResourceAdapterDeployer
                throw new DeployException(clz + " not a valid connection definition");
             }
 
-            result = new HashSet<CommonConnDef>(1);
-            result.add(cd);
+            boolean add = true;
+            if (cd.getClassName() != null)
+            {
+               if (!verifyManagedConnectionFactory(cd.getClassName(), cl))
+               {
+                  log.connectionDefinitionInvalid(cd.getClassName());
+                  add = false;
+               }
+            }
 
-            return result;
+            if (add)
+            {
+               result = new HashSet<CommonConnDef>(1);
+               result.add(cd);
+
+               return result;
+            }
          }
 
          // If there are multiple definitions the MCF class name is mandatory
@@ -478,17 +493,54 @@ public abstract class AbstractResourceAdapterDeployer
 
          for (CommonConnDef cd : defs)
          {
-            if (clz.equals(cd.getClassName()))
+            if (cd.getClassName() == null)
             {
-               if (result == null)
-                  result = new HashSet<CommonConnDef>();
+               log.connectionDefinitionNull();
+            }
+            else
+            {
+               if (clz.equals(cd.getClassName()))
+               {
+                  if (result == null)
+                     result = new HashSet<CommonConnDef>();
 
-               result.add(cd);
+                  result.add(cd);
+               }
+               else
+               {
+                  if (!verifyManagedConnectionFactory(cd.getClassName(), cl))
+                     log.connectionDefinitionInvalid(cd.getClassName());
+               }
             }
          }
       }
 
       return result;
+   }
+
+   /**
+    * Verify the MCF definition
+    * @param clz The class name
+    * @param cl The class loader
+    * @return True if MCF, otherwise false
+    */
+   private boolean verifyManagedConnectionFactory(String clz, ClassLoader cl)
+   {
+      if (clz != null)
+      {
+         try
+         {
+            Class<?> c = Class.forName(clz, true, cl);
+            if (ManagedConnectionFactory.class.isAssignableFrom(c))
+               return true;
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+
+      return false;
    }
 
    /**
@@ -529,12 +581,19 @@ public abstract class AbstractResourceAdapterDeployer
 
          for (org.jboss.jca.common.api.metadata.common.CommonAdminObject cao : defs)
          {
-            if (clz.equals(cao.getClassName()))
+            if (cao.getClassName() == null)
             {
-               if (result == null)
-                  result = new HashSet<CommonAdminObject>();
+               log.adminObjectNull();
+            }
+            else
+            {
+               if (clz.equals(cao.getClassName()))
+               {
+                  if (result == null)
+                     result = new HashSet<CommonAdminObject>();
 
-               result.add(cao);
+                  result.add(cao);
+               }
             }
          }
       }
@@ -1044,7 +1103,7 @@ public abstract class AbstractResourceAdapterDeployer
                   if (cdDefs != null)
                   {
                      connectionDefinitions = 
-                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs);
+                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs, cl);
                   }
                }
 
@@ -1055,7 +1114,7 @@ public abstract class AbstractResourceAdapterDeployer
                   if (cdDefs != null)
                   {
                      connectionDefinitions =
-                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs);
+                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs, cl);
                   }
                }
 
@@ -1412,7 +1471,7 @@ public abstract class AbstractResourceAdapterDeployer
                               {
                                  connectionDefinitions =
                                     findConnectionDefinitions(cdMeta.getManagedConnectionFactoryClass()
-                                                              .getValue(), mcfs, cdDefs);
+                                                              .getValue(), mcfs, cdDefs, cl);
                               }
                            }
 
@@ -1424,7 +1483,7 @@ public abstract class AbstractResourceAdapterDeployer
                               {
                                  connectionDefinitions = 
                                     findConnectionDefinitions(cdMeta.getManagedConnectionFactoryClass().getValue(),
-                                                              mcfs, cdDefs);
+                                                              mcfs, cdDefs, cl);
                               }
                            }
 
