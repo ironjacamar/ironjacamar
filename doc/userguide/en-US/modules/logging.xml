@@ -775,6 +775,16 @@
             <entry>Admin object with missing class-name</entry>
           </row>
           <row>
+            <entry>20012</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Admin object not bound</entry>
+          </row>
+          <row>
+            <entry>20013</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Connection factory not bound</entry>
+          </row>
+          <row>
             <entry>20051</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to start</entry>

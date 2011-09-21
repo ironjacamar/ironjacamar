@@ -888,6 +888,10 @@ public abstract class AbstractResourceAdapterDeployer
                                                               t);
                                  }
                               }
+                              else
+                              {
+                                  log.adminObjectNotBound(aoMeta.getAdminobjectClass().getValue());
+                              }
                            }
                         }
                         else
@@ -1427,6 +1431,10 @@ public abstract class AbstractResourceAdapterDeployer
                               }
                            }
                         }
+                        else
+                        {
+                            log.connectionFactoryNotBound(mcf.getClass().getName());
+                        }
                      }
                   }
                } 
@@ -1900,6 +1908,10 @@ public abstract class AbstractResourceAdapterDeployer
                                              pp.prefill(subject, null, noTxSeparatePool.booleanValue());
                                           }
                                        }
+                                    }
+                                    else
+                                    {
+                                        log.connectionFactoryNotBound(mcf.getClass().getName());
                                     }
                                  }
                               }
