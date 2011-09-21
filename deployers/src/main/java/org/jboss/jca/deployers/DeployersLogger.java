@@ -128,4 +128,20 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = ERROR)
    @Message(id = 20011, value = "Admin object with missing class-name")
    public void adminObjectNull();
+
+   /**
+    * Admin object not bound
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20012, value = "Admin object not bound: %s")
+   public void adminObjectNotBound(String clz);
+
+   /**
+    * Connection factory not bound
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20013, value = "Connection factory not bound: %s")
+   public void connectionFactoryNotBound(String clz);
 }
