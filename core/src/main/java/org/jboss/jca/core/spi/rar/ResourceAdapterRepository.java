@@ -49,6 +49,14 @@ public interface ResourceAdapterRepository
    public void unregisterResourceAdapter(String key) throws NotFoundException;
 
    /**
+    * Get the resource adapter instance based on the unique id
+    * @param uniqueId An unique id that represents the deployment
+    * @return The resource adapter
+    * @exception NotFoundException Thrown if the unique id isn't registered
+    */
+   public ResourceAdapter getResourceAdapter(String uniqueId) throws NotFoundException;
+
+   /**
     * Get the resource adapters unique ids registered
     * @return The unique ids
     */

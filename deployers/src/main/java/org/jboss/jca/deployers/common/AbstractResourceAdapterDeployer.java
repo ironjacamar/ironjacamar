@@ -890,7 +890,7 @@ public abstract class AbstractResourceAdapterDeployer
                               }
                               else
                               {
-                                  log.adminObjectNotBound(aoMeta.getAdminobjectClass().getValue());
+                                 log.adminObjectNotBound(aoMeta.getAdminobjectClass().getValue());
                               }
                            }
                         }
@@ -1433,7 +1433,7 @@ public abstract class AbstractResourceAdapterDeployer
                         }
                         else
                         {
-                            log.connectionFactoryNotBound(mcf.getClass().getName());
+                           log.connectionFactoryNotBound(mcf.getClass().getName());
                         }
                      }
                   }
@@ -1911,7 +1911,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     }
                                     else
                                     {
-                                        log.connectionFactoryNotBound(mcf.getClass().getName());
+                                       log.connectionFactoryNotBound(mcf.getClass().getName());
                                     }
                                  }
                               }
