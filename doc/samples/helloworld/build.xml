@@ -135,6 +135,7 @@
       
       <jvmarg line="${junit.jvm.options}"/>
       <sysproperty key="archives.dir" value="${target.dir}"/>
+      <sysproperty key="reports.dir" value="${basedir}/reports"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" 

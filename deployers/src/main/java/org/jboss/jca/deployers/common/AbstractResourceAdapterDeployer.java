@@ -85,11 +85,15 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.resource.Referenceable;
 import javax.resource.ResourceException;
@@ -908,6 +912,89 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
+    * Load native libraries
+    * @param root The deployment root
+    */
+   private void loadNativeLibraries(File root)
+   {
+      if (root != null && root.exists())
+      {
+         List<String> libs = null;
+
+         if (root.isDirectory())
+         {
+            for (File f : root.listFiles())
+            {
+               String fileName = f.getName().toLowerCase(Locale.US);
+               if (fileName.endsWith(".a") || fileName.endsWith(".so") || fileName.endsWith(".dll"))
+               {
+                  if (libs == null)
+                     libs = new ArrayList<String>();
+
+                  libs.add(f.getAbsolutePath());
+               }
+            }
+         }
+         else
+         {
+            JarFile jarFile = null;
+            try
+            {
+               jarFile = new JarFile(root);
+               Enumeration<JarEntry> entries = jarFile.entries();
+
+               while (entries.hasMoreElements())
+               {
+                  JarEntry jarEntry = entries.nextElement();
+                  String entryName = jarEntry.getName().toLowerCase(Locale.US);
+                  if (entryName.endsWith(".a") || entryName.endsWith(".so") || entryName.endsWith(".dll"))
+                  {
+                     if (libs == null)
+                        libs = new ArrayList<String>();
+
+                     libs.add(jarEntry.getName());
+                  }
+               }
+            }
+            catch (Throwable t)
+            {
+               log.debugf("Unable to load native libraries from: %s", root.getAbsolutePath());
+            }
+            finally
+            {
+               if (jarFile != null)
+               {
+                  try
+                  {
+                     jarFile.close();
+                  }
+                  catch (IOException ioe)
+                  {
+                     // Ignore
+                  }
+               }
+            }
+         }
+
+         if (libs != null)
+         {
+            for (String lib : libs)
+            {
+               try
+               {
+                  System.load(lib);
+                  log.debugf("Loaded library: %s", lib);
+               }
+               catch (Throwable t)
+               {
+                  log.debugf("Unable to load library: %s", lib);
+               }
+            }
+         }
+      }
+   }
+
+   /**
    *
    * create objects and inject value for this depployment. it is a general method returning a {@link CommonDeployment}
    * to be used to exchange objects needed to real injection in the container
@@ -994,6 +1081,10 @@ public abstract class AbstractResourceAdapterDeployer
             log.tracef("RaXML=%s", raxml);
             log.tracef("ActivateDeployment=%s", activateDeployment);
          }
+
+         // Load native libraries
+         if (activateDeployment)
+            loadNativeLibraries(root);
 
          // Create objects and inject values
          if (cmd != null)
