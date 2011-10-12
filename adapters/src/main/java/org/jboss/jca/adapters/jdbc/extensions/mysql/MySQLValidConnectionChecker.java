@@ -55,8 +55,6 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
 
    private boolean driverHasPingMethod;
 
-   private final Integer pingTimeOut = null;
-
    private transient Method ping;
 
    /**
@@ -84,11 +82,9 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
       //if there is a ping method then use it, otherwise just use a 'SELECT 1' statement
       if (driverHasPingMethod)
       {
-         Object[] params = new Object[]{pingTimeOut};
-
          try
          {
-            ping.invoke(c, params);
+            ping.invoke(c, (Object[])null);
          }
          catch (Exception e)
          {
@@ -157,7 +153,7 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
 
       Class<?> mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, getClass().getClassLoader());
 
-      ping = mysqlConnection.getMethod("ping", new Class<?>[] {});
+      ping = mysqlConnection.getMethod("ping", (Class[])null);
 
       if (ping != null)
       {
@@ -182,15 +178,5 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
          ioe.initCause(e);
          throw ioe;
       }
-   }
-
-   /**
-    * Get the pingTimeOut.
-    *
-    * @return the pingTimeOut.
-    */
-   public final Integer getPingTimeOut()
-   {
-      return pingTimeOut;
    }
 }
