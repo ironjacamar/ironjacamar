@@ -22,7 +22,7 @@
  */
 -->
 
-<project name="helloworld" basedir="." default="rar">
+<project name="helloworld-native" basedir="." default="rar">
 
   <!-- ================================= 
        Properties              
@@ -65,6 +65,8 @@
        Target: init
        ================================= -->
   <target name="init">
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${build.dir}/c" />
     <mkdir dir="${lib.dir}" />
   </target>
 
@@ -72,8 +74,6 @@
        Target: compile
        ================================= -->
   <target name="compile" depends="init">
-    <mkdir dir="${build.dir}" />
-
     <javac srcdir="${basedir}/src/main/java"
            destdir="${build.dir}"
            classpathref="lib.path.id"
@@ -84,9 +84,20 @@
   </target>
   
   <!-- ================================= 
+       Target: native
+       ================================= -->
+  <target name="native" depends="compile">
+    <javah class="org.jboss.jca.samples.helloworld.HelloWorldManagedConnection"
+           outputFile="${build.dir}/c/HelloWorld.h"
+           force="true"
+           classpath="${build.dir}">
+    </javah>
+  </target>
+
+  <!-- ================================= 
        Target: rar
        ================================= -->
-  <target name="rar" depends="compile">
+  <target name="rar">
     <mkdir dir="${target.dir}" />
     <mkdir dir="${basedir}/src/main/resources" />
     <jar destfile="${build.dir}/helloworld.jar"
@@ -94,11 +105,13 @@
          includes="**/*.class"/>
     <jar destfile="${target.dir}/helloworld.rar">
       <fileset dir="${basedir}/src/main/resources" includes="META-INF/*"/>
-      <fileset dir="${build.dir}" includes="**/*.jar"/>
+      <fileset dir="${build.dir}" includes="*.jar"/>
+      <fileset dir="${build.dir}" includes="*.so"/>
+      <fileset dir="${build.dir}" includes="*.a"/>
+      <fileset dir="${build.dir}" includes="*.dll"/>
     </jar>
   </target>
   
-      
   <!-- ================================= 
        Target: prepare-test
        ================================= -->
@@ -193,6 +206,12 @@
     <delete dir="${build.dir}"/>
     <delete dir="${target.dir}"/>
     <delete dir="${basedir}/reports"/>
+
+    <!-- cmake environment -->
+    <delete file="${basedir}/Makefile"/>
+    <delete file="${basedir}/cmake_install.cmake"/>
+    <delete dir="${basedir}/CMakeFiles"/>
+    <delete file="${basedir}/CMakeCache.txt"/>
   </target>
 
   <!-- ================================= 

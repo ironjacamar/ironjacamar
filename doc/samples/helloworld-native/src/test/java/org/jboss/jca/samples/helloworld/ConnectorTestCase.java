@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.samples.helloworld;
 
+import java.io.File;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -37,18 +38,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.junit.Assert.*;
 
-
 /**
- * ConnectorTestCase
- *
- * @version $Revision: $
+ * Test case for the HelloWorld/Native resource adapter
  */
 @RunWith(Arquillian.class)
 public class ConnectorTestCase
 {
    private static Logger log = Logger.getLogger("ConnectorTestCase");
-
-   private static String deploymentName = "ConnectorTestCase";
 
    /**
     * Define the deployment
@@ -58,8 +54,10 @@ public class ConnectorTestCase
    @Deployment
    public static ResourceAdapterArchive createDeployment()
    {
+      String deploymentName = "ConnectorTestCase.rar";
+
       ResourceAdapterArchive raa =
-         ShrinkWrap.create(ResourceAdapterArchive.class, deploymentName + ".rar");
+         ShrinkWrap.create(ResourceAdapterArchive.class, deploymentName);
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, 
          UUID.randomUUID().toString() + ".jar");
       ja.addClasses(HelloWorldResourceAdapter.class, 
@@ -73,10 +71,22 @@ public class ConnectorTestCase
       raa.addAsLibrary(ja);
       raa.addAsManifestResource("META-INF/ironjacamar.xml", "ironjacamar.xml");
 
+      String rootPath =
+         System.getProperty("test.dir") + File.separator + ".." + File.separator;
+
+      File root = new File(rootPath);
+      for (File f : root.listFiles())
+      {
+         if (f.getName().contains("HelloWorld"))
+            raa.addAsLibrary(f);
+      }
+
+      log.info(raa.toString(true));
+
       return raa;
    }
 
-   /** resource */
+   /** Resource */
    @Resource(mappedName = "java:/eis/HelloWorld")
    private HelloWorldConnectionFactory connectionFactory;
 
@@ -92,6 +102,7 @@ public class ConnectorTestCase
       HelloWorldConnection connection = connectionFactory.getConnection();
       assertNotNull(connection);
       String result = connection.helloWorld();
+      assertNotNull(result);
       connection.close();
    }
 
@@ -107,6 +118,7 @@ public class ConnectorTestCase
       HelloWorldConnection connection = connectionFactory.getConnection();
       assertNotNull(connection);
       String result = connection.helloWorld(null);
+      assertNotNull(result);
       connection.close();
    }
 }

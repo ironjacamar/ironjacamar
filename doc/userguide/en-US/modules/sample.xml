@@ -124,4 +124,144 @@ ant test
 
   </section>
 
+  <section id="sample_helloworld_native">
+    <title>HelloWorld/Native example</title>
+
+    <section id="sample_helloworld_native_introduction">
+      <title>Introduction</title>
+
+      <para>The HelloWorld/Native resource adapter sample shows a simple example of how to use and
+      implement the interfaces in the Java EE Connector Architecture specification which calls a
+      native library.</para>
+
+      <para>The HelloWorld/Native sample exposes the HelloWorldConnection interface where developers
+      can invoke the exposed methods.</para>
+
+      <para>The sample shows how to build and test a resource adapter.</para>
+
+      <section id="sample_helloworld_native_introduction_setup">
+        <title>Setup</title>
+        <para>The build environment needs various libraries in order to being able to build and
+        test the resource adapter. The setup is done by</para>
+        <programlisting>
+cd doc/samples/helloworld-native
+cp -R ../../../lib .
+cp ../../../bin/ironjacamar-sjc.jar lib/
+        </programlisting>
+      </section>
+
+      <section id="sample_helloworld_native_introduction_building">
+        <title>Building</title>
+        <para>Building the resource adapter is done by</para>
+        <programlisting>
+ant native
+cmake .
+make
+ant rar
+        </programlisting>
+      </section>
+
+      <section id="sample_helloworld_native_introduction_testing">
+        <title>Testing</title>
+        <para>Testing the resource adapter is done by</para>
+        <programlisting>
+ant test
+        </programlisting>
+      </section>
+
+    </section>
+
+    <section id="sample_helloworld_native_resourceadpater">
+      <title>HelloWorld/Native Resource Adapter</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldResourceAdapter.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_mcf">
+      <title>HelloWorld/Native Managed Connection Factory</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_mc">
+      <title>HelloWorld/Native Managed Connection</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_cf">
+      <title>HelloWorld/Native Connection Factory</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_cfimpl">
+      <title>HelloWorld/Native Connection Factory Implementation</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_connection">
+      <title>HelloWorld/Native Connection</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_connectionimpl">
+      <title>HelloWorld/Native Connection Implementation</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_metadata">
+      <title>HelloWorld/Native Managed Connection MetaData</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionMetaData.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_ironjacamarxml">
+      <title>HelloWorld/Native ironjacamar.xml</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/main/resources/META-INF/ironjacamar.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_c">
+      <title>HelloWorld/Native C</title>
+      <programlisting language="c">
+<xi:include parse="text" href="../../samples/helloworld-native/helloworld.c" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_testcase">
+      <title>HelloWorld/Native Connection Test Case</title>
+      <programlisting language="java">
+<xi:include parse="text" href="../../samples/helloworld-native/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_buildxml">
+      <title>HelloWorld/Native Ant build.xml</title>
+      <programlisting language="xml">
+<xi:include parse="text" href="../../samples/helloworld-native/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+    <section id="sample_helloworld_native_cmake">
+      <title>HelloWorld/Native cmake</title>
+      <programlisting language="text">
+<xi:include parse="text" href="../../samples/helloworld-native/CMakeLists.txt" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+    </section>
+
+  </section>
+
 </appendix>
