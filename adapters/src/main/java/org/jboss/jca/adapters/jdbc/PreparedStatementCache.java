@@ -41,13 +41,40 @@ import org.jboss.logging.Logger;
 @SuppressWarnings("unchecked")
 public class PreparedStatementCache
 {
+   private static BoundedConcurrentHashMap.Eviction evictionPolicy;
+
    private final Logger log = Logger.getLogger(getClass());
 
    private BoundedConcurrentHashMap<Key, CachedPreparedStatement> cache;
    private JdbcStatisticsPlugin statistics;
 
+   static
+   {
+      String cache = SecurityActions.getSystemProperty("ironjacamar.jdbc.cache");
+      if (cache != null)
+      {
+         cache = cache.trim();
+
+         if ("LRU".equals(cache))
+         {
+            evictionPolicy = BoundedConcurrentHashMap.Eviction.LRU;
+         }
+         else if ("LRU_OLD".equals(cache))
+         {
+            evictionPolicy = BoundedConcurrentHashMap.Eviction.LRU_OLD;
+         }
+         else if ("LIRS".equals(cache))
+         {
+            evictionPolicy = BoundedConcurrentHashMap.Eviction.LIRS;
+         }         
+      }
+       
+      if (evictionPolicy == null)
+         evictionPolicy = BoundedConcurrentHashMap.Eviction.LRU_OLD;
+   }
+
    /**
-    * Ket class
+    * Key class
     */
    public static class Key
    {
@@ -183,7 +210,7 @@ public class PreparedStatementCache
 
       this.cache =
          new BoundedConcurrentHashMap<Key, CachedPreparedStatement>(max, 16, 
-                                                                    BoundedConcurrentHashMap.Eviction.LIRS,
+                                                                    evictionPolicy,
                                                                     evictionListener);
       this.statistics = stats;
    }
@@ -262,6 +289,13 @@ public class PreparedStatementCache
                }
             }
          }
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void onEntryChosenForEviction(Object internalCacheEntry)
+      {
       }
    }
 
