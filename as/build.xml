@@ -94,6 +94,125 @@
     </copy>
   </target>
 
+
+  <!-- ================================= 
+       Target: test
+       ================================= -->
+  <target name="test" depends="jars, prepare-test">
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${reports.dir}/as"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.as.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      
+      <classpath>
+        <pathelement location="${build.as.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/as"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.as.dir}/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+    
+  </target>
+
+
+  <!-- ================================= 
+       Target: one-test
+       ================================= -->
+  <target name="one-test" depends="jars, prepare-test">
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${reports.dir}/as"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.as.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
+      
+      <classpath>
+        <pathelement location="${build.as.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <test todir="${reports.dir}/as" name="${test}"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}"/>
+    </junit>
+  </target>
+
+  <!-- ================================= 
+       Target: prepare-test
+       ================================= -->
+  <target name="prepare-test">
+    <mkdir dir="${build.as.dir}" />
+    <mkdir dir="${build.as.dir}/test" />
+
+    <javac srcdir="src/test"
+           destdir="${build.as.dir}/test"
+           classpathref="test.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
+    <copy todir="${build.as.dir}/test">
+      <fileset dir="src/test/resources"/>
+    </copy>
+
+
+  </target>
+
   <!-- ================================= 
        Target: artifacts
        ================================= -->

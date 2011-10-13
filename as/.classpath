@@ -2,6 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" output="eclipse-target/tests-classes" path="src/test/java"/>
+	<classpathentry excluding="**/*.java" kind="src" output="eclipse-target/tests-classes" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-common"/>
