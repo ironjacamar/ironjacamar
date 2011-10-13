@@ -152,9 +152,10 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
       if (enabled)
       {
          MetadataRepository mdr = ((RAConfiguration) getConfiguration()).getMetadataRepository();
+         ResourceAdapterRepository rar = ((RAConfiguration) getConfiguration()).getResourceAdapterRepository();
 
          Set<String> rarDeployments = mdr.getResourceAdapters();
-         Set<String> configuredRars = getConfiguredResourceAdapters(mdr);
+         Set<String> configuredRars = getConfiguredResourceAdapters(mdr, rar);
 
          for (String deployment : rarDeployments)
          {
@@ -228,9 +229,10 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    /**
     * Get the set of configured resource adapters
     * @param mdr The metadata repository
+    * @param rar The resource adapter repository
     * @return The resource adapters
     */
-   private Set<String> getConfiguredResourceAdapters(MetadataRepository mdr)
+   private Set<String> getConfiguredResourceAdapters(MetadataRepository mdr, ResourceAdapterRepository rar)
    {
       Set<String> configured = new HashSet<String>();
 
@@ -244,8 +246,15 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
       {
          if (deployment.endsWith(".rar"))
          {
-            if (mdr.hasJndiMappings(deployment))
-               configured.add(deployment);
+            try
+            {
+               if (mdr.hasJndiMappings(deployment) || hasResourceAdapter(rar, mdr.getResourceAdapter(deployment)))
+                  configured.add(deployment);
+            }
+            catch (Throwable t)
+            {
+               // Ignore
+            }
          }
          else if (deployment.endsWith("-ra.xml"))
          {
@@ -416,6 +425,41 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
          }
 
          return true;
+      }
+
+      return false;
+   }
+
+   /**
+    * Has a resource adapter instance deployed
+    * @param rar The resource adapter repository
+    * @param c The connector definition
+    */
+   private boolean hasResourceAdapter(ResourceAdapterRepository rar, Connector c)
+   {
+      if (rar != null && c != null &&
+          c.getResourceadapter() != null && c.getResourceadapter() instanceof ResourceAdapter1516)
+      {
+         ResourceAdapter1516 ra = (ResourceAdapter1516)c.getResourceadapter();
+
+         if (ra.getResourceadapterClass() != null)
+         {
+            String clz = ra.getResourceadapterClass();
+
+            for (String deployment : rar.getResourceAdapters())
+            {
+               try
+               {
+                  javax.resource.spi.ResourceAdapter instance = rar.getResourceAdapter(deployment);
+                  if (clz.equals(instance.getClass().getName()))
+                     return true;
+               }
+               catch (Throwable t)
+               {
+                  // Ignore deployment
+               }
+            }
+         }
       }
 
       return false;
