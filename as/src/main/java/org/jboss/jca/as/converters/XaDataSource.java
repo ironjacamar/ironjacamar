@@ -86,7 +86,8 @@ public interface XaDataSource extends DataSource, CommonXa
    *
    * A Tag.
    */
-   public enum Tag {
+   public enum Tag 
+   {
       /**
        * always first
        */

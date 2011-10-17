@@ -46,7 +46,8 @@ public interface TxConnectionFactory extends NoTxConnectionFactory, CommonXa
    *
    * A Tag.
    */
-   public enum Tag {
+   public enum Tag 
+   {
       /**
        * always first
        */
@@ -67,8 +68,19 @@ public interface TxConnectionFactory extends NoTxConnectionFactory, CommonXa
       */
       XA_RESOURCE_TIMEOUT("xa-resource-timeout"),
 
-      RAR_NAME("rar-name"), CONNECTION_DEFINITION("connection-definition"), CONFIG_PROPERTY("config-property"),
-
+      /**
+       * rar-name tag
+       */
+      RAR_NAME("rar-name"),
+      /**
+       * connection-definition tag
+       */
+      CONNECTION_DEFINITION("connection-definition"),
+      /**
+       * config-property tag
+       */
+      CONFIG_PROPERTY("config-property"),
+      
       /**
        * jndiName tag
        */

@@ -30,11 +30,20 @@ package org.jboss.jca.as.converters;
 public class DataSourceConverter
 {
    private DataSources dss;
+   
+   /**
+    * DataSourceConverter constructor
+    * @param dss DataSources
+    */
    public DataSourceConverter(DataSources dss)
    {
       this.dss = dss;
    }
    
+   /**
+    * convert DataSources to string
+    * @return xml string
+    */
    public String convert()
    {
       return dss.toString();

@@ -32,10 +32,16 @@ import java.util.List;
 public class DatasourcesImpl implements DataSources
 {
    
-   List<NoTxDataSource> noTxDatasource;
-   List<LocalTxDataSource> localTxDatasource;
-   List<XaDataSource> xaDataSource;
+   private List<NoTxDataSource> noTxDatasource;
+   private List<LocalTxDataSource> localTxDatasource;
+   private List<XaDataSource> xaDataSource;
 
+   /**
+    * DatasourcesImpl
+    * @param noTxDatasource list of NoTxDatasource
+    * @param localTxDatasource list of LocalTxDataSource
+    * @param xaDataSource list of XaDataSource
+    */
    public DatasourcesImpl(
          List<NoTxDataSource> noTxDatasource,
          List<LocalTxDataSource> localTxDatasource,

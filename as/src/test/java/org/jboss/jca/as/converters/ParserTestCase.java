@@ -27,7 +27,6 @@ import java.io.InputStream;
 import org.jboss.logging.Logger;
 
 import org.junit.Test;
-import org.junit.Ignore;
 import static org.junit.Assert.*;
 
 /**
@@ -40,48 +39,48 @@ public class ParserTestCase
 {
    private static Logger log = Logger.getLogger(ParserTestCase.class);
    
-   String[] xaFilesName = {
-         "db2-jcc-xa-ds.xml",
-         "informix-xa-ds.xml",
-         "mysql-xa-ds.xml",
-         "postgres-xa-ds.xml",
-         "db2-xa-ds.xml",
-         "mimer-xa-ds.xml",
-         "oracle-xa-ds.xml",
-         "sybase-xa-ds.xml",
-         "derby-xa-ds.xml",
-         "mssql-xa-ds.xml",
-         "pointbase-xa-ds.xml"
-         };
+   private String[] xaFilesName = {
+      "db2-jcc-xa-ds.xml",
+      "informix-xa-ds.xml",
+      "mysql-xa-ds.xml",
+      "postgres-xa-ds.xml",
+      "db2-xa-ds.xml",
+      "mimer-xa-ds.xml",
+      "oracle-xa-ds.xml",
+      "sybase-xa-ds.xml",
+      "derby-xa-ds.xml",
+      "mssql-xa-ds.xml",
+      "pointbase-xa-ds.xml"
+   };
    
-   String[] dsFilesName = {
-         "asapxcess-jb3.2-ds.xml",
-         "hsqldb-ds.xml",
-         "cicsr9s-ds.xml",
-         "hsqldb-encrypted-ds.xml",
-         "oracle-ds.xml",
-         "db2-400-ds.xml",
-         "informix-ds.xml",
-         "db2-ds.xml",
-         "pointbase-ds.xml",
-         "jdatastore-ds.xml",
-         "jms-ds.xml",
-         "postgres-ds.xml",
-         "derby-ds.xml",
-         "jsql-ds.xml",
-         "mimer-ds.xml",
-         "progress-ds.xml",
-         "facets-ds.xml",
-         "sapdb-ds.xml",
-         "fastobjects-jboss32-ds.xml",
-         "msaccess-ds.xml",
-         "sapr3-ds.xml",
-         "firebird-ds.xml",
-         "mssql-ds.xml",
-         "solid-ds.xml",
-         "sybase-ds.xml",
-         "hajndi-jms-ds.xml",
-         "mysql-ds.xml"
+   private String[] dsFilesName = {
+      "asapxcess-jb3.2-ds.xml",
+      "hsqldb-ds.xml",
+      "cicsr9s-ds.xml",
+      "hsqldb-encrypted-ds.xml",
+      "oracle-ds.xml",
+      "db2-400-ds.xml",
+      "informix-ds.xml",
+      "db2-ds.xml",
+      "pointbase-ds.xml",
+      "jdatastore-ds.xml",
+      "jms-ds.xml",
+      "postgres-ds.xml",
+      "derby-ds.xml",
+      "jsql-ds.xml",
+      "mimer-ds.xml",
+      "progress-ds.xml",
+      "facets-ds.xml",
+      "sapdb-ds.xml",
+      "fastobjects-jboss32-ds.xml",
+      "msaccess-ds.xml",
+      "sapr3-ds.xml",
+      "firebird-ds.xml",
+      "mssql-ds.xml",
+      "solid-ds.xml",
+      "sybase-ds.xml",
+      "hajndi-jms-ds.xml",
+      "mysql-ds.xml"
    };
 
    /**

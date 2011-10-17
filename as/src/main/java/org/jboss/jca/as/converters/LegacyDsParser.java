@@ -24,12 +24,8 @@ package org.jboss.jca.as.converters;
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
-import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
-
-import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
-import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
-import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -39,6 +35,10 @@ import java.util.Map;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
+import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import org.jboss.logging.Logger;
 
@@ -52,6 +52,12 @@ public class LegacyDsParser extends AbstractParser
 {
    private static Logger log = Logger.getLogger(LegacyDsParser.class);
    
+   /**
+    * parse xml string to datasources
+    * @param xmlInputStream xml file input stream
+    * @return DataSources
+    * @throws Exception exception
+    */
    public DataSources parse(InputStream xmlInputStream) throws Exception
    {
       XMLStreamReader reader = null;
@@ -74,12 +80,15 @@ public class LegacyDsParser extends AbstractParser
       int level = 1;
       while (reader.hasNext() && level > 0)
       {
-         switch (reader.next()) {
-            case END_ELEMENT : {
+         switch (reader.next()) 
+         {
+            case END_ELEMENT : 
+            {
                level--;
                break;
             }
-            case START_ELEMENT : {
+            case START_ELEMENT : 
+            {
                level++;
                break;
             }
@@ -640,7 +649,8 @@ public class LegacyDsParser extends AbstractParser
    *
    * A Tag.
    */
-   public enum Tag {
+   public enum Tag 
+   {
       /**
        * always first
        */

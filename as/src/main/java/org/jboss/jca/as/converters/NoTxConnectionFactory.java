@@ -59,15 +59,25 @@ public interface NoTxConnectionFactory extends ConnectionFactory
    *
    * A Tag.
    */
-   public enum Tag {
+   public enum Tag 
+   {
       /**
        * always first
        */
       UNKNOWN(null),
       
       //more by ConnectionFactory
+      /**
+       * rar-name tag
+       */
       RAR_NAME("rar-name"),
+      /**
+       * connection-definition tag
+       */
       CONNECTION_DEFINITION("connection-definition"),
+      /**
+       * config-property tag
+       */
       CONFIG_PROPERTY("config-property"),
       
       /**

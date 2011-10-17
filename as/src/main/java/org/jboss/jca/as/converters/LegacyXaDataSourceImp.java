@@ -27,10 +27,10 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
+import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
 import org.jboss.jca.common.metadata.ds.StatementImpl;
@@ -60,58 +60,57 @@ public class LegacyXaDataSourceImp implements XaDataSource
 
    private final HashMap<String, String> xaDataSourceProperty;
 
-   protected final TransactionIsolation transactionIsolation;
+   private final TransactionIsolation transactionIsolation;
 
-   protected TimeOut timeOut;
+   private TimeOut timeOut;
 
-   protected DsSecurity security;
+   private DsSecurity security;
 
-   protected Statement statement;
+   private Statement statement;
 
-   protected Validation validation;
+   private Validation validation;
 
    private CommonXaPool xaPool;
 
-   protected String urlDelimiter;
+   private String urlDelimiter;
 
-   protected String urlSelectorStrategyClassName;
+   private String urlSelectorStrategyClassName;
    
    private String newConnectionSql;
 
-   protected Boolean useJavaContext;
+   private Boolean useJavaContext;
 
-   protected String poolName;
+   private String poolName;
 
-   protected Boolean enabled;
+   private Boolean enabled;
 
-   protected String jndiName;
+   private String jndiName;
 
-   protected Boolean spy;
+   private Boolean spy;
 
-   protected Boolean useCcm;
+   private Boolean useCcm;
    
-   protected Boolean jta;
+   private Boolean jta;
    
-   Recovery recovery;
+   private Recovery recovery;
    
-   Boolean isSameRmOverride;
+   private Boolean isSameRmOverride;
 
-   Boolean interleaving;
+   private Boolean interleaving;
 
-   Boolean padXid;
+   private Boolean padXid;
 
-   Boolean wrapXaDataSource;
+   private Boolean wrapXaDataSource;
 
-   Boolean noTxSeparatePool;
+   private Boolean noTxSeparatePool;
    
-   /*
-    * TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
-      Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
-      Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, Boolean spy, Boolean useCcm,
-      Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver, String newConnectionSql,
-      CommonXaPool xaPool, Recovery recovery
-         */
-   
+   /**
+    * create a LegacyXaDataSourceImp
+    * @param xaDataSourceClass xaDataSourceClass
+    * @param driver driver
+    * @param transactionIsolation transactionIsolation
+    * @param xaDataSourceProperty xaDataSourceProperty
+    */
    public LegacyXaDataSourceImp(String xaDataSourceClass, String driver,
          TransactionIsolation transactionIsolation, Map<String, String> xaDataSourceProperty)
    {
@@ -131,6 +130,10 @@ public class LegacyXaDataSourceImp implements XaDataSource
       this.transactionIsolation = transactionIsolation;
    }
    
+   /**
+    * buildXaDataSourceImpl
+    * @throws Exception exception
+    */
    public void buildXaDataSourceImpl()  throws Exception
    {
       dsImpl = new XADataSourceImpl(transactionIsolation, timeOut, security,
@@ -147,30 +150,80 @@ public class LegacyXaDataSourceImp implements XaDataSource
       return out;
    }
    
-   public LegacyXaDataSourceImp buildTimeOut(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
-         Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQueryTimeout, Long queryTimeout,
+   /**
+    * build timeout part
+    * 
+    * @param blockingTimeoutMillis blockingTimeoutMillis
+    * @param idleTimeoutMinutes idleTimeoutMinutes
+    * @param allocationRetry allocationRetry
+    * @param allocationRetryWaitMillis allocationRetryWaitMillis
+    * @param xaResourceTimeout xaResourceTimeout
+    * @param setTxQueryTimeout setTxQueryTimeout
+    * @param queryTimeout queryTimeout
+    * @param useTryLock useTryLock
+    * @return this 
+    * @throws Exception exception
+    */
+   public LegacyXaDataSourceImp buildTimeOut(Long blockingTimeoutMillis, Long idleTimeoutMinutes, 
+         Integer allocationRetry, Long allocationRetryWaitMillis, Integer xaResourceTimeout, 
+         Boolean setTxQueryTimeout, Long queryTimeout,
          Long useTryLock) throws Exception
    {
-      timeOut = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout,
+      timeOut = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
+            allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout,
             queryTimeout, useTryLock);
       return this;
    }
    
-   public LegacyXaDataSourceImp buildDsSecurity(String userName, String password, String securityDomain, Extension reauthPlugin)
-   throws Exception
+   /** 
+    * build security part
+    * 
+    * @param userName userName
+    * @param password password
+    * @param securityDomain securityDomain
+    * @param reauthPlugin reauthPlugin
+    * @return this
+    * @throws Exception exception
+    */
+   public LegacyXaDataSourceImp buildDsSecurity(String userName, String password, String securityDomain, 
+         Extension reauthPlugin) throws Exception
    {
       security = new DsSecurityImpl(userName, password, securityDomain, reauthPlugin);
       return this;
    }
-   
+
+   /**
+    * build statement part
+    * 
+    * @param sharePreparedStatements sharePreparedStatements
+    * @param preparedStatementsCacheSize preparedStatementsCacheSize
+    * @param trackStatements trackStatements
+    * @return this
+    * @throws Exception exception
+    */
    public LegacyXaDataSourceImp buildStatement(Boolean sharePreparedStatements, Long preparedStatementsCacheSize,
          TrackStatementsEnum trackStatements) throws Exception
    {
       statement = new StatementImpl(sharePreparedStatements, preparedStatementsCacheSize, trackStatements);
       return this;
    }
-   
-   public LegacyXaDataSourceImp buildValidation(Boolean backgroundValidation, Long backgroundValidationMillis, Boolean useFastFail,
+
+   /**
+    * build validation part
+    * 
+    * @param backgroundValidation backgroundValidation
+    * @param backgroundValidationMillis backgroundValidationMillis
+    * @param useFastFail useFastFail
+    * @param validConnectionChecker validConnectionChecker
+    * @param checkValidConnectionSql checkValidConnectionSql
+    * @param validateOnMatch validateOnMatch
+    * @param staleConnectionChecker staleConnectionChecker
+    * @param exceptionSorter exceptionSorter
+    * @return this
+    * @throws Exception exception
+    */
+   public LegacyXaDataSourceImp buildValidation(Boolean backgroundValidation, Long backgroundValidationMillis, 
+         Boolean useFastFail,
          Extension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
          Extension staleConnectionChecker, Extension exceptionSorter) throws Exception
    {
@@ -179,7 +232,18 @@ public class LegacyXaDataSourceImp implements XaDataSource
             staleConnectionChecker, exceptionSorter);
       return this;
    }
-   
+
+   /**
+    * build pool part
+    * 
+    * @param minPoolSize minPoolSize
+    * @param maxPoolSize maxPoolSize
+    * @param prefill prefill
+    * @param useStrictMin useStrictMin
+    * @param flushStrategy flushStrategy
+    * @return this
+    * @throws Exception exception
+    */
    public LegacyXaDataSourceImp buildCommonPool(Integer minPoolSize, Integer maxPoolSize, 
          Boolean prefill, Boolean useStrictMin,
          FlushStrategy flushStrategy) throws Exception
@@ -190,7 +254,23 @@ public class LegacyXaDataSourceImp implements XaDataSource
       return this;
    }
    
-   public LegacyXaDataSourceImp buildOther(String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
+   /**
+    * build other properties
+    * 
+    * @param urlDelimiter urlDelimiter
+    * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
+    * @param newConnectionSql newConnectionSql
+    * @param useJavaContext useJavaContext
+    * @param poolName poolName
+    * @param enabled enabled
+    * @param jndiName jndiName
+    * @param spy spy
+    * @param useCcm useCcm
+    * @param jta jta
+    * @return this
+    */
+   public LegacyXaDataSourceImp buildOther(String urlDelimiter, String urlSelectorStrategyClassName, 
+         String newConnectionSql, 
          Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, 
          Boolean spy, Boolean useCcm, Boolean jta)
    {

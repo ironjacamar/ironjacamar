@@ -388,6 +388,7 @@
     <ant dir="codegenerator" inheritRefs="true" target="prepare-test"/>
     <ant dir="adapters" inheritRefs="true" target="prepare-test"/>
     <ant dir="rhq" inheritRefs="true" target="prepare-test"/>
+    <ant dir="as" inheritRefs="true" target="prepare-test"/>
   </target>
   
   <!-- ================================= 
@@ -401,6 +402,7 @@
     <ant dir="validator" inheritRefs="true" target="test"/>
     <ant dir="adapters" inheritRefs="true" target="test"/>
     <ant dir="rhq" inheritRefs="true" target="test"/>
+    <ant dir="as" inheritRefs="true" target="test"/>
   </target>
   
   <!-- ================================= 

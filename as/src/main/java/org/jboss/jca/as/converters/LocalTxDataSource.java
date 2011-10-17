@@ -41,13 +41,17 @@ public interface LocalTxDataSource extends NoTxDataSource
     */
    public TransactionIsolation getTransactionIsolation();
 
+   /**
+    * isNoTxSeparatePools
+    * @return nTxSeparatePools
+    */
    public boolean isNoTxSeparatePools();
    
    /**
-   *
    * A Tag.
    */
-   public enum Tag {
+   public enum Tag 
+   {
       /**
        * always first
        */
@@ -59,6 +63,9 @@ public interface LocalTxDataSource extends NoTxDataSource
        */
       TRANSACTION_ISOLATION("transaction-isolation"),
       
+      /**
+       * no-tx-separate-pools tag
+       */
       NO_TX_SEPARATE_POOLS("no-tx-separate-pools"),
       
       /**
