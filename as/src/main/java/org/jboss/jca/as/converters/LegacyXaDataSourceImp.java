@@ -241,16 +241,23 @@ public class LegacyXaDataSourceImp implements XaDataSource
     * @param prefill prefill
     * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
+    * @param isSameRmOverride isSameRmOverride
+    * @param interleaving interleaving
+    * @param padXid padXid
+    * @param wrapXaResource wrapXaResource
+    * @param noTxSeparatePool noTxSeparatePool
     * @return this
     * @throws Exception exception
     */
    public LegacyXaDataSourceImp buildCommonPool(Integer minPoolSize, Integer maxPoolSize, 
          Boolean prefill, Boolean useStrictMin,
-         FlushStrategy flushStrategy) throws Exception
+         FlushStrategy flushStrategy, Boolean isSameRmOverride, Boolean interleaving, 
+         Boolean padXid, Boolean wrapXaResource,
+         Boolean noTxSeparatePool) throws Exception
    {
       xaPool = new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
             isSameRmOverride, interleaving, padXid,
-            wrapXaDataSource, noTxSeparatePool);
+            wrapXaResource, noTxSeparatePool);
       return this;
    }
    

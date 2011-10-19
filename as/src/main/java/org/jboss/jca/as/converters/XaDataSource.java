@@ -101,12 +101,21 @@ public interface XaDataSource extends DataSource, CommonXa
       /**
        * isSameRmOverrideValue tag
        */
-      IS_SAME_RM_OVERRIDE("is-same-rm-override"),
+      IS_SAME_RM_OVERRIDE("isSameRM-override-value"),
       /**
       * interleaving tag
       */
       INTERLEAVING("interleaving"),
+      /**
+       * pad-xid tag
+       */
+      PAD_XID("pad-xid"),
 
+      /**
+       * wrap-xa-resource tag
+       */
+      WRAP_XA_RESOURCE("wrap-xa-resource"),
+      
       /**
        * xaDatasourceProperty tag
        */
@@ -195,15 +204,15 @@ public interface XaDataSource extends DataSource, CommonXa
       /**
        * validConnectionCheckerClassName tag
        */
-      VALID_CONNECTION_CHECKER("valid-connection-checker"),
+      VALID_CONNECTION_CHECKER("valid-connection-checker-class-name"),
       /**
        * exceptionSorterClassName tag
        */
-      EXCEPTION_SORTER("exception-sorter"),
+      EXCEPTION_SORTER("exception-sorter-class-name"),
       /**
        * staleConnectionCheckerClassName tag
        */
-      STALE_CONNECTION_CHECKER("stale-connection-checker"),
+      STALE_CONNECTION_CHECKER("stale-connection-checker-class-name"),
       /**
        * trackStatements tag
        */

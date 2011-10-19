@@ -153,15 +153,15 @@ public interface NoTxDataSource extends DataSource
       /**
        * validConnectionCheckerClassName tag
        */
-      VALID_CONNECTION_CHECKER("valid-connection-checker"),
+      VALID_CONNECTION_CHECKER("valid-connection-checker-class-name"),
       /**
        * exceptionSorterClassName tag
        */
-      EXCEPTION_SORTER("exception-sorter"),
+      EXCEPTION_SORTER("exception-sorter-class-name"),
       /**
        * staleConnectionCheckerClassName tag
        */
-      STALE_CONNECTION_CHECKER("stale-connection-checker"),
+      STALE_CONNECTION_CHECKER("stale-connection-checker-class-name"),
       /**
        * trackStatements tag
        */

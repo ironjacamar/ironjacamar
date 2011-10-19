@@ -50,6 +50,7 @@ import org.jboss.logging.Logger;
  */
 public class LegacyDsParser extends AbstractParser
 {
+   private static final String DEFAULT_SECURITY_DOMAIN = "other";
    private static Logger log = Logger.getLogger(LegacyDsParser.class);
    
    /**
@@ -97,6 +98,7 @@ public class LegacyDsParser extends AbstractParser
          }
       }
       log.info("Skip parse " + reader.getLocalName());
+      //System.out.println("Skip parse " + reader.getLocalName());
    }
    
 
@@ -244,7 +246,7 @@ public class LegacyDsParser extends AbstractParser
       TrackStatementsEnum trackStatements = TrackStatementsEnum.FALSE;
       
       TransactionIsolation transactionIsolation = TransactionIsolation.TRANSACTION_NONE;
-      String securityDomain = ""; //TODO
+      String securityDomain = DEFAULT_SECURITY_DOMAIN;
       Extension reauthPlugin = null;
       
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
@@ -258,6 +260,12 @@ public class LegacyDsParser extends AbstractParser
       
       Boolean useStrictMin = Defaults.USE_STRICT_MIN;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
+      
+      Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
+      Boolean interleaving = Defaults.INTERLEAVING;
+      Boolean padXid = Defaults.PAD_XID;
+      Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
+      Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
       
       //elements reading
       while (reader.hasNext())
@@ -276,7 +284,8 @@ public class LegacyDsParser extends AbstractParser
                   xaDsImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail, 
                         validConnectionChecker, checkValidConnectionSql, validateOnMatch, staleConnectionChecker, 
                         exceptionSorter);
-                  xaDsImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
+                  xaDsImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
+                        isSameRmOverride, interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
                   xaDsImpl.buildOther(urlDelimiter, urlSelectorStrategyClassName, newConnectionSql, useJavaContext, 
                         poolName, enabled, jndiName, spy, useCcm, jta);
                   xaDsImpl.buildXaDataSourceImpl();
@@ -318,10 +327,47 @@ public class LegacyDsParser extends AbstractParser
                      transactionIsolation = TransactionIsolation.valueOf(elementAsString(reader));
                      break;
                   }
+                  
+                  case INTERLEAVING : {
+                     interleaving = elementAsBoolean(reader);
+                     break;
+                  }
+                  case IS_SAME_RM_OVERRIDE : {
+                     isSameRmOverride = elementAsBoolean(reader);
+                     break;
+                  }
+                  case NO_TX_SEPARATE_POOLS : {
+                     noTxSeparatePool = elementAsBoolean(reader);
+                     break;
+                  }
+                  case PAD_XID : {
+                     padXid = elementAsBoolean(reader);
+                     break;
+                  }
+                  case WRAP_XA_RESOURCE : {
+                     wrapXaDataSource = elementAsBoolean(reader);
+                     break;
+                  }
+                  
+                  case VALID_CONNECTION_CHECKER : {
+                     String classname = elementAsString(reader);
+                     validConnectionChecker = new Extension(classname, null);
+                     break;
+                  }
+                  case EXCEPTION_SORTER : {
+                     String classname = elementAsString(reader);
+                     exceptionSorter = new Extension(classname, null);
+                     break;
+                  }
+                  case STALE_CONNECTION_CHECKER : {
+                     String classname = elementAsString(reader);
+                     staleConnectionChecker = new Extension(classname, null);
+                     break;
+                  }
 
                   case JNDI_NAME : {
-                     jndiName = elementAsString(reader);
-                     poolName = jndiName;
+                     poolName = elementAsString(reader);
+                     jndiName = "java:jboss/datasources/" + poolName;
                      break;
                   }
                   case USE_JAVA_CONTEXT : {
@@ -432,13 +478,11 @@ public class LegacyDsParser extends AbstractParser
       String driverClass = null;
       String dataSourceClass = null;
       String driver = null;
-      //TransactionIsolation transactionIsolation = null;
       Map<String, String> connectionProperties = new HashMap<String, String>();
 
       String urlDelimiter = null;
       String urlSelectorStrategyClassName = null;
       String newConnectionSql = null;
-      //CommonPool pool = null;
 
       //attributes reading
       Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
@@ -469,7 +513,7 @@ public class LegacyDsParser extends AbstractParser
       Boolean setTxQueryTimeout = Defaults.SET_TX_QUERY_TIMEOUT;
       
       TransactionIsolation transactionIsolation = TransactionIsolation.TRANSACTION_NONE;
-      String securityDomain = ""; //TODO
+      String securityDomain = DEFAULT_SECURITY_DOMAIN;
       Extension reauthPlugin = null;
       
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
@@ -519,6 +563,22 @@ public class LegacyDsParser extends AbstractParser
             case START_ELEMENT : {
                switch (LocalTxDataSource.Tag.forName(reader.getLocalName()))
                {
+                  case VALID_CONNECTION_CHECKER : {
+                     String classname = elementAsString(reader);
+                     validConnectionChecker = new Extension(classname, null);
+                     break;
+                  }
+                  case EXCEPTION_SORTER : {
+                     String classname = elementAsString(reader);
+                     exceptionSorter = new Extension(classname, null);
+                     break;
+                  }
+                  case STALE_CONNECTION_CHECKER : {
+                     String classname = elementAsString(reader);
+                     staleConnectionChecker = new Extension(classname, null);
+                     break;
+                  }
+                  
                   case CONNECTION_PROPERTY : {
                      connectionProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
@@ -548,8 +608,8 @@ public class LegacyDsParser extends AbstractParser
                      break;
                   }
                   case JNDI_NAME : {
-                     jndiName = elementAsString(reader);
-                     poolName = jndiName;
+                     poolName = elementAsString(reader);
+                     jndiName = "java:jboss/datasources/" + poolName;
                      break;
                   }
                   case USE_JAVA_CONTEXT : {
