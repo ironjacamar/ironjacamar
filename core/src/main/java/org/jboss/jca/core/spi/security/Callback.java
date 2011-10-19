@@ -26,11 +26,10 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * This SPI interface represents the the users and their passwords and roles in
+ * This SPI interface represents the users, their passwords and roles in
  * the container environment
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Rev: 97162 $
  */
 public interface Callback extends Serializable
 {
@@ -59,4 +58,16 @@ public interface Callback extends Serializable
     * @return A set of roles; <code>null</code> if user doesn't exists or no roles
     */
    public String[] getRoles(String user);
+
+   /**
+    * Start
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void start() throws Throwable;
+
+   /**
+    * Stop
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void stop() throws Throwable;
 }
