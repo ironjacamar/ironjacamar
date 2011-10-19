@@ -374,13 +374,13 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
    @Override
    public Integer getAllocationRetry()
    {
-      return this.getAllocationRetry();
+      return this.timeOut.getAllocationRetry();
    }
 
    @Override
    public Long getAllocationRetryWaitMillis()
    {
-      return this.getAllocationRetryWaitMillis();
+      return this.timeOut.getAllocationRetryWaitMillis();
    }
 
    @Override
@@ -392,7 +392,7 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
    @Override
    public String getNewConnectionSql()
    {
-      return this.getNewConnectionSql();
+      return this.newConnectionSql;
    }
 
    @Override
@@ -423,13 +423,13 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
    public TrackStatementsEnum getTrackStatements()
    {
 
-      return this.getTrackStatements();
+      return this.statement.getTrackStatements();
    }
 
    @Override
    public Boolean isPrefill()
    {
-      return this.isPrefill();
+      return this.pool.isPrefill();
    }
 
    @Override
@@ -441,13 +441,13 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
    @Override
    public Long getPreparedStatementsCacheSize()
    {
-      return this.getPreparedStatementsCacheSize();
+      return this.statement.getPreparedStatementsCacheSize();
    }
 
    @Override
    public Boolean isSharePreparedStatements()
    {
-      return this.isSharePreparedStatements();
+      return this.statement.isSharePreparedStatements();
    }
 
    @Override
@@ -465,19 +465,19 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
    @Override
    public Long getUseTryLock()
    {
-      return this.getUseTryLock();
+      return this.timeOut.getUseTryLock();
    }
 
    @Override
    public TransactionIsolation getTransactionIsolation()
    {
-      return this.getTransactionIsolation();
+      return this.transactionIsolation;
    }
 
    @Override
    public boolean isNoTxSeparatePools()
    {
-      return this.isNoTxSeparatePools();
+      return false;
    }
 
 }

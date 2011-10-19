@@ -76,13 +76,6 @@ public interface XaDataSource extends DataSource, CommonXa
    public Boolean isWrapXaResource();
 
    /**
-    * Get the noTxSeparatePool.
-    *
-    * @return the noTxSeparatePool.
-    */
-   public Boolean isNoTxSeparatePool();
-
-   /**
    *
    * A Tag.
    */

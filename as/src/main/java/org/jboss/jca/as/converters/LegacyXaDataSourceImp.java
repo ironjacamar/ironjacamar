@@ -369,13 +369,13 @@ public class LegacyXaDataSourceImp implements XaDataSource
    @Override
    public Integer getAllocationRetry()
    {
-      return this.getAllocationRetry();
+      return this.timeOut.getAllocationRetry();
    }
 
    @Override
    public Long getAllocationRetryWaitMillis()
    {
-      return this.getAllocationRetryWaitMillis();
+      return this.timeOut.getAllocationRetryWaitMillis();
    }
 
    @Override
@@ -387,7 +387,7 @@ public class LegacyXaDataSourceImp implements XaDataSource
    @Override
    public String getNewConnectionSql()
    {
-      return this.getNewConnectionSql();
+      return this.newConnectionSql;
    }
 
    @Override
@@ -418,13 +418,13 @@ public class LegacyXaDataSourceImp implements XaDataSource
    public TrackStatementsEnum getTrackStatements()
    {
 
-      return this.getTrackStatements();
+      return this.statement.getTrackStatements();
    }
 
    @Override
    public Boolean isPrefill()
    {
-      return this.isPrefill();
+      return this.xaPool.isPrefill();
    }
 
    @Override
@@ -436,13 +436,13 @@ public class LegacyXaDataSourceImp implements XaDataSource
    @Override
    public Long getPreparedStatementsCacheSize()
    {
-      return this.getPreparedStatementsCacheSize();
+      return this.statement.getPreparedStatementsCacheSize();
    }
 
    @Override
    public Boolean isSharePreparedStatements()
    {
-      return this.isSharePreparedStatements();
+      return this.statement.isSharePreparedStatements();
    }
 
    @Override
@@ -460,39 +460,39 @@ public class LegacyXaDataSourceImp implements XaDataSource
    @Override
    public Long getUseTryLock()
    {
-      return this.getUseTryLock();
+      return this.timeOut.getUseTryLock();
    }
 
    @Override
    public Boolean isNoTxSeparatePools()
    {
-      return this.isNoTxSeparatePools();
+      return this.noTxSeparatePool;
    }
 
    
    @Override
    public Boolean isTrackConnectionByTx()
    {
-      return this.isTrackConnectionByTx();
+      return false;
    }
 
    @Override
    public Integer getXaResourceTimeout()
    {
-      return this.getXaResourceTimeout();
+      return this.timeOut.getXaResourceTimeout();
    }
 
    @Override
    public String getXaDataSourceClass()
    {
 
-      return this.getXaDataSourceClass();
+      return this.xaDataSourceClass;
    }
 
    @Override
    public Map<String, String> getXaDataSourceProperty()
    {
-      return this.getXaDataSourceProperty();
+      return this.xaDataSourceProperty;
    }
 
    @Override
@@ -504,25 +504,18 @@ public class LegacyXaDataSourceImp implements XaDataSource
    @Override
    public Boolean isInterleaving()
    {
-      return this.isInterleaving();
+      return this.interleaving;
    }
 
    @Override
    public Boolean isPadXid()
    {
-      return this.isPadXid();
+      return this.padXid;
    }
 
    @Override
    public Boolean isWrapXaResource()
    {
-      return this.isWrapXaResource();
+      return this.wrapXaDataSource;
    }
-
-   @Override
-   public Boolean isNoTxSeparatePool()
-   {
-      return this.isNoTxSeparatePool();
-   }
-
 }

@@ -92,6 +92,8 @@ public class LegacyDsParser extends AbstractParser
                level++;
                break;
             }
+            default :
+               continue;
          }
       }
       log.info("Skip parse " + reader.getLocalName());

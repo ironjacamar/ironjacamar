@@ -64,21 +64,35 @@ public class Main
       }
       FileInputStream in = null;
       FileOutputStream out = null;
+      String dsxml;
+
       if (option.equals("-ds"))
       {
-         in = new FileInputStream(oldDsFilename);
-         LegacyDsParser parser = new LegacyDsParser();
-         DataSources ds = parser.parse(in);
-         String dsxml = ds.toString();
-         
-         out = new FileOutputStream(newFilename);
-         out.write(dsxml.getBytes(Charset.forName("UTF-8")));
+         try
+         {
+            in = new FileInputStream(oldDsFilename);
+            LegacyDsParser parser = new LegacyDsParser();
+            DataSources ds = parser.parse(in);
+            dsxml = ds.toString();
+         }
+         finally
+         {
+            if (in != null)
+               in.close();
+         }
+
+         try
+         {
+            out = new FileOutputStream(newFilename);
+            out.write(dsxml.getBytes(Charset.forName("UTF-8")));
+         }
+         finally
+         {
+
+            if (out != null)
+               out.close();
+         }
       }
-      
-      if (in != null)
-         in.close();
-      if (out != null)
-         out.close();
 
       System.out.println("\nConvert successfully!");
       System.exit(SUCCESS);
