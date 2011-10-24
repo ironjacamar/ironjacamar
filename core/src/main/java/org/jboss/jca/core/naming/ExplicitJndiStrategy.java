@@ -294,18 +294,21 @@ public class ExplicitJndiStrategy implements JndiStrategy
             if (jndiName == null)
                throw new IllegalArgumentException("JNDI name is null");
 
-            String className = ao.getClass().getName();
-            Reference ref = new Reference(className,
-                                          new StringRefAddr("class", className),
-                                          ExplicitJndiStrategy.class.getName(),
-                                          null);
-            ref.add(new StringRefAddr("name", jndiName));
+            if (ao instanceof Referenceable)
+            {
+               String className = ao.getClass().getName();
+               Reference ref = new Reference(className,
+                                             new StringRefAddr("class", className),
+                                             ExplicitJndiStrategy.class.getName(),
+                                             null);
+               ref.add(new StringRefAddr("name", jndiName));
 
-            if (objs.putIfAbsent(qualifiedName(jndiName, className), ao) != null)
-               throw new Exception(bundle.deploymentFailedSinceJndiNameHasDeployed(className, jndiName));
+               if (objs.putIfAbsent(qualifiedName(jndiName, className), ao) != null)
+                  throw new Exception(bundle.deploymentFailedSinceJndiNameHasDeployed(className, jndiName));
 
-            Referenceable referenceable = (Referenceable)ao;
-            referenceable.setReference(ref);
+               Referenceable referenceable = (Referenceable)ao;
+               referenceable.setReference(ref);
+            }
             
             Util.bind(context, jndiName, ao);
 
