@@ -95,7 +95,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import javax.resource.Referenceable;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
@@ -856,45 +858,53 @@ public abstract class AbstractResourceAdapterDeployer
                                                                               .getConfigProperties()));
                               beanValidationObjects.add(ao);
 
-                              if (ao != null && ao instanceof Serializable && ao instanceof Referenceable)
+                              if (ao != null)
                               {
-                                 try
+                                 boolean adminObjectBound = false;
+
+                                 if ((ao instanceof ResourceAdapterAssociation &&
+                                      ao instanceof Serializable &&
+                                      ao instanceof javax.resource.Referenceable) ||
+                                     (ao instanceof javax.naming.Referenceable))
                                  {
-                                    String jndiName = null;
-                                    if (adminObject != null)
+                                    try
                                     {
-                                       jndiName = buildJndiName(adminObject.getJndiName(),
-                                                                adminObject.isUseJavaContext());
+                                       String jndiName = null;
+                                       if (adminObject != null)
+                                       {
+                                          jndiName = buildJndiName(adminObject.getJndiName(),
+                                                                   adminObject.isUseJavaContext());
 
-                                       bindAdminObject(url, deploymentName, ao, jndiName);
+                                          bindAdminObject(url, deploymentName, ao, jndiName);
+                                       }
+                                       else
+                                       {
+                                          String[] names = bindAdminObject(url, deploymentName, ao);
+                                          jndiName = names[0];
+                                       }
+                                       
+                                       aos.add(ao);
+                                       aoJndiNames.add(jndiName);
+                                       adminObjectBound = true;
+
+                                       org.jboss.jca.core.api.management.AdminObject mgtAo =
+                                          new org.jboss.jca.core.api.management.AdminObject(ao);
+
+                                       mgtAo.getConfigProperties().
+                                          addAll(createManagementView(aoMeta.getConfigProperties()));
+                                       mgtAo.setJndiName(jndiName);
+                                       
+                                       mgtConnector.getAdminObjects().add(mgtAo);
                                     }
-                                    else
+                                    catch (Throwable t)
                                     {
-                                       String[] names = bindAdminObject(url, deploymentName, ao);
-                                       jndiName = names[0];
+                                       throw new 
+                                          DeployException(bundle.failedToBindAdminObject(ao.getClass().getName()), t);
                                     }
-
-                                    aos.add(ao);
-                                    aoJndiNames.add(jndiName);
-
-                                    org.jboss.jca.core.api.management.AdminObject mgtAo =
-                                       new org.jboss.jca.core.api.management.AdminObject(ao);
-
-                                    mgtAo.getConfigProperties().
-                                       addAll(createManagementView(aoMeta.getConfigProperties()));
-                                    mgtAo.setJndiName(jndiName);
-
-                                    mgtConnector.getAdminObjects().add(mgtAo);
                                  }
-                                 catch (Throwable t)
-                                 {
-                                    throw new DeployException(bundle.failedToBindAdminObject(ao.getClass().getName()),
-                                                              t);
-                                 }
-                              }
-                              else
-                              {
-                                 log.adminObjectNotBound(aoMeta.getAdminobjectClass().getValue());
+
+                                 if (!adminObjectBound)
+                                    log.adminObjectNotBound(aoMeta.getAdminobjectClass().getValue());
                               }
                            }
                         }
@@ -1447,7 +1457,8 @@ public abstract class AbstractResourceAdapterDeployer
 
                         archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
-                        if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
+                        if (cf != null && cf instanceof Serializable &&
+                            cf instanceof javax.resource.Referenceable)
                         {
                            String jndiName;
                            if (connectionDefinition != null)
@@ -1914,7 +1925,8 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
-                                    if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
+                                    if (cf != null && cf instanceof Serializable &&
+                                        cf instanceof javax.resource.Referenceable)
                                     {
                                        String jndiName;
                                        if (connectionDefinition != null)
