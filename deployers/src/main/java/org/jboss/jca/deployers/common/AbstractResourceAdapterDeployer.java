@@ -95,9 +95,6 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
@@ -904,7 +901,10 @@ public abstract class AbstractResourceAdapterDeployer
                                  }
 
                                  if (!adminObjectBound)
+                                 {
                                     log.adminObjectNotBound(aoMeta.getAdminobjectClass().getValue());
+                                    log.adminObjectNotSpecCompliant(aoMeta.getAdminobjectClass().getValue());
+                                 }
                               }
                            }
                         }
@@ -1536,6 +1536,15 @@ public abstract class AbstractResourceAdapterDeployer
                         else
                         {
                            log.connectionFactoryNotBound(mcf.getClass().getName());
+
+                           if (cf != null)
+                           {
+                              log.connectionFactoryNotSpecCompliant(cf.getClass().getName());
+                           }
+                           else
+                           {
+                              log.connectionFactoryNotSpecCompliant(mcf.getClass().getName());
+                           }
                         }
                      }
                   }
@@ -2015,6 +2024,15 @@ public abstract class AbstractResourceAdapterDeployer
                                     else
                                     {
                                        log.connectionFactoryNotBound(mcf.getClass().getName());
+
+                                       if (cf != null)
+                                       {
+                                          log.connectionFactoryNotSpecCompliant(cf.getClass().getName());
+                                       }
+                                       else
+                                       {
+                                          log.connectionFactoryNotSpecCompliant(mcf.getClass().getName());
+                                       }
                                     }
                                  }
                               }
