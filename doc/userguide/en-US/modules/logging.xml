@@ -785,6 +785,16 @@
             <entry>Connection factory not bound</entry>
           </row>
           <row>
+            <entry>20014</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Admin object not spec compliant</entry>
+          </row>
+          <row>
+            <entry>20015</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Connection factory not spec compliant</entry>
+          </row>
+          <row>
             <entry>20051</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to start</entry>

@@ -144,4 +144,22 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 20013, value = "Connection factory not bound: %s")
    public void connectionFactoryNotBound(String clz);
+
+   /**
+    * Admin object not spec compliant
+    * @param clz The class name
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 20014, value = "Admin object not specification compliant. " +
+            "See 13.4.2.3 for additional details: %s")
+   public void adminObjectNotSpecCompliant(String clz);
+
+   /**
+    * Connection factory not spec compliant
+    * @param clz The class name
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 20015, value = "Connection factory not specification compliant. " +
+            "See 6.5.1.3 for additional details: %s")
+   public void connectionFactoryNotSpecCompliant(String clz);
 }
