@@ -213,7 +213,10 @@ public class Validation
 
             exitCode = FAIL;
          }
-         exitCode = SUCCESS;
+         else
+         {
+            exitCode = SUCCESS;
+         }
       }
       catch (Exception e)
       {
