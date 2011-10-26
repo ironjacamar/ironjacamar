@@ -724,7 +724,7 @@ public class LegacyDsParser extends AbstractParser
       DATASOURCES("datasources"),
 
       /**
-       * datasources tag
+       * connection-factories tag
        */
       CONNECTION_FACTORIES("connection-factories");
 

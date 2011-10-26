@@ -26,6 +26,7 @@ import java.io.InputStream;
 
 import org.jboss.logging.Logger;
 
+//import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -54,9 +55,7 @@ public class ParserTestCase
    };
    
    private String[] dsFilesName = {
-      "asapxcess-jb3.2-ds.xml",
       "hsqldb-ds.xml",
-      "cicsr9s-ds.xml",
       "hsqldb-encrypted-ds.xml",
       "oracle-ds.xml",
       "db2-400-ds.xml",
@@ -64,23 +63,28 @@ public class ParserTestCase
       "db2-ds.xml",
       "pointbase-ds.xml",
       "jdatastore-ds.xml",
-      "jms-ds.xml",
       "postgres-ds.xml",
       "derby-ds.xml",
       "jsql-ds.xml",
       "mimer-ds.xml",
       "progress-ds.xml",
-      "facets-ds.xml",
       "sapdb-ds.xml",
-      "fastobjects-jboss32-ds.xml",
       "msaccess-ds.xml",
-      "sapr3-ds.xml",
-      "firebird-ds.xml",
       "mssql-ds.xml",
       "solid-ds.xml",
       "sybase-ds.xml",
-      "hajndi-jms-ds.xml",
       "mysql-ds.xml"
+   };
+   
+   private String[] cfFilesName = {
+      "asapxcess-jb3.2-ds.xml",
+      "cicsr9s-ds.xml",
+      "jms-ds.xml",
+      "facets-ds.xml",
+      "fastobjects-jboss32-ds.xml",
+      "sapr3-ds.xml",
+      "firebird-ds.xml",
+      "hajndi-jms-ds.xml",
    };
 
    /**
@@ -118,6 +122,26 @@ public class ParserTestCase
          InputStream in = ParserTestCase.class.getClassLoader().getResourceAsStream("ds/" + dsFileName);
          DataSources ds = parser.parse(in);
          
+         if (ds != null)
+            System.out.println(ds.toString());
+      }
+   }
+   
+   /**
+    * test cf parser
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testCfParser() throws Throwable
+   {
+      LegacyCfParser parser = new LegacyCfParser();
+      
+      for (String cfFileName : cfFilesName)
+      {
+         System.out.println("\nStart parse... " + cfFileName);
+         InputStream in = ParserTestCase.class.getClassLoader().getResourceAsStream("ds/" + cfFileName);
+         ConnectionFactories ds = parser.parse(in);
+   
          if (ds != null)
             System.out.println(ds.toString());
       }

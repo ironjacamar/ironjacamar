@@ -64,34 +64,40 @@ public class Main
       }
       FileInputStream in = null;
       FileOutputStream out = null;
-      String dsxml;
+      String outxml = "";
 
-      if (option.equals("-ds"))
+      try
       {
-         try
+         in = new FileInputStream(oldDsFilename);
+
+         if (option.equals("-ds"))
          {
-            in = new FileInputStream(oldDsFilename);
             LegacyDsParser parser = new LegacyDsParser();
             DataSources ds = parser.parse(in);
-            dsxml = ds.toString();
+            outxml = ds.toString();
          }
-         finally
+         else if (option.equals("-ra"))
          {
-            if (in != null)
-               in.close();
+            LegacyCfParser parser = new LegacyCfParser();
+            ConnectionFactories ds = parser.parse(in);
+            outxml = ds.toString();
          }
+      }
+      finally
+      {
+         if (in != null)
+            in.close();
+      }
+      try
+      {
+         out = new FileOutputStream(newFilename);
+         out.write(outxml.getBytes(Charset.forName("UTF-8")));
+      }
+      finally
+      {
 
-         try
-         {
-            out = new FileOutputStream(newFilename);
-            out.write(dsxml.getBytes(Charset.forName("UTF-8")));
-         }
-         finally
-         {
-
-            if (out != null)
-               out.close();
-         }
+         if (out != null)
+            out.close();
       }
 
       System.out.println("\nConvert successfully!");

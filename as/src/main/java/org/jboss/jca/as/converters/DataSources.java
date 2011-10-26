@@ -56,21 +56,6 @@ public interface DataSources
    public List<XaDataSource> getXaDataSource();
 
    /**
-    * Get the TxConnectionFactory
-    *
-    * @return the list of TxConnectionFactory
-    */
-   public List<TxConnectionFactory> getTxConnectionFactory();
-
-   /**
-    * Get the NoTxConnectionFactory
-    *
-    * @return the list of NoTxConnectionFactory
-    */
-   public List<NoTxConnectionFactory> getNoTxConnectionFactory();
-
-
-   /**
    *
    * A Tag.
    *
@@ -97,17 +82,7 @@ public interface DataSources
       /**
        * xa-datasource tag
        */
-      XA_DATASOURCE("xa-datasource"),
-
-      /**
-       * tx-connection-factory tag
-       */
-      TX_CONNECTION_FACTORY("tx-connection-factory"),
-
-      /**
-       * no-tx-connection-factory tag
-       */
-      NO_TX_CONNECTION_FACTORY("no-tx-connection-factory");
+      XA_DATASOURCE("xa-datasource");
 
       private final String name;
 

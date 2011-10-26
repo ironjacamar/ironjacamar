@@ -21,122 +21,54 @@
  */
 package org.jboss.jca.as.converters;
 
-import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * No Tx ConnectionFactory
+ *
+ * ConnectionFactories
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public interface TxConnectionFactory extends NoTxConnectionFactory, CommonXa
+public interface ConnectionFactories
 {
    /**
+    * Get the TxConnectionFactory
     *
-    * get the getTransactionSupport
-    *
-    * @return the getTransactionSupport
+    * @return the list of TxConnectionFactory
     */
-   public TransactionSupportEnum getTransactionSupport();
+   public List<TxConnectionFactory> getTxConnectionFactory();
+
+   /**
+    * Get the NoTxConnectionFactory
+    *
+    * @return the list of NoTxConnectionFactory
+    */
+   public List<NoTxConnectionFactory> getNoTxConnectionFactory();
 
    /**
    *
    * A Tag.
+   *
    */
-   public enum Tag 
+   public enum Tag
    {
-      /**
-       * always first
+      /** always first
+       *
        */
       UNKNOWN(null),
 
-      //more by NoConnectionFactory
+      /**
+       * tx-connection-factory tag
+       */
+      TX_CONNECTION_FACTORY("tx-connection-factory"),
 
       /**
-       * xaDatasourceProperty tag
+       * no-tx-connection-factory tag
        */
-      TRACK_CONNECTION_BY_TX("track_connection-by_tx"),
-      /**
-      * xaDatasourceClass tag
-      */
-      NO_TX_SEPARATE_POOLS("no-tx-separate-pools"),
-      /**
-      * XaResourceTimeout tag
-      */
-      XA_RESOURCE_TIMEOUT("xa-resource-timeout"),
-      /**
-       * local-transaction tag
-       */
-      LOCAL_TRANSACTION("local-transaction"),
-      /**
-       * xa-transaction tag
-       */
-      XA_TRANSACTION("xa-transaction"),
-
-      /**
-       * rar-name tag
-       */
-      RAR_NAME("rar-name"),
-      /**
-       * connection-definition tag
-       */
-      CONNECTION_DEFINITION("connection-definition"),
-      /**
-       * config-property tag
-       */
-      CONFIG_PROPERTY("config-property"),
-      
-      /**
-       * jndiName tag
-       */
-      JNDI_NAME("jndi-name"),
-      /**
-       * security-domain tag
-       */
-      SECURITY_DOMAIN("security-domain"),
-      /**
-       * min-pool-size tag
-       */
-      MIN_POOL_SIZE("min-pool-size"),
-      /**
-      * maxPoolSize tag
-      */
-      MAX_POOL_SIZE("max-pool-size"),
-      /**
-       * blockingTimeoutMillis tag
-       */
-      BLOCKING_TIMEOUT_MILLIS("blocking-timeout-millis"),
-      /**
-       * backgroundValidation tag
-       */
-      BACKGROUND_VALIDATION("background-validation"),
-      /**
-      * backgroundValidationMillis tag
-      */
-      BACKGROUND_VALIDATION_MILLIS("background-validation-millis"),
-      /**
-      * idleTimeoutMinutes tag
-      */
-      IDLE_TIMEOUT_MINUTES("idle-timeout-minutes"),
-      /**
-       * allocationRetry tag
-       */
-      ALLOCATION_RETRY("allocation-retry"),
-      /**
-      * allocationRetryWaitMillis tag
-      */
-      ALLOCATION_RETRY_WAIT_MILLIS("allocation-retry-wait-millis"),
-      /**
-      * prefill tag
-      */
-      PREFILL("prefill"),
-      /**
-       * useFastFail tag
-       */
-      USE_FAST_FAIL("use-fast-fail");
+      NO_TX_CONNECTION_FACTORY("no-tx-connection-factory");
 
       private final String name;
 

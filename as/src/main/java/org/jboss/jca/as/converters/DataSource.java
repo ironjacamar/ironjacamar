@@ -33,15 +33,8 @@ import java.util.Map;
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public interface DataSource
+public interface DataSource extends ConnectionFactory
 {
-   /**
-    * Get the jndiName.
-    *
-    * @return the jndiName.
-    */
-   public String getJndiName();
-
    /**
     * Get the useJavaContext.
     *
@@ -76,70 +69,6 @@ public interface DataSource
     * @return the password.
     */
    public String getPassword();
-
-   /**
-    *
-    * get the security domain for pure security-domain security management
-    *
-    * @return the security-domain to use
-    */
-   public String getSecurityDomain();
-
-   /**
-    * Get the minPoolSize.
-    *
-    * @return the minPoolSize.
-    */
-   public Integer getMinPoolSize();
-
-   /**
-    * Get the maxPoolSize.
-    *
-    * @return the maxPoolSize.
-    */
-   public Integer getMaxPoolSize();
-
-   /**
-    * Get the blockingTimeoutMillis.
-    *
-    * @return the blockingTimeoutMillis.
-    */
-   public Long getBlockingTimeoutMillis();
-
-   /**
-    * Get the backgroundValidation.
-    *
-    * @return the backgroundValidation.
-    */
-   public Boolean isBackgroundValidation();
-
-   /**
-    * Get the backgroundValidationMillis.
-    *
-    * @return the backgroundValidationMillis.
-    */
-   public Long getBackgroundValidationMillis();
-
-   /**
-    * Get the idleTimeoutMinutes.
-    *
-    * @return the idleTimeoutMinutes.
-    */
-   public Long getIdleTimeoutMinutes();
-
-   /**
-    * Get the allocationRetryWaitMillis.
-    *
-    * @return the allocationRetryWaitMillis.
-    */
-   public Integer getAllocationRetry();
-
-   /**
-    * Get the allocationRetryWaitMillis.
-    *
-    * @return the allocationRetryWaitMillis.
-    */
-   public Long getAllocationRetryWaitMillis();
 
    /**
     * Get the validateOnMatch.
@@ -189,20 +118,6 @@ public interface DataSource
     * @return the trackStatements.
     */
    public TrackStatementsEnum getTrackStatements();
-
-   /**
-    * Get the prefill.
-    *
-    * @return the prefill.
-    */
-   public Boolean isPrefill();
-
-   /**
-    * Get the useFastFail.
-    *
-    * @return the useFastFail.
-    */
-   public Boolean isUseFastFail();
 
    /**
     * Get the preparedStatementsCacheSize.

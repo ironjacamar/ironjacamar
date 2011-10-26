@@ -21,74 +21,63 @@
  */
 package org.jboss.jca.as.converters;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A XaDataSource impl.
+ * A ConnectionFactoriesImpl .
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class DatasourcesImpl implements DataSources
+public class ConnectionFactoriesImpl implements ConnectionFactories
 {
+   private List<NoTxConnectionFactory> noTxConnectionFactory = new ArrayList<NoTxConnectionFactory>();
+   private List<TxConnectionFactory> txConnectionFactory = new ArrayList<TxConnectionFactory>();
    
-   private List<NoTxDataSource> noTxDatasource;
-   private List<LocalTxDataSource> localTxDatasource;
-   private List<XaDataSource> xaDataSource;
-
    /**
-    * DatasourcesImpl
-    * @param noTxDatasource list of NoTxDatasource
-    * @param localTxDatasource list of LocalTxDataSource
-    * @param xaDataSource list of XaDataSource
+    * ConnectionFactoriesImpl
+    * @param noTxConnectionFactory noTxConnectionFactory
+    * @param txConnectionFactory txConnectionFactory
     */
-   public DatasourcesImpl(
-         List<NoTxDataSource> noTxDatasource,
-         List<LocalTxDataSource> localTxDatasource,
-         List<XaDataSource> xaDataSource)
+   public ConnectionFactoriesImpl(
+         List<NoTxConnectionFactory> noTxConnectionFactory,
+         List<TxConnectionFactory> txConnectionFactory)
    {
-      this.noTxDatasource = noTxDatasource;
-      this.localTxDatasource = localTxDatasource;
-      this.xaDataSource = xaDataSource;
+      this.noTxConnectionFactory = noTxConnectionFactory;
+      this.txConnectionFactory = txConnectionFactory;
    }
    
    @Override
    public String toString()
    {
       StringBuilder out = new StringBuilder();
-      out.append("<datasources>\n");
-      for (DataSource ds : noTxDatasource)
+      out.append("<resource-adapter>\n");
+
+      for (ConnectionFactory cf : noTxConnectionFactory)
       {
          
-         out.append(ds.toString());
+         out.append(cf.toString());
       }
-      for (DataSource ds : localTxDatasource)
+      for (ConnectionFactory cf : txConnectionFactory)
       {
-         out.append(ds.toString());
+         out.append(cf.toString());
       }
-      for (DataSource ds : xaDataSource)
-      {
-         out.append(ds.toString());
-      }
-      out.append("\n</datasources>\n");
+
+      out.append("\n</resource-adapter>\n");
       return out.toString();
    }
 
    @Override
-   public List<LocalTxDataSource> getLocalTxDataSource()
+   public List<TxConnectionFactory> getTxConnectionFactory()
    {
-      return localTxDatasource;
+      return txConnectionFactory;
    }
 
    @Override
-   public List<NoTxDataSource> getNoTxDataSource()
+   public List<NoTxConnectionFactory> getNoTxConnectionFactory()
    {
-      return noTxDatasource;
+      return noTxConnectionFactory;
    }
 
-   @Override
-   public List<XaDataSource> getXaDataSource()
-   {
-      return xaDataSource;
-   }
 }
