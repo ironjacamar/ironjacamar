@@ -52,7 +52,7 @@ public class ConnectionFactoriesImpl implements ConnectionFactories
    public String toString()
    {
       StringBuilder out = new StringBuilder();
-      out.append("<resource-adapter>\n");
+      out.append("<resource-adapters>\n");
 
       for (ConnectionFactory cf : noTxConnectionFactory)
       {
@@ -64,7 +64,7 @@ public class ConnectionFactoriesImpl implements ConnectionFactories
          out.append(cf.toString());
       }
 
-      out.append("\n</resource-adapter>\n");
+      out.append("\n</resource-adapters>\n");
       return out.toString();
    }
 

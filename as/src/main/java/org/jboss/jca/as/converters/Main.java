@@ -23,17 +23,20 @@ package org.jboss.jca.as.converters;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-
+import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
- * converter main class
+ * Converter main class
  * 
  * @author Jeff Zhang
- * @version $Revision: $
  */
 public class Main
 {
+   /** New line character */
+   private static final String NEW_LINE = System.getProperty("line.separator");
+
+   /** Exit codes */
    private static final int SUCCESS = 0;
    private static final int ERROR = 1;
    private static final int OTHER = 2;
@@ -43,31 +46,32 @@ public class Main
     * @param args args 
     * @throws Exception exception
     */
-   public static void main(String[] args) throws Exception
+   public static void main(String[] args)
    {
-      
-      if (args.length < 3)
-      {
-         usage();
-         System.exit(OTHER);
-      }
-      String option = args[0];
-      String oldDsFilename = args[1];
-      String newFilename = args[2];
-      
-      if (!(option.equals("-ra") || option.equals("-ds")) ||
-            !oldDsFilename.endsWith("-ds.xml") ||
-            !newFilename.endsWith(".xml"))
-      {
-         usage();
-         System.exit(OTHER);
-      }
       FileInputStream in = null;
       FileOutputStream out = null;
-      String outxml = "";
 
       try
       {
+         if (args.length < 3)
+         {
+            usage();
+            System.exit(OTHER);
+         }
+
+         String option = args[0];
+         String oldDsFilename = args[1];
+         String newFilename = args[2];
+         
+         if (!(option.equals("-ra") || option.equals("-ds")) ||
+             !oldDsFilename.endsWith("-ds.xml") || !newFilename.endsWith(".xml"))
+         {
+            usage();
+            System.exit(OTHER);
+         }
+
+         String outxml = "";
+
          in = new FileInputStream(oldDsFilename);
 
          if (option.equals("-ds"))
@@ -79,29 +83,50 @@ public class Main
          else if (option.equals("-ra"))
          {
             LegacyCfParser parser = new LegacyCfParser();
-            ConnectionFactories ds = parser.parse(in);
-            outxml = ds.toString();
+            ConnectionFactories cfs = parser.parse(in);
+            outxml = cfs.toString();
          }
+         
+         out = new FileOutputStream(newFilename);
+         out.write(outxml.getBytes(Charset.forName("UTF-8")));
+         out.flush();
+
+         System.out.println(NEW_LINE);
+         System.out.println("Done.");
+         System.exit(SUCCESS);
+      }
+      catch (Throwable t)
+      {
+         System.err.println("Error: " + t.getMessage());
+         t.printStackTrace(System.err);
+         System.exit(ERROR);
       }
       finally
       {
          if (in != null)
-            in.close();
-      }
-      try
-      {
-         out = new FileOutputStream(newFilename);
-         out.write(outxml.getBytes(Charset.forName("UTF-8")));
-      }
-      finally
-      {
+         {
+            try
+            {
+               in.close();
+            }
+            catch (IOException ioe)
+            {
+               // Ignore
+            }
+         }
 
          if (out != null)
-            out.close();
+         {
+            try
+            {
+               out.close();
+            }
+            catch (IOException ioe)
+            {
+               // Ignore
+            }
+         }
       }
-
-      System.out.println("\nConvert successfully!");
-      System.exit(SUCCESS);
    }
 
    /**
@@ -109,6 +134,6 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage: ./as-converter.sh -{ds|ra} old-ds.xml mydeployment-{ds|ra}.xml");
+      System.out.println("Usage: ./converter.sh -{ds|ra} old-ds.xml mydeployment-{ds|ra}.xml");
    }
 }
