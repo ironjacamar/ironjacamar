@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="tools">
+  <title>Other tools</title>
+
+  <section id="tools_migration">
+    <title>Migration tool</title>
+
+    <para>
+      The IronJacamar distribution features a migration tool, that can convert the deployment
+      format used in JBoss Application Server prior to version 7, and JBoss Enterprise Application Platform
+      versions prior to version 6.
+    </para>
+
+    <para>
+      Since there are different formats (XSDs) to deploy datasources and a resource adapters the tool
+      can convert to both these formats.
+    </para>
+
+    <para>
+      The tool (<code>converter.sh</code>) is located in the <code>doc/as/</code> directory of the
+      distribution.
+    </para>
+
+    <section id="tools_migration_resource_adapters">
+      <title>Resource adapters</title>
+
+      <para>
+        A resource adapter deployment is converted using the following command:
+      </para>
+        
+      <programlisting>
+./converter.sh -ra old-ds.xml new-ra.xml
+      </programlisting>
+
+      <para>
+        which will convert the file <code>old-ds.xml</code> to <code>new-ra.xml</code>. The content of
+        <code>new-ra.xml</code> can then be copied into the <code>resource-adapters</code> subsystem
+        in JBoss Application Server 7 or used directly in the IronJacamar/Standalone distribution.
+      </para>
+
+      <note>
+        Note that, the tool will do a best effort to convert all old attributes and elements to
+        the new format. It will be necessary to make additional changes to the generated file.
+        Please, consult this documentation for additional information.
+      </note>
+    </section>
+
+    <section id="tools_migration_datasources">
+      <title>Data sources</title>
+
+      <para>
+        A data source deployment is converted using the following command:
+      </para>
+        
+      <programlisting>
+./converter.sh -ds old-ds.xml new-ds.xml
+      </programlisting>
+
+      <para>
+        which will convert the file <code>old-ds.xml</code> to <code>new-ds.xml</code>. The content of
+        <code>new-ds.xml</code> can then be copied into the <code>datasources</code> subsystem
+        in JBoss Application Server 7 or used directly in the IronJacamar/Standalone distribution.
+      </para>
+
+      <note>
+        Note that, the tool will do a best effort to convert all old attributes and elements to
+        the new format. It will be necessary to make additional changes to the generated file.
+        Please, consult this documentation for additional information.
+      </note>
+    </section>
+
+  </section>
+
+</chapter>

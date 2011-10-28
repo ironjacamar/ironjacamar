@@ -11,6 +11,7 @@
         <!ENTITY running SYSTEM "modules/running.xml">
         <!ENTITY validator SYSTEM "modules/validator.xml">
         <!ENTITY codegenerator SYSTEM "modules/codegenerator.xml">
+        <!ENTITY tools SYSTEM "modules/tools.xml">
         <!ENTITY embedded SYSTEM "modules/embedded.xml">
         <!ENTITY community SYSTEM "modules/community.xml">
         <!ENTITY troubleshooting SYSTEM "modules/troubleshooting.xml">
@@ -54,6 +55,8 @@
    &validator;
 
    &codegenerator;
+
+   &tools;
 
    &embedded;
 
