@@ -24,7 +24,6 @@ package org.jboss.jca.as.converters;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
 /**
  * Converter main class
@@ -33,9 +32,6 @@ import java.nio.charset.Charset;
  */
 public class Main
 {
-   /** New line character */
-   private static final String NEW_LINE = System.getProperty("line.separator");
-
    /** Exit codes */
    private static final int SUCCESS = 0;
    private static final int ERROR = 1;
@@ -44,7 +40,6 @@ public class Main
    /**
     * Main
     * @param args args 
-    * @throws Exception exception
     */
    public static void main(String[] args)
    {
@@ -70,28 +65,19 @@ public class Main
             System.exit(OTHER);
          }
 
-         String outxml = "";
-
          in = new FileInputStream(oldDsFilename);
-
+         out = new FileOutputStream(newFilename);
          if (option.equals("-ds"))
          {
-            LegacyDsParser parser = new LegacyDsParser();
-            DataSources ds = parser.parse(in);
-            outxml = ds.toString();
+            DataSourceConverter converter = new DataSourceConverter();
+            converter.convert(in, out);
          }
          else if (option.equals("-ra"))
          {
-            LegacyCfParser parser = new LegacyCfParser();
-            ConnectionFactories cfs = parser.parse(in);
-            outxml = cfs.toString();
+            ConnectionFactoryConverter converter = new ConnectionFactoryConverter();
+            converter.convert(in, out);
          }
-         
-         out = new FileOutputStream(newFilename);
-         out.write(outxml.getBytes(Charset.forName("UTF-8")));
-         out.flush();
 
-         System.out.println(NEW_LINE);
          System.out.println("Done.");
          System.exit(SUCCESS);
       }

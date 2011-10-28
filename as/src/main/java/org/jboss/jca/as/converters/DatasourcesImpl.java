@@ -31,7 +31,6 @@ import java.util.List;
  */
 public class DatasourcesImpl implements DataSources
 {
-   
    private List<NoTxDataSource> noTxDatasource;
    private List<LocalTxDataSource> localTxDatasource;
    private List<XaDataSource> xaDataSource;
@@ -56,10 +55,9 @@ public class DatasourcesImpl implements DataSources
    public String toString()
    {
       StringBuilder out = new StringBuilder();
-      out.append("<datasources>\n");
+      out.append("<datasources>");
       for (DataSource ds : noTxDatasource)
       {
-         
          out.append(ds.toString());
       }
       for (DataSource ds : localTxDatasource)
@@ -70,7 +68,7 @@ public class DatasourcesImpl implements DataSources
       {
          out.append(ds.toString());
       }
-      out.append("\n</datasources>\n");
+      out.append("</datasources>");
       return out.toString();
    }
 

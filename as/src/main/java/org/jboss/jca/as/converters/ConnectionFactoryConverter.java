@@ -37,18 +37,18 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 /**
- * DataSourceConverter
+ * ConnectionFactoryConverter
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class DataSourceConverter
+public class ConnectionFactoryConverter
 {
 
    /**
-    * DataSourceConverter constructor
+    * ConnectionFactoryConverter constructor
     */
-   public DataSourceConverter()
+   public ConnectionFactoryConverter()
    {
    }
 
@@ -60,8 +60,8 @@ public class DataSourceConverter
     */
    public void convert(InputStream in, OutputStream out) throws Exception
    {
-      LegacyDsParser parser = new LegacyDsParser();
-      DataSources ds = parser.parse(in);
+      LegacyCfParser parser = new LegacyCfParser();
+      ConnectionFactories ds = parser.parse(in);
 
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();

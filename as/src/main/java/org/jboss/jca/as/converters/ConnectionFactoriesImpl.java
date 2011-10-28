@@ -23,7 +23,6 @@ package org.jboss.jca.as.converters;
 
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * A ConnectionFactoriesImpl .
  * 
@@ -52,7 +51,7 @@ public class ConnectionFactoriesImpl implements ConnectionFactories
    public String toString()
    {
       StringBuilder out = new StringBuilder();
-      out.append("<resource-adapters>\n");
+      out.append("<resource-adapters>");
 
       for (ConnectionFactory cf : noTxConnectionFactory)
       {
@@ -63,8 +62,8 @@ public class ConnectionFactoriesImpl implements ConnectionFactories
       {
          out.append(cf.toString());
       }
-
-      out.append("\n</resource-adapters>\n");
+      out.append("</resource-adapters>");
+      
       return out.toString();
    }
 
