@@ -259,7 +259,8 @@ public class LegacyCfParser extends AbstractParser
                      break;
                   }
                   case CONNECTION_DEFINITION : {
-                     connectionDefinition = elementAsString(reader);
+                     elementAsString(reader);
+                     connectionDefinition = "FIXME_MCF_CLASS_NAME";// we can't use the old -ds.xml definition.
                      break;
                   }
                   case JNDI_NAME : {
@@ -388,7 +389,8 @@ public class LegacyCfParser extends AbstractParser
                      break;
                   }
                   case CONNECTION_DEFINITION : {
-                     connectionDefinition = elementAsString(reader);
+                     elementAsString(reader);
+                     connectionDefinition = "FIXME_MCF_CLASS_NAME";// we can't use the old -ds.xml definition.
                      break;
                   }
                   case JNDI_NAME : {
