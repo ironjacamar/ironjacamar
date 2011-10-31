@@ -97,7 +97,7 @@ public class LegacyDsParser extends AbstractParser
                continue;
          }
       }
-      log.info("Skip parse " + reader.getLocalName());
+      log.info("Skipping: " + reader.getLocalName());
       //System.out.println("Skip parse " + reader.getLocalName());
    }
    
@@ -303,6 +303,11 @@ public class LegacyDsParser extends AbstractParser
             case START_ELEMENT : {
                switch (XaDataSource.Tag.forName(reader.getLocalName()))
                {
+                  case SECURITY_DOMAIN :
+                  case SECURITY_DOMAIN_AND_APPLICATION : {
+                     securityDomain = elementAsString(reader);
+                     break;
+                  }
                   case XA_DATASOURCE_PROPERTY : {
                      xaDataSourceProperty.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
@@ -348,6 +353,10 @@ public class LegacyDsParser extends AbstractParser
                      wrapXaDataSource = elementAsBoolean(reader);
                      break;
                   }
+                  case TRACK_CONNECTION_BY_TX : {
+                     interleaving = false;
+                     break;
+                  }
                   
                   case VALID_CONNECTION_CHECKER : {
                      String classname = elementAsString(reader);
@@ -367,6 +376,9 @@ public class LegacyDsParser extends AbstractParser
 
                   case JNDI_NAME : {
                      poolName = elementAsString(reader);
+                     if (poolName.startsWith("java:"))
+                        poolName = poolName.substring(5);
+
                      jndiName = "java:jboss/datasources/" + poolName;
                      break;
                   }
@@ -578,6 +590,11 @@ public class LegacyDsParser extends AbstractParser
                      staleConnectionChecker = new Extension(classname, null);
                      break;
                   }
+                  case SECURITY_DOMAIN :
+                  case SECURITY_DOMAIN_AND_APPLICATION : {
+                     securityDomain = elementAsString(reader);
+                     break;
+                  }
                   
                   case CONNECTION_PROPERTY : {
                      connectionProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
@@ -609,6 +626,9 @@ public class LegacyDsParser extends AbstractParser
                   }
                   case JNDI_NAME : {
                      poolName = elementAsString(reader);
+                     if (poolName.startsWith("java:"))
+                        poolName = poolName.substring(5);
+
                      jndiName = "java:jboss/datasources/" + poolName;
                      break;
                   }

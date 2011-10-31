@@ -94,7 +94,7 @@ public class LegacyCfParser extends AbstractParser
                continue;
          }
       }
-      log.info("Skip parse " + reader.getLocalName());
+      log.info("Skipping: " + reader.getLocalName());
       //System.out.println("Skip parse " + reader.getLocalName());
    }
    
@@ -219,6 +219,9 @@ public class LegacyCfParser extends AbstractParser
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
       Boolean useFastFail = Defaults.USE_FAST_FAIL;
+      String securityDomainManaged = "";
+      String securityDomainAndApplicationManaged = "";
+      boolean applicationManaged = true;
       
       //elements reading
       while (reader.hasNext())
@@ -233,8 +236,10 @@ public class LegacyCfParser extends AbstractParser
                         connectionDefinition, configProperty, TransactionSupportEnum.NoTransaction);
                   cfImpl.buildTimeOut(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                         allocationRetryWaitMillis, null);
+                  cfImpl.buildSecurity(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
                   cfImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail);
-                  cfImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, Defaults.NO_TX_SEPARATE_POOL);
+                  cfImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, Defaults.NO_TX_SEPARATE_POOL, 
+                        Defaults.INTERLEAVING);
                   cfImpl.buildResourceAdapterImpl();
                   return cfImpl;
                }
@@ -250,6 +255,16 @@ public class LegacyCfParser extends AbstractParser
             case START_ELEMENT : {
                switch (NoTxConnectionFactory.Tag.forName(reader.getLocalName()))
                {
+                  case SECURITY_DOMAIN : {
+                     securityDomainManaged = elementAsString(reader);
+                     applicationManaged = false;
+                     break;
+                  }
+                  case SECURITY_DOMAIN_AND_APPLICATION : {
+                     securityDomainAndApplicationManaged = elementAsString(reader);
+                     applicationManaged = false;
+                     break;
+                  }
                   case CONFIG_PROPERTY : {
                      configProperty.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
@@ -265,7 +280,10 @@ public class LegacyCfParser extends AbstractParser
                   }
                   case JNDI_NAME : {
                      poolName = elementAsString(reader);
-                     jndiName = "java:jboss/datasources/" + poolName;
+                     if (poolName.startsWith("java:"))
+                        poolName = poolName.substring(5);
+
+                     jndiName = "java:jboss/" + poolName;
                      break;
                   }
                   case MAX_POOL_SIZE : {
@@ -349,6 +367,11 @@ public class LegacyCfParser extends AbstractParser
       
       TransactionSupportEnum transactionSupport = TransactionSupportEnum.LocalTransaction;
       Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
+      Boolean interleaving = Defaults.INTERLEAVING;
+
+      String securityDomainManaged = "";
+      String securityDomainAndApplicationManaged = "";
+      boolean applicationManaged = true;
       
       //elements reading
       while (reader.hasNext())
@@ -363,8 +386,9 @@ public class LegacyCfParser extends AbstractParser
                         connectionDefinition, configProperty, transactionSupport);
                   cfImpl.buildTimeOut(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                         allocationRetryWaitMillis, xaResourceTimeout);
+                  cfImpl.buildSecurity(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
                   cfImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail);
-                  cfImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, noTxSeparatePool);
+                  cfImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, noTxSeparatePool, interleaving);
                   cfImpl.buildResourceAdapterImpl();
                   return cfImpl;
                }
@@ -380,6 +404,16 @@ public class LegacyCfParser extends AbstractParser
             case START_ELEMENT : {
                switch (TxConnectionFactory.Tag.forName(reader.getLocalName()))
                {
+                  case SECURITY_DOMAIN : {
+                     securityDomainManaged = elementAsString(reader);
+                     applicationManaged = false;
+                     break;
+                  }
+                  case SECURITY_DOMAIN_AND_APPLICATION : {
+                     securityDomainAndApplicationManaged = elementAsString(reader);
+                     applicationManaged = false;
+                     break;
+                  }
                   case CONFIG_PROPERTY : {
                      configProperty.put(attributeAsString(reader, "name"), elementAsString(reader));
                      break;
@@ -395,7 +429,10 @@ public class LegacyCfParser extends AbstractParser
                   }
                   case JNDI_NAME : {
                      poolName = elementAsString(reader);
-                     jndiName = "java:jboss/datasources/" + poolName;
+                     if (poolName.startsWith("java:"))
+                        poolName = poolName.substring(5);
+
+                     jndiName = "java:jboss/" + poolName;
                      break;
                   }
                   case MAX_POOL_SIZE : {
@@ -452,6 +489,10 @@ public class LegacyCfParser extends AbstractParser
                   }
                   case XA_RESOURCE_TIMEOUT : {
                      xaResourceTimeout = elementAsInteger(reader);
+                     break;
+                  }
+                  case TRACK_CONNECTION_BY_TX : {
+                     interleaving = false;
                      break;
                   }
                   default :

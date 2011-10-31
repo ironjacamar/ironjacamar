@@ -68,7 +68,7 @@ public interface CommonXa
       /**
       * xaDatasourceProperty tag
       */
-      TRACK_CONNECTION_BY_TX("track_connection-by_tx"),
+      TRACK_CONNECTION_BY_TX("track_connection-by-tx"),
       /**
       * xaDatasourceClass tag
       */

@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.metadata.common.CommonConnDefImpl;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
+import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
 import org.jboss.jca.common.metadata.common.CommonValidationImpl;
 import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterImpl;
@@ -55,7 +56,9 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
 
 
    private CommonTimeOutImpl timeOut;
-
+   
+   private CommonSecurityImpl security;
+   
    private CommonValidationImpl validation;
 
    private CommonPool pool;
@@ -67,7 +70,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    private Map<String, String> configProperty;
    
    private Boolean noTxSeparatePool;
-   
+   private Boolean interleaving;
 
    /**
     * create a LegacyConnectionFactoryImp
@@ -105,7 +108,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    public void buildResourceAdapterImpl()  throws Exception
    {
       CommonConnDefImpl connDef = new CommonConnDefImpl(configProperty, connectionDefinition, jndiName, poolName, 
-            Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, timeOut, validation, null, null);
+            Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, timeOut, validation, security, null);
       connectionDefinitions = new ArrayList<CommonConnDef>();
       connectionDefinitions.add(connDef);
       raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, null,
@@ -161,14 +164,32 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
     * @param noTxSeparatePool noTxSeparatePool
+    * @param interleaving interleaving
     * @return this
     * @throws Exception exception
     */
    public LegacyConnectionFactoryImp buildCommonPool(Integer minPoolSize, Integer maxPoolSize, 
-         Boolean prefill, Boolean noTxSeparatePool) throws Exception
+         Boolean prefill, Boolean noTxSeparatePool, Boolean interleaving) throws Exception
    {
       pool = new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, Defaults.FLUSH_STRATEGY);
       this.noTxSeparatePool = noTxSeparatePool;
+      this.interleaving = interleaving;
+      return this;
+   }
+   
+   /** 
+    * build security part
+    * 
+    * @param securityDomainManaged securityDomainManaged
+    * @param securityDomainAndApplicationManaged securityDomainAndApplicationManaged
+    * @param applicationManaged applicationManagedS
+    * @return this
+    * @throws Exception exception
+    */
+   public LegacyConnectionFactoryImp buildSecurity(String securityDomainManaged,
+         String securityDomainAndApplicationManaged, boolean applicationManaged) throws Exception
+   {
+      security = new CommonSecurityImpl(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
       return this;
    }
    

@@ -89,6 +89,10 @@ public interface NoTxConnectionFactory extends ConnectionFactory
        */
       SECURITY_DOMAIN("security-domain"),
       /**
+       * security-domain-and-application tag
+       */
+      SECURITY_DOMAIN_AND_APPLICATION("security-domain-and-application"),
+      /**
        * min-pool-size tag
        */
       MIN_POOL_SIZE("min-pool-size"),

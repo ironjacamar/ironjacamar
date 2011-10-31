@@ -119,7 +119,7 @@ public interface XaDataSource extends DataSource, CommonXa
       /**
        * xaDatasourceProperty tag
        */
-      TRACK_CONNECTION_BY_TX("track_connection-by_tx"),
+      TRACK_CONNECTION_BY_TX("track_connection-by-tx"),
       /**
       * xaDatasourceClass tag
       */
@@ -157,6 +157,10 @@ public interface XaDataSource extends DataSource, CommonXa
        * security-domain tag
        */
       SECURITY_DOMAIN("security-domain"),
+      /**
+       * security-domain-and-application tag
+       */
+      SECURITY_DOMAIN_AND_APPLICATION("security-domain-and-application"),
       /**
        * min-pool-size tag
        */
