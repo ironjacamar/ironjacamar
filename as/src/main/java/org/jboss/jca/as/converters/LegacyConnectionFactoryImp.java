@@ -105,7 +105,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    public void buildResourceAdapterImpl()  throws Exception
    {
       CommonConnDefImpl connDef = new CommonConnDefImpl(configProperty, connectionDefinition, jndiName, poolName, 
-            true, true, false, pool, timeOut, validation, null, null);
+            Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, timeOut, validation, null, null);
       connectionDefinitions = new ArrayList<CommonConnDef>();
       connectionDefinitions.add(connDef);
       raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, null,
