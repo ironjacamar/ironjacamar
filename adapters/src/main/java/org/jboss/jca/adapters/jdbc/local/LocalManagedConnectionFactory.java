@@ -205,7 +205,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    /**
     * {@inheritDoc}
     */
-   public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
+   public synchronized ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
       Properties props = getConnectionProperties(subject, cri);
