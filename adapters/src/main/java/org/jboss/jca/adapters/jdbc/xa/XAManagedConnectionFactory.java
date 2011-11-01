@@ -369,7 +369,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    /**
     * {@inheritDoc}
     */
-   public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
+   public synchronized ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
       throws javax.resource.ResourceException
    {
       if (xadsSelector == null)
