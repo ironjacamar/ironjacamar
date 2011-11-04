@@ -12,5 +12,6 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/mockito-all.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/tools/ant.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-validator"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
