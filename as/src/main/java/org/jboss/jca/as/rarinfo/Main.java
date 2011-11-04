@@ -228,6 +228,7 @@ public class Main
          if (raNode != null)
          {
             out.println();
+            out.println("Deployment descriptor:");
 
             TransformerFactory tfactory = TransformerFactory.newInstance();
             Transformer serializer;
