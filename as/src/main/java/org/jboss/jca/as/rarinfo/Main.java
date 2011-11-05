@@ -64,7 +64,7 @@ public class Main
    private static final int ERROR = 1;
    private static final int OTHER = 2;
    
-   private static final String REPORT_FILE = "file-report.txt";
+   private static final String REPORT_FILE = "-report.txt";
    private static final String RAXML_FILE = "META-INF/ra.xml";
    
    /**
@@ -76,13 +76,29 @@ public class Main
       PrintStream out = null;
       try
       {
-         if (args.length < 1 && args[0].endsWith("rar"))
+         if (args.length < 1 || args.length == 2 || args.length > 3)
+         {
+            usage();
+            System.exit(OTHER);
+         }
+         
+         String rarFile = "";
+         String[] cps = null;
+         if (args.length == 1 && args[0].endsWith("rar"))
+         {
+            rarFile = args[0];
+         }
+         else if (args.length == 3 && args[0].equals("-classpath") && args[2].endsWith("rar"))
+         {
+            rarFile = args[2];
+            cps = args[1].split(System.getProperty("path.separator"));
+         }
+         else
          {
             usage();
             System.exit(OTHER);
          }
 
-         String rarFile = args[0];
          ZipFile zipFile = new ZipFile(rarFile);
 
          boolean hasRaXml = false;
@@ -127,17 +143,19 @@ public class Main
             System.exit(OTHER);
          }
 
-         out = new PrintStream(REPORT_FILE);
+         out = new PrintStream(rarFile.substring(0, rarFile.length() - 4) + REPORT_FILE);
          out.println("Archive:\t" + rarFile);
          
          String version;
          String type = "";
          ResourceAdapter ra;
+         boolean reauth = false;
          if (connector.getVersion() == Version.V_10)
          {
             version = "1.0";
             ra = connector.getResourceadapter();
             type = "OutBound";
+            reauth = ((ResourceAdapter10)ra).getReauthenticationSupport();
          }
          else
          {
@@ -147,17 +165,18 @@ public class Main
                version = "1.6";
             ResourceAdapter1516 ra1516 = (ResourceAdapter1516)connector.getResourceadapter();
             ra = ra1516;
-            if (ra1516.getInboundResourceadapter() != null)
+            if (ra1516.getOutboundResourceadapter() != null)
             {
-               if (ra1516.getOutboundResourceadapter() != null)
-                  type = "Bidirect";
+               reauth = ra1516.getOutboundResourceadapter().getReauthenticationSupport();
+               if (ra1516.getInboundResourceadapter() != null)
+                  type = "Bidirectional";
                else
-                  type = "InBound";
+                  type = "OutBound";
             }
             else
             {
-               if (ra1516.getOutboundResourceadapter() != null)
-                  type = "OutBound";
+               if (ra1516.getInboundResourceadapter() != null)
+                  type = "InBound";
                else
                {
                   out.println("Rar file has problem");
@@ -168,7 +187,14 @@ public class Main
          out.println("JCA version:\t" + version);
          out.println("Type:\t\t" + type);
          
-         int systemExitCode = Validation.validate(new File(rarFile).toURI().toURL(), ".");
+         out.print("Reauth:\t\t");
+         if (reauth)
+            out.println("Yes");
+         else
+            out.println("No");
+
+         int systemExitCode = Validation.validate(new File(rarFile).toURI().toURL(), ".", cps);
+         
          String compliant;
          if (systemExitCode == SUCCESS)
             compliant = "Yes";
@@ -271,6 +297,6 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage: ./rar-info.sh file.rar");
+      System.out.println("Usage:  ./rar-info.sh [-classpath <lib>[:<lib>]*] <file>");
    }
 }
