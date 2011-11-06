@@ -21,7 +21,12 @@
  */
 package org.jboss.jca.as.rarinfo;
 
+import org.jboss.jca.common.api.metadata.Defaults;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
+import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Connector.Version;
@@ -29,13 +34,20 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
+import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
+import org.jboss.jca.common.metadata.common.CommonConnDefImpl;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.validator.Validation;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -48,8 +60,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /**
@@ -104,7 +114,6 @@ public class Main
          boolean hasRaXml = false;
          boolean exsitNativeFile = false;
          Connector connector = null;
-         Node raNode = null;
 
          Enumeration zipEntries = zipFile.entries();
 
@@ -122,13 +131,7 @@ public class Main
                RaParser parser = new RaParser();
                connector = parser.parse(raIn);
                raIn.close();
-               
-               DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-               DocumentBuilder db = dbf.newDocumentBuilder();
-               Document doc = db.parse(new InputSource(zipFile.getInputStream(ze)));
-               NodeList raList = doc.getElementsByTagName("resourceadapter");
-               if (raList != null && raList.getLength() > 0)
-                  raNode = raList.item(0);
+
             }
          }
 
@@ -208,6 +211,12 @@ public class Main
          else
             out.println("No");
          
+         String classname = "";
+         Map<String, String> raConfigProperties = null;
+         TransactionSupportEnum transSupport = TransactionSupportEnum.NoTransaction;
+         List<CommonAdminObject> adminObjects = null;
+         List<CommonConnDef> connDefs = null;
+
          if (connector.getVersion() != Version.V_10)
          {
             ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
@@ -219,17 +228,53 @@ public class Main
             out.println("Managed-connection-factory:");
             if (ra1516.getOutboundResourceadapter() != null)
             {
+               if (ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+                  connDefs = new ArrayList<CommonConnDef>();
                for (ConnectionDefinition mcf : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
                {
-                  out.println("  Class: " + mcf.getManagedConnectionFactoryClass());
+                  classname = mcf.getManagedConnectionFactoryClass().toString();
+                  out.println("  Class: " + classname);
+                  
+                  Map<String, String> configProperty = null;
+                  if (mcf.getConfigProperties() != null)
+                     configProperty = new HashMap<String, String>();
+                  for (ConfigProperty cp : mcf.getConfigProperties())
+                  {
+                     configProperty.put(cp.getConfigPropertyName().toString(), cp.getConfigPropertyValue().toString());
+                  }
+                  String poolName = classname.substring(classname.lastIndexOf('.') + 1);
+                  CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
+                        "java:jboss/eis/" + poolName, poolName, 
+                        Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, 
+                        null, null, null, null, null);
+                  connDefs.add(connImpl);
                }
+               
+               transSupport = ra1516.getOutboundResourceadapter().getTransactionSupport();
             }
-            
+
             out.println();
             out.println("Admin-object:");
+            
+            if (ra1516.getAdminObjects() != null)
+            {
+               adminObjects = new ArrayList<CommonAdminObject>();
+            }
             for (AdminObject ao : ra1516.getAdminObjects())
             {
-               out.println("  Class: " + ao.getAdminobjectClass());
+               String aoClassname = ao.getAdminobjectClass().toString();
+               out.println("  Class: " + aoClassname);
+               String poolName = classname.substring(aoClassname.lastIndexOf('.') + 1);
+               Map<String, String> configProperty = null;
+               if (ao.getConfigProperties() != null)
+                  configProperty = new HashMap<String, String>();
+               for (ConfigProperty cp : ao.getConfigProperties())
+               {
+                  configProperty.put(cp.getConfigPropertyName().toString(), cp.getConfigPropertyValue().toString());
+               }
+               CommonAdminObjectImpl aoImpl = new CommonAdminObjectImpl(configProperty, aoClassname,
+                     "java:jboss/eis/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
+               adminObjects.add(aoImpl);
             }
             
             out.println();
@@ -242,6 +287,17 @@ public class Main
                   out.println("  Class: " + ml.getActivationspec().getActivationspecClass());
                }
             }
+            
+            
+            if (ra1516.getConfigProperties() != null)
+            {
+               raConfigProperties = new HashMap<String, String>();
+               for (ConfigProperty cp : ra1516.getConfigProperties())
+               {
+                  raConfigProperties.put(cp.getConfigPropertyName().toString(), cp.getConfigPropertyValue().toString());
+               }
+            }
+
          }
          else
          {
@@ -249,10 +305,38 @@ public class Main
 
             ResourceAdapter10 ra10 = (ResourceAdapter10)ra;
             out.println("  Class: " + ra10.getManagedConnectionFactoryClass());
+            
+            classname = ra10.getManagedConnectionFactoryClass().toString();
+            transSupport = ra10.getTransactionSupport();
+            
+            Map<String, String> configProperty = null;
+            if (ra10.getConfigProperties() != null)
+               configProperty = new HashMap<String, String>();
+            for (ConfigProperty cp : ra10.getConfigProperties())
+            {
+               configProperty.put(cp.getConfigPropertyName().toString(), cp.getConfigPropertyValue().toString());
+            }
+            String poolName = classname.substring(classname.lastIndexOf('.') + 1);
+            CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
+                  "java:jboss/eis/" + poolName, poolName, 
+                  Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, 
+                  null, null, null, null, null);
+            connDefs = new ArrayList<CommonConnDef>();
+            connDefs.add(connImpl);
          }
          
-         if (raNode != null)
+
+         RaImpl raImpl = new RaImpl(rarFile, transSupport, connDefs, adminObjects, raConfigProperties);
+         raImpl.buildResourceAdapterImpl();
+
+         String raString = "<resource-adapters>" + raImpl.toString() + "</resource-adapters>";
+         if (!raString.equals(""))
          {
+
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new InputSource(new StringReader(raString)));
+            
             out.println();
             out.println("Deployment descriptor:");
 
@@ -264,7 +348,7 @@ public class Main
             serializer.setOutputProperty(OutputKeys.INDENT, "yes");
             serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
-            serializer.transform(new DOMSource(raNode), new StreamResult(out));
+            serializer.transform(new DOMSource(doc), new StreamResult(out));
          }
 
          System.out.println("Done.");
