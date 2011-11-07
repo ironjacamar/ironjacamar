@@ -31,8 +31,10 @@ import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.Connector.Version;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
+import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
+import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
 import org.jboss.jca.common.metadata.common.CommonConnDefImpl;
@@ -222,10 +224,24 @@ public class Main
             ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
             out.println();
             out.println("Resource-adapter:");
-            out.println("  Class: " + ra1516.getResourceadapterClass());
-
+            out.println("-----------------");
+            out.println("Class: " + ra1516.getResourceadapterClass());
+            
+            if (ra1516.getConfigProperties() != null)
+            {
+               raConfigProperties = new HashMap<String, String>();
+               for (ConfigProperty cp : ra1516.getConfigProperties())
+               {
+                  raConfigProperties.put(cp.getConfigPropertyName().toString(), 
+                        getValueString(cp.getConfigPropertyValue()));
+                  out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
+                        cp.getConfigPropertyType() + ")");
+               }
+            }
+            
             out.println();
             out.println("Managed-connection-factory:");
+            out.println("---------------------------");
             if (ra1516.getOutboundResourceadapter() != null)
             {
                if (ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
@@ -233,14 +249,17 @@ public class Main
                for (ConnectionDefinition mcf : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
                {
                   classname = mcf.getManagedConnectionFactoryClass().toString();
-                  out.println("  Class: " + classname);
+                  out.println("Class: " + classname);
                   
                   Map<String, String> configProperty = null;
                   if (mcf.getConfigProperties() != null)
                      configProperty = new HashMap<String, String>();
                   for (ConfigProperty cp : mcf.getConfigProperties())
                   {
-                     configProperty.put(cp.getConfigPropertyName().toString(), cp.getConfigPropertyValue().toString());
+                     configProperty.put(cp.getConfigPropertyName().toString(), 
+                           getValueString(cp.getConfigPropertyValue()));
+                     out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
+                           cp.getConfigPropertyType() + ")");
                   }
                   String poolName = classname.substring(classname.lastIndexOf('.') + 1);
                   CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
@@ -255,6 +274,7 @@ public class Main
 
             out.println();
             out.println("Admin-object:");
+            out.println("-------------");
             
             if (ra1516.getAdminObjects() != null)
             {
@@ -263,14 +283,17 @@ public class Main
             for (AdminObject ao : ra1516.getAdminObjects())
             {
                String aoClassname = ao.getAdminobjectClass().toString();
-               out.println("  Class: " + aoClassname);
+               out.println("Class: " + aoClassname);
                String poolName = classname.substring(aoClassname.lastIndexOf('.') + 1);
                Map<String, String> configProperty = null;
                if (ao.getConfigProperties() != null)
                   configProperty = new HashMap<String, String>();
                for (ConfigProperty cp : ao.getConfigProperties())
                {
-                  configProperty.put(cp.getConfigPropertyName().toString(), cp.getConfigPropertyValue().toString());
+                  configProperty.put(cp.getConfigPropertyName().toString(), 
+                        getValueString(cp.getConfigPropertyValue()));
+                  out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
+                        cp.getConfigPropertyType() + ")");
                }
                CommonAdminObjectImpl aoImpl = new CommonAdminObjectImpl(configProperty, aoClassname,
                      "java:jboss/eis/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
@@ -279,32 +302,32 @@ public class Main
             
             out.println();
             out.println("Activation-spec:");
+            out.println("----------------");
             if (ra1516.getInboundResourceadapter() != null && 
                ra1516.getInboundResourceadapter().getMessageadapter() != null)
             {
-               for (MessageListener ml : ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
+               for (MessageListener ml : 
+                  ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
                {
-                  out.println("  Class: " + ml.getActivationspec().getActivationspecClass());
+                  out.println("Class: " + ml.getActivationspec().getActivationspecClass());
+                  if (ml.getActivationspec() != null && 
+                     ml.getActivationspec().getRequiredConfigProperties() != null)
+                  {
+                     for (RequiredConfigProperty cp :  ml.getActivationspec().getRequiredConfigProperties())
+                     {
+                        out.println("  Config-property: " + cp.getConfigPropertyName());
+                     }
+                  }
                }
             }
-            
-            
-            if (ra1516.getConfigProperties() != null)
-            {
-               raConfigProperties = new HashMap<String, String>();
-               for (ConfigProperty cp : ra1516.getConfigProperties())
-               {
-                  raConfigProperties.put(cp.getConfigPropertyName().toString(), cp.getConfigPropertyValue().toString());
-               }
-            }
-
          }
          else
          {
             out.println("Managed-connection-factory:");
+            out.println("---------------------------");
 
             ResourceAdapter10 ra10 = (ResourceAdapter10)ra;
-            out.println("  Class: " + ra10.getManagedConnectionFactoryClass());
+            out.println("Class: " + ra10.getManagedConnectionFactoryClass());
             
             classname = ra10.getManagedConnectionFactoryClass().toString();
             transSupport = ra10.getTransactionSupport();
@@ -314,7 +337,10 @@ public class Main
                configProperty = new HashMap<String, String>();
             for (ConfigProperty cp : ra10.getConfigProperties())
             {
-               configProperty.put(cp.getConfigPropertyName().toString(), cp.getConfigPropertyValue().toString());
+               configProperty.put(cp.getConfigPropertyName().toString(), 
+                     getValueString(cp.getConfigPropertyValue()));
+               out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
+                     cp.getConfigPropertyType() + ")");
             }
             String poolName = classname.substring(classname.lastIndexOf('.') + 1);
             CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
@@ -339,6 +365,7 @@ public class Main
             
             out.println();
             out.println("Deployment descriptor:");
+            out.println("----------------------");
 
             TransformerFactory tfactory = TransformerFactory.newInstance();
             Transformer serializer;
@@ -374,6 +401,19 @@ public class Main
             }
          }
       }
+   }
+   
+   /**
+    * get correct value string 
+    * @param value xsdstring
+    * @return correct string
+    */
+   private static String getValueString(XsdString value)
+   {
+      if (value == null || value == XsdString.NULL_XSDSTRING)
+         return "";
+      else
+         return value.toString();
    }
 
    /**
