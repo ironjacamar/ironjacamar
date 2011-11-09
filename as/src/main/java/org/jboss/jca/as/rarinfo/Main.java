@@ -24,6 +24,7 @@ package org.jboss.jca.as.rarinfo;
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
@@ -38,6 +39,9 @@ import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
 import org.jboss.jca.common.metadata.common.CommonConnDefImpl;
+import org.jboss.jca.common.metadata.common.CommonPoolImpl;
+import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
+import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.validator.Validation;
 
@@ -219,6 +223,13 @@ public class Main
          List<CommonAdminObject> adminObjects = null;
          List<CommonConnDef> connDefs = null;
 
+         CommonSecurityImpl secImpl = new CommonSecurityImpl("", "", true);
+         CommonPoolImpl poolImpl = new CommonPoolImpl(0, 0, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
+               Defaults.FLUSH_STRATEGY);
+         CommonXaPoolImpl xaPoolImpl = new CommonXaPoolImpl(0, 0, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
+               Defaults.FLUSH_STRATEGY, Defaults.IS_SAME_RM_OVERRIDE, Defaults.INTERLEAVING,
+               Defaults.PAD_XID, Defaults.WRAP_XA_RESOURCE, Defaults.NO_TX_SEPARATE_POOL);
+
          if (connector.getVersion() != Version.V_10)
          {
             ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
@@ -239,6 +250,8 @@ public class Main
                }
             }
             
+            int line = 0;
+            String sameClassname = "";
             out.println();
             out.println("Managed-connection-factory:");
             out.println("---------------------------");
@@ -246,10 +259,21 @@ public class Main
             {
                if (ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
                   connDefs = new ArrayList<CommonConnDef>();
+               
+               transSupport = ra1516.getOutboundResourceadapter().getTransactionSupport();
                for (ConnectionDefinition mcf : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
                {
                   classname = mcf.getManagedConnectionFactoryClass().toString();
-                  out.println("Class: " + classname);
+                  if (!classname.equals(sameClassname))
+                  {
+                     sameClassname = classname;
+                     if (line != 0)
+                     {
+                        out.println();
+                     }
+                     line++;
+                     out.println("Class: " + classname);
+                  }
                   
                   Map<String, String> configProperty = null;
                   if (mcf.getConfigProperties() != null)
@@ -261,17 +285,28 @@ public class Main
                      out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
                            cp.getConfigPropertyType() + ")");
                   }
-                  String poolName = classname.substring(classname.lastIndexOf('.') + 1);
+                  String poolName = mcf.getConnectionInterface().toString().substring(
+                        mcf.getConnectionInterface().toString().lastIndexOf('.') + 1);
+                  CommonPool pool = null;
+                  if (transSupport.equals(TransactionSupportEnum.XATransaction))
+                  {
+                     pool = poolImpl;
+                  }
+                  else
+                  {
+                     pool = xaPoolImpl;
+                  }
                   CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
                         "java:jboss/eis/" + poolName, poolName, 
                         Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, 
-                        null, null, null, null, null);
+                        pool, null, null, secImpl, null);
                   connDefs.add(connImpl);
                }
-               
-               transSupport = ra1516.getOutboundResourceadapter().getTransactionSupport();
+
             }
 
+            line = 0;
+            sameClassname = "";
             out.println();
             out.println("Admin-object:");
             out.println("-------------");
@@ -283,8 +318,18 @@ public class Main
             for (AdminObject ao : ra1516.getAdminObjects())
             {
                String aoClassname = ao.getAdminobjectClass().toString();
-               out.println("Class: " + aoClassname);
-               String poolName = classname.substring(aoClassname.lastIndexOf('.') + 1);
+               if (!aoClassname.equals(sameClassname))
+               {
+                  sameClassname = aoClassname;
+                  if (line != 0)
+                  {
+                     out.println();
+                  }
+                  line++;
+                  out.println("Class: " + aoClassname);
+               }
+
+               String poolName = aoClassname.substring(aoClassname.lastIndexOf('.') + 1);
                Map<String, String> configProperty = null;
                if (ao.getConfigProperties() != null)
                   configProperty = new HashMap<String, String>();
@@ -296,10 +341,12 @@ public class Main
                         cp.getConfigPropertyType() + ")");
                }
                CommonAdminObjectImpl aoImpl = new CommonAdminObjectImpl(configProperty, aoClassname,
-                     "java:jboss/eis/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
+                     "java:jboss/eis/ao/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
                adminObjects.add(aoImpl);
             }
             
+            line = 0;
+            sameClassname = "";
             out.println();
             out.println("Activation-spec:");
             out.println("----------------");
@@ -309,13 +356,23 @@ public class Main
                for (MessageListener ml : 
                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
                {
-                  out.println("Class: " + ml.getActivationspec().getActivationspecClass());
+                  String asClassname = ml.getActivationspec().getActivationspecClass().toString();
+                  if (!asClassname.equals(sameClassname))
+                  {
+                     sameClassname = asClassname;
+                     if (line != 0)
+                     {
+                        out.println();
+                     }
+                     line++;
+                     out.println("Class: " + asClassname);
+                  }
                   if (ml.getActivationspec() != null && 
                      ml.getActivationspec().getRequiredConfigProperties() != null)
                   {
                      for (RequiredConfigProperty cp :  ml.getActivationspec().getRequiredConfigProperties())
                      {
-                        out.println("  Config-property: " + cp.getConfigPropertyName());
+                        out.println("  Required-config-property: " + cp.getConfigPropertyName());
                      }
                   }
                }
@@ -343,10 +400,19 @@ public class Main
                      cp.getConfigPropertyType() + ")");
             }
             String poolName = classname.substring(classname.lastIndexOf('.') + 1);
+            CommonPool pool = null;
+            if (transSupport.equals(TransactionSupportEnum.XATransaction))
+            {
+               pool = poolImpl;
+            }
+            else
+            {
+               pool = xaPoolImpl;
+            }
             CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
                   "java:jboss/eis/" + poolName, poolName, 
                   Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, 
-                  null, null, null, null, null);
+                  pool, null, null, secImpl, null);
             connDefs = new ArrayList<CommonConnDef>();
             connDefs.add(connImpl);
          }
