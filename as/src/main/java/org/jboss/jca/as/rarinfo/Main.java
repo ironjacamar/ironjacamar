@@ -224,9 +224,9 @@ public class Main
          List<CommonConnDef> connDefs = null;
 
          CommonSecurityImpl secImpl = new CommonSecurityImpl("", "", true);
-         CommonPoolImpl poolImpl = new CommonPoolImpl(0, 0, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
+         CommonPoolImpl poolImpl = new CommonPoolImpl(0, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
                Defaults.FLUSH_STRATEGY);
-         CommonXaPoolImpl xaPoolImpl = new CommonXaPoolImpl(0, 0, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
+         CommonXaPoolImpl xaPoolImpl = new CommonXaPoolImpl(0, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
                Defaults.FLUSH_STRATEGY, Defaults.IS_SAME_RM_OVERRIDE, Defaults.INTERLEAVING,
                Defaults.PAD_XID, Defaults.WRAP_XA_RESOURCE, Defaults.NO_TX_SEPARATE_POOL);
 
@@ -290,11 +290,11 @@ public class Main
                   CommonPool pool = null;
                   if (transSupport.equals(TransactionSupportEnum.XATransaction))
                   {
-                     pool = poolImpl;
+                     pool = xaPoolImpl;
                   }
                   else
                   {
-                     pool = xaPoolImpl;
+                     pool = poolImpl;
                   }
                   CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
                         "java:jboss/eis/" + poolName, poolName, 
@@ -403,11 +403,11 @@ public class Main
             CommonPool pool = null;
             if (transSupport.equals(TransactionSupportEnum.XATransaction))
             {
-               pool = poolImpl;
+               pool = xaPoolImpl;
             }
             else
             {
-               pool = xaPoolImpl;
+               pool = poolImpl;
             }
             CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
                   "java:jboss/eis/" + poolName, poolName, 
