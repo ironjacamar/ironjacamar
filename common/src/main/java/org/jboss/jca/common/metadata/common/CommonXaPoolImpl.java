@@ -246,18 +246,14 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
          sb.append("</").append(CommonXaPool.Tag.IS_SAME_RM_OVERRIDE).append(">");
       }
 
-      if (interleaving != null)
+      if (interleaving != null && Boolean.TRUE.equals(interleaving))
       {
-         sb.append("<").append(CommonXaPool.Tag.INTERLEAVING).append(">");
-         sb.append(interleaving);
-         sb.append("</").append(CommonXaPool.Tag.INTERLEAVING).append(">");
+         sb.append("<").append(CommonXaPool.Tag.INTERLEAVING).append("/>");
       }
 
-      if (noTxSeparatePool != null)
+      if (noTxSeparatePool != null && Boolean.TRUE.equals(noTxSeparatePool))
       {
-         sb.append("<").append(CommonXaPool.Tag.NO_TX_SEPARATE_POOLS).append(">");
-         sb.append(noTxSeparatePool);
-         sb.append("</").append(CommonXaPool.Tag.NO_TX_SEPARATE_POOLS).append(">");
+         sb.append("<").append(CommonXaPool.Tag.NO_TX_SEPARATE_POOLS).append("/>");
       }
 
       if (padXid != null)
