@@ -2,6 +2,76 @@
 <chapter id="tools">
   <title>Other tools</title>
 
+  <section id="tools_rarinfo">
+    <title>Resource adapter information tool</title>
+
+    <para>
+      The IronJacamar distribution features a resource adapter information tool, that can provide the important 
+      information about the resource adapter and a sample deployment descriptor.
+    </para>
+
+    <para>
+      The information about the resource adapter is generated using the following command:
+    </para>
+        
+    <programlisting>
+./rar-info.sh myeis.rar
+    </programlisting>
+
+    <para>
+      where the report will be located in <code>myeis-report.txt</code>. The tool can take an optional
+      <code>-classpath</code> parameter such that additional external dependencies can be resolved against
+      the resource adapter.
+    </para>
+
+    <para>
+      The report will contain information about
+
+      <itemizedlist spacing="compact">
+        <listitem>
+          The name of the resource adapter
+        </listitem>
+        <listitem>
+          The Java EE Connector Architecture specification version
+        </listitem>
+        <listitem>
+          The type of the resource adapter
+        </listitem>
+        <listitem>
+          If the resource adapter supports reauthentication
+        </listitem>
+        <listitem>
+          If the resource adapter is compliant (see the validator tool)
+        </listitem>
+        <listitem>
+          If the resource adapter contains native libraries
+        </listitem>
+        <listitem>
+          Overview of the resource adapter class
+        </listitem>
+        <listitem>
+          Overview of the managed connection factory classes
+        </listitem>
+        <listitem>
+          Overview of the admin object classes
+        </listitem>
+        <listitem>
+          Overview of the activation specification classes
+        </listitem>
+        <listitem>
+          A sample deployment descriptor
+        </listitem>
+      </itemizedlist>
+
+    </para>
+
+    <para>
+      The tool (<code>rar-info.sh</code>) is located in the <code>doc/as/</code> directory of the
+      distribution.
+    </para>
+
+  </section>
+
   <section id="tools_migration">
     <title>Migration tool</title>
 
