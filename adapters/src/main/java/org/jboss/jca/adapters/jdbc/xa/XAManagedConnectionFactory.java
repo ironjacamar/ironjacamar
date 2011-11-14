@@ -35,8 +35,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -63,7 +66,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    private String xaDataSourceProperties;
 
    /** THe XA properties */
-   protected final Properties xaProps = new Properties();
+   protected final Map<String, String> xaProps = Collections.synchronizedMap(new HashMap<String, String>());
 
    private Boolean isSameRMOverrideValue;
 
@@ -157,7 +160,13 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          InputStream is = new ByteArrayInputStream(xaDataSourceProperties.getBytes());
          try
          {
-            xaProps.load(is);
+            Properties p = new Properties();
+            p.load(is);
+
+            for (Map.Entry<Object, Object> entry : p.entrySet())
+            {
+               xaProps.put((String)entry.getKey(), (String)entry.getValue());
+            }
          }
          catch (IOException ioe)
          {
@@ -191,7 +200,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    {
       if (urlProperty != null && urlProperty.length() > 0)
       {
-         String urlsStr = xaProps.getProperty(urlProperty);
+         String urlsStr = xaProps.get(urlProperty);
          if (urlsStr != null && urlsStr.trim().length() > 0 &&
              urlDelimiter != null && urlDelimiter.trim().length() > 0)
          {
@@ -201,10 +210,9 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             // ctor doesn't work because iteration won't include defaults
             // Properties xaPropsCopy = new Properties(xaProps);
             Properties xaPropsCopy = new Properties();
-            for (Iterator<?> i = xaProps.keySet().iterator(); i.hasNext();)
+            for (Map.Entry<String, String> entry : xaProps.entrySet())
             {
-               Object key = i.next();
-               xaPropsCopy.put(key, xaProps.get(key));
+               xaPropsCopy.put(entry.getKey(), entry.getValue());
             }
 
             int urlStart = 0;
@@ -244,7 +252,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    }
 
    @SuppressWarnings("unchecked")
-   private XADataSource createXaDataSource(Properties xaProps) throws ResourceException
+   private XADataSource createXaDataSource(Properties p) throws ResourceException
    {
       if (getXADataSourceClass() == null)
       {
@@ -292,10 +300,10 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          xads = (XADataSource)clazz.newInstance();
          final Class<?>[] noClasses = new Class<?>[]{};
-         for (Iterator<?> i = xaProps.keySet().iterator(); i.hasNext();)
+         for (Map.Entry<Object, Object> entry : p.entrySet())
          {
-            String name = (String)i.next();
-            String value = xaProps.getProperty(name);
+            String name = (String)entry.getKey();
+            String value = (String)entry.getValue();
             char firstCharName = Character.toUpperCase(name.charAt(0));
             if (name.length() > 1)
             {
@@ -545,10 +553,10 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             xads = (XADataSource) clazz.newInstance();
             final Class<?>[] noClasses = new Class<?>[] {};
 
-            for (Iterator<?> i = xaProps.keySet().iterator(); i.hasNext();)
+            for (Map.Entry<String, String> entry : xaProps.entrySet())
             {
-               String name = (String)i.next();
-               String value = xaProps.getProperty(name);
+               String name = entry.getKey();
+               String value = entry.getValue();
                char firstCharName = Character.toUpperCase(name.charAt(0));
 
                if (name.length() > 1)
@@ -622,15 +630,6 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          }
       }
       return xads;
-   }
-
-   /**
-    * Get the XA properties
-    * @return The value
-    */
-   protected Properties getXaProps()
-   {
-      return xaProps;
    }
 
    /**
