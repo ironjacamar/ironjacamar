@@ -42,8 +42,8 @@ public class PoolConfiguration
    /** Blocking timeout. In milliseconds */
    private AtomicLong blockingTimeout;
    
-   /** Idle timeout period. Default 30 mins. In milliseconds */
-   private AtomicLong idleTimeout;
+   /** Idle timeout period. Default 30 mins */
+   private AtomicInteger idleTimeoutMinutes;
 
    /** Background validation */
    private AtomicBoolean backgroundValidation;
@@ -71,7 +71,7 @@ public class PoolConfiguration
       minSize = new AtomicInteger(0);
       maxSize = new AtomicInteger(20);
       blockingTimeout = new AtomicLong(30000);
-      idleTimeout = new AtomicLong(1000 * 60 * 30);
+      idleTimeoutMinutes = new AtomicInteger(30);
       backgroundValidation = new AtomicBoolean(false);
       backgroundValidationMillis = new AtomicLong(0);
       prefill = new AtomicBoolean(false);
@@ -134,19 +134,27 @@ public class PoolConfiguration
    }
 
    /**
-    * @return the idleTimeout
+    * @return the idleTimeout in milliseconds
     */
    public long getIdleTimeout()
    {
-      return idleTimeout.get();
+      return idleTimeoutMinutes.get() * 1000 * 60;
+   }
+
+   /**
+    * @return the idleTimeout
+    */
+   public int getIdleTimeoutMinutes()
+   {
+      return idleTimeoutMinutes.get();
    }
 
    /**
     * @param idleTimeout the idleTimeout to set
     */
-   public void setIdleTimeout(long idleTimeout)
+   public void setIdleTimeoutMinutes(int idleTimeout)
    {
-      this.idleTimeout.set(idleTimeout);
+      this.idleTimeoutMinutes.set(idleTimeout);
    }
 
    /**
@@ -244,7 +252,7 @@ public class PoolConfiguration
       sb.append("[minSize=").append(minSize.get());
       sb.append(" maxSize=").append(maxSize.get());
       sb.append(" blockingTimeout=").append(blockingTimeout.get());
-      sb.append(" idleTimeout=").append(idleTimeout.get());
+      sb.append(" idleTimeoutMinutes=").append(idleTimeoutMinutes.get());
       sb.append(" backgroundValidation=").append(backgroundValidation.get());
       sb.append(" backgroundValidationMillis=").append(backgroundValidationMillis.get());
       sb.append(" prefill=").append(prefill.get());

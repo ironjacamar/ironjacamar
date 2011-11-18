@@ -79,9 +79,11 @@ public class PoolConfigurationTestCase
    public void testIdleTimeout()
    {
       PoolConfiguration params = new PoolConfiguration();
-      assertEquals(1000 * 60 * 30, params.getIdleTimeout());
-      params.setIdleTimeout(1000 * 60 * 20);
-      assertEquals(1000 * 60 * 20, params.getIdleTimeout());
+      assertEquals(30, params.getIdleTimeoutMinutes());
+      assertEquals(30 * 1000 * 60, params.getIdleTimeout());
+      params.setIdleTimeoutMinutes(20);
+      assertEquals(20, params.getIdleTimeoutMinutes());
+      assertEquals(20 * 1000 * 60, params.getIdleTimeout());
    }
 
    /**
