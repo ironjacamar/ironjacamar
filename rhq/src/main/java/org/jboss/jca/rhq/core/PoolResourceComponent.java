@@ -122,8 +122,7 @@ public abstract class PoolResourceComponent extends AbstractResourceComponent
       
       // idle-timeout-minutes
       Integer idleTimeoutMinutes = Integer.valueOf(config.getSimpleValue("idle-timeout-minutes", "30"));
-      Long idleTimeoutMillis = Long.valueOf(idleTimeoutMinutes * 60 * 1000);
-      poolConfig.setIdleTimeout(idleTimeoutMillis.longValue());
+      poolConfig.setIdleTimeoutMinutes(idleTimeoutMinutes.intValue());
       
       // prefill
       Boolean preFill = Boolean.valueOf(config.getSimpleValue("prefill", "true"));

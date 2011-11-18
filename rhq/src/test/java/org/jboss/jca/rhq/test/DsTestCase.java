@@ -162,7 +162,7 @@ public class DsTestCase
       boolean oldBackgroundValidation = poolConfig.isBackgroundValidation();
       long oldBackgroundValidationTime = poolConfig.getBackgroundValidationMillis();
       long oldBlockingTimeout = poolConfig.getBlockingTimeout();
-      long oldIdleTimeout = poolConfig.getIdleTimeout();
+      int oldIdleTimeout = poolConfig.getIdleTimeoutMinutes();
       boolean oldPreFill = poolConfig.isPrefill();
       boolean oldUseStrictMin = poolConfig.isStrictMin();
       boolean oldUseFastFail = poolConfig.isUseFastFail();
@@ -199,7 +199,7 @@ public class DsTestCase
       poolConfig.setBackgroundValidation(oldBackgroundValidation);
       poolConfig.setBackgroundValidationMillis(oldBackgroundValidationTime);
       poolConfig.setBlockingTimeout(oldBlockingTimeout);
-      poolConfig.setIdleTimeout(oldIdleTimeout);
+      poolConfig.setIdleTimeoutMinutes(oldIdleTimeout);
       poolConfig.setMaxSize(oldMaxPoolSize);
       poolConfig.setMinSize(oldMinPoolSize);
       poolConfig.setPrefill(oldPreFill);
