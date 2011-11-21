@@ -77,10 +77,8 @@ public abstract class PoolResourceComponent extends AbstractResourceComponent
       PropertySimple blockingTimeoutProp = new PropertySimple("blocking-timeout-millis", blTimeout);
       config.put(blockingTimeoutProp);
       
-      Long idleTimeoutMills = poolConfig.getIdleTimeout();
-      
-      Integer idleTimeout = (int)(idleTimeoutMills / (1000 * 60)); // convert to minutes
-      PropertySimple idleTimeoutProp = new PropertySimple("idle-timeout-minutes", idleTimeout);
+      Integer idleTimeoutMinutes = poolConfig.getIdleTimeoutMinutes();
+      PropertySimple idleTimeoutProp = new PropertySimple("idle-timeout-minutes", idleTimeoutMinutes);
       config.put(idleTimeoutProp);
       
       PropertySimple prefillProp = new PropertySimple("prefill", Boolean.valueOf(poolConfig.isPrefill()));

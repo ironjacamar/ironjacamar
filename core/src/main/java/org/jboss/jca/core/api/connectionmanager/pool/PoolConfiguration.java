@@ -134,14 +134,6 @@ public class PoolConfiguration
    }
 
    /**
-    * @return the idleTimeout in milliseconds
-    */
-   public long getIdleTimeout()
-   {
-      return idleTimeoutMinutes.get() * 1000 * 60;
-   }
-
-   /**
     * @return the idleTimeout
     */
    public int getIdleTimeoutMinutes()
