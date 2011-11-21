@@ -1,0 +1,26 @@
+<resource-adapters>
+
+  <resource-adapter>
+    <archive>CamelCase.rar</archive>
+    <config-property name="Name">RA</config-property>
+
+    <transaction-support>NoTransaction</transaction-support>
+    
+    <connection-definitions>
+      <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.multiple.MultipleManagedConnectionFactory1" 
+                             enabled="true" jndi-name="java:/eis/MultipleConnectionFactory1"
+                             pool-name="MultipleConnectionFactory1">
+        <config-property name="Name">A</config-property>
+      </connection-definition>
+    </connection-definitions>
+    
+    <admin-objects>
+      <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject1Impl" 
+                    jndi-name="java:/eis/MultipleAdminObject1">
+        <config-property name="Name">C</config-property>
+      </admin-object>
+    </admin-objects>
+    
+  </resource-adapter>
+
+</resource-adapters>
