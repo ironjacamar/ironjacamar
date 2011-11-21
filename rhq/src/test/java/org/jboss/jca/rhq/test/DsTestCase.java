@@ -171,14 +171,14 @@ public class DsTestCase
       int maxPoolSize = 15;
       long backValidationTime = 30000;
       long blockingTimeout = 10000;
-      long idleTimeOut = 15;
+      int idleTimeOutMinutes = 15;
       
       config.put(new PropertySimple("min-pool-size", minPoolSize));
       config.put(new PropertySimple("max-pool-size", maxPoolSize));
       config.put(new PropertySimple("background-validation", true));
       config.put(new PropertySimple("background-validation-millis", backValidationTime));
       config.put(new PropertySimple("blocking-timeout-millis", blockingTimeout));
-      config.put(new PropertySimple("idle-timeout-minutes", idleTimeOut));
+      config.put(new PropertySimple("idle-timeout-minutes", idleTimeOutMinutes));
       config.put(new PropertySimple("prefill", false));
       config.put(new PropertySimple("use-strict-min", true));
       config.put(new PropertySimple("use-fast-fail", true));
@@ -191,7 +191,7 @@ public class DsTestCase
       assertTrue(poolConfig.isBackgroundValidation());
       assertEquals(backValidationTime, poolConfig.getBackgroundValidationMillis());
       assertEquals(blockingTimeout, poolConfig.getBlockingTimeout());
-      assertEquals(idleTimeOut * 60 * 1000L, poolConfig.getIdleTimeout());
+      assertEquals(idleTimeOutMinutes, poolConfig.getIdleTimeoutMinutes());
       assertFalse(poolConfig.isPrefill());
       assertTrue(poolConfig.isStrictMin());
       assertTrue(poolConfig.isUseFastFail());
