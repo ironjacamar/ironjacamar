@@ -485,4 +485,23 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
 
       return result;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("SimpleResourceAdapterRepository@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[");
+      sb.append(" rars=").append(rars);
+      sb.append(" ids=").append(ids);
+      sb.append(" mdr=").append(mdr);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }
