@@ -114,7 +114,7 @@
   <property name="version.dom4j" value="1.6.1"/>
   <property name="version.mockito" value="1.8.5"/>
   <property name="version.eclipse.ecj" value="3.5.1"/>
-  <property name="version.fungal" value="0.10.0.RC1"/>
+  <property name="version.fungal" value="0.10.0.RC2"/>
   <property name="version.h2" value="1.3.159"/>
   <property name="version.hibernate-annotations" value="3.5.1-Final"/>
   <property name="version.hibernate-validator" value="4.2.0.Final"/>
@@ -712,7 +712,6 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
@@ -753,7 +752,6 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
@@ -794,7 +792,6 @@
       <sysproperty key="archives.dir" value="${build.dir}/deployers"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
@@ -835,7 +832,6 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
@@ -876,7 +872,6 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
@@ -917,7 +912,6 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
@@ -959,7 +953,6 @@
       <sysproperty key="archives.dir" value="${build.dir}/adapters"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
@@ -1002,7 +995,6 @@
       <sysproperty key="archives.dir" value="${build.dir}/rhq"/>
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
