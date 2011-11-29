@@ -45,15 +45,32 @@ import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.validator.Validation;
 
+import java.lang.reflect.Method;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FilenameFilter;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -82,6 +99,31 @@ public class Main
    
    private static final String REPORT_FILE = "-report.txt";
    private static final String RAXML_FILE = "META-INF/ra.xml";
+
+   private static Set<Class<?>> validTypes;
+
+   static
+   {
+      validTypes = new HashSet<Class<?>>();
+
+      validTypes.add(boolean.class);
+      validTypes.add(Boolean.class);
+      validTypes.add(byte.class);
+      validTypes.add(Byte.class);
+      validTypes.add(short.class);
+      validTypes.add(Short.class);
+      validTypes.add(int.class);
+      validTypes.add(Integer.class);
+      validTypes.add(long.class);
+      validTypes.add(Long.class);
+      validTypes.add(float.class);
+      validTypes.add(Float.class);
+      validTypes.add(double.class);
+      validTypes.add(Double.class);
+      validTypes.add(char.class);
+      validTypes.add(Character.class);
+      validTypes.add(String.class);
+   }
    
    /**
     * Main
@@ -238,6 +280,9 @@ public class Main
             out.println("-----------------");
             out.println("Class: " + ra1516.getResourceadapterClass());
             
+            Map<String, String> introspected =
+               getIntrospectedProperties(ra1516.getResourceadapterClass(), rarFile, cps);
+
             if (ra1516.getConfigProperties() != null)
             {
                raConfigProperties = new HashMap<String, String>();
@@ -245,8 +290,20 @@ public class Main
                {
                   raConfigProperties.put(cp.getConfigPropertyName().toString(), 
                         getValueString(cp.getConfigPropertyValue()));
+
+                  removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+
                   out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
                         cp.getConfigPropertyType() + ")");
+               }
+            }
+
+            if (!introspected.isEmpty())
+            {
+               for (Map.Entry<String, String> entry : introspected.entrySet())
+               {
+                  out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                              entry.getValue() + ")");
                }
             }
             
@@ -278,13 +335,29 @@ public class Main
                   Map<String, String> configProperty = null;
                   if (mcf.getConfigProperties() != null)
                      configProperty = new HashMap<String, String>();
+
+                  introspected = getIntrospectedProperties(classname, rarFile, cps);
+
                   for (ConfigProperty cp : mcf.getConfigProperties())
                   {
                      configProperty.put(cp.getConfigPropertyName().toString(), 
                            getValueString(cp.getConfigPropertyValue()));
+
+                     removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+
                      out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
                            cp.getConfigPropertyType() + ")");
                   }
+
+                  if (!introspected.isEmpty())
+                  {
+                     for (Map.Entry<String, String> entry : introspected.entrySet())
+                     {
+                        out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                                    entry.getValue() + ")");
+                     }
+                  }
+
                   String poolName = mcf.getConnectionInterface().toString().substring(
                         mcf.getConnectionInterface().toString().lastIndexOf('.') + 1);
                   CommonPool pool = null;
@@ -333,13 +406,29 @@ public class Main
                Map<String, String> configProperty = null;
                if (ao.getConfigProperties() != null)
                   configProperty = new HashMap<String, String>();
+               
+               introspected = getIntrospectedProperties(aoClassname, rarFile, cps);
+
                for (ConfigProperty cp : ao.getConfigProperties())
                {
                   configProperty.put(cp.getConfigPropertyName().toString(), 
                         getValueString(cp.getConfigPropertyValue()));
+
+                  removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+
                   out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
                         cp.getConfigPropertyType() + ")");
                }
+
+               if (!introspected.isEmpty())
+               {
+                  for (Map.Entry<String, String> entry : introspected.entrySet())
+                  {
+                     out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                                 entry.getValue() + ")");
+                  }
+               }
+
                CommonAdminObjectImpl aoImpl = new CommonAdminObjectImpl(configProperty, aoClassname,
                      "java:jboss/eis/ao/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
                adminObjects.add(aoImpl);
@@ -366,13 +455,27 @@ public class Main
                      }
                      line++;
                      out.println("Class: " + asClassname);
-                  }
-                  if (ml.getActivationspec() != null && 
-                     ml.getActivationspec().getRequiredConfigProperties() != null)
-                  {
-                     for (RequiredConfigProperty cp :  ml.getActivationspec().getRequiredConfigProperties())
+
+                     introspected = getIntrospectedProperties(asClassname, rarFile, cps);
+
+                     if (ml.getActivationspec() != null && 
+                         ml.getActivationspec().getRequiredConfigProperties() != null)
                      {
-                        out.println("  Required-config-property: " + cp.getConfigPropertyName());
+                        for (RequiredConfigProperty cp :  ml.getActivationspec().getRequiredConfigProperties())
+                        {
+                           removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+                        
+                           out.println("  Required-config-property: " + cp.getConfigPropertyName());
+                        }
+                     }
+
+                     if (!introspected.isEmpty())
+                     {
+                        for (Map.Entry<String, String> entry : introspected.entrySet())
+                        {
+                           out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                                       entry.getValue() + ")");
+                        }
                      }
                   }
                }
@@ -392,13 +495,30 @@ public class Main
             Map<String, String> configProperty = null;
             if (ra10.getConfigProperties() != null)
                configProperty = new HashMap<String, String>();
+
+            Map<String, String> introspected =
+               getIntrospectedProperties(classname, rarFile, cps);
+
             for (ConfigProperty cp : ra10.getConfigProperties())
             {
                configProperty.put(cp.getConfigPropertyName().toString(), 
                      getValueString(cp.getConfigPropertyValue()));
+
+               removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+
                out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
                      cp.getConfigPropertyType() + ")");
             }
+            
+            if (!introspected.isEmpty())
+            {
+               for (Map.Entry<String, String> entry : introspected.entrySet())
+               {
+                  out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                              entry.getValue() + ")");
+               }
+            }
+
             String poolName = classname.substring(classname.lastIndexOf('.') + 1);
             CommonPool pool = null;
             if (transSupport.equals(TransactionSupportEnum.XATransaction))
@@ -468,7 +588,323 @@ public class Main
          }
       }
    }
-   
+
+   /**
+    * Get the introspected properties for a class
+    * @param clz The fully qualified class name
+    * @param rarFile The name of the .rar file
+    * @param classpath The classpath
+    * @return The properties (name, type)
+    */
+   private static Map<String, String> getIntrospectedProperties(String clz, String rarFile, String[] classpath)
+   {
+      Map<String, String> result = new TreeMap<String, String>();
+
+      if (clz != null && rarFile != null)
+      {
+         File destination = null;
+         try
+         {
+            File f = new File(rarFile);
+            File root = null;
+
+            if (f.isFile())
+            {
+               destination = new File(SecurityActions.getSystemProperty("java.io.tmpdir"), "/tmp/");
+               root = extract(f, destination);
+            }
+            else
+            {
+               root = f;
+            }
+
+            // Create classloader
+            URL[] allurls;
+            URL[] urls = getUrls(root);
+            if (classpath != null && classpath.length > 0)
+            {
+               List<URL> listUrl = new ArrayList<URL>();
+               for (URL u : urls)
+                  listUrl.add(u);
+               for (String jar : classpath)
+               {
+                  if (jar.endsWith(".jar"))
+                     listUrl.add(new File(jar).toURI().toURL());
+               }
+               allurls = listUrl.toArray(new URL[listUrl.size()]);
+            }
+            else
+               allurls = urls;
+
+            URLClassLoader cl = SecurityActions.createURLCLassLoader(allurls,
+                                                                     SecurityActions.getThreadContextClassLoader());
+
+            Class<?> c = Class.forName(clz, true, cl);
+            Method[] methods = c.getMethods();
+         
+            if (methods != null)
+            {
+               for (Method m : methods)
+               {
+                  if (m.getName().startsWith("set") &&
+                      m.getParameterTypes() != null && m.getParameterTypes().length == 1 &&
+                      isValidType(m.getParameterTypes()[0]))
+                  {
+                     String name = m.getName().substring(3);
+
+                     if (name.length() == 1)
+                     {
+                        name = name.toLowerCase(Locale.US);
+                     }
+                     else
+                     {
+                        name = name.substring(0, 1).toLowerCase(Locale.US) + name.substring(1);
+                     }
+
+                     String type = m.getParameterTypes()[0].getName();
+                     
+                     result.put(name, type);
+                  }
+               }
+            }
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+         finally
+         {
+            if (destination != null)
+            {
+               try
+               {
+                  recursiveDelete(destination);
+               }
+               catch (IOException ioe)
+               {
+                  // Ignore
+               }
+            }
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * Is valid type
+    * @param type The type
+    * @return True if valid; otherwise false
+    */
+   private static boolean isValidType(Class type)
+   {
+      return validTypes.contains(type);
+   }
+
+   /**
+    * Remove introspected value
+    * @param m The map
+    * @param name The name
+    */
+   private static void removeIntrospectedValue(Map<String, String> m, String name)
+   {
+      m.remove(name);
+
+      if (name.length() == 1)
+      {
+         name = name.toUpperCase(Locale.US);
+      }
+      else
+      {
+         name = name.substring(0, 1).toUpperCase(Locale.US) + name.substring(1);
+      }
+
+      m.remove(name);
+
+      if (name.length() == 1)
+      {
+         name = name.toLowerCase(Locale.US);
+      }
+      else
+      {
+         name = name.substring(0, 1).toLowerCase(Locale.US) + name.substring(1);
+      }
+
+      m.remove(name);
+   }
+
+   /**
+    * Get the URLs for the directory and all libraries located in the directory
+    * @param directory The directory
+    * @return The URLs
+    * @exception MalformedURLException MalformedURLException
+    * @exception IOException IOException
+    */
+   private static URL[] getUrls(File directory) throws MalformedURLException, IOException
+   {
+      List<URL> list = new LinkedList<URL>();
+
+      if (directory.exists() && directory.isDirectory())
+      {
+         // Add directory
+         list.add(directory.toURI().toURL());
+
+         // Add the contents of the directory too
+         File[] jars = directory.listFiles(new FilenameFilter()
+         {
+            /**
+             * Accept
+             * @param dir The directory
+             * @param name The name
+             * @return True if accepts; otherwise false
+             */
+            public boolean accept(File dir, String name)
+            {
+               return name.endsWith(".jar");
+            }
+         });
+
+         if (jars != null)
+         {
+            for (int j = 0; j < jars.length; j++)
+            {
+               list.add(jars[j].getCanonicalFile().toURI().toURL());
+            }
+         }
+      }
+      return list.toArray(new URL[list.size()]);
+   }
+
+   /**
+    * Extract a JAR type file
+    * @param file The file
+    * @param directory The directory where the file should be extracted
+    * @return The root of the extracted JAR file
+    * @exception IOException Thrown if an error occurs
+    */
+   private static File extract(File file, File directory) throws IOException
+   {
+      if (file == null)
+         throw new IllegalArgumentException("File is null");
+
+      if (directory == null)
+         throw new IllegalArgumentException("Directory is null");
+
+      File target = new File(directory, file.getName());
+
+      if (target.exists())
+         recursiveDelete(target);
+
+      if (!target.mkdirs())
+         throw new IOException("Could not create " + target);
+
+      JarFile jar = new JarFile(file);
+      Enumeration<JarEntry> entries = jar.entries();
+
+      while (entries.hasMoreElements())
+      {
+         JarEntry je = entries.nextElement();
+         File copy = new File(target, je.getName());
+
+         if (!je.isDirectory())
+         {
+            InputStream in = null;
+            OutputStream out = null;
+
+            // Make sure that the directory is _really_ there
+            if (copy.getParentFile() != null && !copy.getParentFile().exists())
+            {
+               if (!copy.getParentFile().mkdirs())
+                  throw new IOException("Could not create " + copy.getParentFile());
+            }
+
+            try
+            {
+               in = new BufferedInputStream(jar.getInputStream(je));
+               out = new BufferedOutputStream(new FileOutputStream(copy));
+
+               byte[] buffer = new byte[4096];
+               for (;;)
+               {
+                  int nBytes = in.read(buffer);
+                  if (nBytes <= 0)
+                     break;
+
+                  out.write(buffer, 0, nBytes);
+               }
+               out.flush();
+            }
+            finally
+            {
+               try
+               {
+                  if (out != null)
+                     out.close();
+               }
+               catch (IOException ignore)
+               {
+                  // Ignore
+               }
+
+               try
+               {
+                  if (in != null)
+                     in.close();
+               }
+               catch (IOException ignore)
+               {
+                  // Ignore
+               }
+            }
+         }
+         else
+         {
+            if (!copy.exists())
+            {
+               if (!copy.mkdirs())
+                  throw new IOException("Could not create " + copy);
+            }
+            else
+            {
+               if (!copy.isDirectory())
+                  throw new IOException(copy + " isn't a directory");
+            }
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Recursive delete
+    * @param f The file handler
+    * @exception IOException Thrown if a file could not be deleted
+    */
+   private static void recursiveDelete(File f) throws IOException
+   {
+      if (f != null && f.exists())
+      {
+         File[] files = f.listFiles();
+         if (files != null)
+         {
+            for (int i = 0; i < files.length; i++)
+            {
+               if (files[i].isDirectory())
+               {
+                  recursiveDelete(files[i]);
+               }
+               else
+               {
+                  if (!files[i].delete())
+                     throw new IOException("Could not delete " + files[i]);
+               }
+            }
+         }
+         if (!f.delete())
+            throw new IOException("Could not delete " + f);
+      }
+   }
+
    /**
     * get correct value string 
     * @param value xsdstring
