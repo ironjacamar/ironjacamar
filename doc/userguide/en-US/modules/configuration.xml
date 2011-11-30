@@ -163,7 +163,7 @@ config/bootstrap/jca.xml
                   <entry><code>ResourceAdapterRepository</code></entry>
                   <entry><code>org.jboss.jca.&#x200B;core.spi.rar.&#x200B;ResourceAdapterRepository</code></entry>
                   <entry>
-                    The metadata repository
+                    The resource adapter repository
                   </entry>
                 </row>
                 <row>
