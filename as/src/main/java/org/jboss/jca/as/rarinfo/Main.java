@@ -311,7 +311,8 @@ public class Main
             }
             
             int line = 0;
-            String sameClassname = "";
+            Set<String> sameClassnameSet = new HashSet<String>();
+            boolean needPrint = true;
 
             if (ra1516.getOutboundResourceadapter() != null)
             {
@@ -326,15 +327,20 @@ public class Main
                for (ConnectionDefinition mcf : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
                {
                   classname = mcf.getManagedConnectionFactoryClass().toString();
-                  if (!classname.equals(sameClassname))
+                  if (!sameClassnameSet.contains(classname))
                   {
-                     sameClassname = classname;
+                     sameClassnameSet.add(classname);
                      if (line != 0)
                      {
                         out.println();
                      }
                      line++;
                      out.println("Class: " + classname);
+                     needPrint = true;
+                  }
+                  else
+                  {
+                     needPrint = false;
                   }
                   
                   Map<String, String> configProperty = null;
@@ -350,7 +356,8 @@ public class Main
 
                      removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
 
-                     out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
+                     if (needPrint)
+                        out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
                            cp.getConfigPropertyType() + ")");
                   }
 
@@ -358,7 +365,8 @@ public class Main
                   {
                      for (Map.Entry<String, String> entry : introspected.entrySet())
                      {
-                        out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                        if (needPrint)
+                           out.println("  Introspected Config-property: " + entry.getKey() + " (" +
                                     entry.getValue() + ")");
                      }
                   }
@@ -384,7 +392,7 @@ public class Main
             }
 
             line = 0;
-            sameClassname = "";
+            sameClassnameSet.clear();
 
             if (ra1516.getAdminObjects() != null && ra1516.getAdminObjects().size() > 0)
             {
@@ -396,15 +404,20 @@ public class Main
             for (AdminObject ao : ra1516.getAdminObjects())
             {
                String aoClassname = ao.getAdminobjectClass().toString();
-               if (!aoClassname.equals(sameClassname))
+               if (!sameClassnameSet.contains(aoClassname))
                {
-                  sameClassname = aoClassname;
+                  sameClassnameSet.add(aoClassname);
                   if (line != 0)
                   {
                      out.println();
                   }
                   line++;
                   out.println("Class: " + aoClassname);
+                  needPrint = true;
+               }
+               else
+               {
+                  needPrint = false;
                }
 
                String poolName = aoClassname.substring(aoClassname.lastIndexOf('.') + 1);
@@ -421,7 +434,8 @@ public class Main
 
                   removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
 
-                  out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
+                  if (needPrint)
+                     out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
                         cp.getConfigPropertyType() + ")");
                }
 
@@ -429,7 +443,8 @@ public class Main
                {
                   for (Map.Entry<String, String> entry : introspected.entrySet())
                   {
-                     out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                     if (needPrint)
+                        out.println("  Introspected Config-property: " + entry.getKey() + " (" +
                                  entry.getValue() + ")");
                   }
                }
@@ -440,7 +455,7 @@ public class Main
             }
             
             line = 0;
-            sameClassname = "";
+            sameClassnameSet.clear();
 
             if (ra1516.getInboundResourceadapter() != null && 
                ra1516.getInboundResourceadapter().getMessageadapter() != null)
@@ -452,9 +467,9 @@ public class Main
                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
                {
                   String asClassname = ml.getActivationspec().getActivationspecClass().toString();
-                  if (!asClassname.equals(sameClassname))
+                  if (!sameClassnameSet.contains(asClassname))
                   {
-                     sameClassname = asClassname;
+                     sameClassnameSet.add(asClassname);
                      if (line != 0)
                      {
                         out.println();
