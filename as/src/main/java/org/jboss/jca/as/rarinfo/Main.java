@@ -45,17 +45,17 @@ import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.validator.Validation;
 
-import java.lang.reflect.Method;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.StringReader;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -380,12 +380,12 @@ public class Main
 
             line = 0;
             sameClassname = "";
-            out.println();
-            out.println("Admin-object:");
-            out.println("-------------");
-            
-            if (ra1516.getAdminObjects() != null)
+
+            if (ra1516.getAdminObjects() != null && ra1516.getAdminObjects().size() > 0)
             {
+               out.println();
+               out.println("Admin-object:");
+               out.println("-------------");
                adminObjects = new ArrayList<CommonAdminObject>();
             }
             for (AdminObject ao : ra1516.getAdminObjects())
@@ -436,12 +436,13 @@ public class Main
             
             line = 0;
             sameClassname = "";
-            out.println();
-            out.println("Activation-spec:");
-            out.println("----------------");
+
             if (ra1516.getInboundResourceadapter() != null && 
                ra1516.getInboundResourceadapter().getMessageadapter() != null)
             {
+               out.println();
+               out.println("Activation-spec:");
+               out.println("----------------");
                for (MessageListener ml : 
                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
                {
