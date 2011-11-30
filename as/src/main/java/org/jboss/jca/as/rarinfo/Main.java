@@ -275,10 +275,13 @@ public class Main
          if (connector.getVersion() != Version.V_10)
          {
             ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
-            out.println();
-            out.println("Resource-adapter:");
-            out.println("-----------------");
-            out.println("Class: " + ra1516.getResourceadapterClass());
+            if (ra1516.getResourceadapterClass() != null && !ra1516.getResourceadapterClass().equals(""))
+            {
+               out.println();
+               out.println("Resource-adapter:");
+               out.println("-----------------");
+               out.println("Class: " + ra1516.getResourceadapterClass());
+            }
             
             Map<String, String> introspected =
                getIntrospectedProperties(ra1516.getResourceadapterClass(), rarFile, cps);
@@ -309,11 +312,13 @@ public class Main
             
             int line = 0;
             String sameClassname = "";
-            out.println();
-            out.println("Managed-connection-factory:");
-            out.println("---------------------------");
+
             if (ra1516.getOutboundResourceadapter() != null)
             {
+               out.println();
+               out.println("Managed-connection-factory:");
+               out.println("---------------------------");
+               
                if (ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
                   connDefs = new ArrayList<CommonConnDef>();
                
