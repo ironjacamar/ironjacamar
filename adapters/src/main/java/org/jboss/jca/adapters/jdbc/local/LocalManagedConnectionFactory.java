@@ -692,4 +692,22 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
       return dataSource;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("LocalManagedConnectionFactory@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[connectionURL=").append(connectionURL);
+      sb.append(" driverClass=").append(driverClass);
+      sb.append(" userName=").append(userName);
+      sb.append(" password=****");
+      sb.append(" transactionIsolation=").append(transactionIsolation);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

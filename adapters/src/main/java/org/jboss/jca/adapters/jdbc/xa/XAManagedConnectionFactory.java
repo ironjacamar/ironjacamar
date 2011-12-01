@@ -633,6 +633,24 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public String toString() 
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("XAManagedConnectionFactory@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[xaDataSourceClass=").append(xaDataSourceClass);
+      sb.append(" xaProps=").append(Integer.toHexString(System.identityHashCode(xaProps)));
+      sb.append(" userName=").append(userName);
+      sb.append(" password=****");
+      sb.append(" transactionIsolation=").append(transactionIsolation);
+      sb.append("]");
+
+      return sb.toString();
+   }
+ 
+   /**
     * Default implementation
     */
    public static class XADataSelector implements URLSelectorStrategy
