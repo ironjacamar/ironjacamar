@@ -233,10 +233,12 @@ public interface CoreBundle
    
    /**
     * Wrong ManagedConnectionFactory sent to allocateConnection
+    * @param pool The ManagedConnectionFactory used for the pool
+    * @param mcf The ManagedConnectionFactory passed in
     * @return The value
     */
-   @Message(id = 455, value = "Wrong ManagedConnectionFactory sent to allocateConnection")
-   public String wrongManagedConnectionFactorySentToAllocateConnection();
+   @Message(id = 455, value = "Wrong ManagedConnectionFactory sent to allocateConnection (Pool=%s, MCF=%s)")
+   public String wrongManagedConnectionFactorySentToAllocateConnection(Object pool, Object mcf);
 
    /**
     * Unchecked throwable in ManagedConnection.getConnection()

@@ -440,7 +440,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       //it is an explicit spec requirement that equals be used for matching rather than ==.
       if (!pool.getManagedConnectionFactory().equals(mcf))
       {
-         throw new ResourceException(bundle.wrongManagedConnectionFactorySentToAllocateConnection());
+         throw new ResourceException(
+            bundle.wrongManagedConnectionFactorySentToAllocateConnection(pool.getManagedConnectionFactory(), mcf));
       }
 
       // Pick a managed connection from the pool
