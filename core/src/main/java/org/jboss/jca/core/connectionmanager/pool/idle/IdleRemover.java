@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -47,7 +48,7 @@ public class IdleRemover
    private static CoreLogger logger = Logger.getMessageLogger(CoreLogger.class, IdleRemover.class.getName());
    
    /**Validator thread name*/
-   private static final String VALIDATOR_THREAD_NAME = "JBossConnectionValidator";
+   private static final String THREAD_NAME = "IdleRemover";
    
    /**Singleton instance*/
    private static final IdleRemover INSTANCE = new IdleRemover();
@@ -65,6 +66,9 @@ public class IdleRemover
    /** The next - important initialization! */
    private long next = Long.MAX_VALUE;
    
+   /** Shutdown */
+   private AtomicBoolean shutdown = new AtomicBoolean(false);
+
    /**Lock for condition*/
    private Lock lock = new ReentrantLock(true);
    
@@ -76,8 +80,8 @@ public class IdleRemover
     */
    private IdleRemover()
    {
-      this.executorService = Executors.newSingleThreadExecutor(new ValidatorThreadFactory());
-      this.executorService.execute(new JBossConnectionValidator());
+      this.executorService = Executors.newSingleThreadExecutor(new IdleRemoverThreadFactory());
+      this.executorService.execute(new IdleConnectionsRemover());
    }
    
    /**
@@ -87,6 +91,8 @@ public class IdleRemover
     */
    public static void registerPool(IdleConnectionRemovalSupport mcp, long interval)
    {
+      logger.debugf("Register pool: %s (interval=%s)", mcp, interval);
+
       INSTANCE.internalRegisterPool(mcp, interval);
    }
    
@@ -96,7 +102,22 @@ public class IdleRemover
     */
    public static void unregisterPool(IdleConnectionRemovalSupport mcp)
    {
+      logger.debugf("Unregister pool: %s", mcp);
+
       INSTANCE.internalUnregisterPool(mcp);
+   }
+
+   /**
+    * Shutdown
+    */
+   public static void shutdown()
+   {
+      INSTANCE.shutdown.set(true);
+
+      INSTANCE.executorService.shutdownNow();
+      INSTANCE.executorService = null;
+
+      INSTANCE.registeredPools.clear();
    }
    
    private void internalRegisterPool(IdleConnectionRemovalSupport mcp, long interval)
@@ -121,7 +142,6 @@ public class IdleRemover
                }               
                
                this.condition.signal();
-               
             }
          }         
       } 
@@ -147,32 +167,16 @@ public class IdleRemover
    }
          
    /**
-    * Wait for background thread.
-    */
-   public static void waitForBackgroundThread()
-   {
-      try
-      {
-         INSTANCE.lock.lock();
-         
-      }
-      finally
-      {
-         INSTANCE.lock.unlock();  
-      }
-   }
-   
-   /**
     * Thread factory.
     */
-   private static class ValidatorThreadFactory implements ThreadFactory
+   private static class IdleRemoverThreadFactory implements ThreadFactory
    {
       /**
        * {@inheritDoc}
        */
       public Thread newThread(Runnable r)
       {
-         Thread thread = new Thread(r, IdleRemover.VALIDATOR_THREAD_NAME);
+         Thread thread = new Thread(r, IdleRemover.THREAD_NAME);
          thread.setDaemon(true);
          
          return thread;
@@ -180,15 +184,14 @@ public class IdleRemover
    }
    
    /**
-    * JBossConnectionValidator.
-    *
+    * IdleConnectionsRemover
     */
-   private class JBossConnectionValidator implements Runnable
+   private class IdleConnectionsRemover implements Runnable
    {
       /**
        * Constructor
        */
-      public JBossConnectionValidator()
+      public IdleConnectionsRemover()
       {
       }
 
@@ -197,13 +200,14 @@ public class IdleRemover
        */
       public void run()
       {
+         final ClassLoader oldTccl = SecurityActions.getThreadContextClassLoader();
          SecurityActions.setThreadContextClassLoader(IdleRemover.class.getClassLoader());
          
          try
          {
             lock.lock();
             
-            while (true)
+            while (!shutdown.get())
             {
                boolean result = INSTANCE.condition.await(INSTANCE.interval, TimeUnit.MILLISECONDS);
 
@@ -227,14 +231,12 @@ public class IdleRemover
                if (next < 0)
                {
                   next = Long.MAX_VALUE;  
-               }              
+               }
             }            
          }
          catch (InterruptedException e)
          {
             logger.returningConnectionValidatorInterrupted();
-            
-            return;  
          }
          catch (RuntimeException e)
          {
@@ -247,7 +249,8 @@ public class IdleRemover
          finally
          {
             lock.unlock();  
-         }         
-      }      
+            SecurityActions.setThreadContextClassLoader(oldTccl);
+         }
+      }
    }
 }

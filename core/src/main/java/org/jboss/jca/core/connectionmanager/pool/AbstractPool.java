@@ -583,7 +583,14 @@ public abstract class AbstractPool implements Pool
    {
       log.debug(poolName + ": shutdown");
 
-      flush(true);
+      Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
+      while (it.hasNext())
+      {
+         ManagedConnectionPool mcp = it.next();
+         mcp.shutdown();
+      }
+
+      mcpPools.clear();
    }
 
    /**

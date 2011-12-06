@@ -641,7 +641,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       shutdown.set(true);
       IdleRemover.unregisterPool(this);
       ConnectionValidator.unregisterPool(this);
-      flush();
+      flush(true);
    }
 
    /**
