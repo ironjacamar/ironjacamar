@@ -25,13 +25,12 @@ package org.jboss.jca.core.connectionmanager.pool.validator;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -50,7 +49,7 @@ public class ConnectionValidator
    private static CoreLogger logger = Logger.getMessageLogger(CoreLogger.class, ConnectionValidator.class.getName());
    
    /**Validator thread name*/
-   private static final String VALIDATOR_THREAD_NAME = "JBossConnectionValidator";
+   private static final String THREAD_NAME = "ConnectionValidator";
    
    /**Registered internal pool instances*/
    private CopyOnWriteArrayList<ManagedConnectionPool> registeredPools = 
@@ -65,16 +64,17 @@ public class ConnectionValidator
    /** The interval */
    private long interval = Long.MAX_VALUE;
 
-   /** The next */
- //important initialization!
+   /** The next - important initialization */
    private long next = Long.MAX_VALUE;
    
+   /** Shutdown */
+   private AtomicBoolean shutdown = new AtomicBoolean(false);
+
    /**Lock for condition*/
    private Lock lock = new ReentrantLock(true);
    
    /**Condition*/
    private Condition condition = lock.newCondition();
-   
    
    /**
     * Private constructor.
@@ -92,6 +92,8 @@ public class ConnectionValidator
     */
    public static void registerPool(ManagedConnectionPool mcp, long interval)
    {
+      logger.debugf("Register pool: %s (interval=%s)", mcp, interval);
+
       instance.internalRegisterPool(mcp, interval);
    }
    
@@ -101,7 +103,22 @@ public class ConnectionValidator
     */
    public static void unregisterPool(ManagedConnectionPool mcp)
    {
+      logger.debugf("Unregister pool: %s", mcp);
+
       instance.internalUnregisterPool(mcp);
+   }
+   
+   /**
+    * Shutdown
+    */
+   public static void shutdown()
+   {
+      instance.shutdown.set(true);
+
+      instance.executorService.shutdownNow();
+      instance.executorService = null;
+
+      instance.registeredPools.clear();
    }
    
    private void internalRegisterPool(ManagedConnectionPool mcp, long interval)
@@ -151,70 +168,7 @@ public class ConnectionValidator
          interval = Long.MAX_VALUE;
       }
    }
-   
-   /**
-    * Setup context class loader.
-    */
-   private void setupContextClassLoader()
-   {
-      // Could be null if loaded from system classloader
-      final ClassLoader cl = ConnectionValidator.class.getClassLoader();
-      if (cl == null)
-      {
-         return;  
-      }
-      
-      SecurityManager sm = System.getSecurityManager();
-      
-      if (sm == null)
-      {
-         Thread.currentThread().setContextClassLoader(cl);
-         
-         return;
-      }
-      
-      AccessController.doPrivileged(new ClassLoaderAction(cl));
- 
-   }
-   
-   /**
-    * Priviledge action. 
-    */
-   private static class ClassLoaderAction implements PrivilegedAction<Object>
-   {
-      private ClassLoader classLoader;
-      
-      public ClassLoaderAction(ClassLoader cl)
-      {
-         this.classLoader = cl;
-      }
-      
-      public Object run()
-      {
-         Thread.currentThread().setContextClassLoader(classLoader);
-         
-         return null;
-      }
-      
-   }
-   
-   /**
-    * Wait for background thread.
-    */
-   public static void waitForBackgroundThread()
-   {
-      try
-      {
-         instance.lock.lock();
-         
-      }
-      finally
-      {
-         instance.lock.unlock();  
-      }
-   }
-   
-   
+
    /**
     * Thread factory.
     */
@@ -225,7 +179,7 @@ public class ConnectionValidator
        */
       public Thread newThread(Runnable r)
       {
-         Thread thread = new Thread(r, ConnectionValidator.VALIDATOR_THREAD_NAME);
+         Thread thread = new Thread(r, ConnectionValidator.THREAD_NAME);
          thread.setDaemon(true);
          
          return thread;
@@ -238,19 +192,19 @@ public class ConnectionValidator
     */
    private class JBossConnectionValidator implements Runnable
    {
-      
       /**
        * {@inheritDoc}
        */
       public void run()
       {
-         setupContextClassLoader();
+         final ClassLoader oldTccl = SecurityActions.getThreadContextClassLoader();
+         SecurityActions.setThreadContextClassLoader(ConnectionValidator.class.getClassLoader());
          
          try
          {
             lock.lock();
             
-            while (true)
+            while (!shutdown.get())
             {
                boolean result = instance.condition.await(instance.interval, TimeUnit.MILLISECONDS);
                
@@ -280,8 +234,6 @@ public class ConnectionValidator
          catch (InterruptedException e)
          {
             logger.returningConnectionValidatorInterrupted();
-            
-            return;  
          }
          catch (RuntimeException e)
          {
@@ -294,7 +246,8 @@ public class ConnectionValidator
          finally
          {
             lock.unlock();  
-         }         
-      }      
+            SecurityActions.setThreadContextClassLoader(oldTccl);
+         }
+      }
    }
 }
