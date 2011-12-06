@@ -43,14 +43,17 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.Ignore;
 
 import static org.junit.Assert.assertNotNull;
 
 /**
  * Serializable test of the transaction connection manager
+ *
+ * We need this in IronJacamar 2.0
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
+@Ignore
 public class SerializableTestCase
 {
    /**Embedded JCA*/
@@ -60,7 +63,6 @@ public class SerializableTestCase
     * testSerializable.
     * @throws Throwable for exception
     */
-   @Test(expected = IOException.class)
    public void testSerializable() throws Throwable
    {
       TransactionIntegration ti = embedded.lookup("TransactionIntegration", TransactionIntegration.class);

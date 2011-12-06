@@ -31,11 +31,6 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -688,35 +683,5 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          log.tracef("Subject: %s", subject);
 
       return subject;
-   }
-
-   /**
-    * Write the object to the stream -- THIS IS NOT SUPPORTED
-    * @param out The stream
-    * @exception IOException Thrown in case of an error
-    */
-   private void writeObject(ObjectOutputStream out) throws IOException
-   {
-      throw new IOException(bundle.thisMethodNotSupported());
-   }
-
-   /**
-    * Read the object from the stream -- THIS IS NOT SUPPORTED
-    * @param in The stream
-    * @exception IOException Thrown in case of an error
-    * @exception ClassNotFoundException Thrown if a class can't be resolved
-    */
-   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
-   {
-      throw new IOException(bundle.thisMethodNotSupported());
-   }
-
-   /**
-    * Read the object -- THIS IS NOT SUPPORTED
-    * @exception ObjectStreamException Thrown in case of an error
-    */
-   private void readObjectNoData() throws ObjectStreamException
-   {
-      throw new NotSerializableException(bundle.thisMethodNotSupported());
    }
 }
