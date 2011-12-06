@@ -30,7 +30,7 @@ import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager, java.io.Serializable
+public interface ConnectionManager extends javax.resource.spi.ConnectionManager
 {
    /**
     * Kill given connection listener wrapped connection instance.
