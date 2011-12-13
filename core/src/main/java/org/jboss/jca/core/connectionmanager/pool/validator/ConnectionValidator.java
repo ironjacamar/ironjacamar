@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -38,51 +38,121 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.jboss.logging.Logger;
 
 /**
- * Connection validator class.
+ * Connection validator
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev: $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class ConnectionValidator
 {
-   /**Logger instance*/
+   /** Logger instance */
    private static CoreLogger logger = Logger.getMessageLogger(CoreLogger.class, ConnectionValidator.class.getName());
    
-   /**Validator thread name*/
+   /** Thread name */
    private static final String THREAD_NAME = "ConnectionValidator";
    
-   /**Registered internal pool instances*/
+   /** Singleton instance */
+   private static ConnectionValidator instance = new ConnectionValidator();
+   
+   /** Registered pool instances */
    private CopyOnWriteArrayList<ManagedConnectionPool> registeredPools = 
       new CopyOnWriteArrayList<ManagedConnectionPool>();
    
-   /**Validator executor service*/
-   private ExecutorService executorService = null;
-   
-   /**Singleton instance*/
-   private static ConnectionValidator instance = new ConnectionValidator();
+   /** Executor service */
+   private ExecutorService executorService;
+
+   /** Is the executor external */
+   private boolean isExternal;
    
    /** The interval */
-   private long interval = Long.MAX_VALUE;
+   private long interval;
 
-   /** The next - important initialization */
-   private long next = Long.MAX_VALUE;
+   /** The next scan */
+   private long next;
    
    /** Shutdown */
-   private AtomicBoolean shutdown = new AtomicBoolean(false);
+   private AtomicBoolean shutdown;
 
-   /**Lock for condition*/
-   private Lock lock = new ReentrantLock(true);
+   /** Lock */
+   private Lock lock;
    
-   /**Condition*/
-   private Condition condition = lock.newCondition();
+   /** Condition */
+   private Condition condition;
    
    /**
     * Private constructor.
     */
    private ConnectionValidator()
    {
-      this.executorService = Executors.newSingleThreadExecutor(new ValidatorThreadFactory());
-      this.executorService.execute(new JBossConnectionValidator());
+      this.executorService = null;
+      this.isExternal = false;
+      this.interval = Long.MAX_VALUE;
+      this.next = Long.MAX_VALUE;
+      this.shutdown = new AtomicBoolean(false);
+      this.lock = new ReentrantLock(true);
+      this.condition = lock.newCondition();
+   }
+
+   /**
+    * Get the instance
+    * @return The value
+    */
+   public static ConnectionValidator getInstance()
+   {
+      return instance;
+   }
+   
+   /**
+    * Set the executor service
+    * @param v The value
+    */
+   public void setExecutorService(ExecutorService v)
+   {
+      if (v != null)
+      {
+         this.executorService = v;
+         this.isExternal = true;
+      }
+      else
+      {
+         this.executorService = null;
+         this.isExternal = false;
+      }
+   }
+
+   /**
+    * Start
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void start() throws Throwable
+   {
+      if (!isExternal)
+      {
+         this.executorService = Executors.newSingleThreadExecutor(new ValidatorThreadFactory());
+      }
+
+      this.shutdown.set(false);
+      this.interval = Long.MAX_VALUE;
+      this.next = Long.MAX_VALUE;
+
+      this.executorService.execute(new ConnectionValidatorRunner());
+   }
+
+   /**
+    * Stop
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void stop() throws Throwable
+   {
+      instance.shutdown.set(true);
+
+      if (!isExternal)
+      {
+         instance.executorService.shutdownNow();
+         instance.executorService = null;
+      }
+
+      instance.registeredPools.clear();
    }
    
    /**
@@ -90,7 +160,7 @@ public class ConnectionValidator
     * @param mcp managed connection pool
     * @param interval validation interval
     */
-   public static void registerPool(ManagedConnectionPool mcp, long interval)
+   public void registerPool(ManagedConnectionPool mcp, long interval)
    {
       logger.debugf("Register pool: %s (interval=%s)", mcp, interval);
 
@@ -101,24 +171,11 @@ public class ConnectionValidator
     * Unregister pool instance for connection validation.
     * @param mcp pool instance
     */
-   public static void unregisterPool(ManagedConnectionPool mcp)
+   public void unregisterPool(ManagedConnectionPool mcp)
    {
       logger.debugf("Unregister pool: %s", mcp);
 
       instance.internalUnregisterPool(mcp);
-   }
-   
-   /**
-    * Shutdown
-    */
-   public static void shutdown()
-   {
-      instance.shutdown.set(true);
-
-      instance.executorService.shutdownNow();
-      instance.executorService = null;
-
-      instance.registeredPools.clear();
    }
    
    private void internalRegisterPool(ManagedConnectionPool mcp, long interval)
@@ -138,15 +195,12 @@ public class ConnectionValidator
                next = maybeNext;
                if (logger.isDebugEnabled())
                {
-                  logger.debug("internalRegisterPool: about to notify thread: old next: " +
-                        next + ", new next: " + maybeNext);  
+                  logger.debug("About to notify thread: old next: " + next + ", new next: " + maybeNext);
                }               
                
                this.condition.signal();
-               
             }
          }
-         
       } 
       finally
       {
@@ -162,7 +216,7 @@ public class ConnectionValidator
       {
          if (logger.isDebugEnabled())
          {
-            logger.debug("internalUnregisterPool: setting interval to Long.MAX_VALUE");  
+            logger.debug("Setting interval to Long.MAX_VALUE");  
          }
          
          interval = Long.MAX_VALUE;
@@ -187,10 +241,10 @@ public class ConnectionValidator
    }
    
    /**
-    * JBossConnectionValidator.
+    * ConnectionValidatorRunner.
     *
     */
-   private class JBossConnectionValidator implements Runnable
+   private class ConnectionValidatorRunner implements Runnable
    {
       /**
        * {@inheritDoc}
@@ -210,12 +264,12 @@ public class ConnectionValidator
                
                if (logger.isTraceEnabled())
                {
-                  logger.trace("Result of await ConnectionValidator: " + result);
+                  logger.trace("Result of await: " + result);
                }
                
                if (logger.isDebugEnabled())
                {
-                  logger.debug("run: ConnectionValidator notifying pools, interval: " + interval);  
+                  logger.debug("Notifying pools, interval: " + interval);  
                }
      
                for (ManagedConnectionPool mcp : registeredPools)
@@ -233,7 +287,8 @@ public class ConnectionValidator
          }
          catch (InterruptedException e)
          {
-            logger.returningConnectionValidatorInterrupted();
+            if (!shutdown.get())
+               logger.returningConnectionValidatorInterrupted();
          }
          catch (RuntimeException e)
          {
