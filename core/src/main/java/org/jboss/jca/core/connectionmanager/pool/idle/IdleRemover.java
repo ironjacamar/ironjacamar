@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -37,51 +37,121 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.jboss.logging.Logger;
 
 /**
- * Connection validator class.
+ * Idle remover
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class IdleRemover
 {
-   /**Logger instance*/
+   /** Logger instance */
    private static CoreLogger logger = Logger.getMessageLogger(CoreLogger.class, IdleRemover.class.getName());
    
-   /**Validator thread name*/
+   /** Thread name */
    private static final String THREAD_NAME = "IdleRemover";
    
-   /**Singleton instance*/
-   private static final IdleRemover INSTANCE = new IdleRemover();
+   /** Singleton instance */
+   private static IdleRemover instance = new IdleRemover();
    
-   /**Registered internal pool instances*/
+   /** Registered pool instances */
    private CopyOnWriteArrayList<IdleConnectionRemovalSupport> registeredPools = 
       new CopyOnWriteArrayList<IdleConnectionRemovalSupport>();
    
-   /**Validator executor service*/
-   private ExecutorService executorService = null;
+   /** Executor service */
+   private ExecutorService executorService;
    
-   /** The interval */
-   private long interval = Long.MAX_VALUE;
+   /** Is the executor external */
+   private boolean isExternal;
 
-   /** The next - important initialization! */
-   private long next = Long.MAX_VALUE;
+   /** The interval */
+   private long interval;
+
+   /** The next scan */
+   private long next;
    
    /** Shutdown */
-   private AtomicBoolean shutdown = new AtomicBoolean(false);
+   private AtomicBoolean shutdown;
 
-   /**Lock for condition*/
-   private Lock lock = new ReentrantLock(true);
+   /** Lock */
+   private Lock lock;
    
-   /**Condition*/
-   private Condition condition = lock.newCondition();
+   /** Condition */
+   private Condition condition;
    
    /**
     * Private constructor.
     */
    private IdleRemover()
    {
-      this.executorService = Executors.newSingleThreadExecutor(new IdleRemoverThreadFactory());
-      this.executorService.execute(new IdleConnectionsRemover());
+      this.executorService = null;
+      this.isExternal = false;
+      this.interval = Long.MAX_VALUE;
+      this.next = Long.MAX_VALUE;
+      this.shutdown = new AtomicBoolean(false);
+      this.lock = new ReentrantLock(true);
+      this.condition = lock.newCondition();
+   }
+
+   /**
+    * Get the instance
+    * @return The value
+    */
+   public static IdleRemover getInstance()
+   {
+      return instance;
+   }
+   
+   /**
+    * Set the executor service
+    * @param v The value
+    */
+   public void setExecutorService(ExecutorService v)
+   {
+      if (v != null)
+      {
+         this.executorService = v;
+         this.isExternal = true;
+      }
+      else
+      {
+         this.executorService = null;
+         this.isExternal = false;
+      }
+   }
+
+   /**
+    * Start
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void start() throws Throwable
+   {
+      if (!isExternal)
+      {
+         this.executorService = Executors.newSingleThreadExecutor(new IdleRemoverThreadFactory());
+      }
+
+      this.shutdown.set(false);
+      this.interval = Long.MAX_VALUE;
+      this.next = Long.MAX_VALUE;
+
+      this.executorService.execute(new IdleRemoverRunner());
+   }
+
+   /**
+    * Stop
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void stop() throws Throwable
+   {
+      instance.shutdown.set(true);
+
+      if (!isExternal)
+      {
+         instance.executorService.shutdownNow();
+         instance.executorService = null;
+      }
+
+      instance.registeredPools.clear();
    }
    
    /**
@@ -89,37 +159,24 @@ public class IdleRemover
     * @param mcp managed connection pool
     * @param interval validation interval
     */
-   public static void registerPool(IdleConnectionRemovalSupport mcp, long interval)
+   public void registerPool(IdleConnectionRemovalSupport mcp, long interval)
    {
       logger.debugf("Register pool: %s (interval=%s)", mcp, interval);
 
-      INSTANCE.internalRegisterPool(mcp, interval);
+      instance.internalRegisterPool(mcp, interval);
    }
    
    /**
     * Unregister pool instance for connection validation.
     * @param mcp pool instance
     */
-   public static void unregisterPool(IdleConnectionRemovalSupport mcp)
+   public void unregisterPool(IdleConnectionRemovalSupport mcp)
    {
       logger.debugf("Unregister pool: %s", mcp);
 
-      INSTANCE.internalUnregisterPool(mcp);
+      instance.internalUnregisterPool(mcp);
    }
 
-   /**
-    * Shutdown
-    */
-   public static void shutdown()
-   {
-      INSTANCE.shutdown.set(true);
-
-      INSTANCE.executorService.shutdownNow();
-      INSTANCE.executorService = null;
-
-      INSTANCE.registeredPools.clear();
-   }
-   
    private void internalRegisterPool(IdleConnectionRemovalSupport mcp, long interval)
    {
       try
@@ -137,8 +194,7 @@ public class IdleRemover
                next = maybeNext;
                if (logger.isDebugEnabled())
                {
-                  logger.debug("internalRegisterPool: about to notify thread: old next: " +
-                        next + ", new next: " + maybeNext);  
+                  logger.debug("About to notify thread: old next: " + next + ", new next: " + maybeNext);
                }               
                
                this.condition.signal();
@@ -159,7 +215,7 @@ public class IdleRemover
       {
          if (logger.isDebugEnabled())
          {
-            logger.debug("internalUnregisterPool: setting interval to Long.MAX_VALUE");  
+            logger.debug("Setting interval to Long.MAX_VALUE");  
          }
          
          interval = Long.MAX_VALUE;
@@ -184,17 +240,10 @@ public class IdleRemover
    }
    
    /**
-    * IdleConnectionsRemover
+    * IdleRemoverRunner
     */
-   private class IdleConnectionsRemover implements Runnable
+   private class IdleRemoverRunner implements Runnable
    {
-      /**
-       * Constructor
-       */
-      public IdleConnectionsRemover()
-      {
-      }
-
       /**
        * {@inheritDoc}
        */
@@ -209,16 +258,16 @@ public class IdleRemover
             
             while (!shutdown.get())
             {
-               boolean result = INSTANCE.condition.await(INSTANCE.interval, TimeUnit.MILLISECONDS);
+               boolean result = instance.condition.await(instance.interval, TimeUnit.MILLISECONDS);
 
                if (logger.isTraceEnabled())
                {
-                  logger.trace("Result of await ConnectionValidator: " + result);
+                  logger.trace("Result of await: " + result);
                }
 
                if (logger.isDebugEnabled())
                {
-                  logger.debug("run: ConnectionValidator notifying pools, interval: " + interval);  
+                  logger.debug("Notifying pools, interval: " + interval);  
                }
      
                for (IdleConnectionRemovalSupport mcp : registeredPools)
@@ -236,7 +285,8 @@ public class IdleRemover
          }
          catch (InterruptedException e)
          {
-            logger.returningConnectionValidatorInterrupted();
+            if (!shutdown.get())
+               logger.returningConnectionValidatorInterrupted();
          }
          catch (RuntimeException e)
          {

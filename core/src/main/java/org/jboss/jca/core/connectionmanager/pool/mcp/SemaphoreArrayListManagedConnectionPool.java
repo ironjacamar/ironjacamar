@@ -207,7 +207,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (poolConfiguration.getIdleTimeoutMinutes() > 0)
       {
          //Register removal support
-         IdleRemover.registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000 * 60);
+         IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000 * 60);
       }
       
       if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
@@ -216,7 +216,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                    poolConfiguration.getBackgroundValidationMillis());
          
          //Register validation
-         ConnectionValidator.registerPool(this, poolConfiguration.getBackgroundValidationMillis());
+         ConnectionValidator.getInstance().registerPool(this, poolConfiguration.getBackgroundValidationMillis());
       }
 
       shutdown.set(false);
@@ -639,8 +639,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    public void shutdown()
    {
       shutdown.set(true);
-      IdleRemover.unregisterPool(this);
-      ConnectionValidator.unregisterPool(this);
+      IdleRemover.getInstance().unregisterPool(this);
+      ConnectionValidator.getInstance().unregisterPool(this);
       flush(true);
    }
 
