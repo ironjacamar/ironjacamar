@@ -96,7 +96,7 @@ class ManagedConnectionPoolUtility
       sb.append("  MinSize: ").append(pc.getMinSize()).append(newLine);
       sb.append("  MaxSize: ").append(pc.getMaxSize()).append(newLine);
       sb.append("  BlockingTimeout: ").append(pc.getBlockingTimeout()).append(newLine);
-      sb.append("  IdleTimeout: ").append(pc.getIdleTimeout()).append(newLine);
+      sb.append("  IdleTimeoutMinutes: ").append(pc.getIdleTimeoutMinutes()).append(newLine);
       sb.append("  BackgroundValidation: ").append(pc.isBackgroundValidation()).append(newLine);
       sb.append("  BackgroundValidationMillis: ").append(pc.getBackgroundValidationMillis()).append(newLine);
       sb.append("  StrictMin: ").append(pc.isStrictMin()).append(newLine);

@@ -85,13 +85,16 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
-import javax.resource.Referenceable;
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
@@ -445,10 +448,12 @@ public abstract class AbstractResourceAdapterDeployer
     * @param clz The fully quilified class name for the managed connection factory
     * @param mcfs The managed connection facotries
     * @param defs The connection definitions
+    * @param cl The class loader
     * @return The metadata; <code>null</code> if none could be found
     * @exception DeployException Thrown in case of configuration error
     */
-   protected Set<CommonConnDef> findConnectionDefinitions(String clz, List<String> mcfs, List<CommonConnDef> defs)
+   protected Set<CommonConnDef> findConnectionDefinitions(String clz, List<String> mcfs, List<CommonConnDef> defs,
+                                                          ClassLoader cl)
       throws DeployException
    {
       Set<CommonConnDef> result = null;
@@ -466,10 +471,23 @@ public abstract class AbstractResourceAdapterDeployer
                throw new DeployException(clz + " not a valid connection definition");
             }
 
-            result = new HashSet<CommonConnDef>(1);
-            result.add(cd);
+            boolean add = true;
+            if (cd.getClassName() != null)
+            {
+               if (!verifyManagedConnectionFactory(cd.getClassName(), cl))
+               {
+                  log.connectionDefinitionInvalid(cd.getClassName());
+                  add = false;
+               }
+            }
 
-            return result;
+            if (add)
+            {
+               result = new HashSet<CommonConnDef>(1);
+               result.add(cd);
+
+               return result;
+            }
          }
 
          // If there are multiple definitions the MCF class name is mandatory
@@ -478,17 +496,54 @@ public abstract class AbstractResourceAdapterDeployer
 
          for (CommonConnDef cd : defs)
          {
-            if (clz.equals(cd.getClassName()))
+            if (cd.getClassName() == null)
             {
-               if (result == null)
-                  result = new HashSet<CommonConnDef>();
+               log.connectionDefinitionNull();
+            }
+            else
+            {
+               if (clz.equals(cd.getClassName()))
+               {
+                  if (result == null)
+                     result = new HashSet<CommonConnDef>();
 
-               result.add(cd);
+                  result.add(cd);
+               }
+               else
+               {
+                  if (!verifyManagedConnectionFactory(cd.getClassName(), cl))
+                     log.connectionDefinitionInvalid(cd.getClassName());
+               }
             }
          }
       }
 
       return result;
+   }
+
+   /**
+    * Verify the MCF definition
+    * @param clz The class name
+    * @param cl The class loader
+    * @return True if MCF, otherwise false
+    */
+   private boolean verifyManagedConnectionFactory(String clz, ClassLoader cl)
+   {
+      if (clz != null)
+      {
+         try
+         {
+            Class<?> c = Class.forName(clz, true, cl);
+            if (ManagedConnectionFactory.class.isAssignableFrom(c))
+               return true;
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+
+      return false;
    }
 
    /**
@@ -529,12 +584,19 @@ public abstract class AbstractResourceAdapterDeployer
 
          for (org.jboss.jca.common.api.metadata.common.CommonAdminObject cao : defs)
          {
-            if (clz.equals(cao.getClassName()))
+            if (cao.getClassName() == null)
             {
-               if (result == null)
-                  result = new HashSet<CommonAdminObject>();
+               log.adminObjectNull();
+            }
+            else
+            {
+               if (clz.equals(cao.getClassName()))
+               {
+                  if (result == null)
+                     result = new HashSet<CommonAdminObject>();
 
-               result.add(cao);
+                  result.add(cao);
+               }
             }
          }
       }
@@ -574,7 +636,7 @@ public abstract class AbstractResourceAdapterDeployer
             pc.setBlockingTimeout(tp.getBlockingTimeoutMillis().longValue());
 
          if (tp.getIdleTimeoutMinutes() != null)
-            pc.setIdleTimeout(tp.getIdleTimeoutMinutes().longValue());
+            pc.setIdleTimeoutMinutes(tp.getIdleTimeoutMinutes().intValue());
       }
 
       if (vp != null)
@@ -793,40 +855,55 @@ public abstract class AbstractResourceAdapterDeployer
                                                                               .getConfigProperties()));
                               beanValidationObjects.add(ao);
 
-                              if (ao != null && ao instanceof Serializable && ao instanceof Referenceable)
+                              if (ao != null)
                               {
-                                 try
+                                 boolean adminObjectBound = false;
+
+                                 if ((ao instanceof ResourceAdapterAssociation &&
+                                      ao instanceof Serializable &&
+                                      ao instanceof javax.resource.Referenceable) ||
+                                     (ao instanceof javax.naming.Referenceable))
                                  {
-                                    String jndiName = null;
-                                    if (adminObject != null)
+                                    try
                                     {
-                                       jndiName = buildJndiName(adminObject.getJndiName(),
-                                                                adminObject.isUseJavaContext());
+                                       String jndiName = null;
+                                       if (adminObject != null)
+                                       {
+                                          jndiName = buildJndiName(adminObject.getJndiName(),
+                                                                   adminObject.isUseJavaContext());
 
-                                       bindAdminObject(url, deploymentName, ao, jndiName);
+                                          bindAdminObject(url, deploymentName, ao, jndiName);
+                                       }
+                                       else
+                                       {
+                                          String[] names = bindAdminObject(url, deploymentName, ao);
+                                          jndiName = names[0];
+                                       }
+                                       
+                                       aos.add(ao);
+                                       aoJndiNames.add(jndiName);
+                                       adminObjectBound = true;
+
+                                       org.jboss.jca.core.api.management.AdminObject mgtAo =
+                                          new org.jboss.jca.core.api.management.AdminObject(ao);
+
+                                       mgtAo.getConfigProperties().
+                                          addAll(createManagementView(aoMeta.getConfigProperties()));
+                                       mgtAo.setJndiName(jndiName);
+                                       
+                                       mgtConnector.getAdminObjects().add(mgtAo);
                                     }
-                                    else
+                                    catch (Throwable t)
                                     {
-                                       String[] names = bindAdminObject(url, deploymentName, ao);
-                                       jndiName = names[0];
+                                       throw new 
+                                          DeployException(bundle.failedToBindAdminObject(ao.getClass().getName()), t);
                                     }
-
-                                    aos.add(ao);
-                                    aoJndiNames.add(jndiName);
-
-                                    org.jboss.jca.core.api.management.AdminObject mgtAo =
-                                       new org.jboss.jca.core.api.management.AdminObject(ao);
-
-                                    mgtAo.getConfigProperties().
-                                       addAll(createManagementView(aoMeta.getConfigProperties()));
-                                    mgtAo.setJndiName(jndiName);
-
-                                    mgtConnector.getAdminObjects().add(mgtAo);
                                  }
-                                 catch (Throwable t)
+
+                                 if (!adminObjectBound)
                                  {
-                                    throw new DeployException(bundle.failedToBindAdminObject(ao.getClass().getName()),
-                                                              t);
+                                    log.adminObjectNotBound(aoMeta.getAdminobjectClass().getValue());
+                                    log.adminObjectNotSpecCompliant(aoMeta.getAdminobjectClass().getValue());
                                  }
                               }
                            }
@@ -842,6 +919,89 @@ public abstract class AbstractResourceAdapterDeployer
          }
       }
       return failures;
+   }
+
+   /**
+    * Load native libraries
+    * @param root The deployment root
+    */
+   private void loadNativeLibraries(File root)
+   {
+      if (root != null && root.exists())
+      {
+         List<String> libs = null;
+
+         if (root.isDirectory())
+         {
+            for (File f : root.listFiles())
+            {
+               String fileName = f.getName().toLowerCase(Locale.US);
+               if (fileName.endsWith(".a") || fileName.endsWith(".so") || fileName.endsWith(".dll"))
+               {
+                  if (libs == null)
+                     libs = new ArrayList<String>();
+
+                  libs.add(f.getAbsolutePath());
+               }
+            }
+         }
+         else
+         {
+            JarFile jarFile = null;
+            try
+            {
+               jarFile = new JarFile(root);
+               Enumeration<JarEntry> entries = jarFile.entries();
+
+               while (entries.hasMoreElements())
+               {
+                  JarEntry jarEntry = entries.nextElement();
+                  String entryName = jarEntry.getName().toLowerCase(Locale.US);
+                  if (entryName.endsWith(".a") || entryName.endsWith(".so") || entryName.endsWith(".dll"))
+                  {
+                     if (libs == null)
+                        libs = new ArrayList<String>();
+
+                     libs.add(jarEntry.getName());
+                  }
+               }
+            }
+            catch (Throwable t)
+            {
+               log.debugf("Unable to load native libraries from: %s", root.getAbsolutePath());
+            }
+            finally
+            {
+               if (jarFile != null)
+               {
+                  try
+                  {
+                     jarFile.close();
+                  }
+                  catch (IOException ioe)
+                  {
+                     // Ignore
+                  }
+               }
+            }
+         }
+
+         if (libs != null)
+         {
+            for (String lib : libs)
+            {
+               try
+               {
+                  System.load(lib);
+                  log.debugf("Loaded library: %s", lib);
+               }
+               catch (Throwable t)
+               {
+                  log.debugf("Unable to load library: %s", lib);
+               }
+            }
+         }
+      }
    }
 
    /**
@@ -931,6 +1091,10 @@ public abstract class AbstractResourceAdapterDeployer
             log.tracef("RaXML=%s", raxml);
             log.tracef("ActivateDeployment=%s", activateDeployment);
          }
+
+         // Load native libraries
+         if (activateDeployment)
+            loadNativeLibraries(root);
 
          // Create objects and inject values
          if (cmd != null)
@@ -1044,7 +1208,7 @@ public abstract class AbstractResourceAdapterDeployer
                   if (cdDefs != null)
                   {
                      connectionDefinitions = 
-                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs);
+                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs, cl);
                   }
                }
 
@@ -1055,7 +1219,7 @@ public abstract class AbstractResourceAdapterDeployer
                   if (cdDefs != null)
                   {
                      connectionDefinitions =
-                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs);
+                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs, cl);
                   }
                }
 
@@ -1293,7 +1457,8 @@ public abstract class AbstractResourceAdapterDeployer
 
                         archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
-                        if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
+                        if (cf != null && cf instanceof Serializable &&
+                            cf instanceof javax.resource.Referenceable)
                         {
                            String jndiName;
                            if (connectionDefinition != null)
@@ -1368,6 +1533,19 @@ public abstract class AbstractResourceAdapterDeployer
                               }
                            }
                         }
+                        else
+                        {
+                           log.connectionFactoryNotBound(mcf.getClass().getName());
+
+                           if (cf != null)
+                           {
+                              log.connectionFactoryNotSpecCompliant(cf.getClass().getName());
+                           }
+                           else
+                           {
+                              log.connectionFactoryNotSpecCompliant(mcf.getClass().getName());
+                           }
+                        }
                      }
                   }
                } 
@@ -1412,7 +1590,7 @@ public abstract class AbstractResourceAdapterDeployer
                               {
                                  connectionDefinitions =
                                     findConnectionDefinitions(cdMeta.getManagedConnectionFactoryClass()
-                                                              .getValue(), mcfs, cdDefs);
+                                                              .getValue(), mcfs, cdDefs, cl);
                               }
                            }
 
@@ -1424,7 +1602,7 @@ public abstract class AbstractResourceAdapterDeployer
                               {
                                  connectionDefinitions = 
                                     findConnectionDefinitions(cdMeta.getManagedConnectionFactoryClass().getValue(),
-                                                              mcfs, cdDefs);
+                                                              mcfs, cdDefs, cl);
                               }
                            }
 
@@ -1756,7 +1934,8 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
-                                    if (cf != null && cf instanceof Serializable && cf instanceof Referenceable)
+                                    if (cf != null && cf instanceof Serializable &&
+                                        cf instanceof javax.resource.Referenceable)
                                     {
                                        String jndiName;
                                        if (connectionDefinition != null)
@@ -1840,6 +2019,19 @@ public abstract class AbstractResourceAdapterDeployer
 
                                              pp.prefill(subject, null, noTxSeparatePool.booleanValue());
                                           }
+                                       }
+                                    }
+                                    else
+                                    {
+                                       log.connectionFactoryNotBound(mcf.getClass().getName());
+
+                                       if (cf != null)
+                                       {
+                                          log.connectionFactoryNotSpecCompliant(cf.getClass().getName());
+                                       }
+                                       else
+                                       {
+                                          log.connectionFactoryNotSpecCompliant(mcf.getClass().getName());
                                        }
                                     }
                                  }

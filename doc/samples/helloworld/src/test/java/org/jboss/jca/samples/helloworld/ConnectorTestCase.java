@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 
-import org.jboss.arquillian.api.Deployment;
+import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -71,12 +71,13 @@ public class ConnectorTestCase
          HelloWorldConnection.class, 
          HelloWorldConnectionImpl.class);
       raa.addAsLibrary(ja);
+      raa.addAsManifestResource("META-INF/ironjacamar.xml", "ironjacamar.xml");
 
       return raa;
    }
 
    /** resource */
-   @Resource(mappedName = "java:/eis/ConnectorTestCase")
+   @Resource(mappedName = "java:/eis/HelloWorld")
    private HelloWorldConnectionFactory connectionFactory;
 
    /**

@@ -20,54 +20,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.spi.security;
+package org.jboss.jca.adapters.jdbc;
 
-import java.io.Serializable;
-import java.util.Set;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * This SPI interface represents the users, their passwords and roles in
- * the container environment
+ * Privileged Blocks
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface Callback extends Serializable
+class SecurityActions
 {
    /**
-    * Get the domain
-    * @return The domain
+    * Get a system property
+    * @param name The property name
+    * @return The property value
     */
-   public String getDomain();
-
-   /**
-    * Get the users
-    * @return A set of user names
-    */
-   public Set<String> getUsers();
-
-   /**
-    * Get the credential for an user
-    * @param user The user name
-    * @return The credential; <code>null</code> if user doesn't exists
-    */
-   public char[] getCredential(String user);
-
-   /**
-    * Get the roles for an user
-    * @param user The user name
-    * @return A set of roles; <code>null</code> if user doesn't exists or no roles
-    */
-   public String[] getRoles(String user);
-
-   /**
-    * Start
-    * @exception Throwable Thrown if an error occurs
-    */
-   public void start() throws Throwable;
-
-   /**
-    * Stop
-    * @exception Throwable Thrown if an error occurs
-    */
-   public void stop() throws Throwable;
+   static String getSystemProperty(final String name)
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<String>() 
+      {
+         public String run()
+         {
+            return System.getProperty(name);
+         }
+      });
+   }
 }

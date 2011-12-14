@@ -999,7 +999,7 @@ public abstract class BaseWrapperManagedConnectionFactory
     * @return The properties
     * @exception ResourceException Thrown if an error occurs
     */
-   protected Properties getConnectionProperties(Subject subject, ConnectionRequestInfo cri)
+   protected synchronized Properties getConnectionProperties(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
       if (cri != null && cri.getClass() != WrappedConnectionRequestInfo.class)

@@ -181,7 +181,6 @@
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="test.dir" value="${build.dir}/test"/>
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       
       <classpath>
         <fileset dir="${lib.dir}" includes="**/*.jar" />

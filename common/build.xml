@@ -199,7 +199,6 @@
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl" />
       <sysproperty key="test.dir" value="${test.dir}" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true" />
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl" />
       
       <classpath>
 	<pathelement location="${build.common.dir}/test" />
@@ -250,7 +249,6 @@
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl" />
       <sysproperty key="test.dir" value="${test.dir}" />
       <sysproperty key="xb.builder.useUnorderedSequence" value="true" />
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl" />
       
       <classpath>
 	<pathelement location="${build.common.dir}/test" />

@@ -95,7 +95,7 @@ public interface Defaults
    /**
     * Is same rm override
     */
-   public static final Boolean IS_SAME_RM_OVERRIDE = Boolean.FALSE;
+   public static final Boolean IS_SAME_RM_OVERRIDE = null;
 
    /**
     * Pad Xid

@@ -114,7 +114,7 @@
           </listitem>
           <listitem>
             ManagedConnection: The managed connection represents a physical connection to the target
-            Enterprise Information System (EIS). The managed connection notfies the application server
+            Enterprise Information System (EIS). The managed connection notifies the application server
             of events such as connection closed and connection error.
           </listitem>
         </itemizedlist>

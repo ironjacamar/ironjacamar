@@ -171,10 +171,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void reenable()
    {
-      if (poolConfiguration.getIdleTimeout() > 0L)
+      if (poolConfiguration.getIdleTimeoutMinutes() > 0)
       {
          //Register removal support
-         IdleRemover.registerPool(this, poolConfiguration.getIdleTimeout());
+         IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000 * 60);
       }
       
       if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
@@ -183,7 +183,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                    poolConfiguration.getBackgroundValidationMillis());
          
          //Register validation
-         ConnectionValidator.registerPool(this, poolConfiguration.getBackgroundValidationMillis());
+         ConnectionValidator.getInstance().registerPool(this, poolConfiguration.getBackgroundValidationMillis());
       }
 
       shutdown.set(false);
@@ -530,7 +530,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    public void removeIdleConnections()
    {
       ArrayList<ConnectionListener> destroy = null;
-      long timeout = System.currentTimeMillis() - poolConfiguration.getIdleTimeout();
+      long timeout = System.currentTimeMillis() - (poolConfiguration.getIdleTimeoutMinutes() * 1000 * 60);
       
       boolean cont = true;
       while (cont)
@@ -599,9 +599,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    public void shutdown()
    {
       shutdown.set(true);
-      IdleRemover.unregisterPool(this);
-      ConnectionValidator.unregisterPool(this);
-      flush();
+      IdleRemover.getInstance().unregisterPool(this);
+      ConnectionValidator.getInstance().unregisterPool(this);
+      flush(true);
    }
 
    /**

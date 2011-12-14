@@ -314,18 +314,21 @@ public class SimpleJndiStrategy implements JndiStrategy
       Context context = new InitialContext();
       try
       {
-         String className = ao.getClass().getName();
-         Reference ref = new Reference(className,
-                                       new StringRefAddr("class", className),
-                                       SimpleJndiStrategy.class.getName(),
-                                       null);
-         ref.add(new StringRefAddr("name", jndiName));
+         if (ao instanceof Referenceable)
+         {
+            String className = ao.getClass().getName();
+            Reference ref = new Reference(className,
+                                          new StringRefAddr("class", className),
+                                          SimpleJndiStrategy.class.getName(),
+                                          null);
+            ref.add(new StringRefAddr("name", jndiName));
 
-         if (objs.putIfAbsent(qualifiedName(jndiName, className), ao) != null)
-            throw new Exception(bundle.deploymentFailedSinceJndiNameHasDeployed(className, jndiName));
+            if (objs.putIfAbsent(qualifiedName(jndiName, className), ao) != null)
+               throw new Exception(bundle.deploymentFailedSinceJndiNameHasDeployed(className, jndiName));
 
-         Referenceable referenceable = (Referenceable)ao;
-         referenceable.setReference(ref);
+            Referenceable referenceable = (Referenceable)ao;
+            referenceable.setReference(ref);
+         }
 
          Util.bind(context, jndiName, ao);
 

@@ -891,7 +891,7 @@ public abstract class AbstractDsDeployer
             pc.setBlockingTimeout(tp.getBlockingTimeoutMillis().longValue());
 
          if (tp.getIdleTimeoutMinutes() != null)
-            pc.setIdleTimeout(tp.getIdleTimeoutMinutes().longValue());
+            pc.setIdleTimeoutMinutes(tp.getIdleTimeoutMinutes().intValue());
       }
 
       if (vp != null)

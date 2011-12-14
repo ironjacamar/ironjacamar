@@ -235,4 +235,24 @@ public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastRe
    {
       return false;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("LocalXAResourceImpl@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[connectionListener=").append(cl != null ? Integer.toHexString(System.identityHashCode(cl)) : "null");
+      sb.append(" connectionManager=").append(connectionManager != null ?
+                                              Integer.toHexString(System.identityHashCode(connectionManager)) : "null");
+      sb.append(" warned=").append(warned);
+      sb.append(" currentXid=").append(currentXid);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

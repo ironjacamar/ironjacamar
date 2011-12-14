@@ -162,6 +162,28 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /**
     * {@inheritDoc}
     */
+   public ResourceAdapter getResourceAdapter(String uniqueId) throws NotFoundException
+   {
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
+
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
+
+      if (!rars.containsKey(uniqueId))
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
+
+      WeakReference<ResourceAdapter> ra = rars.get(uniqueId);
+
+      if (ra.get() == null)
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
+
+      return ra.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public synchronized Set<String> getResourceAdapters()
    {
       return Collections.unmodifiableSet(rars.keySet());
@@ -462,5 +484,24 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       }
 
       return result;
+   }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("SimpleResourceAdapterRepository@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[");
+      sb.append(" rars=").append(rars);
+      sb.append(" ids=").append(ids);
+      sb.append(" mdr=").append(mdr);
+      sb.append("]");
+
+      return sb.toString();
    }
 }
