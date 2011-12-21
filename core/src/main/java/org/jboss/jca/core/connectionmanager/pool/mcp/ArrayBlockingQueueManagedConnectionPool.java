@@ -220,7 +220,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (cls.size() > 0)
       {
          if (shutdown.get())
-            throw new RetryableUnavailableException(bundle.thePoolHasBeenShutdown());
+            throw new RetryableUnavailableException(
+               bundle.thePoolHasBeenShutdown(pool.getName(),
+                                             Integer.toHexString(System.identityHashCode(this))));
          
          cl = cls.peek();
          if (cl != null)
@@ -264,7 +266,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
 
             if (shutdown.get())
-               throw new RetryableUnavailableException(bundle.thePoolHasBeenShutdown());
+               throw new RetryableUnavailableException(
+                  bundle.thePoolHasBeenShutdown(pool.getName(),
+                                                Integer.toHexString(System.identityHashCode(this))));
          }
          catch (InterruptedException ie)
          {
@@ -568,28 +572,41 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       // We found some connections to destroy
       if (destroy != null)
       {
-         for (int i = 0; i < destroy.size(); ++i)
+         for (ConnectionListener cl : destroy)
          {
-            ConnectionListener cl = destroy.get(i);
-
             if (trace)
                log.trace("Destroying timedout connection " + cl);
 
             doDestroy(cl);
          }
 
-         // We destroyed something, check the minimum.
-         if (!shutdown.get() && 
-             poolConfiguration.getMinSize() > 0 &&
-             poolConfiguration.isPrefill() &&
-             pool instanceof PrefillPool)
+         if (!shutdown.get())
          {
-            PoolFiller.fillPool(this);
-         }
+            if (!poolConfiguration.isStrictMin())
+            {
+               boolean emptyManagedConnectionPool = false;
 
-         // Empty pool
-         if (pool != null)
-            pool.emptyManagedConnectionPool(this);
+               if (poolConfiguration.isPrefill() && pool instanceof PrefillPool)
+               {
+                  if (poolConfiguration.getMinSize() > 0)
+                  {
+                     PoolFiller.fillPool(this);
+                  }
+                  else
+                  {
+                     emptyManagedConnectionPool = true;
+                  }
+               }
+               else
+               {
+                  emptyManagedConnectionPool = true;
+               }
+
+               // Empty pool
+               if (emptyManagedConnectionPool)
+                  pool.emptyManagedConnectionPool(this);
+            }
+         }
       }
    }
    
@@ -598,6 +615,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void shutdown()
    {
+      if (trace)
+         log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
+
       shutdown.set(true);
       IdleRemover.getInstance().unregisterPool(this);
       ConnectionValidator.getInstance().unregisterPool(this);
@@ -609,6 +629,15 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void fillToMin()
    {
+      if (poolConfiguration.getMinSize() <= 0)
+         return;
+
+      if (!poolConfiguration.isPrefill())
+         return;
+
+      if (!(pool instanceof PrefillPool))
+         return;
+
       while (poolConfiguration.getMinSize() - (cls.size() + checkedOut.size()) > 0)
       {
          if (shutdown.get())
@@ -862,5 +891,21 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
 
       return true;
+   }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("ArrayBlockingQueueManagedConnectionPool@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[pool=").append(pool.getName());
+      sb.append("]");
+
+      return sb.toString();
    }
 }
