@@ -320,10 +320,12 @@ public interface CoreBundle
    
    /**
     * The pool has been shutdown
+    * @param pool The pool
+    * @param mcp The managed connection pool
     * @return The value
     */
-   @Message(id = 653, value = "The pool has been shutdown")
-   public String thePoolHasBeenShutdown();
+   @Message(id = 653, value = "The pool has been shutdown (%s,%s)")
+   public String thePoolHasBeenShutdown(String pool, String mcp);
 
    /**
     * Interrupted while requesting connection

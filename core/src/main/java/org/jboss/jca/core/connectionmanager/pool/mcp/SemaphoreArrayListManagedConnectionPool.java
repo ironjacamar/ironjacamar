@@ -159,7 +159,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.permits = new Semaphore(maxSize, true, statistics);
 
       // Schedule managed connection pool for prefill
-      if (pc.isPrefill() && p instanceof PrefillPool)
+      if (pc.isPrefill() && p instanceof PrefillPool && pc.getMinSize() > 0)
       {
          PoolFiller.fillPool(this);
       }
@@ -261,7 +261,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   if (shutdown.get())
                   {
                      permits.release();
-                     throw new RetryableUnavailableException(bundle.thePoolHasBeenShutdown());
+                     throw new RetryableUnavailableException(
+                        bundle.thePoolHasBeenShutdown(pool.getName(),
+                                                      Integer.toHexString(System.identityHashCode(this))));
                   }
 
                   int clsSize = cls.size();
@@ -608,28 +610,41 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       // We found some connections to destroy
       if (destroy != null)
       {
-         for (int i = 0; i < destroy.size(); ++i)
+         for (ConnectionListener cl : destroy)
          {
-            ConnectionListener cl = destroy.get(i);
-
             if (trace)
                log.trace("Destroying timedout connection " + cl);
 
             doDestroy(cl);
          }
 
-         // We destroyed something, check the minimum.
-         if (!shutdown.get() &&
-             poolConfiguration.getMinSize() > 0 &&
-             poolConfiguration.isPrefill() &&
-             pool instanceof PrefillPool)
+         if (!shutdown.get())
          {
-            PoolFiller.fillPool(this);
-         }
+            if (!poolConfiguration.isStrictMin())
+            {
+               boolean emptyManagedConnectionPool = false;
 
-         // Empty pool
-         if (pool != null)
-            pool.emptyManagedConnectionPool(this);
+               if (poolConfiguration.isPrefill() && pool instanceof PrefillPool)
+               {
+                  if (poolConfiguration.getMinSize() > 0)
+                  {
+                     PoolFiller.fillPool(this);
+                  }
+                  else
+                  {
+                     emptyManagedConnectionPool = true;
+                  }
+               }
+               else
+               {
+                  emptyManagedConnectionPool = true;
+               }
+
+               // Empty pool
+               if (emptyManagedConnectionPool)
+                  pool.emptyManagedConnectionPool(this);
+            }
+         }
       }
    }
 
@@ -638,6 +653,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public void shutdown()
    {
+      if (trace)
+         log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
+
       shutdown.set(true);
       IdleRemover.getInstance().unregisterPool(this);
       ConnectionValidator.getInstance().unregisterPool(this);
@@ -923,5 +941,21 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       cl.setLastValidatedTime(System.currentTimeMillis());
       cls.add(cl);
+   }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("SemaphoreArrayListManagedConnectionPool@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[pool=").append(pool.getName());
+      sb.append("]");
+
+      return sb.toString();
    }
 }
