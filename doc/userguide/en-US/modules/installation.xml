@@ -100,6 +100,7 @@ ironjacamar-1.0.0.Final
      <para>
        where <code>1.0.0.Final</code> is the version identifier of the IronJacamar container
        and the path points to the top-level directory of the JBoss Application Server installation.
+       You can also use <code>1.0.1-SNAPSHOT</code> in order to upgrade to a patch snapshot build.
      </para>
 
      <para>
