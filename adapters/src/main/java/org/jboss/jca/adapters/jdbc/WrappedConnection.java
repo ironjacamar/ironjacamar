@@ -45,6 +45,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.resource.ResourceException;
+import javax.transaction.xa.XAResource;
+
 import org.jboss.logging.Logger;
 
 /**
@@ -1556,6 +1559,16 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    public boolean isXA()
    {
       return mc.isXA();
+   }
+
+   /**
+    * Returns the XAResource if the connection is an XA based one
+    * @return The value
+    * @exception ResourceException Thrown if it isn't an XA based connection
+    */
+   public XAResource getXAResource() throws ResourceException
+   {
+      return mc.getXAResource();
    }
 
    /**
