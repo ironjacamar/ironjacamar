@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -388,8 +389,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                ManagedConnectionPool mcp = (ManagedConnectionPool)cl.getContext();
                Transaction tx = transactionManager.getTransaction();
 
-               // The lock will be initialized when the first connection listener is obtained
-               Lock lock = (Lock)transactionSynchronizationRegistry.getResource(LockKey.INSTANCE);
+               // The lock may need to be initialized if we are in the first lazy enlistment
+               Lock lock = getLock();
                try
                {
                   lock.lockInterruptibly();
@@ -411,6 +412,49 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             }
          }
       }
+   }
+
+   /**
+    * Init lock
+    * @return The lock
+    */
+   private synchronized Lock initLock()
+   {
+      if (transactionSynchronizationRegistry != null && transactionSynchronizationRegistry.getTransactionKey() != null)
+      {
+         if (transactionSynchronizationRegistry.getResource(LockKey.INSTANCE) == null)
+         {
+            Lock lock = new ReentrantLock(true);
+            transactionSynchronizationRegistry.putResource(LockKey.INSTANCE, lock);
+            return lock;
+         }
+         else
+         {
+            return (Lock)transactionSynchronizationRegistry.getResource(LockKey.INSTANCE);
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Get lock
+    * @return The lock
+    */
+   private Lock getLock()
+   {
+      Lock result = null;
+
+      if (transactionSynchronizationRegistry != null && transactionSynchronizationRegistry.getTransactionKey() != null)
+      {
+         result = (Lock)transactionSynchronizationRegistry.getResource(LockKey.INSTANCE);
+         if (result == null)
+         {
+            result = initLock();
+         }
+      }
+
+      return result;
    }
 
    /**
