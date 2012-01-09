@@ -51,7 +51,7 @@ copy example.rar ironjacamar-1.0.0.Final\deploy
 
      <para>on Windows.</para>
 
-     <para>The resource adapter can configured and activated through a <code>META-INF/ironjacamar.xml</code>
+     <para>The resource adapter can be configured and activated through a <code>META-INF/ironjacamar.xml</code>
        file in the archive. The format of the XML document is defined by the <code>ironjacamar_1_0.xsd</code>.</para>
 
      <para>A resource adapter can also be configured and activated through deployment of a <code>-ra.xml</code>
@@ -661,7 +661,7 @@ java:/eis/ao/&lt;deploymentName&gt;
             The IronJacamar recovery extension allows the resource adapter deployment to give feedback
             to the container if a <code>ManagedConnection</code> can be used for recovery. This extension
             is used as part of XA recovery in the environment, and should therefore be implemented by all
-            resource adapters capable of working in an <code>XATransaction</code> sematics.
+            resource adapters capable of working in an <code>XATransaction</code> semantics.
           </para>
 
           <para>

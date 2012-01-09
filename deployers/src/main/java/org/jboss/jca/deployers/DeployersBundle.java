@@ -107,7 +107,7 @@ public interface DeployersBundle
     * Unable to inject
     * @param clz The class name
     * @param name The name
-    * @param value
+    * @param value The value
     * @return The value
     */
    @Message(id = 20060, value = "Unable to inject: %s property: %s value: %s")

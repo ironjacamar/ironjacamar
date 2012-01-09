@@ -164,7 +164,7 @@
   <!-- The provider for default in process UserTransactions -->
   <bean name="DefaultUserTransactionProvider" class="org.jboss.tm.usertx.client.ServerVMClientUserTransaction">
     <constructor factoryClass="org.jboss.tm.usertx.client.ServerVMClientUserTransaction" factoryMethod="getSingleton"/>
-    <depends>TransactionManager</depends>
+    <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
   </bean>
   
   <!-- Bind java:/UserTransaction -->

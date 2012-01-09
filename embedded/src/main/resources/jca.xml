@@ -93,6 +93,20 @@
         interface="org.jboss.jca.core.spi.security.Callback"
         class="org.jboss.jca.core.security.UsersRoles"/>
 
+  <!-- Idle remover -->
+  <bean name="IdleRemover">
+    <constructor factoryClass="org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover"
+                 factoryMethod="getInstance">
+    </constructor>
+  </bean>
+
+  <!-- Connection validator -->
+  <bean name="ConnectionValidator">
+    <constructor factoryClass="org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator"
+                 factoryMethod="getInstance">
+    </constructor>
+  </bean>
+
   <!-- Work Manager -->
   <bean name="WorkManager" 
         interface="org.jboss.jca.core.api.workmanager.WorkManager"
@@ -218,6 +232,8 @@
     <property name="Kernel"><inject bean="Kernel"/></property>
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
+    <depends>IdleRemover</depends>
+    <depends>ConnectionValidator</depends>
   </bean>
 
   <!-- -ra.xml deployer -->
@@ -228,6 +244,8 @@
     <property name="Kernel"><inject bean="Kernel"/></property>
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
+    <depends>IdleRemover</depends>
+    <depends>ConnectionValidator</depends>
   </bean>
 
   <!-- RA activator -->
@@ -244,6 +262,8 @@
     </property>
     <depends>BeanValidation</depends>
     <depends>JBossStdioContextSelector</depends>
+    <depends>IdleRemover</depends>
+    <depends>ConnectionValidator</depends>
   </bean>
   
 </deployment>

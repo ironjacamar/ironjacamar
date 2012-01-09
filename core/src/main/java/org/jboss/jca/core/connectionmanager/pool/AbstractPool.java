@@ -274,22 +274,26 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public void emptyManagedConnectionPool(ManagedConnectionPool pool)
+   public synchronized void emptyManagedConnectionPool(ManagedConnectionPool pool)
    {
       log.debug(poolName + ": emptyManagedConnectionPool(" + pool + ")");
 
       if (pool != null)
       {
-         Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
-
-         while (it.hasNext())
+         // We only consider removal if there are more than 1 managed connection pool
+         if (mcpPools.size() > 1)
          {
-            ManagedConnectionPool other = it.next();
-            if (other == pool && pool.isEmpty())
+            Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
+
+            while (it.hasNext())
             {
-               pool.shutdown();
-               it.remove();
-               break;
+               ManagedConnectionPool other = it.next();
+               if (other == pool && pool.isEmpty())
+               {
+                  pool.shutdown();
+                  it.remove();
+                  break;
+               }
             }
          }
       }
@@ -306,7 +310,7 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public void flush(boolean kill)
+   public synchronized void flush(boolean kill)
    {
       log.debug(poolName + ": flush(" + kill + ")");
 
@@ -447,6 +451,8 @@ public abstract class AbstractPool implements Pool
       }
       catch (InterruptedException ie)
       {
+         Thread.interrupted();
+         
          throw new ResourceException(bundle.unableObtainLock(), ie);
       }
       try
@@ -501,6 +507,8 @@ public abstract class AbstractPool implements Pool
       }
       catch (InterruptedException ie)
       {
+         Thread.interrupted();
+
          throw new ResourceException(bundle.unableObtainLock(), ie);
       }
       try
@@ -583,7 +591,14 @@ public abstract class AbstractPool implements Pool
    {
       log.debug(poolName + ": shutdown");
 
-      flush(true);
+      Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
+      while (it.hasNext())
+      {
+         ManagedConnectionPool mcp = it.next();
+         mcp.shutdown();
+      }
+
+      mcpPools.clear();
    }
 
    /**

@@ -31,11 +31,6 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
-import java.io.IOException;
-import java.io.NotSerializableException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -319,7 +314,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    protected ConnectionListener getManagedConnection(Transaction transaction, Subject subject,
          ConnectionRequestInfo cri) throws ResourceException
    {
-      ResourceException failure = null;
+      Exception failure = null;
 
       if (shutdown.get())
       {
@@ -327,6 +322,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
 
       // First attempt
+      boolean isInterrupted = Thread.interrupted();
+      boolean innerIsInterrupted = false;
       try
       {
          return pool.getConnection(transaction, subject, cri);
@@ -350,6 +347,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                   log.trace("Attempting allocation retry for cri=" + cri);
                }
 
+
+               if (Thread.currentThread().isInterrupted())
+               {
+                  Thread.interrupted();
+                  innerIsInterrupted = true;
+               }
+
                try
                {
                   if (allocationRetryWaitMillis != 0)
@@ -365,9 +369,20 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                }
                catch (InterruptedException ie)
                {
-                  throw new ResourceException(bundle.getManagedConnectionRetryWaitInterrupted(jndiName), ie);
+                  failure = ie;
+                  innerIsInterrupted = true;
                }
             }
+         }
+      }
+      finally
+      {
+         if (isInterrupted || innerIsInterrupted)
+         {
+            Thread.currentThread().interrupt();
+      
+            if (innerIsInterrupted)
+               throw new ResourceException(bundle.getManagedConnectionRetryWaitInterrupted(jndiName), failure);
          }
       }
 
@@ -440,7 +455,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       //it is an explicit spec requirement that equals be used for matching rather than ==.
       if (!pool.getManagedConnectionFactory().equals(mcf))
       {
-         throw new ResourceException(bundle.wrongManagedConnectionFactorySentToAllocateConnection());
+         throw new ResourceException(
+            bundle.wrongManagedConnectionFactorySentToAllocateConnection(pool.getManagedConnectionFactory(), mcf));
       }
 
       // Pick a managed connection from the pool
@@ -687,35 +703,5 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          log.tracef("Subject: %s", subject);
 
       return subject;
-   }
-
-   /**
-    * Write the object to the stream -- THIS IS NOT SUPPORTED
-    * @param out The stream
-    * @exception IOException Thrown in case of an error
-    */
-   private void writeObject(ObjectOutputStream out) throws IOException
-   {
-      throw new IOException(bundle.thisMethodNotSupported());
-   }
-
-   /**
-    * Read the object from the stream -- THIS IS NOT SUPPORTED
-    * @param in The stream
-    * @exception IOException Thrown in case of an error
-    * @exception ClassNotFoundException Thrown if a class can't be resolved
-    */
-   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
-   {
-      throw new IOException(bundle.thisMethodNotSupported());
-   }
-
-   /**
-    * Read the object -- THIS IS NOT SUPPORTED
-    * @exception ObjectStreamException Thrown in case of an error
-    */
-   private void readObjectNoData() throws ObjectStreamException
-   {
-      throw new NotSerializableException(bundle.thisMethodNotSupported());
    }
 }

@@ -233,10 +233,12 @@ public interface CoreBundle
    
    /**
     * Wrong ManagedConnectionFactory sent to allocateConnection
+    * @param pool The ManagedConnectionFactory used for the pool
+    * @param mcf The ManagedConnectionFactory passed in
     * @return The value
     */
-   @Message(id = 455, value = "Wrong ManagedConnectionFactory sent to allocateConnection")
-   public String wrongManagedConnectionFactorySentToAllocateConnection();
+   @Message(id = 455, value = "Wrong ManagedConnectionFactory sent to allocateConnection (Pool=%s, MCF=%s)")
+   public String wrongManagedConnectionFactorySentToAllocateConnection(Object pool, Object mcf);
 
    /**
     * Unchecked throwable in ManagedConnection.getConnection()
@@ -318,10 +320,12 @@ public interface CoreBundle
    
    /**
     * The pool has been shutdown
+    * @param pool The pool
+    * @param mcp The managed connection pool
     * @return The value
     */
-   @Message(id = 653, value = "The pool has been shutdown")
-   public String thePoolHasBeenShutdown();
+   @Message(id = 653, value = "The pool has been shutdown (%s,%s)")
+   public String thePoolHasBeenShutdown(String pool, String mcp);
 
    /**
     * Interrupted while requesting connection

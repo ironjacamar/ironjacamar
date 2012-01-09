@@ -50,8 +50,6 @@ class PreClassLoaderEventListener implements EventListener
       {
          SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
          SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
-         SecurityActions.setSystemProperty("javax.xml.stream.XMLInputFactory", 
-                                           "com.sun.xml.internal.stream.XMLInputFactoryImpl");
          SecurityActions.setSystemProperty("log4j.defaultInitOverride", "true");
       }
    }

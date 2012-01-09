@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2010, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,41 +19,32 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.spi.transaction.usertx;
+
+package org.jboss.jca.adapters.jdbc;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * UserTransactionRegistry.
+ * Privileged Blocks
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface UserTransactionRegistry
+class SecurityActions
 {
    /**
-    * Add a listener
-    * @param listener The listener
+    * Get a system property
+    * @param name The property name
+    * @return The property value
     */
-   public void addListener(UserTransactionListener listener);
-   
-   /**
-    * Remove a listener
-    * @param listener The listener
-    */
-   public void removeListener(UserTransactionListener listener);
-
-   /**
-    * Add a provider
-    * @param provider The provider
-    */
-   public void addProvider(UserTransactionProvider provider);
-   
-   /**
-    * Remove a provider
-    * @param provider The provider
-    */
-   public void removeProvider(UserTransactionProvider provider);
-
-   /**
-    * Fire a user transaction started event
-    */
-   public void userTransactionStarted();
+   static String getSystemProperty(final String name)
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<String>() 
+      {
+         public String run()
+         {
+            return System.getProperty(name);
+         }
+      });
+   }
 }

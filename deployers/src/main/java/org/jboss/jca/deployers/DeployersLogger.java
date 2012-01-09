@@ -106,4 +106,60 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 20008, value = "Invalid config-property: %s")
    public void invalidConfigProperty(String cp);
+
+   /**
+    * Connection definition invalid
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20009, value = "Invalid connection definition with class-name: %s")
+   public void connectionDefinitionInvalid(String clz);
+
+   /**
+    * Connection definition class-name null
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 20010, value = "Connection definition with missing class-name")
+   public void connectionDefinitionNull();
+
+   /**
+    * Admin object class-name null
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 20011, value = "Admin object with missing class-name")
+   public void adminObjectNull();
+
+   /**
+    * Admin object not bound
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20012, value = "Admin object not bound: %s")
+   public void adminObjectNotBound(String clz);
+
+   /**
+    * Connection factory not bound
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20013, value = "Connection factory not bound: %s")
+   public void connectionFactoryNotBound(String clz);
+
+   /**
+    * Admin object not spec compliant
+    * @param clz The class name
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 20014, value = "Admin object not specification compliant. " +
+            "See 13.4.2.3 for additional details: %s")
+   public void adminObjectNotSpecCompliant(String clz);
+
+   /**
+    * Connection factory not spec compliant
+    * @param clz The class name
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 20015, value = "Connection factory not specification compliant. " +
+            "See 6.5.1.3 for additional details: %s")
+   public void connectionFactoryNotSpecCompliant(String clz);
 }

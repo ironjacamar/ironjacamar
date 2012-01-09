@@ -329,7 +329,7 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
           this.getResourceadapterClass() != null)
          inboundOrOutbound = true;
 
-      if (!inboundOrOutbound)
+      if (!inboundOrOutbound && (this.resourceadapterClass == null || this.resourceadapterClass.trim().equals("")))
          throw new ValidateException(bundle.invalidMetadataForResourceAdapter());
    }
 

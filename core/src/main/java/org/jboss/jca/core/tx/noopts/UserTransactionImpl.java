@@ -21,6 +21,9 @@
  */
 package org.jboss.jca.core.tx.noopts;
 
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionProvider;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
+
 import java.io.Serializable;
 
 import javax.naming.Context;
@@ -38,11 +41,12 @@ import javax.transaction.UserTransaction;
  * A transaction manager implementation
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class UserTransactionImpl implements UserTransaction, Serializable
+public class UserTransactionImpl implements UserTransactionProvider, UserTransaction, Serializable
 {
    private static final long serialVersionUID = 1L;
    private static final String JNDI_NAME = "java:/UserTransaction";
    private TxRegistry registry;
+   private UserTransactionRegistry userTransactionRegistry;
 
    /**
     * Constructor
@@ -50,6 +54,7 @@ public class UserTransactionImpl implements UserTransaction, Serializable
    public UserTransactionImpl()
    {
       this.registry = null;
+      this.userTransactionRegistry = null;
    }
 
    /**
@@ -59,6 +64,15 @@ public class UserTransactionImpl implements UserTransaction, Serializable
    public void setRegistry(TxRegistry v)
    {
       registry = v;
+   }
+
+   /**
+    * Set the user transaction registry
+    * @param v The value
+    */
+   public void setUserTransactionRegistry(UserTransactionRegistry v)
+   {
+      userTransactionRegistry = v;
    }
 
    /**
@@ -73,6 +87,9 @@ public class UserTransactionImpl implements UserTransaction, Serializable
          throw new NotSupportedException();
 
       registry.startTransaction();
+
+      if (userTransactionRegistry != null)
+         userTransactionRegistry.userTransactionStarted();
    }
 
    /**

@@ -62,9 +62,10 @@ public class Main
    {
       try
       {
-         List<String> order = new ArrayList<String>(4);
+         List<String> order = new ArrayList<String>(5);
          order.add(".xml");
          order.add(".rar");
+         order.add("-ra.xml");
          order.add("-ds.xml");
          order.add(".war");
 

@@ -13,4 +13,10 @@
     <depends>WebServer</depends>
   </bean>
 
+  <!-- JNDI viewer -->
+  <bean name="JNDIViewer" class="org.jboss.jca.web.JNDIViewer">
+    <property name="MBeanServer"><inject bean="Kernel" property="MBeanServer"/></property>
+    <property name="Domain"><inject bean="Kernel" property="Name"/></property>
+  </bean>
+
 </deployment>

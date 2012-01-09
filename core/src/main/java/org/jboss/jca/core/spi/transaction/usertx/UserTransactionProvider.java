@@ -22,38 +22,15 @@
 package org.jboss.jca.core.spi.transaction.usertx;
 
 /**
- * UserTransactionRegistry.
+ * UserTransactionProvider.
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface UserTransactionRegistry
+public interface UserTransactionProvider
 {
    /**
-    * Add a listener
-    * @param listener The listener
+    * Set the user transaction registry
+    * @param v The value
     */
-   public void addListener(UserTransactionListener listener);
-   
-   /**
-    * Remove a listener
-    * @param listener The listener
-    */
-   public void removeListener(UserTransactionListener listener);
-
-   /**
-    * Add a provider
-    * @param provider The provider
-    */
-   public void addProvider(UserTransactionProvider provider);
-   
-   /**
-    * Remove a provider
-    * @param provider The provider
-    */
-   public void removeProvider(UserTransactionProvider provider);
-
-   /**
-    * Fire a user transaction started event
-    */
-   public void userTransactionStarted();
+   public void setUserTransactionRegistry(UserTransactionRegistry v);
 }

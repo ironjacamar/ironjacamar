@@ -52,6 +52,13 @@
   <bean name="UserTransactionRegistry"
         interface="org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry" 
         class="org.jboss.jca.core.tx.noopts.UserTransactionRegistryImpl">
+    <!-- Register providers -->
+    <incallback method="addProvider"/>
+    <uncallback method="removeProvider"/>
+
+    <!-- Register listeners -->
+    <incallback method="addListener"/>
+    <uncallback method="removeListener"/>
   </bean>
 
   <!-- Transaction integration -->

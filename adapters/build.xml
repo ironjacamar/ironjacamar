@@ -197,7 +197,6 @@
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       <sysproperty key="java.naming.factory.initial" value="org.jnp.interfaces.LocalOnlyContextFactory"/>
     	<sysproperty key="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces"/>
 
@@ -252,7 +251,6 @@
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
       
       <classpath>
         <pathelement location="${build.adapters.dir}/test"/>
