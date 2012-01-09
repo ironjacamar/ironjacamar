@@ -314,7 +314,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    protected ConnectionListener getManagedConnection(Transaction transaction, Subject subject,
          ConnectionRequestInfo cri) throws ResourceException
    {
-      ResourceException failure = null;
+      Exception failure = null;
 
       if (shutdown.get())
       {
@@ -322,6 +322,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
 
       // First attempt
+      boolean isInterrupted = Thread.interrupted();
+      boolean innerIsInterrupted = false;
       try
       {
          return pool.getConnection(transaction, subject, cri);
@@ -345,6 +347,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                   log.trace("Attempting allocation retry for cri=" + cri);
                }
 
+
+               if (Thread.currentThread().isInterrupted())
+               {
+                  Thread.interrupted();
+                  innerIsInterrupted = true;
+               }
+
                try
                {
                   if (allocationRetryWaitMillis != 0)
@@ -360,9 +369,20 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                }
                catch (InterruptedException ie)
                {
-                  throw new ResourceException(bundle.getManagedConnectionRetryWaitInterrupted(jndiName), ie);
+                  failure = ie;
+                  innerIsInterrupted = true;
                }
             }
+         }
+      }
+      finally
+      {
+         if (isInterrupted || innerIsInterrupted)
+         {
+            Thread.currentThread().interrupt();
+      
+            if (innerIsInterrupted)
+               throw new ResourceException(bundle.getManagedConnectionRetryWaitInterrupted(jndiName), failure);
          }
       }
 

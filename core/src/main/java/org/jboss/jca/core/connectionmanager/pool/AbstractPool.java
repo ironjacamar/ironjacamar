@@ -451,6 +451,8 @@ public abstract class AbstractPool implements Pool
       }
       catch (InterruptedException ie)
       {
+         Thread.interrupted();
+         
          throw new ResourceException(bundle.unableObtainLock(), ie);
       }
       try
@@ -505,6 +507,8 @@ public abstract class AbstractPool implements Pool
       }
       catch (InterruptedException ie)
       {
+         Thread.interrupted();
+
          throw new ResourceException(bundle.unableObtainLock(), ie);
       }
       try
