@@ -234,6 +234,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             }
             catch (InterruptedException ie)
             {
+               Thread.interrupted();
+
                long end = System.currentTimeMillis() - startWait;
                throw new ResourceException(bundle.interruptedWhileRequestingConnection(end));
             }
@@ -272,6 +274,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          }
          catch (InterruptedException ie)
          {
+            Thread.interrupted();
+
             if (!poolConfiguration.isUseFastFail())
             {
                throw new ResourceException(bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
@@ -439,6 +443,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             }
             catch (InterruptedException ie)
             {
+               Thread.interrupted();
+
                cl.setState(ConnectionState.DESTROY);
                kill = true;
             }

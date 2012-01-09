@@ -381,6 +381,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
       catch (InterruptedException ie)
       {
+         Thread.interrupted();
+
          long end = System.currentTimeMillis() - startWait;
          statistics.deltaTotalBlockingTime(end);
          throw new ResourceException(bundle.interruptedWhileRequestingPermit(end));
@@ -723,6 +725,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
          catch (InterruptedException ignored)
          {
+            Thread.interrupted();
+
             if (trace)
                log.trace("Interrupted while requesting permit in fillToMin");
          }
