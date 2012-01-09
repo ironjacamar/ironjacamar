@@ -139,7 +139,7 @@
   <property name="version.jboss.stdio" value="1.0.1.GA"/>
   <property name="version.jboss.threads" value="2.0.0.GA"/>
   <property name="version.jboss.ts" value="4.15.3.Final"/>
-  <property name="version.jboss.ts.spi" value="7.0.0.CR1"/>
+  <property name="version.jboss.ts.spi" value="7.0.0.CR2"/>
   <property name="version.jdepend" value="2.9.1"/>
   <property name="version.jetty" value="7.4.0.v20110414"/>
   <property name="version.jetty.servlet" value="6.1.14"/>

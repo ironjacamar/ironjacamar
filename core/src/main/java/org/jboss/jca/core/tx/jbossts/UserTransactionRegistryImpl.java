@@ -22,6 +22,7 @@
 package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionProvider;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +41,9 @@ public class UserTransactionRegistryImpl implements org.jboss.jca.core.spi.trans
    /** Listener map */
    private Map<UserTransactionListener, UserTransactionListenerImpl> listeners;
 
+   /** Provider map */
+   private Map<UserTransactionProvider, UserTransactionProviderImpl> providers;
+
    /**
     * Constructor
     * @param delegator The delegator instance
@@ -49,6 +53,8 @@ public class UserTransactionRegistryImpl implements org.jboss.jca.core.spi.trans
       this.delegator = delegator;
       this.listeners =
          Collections.synchronizedMap(new HashMap<UserTransactionListener, UserTransactionListenerImpl>());
+      this.providers =
+         Collections.synchronizedMap(new HashMap<UserTransactionProvider, UserTransactionProviderImpl>());
    }
 
    /**
@@ -76,5 +82,40 @@ public class UserTransactionRegistryImpl implements org.jboss.jca.core.spi.trans
          delegator.removeListener(impl);
          listeners.remove(listener);
       }
+   }
+
+   /**
+    * Add a provider
+    * @param provider The provider
+    */
+   public void addProvider(UserTransactionProvider provider)
+   {
+      UserTransactionProviderImpl impl = new UserTransactionProviderImpl(provider);
+
+      delegator.addProvider(impl);
+      providers.put(provider, impl);
+   }
+   
+   /**
+    * Remove a provider
+    * @param provider The provider
+    */
+   public void removeProvider(UserTransactionProvider provider)
+   {
+      UserTransactionProviderImpl impl = providers.get(provider);
+
+      if (impl != null)
+      {
+         delegator.removeProvider(impl);
+         providers.remove(provider);
+      }
+   }
+
+   /**
+    * Fire a user transaction started event
+    */
+   public void userTransactionStarted()
+   {
+      delegator.userTransactionStarted();
    }
 }

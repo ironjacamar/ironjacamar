@@ -22,11 +22,14 @@
 package org.jboss.jca.core.tx.noopts;
 
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
+import org.jboss.jca.core.spi.transaction.usertx.UserTransactionProvider;
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.transaction.SystemException;
 
 /**
  * UserTransactionRegistry implementation.
@@ -38,12 +41,16 @@ public class UserTransactionRegistryImpl implements UserTransactionRegistry
    /** Listeners */
    private Set<UserTransactionListener> listeners;
 
+   /** Providers */
+   private Set<UserTransactionProvider> providers;
+
    /**
     * Constructor
     */
    public UserTransactionRegistryImpl()
    {
       this.listeners = Collections.synchronizedSet(new HashSet<UserTransactionListener>());
+      this.providers = Collections.synchronizedSet(new HashSet<UserTransactionProvider>());
    }
 
    /**
@@ -62,5 +69,47 @@ public class UserTransactionRegistryImpl implements UserTransactionRegistry
    {
       if (listener != null)
          listeners.remove(listener);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void addProvider(UserTransactionProvider provider)
+   {
+      if (provider != null)
+      {
+         provider.setUserTransactionRegistry(this);
+         providers.add(provider);
+      }
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public void removeProvider(UserTransactionProvider provider)
+   {
+      if (provider != null)
+      {
+         provider.setUserTransactionRegistry(null);
+         providers.remove(provider);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void userTransactionStarted()
+   {
+      for (UserTransactionListener utl : listeners)
+      {
+         try
+         {
+            utl.userTransactionStarted();
+         }
+         catch (SystemException se)
+         {
+            // Ignore
+         }
+      }
    }
 }
