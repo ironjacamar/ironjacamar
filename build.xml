@@ -377,6 +377,13 @@
   </target>
 
   <!-- ================================= 
+       Target: eclipse plugin
+       ================================= -->
+  <target name="plugin">
+    <ant dir="eclipse" inheritRefs="true" target="jars"/>
+  </target>
+
+  <!-- ================================= 
        Target: prepare test
        ================================= -->
   <target name="prepare-test" depends="jars">
@@ -1140,6 +1147,9 @@
 
     <ant antfile="tools/docant/build.xml" target="clean" inheritrefs="false" inheritAll="false"/>
     <delete dir="${doc.dir}/target"/>
+    <delete>
+      <fileset dir="eclipse/libs" includes="**/*.jar"/>
+    </delete>
   </target>
   
   <!-- ================================= 
