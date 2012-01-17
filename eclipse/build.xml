@@ -1,0 +1,161 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="ironjacamar-eclipse" 
+         default="compile" 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.eclipse.dir" value="${build.dir}/eclipse" />
+  <property name="eclipse.home" value="/opt/eclipse" />
+
+  <path id="eclipse-sdk-jars">
+
+    <fileset dir="${target.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset dir="${eclipse.home}/plugins/">
+      <include name="org.eclipse.ui*.jar"/>
+      <include name="org.eclipse.jdt*.jar"/>
+      <include name="org.eclipse.core*.jar"/>
+      <include name="org.eclipse.equinox*.jar"/>
+      <include name="org.eclipse.debug*.jar"/>
+      <include name="org.eclipse.osgi*.jar"/>
+      <include name="org.eclipse.swt*.jar"/>
+      <include name="org.eclipse.jface*.jar"/>
+
+      <include name="org.eclipse.team.cvs.ssh2*.jar"/>
+      <include name="com.jcraft.jsch*.jar"/>
+    </fileset>
+  </path>
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile">
+
+    <copy todir="libs/">
+      <fileset dir="${target.dir}"
+               includes="ironjacamar-codegenerator.jar ironjacamar-common*.jar
+               ironjacamar-core*.jar ironjacamar-sjc.jar ironjacamar-spec-api.jar"/>
+    </copy>
+
+    <mkdir dir="${build.eclipse.dir}" />
+    <mkdir dir="${build.eclipse.dir}/impl" />
+
+    <javac srcdir="src/main"
+           destdir="${build.eclipse.dir}/impl"
+           classpathref="eclipse-sdk-jars"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+  </target>
+
+  <!-- ================================= 
+       Target: jars 
+       ================================= -->
+  <target name="jars" depends="compile">
+    <mkdir dir="${build.eclipse.dir}/jars" />
+
+    <!-- eclipse -->
+    <mkdir dir="${build.eclipse.dir}/jars/eclipse" />
+
+    <copy todir="${build.eclipse.dir}/jars/eclipse">
+      <fileset dir="${build.eclipse.dir}/impl"
+               includes="**"/>
+    </copy>
+
+    <copy todir="${build.eclipse.dir}/jars/eclipse">
+      <fileset dir="."
+               includes="plugin.xml build.properties icons/** libs/** META-INF/**"/>
+    </copy>
+
+    <jar destfile="${target.dir}/${name}-eclipse.jar"
+         basedir="${build.eclipse.dir}/jars/eclipse"
+         manifest="META-INF/MANIFEST.MF"
+         update="true"
+         level="9">
+
+    </jar>
+  </target>
+
+  <!-- ================================= 
+       Target: artifacts
+       ================================= -->
+  <target name="artifacts" depends="jars">
+
+    <jar destfile="${target.dir}/${name}-eclipse-sources.jar"
+         basedir="src/main/java"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar eclipse - Sources"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <mkdir dir="${build.eclipse.dir}/docs"/>
+    <javadoc packagenames="org.*"
+             sourcepath="src/main/java"
+             destdir="${build.eclipse.dir}/docs"
+             doclet="org.jboss.apiviz.APIviz"
+             docletpathref="main.lib.path.id"
+             author="true"
+             version="true"
+             windowtitle="IronJacamar eclipse"
+             doctitle="IronJacamar eclipse"
+             use="true"
+             additionalparam="-author -version"
+             classpath="${build.eclipse.dir}"
+             classpathref="main.lib.path.id"
+             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+    <copy todir="${build.eclipse.dir}/docs" overwrite="true">
+      <fileset dir="${tools.dir}/api"/>
+    </copy>
+
+    <jar destfile="${target.dir}/${name}-eclipse-javadoc.jar"
+         basedir="${build.eclipse.dir}/docs"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar eclipse - JavaDoc"/>
+        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+</project>

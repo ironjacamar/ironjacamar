@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="Build Category"
+            id="ironjacamar-eclipse.commands.category">
+      </category>
+      <command
+            name="Build Command"
+            categoryId="ironjacamar-eclipse.commands.category"
+            id="ironjacamar-eclipse.commands.buildCommand">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            commandId="ironjacamar-eclipse.commands.buildCommand"
+            class="org.jboss.jca.eclipse.command.BuildHandler">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="ironjacamar-eclipse.commands.buildCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+6"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               label="Build Menu"
+               mnemonic="M"
+               id="ironjacamar-eclipse.menus.buildMenu">
+            <command
+                  commandId="ironjacamar-eclipse.commands.buildCommand"
+                  mnemonic="S"
+                  id="ironjacamar-eclipse.menus.buildCommand">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="ironjacamar-eclipse.toolbars.buildToolbar">
+            <command
+                  commandId="ironjacamar-eclipse.commands.buildCommand"
+                  icon="icons/build.png"
+                  tooltip="Say hello world"
+                  id="ironjacamar-eclipse.toolbars.buildCommand">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Ironjcamar"
+            id="org.jboss.jca.eclipse.wizards.category">
+      </category>
+      <wizard
+            name="IronJacamar 1.1 project"
+            icon="icons/ij.png"
+            category="org.jboss.jca.eclipse.wizards.category"
+            hasPages="true"     
+            class="org.jboss.jca.eclipse.wizards.CodeGenWizard"
+            id="org.jboss.jca.eclipse.wizards.CodeGenWizard"
+            project="true">
+      </wizard>
+   </extension>
+
+</plugin>

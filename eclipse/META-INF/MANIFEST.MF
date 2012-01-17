@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JBoss JCA Container - Ironjacamar Plugin
+Bundle-SymbolicName: org.jboss.jca.eclipse;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.jboss.jca.eclipse.Activator
+Bundle-Vendor: JBoss Ironjacamar Team
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.ui.ide,
+ org.eclipse.jdt.core;bundle-version="3.6.2",
+ org.eclipse.jdt.launching
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
+ CDC-1.0/Foundation-1.0
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ libs/ironjacamar-codegenerator.jar,
+ libs/ironjacamar-common-api.jar,
+ libs/ironjacamar-common-impl-papaki.jar,
+ libs/ironjacamar-common-impl.jar,
+ libs/ironjacamar-common-spi.jar,
+ libs/ironjacamar-core-api.jar,
+ libs/ironjacamar-core-impl.jar,
+ libs/ironjacamar-sjc.jar,
+ libs/ironjacamar-spec-api.jar
