@@ -33,7 +33,7 @@
     </description>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;mail->default;;tools->default;ironjacamar-as->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-impl-papaki->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;rhq->default;hornetq->default;brew->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;jetty->default;test->default;mail->default;;tools->default;ironjacamar-as->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-impl-papaki->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;hornetq->default;brew->default">
     <conf name="arquillian" transitive="false"/>
     <conf name="common" transitive="false"/>
     <conf name="embedded" transitive="false"/>
@@ -43,7 +43,6 @@
     <conf name="sjc" transitive="false"/>
     <conf name="test" transitive="false"/>
     <conf name="tools" transitive="false"/>
-    <conf name="rhq" transitive="false"/>
     <conf name="brew" transitive="false"/>
 
     <conf name="ironjacamar-as" transitive="false"/>
@@ -108,12 +107,8 @@
     <dependency org="com.github.fungal" name="fungal-cli" rev="${version.fungal}" conf="sjc,ironjacamar-depchain"/>
     <dependency org="com.h2database" name="h2" rev="${version.h2}" conf="test"/>
     <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="jetty,tools"/>
-    <dependency org="javax.activation" name="activation" rev="${version.activation}" conf="rhq"/>
     <dependency org="javax.mail" name="mail" rev="${version.mail-api}" conf="mail"/>
-    <dependency org="javax.persistence" name="persistence-api" rev="${version.jpa}" conf="rhq"/>
     <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="common,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,brew"/>
-    <dependency org="javax.xml" name="jaxb-api" rev="${version.jaxb.api}" conf="rhq"/>
-    <dependency org="javax.xml" name="jaxb-impl" rev="${version.jaxb.impl}" conf="rhq"/>
     <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="tools"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
     <dependency org="log4j" name="log4j" rev="${version.apache-log4j}" conf="common,ironjacamar-depchain"/>
@@ -132,7 +127,6 @@
     <dependency org="org.eclipse.jetty" name="jetty-util" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-webapp" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-xml" rev="${version.jetty}" conf="jetty"/>
-    <dependency org="org.hibernate" name="hibernate-annotations" rev="${version.hibernate-annotations}" conf="rhq"/>
     <dependency org="org.hibernate" name="hibernate-validator" rev="${version.hibernate-validator}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.hornetq" name="hornetq-core" rev="${version.hornetq}" conf="hornetq,ironjacamar-depchain"/>
     <dependency org="org.hornetq" name="hornetq-core-client" rev="${version.hornetq}" conf="hornetq,ironjacamar-depchain"/>
@@ -186,13 +180,6 @@
     <dependency org="org.mortbay.jetty" name="jsp-api-2.1-glassfish"  rev="${version.jetty.glassfish}" conf="jetty"/>
     <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="jetty"/>
     <dependency org="org.picketbox" name="picketbox" rev="${version.jboss.picketbox}" conf="common,ironjacamar-depchain,ironjacamar-core-impl,brew"/>
-    <dependency org="org.rhq" name="rhq-core-client-api" rev="${version.rhq}" conf="rhq"/>
-    <dependency org="org.rhq" name="rhq-core-comm-api" rev="${version.rhq}" conf="rhq"/>
-    <dependency org="org.rhq" name="rhq-core-domain" rev="${version.rhq}" conf="rhq"/>
-    <dependency org="org.rhq" name="rhq-core-native-system" rev="${version.rhq}" conf="rhq"/>
-    <dependency org="org.rhq" name="rhq-core-plugin-api" rev="${version.rhq}" conf="rhq"/>
-    <dependency org="org.rhq" name="rhq-core-plugin-container" rev="${version.rhq}" conf="rhq"/>
-    <dependency org="org.rhq" name="rhq-core-util" rev="${version.rhq}" conf="rhq"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
   </dependencies>
