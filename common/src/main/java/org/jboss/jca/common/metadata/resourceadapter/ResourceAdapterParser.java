@@ -170,9 +170,26 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       ArrayList<CommonAdminObject> adminObjects = null;
       ArrayList<String> beanValidationGroups = null;
       String bootstrapContext = null;
+      String id = null;
       String archive = null;
       TransactionSupportEnum transactionSupport = null;
       HashMap<String, String> configProperties = null;
+
+      int attributeSize = reader.getAttributeCount();
+      for (int i = 0; i < attributeSize; i++)
+      {
+         ResourceAdapter.Attribute attribute = ResourceAdapter.Attribute.forName(reader.getAttributeLocalName(i));
+         switch (attribute)
+         {
+            case ID : {
+               id = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
+            default :
+               throw new ParserException(bundle.unexpectedAttribute(attribute.getLocalName(), reader.getLocalName()));
+         }
+      }
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -180,7 +197,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
             case END_ELEMENT : {
                if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.RESOURCE_ADAPTER)
                {
-                  return new ResourceAdapterImpl(archive, transactionSupport, connectionDefinitions, adminObjects,
+                  return new ResourceAdapterImpl(id, archive, transactionSupport, connectionDefinitions, adminObjects,
                                                  configProperties, beanValidationGroups, bootstrapContext);
                }
                else

@@ -36,13 +36,19 @@ import java.util.Map;
  */
 public interface ResourceAdapter extends CommonIronJacamar
 {
-
    /**
     * Get the archive.
     *
     * @return the archive.
     */
    public String getArchive();
+
+   /**
+    * Get the id
+    *
+    * @return the value.
+    */
+   public String getId();
 
    /**
    *
@@ -164,5 +170,83 @@ public interface ResourceAdapter extends CommonIronJacamar
          return element == null ? UNKNOWN : element;
       }
 
+   }
+
+   /**
+    *
+    * A Attribute.
+    *
+    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    *
+    */
+   public enum Attribute
+   {
+
+      /** always first
+      *
+      */
+      UNKNOWN(null),
+      /** id attribute
+       *
+       */
+      ID("id");
+
+      private final String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
+      private static final Map<String, Attribute> MAP;
+
+      static
+      {
+         final Map<String, Attribute> map = new HashMap<String, Attribute>();
+         for (Attribute element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName XsdString
+      *
+      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Attribute forName(String localName)
+      {
+         final Attribute element = MAP.get(localName);
+         return element == null ? UNKNOWN : element;
+      }
    }
 }

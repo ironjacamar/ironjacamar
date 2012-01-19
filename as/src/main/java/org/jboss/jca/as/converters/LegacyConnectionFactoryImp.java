@@ -111,7 +111,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
             Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, timeOut, validation, security, null);
       connectionDefinitions = new ArrayList<CommonConnDef>();
       connectionDefinitions.add(connDef);
-      raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, null,
+      raImpl = new ResourceAdapterImpl(null, rarName, transactionSupport, connectionDefinitions, null,
             null, null, null);
    }
    

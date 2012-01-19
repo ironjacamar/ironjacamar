@@ -71,7 +71,7 @@ public class RaImpl
     */
    public void buildResourceAdapterImpl()  throws Exception
    {
-      raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, adminObjects,
+      raImpl = new ResourceAdapterImpl(null, rarName, transactionSupport, connectionDefinitions, adminObjects,
             raConfigProperties, null, null);
    }
    
