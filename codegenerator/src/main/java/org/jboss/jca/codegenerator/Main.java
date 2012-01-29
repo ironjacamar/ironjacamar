@@ -335,7 +335,7 @@ public class Main
                System.out.print("[" + mcfdef.getMcfClass() + "]: ");
                mcfClassName = in.readLine();
             }
-            while (classes.contains(mcfClassName));
+            while (classes.contains(mcfClassName) && !mcfClassName.equals(""));
             classes.add(mcfClassName);
             if (mcfClassName != null && !mcfClassName.equals(""))
             {
@@ -369,7 +369,7 @@ public class Main
                System.out.print("[" + mcfdef.getMcClass() + "]: ");
                mcClassName = in.readLine();
             }
-            while (classes.contains(mcClassName));
+            while (classes.contains(mcClassName) && !mcClassName.equals(""));
             classes.add(mcClassName);
 
             if (mcClassName != null && !mcClassName.equals(""))
@@ -396,7 +396,7 @@ public class Main
                   System.out.print("[" + mcfdef.getCfInterfaceClass() + "]: ");
                   cfInterfaceName = in.readLine();
                }
-               while (classes.contains(cfInterfaceName));
+               while (classes.contains(cfInterfaceName) && !cfInterfaceName.equals(""));
                classes.add(cfInterfaceName);
                if (cfInterfaceName != null && !cfInterfaceName.equals(""))
                   mcfdef.setCfInterfaceClass(cfInterfaceName);
@@ -408,7 +408,7 @@ public class Main
                   System.out.print("[" + mcfdef.getCfClass() + "]: ");
                   cfClassName = in.readLine();
                }
-               while (classes.contains(cfClassName));
+               while (classes.contains(cfClassName) && !cfClassName.equals(""));
                classes.add(cfClassName);
                if (cfClassName != null && !cfClassName.equals(""))
                   mcfdef.setCfClass(cfClassName);
@@ -420,7 +420,7 @@ public class Main
                   System.out.print("[" + mcfdef.getConnInterfaceClass() + "]: ");
                   connInterfaceName = in.readLine();
                }
-               while (classes.contains(connInterfaceName));
+               while (classes.contains(connInterfaceName) && !connInterfaceName.equals(""));
                classes.add(connInterfaceName);
                if (connInterfaceName != null && !connInterfaceName.equals(""))
                   mcfdef.setConnInterfaceClass(connInterfaceName);
@@ -432,7 +432,7 @@ public class Main
                   System.out.print("[" + mcfdef.getConnImplClass() + "]: ");
                   connImplName = in.readLine();
                }
-               while (classes.contains(connImplName));
+               while (classes.contains(connImplName) && !connImplName.equals(""));
                classes.add(connImplName);
                if (connImplName != null && !connImplName.equals(""))
                   mcfdef.setConnImplClass(connImplName);
@@ -479,7 +479,7 @@ public class Main
             System.out.print("[" + def.getMlClass() + "]: ");
             mlClassName = in.readLine();
          }
-         while (classes.contains(mlClassName));
+         while (classes.contains(mlClassName) && !mlClassName.equals(""));
          classes.add(mlClassName);
          boolean defaultPackage = true;
          if (mlClassName != null && !mlClassName.equals(""))
@@ -502,7 +502,7 @@ public class Main
             System.out.print("[" + def.getAsClass() + "]: ");
             asClassName = in.readLine();
          }
-         while (classes.contains(asClassName));
+         while (classes.contains(asClassName) && !asClassName.equals(""));
          classes.add(asClassName);
          if (asClassName != null && !asClassName.equals(""))
             def.setAsClass(asClassName);
@@ -517,7 +517,7 @@ public class Main
             System.out.print("[" + def.getActivationClass() + "]: ");
             actiClassName = in.readLine();
          }
-         while (classes.contains(actiClassName));
+         while (classes.contains(actiClassName) && !actiClassName.equals(""));
          classes.add(actiClassName);
          if (actiClassName != null && !actiClassName.equals(""))
             def.setActivationClass(actiClassName);
@@ -563,7 +563,7 @@ public class Main
             System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectInterface]: ");
             aoInterfaceName = in.readLine();
          }
-         while (classes.contains(aoInterfaceName));
+         while (classes.contains(aoInterfaceName) && !aoInterfaceName.equals(""));
          classes.add(aoInterfaceName);
          
          if (aoInterfaceName != null && !aoInterfaceName.equals(""))
@@ -582,7 +582,7 @@ public class Main
             System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectImpl]: ");
             aoClassName = in.readLine();
          }
-         while (classes.contains(aoClassName));
+         while (classes.contains(aoClassName) && !aoClassName.equals(""));
          classes.add(aoClassName);
          if (aoClassName != null && !aoClassName.equals(""))
          {
