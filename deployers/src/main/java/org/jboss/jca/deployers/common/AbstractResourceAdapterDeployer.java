@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.common;
 
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
@@ -1304,7 +1305,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                         PoolFactory pf = new PoolFactory();
 
-                        Boolean noTxSeparatePool = Boolean.FALSE;
+                        Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
 
                         if (connectionDefinition != null &&
                             connectionDefinition.getPool() != null &&
@@ -1414,19 +1415,22 @@ public abstract class AbstractResourceAdapterDeployer
                         }
                         else
                         {
-                           Boolean interleaving = null;
+                           Boolean interleaving = Defaults.INTERLEAVING;
                            Integer xaResourceTimeout = null;
-                           Boolean isSameRMOverride = null;
-                           Boolean wrapXAResource = null;
-                           Boolean padXid = null;
+                           Boolean isSameRMOverride = Defaults.IS_SAME_RM_OVERRIDE;
+                           Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
+                           Boolean padXid = Defaults.PAD_XID;
                            if (connectionDefinition != null && connectionDefinition.isXa())
                            {
                               CommonXaPool xaPool = (CommonXaPool)connectionDefinition.getPool();
 
-                              interleaving = xaPool.isInterleaving();
-                              isSameRMOverride = xaPool.isSameRmOverride();
-                              wrapXAResource = xaPool.isWrapXaResource();
-                              padXid = xaPool.isPadXid();
+                              if (xaPool != null)
+                              {
+                                 interleaving = xaPool.isInterleaving();
+                                 isSameRMOverride = xaPool.isSameRmOverride();
+                                 wrapXAResource = xaPool.isWrapXaResource();
+                                 padXid = xaPool.isPadXid();
+                              }
                            }
 
                            cm = cmf.createTransactional(tsl, pool,
@@ -1688,7 +1692,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        
                                     PoolFactory pf = new PoolFactory();
 
-                                    Boolean noTxSeparatePool = Boolean.FALSE;
+                                    Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
                                     if (connectionDefinition != null &&
                                         connectionDefinition.getPool() != null &&
                                         connectionDefinition.isXa())
@@ -1798,21 +1802,24 @@ public abstract class AbstractResourceAdapterDeployer
                                     }
                                     else
                                     {
-                                       Boolean interleaving = null;
+                                       Boolean interleaving = Defaults.INTERLEAVING;
                                        Integer xaResourceTimeout = null;
-                                       Boolean isSameRMOverride = null;
-                                       Boolean wrapXAResource = null;
-                                       Boolean padXid = null;
+                                       Boolean isSameRMOverride = Defaults.IS_SAME_RM_OVERRIDE;
+                                       Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
+                                       Boolean padXid = Defaults.PAD_XID;
                                        Recovery recoveryMD = null;
                                        if (connectionDefinition != null && connectionDefinition.isXa())
                                        {
                                           CommonXaPool xaPool = (CommonXaPool)connectionDefinition.getPool();
 
-                                          interleaving = xaPool.isInterleaving();
-                                          isSameRMOverride = xaPool.isSameRmOverride();
-                                          wrapXAResource = xaPool.isWrapXaResource();
-                                          padXid = xaPool.isPadXid();
-                                          recoveryMD = connectionDefinition.getRecovery();
+                                          if (xaPool != null)
+                                          {
+                                             interleaving = xaPool.isInterleaving();
+                                             isSameRMOverride = xaPool.isSameRmOverride();
+                                             wrapXAResource = xaPool.isWrapXaResource();
+                                             padXid = xaPool.isPadXid();
+                                             recoveryMD = connectionDefinition.getRecovery();
+                                          }
                                        }
 
                                        cm = cmf.createTransactional(tsl, pool,
