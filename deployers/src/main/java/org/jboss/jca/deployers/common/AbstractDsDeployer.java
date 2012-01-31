@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.deployers.common;
 
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
@@ -592,7 +593,7 @@ public abstract class AbstractDsDeployer
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getXaPool(), ds.getTimeOut(), ds.getValidation());
 
-      Boolean noTxSeparatePool = Boolean.FALSE;
+      Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
 
       if (ds.getXaPool() != null && ds.getXaPool().isNoTxSeparatePool() != null)
          noTxSeparatePool = ds.getXaPool().isNoTxSeparatePool();
@@ -621,11 +622,11 @@ public abstract class AbstractDsDeployer
       // Connection manager properties
       Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
-      Boolean interleaving = null;
+      Boolean interleaving = Defaults.INTERLEAVING;
       Integer xaResourceTimeout = null;
-      Boolean isSameRMOverride = null;
-      Boolean wrapXAResource = null;
-      Boolean padXid = null;
+      Boolean isSameRMOverride = Defaults.IS_SAME_RM_OVERRIDE;
+      Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
+      Boolean padXid = Defaults.PAD_XID;
 
       if (ds.getTimeOut() != null)
       {
