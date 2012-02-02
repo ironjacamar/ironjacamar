@@ -57,7 +57,8 @@ public class IronjacamarXmlGen extends AbstractXmlGen
       
       StringBuilder strRaProps = new StringBuilder();
       List<ConfigPropType> raPropsList = def.getRaConfigProps();
-      getPropsString(strRaProps, raPropsList, 2);
+      if (def.isUseRa())
+         getPropsString(strRaProps, raPropsList, 2);
       
       StringBuilder strMcf = new StringBuilder();
       strMcf.append("  <connection-definitions>\n");
