@@ -27,8 +27,9 @@
        Properties              
        ================================= -->
   <property name="build.eclipse.dir" value="${build.dir}/eclipse" />
+<!--
   <property name="eclipse.home" value="/opt/eclipse" />
-
+-->
   <path id="eclipse-sdk-jars">
 
     <fileset dir="${target.dir}">
@@ -52,7 +53,7 @@
   <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile">
+  <target name="compile" if="eclipse.home">
 
     <copy todir="libs/">
       <fileset dir="${target.dir}"
@@ -77,7 +78,7 @@
   <!-- ================================= 
        Target: jars 
        ================================= -->
-  <target name="jars" depends="compile">
+  <target name="jars" depends="compile" if="eclipse.home">
     <mkdir dir="${build.eclipse.dir}/jars" />
 
     <!-- eclipse -->

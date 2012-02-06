@@ -329,6 +329,7 @@
     <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="codegenerator" inheritRefs="true" target="jars"/>
     <ant dir="as" inheritRefs="true" target="jars"/>
+    <ant dir="eclipse" inheritRefs="true" target="jars"/>
   </target>
   
   <!-- ================================= 
@@ -362,7 +363,7 @@
   <!-- ================================= 
        Target: eclipse plugin
        ================================= -->
-  <target name="plugin">
+  <target name="eclipse">
     <ant dir="eclipse" inheritRefs="true" target="jars"/>
   </target>
 
