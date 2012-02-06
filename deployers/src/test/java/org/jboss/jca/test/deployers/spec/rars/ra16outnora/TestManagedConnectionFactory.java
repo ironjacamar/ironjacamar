@@ -21,12 +21,23 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16outnora;
 
-import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
+import org.jboss.jca.test.deployers.spec.rars.BaseCciConnectionFactory;
+import org.jboss.jca.test.deployers.spec.rars.BaseConnectionManager;
 import org.jboss.jca.test.deployers.spec.rars.TestConnection;
 import org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface;
 
+import java.io.PrintWriter;
+import java.util.Set;
+
+import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionDefinition;
+import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.security.auth.Subject;
+
+import org.jboss.logging.Logger;
 
 /**
  * TestManagedConnectionFactory
@@ -37,7 +48,122 @@ import javax.resource.spi.ManagedConnection;
       connectionFactoryImpl = TestManagedConnection.class,
       connection = TestConnectionInterface.class,
       connectionImpl = TestConnection.class)
-public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
+public class TestManagedConnectionFactory implements ManagedConnectionFactory
 {
    private static final long serialVersionUID = 1L;
+   private static Logger log = Logger.getLogger(TestManagedConnectionFactory.class);
+   private PrintWriter logwriter;
+
+   /**
+    * Constructor
+    */
+   public TestManagedConnectionFactory()
+   {
+      logwriter = null;
+   }
+
+   /**
+    * Creates a Connection Factory instance. 
+    *
+    *  @param    cxManager    ConnectionManager to be associated with created EIS connection factory instance
+    *  @return   EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    *  @throws   ResourceException     Generic exception
+    */
+   public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
+   {
+      log.debug("call createConnectionFactory");
+      return new BaseCciConnectionFactory();
+   }
+
+   /**
+    * Creates a Connection Factory instance. 
+    *
+    *  @return   EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    *  @throws   ResourceException     Generic exception
+    */
+   public Object createConnectionFactory() throws ResourceException
+   {
+      log.debug("call createConnectionFactory");
+      return createConnectionFactory(new BaseConnectionManager());
+   }
+
+   /** 
+    * Creates a new physical connection to the underlying EIS resource manager.
+    *
+    *  @param   subject        Caller's security information
+    *  @param   cxRequestInfo  Additional resource adapter specific connection request information
+    *  @throws  ResourceException     generic exception
+    *  @return  ManagedConnection instance
+    */
+   public ManagedConnection createManagedConnection(Subject subject,
+                                                    ConnectionRequestInfo cxRequestInfo) 
+      throws ResourceException
+   {
+      log.debug("call createManagedConnection");
+      return null;
+   }
+
+   /** 
+    * Returns a matched connection from the candidate set of connections. 
+    *  @param   connectionSet   candidate connection set
+    *  @param   subject         caller's security information
+    *  @param   cxRequestInfo   additional resource adapter specific connection request information  
+    *
+    *  @throws  ResourceException     generic exception
+    *  @return  ManagedConnection     if resource adapter finds an acceptable match otherwise null
+    **/
+   public ManagedConnection matchManagedConnections(Set connectionSet,
+                                                    Subject subject, 
+                                                    ConnectionRequestInfo cxRequestInfo)
+      throws ResourceException
+   {
+      log.debug("call matchManagedConnections");
+      return null;
+   }
+
+   /** 
+    * Get the log writer for this ManagedConnectionFactory instance.
+    *  @return  PrintWriter
+    *  @throws  ResourceException     generic exception
+    */
+   public PrintWriter getLogWriter() throws ResourceException
+   {
+      log.debug("call getLogWriter");
+      return logwriter;
+   }
+
+   /** 
+    * Set the log writer for this ManagedConnectionFactory instance.</p>
+    *
+    *  @param   out PrintWriter - an out stream for error logging and tracing
+    *  @throws  ResourceException     generic exception
+    */
+   public void setLogWriter(PrintWriter out) throws ResourceException
+   {
+      log.debug("call setLogWriter");
+      logwriter = out;
+   }
+
+   /**
+    * Hash code
+    * @return The hash
+    */
+   @Override
+   public int hashCode()
+   {
+      return 42;
+   }
+
+   /**
+    * Equals
+    * @param other The other object
+    * @return True if equal; otherwise false
+    */
+   public boolean equals(Object other)
+   {
+      if (other == null)
+         return false;
+
+      return getClass().equals(other.getClass());
+   }
 }
