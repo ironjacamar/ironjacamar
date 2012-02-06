@@ -261,6 +261,10 @@ public class Annotations
             }
          }
       }
+      else
+      {
+         connector = attachConnector(null, null, connectionDefinitions, null, inboundResourceadapter, adminObjs);
+      }
 
       return connector;
    }
@@ -282,11 +286,13 @@ public class Annotations
       throws Exception
    {
       // Vendor name
-      XsdString vendorName = new XsdString(conAnnotation.vendorName(), null);
+      XsdString vendorName = null;
+      if (conAnnotation != null)
+         vendorName = new XsdString(conAnnotation.vendorName(), null);
 
       // Description
       ArrayList<LocalizedXsdString> descriptions = null;
-      if (conAnnotation.description() != null && conAnnotation.description().length != 0)
+      if (conAnnotation != null && conAnnotation.description() != null && conAnnotation.description().length != 0)
       {
          descriptions = new ArrayList<LocalizedXsdString>(conAnnotation.description().length);
          for (String descriptionAnnoptation : conAnnotation.description())
@@ -297,7 +303,7 @@ public class Annotations
 
       // Display name
       ArrayList<LocalizedXsdString> displayNames = null;
-      if (conAnnotation.description() != null && conAnnotation.displayName().length != 0)
+      if (conAnnotation != null && conAnnotation.description() != null && conAnnotation.displayName().length != 0)
       {
          displayNames = new ArrayList<LocalizedXsdString>(conAnnotation.displayName().length);
          for (String displayNameAnnotation : conAnnotation.displayName())
@@ -307,13 +313,16 @@ public class Annotations
       }
 
       // EIS type
-      XsdString eisType = new XsdString(conAnnotation.eisType(), null);
+      XsdString eisType = null;
+      if (conAnnotation != null)
+         eisType = new XsdString(conAnnotation.eisType(), null);
 
       // License description
       // License required
       ArrayList<LocalizedXsdString> licenseDescriptions = null;
 
-      if (conAnnotation.licenseDescription() != null && conAnnotation.licenseDescription().length != 0)
+      if (conAnnotation != null && conAnnotation.licenseDescription() != null &&
+          conAnnotation.licenseDescription().length != 0)
       {
          licenseDescriptions = new ArrayList<LocalizedXsdString>(conAnnotation.licenseDescription().length);
          for (String licenseDescriptionAnnotation : conAnnotation.licenseDescription())
@@ -321,11 +330,17 @@ public class Annotations
             licenseDescriptions.add(new LocalizedXsdString(licenseDescriptionAnnotation, null));
          }
       }
-      LicenseType license = new LicenseType(licenseDescriptions, conAnnotation.licenseRequired(), null);
+      LicenseType license = null;
+      if (conAnnotation != null)
+         license = new LicenseType(licenseDescriptions, conAnnotation.licenseRequired(), null);
 
       // RequiredWorkContext
       ArrayList<String> requiredWorkContexts = null;
-      Class<? extends WorkContext>[] requiredWorkContextAnnotations = conAnnotation.requiredWorkContexts();
+      Class<? extends WorkContext>[] requiredWorkContextAnnotations = null;
+
+      if (conAnnotation != null)
+         requiredWorkContextAnnotations = conAnnotation.requiredWorkContexts();
+
       if (requiredWorkContextAnnotations != null)
       {
          requiredWorkContexts = new ArrayList<String>(requiredWorkContextAnnotations.length);
@@ -345,8 +360,8 @@ public class Annotations
       // Large icon
       // Small icon
       ArrayList<Icon> icons = null;
-      if ((conAnnotation.smallIcon() != null && conAnnotation.smallIcon().length != 0) ||
-            (conAnnotation.largeIcon() != null && conAnnotation.largeIcon().length != 0))
+      if (conAnnotation != null && ((conAnnotation.smallIcon() != null && conAnnotation.smallIcon().length != 0) ||
+                                    (conAnnotation.largeIcon() != null && conAnnotation.largeIcon().length != 0)))
       {
          icons = new ArrayList<Icon>(
                                      (conAnnotation.smallIcon() == null ? 0 : conAnnotation.smallIcon().length) +
@@ -362,15 +377,25 @@ public class Annotations
       }
 
       // Transaction support
-      TransactionSupport.TransactionSupportLevel transactionSupportAnnotation = conAnnotation.transactionSupport();
+      TransactionSupport.TransactionSupportLevel transactionSupportAnnotation = null;
+
+      if (conAnnotation != null)
+         transactionSupportAnnotation = conAnnotation.transactionSupport();
+
+      if (transactionSupportAnnotation == null)
+         transactionSupportAnnotation = TransactionSupport.TransactionSupportLevel.NoTransaction;
+
       TransactionSupportEnum transactionSupport = TransactionSupportEnum.valueOf(transactionSupportAnnotation.name());
 
       // Reauthentication support
-      boolean reauthenticationSupport = conAnnotation.reauthenticationSupport();
+      boolean reauthenticationSupport = false;
+      if (conAnnotation != null)
+         reauthenticationSupport = conAnnotation.reauthenticationSupport();
 
       // AuthenticationMechanism
-      ArrayList<AuthenticationMechanism> authenticationMechanisms = processAuthenticationMechanism(conAnnotation
-            .authMechanisms());
+      ArrayList<AuthenticationMechanism> authenticationMechanisms = null;
+      if (conAnnotation != null)
+         authenticationMechanisms = processAuthenticationMechanism(conAnnotation.authMechanisms());
 
       OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(connectionDefinitions,
                                                                                         transactionSupport,
@@ -378,8 +403,9 @@ public class Annotations
                                                                                         reauthenticationSupport, null);
 
       // Security permission
-      ArrayList<SecurityPermission> securityPermissions = processSecurityPermissions(conAnnotation
-            .securityPermissions());
+      ArrayList<SecurityPermission> securityPermissions = null;
+      if (conAnnotation != null)
+         securityPermissions = processSecurityPermissions(conAnnotation.securityPermissions());
 
       ResourceAdapter1516Impl resourceAdapter = new ResourceAdapter1516Impl(raClass, configProperties,
                                                                             outboundResourceadapter,
