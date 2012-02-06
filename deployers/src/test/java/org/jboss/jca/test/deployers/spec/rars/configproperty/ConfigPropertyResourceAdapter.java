@@ -30,6 +30,8 @@ import javax.resource.spi.endpoint.MessageEndpointFactory;
 
 import javax.transaction.xa.XAResource;
 
+import org.jboss.logging.Logger;
+
 /**
  * ConfigPropertyResourceAdapter
  *
@@ -39,6 +41,8 @@ public class ConfigPropertyResourceAdapter implements ResourceAdapter
 {
    /** property */
    private String property;
+
+   private static Logger log = Logger.getLogger(ConfigPropertyResourceAdapter.class);
 
    /**
     * Default constructor
@@ -53,6 +57,7 @@ public class ConfigPropertyResourceAdapter implements ResourceAdapter
     */
    public void setProperty(String property)
    {
+      log.info("Property=" + property);
       this.property = property;
    }
 

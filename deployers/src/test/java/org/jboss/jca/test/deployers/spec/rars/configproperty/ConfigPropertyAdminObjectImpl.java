@@ -30,6 +30,8 @@ import javax.resource.Referenceable;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
 
+import org.jboss.logging.Logger;
+
 /**
  * ConfigPropertyAdminObjectImpl
  *
@@ -40,6 +42,8 @@ public class ConfigPropertyAdminObjectImpl implements ConfigPropertyAdminObjectI
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
+
+   private static Logger log = Logger.getLogger(ConfigPropertyAdminObjectImpl.class);
 
    /** The resource adapter */
    private ResourceAdapter ra;
@@ -64,6 +68,7 @@ public class ConfigPropertyAdminObjectImpl implements ConfigPropertyAdminObjectI
     */
    public void setProperty(String property)
    {
+      log.info("Property=" + property);
       this.property = property;
    }
 

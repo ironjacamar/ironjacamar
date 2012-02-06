@@ -35,6 +35,8 @@ import javax.resource.spi.ResourceAdapterAssociation;
 
 import javax.security.auth.Subject;
 
+import org.jboss.logging.Logger;
+
 /**
  * ConfigPropertyManagedConnectionFactory
  *
@@ -44,6 +46,8 @@ public class ConfigPropertyManagedConnectionFactory implements ManagedConnection
 {
    /** The serial version UID */
    private static final long serialVersionUID = 1L;
+
+   private static Logger log = Logger.getLogger(ConfigPropertyManagedConnectionFactory.class);
 
    /** The resource adapter */
    private ResourceAdapter ra;
@@ -68,6 +72,7 @@ public class ConfigPropertyManagedConnectionFactory implements ManagedConnection
     */
    public void setProperty(String property)
    {
+      log.info("Property=" + property);
       this.property = property;
    }
 

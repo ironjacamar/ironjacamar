@@ -191,6 +191,11 @@
           includes="org/jboss/jca/test/deployers/spec/rars/multiple/*.class"/>
        <fileset dir="src/test/resources/multiple-partial.rar"/>
     </jar>
+    <jar destfile="${build.deployers.dir}/config-property.rar">
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/configproperty/*.class"/>
+       <fileset dir="src/test/resources/config-property.rar"/>
+    </jar>
    
   </target>
 
