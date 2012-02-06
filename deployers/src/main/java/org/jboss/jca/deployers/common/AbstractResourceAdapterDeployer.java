@@ -2091,7 +2091,7 @@ public abstract class AbstractResourceAdapterDeployer
          if (activateDeployment)
          {
             // Bean validation
-            if (getConfiguration().getBeanValidation())
+            if (getConfiguration().getBeanValidation() && cmd.getVersion() == Version.V_16)
             {
                List<Class> groupsClasses = null;
 

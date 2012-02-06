@@ -50,6 +50,10 @@ public class BeanValidation
 
    private static boolean trace = log.isTraceEnabled();
 
+   private static ValidatorFactory factory;
+
+   private static String factoryName = "java:/ValidatorFactory";
+
    /**
     * Constructor
     */
@@ -72,13 +76,12 @@ public class BeanValidation
          throw new IllegalArgumentException("Object is null");
       }
 
-      Context context = null;
       try
       {
-         context = new InitialContext();
+         if (factory == null)
+            initValidatorFactory();
 
-         ValidatorFactory vf = (ValidatorFactory) context.lookup("java:/ValidatorFactory");
-         Validator v = vf.usingContext().traversableResolver(new JCATraversableResolver()).getValidator();
+         Validator v = factory.usingContext().traversableResolver(new JCATraversableResolver()).getValidator();
 
          Set errors = null;
          if (groupsClasses == null || groupsClasses.size() == 0)
@@ -106,6 +109,39 @@ public class BeanValidation
       catch (NamingException ne)
       {
          log.error(ne.getMessage(), ne);
+      }
+   }
+
+   /**
+    * Set the validator factory
+    * @param f The factory
+    */
+   public synchronized static void setValidatorFactory(ValidatorFactory f)
+   {
+      factory = f;
+   }
+
+   /**
+    * Set the validator factory name
+    * @param name The factory name
+    */
+   public synchronized static void setValidatorFactoryName(String name)
+   {
+      factoryName = name;
+   }
+
+   /**
+    * Init the validator factory
+    * @exception NamingException Thrown if the validator can't be found
+    */
+   private synchronized static void initValidatorFactory() throws NamingException
+   {
+      Context context = null;
+      try
+      {
+         context = new InitialContext();
+
+         factory = (ValidatorFactory) context.lookup(factoryName);
       }
       finally
       {
