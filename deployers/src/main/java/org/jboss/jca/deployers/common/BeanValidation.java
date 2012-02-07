@@ -31,7 +31,9 @@ import java.util.Set;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.validation.Configuration;
 import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.groups.Default;
@@ -76,39 +78,32 @@ public class BeanValidation
          throw new IllegalArgumentException("Object is null");
       }
 
-      try
+      if (factory == null)
+         initValidatorFactory();
+
+      Validator v = factory.usingContext().traversableResolver(new JCATraversableResolver()).getValidator();
+
+      Set errors = null;
+      if (groupsClasses == null || groupsClasses.size() == 0)
       {
-         if (factory == null)
-            initValidatorFactory();
+         if (trace)
+            log.trace("Validating: " + object + " against groups " + Default.class.getName());
 
-         Validator v = factory.usingContext().traversableResolver(new JCATraversableResolver()).getValidator();
-
-         Set errors = null;
-         if (groupsClasses == null || groupsClasses.size() == 0)
-         {
-            if (trace)
-               log.trace("Validating: " + object + " against groups " + Default.class.getName());
-
-            errors = v.validate(object, Default.class);
-         }
-         else
-         {
-            Class[] vargs = groupsClasses.toArray(new Class[groupsClasses.size()]);
-
-            if (trace)
-               log.trace("Validating: " + object + " against groups " + Arrays.toString(vargs));
-
-            errors = v.validate(object, vargs);
-         }
-
-         if (errors != null && errors.size() > 0)
-         {
-            throw new ConstraintViolationException(errors);
-         }
+         errors = v.validate(object, Default.class);
       }
-      catch (NamingException ne)
+      else
       {
-         log.error(ne.getMessage(), ne);
+         Class[] vargs = groupsClasses.toArray(new Class[groupsClasses.size()]);
+
+         if (trace)
+            log.trace("Validating: " + object + " against groups " + Arrays.toString(vargs));
+
+         errors = v.validate(object, vargs);
+      }
+
+      if (errors != null && errors.size() > 0)
+      {
+         throw new ConstraintViolationException(errors);
       }
    }
 
@@ -132,9 +127,8 @@ public class BeanValidation
 
    /**
     * Init the validator factory
-    * @exception NamingException Thrown if the validator can't be found
     */
-   private synchronized static void initValidatorFactory() throws NamingException
+   private synchronized static void initValidatorFactory()
    {
       Context context = null;
       try
@@ -142,6 +136,13 @@ public class BeanValidation
          context = new InitialContext();
 
          factory = (ValidatorFactory) context.lookup(factoryName);
+      }
+      catch (Throwable t)
+      {
+         Configuration configuration = Validation.byDefaultProvider().configure();
+         Configuration<?> conf = configuration.traversableResolver(new JCATraversableResolver());
+
+         factory = conf.buildValidatorFactory();
       }
       finally
       {
