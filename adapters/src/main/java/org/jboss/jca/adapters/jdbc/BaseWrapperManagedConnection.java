@@ -105,6 +105,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
    /** JDBC auto-commit */
    protected boolean jdbcAutoCommit = true;
 
+   /** Ignore in managed auto commit calls */
+   protected static boolean ignoreInManagedAutoCommitCalls = false;
+
    /** Underlying auto-commit */
    protected boolean underlyingAutoCommit = true;
 
@@ -150,6 +153,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       {
          throw new RuntimeException("Error initializign connection factory", e);
       }
+
+      String ignAutoCommit = SecurityActions.getSystemProperty("ironjacamar.jdbc.ignoreautocommit");
+      if (ignAutoCommit != null)
+         ignoreInManagedAutoCommitCalls = Boolean.valueOf(ignAutoCommit);
    }
 
    /**
@@ -875,7 +882,16 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       synchronized (stateLock)
       {
          if (inManagedTransaction)
-            throw new SQLException("You cannot set autocommit during a managed transaction!");
+         {
+            if (!ignoreInManagedAutoCommitCalls)
+            {
+               throw new SQLException("You cannot set autocommit during a managed transaction!");
+            }
+            else
+            {
+               return;
+            }
+         }
 
          this.jdbcAutoCommit = jdbcAutoCommit;
       }
