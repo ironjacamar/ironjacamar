@@ -75,6 +75,16 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    /** The jndi name */
    protected final String jndiName;
    
+   /** Default fetch size */
+   protected static Integer defaultFetchSize = null;
+
+   static
+   {
+      String dfs = SecurityActions.getSystemProperty("ironjacamar.jdbc.defaultfetchsize");
+      if (dfs != null)
+         defaultFetchSize = Integer.valueOf(dfs);
+   }
+
    /** 
     * Create a new wrapped result set
     * 
@@ -96,6 +106,18 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       this.resultSet = resultSet;
       this.spy = spy;
       this.jndiName = jndiName;
+
+      if (defaultFetchSize != null)
+      {
+         try
+         {
+            resultSet.setFetchSize(defaultFetchSize.intValue());
+         }
+         catch (SQLException ignore)
+         {
+            // Ignore
+         }
+      }
    }
 
    /**

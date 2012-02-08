@@ -61,6 +61,16 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
 
    /** The jndi name */
    protected final String jndiName;
+   
+   /** Default fetch size */
+   protected static Integer defaultFetchSize = null;
+
+   static
+   {
+      String dfs = SecurityActions.getSystemProperty("ironjacamar.jdbc.defaultfetchsize");
+      if (dfs != null)
+         defaultFetchSize = Integer.valueOf(dfs);
+   }
 
    /**
     * Constructor
@@ -75,6 +85,18 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
       this.s = s;
       this.spy = spy;
       this.jndiName = jndiName;
+
+      if (defaultFetchSize != null)
+      {
+         try
+         {
+            s.setFetchSize(defaultFetchSize.intValue());
+         }
+         catch (SQLException ignore)
+         {
+            // Ignore
+         }
+      }
 
       lc.registerStatement(this);
    }
