@@ -461,6 +461,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             log.trace("Destroying returned connection " + cl);
 
          doDestroy(cl);
+         cl = null;
       }
    }
 
@@ -521,6 +522,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                log.trace("Destroying flushed connection " + destroyCl);
 
             doDestroy(destroyCl);
+            destroyCl = null;
          }
 
          // We destroyed something, check the minimum.
@@ -584,6 +586,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                log.trace("Destroying timedout connection " + cl);
 
             doDestroy(cl);
+            cl = null;
          }
 
          if (!shutdown.get())
@@ -686,6 +689,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                if (cl != null)
                {
                   doDestroy(cl);
+                  cl = null;
                }
 
                break;
@@ -747,15 +751,18 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
       statistics.deltaDestroyedCount();
       cl.setState(ConnectionState.DESTROYED);
+
+      ManagedConnection mc = cl.getManagedConnection();
       try
       {
-         cl.getManagedConnection().destroy();
+         mc.destroy();
       }
       catch (Throwable t)
       {
          log.debug("Exception destroying ManagedConnection " + cl, t);
       }
 
+      mc.removeConnectionEventListener(cl);
    }
    
    private boolean shouldRemove()
@@ -816,6 +823,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                      if (cl.getState() != ConnectionState.DESTROY)
                      {
                         doDestroy(cl);
+                        cl = null;
                         destroyed = true;
                         anyDestroyed = true;
                      }
@@ -893,6 +901,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       {
          log.debug("Connection couldn't be returned");
          doDestroy(cl);
+         cl = null;
          return false;
       }
 
