@@ -52,12 +52,6 @@
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
-      <artifactId>ironjacamar-core-spi</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-depchain</artifactId>
       <version>@VERSION.IRONJACAMAR@</version>
       <scope>test</scope>
