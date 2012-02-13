@@ -54,6 +54,8 @@ public class DefinitionWizardPage extends WizardPage
    private ISelection selection;
 
    private Combo boundCombo;
+   
+   private Button annotationshButton;
 
    /**
     * Constructor for SampleNewWizardPage.
@@ -141,7 +143,7 @@ public class DefinitionWizardPage extends WizardPage
 
       label = new Label(container, SWT.NULL);
       label.setText("&Annotations:");
-      final Button annotationshButton = new Button(container, SWT.CHECK);
+      annotationshButton = new Button(container, SWT.CHECK);
       annotationshButton.setSelection(true);
       ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(true);
       annotationshButton.addSelectionListener(new SelectionAdapter()
@@ -182,6 +184,8 @@ public class DefinitionWizardPage extends WizardPage
                {"Outbound"};
                boundCombo.setItems(newdirect);
                boundCombo.setText("Outbound");
+               annotationshButton.setSelection(false);
+               annotationshButton.setEnabled(false);
             }
             else
             {
@@ -189,6 +193,7 @@ public class DefinitionWizardPage extends WizardPage
                {"Outbound", "Inbound", "Bidirectional"};
                boundCombo.setItems(newdirect);
                boundCombo.setText("Outbound");
+               annotationshButton.setEnabled(true);
             }
          }
       });

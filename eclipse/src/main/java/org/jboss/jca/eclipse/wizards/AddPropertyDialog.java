@@ -110,7 +110,8 @@ public class AddPropertyDialog extends Dialog
       nameLabel.setFont(comp.getFont());
 
       final String[] items =
-      {"String", "Integer", "Float"};
+         {"String", "Boolean", "Integer", "Double", "Byte", "Short", "Long", "Float", "Character"};
+
       final Combo combo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
       combo.setItems(items);
       combo.setText("String");
