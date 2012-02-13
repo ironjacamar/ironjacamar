@@ -113,7 +113,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write("this.logwriter = null;");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("this.listeners = new ArrayList<ConnectionEventListener>(1);");
+      out.write("this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("this.connection = null;");
@@ -147,6 +147,8 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
       out.write("import java.util.ArrayList;");
+      writeEol(out);
+      out.write("import java.util.Collections;");
       writeEol(out);
       out.write("import java.util.List;");
       writeEol(out);
