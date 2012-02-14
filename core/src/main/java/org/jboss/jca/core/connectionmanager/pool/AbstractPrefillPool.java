@@ -45,11 +45,12 @@ public abstract class AbstractPrefillPool extends AbstractPool implements Prefil
     * @param mcf the managed connection factory
     * @param pc the pool configuration
     * @param noTxSeparatePools noTxSeparatePool
+    * @param sharable Are the connections sharable
     */
    protected AbstractPrefillPool(final ManagedConnectionFactory mcf, final PoolConfiguration pc,
-                                 final boolean noTxSeparatePools)
+                                 final boolean noTxSeparatePools, final boolean sharable)
    {
-      super(mcf, pc, noTxSeparatePools);
+      super(mcf, pc, noTxSeparatePools, sharable);
       this.shouldPrefill = pc.isPrefill();
    }
 

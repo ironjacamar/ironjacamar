@@ -280,12 +280,12 @@ public class XATxConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager =
          cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
-                                 null, null, false, null, FlushStrategy.FAILING_CONNECTION_ONLY,
+                                 null, null, false, null, true, FlushStrategy.FAILING_CONNECTION_ONLY,
                                  null, null, ti,
                                  Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);

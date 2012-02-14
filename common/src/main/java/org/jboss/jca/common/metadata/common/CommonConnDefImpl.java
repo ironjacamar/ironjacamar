@@ -60,6 +60,8 @@ public class CommonConnDefImpl implements CommonConnDef
 
    private final Boolean useCcm;
 
+   private final Boolean sharable;
+
    private final CommonPool pool;
 
    private final CommonTimeOut timeOut;
@@ -80,6 +82,7 @@ public class CommonConnDefImpl implements CommonConnDef
     * @param enabled enabled
     * @param useJavaContext useJavaContext
     * @param useCcm useCcm
+    * @param sharable sharable
     * @param pool pool
     * @param timeOut timeOut
     * @param validation validation
@@ -87,8 +90,9 @@ public class CommonConnDefImpl implements CommonConnDef
     * @param recovery recovery
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
-      String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm, CommonPool pool, CommonTimeOut timeOut,
-      CommonValidation validation, CommonSecurity security, Recovery recovery)
+                            String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm, Boolean sharable,
+                            CommonPool pool, CommonTimeOut timeOut,
+                            CommonValidation validation, CommonSecurity security, Recovery recovery)
    {
       super();
       if (configProperties != null)
@@ -106,6 +110,7 @@ public class CommonConnDefImpl implements CommonConnDef
       this.enabled = enabled;
       this.useJavaContext = useJavaContext;
       this.useCcm = useCcm;
+      this.sharable = sharable;
       this.pool = pool;
       this.timeOut = timeOut;
       this.validation = validation;
@@ -192,6 +197,17 @@ public class CommonConnDefImpl implements CommonConnDef
    }
 
    /**
+    * Get the sharable
+    *
+    * @return the sharable
+    */
+   @Override
+   public final Boolean isSharable()
+   {
+      return sharable;
+   }
+
+   /**
     * Get the pool.
     *
     * @return the pool.
@@ -257,6 +273,7 @@ public class CommonConnDefImpl implements CommonConnDef
       result = prime * result + ((timeOut == null) ? 0 : timeOut.hashCode());
       result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
       result = prime * result + ((useCcm == null) ? 0 : useCcm.hashCode());
+      result = prime * result + ((sharable == null) ? 0 : sharable.hashCode());
       result = prime * result + ((validation == null) ? 0 : validation.hashCode());
       return result;
    }
@@ -348,6 +365,13 @@ public class CommonConnDefImpl implements CommonConnDef
       }
       else if (!useCcm.equals(other.useCcm))
          return false;
+      if (sharable == null)
+      {
+         if (other.sharable != null)
+            return false;
+      }
+      else if (!sharable.equals(other.sharable))
+         return false;
       if (validation == null)
       {
          if (other.validation != null)
@@ -385,6 +409,9 @@ public class CommonConnDefImpl implements CommonConnDef
 
       if (useCcm != null)
          sb.append(" ").append(CommonConnDef.Attribute.USE_CCM).append("=\"").append(useCcm).append("\"");
+
+      if (sharable != null)
+         sb.append(" ").append(CommonConnDef.Attribute.SHARABLE).append("=\"").append(sharable).append("\"");
 
       sb.append(">");
 

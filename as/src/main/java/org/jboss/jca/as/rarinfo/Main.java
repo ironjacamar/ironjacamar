@@ -383,9 +383,10 @@ public class Main
                      pool = poolImpl;
                   }
                   CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
-                        "java:jboss/eis/" + poolName, poolName, 
-                        Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, 
-                        pool, null, null, secImpl, null);
+                                                                     "java:jboss/eis/" + poolName, poolName, 
+                                                                     Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
+                                                                     Defaults.USE_CCM, Defaults.SHARABLE, 
+                                                                     pool, null, null, secImpl, null);
                   connDefs.add(connImpl);
                }
 
@@ -551,9 +552,10 @@ public class Main
                pool = poolImpl;
             }
             CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
-                  "java:jboss/eis/" + poolName, poolName, 
-                  Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, 
-                  pool, null, null, secImpl, null);
+                                                               "java:jboss/eis/" + poolName, poolName, 
+                                                               Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
+                                                               Defaults.USE_CCM, Defaults.SHARABLE, 
+                                                               pool, null, null, secImpl, null);
             connDefs = new ArrayList<CommonConnDef>();
             connDefs.add(connImpl);
          }

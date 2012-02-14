@@ -1351,7 +1351,11 @@ public abstract class AbstractResourceAdapterDeployer
                            strategy = PoolStrategy.REAUTH;
                         }
 
-                        Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue());
+                        Boolean sharable = Boolean.TRUE;
+                        if (connectionDefinition != null)
+                           sharable = connectionDefinition.isSharable();
+
+                        Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), sharable.booleanValue());
 
                         // Add a connection manager
                         ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -1410,6 +1414,7 @@ public abstract class AbstractResourceAdapterDeployer
                            cm = cmf.createNonTransactional(tsl, pool,
                                                            getSubjectFactory(securityDomain), securityDomain,
                                                            useCCM, getCachedConnectionManager(),
+                                                           sharable,
                                                            flushStrategy,
                                                            allocationRetry, allocationRetryWaitMillis);
                         }
@@ -1436,6 +1441,7 @@ public abstract class AbstractResourceAdapterDeployer
                            cm = cmf.createTransactional(tsl, pool,
                                                         getSubjectFactory(securityDomain), securityDomain,
                                                         useCCM, getCachedConnectionManager(),
+                                                        sharable,
                                                         flushStrategy,
                                                         allocationRetry, allocationRetryWaitMillis,
                                                         getTransactionIntegration(), interleaving,
@@ -1736,7 +1742,12 @@ public abstract class AbstractResourceAdapterDeployer
                                        strategy = PoolStrategy.REAUTH;
                                     }
 
-                                    Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue());
+                                    Boolean sharable = Boolean.TRUE;
+                                    if (connectionDefinition != null)
+                                       sharable = connectionDefinition.isSharable();
+
+                                    Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
+                                                          sharable.booleanValue());
 
                                     // Add a connection manager
                                     ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -1797,6 +1808,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                        getSubjectFactory(securityDomain),
                                                                        securityDomain,
                                                                        useCCM, getCachedConnectionManager(),
+                                                                       sharable,
                                                                        flushStrategy,
                                                                        allocationRetry, allocationRetryWaitMillis);
                                     }
@@ -1825,6 +1837,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        cm = cmf.createTransactional(tsl, pool,
                                                                     getSubjectFactory(securityDomain), securityDomain,
                                                                     useCCM, getCachedConnectionManager(),
+                                                                    sharable,
                                                                     flushStrategy,
                                                                     allocationRetry, allocationRetryWaitMillis,
                                                                     getTransactionIntegration(),

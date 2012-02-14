@@ -428,12 +428,13 @@ public class TxConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
     
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true);
       
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       return (TxConnectionManager) cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
-                                   null, null, false, null, FlushStrategy.FAILING_CONNECTION_ONLY,
-                                   null, null, ti, null, null, null, null, null);
+                                                           null, null, false, null, true, 
+                                                           FlushStrategy.FAILING_CONNECTION_ONLY,
+                                                           null, null, ti, null, null, null, null, null);
    }
 
    /**

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ironjacamar>
+  <connection-definitions>
+    <connection-definition 
+     class-name="org.jboss.jca.samples.helloworld.HelloWorldManagedConnectionFactory" 
+     jndi-name="java:/eis/HelloWorld">
+      <pool>
+        <min-pool-size>0</min-pool-size>
+        <max-pool-size>1</max-pool-size>
+      </pool>
+    </connection-definition>
+  </connection-definitions>
+</ironjacamar>

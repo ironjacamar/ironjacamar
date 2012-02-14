@@ -83,6 +83,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       String jndiName = null;
       String poolName = null;
       Boolean useCcm = Boolean.TRUE;
+      Boolean sharable = Boolean.TRUE;
       int attributeSize = reader.getAttributeCount();
 
       Boolean isXa = Boolean.FALSE;
@@ -116,6 +117,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                useCcm = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
+            case SHARABLE : {
+               sharable = attributeAsBoolean(reader, attribute.getLocalName(), true);
+               break;
+            }
             default :
                throw new ParserException(bundle.unexpectedAttribute(attribute.getLocalName(), reader.getLocalName()));
          }
@@ -132,7 +137,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
 
                   return new CommonConnDefImpl(configProperties, className, jndiName, poolName, enabled,
-                                               useJavaContext, useCcm, pool, timeOut, validation, security, recovery);
+                                               useJavaContext, useCcm, sharable, pool, timeOut, validation,
+                                               security, recovery);
                }
                else
                {

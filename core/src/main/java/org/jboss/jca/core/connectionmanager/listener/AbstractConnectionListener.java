@@ -44,8 +44,7 @@ import org.jboss.logging.Messages;
  * contract.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @version $Rev: $
- *
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
  */
 public abstract class AbstractConnectionListener implements ConnectionListener
 {
@@ -283,23 +282,17 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * Unregister connections.
     */
-   protected  void unregisterConnections()
+   public  void unregisterConnections()
    {
-      try
+      if (getCachedConnectionManager() != null)
       {
-         Iterator<Object> itHandles = connectionHandles.iterator();
-         
-         while (itHandles.hasNext())
+         for (Object handle : connectionHandles)
          {
-            Object handle = itHandles.next();
-            if (getCachedConnectionManager() != null)
-               getCachedConnectionManager().unregisterConnection(getConnectionManager(), handle);
+            getCachedConnectionManager().unregisterConnection(getConnectionManager(), handle);
          }
       }
-      finally
-      {
-         connectionHandles.clear();
-      }
+
+      connectionHandles.clear();
    }
    
 
@@ -368,6 +361,19 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       }
    }
    
+   /**
+    * {@inheritDoc}
+    */
+   public boolean controls(Object connection, ManagedConnection mc)
+   {
+      if (managedConnection.equals(mc))
+      {
+         if (connectionHandles.contains(connection))
+            return true;
+      }
+
+      return false;
+   }
    
    /**
     * {@inheritDoc}

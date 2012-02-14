@@ -28,6 +28,7 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 import javax.transaction.Transaction;
@@ -47,6 +48,12 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
     */
    public void setName(String poolName);
    
+   /**
+    * Is sharable
+    * @return The value
+    */
+   public boolean isSharable();
+
    /**
     * Retrieve the managed connection factory for this pool.
     * 
@@ -72,6 +79,14 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
     */
    public ConnectionListener getConnection(Transaction trackByTransaction, Subject subject, ConnectionRequestInfo cri)
       throws ResourceException;
+
+   /**
+    * Find a connection listener
+    * @param connection The connection
+    * @param mc The managed connection
+    * @return The connection listener
+    */
+   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc);
 
    /**
     * Return a connection

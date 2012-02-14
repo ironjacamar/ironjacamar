@@ -418,12 +418,12 @@ public class InterleavingTestCase
 
       PoolFactory pf = new PoolFactory();
     
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true);
       
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       TxConnectionManagerImpl tcm =
          (TxConnectionManagerImpl)cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
-                                                          null, null, false, null,
+                                                          null, null, false, null, true,
                                                           FlushStrategy.FAILING_CONNECTION_ONLY,
                                                           null, null, ti, null, null, null, null, null);
       tcm.setInterleaving(true);

@@ -65,7 +65,7 @@ public class PrefillTestCase
       config.setPrefill(true);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false, true);
 
       assertTrue(pool instanceof PrefillPool);
 
@@ -73,7 +73,7 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, 
-                                    pool, null, null, false, null, 
+                                    pool, null, null, false, null, true,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
@@ -109,7 +109,7 @@ public class PrefillTestCase
       config.setPrefill(false);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false, true);
 
       assertTrue(pool instanceof PrefillPool);
 
@@ -117,7 +117,7 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
-                                    null, null, false, null, 
+                                    null, null, false, null, true,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
@@ -151,7 +151,7 @@ public class PrefillTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_CRI, mcf, config, false);
+      Pool pool = pf.create(PoolStrategy.POOL_BY_CRI, mcf, config, false, true);
 
       assertFalse(pool instanceof PrefillPool);
    }
@@ -174,7 +174,7 @@ public class PrefillTestCase
       config.setPrefill(true);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false);
+      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false, true);
 
       assertTrue(pool instanceof PrefillPool);
 
@@ -182,7 +182,7 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
-                                    subjectFactory, "domain", false, null, 
+                                    subjectFactory, "domain", false, null, true,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
@@ -221,7 +221,7 @@ public class PrefillTestCase
       config.setPrefill(false);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false);
+      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false, true);
 
       assertTrue(pool instanceof PrefillPool);
 
@@ -229,7 +229,7 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
-                                    subjectFactory, "domain", false, null, 
+                                    subjectFactory, "domain", false, null, true,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
@@ -263,7 +263,7 @@ public class PrefillTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT_AND_CRI, mcf, config, false);
+      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT_AND_CRI, mcf, config, false, true);
 
       assertFalse(pool instanceof PrefillPool);
    }
@@ -281,7 +281,7 @@ public class PrefillTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.REAUTH, mcf, config, false);
+      Pool pool = pf.create(PoolStrategy.REAUTH, mcf, config, false, true);
 
       assertFalse(pool instanceof PrefillPool);
    }

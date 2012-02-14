@@ -454,7 +454,7 @@ public abstract class AbstractDsDeployer
          }
       }
 
-      Pool pool = pf.create(strategy, mcf, pc, false);
+      Pool pool = pf.create(strategy, mcf, pc, false, true);
 
       // Connection manager properties
       Integer allocationRetry = null;
@@ -491,6 +491,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
                                       getSubjectFactory(securityDomain), securityDomain,
                                       ds.isUseCcm(), getCachedConnectionManager(),
+                                      true,
                                       flushStrategy,
                                       allocationRetry, allocationRetryWaitMillis,
                                       getTransactionIntegration(),
@@ -501,6 +502,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
                                          getSubjectFactory(securityDomain), securityDomain,
                                          ds.isUseCcm(), getCachedConnectionManager(),
+                                         true,
                                          flushStrategy, allocationRetry, allocationRetryWaitMillis);
       }
 
@@ -617,7 +619,7 @@ public abstract class AbstractDsDeployer
          }
       }
 
-      Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue());
+      Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), true);
 
       // Connection manager properties
       Integer allocationRetry = null;
@@ -665,6 +667,7 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  ds.isUseCcm(), getCachedConnectionManager(),
+                                 true,
                                  flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,

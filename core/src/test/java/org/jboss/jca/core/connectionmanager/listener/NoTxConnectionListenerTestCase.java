@@ -222,12 +222,12 @@ public class NoTxConnectionListenerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
-                                    null, null, false, null, 
+                                    null, null, false, null, true,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 

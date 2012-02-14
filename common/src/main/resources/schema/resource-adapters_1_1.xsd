@@ -391,6 +391,16 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="sharable" type="xs:boolean" default="true" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Defines the connections as sharable which allows lazy association to be enabled
+            if supported
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attributeGroup ref="common-attribute"></xs:attributeGroup>
   </xs:complexType>
 

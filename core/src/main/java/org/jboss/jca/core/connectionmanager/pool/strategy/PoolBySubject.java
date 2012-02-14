@@ -56,11 +56,12 @@ public class PoolBySubject extends AbstractPrefillPool
     * @param mcf managed connection factory
     * @param pc pool configuration
     * @param noTxSeparatePools notx seperate pool
+    * @param sharable Are the connections sharable
     */
    public PoolBySubject(final ManagedConnectionFactory mcf, final PoolConfiguration pc,
-                        final boolean noTxSeparatePools)
+                        final boolean noTxSeparatePools, final boolean sharable)
    {
-      super(mcf, pc, noTxSeparatePools);
+      super(mcf, pc, noTxSeparatePools, sharable);
    }
 
    /**

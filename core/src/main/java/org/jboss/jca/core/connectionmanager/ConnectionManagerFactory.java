@@ -55,6 +55,7 @@ public class ConnectionManagerFactory
     * @param securityDomain The security domain 
     * @param useCcm Should the CCM be used
     * @param ccm The cached connection manager
+    * @param sharable Enable sharable connections
     * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
@@ -66,6 +67,7 @@ public class ConnectionManagerFactory
                                                        final String securityDomain,
                                                        final boolean useCcm,
                                                        final CachedConnectionManager ccm,
+                                                       final boolean sharable,
                                                        final FlushStrategy flushStrategy,
                                                        final Integer allocationRetry,
                                                        final Long allocationRetryWaitMillis)
@@ -100,6 +102,7 @@ public class ConnectionManagerFactory
       setProperties(cm, pool,
                     subjectFactory, securityDomain, 
                     useCcm, ccm,
+                    sharable,
                     flushStrategy,
                     allocationRetry, allocationRetryWaitMillis, 
                     null);
@@ -116,6 +119,7 @@ public class ConnectionManagerFactory
     * @param securityDomain The security domain 
     * @param useCcm Should the CCM be used
     * @param ccm The cached connection manager
+    * @param sharable Enable sharable connections
     * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
@@ -133,6 +137,7 @@ public class ConnectionManagerFactory
                                                   final String securityDomain,
                                                   final boolean useCcm,
                                                   final CachedConnectionManager ccm,
+                                                  final boolean sharable,
                                                   final FlushStrategy flushStrategy,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
@@ -177,6 +182,7 @@ public class ConnectionManagerFactory
       setProperties(cm, pool, 
                     subjectFactory, securityDomain, 
                     useCcm, ccm,
+                    sharable,
                     flushStrategy,
                     allocationRetry, allocationRetryWaitMillis,
                     txIntegration.getTransactionManager());
@@ -193,6 +199,7 @@ public class ConnectionManagerFactory
     * @param securityDomain The security domain
     * @param useCcm Should the CCM be used
     * @param ccm The cached connection manager
+    * @param sharable Enable sharable connections
     * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
@@ -204,6 +211,7 @@ public class ConnectionManagerFactory
                               String securityDomain,
                               boolean useCcm,
                               CachedConnectionManager ccm,
+                              boolean sharable,
                               FlushStrategy flushStrategy,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
@@ -225,6 +233,8 @@ public class ConnectionManagerFactory
 
       if (useCcm)
          cm.setCachedConnectionManager(ccm);
+
+      cm.setSharable(sharable);
    }
 
    /**

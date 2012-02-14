@@ -44,6 +44,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.RetryableException;
 import javax.security.auth.Subject;
@@ -97,15 +98,19 @@ public abstract class AbstractPool implements Pool
    /** Statistics */
    private PoolStatistics statistics;
 
+   /** Are the connections sharable */
+   private boolean sharable;
+
    /**
     * Create a new base pool.
     *
     * @param mcf the managed connection factory
     * @param pc the pool configuration
     * @param noTxSeparatePools noTxSeparatePool
+    * @param sharable Are the connections sharable
     */
    protected AbstractPool(final ManagedConnectionFactory mcf, final PoolConfiguration pc,
-                          final boolean noTxSeparatePools)
+                          final boolean noTxSeparatePools, final boolean sharable)
    {
       if (mcf == null)
          throw new IllegalArgumentException("MCF is null");
@@ -116,6 +121,7 @@ public abstract class AbstractPool implements Pool
       this.mcf = mcf;
       this.poolConfiguration = pc;
       this.noTxSeparatePools = noTxSeparatePools;
+      this.sharable = sharable;
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
       this.statistics = new PoolStatisticsImpl(pc.getMaxSize(), mcpPools);
@@ -137,6 +143,15 @@ public abstract class AbstractPool implements Pool
    public String getName()
    {
       return poolName;
+   }
+
+   /**
+    * Is sharable
+    * @return The value
+    */
+   public boolean isSharable()
+   {
+      return sharable;
    }
 
    /**
@@ -541,6 +556,21 @@ public abstract class AbstractPool implements Pool
       {
          lock.unlock();
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc)
+   {
+      for (ManagedConnectionPool mcp : mcpPools.values())
+      {
+         ConnectionListener cl = mcp.findConnectionListener(connection, mc);
+         if (cl != null)
+            return cl;
+      }
+
+      return null;
    }
 
    /**

@@ -61,7 +61,7 @@ public class AbstractConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false, true);
       pool.setConnectionListenerFactory(connectionManager);
       connectionManager.setPool(pool);
 
@@ -146,7 +146,7 @@ public class AbstractConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, false);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, false, true);
       pool.setConnectionListenerFactory(connectionManager);
       connectionManager.setPool(pool);
 
@@ -236,7 +236,7 @@ public class AbstractConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false, true);
       pool.setConnectionListenerFactory(connectionManager);
 
       connectionManager.setPool(pool);

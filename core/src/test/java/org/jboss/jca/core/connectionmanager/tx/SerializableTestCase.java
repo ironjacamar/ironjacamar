@@ -72,11 +72,11 @@ public class SerializableTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
-                                                                    pool, null, null, false, null, 
+                                                                    pool, null, null, false, null, true,
                                                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                                                     null, null, ti,
                                                                     Boolean.FALSE, null, null, null, null);

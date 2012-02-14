@@ -44,6 +44,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.DissociatableManagedConnection;
+import javax.resource.spi.LazyAssociatableConnectionManager;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.RetryableUnavailableException;
@@ -119,6 +121,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
 
+   /** Supports lazy association */
+   private Boolean supportsLazyAssociation;
+   
    /**
     * Constructor
     */
@@ -157,6 +162,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
       this.permits = new Semaphore(maxSize, true, statistics);
+      this.supportsLazyAssociation = null;
+      
+      // Check if connection manager supports lazy association
+      if (!(clf instanceof LazyAssociatableConnectionManager))
+         supportsLazyAssociation = Boolean.FALSE;
 
       // Schedule managed connection pool for prefill
       if (pc.isPrefill() && p instanceof PrefillPool && pc.getMinSize() > 0)
@@ -187,6 +197,18 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    }
 
    /**
+    * Is the pool full ?
+    * @return True if full, otherwise false
+    */
+   public boolean isFull()
+   {
+      synchronized (cls)
+      {
+         return checkedOut.size() == maxSize;
+      }
+   }
+
+   /**
     * Check if the pool has reached a certain size
     * @param size The size
     * @return True if reached; otherwise false
@@ -212,8 +234,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       
       if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
       {
-         log.debug("Registering for background validation at interval " + 
-                   poolConfiguration.getBackgroundValidationMillis());
+         if (debug)
+            log.debug("Registering for background validation at interval " + 
+                      poolConfiguration.getBackgroundValidationMillis());
          
          //Register validation
          ConnectionValidator.getInstance().registerPool(this, poolConfiguration.getBackgroundValidationMillis());
@@ -245,6 +268,18 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       subject = (subject == null) ? defaultSubject : subject;
       cri = (cri == null) ? defaultCri : cri;
+
+      if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()) && isFull())
+      {
+         if (supportsLazyAssociation == null)
+            checkLazyAssociation();
+
+         if (supportsLazyAssociation != null && supportsLazyAssociation.booleanValue())
+         {
+            detachConnectionListener();
+         }
+      }
+
       long startWait = System.currentTimeMillis();
       try
       {
@@ -392,7 +427,32 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
+   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc)
+   {
+      synchronized (cls)
+      {
+         for (ConnectionListener cl : checkedOut)
+         {
+            if (cl.controls(connection, mc))
+               return cl;
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void returnConnection(ConnectionListener cl, boolean kill)
+   {
+      returnConnection(cl, kill, true);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup)
    {
       if (trace)
       {
@@ -424,14 +484,17 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          return;
       }
 
-      try
+      if (cleanup)
       {
-         cl.getManagedConnection().cleanup();
-      }
-      catch (ResourceException re)
-      {
-         log.resourceExceptionCleaningUpManagedConnection(cl, re);
-         kill = true;
+         try
+         {
+            cl.getManagedConnection().cleanup();
+         }
+         catch (ResourceException re)
+         {
+            log.resourceExceptionCleaningUpManagedConnection(cl, re);
+            kill = true;
+         }
       }
 
       synchronized (cls)
@@ -799,7 +862,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
       catch (Throwable t)
       {
-         log.debug("Exception destroying ManagedConnection " + cl, t);
+         if (debug)
+            log.debug("Exception destroying ManagedConnection " + cl, t);
       }
 
       mc.removeConnectionEventListener(cl);
@@ -919,7 +983,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    private ConnectionListener removeForFrequencyCheck()
    {
-      log.debug("Checking for connection within frequency");
+      if (debug)
+         log.debug("Checking for connection within frequency");
 
       ConnectionListener cl = null;
 
@@ -948,10 +1013,87 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    private void returnForFrequencyCheck(ConnectionListener cl)
    {
-      log.debug("Returning for connection within frequency");
+      if (debug)
+         log.debug("Returning for connection within frequency");
 
       cl.setLastValidatedTime(System.currentTimeMillis());
       cls.add(cl);
+   }
+
+   /**
+    * Check if the resource adapter supports lazy association
+    */
+   private void checkLazyAssociation()
+   {
+      synchronized (cls)
+      {
+         ConnectionListener cl = null;
+
+         if (checkedOut.size() > 0)
+            cl = checkedOut.get(0);
+
+         if (cl == null && cls.size() > 0)
+            cl = cls.get(0);
+
+         if (cl != null)
+         {
+            ManagedConnection mc = cl.getManagedConnection();
+
+            if (mc instanceof DissociatableManagedConnection)
+            {
+               if (debug)
+                  log.debug("Enable lazy association support for: " + pool.getName());
+
+               supportsLazyAssociation = Boolean.TRUE;
+            }
+            else
+            {
+               if (debug)
+                  log.debug("Disable lazy association support for: " + pool.getName());
+
+               supportsLazyAssociation = Boolean.FALSE;
+            }
+         }
+      }
+   }
+
+   /**
+    * Detach connection listener
+    */
+   private void detachConnectionListener()
+   {
+      ConnectionListener cl = null;
+
+      synchronized (cls)
+      {
+         if (checkedOut.size() > 0)
+            cl = checkedOut.remove(0);
+
+         if (cl != null)
+         {
+            try
+            {
+               if (trace)
+                  log.tracef("Detach: %s", cl); 
+
+               DissociatableManagedConnection dmc = (DissociatableManagedConnection)cl.getManagedConnection();
+               dmc.dissociateConnections();
+               
+               cl.unregisterConnections();
+               
+               returnConnection(cl, false, false);
+            }
+            catch (Throwable t)
+            {
+               // Ok - didn't work; nuke it and disable
+               if (debug)
+                  log.debug("Exception during detach for: " + pool.getName(), t); 
+
+               supportsLazyAssociation = Boolean.FALSE;
+               returnConnection(cl, true, true);
+            }
+         }
+      }
    }
 
    /**

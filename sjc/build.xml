@@ -248,6 +248,7 @@
         <include name="schema/resource-adapters_1_0.xsd"/>
         <include name="schema/resource-adapters_1_1.xsd"/>
         <include name="schema/ironjacamar_1_0.xsd"/>
+        <include name="schema/ironjacamar_1_1.xsd"/>
       </fileset>
     </copy>
 

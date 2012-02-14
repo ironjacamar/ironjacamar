@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.listener;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
 /**
@@ -102,6 +103,11 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
    public void unregisterConnection(Object handle);
 
    /**
+    * Unregister all connections
+    */
+   public void unregisterConnections();
+
+   /**
     * Is the managed connection free?
     * 
     * @return true when it is free
@@ -150,4 +156,12 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
     *           milliseconds.
     */
    public void setLastValidatedTime(long lastValidated);
+
+   /**
+    * Controls the connection / managed connection pair
+    * @param connection The connection
+    * @param mc The managed connection
+    * @return True if the connection listener controls the pair, otherwise false
+    */
+   public boolean controls(Object connection, ManagedConnection mc);
 }

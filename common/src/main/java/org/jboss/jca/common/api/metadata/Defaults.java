@@ -59,6 +59,11 @@ public interface Defaults
     */
    public static final boolean JTA = Boolean.TRUE;
    
+   /**
+    * SHARABLE
+    */
+   public static final Boolean SHARABLE = Boolean.TRUE;
+   
    // POOL
 
    /**

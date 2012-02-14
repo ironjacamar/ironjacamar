@@ -30,6 +30,7 @@ import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSuppo
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
@@ -62,6 +63,14 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     */
    public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException;
    
+   /**
+    * Find a connection listener
+    * @param connection The connection
+    * @param mc The managed connection
+    * @return The connection listener; <code>null</code> if the connection listener doesn't belong
+    */
+   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc);
+
    /**
     * Return connection to the pool.
     * @param cl connection listener

@@ -46,6 +46,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
@@ -412,6 +413,16 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             }
          }
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean dissociateManagedConnection(Object connection, ManagedConnection mc, ManagedConnectionFactory mcf)
+      throws ResourceException
+   {
+
+      return false;
    }
 
    /**

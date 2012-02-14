@@ -1,0 +1,205 @@
+<!--
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+-->
+
+<project name="helloworld-lazy" basedir="." default="rar">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.dir" value="${basedir}/build" />
+  <property name="target.dir" value="${basedir}/target" />
+  <property name="lib.dir" value="${basedir}/lib" />
+
+  <property name="javac.debug" value="on" />
+  <property name="javac.deprecation" value="on" />
+  <property name="javac.optimize" value="off" />
+
+  <property name="junit.printsummary" value="yes" />
+  <property name="junit.haltonerror" value="no" />
+  <property name="junit.haltonfailure" value="no" />
+  <property name="junit.fork" value="yes" />
+  <property name="junit.timeout" value="60000" />
+  <property name="junit.jvm" value="" />
+  <property name="junit.jvm.options" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m" />
+  <property name="junit.batchtest.haltonerror" value="no" />
+  <property name="junit.batchtest.haltonfailure" value="no" />
+  <property name="junit.batchtest.fork" value="yes" />
+  
+  <path id="lib.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+    
+  <path id="test.lib.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${build.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+  
+  <!-- ================================= 
+       Target: init
+       ================================= -->
+  <target name="init">
+    <mkdir dir="${lib.dir}" />
+  </target>
+
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile" depends="init">
+    <mkdir dir="${build.dir}" />
+
+    <javac srcdir="${basedir}/src/main/java"
+           destdir="${build.dir}"
+           classpathref="lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+    </javac> 
+  </target>
+  
+  <!-- ================================= 
+       Target: rar
+       ================================= -->
+  <target name="rar" depends="compile">
+    <mkdir dir="${target.dir}" />
+    <mkdir dir="${basedir}/src/main/resources" />
+    <jar destfile="${build.dir}/helloworld.jar"
+         basedir="${build.dir}"
+         includes="**/*.class"/>
+    <jar destfile="${target.dir}/helloworld.rar">
+      <fileset dir="${basedir}/src/main/resources" includes="META-INF/*"/>
+      <fileset dir="${build.dir}" includes="**/*.jar"/>
+    </jar>
+  </target>
+  
+      
+  <!-- ================================= 
+       Target: prepare-test
+       ================================= -->
+  <target name="prepare-test" depends="init">
+    <mkdir dir="${build.dir}/test" />
+
+    <javac srcdir="src/test"
+           destdir="${build.dir}/test"
+           classpathref="test.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
+    <copy todir="${build.dir}/test">
+      <fileset dir="src/main/resources"/>
+      <fileset dir="src/test/resources"/>
+    </copy>
+  </target>
+
+  <!-- ================================= 
+       Target: test
+       ================================= -->
+  <target name="test" depends="rar, prepare-test">
+    <mkdir dir="${basedir}/reports"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${target.dir}"/>
+      <sysproperty key="reports.dir" value="${basedir}/reports"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" 
+      	           value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${build.dir}/test"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      
+      <classpath>
+        <fileset dir="${lib.dir}" includes="**/*.jar" />
+        <fileset dir="${build.dir}" includes="*.jar" />
+        <pathelement location="${build.dir}/test"/>
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${basedir}/reports"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.dir}/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+    
+  </target>
+  
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs" depends="compile">
+    <mkdir dir="${target.dir}/docs"/>
+    <javadoc packagenames="*"
+             sourcepath="src/main/java"
+             destdir="${target.dir}/docs"
+             classpathref="lib.path.id">
+    </javadoc>
+  </target>
+  
+  <!-- ================================= 
+       Target: clean              
+       ================================= -->
+  <target name="clean">
+    <delete>
+      <fileset dir="${basedir}" defaultexcludes="no">
+        <include name="**/*~"/>
+        <include name="**/*.bak"/>
+      </fileset>
+    </delete>
+    <delete dir="${build.dir}"/>
+    <delete dir="${target.dir}"/>
+    <delete dir="${basedir}/reports"/>
+  </target>
+
+  <!-- ================================= 
+       Target: dist-clean              
+       ================================= -->
+  <target name="dist-clean" depends="init,clean">
+    <delete includeemptydirs="true">
+      <fileset dir="${lib.dir}" includes="**/*"/>
+    </delete>
+  </target>
+
+</project>

@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
@@ -94,6 +95,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
    /** Jndi name */
    private String jndiName;
+
+   /** Sharable */
+   private boolean sharable;
 
    /**
     * Creates a new instance of connection manager.
@@ -174,6 +178,24 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public void setJndiName(String jndiName)
    {
       this.jndiName = jndiName;
+   }
+
+   /**
+    * Is sharable
+    * @return The value
+    */
+   public boolean isSharable()
+   {
+      return sharable;
+   }
+
+   /**
+    * Set the sharable flag
+    * @param v The value
+    */
+   public void setSharable(boolean v)
+   {
+      this.sharable = v;
    }
 
    /**
@@ -440,7 +462,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
    }
 
-
    /**
     * {@inheritDoc}
     */
@@ -496,6 +517,65 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
 
       return connection;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void associateConnection(Object connection, ManagedConnectionFactory mcf, ConnectionRequestInfo cri)
+      throws ResourceException
+   {
+      associateManagedConnection(connection, mcf, cri);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ManagedConnection associateManagedConnection(Object connection, ManagedConnectionFactory mcf,
+                                                       ConnectionRequestInfo cri)
+      throws ResourceException
+   {
+      // Check for pooling!
+      if (pool == null)
+      {
+         throw new ResourceException(bundle.tryingUseConnectionFactoryShutDown());
+      }
+
+      // It is an explicit spec requirement that equals be used for matching rather than ==.
+      if (!pool.getManagedConnectionFactory().equals(mcf))
+      {
+         throw new ResourceException(
+            bundle.wrongManagedConnectionFactorySentToAllocateConnection(pool.getManagedConnectionFactory(), mcf));
+      }
+
+      if (connection == null)
+         throw new ResourceException(bundle.connectionIsNull());
+
+      // Pick a managed connection from the pool
+      Subject subject = getSubject();
+      ConnectionListener cl = getManagedConnection(subject, cri);
+
+      // Tell each connection manager the managed connection is active
+      reconnectManagedConnection(cl);
+
+      // Associate managed connection with the connection
+      cl.getManagedConnection().associateConnection(connection);
+      registerAssociation(cl, connection);
+
+      if (cachedConnectionManager != null)
+      {
+         cachedConnectionManager.registerConnection(this, cl, connection, cri);
+      }
+
+      return cl.getManagedConnection();
+   }
+ 
+   /**
+    * {@inheritDoc}
+    */
+   public void inactiveConnectionClosed(Object connection, ManagedConnectionFactory mcf)
+   {
+      // We don't track inactive connections
    }
 
    /**

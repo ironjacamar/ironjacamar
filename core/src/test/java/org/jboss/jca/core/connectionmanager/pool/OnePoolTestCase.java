@@ -68,7 +68,7 @@ public class OnePoolTestCase
    @Test
    public void getKeyShouldReturnSameBooleanValuePassedAsSeparateNoTx() throws Exception
    {
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       assertThat((Boolean) pool.getKey(null, null, true), is(true));
       assertThat((Boolean) pool.getKey(null, null, false), is(false));
    }
@@ -81,7 +81,7 @@ public class OnePoolTestCase
    @Test(expected = IllegalArgumentException.class)
    public void constructorShouldThrowIllegalArgumentExceptionForNullManagedConnectionFactory() throws Exception
    {
-      OnePool pool = new OnePool(null, mock(PoolConfiguration.class), false);
+      OnePool pool = new OnePool(null, mock(PoolConfiguration.class), false, true);
    }
 
    /**
@@ -92,7 +92,7 @@ public class OnePoolTestCase
    @Test(expected = IllegalArgumentException.class)
    public void constructorShouldThrowIllegalArgumentExceptionForNullPoolConfiguration() throws Exception
    {
-      OnePool pool = new OnePool(mock(ManagedConnectionFactory.class), null, false);
+      OnePool pool = new OnePool(mock(ManagedConnectionFactory.class), null, false, true);
    }
 
    /**
@@ -104,7 +104,7 @@ public class OnePoolTestCase
    public void emptySubPoolShouldDoNothing() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       //when (note: argument is not important, set to null just for convenience)
       ((OnePool) pool).emptySubPool(null);
       //then
@@ -120,7 +120,7 @@ public class OnePoolTestCase
    public void flushPoolShouldLeaveSubPoolEmpty() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       //when (note: argument is not important, set to null just for convenience)
       ((OnePool) pool).flush();
       //then
@@ -137,7 +137,7 @@ public class OnePoolTestCase
    public void shutdownShouldLeaveSubPoolEmpty() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       //when (note: argument is not important, set to null just for convenience)
       ((OnePool) pool).shutdown();
       //then
@@ -154,7 +154,7 @@ public class OnePoolTestCase
    public void getTransactionOldConnectionShouldThrowResourceExceptionIfLockFail() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       Transaction trackByTransaction = mock(Transaction.class);
       //doThrow(new InterruptedException()).lock(trackByTransaction);
       //when
@@ -171,7 +171,7 @@ public class OnePoolTestCase
    public void getTransactionOldConnectionShouldReturnNullIfClIsNullButCorrectlyLockAndUnlock() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       Transaction trackByTransaction = mock(Transaction.class);
       //when
       //Object returnValue = pool.getTransactionOldConnection(trackByTransaction);
@@ -188,7 +188,7 @@ public class OnePoolTestCase
    public void getTransactionOldConnectionShouldReturnValueIfClHasValueAndCorrectlyLockAndUnlock() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       Transaction trackByTransaction = mock(Transaction.class);
       ConnectionListener listener = mock(ConnectionListener.class);
       //when
@@ -206,7 +206,7 @@ public class OnePoolTestCase
    public void getTransactionNewConnectionShouldGetConnectionBeforeLocking() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       Transaction trackByTransaction = mock(Transaction.class);
       ConnectionListener listener = mock(ConnectionListener.class);
       ManagedConnectionPool mcp = mock(ManagedConnectionPool.class);
@@ -236,7 +236,7 @@ public class OnePoolTestCase
       throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       Transaction trackByTransaction = mock(Transaction.class);
       ManagedConnectionPool mcp = mock(ManagedConnectionPool.class);
       ConnectionListener cl = mock(ConnectionListener.class);
@@ -268,7 +268,7 @@ public class OnePoolTestCase
    public void getTransactionNewConnectionShouldUseTheOtherFromDifferentThreadIfAlreadyTracked() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       Transaction trackByTransaction = mock(Transaction.class);
       ManagedConnectionPool mcp = mock(ManagedConnectionPool.class);
       ConnectionListener cl = mock(ConnectionListener.class);
@@ -307,7 +307,7 @@ public class OnePoolTestCase
    public void getTransactionNewConnectionShouldUseMcpReturnedCl() throws Exception
    {
       //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
+      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
       Transaction trackByTransaction = mock(Transaction.class);
       ManagedConnectionPool mcp = mock(ManagedConnectionPool.class);
       ConnectionListener cl = mock(ConnectionListener.class);

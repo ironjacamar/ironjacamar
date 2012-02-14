@@ -300,6 +300,20 @@ public interface CoreBundle
    @Message(id = 463, value = "Unable to set XAResource transaction timeout: %s")
    public String unableSetXAResourceTransactionTimeout(String jndiName);
       
+   /**
+    * Unable to find connection listener
+    * @return The value
+    */
+   @Message(id = 464, value = "Unable to find connection listener")
+   public String unableToFindConnectionListener();
+      
+   /**
+    * Connection is null
+    * @return The value
+    */
+   @Message(id = 465, value = "Connection is null")
+   public String connectionIsNull();
+      
    // TRANSACTION SYNCHRONIZER (500)
    
    // POOL MANAGER (600)

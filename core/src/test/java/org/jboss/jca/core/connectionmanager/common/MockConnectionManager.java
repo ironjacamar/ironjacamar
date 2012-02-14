@@ -31,6 +31,7 @@ import java.util.Collection;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.SystemException;
 
 import org.jboss.logging.Logger;
@@ -71,6 +72,15 @@ public class MockConnectionManager extends AbstractConnectionManager
          Object context) throws ResourceException
    {
       return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean dissociateManagedConnection(Object connection, ManagedConnection mc, ManagedConnectionFactory mcf)
+      throws ResourceException
+   {
+      return false;
    }
 
    @Override

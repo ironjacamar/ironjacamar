@@ -86,6 +86,13 @@ public interface CommonConnDef extends JCAMetadata
    public Boolean isUseCcm();
 
    /**
+    * Get the sharable
+    *
+    * @return the value
+    */
+   public Boolean isSharable();
+
+   /**
     * Get the pool.
     *
     * @return the pool.
@@ -270,7 +277,11 @@ public interface CommonConnDef extends JCAMetadata
       /** use-ccm attribute
       *
       */
-      USE_CCM("use-ccm");
+      USE_CCM("use-ccm"),
+      /** sharable attribute
+      *
+      */
+      SHARABLE("sharable");
 
       private final String name;
 

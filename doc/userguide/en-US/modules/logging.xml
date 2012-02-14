@@ -275,6 +275,16 @@
             <entry>Unable to set XAResource transaction timeout</entry>
           </row>
           <row>
+            <entry>464</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to find connection listener</entry>
+          </row>
+          <row>
+            <entry>465</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Connection is null</entry>
+          </row>
+          <row>
             <entry>501</entry>
             <entry><code>WARN</code></entry>
             <entry>Thread is not the enlisting thread</entry>

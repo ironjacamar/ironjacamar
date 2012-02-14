@@ -75,11 +75,11 @@ public class NoTxConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true);
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       connectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, false, null, 
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, false, null, true,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
       assertNotNull(connectionManager);
