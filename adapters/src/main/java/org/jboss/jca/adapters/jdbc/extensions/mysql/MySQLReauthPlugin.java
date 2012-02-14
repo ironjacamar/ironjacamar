@@ -35,8 +35,6 @@ import java.sql.SQLException;
  */
 public class MySQLReauthPlugin implements ReauthPlugin
 {
-   private Method changeUser;
-
    /**
     * Default constructor
     */
@@ -55,10 +53,9 @@ public class MySQLReauthPlugin implements ReauthPlugin
 
       try
       {
-         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-         mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, tccl);
+         mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, cl);
       }
-      catch (ClassNotFoundException cnfe) 
+      catch (Throwable t) 
       {
          // Ignore
       }
@@ -67,17 +64,18 @@ public class MySQLReauthPlugin implements ReauthPlugin
       {
          try
          {
-            mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, cl);
+            ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
+            mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, tccl);
          }
          catch (Throwable t) 
          {
-            throw new SQLException("Cannot resolve com.mysq.jdbc.Connection changeUser method", t);
+            throw new SQLException("Cannot resolve com.mysq.jdbc.Connection", t);
          }
       }
 
       try
       {
-         changeUser = mysqlConnection.getMethod("changeUser", new Class[] {String.class, String.class});
+         Method changeUser = mysqlConnection.getMethod("changeUser", new Class[] {String.class, String.class});
       }
       catch (Throwable t)
       {
@@ -97,6 +95,8 @@ public class MySQLReauthPlugin implements ReauthPlugin
       Object[] params = new Object[] {userName, password};
       try
       {
+         Method changeUser = c.getClass().getMethod("changeUser", new Class[] {String.class, String.class});
+         changeUser.setAccessible(true);
          changeUser.invoke(c, params);
       }
       catch (Throwable t) 
