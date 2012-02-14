@@ -24,9 +24,6 @@ package org.jboss.jca.adapters.jdbc.extensions.mysql;
 
 import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -51,52 +48,18 @@ import org.jboss.logging.Logger;
  */
 public class MySQLReplicationValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
+   private static Logger log = Logger.getLogger(MySQLReplicationValidConnectionChecker.class);
+
    /**
     * Serial version ID
     */
    private static final long serialVersionUID = 2658231045989623858L;
 
    /**
-    * Tells if the connection supports the isValid method.
-    * (Java 6 only)
-    */
-   private boolean driverHasIsValidMethod;
-
-   private transient Method isValid;
-
-   /**
-    * Tells if the connection supports the ping method.
-    */
-   private boolean driverHasPingMethod;
-
-   private transient Method ping;
-
-   /**
-    * Classname of the supported connection
-    */
-   protected static final String CONNECTION_CLASS = "com.mysql.jdbc.ReplicationConnection";
-
-   /**
-    * Log access object
-    */
-   private static transient Logger log;
-
-   // The timeout (apparently the timeout is ignored?)
-   private static Object[] timeoutParam = new Object[] {};
-
-   /**
     * Initiates the ValidConnectionChecker implementation.
     */
    public MySQLReplicationValidConnectionChecker()
    {
-      try
-      {
-         initPing();
-      }
-      catch (Exception e)
-      {
-         log.warn("Cannot find the driver class defined in CONNECTION_CLASS.  Will use 'SELECT 1' instead.", e);
-      }
    }
 
    /**
@@ -105,11 +68,37 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
    @Override
    public SQLException isValidConnection(Connection c)
    {
-      if (driverHasIsValidMethod)
+      Method isValid = null;
+      Method ping = null;
+
+      try
+      {
+         isValid = c.getClass().getMethod("isValid", new Class<?>[] {});
+         isValid.setAccessible(true);
+      }
+      catch (Throwable t)
+      {
+         // Ignore
+      }
+
+      if (isValid == null)
       {
          try
          {
-            isValid.invoke(c, timeoutParam);
+            ping = c.getClass().getMethod("ping", (Class[])null);
+            ping.setAccessible(true);
+         }
+         catch (Throwable t)
+         {
+            // Ignore
+         }
+      }
+
+      if (isValid != null)
+      {
+         try
+         {
+            isValid.invoke(c, new Object[] {});
          }
          catch (Exception e)
          {
@@ -119,17 +108,16 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
             }
             else
             {
-               log.warn("Unexpected error in ping", e);
-               return new SQLException("ping failed: " + e.toString());
+               log.warn("Unexpected error", e);
+               return new SQLException("IsValid failed: " + e.toString());
             }
          }
       }
-      else if (driverHasPingMethod)
+      else if (ping != null)
       {
-         //if there is a ping method then use it
          try
          {
-            ping.invoke(c, timeoutParam);
+            ping.invoke(c, (Object[])null);
          }
          catch (Exception e)
          {
@@ -139,8 +127,8 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
             }
             else
             {
-               log.warn("Unexpected error in ping", e);
-               return new SQLException("ping failed: " + e.toString());
+               log.warn("Unexpected error", e);
+               return new SQLException("Ping failed: " + e.toString());
             }
          }
       }
@@ -163,8 +151,8 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
             }
             else
             {
-               log.warn("Unexpected error in ping (SELECT 1)", e);
-               return new SQLException("ping (SELECT 1) failed: " + e.toString());
+               log.warn("Unexpected error", e);
+               return new SQLException("SELECT 1 failed: " + e.toString());
             }
          }
          finally
@@ -193,74 +181,5 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
       }
 
       return null;
-   }
-
-
-   @SuppressWarnings("unchecked")
-   private void initPing() throws ClassNotFoundException, NoSuchMethodException
-   {
-      driverHasIsValidMethod = false;
-      driverHasPingMethod = false;
-
-      log = Logger.getLogger(MySQLReplicationValidConnectionChecker.class);
-
-      // Load connection class
-      Class<?> mysqlConnection = Class.forName(CONNECTION_CLASS, true, getClass().getClassLoader());
-
-      // Check for Java 6 compatibility and use isValid on the connection
-      try
-      {
-         isValid = mysqlConnection.getMethod("isValid", new Class<?>[] {});
-         driverHasIsValidMethod = true;
-      }
-      catch (NoSuchMethodException e)
-      {
-         // Notify someone
-         log.info("Cannot resolve com.mysq.jdbc.ReplicationConnection.isValid method. Fallback to ping.", e);
-      }
-      catch (SecurityException e)
-      {
-         // Notify someone
-         log.info("Cannot resolve com.mysq.jdbc.ReplicationConnection.isValid method. Fallback to ping.", e);
-      }
-
-      if (!driverHasIsValidMethod)
-      {
-         try
-         {
-            // Check for ping method
-            ping = mysqlConnection.getMethod("ping", new Class<?>[] {});
-            driverHasPingMethod = true;
-         }
-         catch (NoSuchMethodException e)
-         {
-            // Notify someone
-            log.warn("Cannot resolve com.mysq.jdbc.ReplicationConnection.ping method. Will use 'SELECT 1' instead.", e);
-         }
-         catch (SecurityException e)
-         {
-            // Notify someone
-            log.info("Cannot resolve com.mysq.jdbc.ReplicationConnection.ping method. Will use 'SELECT 1' instead.", e);
-         }
-      }
-   }
-
-   private void writeObject(ObjectOutputStream stream) throws IOException
-   {
-      // nothing
-   }
-
-   private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException
-   {
-      try
-      {
-         initPing();
-      }
-      catch (Exception e)
-      {
-         IOException ioe = new IOException("Unable to resolve ping method: " + e.getMessage());
-         ioe.initCause(e);
-         throw ioe;
-      }
    }
 }

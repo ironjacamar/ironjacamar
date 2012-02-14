@@ -24,9 +24,6 @@ package org.jboss.jca.adapters.jdbc.extensions.oracle;
 
 import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.Connection;
@@ -44,26 +41,17 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
 {
    private static final long serialVersionUID = 5379340663276548636L;
 
-   private static transient Logger log;
+   private static Logger log = Logger.getLogger(OracleValidConnectionChecker.class);
 
    // The timeout in seconds (apparently the timeout is ignored?)
-   private Integer pingTimeOut = new Integer(5);
-
-   private transient Method ping;
+   private Integer pingTimeOut;
 
    /**
     * Constructor
     */
    public OracleValidConnectionChecker()
    {
-      try
-      {
-         initPing();
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException("Unable to resolve pingDatabase method:", e);
-      }
+      pingTimeOut = Integer.valueOf(5);
    }
 
    /**
@@ -72,10 +60,13 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
    @Override
    public SQLException isValidConnection(Connection c)
    {
-      Object[] params = new Object[]{pingTimeOut};
+      Object[] params = new Object[] {pingTimeOut};
 
       try
       {
+         Method ping = c.getClass().getMethod("pingDatabase", new Class<?>[] {Integer.TYPE});
+         ping.setAccessible(true);
+
          Integer status = (Integer) ping.invoke(c, params);
 
          // Error
@@ -92,41 +83,12 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
       return null;
    }
 
-   @SuppressWarnings("unchecked")
-   private void initPing() throws ClassNotFoundException, NoSuchMethodException
-   {
-      log = Logger.getLogger(OracleValidConnectionChecker.class);
-
-      Class<?> oracleConnection =
-         Class.forName("oracle.jdbc.driver.OracleConnection", true, getClass().getClassLoader());
-      ping = oracleConnection.getMethod("pingDatabase", new Class<?>[] {Integer.TYPE});
-   }
-
-   private void writeObject(ObjectOutputStream stream) throws IOException
-   {
-      // nothing
-   }
-
-   private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException
-   {
-      try
-      {
-         initPing();
-      }
-      catch (Exception e)
-      {
-         IOException ioe = new IOException("Unable to resolve pingDatabase method: " + e.getMessage());
-         ioe.initCause(e);
-         throw ioe;
-      }
-   }
-
    /**
     * Get the pingTimeOut.
     *
     * @return the pingTimeOut.
     */
-   public final Integer getPingTimeOut()
+   public Integer getPingTimeOut()
    {
       return pingTimeOut;
    }
@@ -136,7 +98,7 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
     *
     * @param pingTimeOut The pingTimeOut to set.
     */
-   public final void setPingTimeOut(Integer pingTimeOut)
+   public void setPingTimeOut(Integer pingTimeOut)
    {
       this.pingTimeOut = pingTimeOut;
    }
