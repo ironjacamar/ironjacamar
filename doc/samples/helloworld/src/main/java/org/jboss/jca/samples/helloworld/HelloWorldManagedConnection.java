@@ -207,6 +207,16 @@ public class HelloWorldManagedConnection implements ManagedConnection
    }
 
    /**
+    * Call helloWorld
+    * @param name String name
+    * @return String helloworld
+    */
+   String helloWorld(String name)
+   {
+      return "Hello World, " + name + " !";
+   }
+
+   /**
     * Close handle
     * @param handle The handle
     */

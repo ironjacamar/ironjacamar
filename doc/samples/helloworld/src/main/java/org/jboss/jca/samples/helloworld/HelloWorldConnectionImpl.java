@@ -67,7 +67,7 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
     */
    public String helloWorld(String name)
    {
-      return "Hello World, " + name + " !";
+      return mc.helloWorld(name);
    }
 
    /**
