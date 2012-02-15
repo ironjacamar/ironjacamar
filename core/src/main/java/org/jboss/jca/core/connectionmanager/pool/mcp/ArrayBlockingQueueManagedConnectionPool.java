@@ -44,6 +44,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.DissociatableManagedConnection;
+import javax.resource.spi.LazyAssociatableConnectionManager;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.RetryableUnavailableException;
@@ -101,6 +103,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
 
+   /** Supports lazy association */
+   private Boolean supportsLazyAssociation;
+
    /**
     * Constructor
     */
@@ -138,7 +143,12 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.cls = new ArrayBlockingQueue<ConnectionListener>(pc.getMaxSize(), true);
       this.checkedOut = new ConcurrentSkipListSet<ConnectionListener>();
       this.statistics = new ManagedConnectionPoolStatisticsImpl(pc.getMaxSize());
+      this.supportsLazyAssociation = null;
   
+      // Check if connection manager supports lazy association
+      if (!(clf instanceof LazyAssociatableConnectionManager))
+         supportsLazyAssociation = Boolean.FALSE;
+
       // Schedule managed connection pool for prefill
       if (pc.isPrefill() && p instanceof PrefillPool && pc.getMinSize() > 0)
       {
@@ -164,6 +174,15 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    public synchronized boolean isEmpty()
    {
       return cls.size() == 0 && checkedOut.size() == 0;
+   }
+
+   /**
+    * Is the pool full ?
+    * @return True if full, otherwise false
+    */
+   public synchronized boolean isFull()
+   {
+      return checkedOut.size() == poolConfiguration.getMaxSize();
    }
 
    /**
@@ -262,6 +281,18 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
       else
       {
+         if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()) &&
+             isFull())
+         {
+            if (supportsLazyAssociation == null)
+               checkLazyAssociation();
+
+            if (supportsLazyAssociation != null && supportsLazyAssociation.booleanValue())
+            {
+               detachConnectionListener();
+            }
+         }
+
          try
          {
             cl = cls.poll(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS);
@@ -387,6 +418,17 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void returnConnection(ConnectionListener cl, boolean kill)
    {
+      returnConnection(cl, kill, true);
+   }
+
+   /**
+    * Return a connection to the pool
+    * @param cl The connection listener
+    * @param kill Should the connection be killed
+    * @param cleanup Should cleanup be performed
+    */
+   public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup)
+   {
       if (trace)
       {
          synchronized (cls)
@@ -411,14 +453,17 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          return;
       }
 
-      try
+      if (cleanup)
       {
-         cl.getManagedConnection().cleanup();
-      }
-      catch (ResourceException re)
-      {
-         log.resourceExceptionCleaningUpManagedConnection(cl, re);
-         kill = true;
+         try
+         {
+            cl.getManagedConnection().cleanup();
+         }
+         catch (ResourceException re)
+         {
+            log.resourceExceptionCleaningUpManagedConnection(cl, re);
+            kill = true;
+         }
       }
 
       // We need to destroy this one
@@ -920,6 +965,76 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
 
       return true;
+   }
+
+   /**
+    * Check if the resource adapter supports lazy association
+    */
+   private void checkLazyAssociation()
+   {
+      ConnectionListener cl = null;
+
+      if (checkedOut.size() > 0)
+         cl = checkedOut.first();
+
+      if (cl == null && cls.size() > 0)
+         cl = cls.peek();
+
+      if (cl != null)
+      {
+         ManagedConnection mc = cl.getManagedConnection();
+
+         if (mc instanceof DissociatableManagedConnection)
+         {
+            if (debug)
+               log.debug("Enable lazy association support for: " + pool.getName());
+
+            supportsLazyAssociation = Boolean.TRUE;
+         }
+         else
+         {
+            if (debug)
+               log.debug("Disable lazy association support for: " + pool.getName());
+            
+            supportsLazyAssociation = Boolean.FALSE;
+         }
+      }
+   }
+
+   /**
+    * Detach connection listener
+    */
+   private void detachConnectionListener()
+   {
+      ConnectionListener cl = null;
+
+      if (checkedOut.size() > 0)
+         cl = checkedOut.pollFirst();
+
+      if (cl != null)
+      {
+         try
+         {
+            if (trace)
+               log.tracef("Detach: %s", cl); 
+
+            DissociatableManagedConnection dmc = (DissociatableManagedConnection)cl.getManagedConnection();
+            dmc.dissociateConnections();
+               
+            cl.unregisterConnections();
+               
+            returnConnection(cl, false, false);
+         }
+         catch (Throwable t)
+         {
+            // Ok - didn't work; nuke it and disable
+            if (debug)
+               log.debug("Exception during detach for: " + pool.getName(), t); 
+
+            supportsLazyAssociation = Boolean.FALSE;
+            returnConnection(cl, true, true);
+         }
+      }
    }
 
    /**
