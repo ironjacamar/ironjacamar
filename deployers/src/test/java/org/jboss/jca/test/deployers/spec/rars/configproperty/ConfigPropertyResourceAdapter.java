@@ -39,6 +39,9 @@ import org.jboss.logging.Logger;
  */
 public class ConfigPropertyResourceAdapter implements ResourceAdapter
 {
+   /** defaultProperty */
+   private String defaultProperty;
+
    /** property */
    private String property;
 
@@ -49,6 +52,25 @@ public class ConfigPropertyResourceAdapter implements ResourceAdapter
     */
    public ConfigPropertyResourceAdapter()
    {
+   }
+
+   /** 
+    * Set default property
+    * @param property The value
+    */
+   public void setDefaultProperty(String property)
+   {
+      log.info("DefaultProperty=" + property);
+      this.defaultProperty = property;
+   }
+
+   /** 
+    * Get default property
+    * @return The value
+    */
+   public String getDefaultProperty()
+   {
+      return defaultProperty;
    }
 
    /** 
@@ -133,6 +155,10 @@ public class ConfigPropertyResourceAdapter implements ResourceAdapter
    public int hashCode()
    {
       int result = 17;
+      if (defaultProperty != null)
+         result += 31 * result + 7 * defaultProperty.hashCode();
+      else
+         result += 31 * result + 7;
       if (property != null)
          result += 31 * result + 7 * property.hashCode();
       else
@@ -156,6 +182,13 @@ public class ConfigPropertyResourceAdapter implements ResourceAdapter
          return false;
       ConfigPropertyResourceAdapter obj = (ConfigPropertyResourceAdapter)other;
       boolean result = true; 
+      if (result)
+      {
+         if (defaultProperty == null)
+            result = obj.getDefaultProperty() == null;
+         else
+            result = defaultProperty.equals(obj.getDefaultProperty());
+      }
       if (result)
       {
          if (property == null)

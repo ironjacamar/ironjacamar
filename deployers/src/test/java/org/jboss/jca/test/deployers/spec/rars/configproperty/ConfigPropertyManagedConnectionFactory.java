@@ -55,6 +55,9 @@ public class ConfigPropertyManagedConnectionFactory implements ManagedConnection
    /** The logwriter */
    private PrintWriter logwriter;
 
+   /** defaultProperty */
+   private String defaultProperty;
+
    /** property */
    private String property;
 
@@ -64,6 +67,25 @@ public class ConfigPropertyManagedConnectionFactory implements ManagedConnection
    public ConfigPropertyManagedConnectionFactory()
    {
 
+   }
+
+   /** 
+    * Set default property
+    * @param property The value
+    */
+   public void setDefaultProperty(String property)
+   {
+      log.info("DefaultProperty=" + property);
+      this.defaultProperty = property;
+   }
+
+   /** 
+    * Get default property
+    * @return The value
+    */
+   public String getDefaultProperty()
+   {
+      return defaultProperty;
    }
 
    /** 
@@ -198,6 +220,10 @@ public class ConfigPropertyManagedConnectionFactory implements ManagedConnection
    public int hashCode()
    {
       int result = 17;
+      if (defaultProperty != null)
+         result += 31 * result + 7 * defaultProperty.hashCode();
+      else
+         result += 31 * result + 7;
       if (property != null)
          result += 31 * result + 7 * property.hashCode();
       else
@@ -223,6 +249,13 @@ public class ConfigPropertyManagedConnectionFactory implements ManagedConnection
       boolean result = true; 
       if (result)
       {
+         if (defaultProperty == null)
+            result = obj.getDefaultProperty() == null;
+         else
+            result = defaultProperty.equals(obj.getDefaultProperty());
+      }
+      if (result)
+      {
          if (property == null)
             result = obj.getProperty() == null;
          else
@@ -230,6 +263,4 @@ public class ConfigPropertyManagedConnectionFactory implements ManagedConnection
       }
       return result;
    }
-
-
 }

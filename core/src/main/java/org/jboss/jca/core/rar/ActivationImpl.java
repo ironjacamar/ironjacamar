@@ -23,10 +23,13 @@
 package org.jboss.jca.core.rar;
 
 import org.jboss.jca.core.CoreBundle;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.rar.Activation;
 import org.jboss.jca.core.spi.rar.NotFoundException;
+import org.jboss.jca.core.util.Injection;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +37,7 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ResourceAdapter;
 
+import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
@@ -46,6 +50,10 @@ public class ActivationImpl implements Activation
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
+      ActivationImpl.class.getName());
+
    /** Resource adapter */
    private WeakReference<ResourceAdapter> rar;
 
@@ -58,22 +66,28 @@ public class ActivationImpl implements Activation
    /** Required config properties */
    private Set<String> requiredConfigProperties;
 
+   /** Value properties */
+   private Map<String, String> valueProperties;
+
    /**
     * Constructor
     * @param rar The resource adapter
     * @param activationSpecClass The activation spec class
     * @param configProperties The config properties
     * @param requiredConfigProperties The required config properties
+    * @param valueProperties The value properties
     */
    ActivationImpl(ResourceAdapter rar,
                   Class<?> activationSpecClass,
                   Map<String, Class<?>> configProperties,
-                  Set<String> requiredConfigProperties)
+                  Set<String> requiredConfigProperties,
+                  Map<String, String> valueProperties)
    {
       this.rar = new WeakReference<ResourceAdapter>(rar);
       this.activationSpecClass = new WeakReference<Class<?>>(activationSpecClass);
       this.configProperties = configProperties;
       this.requiredConfigProperties = requiredConfigProperties;
+      this.valueProperties = valueProperties;
    }
 
    /**
@@ -111,6 +125,30 @@ public class ActivationImpl implements Activation
       ActivationSpec instance = ActivationSpec.class.cast(clz.newInstance());
       instance.setResourceAdapter(ra);
 
+      if (valueProperties != null && valueProperties.size() > 0)
+      {
+         Injection injector = new Injection();
+         Iterator<Map.Entry<String, String>> it = valueProperties.entrySet().iterator();
+         while (it.hasNext())
+         {
+            String propertyName = null;
+            String propertyValue = null;
+            try
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               propertyName = entry.getKey();
+               propertyValue = entry.getValue();
+               
+               injector.inject(instance, propertyName, propertyValue);
+            }
+            catch (Throwable t)
+            {
+               log.debug("Ignoring: " + propertyName + " (" + propertyValue + ")", t);
+            }
+         }
+      }
+
       return instance;
    }
 
@@ -128,6 +166,7 @@ public class ActivationImpl implements Activation
       sb.append(" activationSpecClass=").append(activationSpecClass != null ? activationSpecClass.get() : "null");
       sb.append(" configProperties=").append(configProperties);
       sb.append(" requiredConfigProperties=").append(requiredConfigProperties);
+      sb.append(" valueProperties=").append(valueProperties);
       sb.append("]");
 
       return sb.toString();
