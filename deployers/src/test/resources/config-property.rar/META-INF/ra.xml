@@ -36,6 +36,11 @@
    <resourceadapter>
       <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.configproperty.ConfigPropertyResourceAdapter</resourceadapter-class>
       <config-property>
+         <config-property-name>defaultProperty</config-property-name>
+         <config-property-type>java.lang.String</config-property-type>
+         <config-property-value>Default</config-property-value>
+      </config-property>
+      <config-property>
          <config-property-name>property</config-property-name>
          <config-property-type>java.lang.String</config-property-type>
          <config-property-value>default</config-property-value>
@@ -44,6 +49,11 @@
       <outbound-resourceadapter>
          <connection-definition>
             <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.configproperty.ConfigPropertyManagedConnectionFactory</managedconnectionfactory-class>
+            <config-property>
+              <config-property-name>defaultProperty</config-property-name>
+              <config-property-type>java.lang.String</config-property-type>
+              <config-property-value>Default</config-property-value>
+            </config-property>
             <config-property>
                <config-property-name>property</config-property-name>
                <config-property-type>java.lang.String</config-property-type>
@@ -61,6 +71,11 @@
       <adminobject>
          <adminobject-interface>org.jboss.jca.test.deployers.spec.rars.configproperty.ConfigPropertyAdminObjectInterface</adminobject-interface>
          <adminobject-class>org.jboss.jca.test.deployers.spec.rars.configproperty.ConfigPropertyAdminObjectImpl</adminobject-class>
+         <config-property>
+           <config-property-name>defaultProperty</config-property-name>
+           <config-property-type>java.lang.String</config-property-type>
+           <config-property-value>Default</config-property-value>
+         </config-property>
          <config-property>
             <config-property-name>property</config-property-name>
             <config-property-type>java.lang.String</config-property-type>

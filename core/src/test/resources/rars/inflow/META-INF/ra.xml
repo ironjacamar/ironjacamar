@@ -27,8 +27,8 @@
 <connector xmlns="http://java.sun.com/xml/ns/j2ee"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
-           http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"
-           version="1.5">
+           http://java.sun.com/xml/ns/j2ee/connector_1_6.xsd"
+           version="1.6">
 
    <vendor-name>Red Hat Middleware LLC</vendor-name>
    <eis-type>Test RA</eis-type>
@@ -41,6 +41,16 @@
                <messagelistener-type>javax.jms.MessageListener</messagelistener-type>
                <activationspec>
                   <activationspec-class>org.jboss.jca.core.inflow.ra.inflow.PureInflowActivationSpec</activationspec-class>
+                  <config-property>
+                    <config-property-name>defaultBoolean</config-property-name>
+                    <config-property-type>java.lang.Boolean</config-property-type>
+                    <config-property-value>true</config-property-value>
+                  </config-property>
+                  <config-property>
+                    <config-property-name>defaultString</config-property-name>
+                    <config-property-type>java.lang.String</config-property-type>
+                    <config-property-value>Default</config-property-value>
+                  </config-property>
                </activationspec>
             </messagelistener>
          </messageadapter>

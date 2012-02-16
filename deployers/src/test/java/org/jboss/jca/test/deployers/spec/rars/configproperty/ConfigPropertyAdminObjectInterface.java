@@ -33,6 +33,18 @@ import javax.resource.Referenceable;
 public interface ConfigPropertyAdminObjectInterface extends Referenceable, Serializable
 {
    /** 
+    * Set default property
+    * @param property The value
+    */
+   public void setDefaultProperty(String property);
+
+   /** 
+    * Get default property
+    * @return The value
+    */
+   public String getDefaultProperty();
+
+   /** 
     * Set property
     * @param property The value
     */

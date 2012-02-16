@@ -29,10 +29,20 @@ package org.jboss.jca.test.deployers.spec.rars.configproperty;
 public interface ConfigPropertyConnection
 {
    /**
+    * getResourceAdapterDefaultProperty
+    * @return String
+    */
+   public String getResourceAdapterDefaultProperty();
+   /**
     * getResourceAdapterProperty
     * @return String
     */
    public String getResourceAdapterProperty();
+   /**
+    * getManagedConnectionFactoryDefaultProperty
+    * @return String
+    */
+   public String getManagedConnectionFactoryDefaultProperty();
    /**
     * getManagedConnectionFactoryProperty
     * @return String

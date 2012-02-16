@@ -47,6 +47,9 @@ public class ConfigPropertyAdminObjectImpl implements ConfigPropertyAdminObjectI
    /** Reference */
    private Reference reference;
 
+   /** default property */
+   private String defaultProperty;
+
    /** property */
    private String property;
 
@@ -56,6 +59,24 @@ public class ConfigPropertyAdminObjectImpl implements ConfigPropertyAdminObjectI
    public ConfigPropertyAdminObjectImpl()
    {
 
+   }
+
+   /** 
+    * Set default property
+    * @param property The value
+    */
+   public void setDefaultProperty(String property)
+   {
+      this.defaultProperty = property;
+   }
+
+   /** 
+    * Get default property
+    * @return The value
+    */
+   public String getDefaultProperty()
+   {
+      return defaultProperty;
    }
 
    /** 
@@ -127,6 +148,10 @@ public class ConfigPropertyAdminObjectImpl implements ConfigPropertyAdminObjectI
    public int hashCode()
    {
       int result = 17;
+      if (defaultProperty != null)
+         result += 31 * result + 7 * defaultProperty.hashCode();
+      else
+         result += 31 * result + 7;
       if (property != null)
          result += 31 * result + 7 * property.hashCode();
       else
@@ -150,6 +175,13 @@ public class ConfigPropertyAdminObjectImpl implements ConfigPropertyAdminObjectI
          return false;
       ConfigPropertyAdminObjectImpl obj = (ConfigPropertyAdminObjectImpl)other;
       boolean result = true; 
+      if (result)
+      {
+         if (defaultProperty == null)
+            result = obj.getDefaultProperty() == null;
+         else
+            result = defaultProperty.equals(obj.getDefaultProperty());
+      }
       if (result)
       {
          if (property == null)

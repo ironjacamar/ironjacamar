@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.inflow;
 
+import org.jboss.jca.core.inflow.ra.inflow.PureInflowActivationSpec;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.MessageListener;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
@@ -111,6 +112,13 @@ public class PureInflowTestCase
          ActivationSpec as = listener.getActivation().createInstance();
          assertNotNull(as);
          assertNotNull(as.getResourceAdapter());
+
+         assertTrue(as instanceof PureInflowActivationSpec);
+         PureInflowActivationSpec pias = (PureInflowActivationSpec)as;
+         assertNotNull(pias.getDefaultString());
+         assertEquals("Default", pias.getDefaultString());
+         assertNotNull(pias.getDefaultBoolean());
+         assertTrue(pias.getDefaultBoolean());
       }
       finally
       {

@@ -399,6 +399,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
 
          Map<String, Class<?>> configProperties = new HashMap<String, Class<?>>();
          Set<String> requiredConfigProperties = new HashSet<String>();
+         Map<String, String> valueProperties = new HashMap<String, String>();
 
          Activationspec15 as = ml.getActivationspec();
          Class<?> asClz = Class.forName(as.getActivationspecClass().getValue(), true, cl);
@@ -414,6 +415,9 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
                   Class<?> ct = Class.forName(cp.getConfigPropertyType().getValue(), true, cl);
 
                   configProperties.put(name, ct);
+
+                  if (cp.getConfigPropertyValue() != null && cp.getConfigPropertyValue().getValue() != null)
+                     valueProperties.put(name, cp.getConfigPropertyValue().getValue());
                }
             }
          }
@@ -434,7 +438,8 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          ActivationImpl a = new ActivationImpl(rar,
                                                asClz,
                                                Collections.unmodifiableMap(configProperties),
-                                               Collections.unmodifiableSet(requiredConfigProperties));
+                                               Collections.unmodifiableSet(requiredConfigProperties),
+                                               Collections.unmodifiableMap(valueProperties));
 
          return new MessageListenerImpl(type, a);
       }

@@ -55,12 +55,30 @@ public class ConfigPropertyConnectionImpl implements ConfigPropertyConnection
    }
 
    /**
+    * Call getResourceAdapterDefaultProperty
+    * @return String
+    */
+   public String getResourceAdapterDefaultProperty()
+   {
+      return ((ConfigPropertyResourceAdapter)mcf.getResourceAdapter()).getDefaultProperty();
+   }
+
+   /**
     * Call getManagedConnectionFactoryProperty
     * @return String
     */
    public String getManagedConnectionFactoryProperty()
    {
       return mcf.getProperty();
+   }
+
+   /**
+    * Call getManagedConnectionFactoryDefaultProperty
+    * @return String
+    */
+   public String getManagedConnectionFactoryDefaultProperty()
+   {
+      return mcf.getDefaultProperty();
    }
 
    /**

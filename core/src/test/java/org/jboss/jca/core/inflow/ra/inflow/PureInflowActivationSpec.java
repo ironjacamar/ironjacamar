@@ -37,6 +37,12 @@ public class PureInflowActivationSpec implements ActivationSpec
    /** The logger */
    private static Logger log = Logger.getLogger(PureInflowActivationSpec.class);
 
+   /** Default string */
+   private String defaultString;
+
+   /** Default boolean */
+   private Boolean defaultBoolean;
+
    /** The resource adapter */
    private ResourceAdapter ra;
 
@@ -46,6 +52,44 @@ public class PureInflowActivationSpec implements ActivationSpec
    public PureInflowActivationSpec()
    {
 
+   }
+
+   /**
+    * Set the default string
+    * @param v The value
+    */
+   public void setDefaultString(String v)
+   {
+      log.trace("setDefaultString(" + v + ")");
+      this.defaultString = v;
+   }
+
+   /**
+    * Get the default string
+    * @return The value
+    */
+   public String getDefaultString()
+   {
+      return defaultString;
+   }
+
+   /**
+    * Set the default boolean
+    * @param v The value
+    */
+   public void setDefaultBoolean(Boolean v)
+   {
+      log.trace("setDefaultBoolean(" + v + ")");
+      this.defaultBoolean = v;
+   }
+
+   /**
+    * Get the default boolean
+    * @return The value
+    */
+   public Boolean getDefaultBoolean()
+   {
+      return defaultBoolean;
    }
 
    /**

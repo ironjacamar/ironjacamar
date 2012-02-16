@@ -107,9 +107,13 @@ public class ConfigPropertyTestCase
       assertNotNull(connection);
 
       assertEquals("A", connection.getResourceAdapterProperty());
+      assertEquals("Default", connection.getResourceAdapterDefaultProperty());
+
       assertEquals("B", connection.getManagedConnectionFactoryProperty());
+      assertEquals("Default", connection.getManagedConnectionFactoryDefaultProperty());
 
       assertEquals("C", adminObject.getProperty());
+      assertEquals("Default", adminObject.getDefaultProperty());
 
       connection.close();
    }
