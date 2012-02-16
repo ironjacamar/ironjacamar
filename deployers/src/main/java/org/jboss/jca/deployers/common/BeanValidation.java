@@ -52,15 +52,25 @@ public class BeanValidation
 
    private static boolean trace = log.isTraceEnabled();
 
-   private static ValidatorFactory factory;
-
    private static String factoryName = "java:/ValidatorFactory";
+
+   private ValidatorFactory factory;
 
    /**
     * Constructor
     */
    public BeanValidation()
    {
+      this(null);
+   }
+
+   /**
+    * Constructor
+    * @param vf The validator factory
+    */
+   public BeanValidation(ValidatorFactory vf)
+   {
+      this.factory = vf;
    }
 
    /**
@@ -108,15 +118,6 @@ public class BeanValidation
    }
 
    /**
-    * Set the validator factory
-    * @param f The factory
-    */
-   public synchronized static void setValidatorFactory(ValidatorFactory f)
-   {
-      factory = f;
-   }
-
-   /**
     * Set the validator factory name
     * @param name The factory name
     */
@@ -128,7 +129,7 @@ public class BeanValidation
    /**
     * Init the validator factory
     */
-   private synchronized static void initValidatorFactory()
+   private synchronized void initValidatorFactory()
    {
       Context context = null;
       try

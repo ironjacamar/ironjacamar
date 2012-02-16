@@ -2120,7 +2120,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                if (beanValidationObjects.size() > 0)
                {
-                  BeanValidation beanValidator = new BeanValidation();
+                  BeanValidation beanValidator = getBeanValidation();
                   for (Object o : beanValidationObjects)
                   {
                      beanValidator.validate(o, groupsClasses);
@@ -2283,6 +2283,15 @@ public abstract class AbstractResourceAdapterDeployer
             return null;
          }
       });
+   }
+
+   /**
+    * Get the bean validation module
+    * @return The module
+    */
+   protected BeanValidation getBeanValidation()
+   {
+      return new BeanValidation();
    }
 
    /**
