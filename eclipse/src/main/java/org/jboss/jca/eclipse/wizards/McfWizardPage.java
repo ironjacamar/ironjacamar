@@ -98,8 +98,8 @@ public class McfWizardPage extends WizardPage
    public McfWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("Create Mcf");
-      setDescription("Input Mcf Information.");
+      setTitle("Create Management Connection Factory");
+      setDescription("Input management connection factory information.");
       this.selection = selection;
 
    }
@@ -156,7 +156,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Management Connection Factory Properties:");
+      label.setText("Management Connection Factory properties:");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();
@@ -219,7 +219,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Use CCi:");
+      label.setText("Use CCI:");
 
       final Button cciButton = new Button(mcfContainer, SWT.CHECK);
       cciButton.setSelection(false);
@@ -248,7 +248,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Connection factory interface:");
+      label.setText("Connection Factory interface:");
 
       cfText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);

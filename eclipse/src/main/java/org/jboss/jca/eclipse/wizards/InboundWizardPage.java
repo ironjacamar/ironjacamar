@@ -90,7 +90,7 @@ public class InboundWizardPage extends WizardPage
    {
       super("wizardPage");
       setTitle("Create Inbound");
-      setDescription("Input Inbound Information.");
+      setDescription("Input inbound information.");
       this.selection = selection;
 
    }
@@ -120,7 +120,7 @@ public class InboundWizardPage extends WizardPage
       }
 
       Label label = new Label(inContainer, SWT.NULL);
-      label.setText("MessageListener:");
+      label.setText("Message Listener:");
 
       mlText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -144,7 +144,7 @@ public class InboundWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("ActivationSpec:");
+      label.setText("Activation Spec:");
 
       asText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -167,7 +167,7 @@ public class InboundWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("ActivationSpec config properties:");
+      label.setText("Activation Spec properties:");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();

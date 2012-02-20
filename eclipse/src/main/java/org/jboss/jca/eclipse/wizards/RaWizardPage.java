@@ -84,7 +84,7 @@ public class RaWizardPage extends WizardPage
    public RaWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("Resource adapter information");
+      setTitle("Resource Adapter Information");
       setDescription("Input information about resource adapter.");
       this.selection = selection;
    }
@@ -113,7 +113,7 @@ public class RaWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(raContainer, SWT.NULL);
-      label.setText("Include a ResourceAdapter:");
+      label.setText("Include a Resource Adapter:");
       final Button raButton = new Button(raContainer, SWT.CHECK);
       raButton.setSelection(true);
       ((CodeGenWizard) getWizard()).getDef().setUseRa(true);
@@ -128,7 +128,7 @@ public class RaWizardPage extends WizardPage
       });
 
       label = new Label(raContainer, SWT.NULL);
-      label.setText("Resource adapter class name:");
+      label.setText("Resource Adapter class name:");
       raText = new Text(raContainer, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
@@ -150,7 +150,7 @@ public class RaWizardPage extends WizardPage
       });
 
       label = new Label(raContainer, SWT.NULL);
-      label.setText("ResourceAdapter Properties:");
+      label.setText("Resource Adapter properties:");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();

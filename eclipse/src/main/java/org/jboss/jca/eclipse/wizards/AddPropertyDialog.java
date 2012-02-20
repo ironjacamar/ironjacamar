@@ -171,16 +171,13 @@ public class AddPropertyDialog extends Dialog
    {
       if (buttonId == IDialogConstants.OK_ID)
       {
-         //https://bugs.eclipse.org/bugs/show_bug.cgi?id=248316
          name = nameText.getText().trim();
          value = valueText.getText().trim();
-         //fType = fTypeText.getText().trim();
       }
       else
       {
          name = null;
          value = null;
-         //fType = null;
       }
       super.buttonPressed(buttonId);
    }

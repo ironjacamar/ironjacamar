@@ -89,7 +89,7 @@ public class AoWizardPage extends WizardPage
    {
       super("wizardPage");
       setTitle("Create Admin Object");
-      setDescription("Input Admin Object Information.");
+      setDescription("Input admin object information.");
       this.selection = selection;
 
    }
@@ -213,7 +213,7 @@ public class AoWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("Admin object config properties:");
+      label.setText("Admin object properties:");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();

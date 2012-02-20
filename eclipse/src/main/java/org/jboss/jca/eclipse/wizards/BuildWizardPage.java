@@ -53,7 +53,7 @@ public class BuildWizardPage extends WizardPage
    public BuildWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("MBean and build information");
+      setTitle("MBean and Build");
       setDescription("Input mbean and build information.");
       this.selection = selection;
    }
@@ -99,17 +99,26 @@ public class BuildWizardPage extends WizardPage
       label.setText("&Build environment:");
 
       final String[] items =
-      {"ant", "ant+ivy", "maven"};
+      {"Apache Ant", "Apache Ant / Apache Ivy", "Apache Maven"};
       final Combo combo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
       combo.setItems(items);
-      combo.setText("ant");
+      combo.setText("Apache Ant");
       ((CodeGenWizard) getWizard()).getDef().setVersion("ant");
 
       combo.addSelectionListener(new SelectionAdapter()
       {
          public void widgetSelected(SelectionEvent e)
          {
-            ((CodeGenWizard) getWizard()).getDef().setVersion(combo.getText());
+            if (combo.getText().equals("Apache Maven"))
+            {
+               ((CodeGenWizard) getWizard()).getDef().setVersion("maven");
+            } else if (combo.getText().equals("Apache Ant"))
+            {
+               ((CodeGenWizard) getWizard()).getDef().setVersion("ant");
+            } else if (combo.getText().equals("Apache Ant / Apache Ivy"))
+            {
+               ((CodeGenWizard) getWizard()).getDef().setVersion("ant+ivy");
+            }
          }
       });
    }

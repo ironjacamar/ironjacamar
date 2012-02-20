@@ -41,7 +41,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
  */
 public class PropsContentProvider implements IStructuredContentProvider
 {
-   private List elements = new ArrayList();
+   private List<Object> elements = new ArrayList<Object>();
 
    private TableViewer tableViewer;
 
