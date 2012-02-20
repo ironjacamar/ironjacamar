@@ -103,7 +103,7 @@ public class BuildWizardPage extends WizardPage
       final Combo combo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
       combo.setItems(items);
       combo.setText("Apache Ant");
-      ((CodeGenWizard) getWizard()).getDef().setVersion("ant");
+      ((CodeGenWizard) getWizard()).getDef().setBuild("ant");
 
       combo.addSelectionListener(new SelectionAdapter()
       {
@@ -111,13 +111,13 @@ public class BuildWizardPage extends WizardPage
          {
             if (combo.getText().equals("Apache Maven"))
             {
-               ((CodeGenWizard) getWizard()).getDef().setVersion("maven");
+               ((CodeGenWizard) getWizard()).getDef().setBuild("maven");
             } else if (combo.getText().equals("Apache Ant"))
             {
-               ((CodeGenWizard) getWizard()).getDef().setVersion("ant");
+               ((CodeGenWizard) getWizard()).getDef().setBuild("ant");
             } else if (combo.getText().equals("Apache Ant / Apache Ivy"))
             {
-               ((CodeGenWizard) getWizard()).getDef().setVersion("ant+ivy");
+               ((CodeGenWizard) getWizard()).getDef().setBuild("ivy");
             }
          }
       });
