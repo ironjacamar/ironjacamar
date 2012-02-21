@@ -366,10 +366,7 @@ public abstract class AbstractPool implements Pool
       }
 
       // Transaction old connections
-      if (cl == null)
-      {
-         cl = getTransactionOldConnection(trackByTransaction, mcp);
-      }
+      cl = getTransactionOldConnection(trackByTransaction, mcp);
 
       // Creates a new connection with given transaction
       if (cl == null)

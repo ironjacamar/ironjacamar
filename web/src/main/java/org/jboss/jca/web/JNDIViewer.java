@@ -159,7 +159,7 @@ public class JNDIViewer
             }
          }
 
-         buffer.append(" (class: " + binding.getClassName() + ")");
+         buffer.append(" (class: " + className + ")");
 
          buffer.append(NEW_LINE);
          

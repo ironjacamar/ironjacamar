@@ -108,8 +108,8 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
          return false;
       if (!(obj instanceof Connector10Impl))
          return false;
-      Connector10Impl other = (Connector10Impl) obj;
-      return true;
+
+      return super.equals((Connector10Impl) obj);
    }
 
    @Override

@@ -40,10 +40,10 @@ import javax.transaction.xa.XAResource;
  */
 public class TransactionImpl implements Transaction, Serializable
 {
-   private static final long serialVersionUID = 1L;
-   private int status;
-   private Set<Synchronization> syncs;
-   private Set<XAResource> xas;
+   private static final long serialVersionUID = 2L;
+   private transient int status;
+   private transient Set<Synchronization> syncs;
+   private transient Set<XAResource> xas;
 
    /**
     * Constructor

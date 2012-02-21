@@ -238,13 +238,6 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       if (trace)
          log.tracef("popped object: %s", oldKey);
 
-      /*
-      if (!stack.contains(oldKey))
-      {
-         disconnect(oldKey, unsharableResources);
-      }
-      */
-
       if (debug)
       {
          if (closeAll(oldKey.getCMToConnectionsMap()) && error)
@@ -372,80 +365,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       }
 
       KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
-      /*
-      if (!stack.contains(key))
-      {
-         reconnect(key, unsharableResources);
-      }
-      */
-
       stack.addLast(key);
-   }
-
-   /**
-    * The <code>reconnect</code> method gets the cmToConnectionsMap
-    * from objectToConnectionManagerMap, copies it to the key, and
-    * reconnects all the connections in it.
-    *
-    * @param key a <code>KeyConnectionAssociation</code> value
-    * @param unsharableResources a <code>Set</code> value
-    * @exception ResourceException if an error occurs
-    */
-   @SuppressWarnings("unchecked")
-   private void reconnect(KeyConnectionAssociation key, Set unsharableResources) throws ResourceException
-   {
-      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
-         objectToConnectionManagerMap.get(key);
-
-      if (cmToConnectionsMap == null)
-         return;
-
-      key.setCMToConnectionsMap(cmToConnectionsMap);
-      Iterator<Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> cmToConnectionsMapIterator =
-         cmToConnectionsMap.entrySet().iterator();
-
-      while (cmToConnectionsMapIterator.hasNext())
-      {
-         Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> entry =
-            cmToConnectionsMapIterator.next();
-
-         ConnectionCacheListener cm = entry.getKey();
-         CopyOnWriteArrayList<ConnectionRecord> conns =  entry.getValue();
-
-         cm.reconnect(conns, unsharableResources);
-      }
-   }
-
-   /**
-    * Disconnect connections.
-    * @param key key
-    * @param unsharableResources resource
-    * @throws ResourceException exception
-    */
-   @SuppressWarnings("unchecked")
-   private void disconnect(KeyConnectionAssociation key, Set unsharableResources) throws ResourceException
-   {
-      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
-         key.getCMToConnectionsMap();
-
-      if (!cmToConnectionsMap.isEmpty())
-      {
-         objectToConnectionManagerMap.put(key, cmToConnectionsMap);
-
-         Iterator<Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> cmToConnectionsMapIterator =
-            cmToConnectionsMap.entrySet().iterator();
-
-         while (cmToConnectionsMapIterator.hasNext())
-         {
-            Entry<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> entry =
-               cmToConnectionsMapIterator.next();
-
-            ConnectionCacheListener cm = entry.getKey();
-            CopyOnWriteArrayList<ConnectionRecord> conns =  entry.getValue();
-
-            cm.disconnect(conns, unsharableResources);
-         }
-      }
    }
 
    /**

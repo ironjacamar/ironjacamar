@@ -177,6 +177,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       result = prime * result + ((connectionDefinition == null) ? 0 : connectionDefinition.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((transactionSupport == null) ? 0 : transactionSupport.hashCode());
+      result = prime * result + ((reauthenticationSupport == null) ? 0 : reauthenticationSupport.hashCode());
       return result;
    }
 
@@ -234,7 +235,14 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       {
          return false;
       }
-      if (reauthenticationSupport != other.reauthenticationSupport)
+      if (reauthenticationSupport == null)
+      {
+         if (other.reauthenticationSupport != null)
+         {
+            return false;
+         }
+      }
+      else if (!reauthenticationSupport.equals(other.reauthenticationSupport))
       {
          return false;
       }

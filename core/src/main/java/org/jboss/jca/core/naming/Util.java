@@ -45,19 +45,6 @@ class Util
     * @param ctx the parent JNDI Context under which value will be bound
     * @param name the name relative to ctx of the subcontext.
     * @return The new or existing JNDI subcontext
-    * @throws javax.naming.NamingException on any JNDI failure
-    */
-   private static Context createSubcontext(Context ctx, String name) throws NamingException
-   {
-      Name n = ctx.getNameParser("").parse(name);
-      return createSubcontext(ctx, n);
-   }
-
-   /**
-    * Create a subcontext including any intermediate contexts.
-    * @param ctx the parent JNDI Context under which value will be bound
-    * @param name the name relative to ctx of the subcontext.
-    * @return The new or existing JNDI subcontext
     * @throws NamingException on any JNDI failure
     */
    private static Context createSubcontext(Context ctx, Name name) throws NamingException

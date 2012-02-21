@@ -84,10 +84,10 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    private Kernel kernel;
 
    /** Metadata repository */
-   protected MetadataRepository mdr;
+   private MetadataRepository mdr;
 
    /** Driver registry */
-   protected DriverRegistry driverRegistry;
+   private DriverRegistry driverRegistry;
 
    /**
     * Constructor
