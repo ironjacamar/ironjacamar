@@ -8,83 +8,87 @@
   <packaging>jar</packaging>
   <version>0.1</version>
   <url>http://repository.jboss.org</url>
+  <properties>
+    <version.org.jboss.ironjacamar>@VERSION.IRONJACAMAR@</version.org.jboss.ironjacamar>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-spec-api</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-common-api</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-common-spi</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>   
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-common-impl</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-common-impl-papaki</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-core-api</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-core-impl</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-depchain</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
       <type>pom</type>
     </dependency>   
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-deployers-common</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-deployers-fungal</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-embedded-arquillian</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-embedded</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-validator</artifactId>
-      <version>@VERSION.IRONJACAMAR@</version>
+      <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>
 
@@ -101,7 +105,7 @@
       <dependency>
         <groupId>org.jboss.ironjacamar</groupId>
         <artifactId>ironjacamar-depchain</artifactId>
-        <version>@VERSION.IRONJACAMAR@</version>
+        <version>${version.org.jboss.ironjacamar}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -123,6 +127,10 @@
     </plugins>
   </build> 
   <repositories>
+    <repository>
+      <id>jboss</id>
+      <url>http://repository.jboss.org/nexus/content/groups/public</url>
+    </repository>
     <repository>
       <id>fungal</id>
       <url>http://jesperpedersen.github.com/fungal/maven2</url>
