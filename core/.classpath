@@ -12,6 +12,7 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jnpserver.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/validation-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-api-base.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/mockito-all.jar"/>

@@ -8,18 +8,23 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-common"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-container-spi.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-container-test-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-core-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-core-spi.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-junit-core.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jnpserver.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-stdio.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-test-spi.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/hibernate-validator.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-impl-base.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/validation-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-stdio.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api_1.1_spec.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jnpserver.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/validation-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-api-base.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-impl-base.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
