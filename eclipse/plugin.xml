@@ -66,7 +66,7 @@
       </category>
       <wizard
             name="IronJacamar 1.1 project"
-            icon="icons/ij.png"
+            icon="icons/ironjacamar_icon_64px.png"
             category="org.jboss.jca.eclipse.wizards.category"
             hasPages="true"     
             class="org.jboss.jca.eclipse.wizards.CodeGenWizard"
