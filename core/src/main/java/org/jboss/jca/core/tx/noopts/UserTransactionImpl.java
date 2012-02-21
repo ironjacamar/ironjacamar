@@ -43,10 +43,10 @@ import javax.transaction.UserTransaction;
  */
 public class UserTransactionImpl implements UserTransactionProvider, UserTransaction, Serializable
 {
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
    private static final String JNDI_NAME = "java:/UserTransaction";
-   private TxRegistry registry;
-   private UserTransactionRegistry userTransactionRegistry;
+   private transient TxRegistry registry;
+   private transient UserTransactionRegistry userTransactionRegistry;
 
    /**
     * Constructor

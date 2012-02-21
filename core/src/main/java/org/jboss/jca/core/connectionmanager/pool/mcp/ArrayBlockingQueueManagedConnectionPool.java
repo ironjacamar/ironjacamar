@@ -193,7 +193,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (poolConfiguration.getIdleTimeoutMinutes() > 0)
       {
          //Register removal support
-         IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000 * 60);
+         IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
       }
       
       if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
@@ -215,13 +215,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    {
       if (trace)
       {
-         synchronized (cls)
-         {
-            String method = "getConnection(" + subject + ", " + cri + ")";
-            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
-                                                               mcf, clf, pool, poolConfiguration,
-                                                               cls, checkedOut, statistics));
-         }
+         String method = "getConnection(" + subject + ", " + cri + ")";
+         log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                            mcf, clf, pool, poolConfiguration,
+                                                            cls, checkedOut, statistics));
       }
       else if (debug)
       {
@@ -388,7 +385,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          
             checkedOut.remove(cl);
             statistics.setInUsedCount(checkedOut.size());
-            
+
             doDestroy(cl);
             cl = null;
 
@@ -431,13 +428,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    {
       if (trace)
       {
-         synchronized (cls)
-         {
-            String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
-            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
-                                                               mcf, clf, pool, poolConfiguration,
-                                                               cls, checkedOut, statistics));
-         }
+         String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
+         log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                            mcf, clf, pool, poolConfiguration,
+                                                            cls, checkedOut, statistics));
       }
       else if (debug)
       {
@@ -601,7 +595,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    public void removeIdleConnections()
    {
       ArrayList<ConnectionListener> destroy = null;
-      long timeout = System.currentTimeMillis() - (poolConfiguration.getIdleTimeoutMinutes() * 1000 * 60);
+      long timeout = System.currentTimeMillis() - (poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
       
       boolean cont = true;
       while (cont)

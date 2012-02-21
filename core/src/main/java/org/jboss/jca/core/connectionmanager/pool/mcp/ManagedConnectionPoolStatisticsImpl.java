@@ -22,6 +22,9 @@
 
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +43,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoolStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
@@ -58,26 +61,35 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
    private int maxPoolSize;
 
-   private Set<String> names;
-   private Map<String, Class> types;
-   private Map<Locale, ResourceBundle> rbs;
+   private transient Set<String> names;
+   private transient Map<String, Class> types;
+   private transient Map<Locale, ResourceBundle> rbs;
 
-   private AtomicInteger createdCount;
-   private AtomicInteger destroyedCount;
-   private AtomicInteger maxUsedCount;
-   private AtomicLong maxCreationTime;
-   private AtomicInteger maxWaitCount;
-   private AtomicLong maxWaitTime;
-   private AtomicInteger timedOut;
-   private AtomicLong totalBlockingTime;
-   private AtomicLong totalCreationTime;
-   private AtomicInteger inUseCount;
+   private transient AtomicInteger createdCount;
+   private transient AtomicInteger destroyedCount;
+   private transient AtomicInteger maxUsedCount;
+   private transient AtomicLong maxCreationTime;
+   private transient AtomicInteger maxWaitCount;
+   private transient AtomicLong maxWaitTime;
+   private transient AtomicInteger timedOut;
+   private transient AtomicLong totalBlockingTime;
+   private transient AtomicLong totalCreationTime;
+   private transient AtomicInteger inUseCount;
 
    /**
     * Constructor
     * @param maxPoolSize The maximum pool size
     */
    public ManagedConnectionPoolStatisticsImpl(int maxPoolSize)
+   {
+      init(maxPoolSize);
+   }
+
+   /**
+    * Init
+    * @param maxPoolSize The maximum pool size
+    */
+   private void init(int maxPoolSize)
    {
       this.maxPoolSize = maxPoolSize;
 
@@ -467,6 +479,16 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    public void clear()
    {
       // No-op
+   }
+
+   private void writeObject(ObjectOutputStream out) throws IOException
+   {
+      out.writeInt(maxPoolSize);
+   }
+
+   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+   {
+      init(in.readInt());
    }
 
    /**

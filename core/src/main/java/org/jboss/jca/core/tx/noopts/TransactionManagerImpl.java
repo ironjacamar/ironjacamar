@@ -47,6 +47,8 @@ public class TransactionManagerImpl implements TransactionManager
     */
    public TransactionManagerImpl()
    {
+      this.registry = null;
+      this.terminator = null;
    }
 
    /**

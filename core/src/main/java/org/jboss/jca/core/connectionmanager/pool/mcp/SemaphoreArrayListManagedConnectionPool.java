@@ -229,7 +229,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (poolConfiguration.getIdleTimeoutMinutes() > 0)
       {
          //Register removal support
-         IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000 * 60);
+         IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
       }
       
       if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
@@ -642,7 +642,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    public void removeIdleConnections()
    {
       ArrayList<ConnectionListener> destroy = null;
-      long timeout = System.currentTimeMillis() - (poolConfiguration.getIdleTimeoutMinutes() * 1000 * 60);
+      long timeout = System.currentTimeMillis() - (poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
 
       while (true)
       {

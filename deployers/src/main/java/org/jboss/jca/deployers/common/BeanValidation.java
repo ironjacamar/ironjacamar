@@ -54,7 +54,7 @@ public class BeanValidation
 
    private static String factoryName = "java:/ValidatorFactory";
 
-   private ValidatorFactory factory;
+   private volatile ValidatorFactory factory;
 
    /**
     * Constructor
@@ -121,7 +121,7 @@ public class BeanValidation
     * Set the validator factory name
     * @param name The factory name
     */
-   public synchronized static void setValidatorFactoryName(String name)
+   public static void setValidatorFactoryName(String name)
    {
       factoryName = name;
    }
@@ -129,7 +129,7 @@ public class BeanValidation
    /**
     * Init the validator factory
     */
-   private synchronized void initValidatorFactory()
+   private void initValidatorFactory()
    {
       Context context = null;
       try

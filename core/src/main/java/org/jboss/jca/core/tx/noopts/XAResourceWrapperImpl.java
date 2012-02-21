@@ -204,14 +204,4 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
    {
       return jndiName;
    }
-   
-   /**
-    * Return wrapper for given xid.
-    * @param xid xid
-    * @return return wrapper
-    */
-   private Xid convertXid(Xid xid)
-   {
-      return xid;
-   }
 }

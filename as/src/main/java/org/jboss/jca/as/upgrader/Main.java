@@ -50,7 +50,7 @@ public class Main
    /**
     * API artifacts
     */
-   public static final String[] API_ARTIFACTS = {
+   static final String[] API_ARTIFACTS = {
       "ironjacamar-common-api",
       "ironjacamar-common-spi",
       "ironjacamar-core-api"
@@ -59,7 +59,7 @@ public class Main
    /**
     * Implementation artifacts
     */
-   public static final String[] IMPLEMENTATION_ARTIFACTS = {
+   static final String[] IMPLEMENTATION_ARTIFACTS = {
       "ironjacamar-common-impl",
       "ironjacamar-core-impl",
       "ironjacamar-deployers-common",
@@ -69,7 +69,7 @@ public class Main
    /**
     * JDBC artifacts
     */
-   public static final String[] JDBC_ARTIFACTS = {
+   static final String[] JDBC_ARTIFACTS = {
       "ironjacamar-jdbc"
    };
 
@@ -159,7 +159,8 @@ public class Main
 
       delete(toDirectory);
 
-      toDirectory.mkdirs();
+      if (!toDirectory.mkdirs())
+         throw new IOException("Could not create: " + toDirectory);
 
       if (version.endsWith("-SNAPSHOT"))
       {
@@ -458,7 +459,8 @@ public class Main
       File jdbcRoot = new File(ijRoot, "jdbcadapters");
 
       File apiMain = new File(apiRoot, "main");
-      apiMain.mkdirs();
+      if (!apiMain.mkdirs())
+         throw new IOException("Could not create: " + apiMain);
 
       String commonApiVersion = installArtifact(fromDirectory, API_ARTIFACTS[0], apiMain);
       String commonSpiVersion = installArtifact(fromDirectory, API_ARTIFACTS[1], apiMain);
@@ -477,7 +479,8 @@ public class Main
       fw.close();
 
       File implMain = new File(implRoot, "main");
-      implMain.mkdirs();
+      if (!implMain.mkdirs())
+         throw new IOException("Could not create: " + implMain);
 
       String commonImplVersion = installArtifact(fromDirectory, IMPLEMENTATION_ARTIFACTS[0], implMain);
       String coreImplVersion = installArtifact(fromDirectory, IMPLEMENTATION_ARTIFACTS[1], implMain);
@@ -498,7 +501,8 @@ public class Main
       fw.close();
 
       File jdbcMain = new File(jdbcRoot, "main");
-      jdbcMain.mkdirs();
+      if (!jdbcMain.mkdirs())
+         throw new IOException("Could not create: " + jdbcMain);
 
       String jdbcVersion = installArtifact(fromDirectory, JDBC_ARTIFACTS[0], jdbcMain);
 

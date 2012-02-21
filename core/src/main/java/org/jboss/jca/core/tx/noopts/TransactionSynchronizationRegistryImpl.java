@@ -39,10 +39,10 @@ import javax.transaction.TransactionSynchronizationRegistry;
  */
 public class TransactionSynchronizationRegistryImpl implements TransactionSynchronizationRegistry, Serializable
 {
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
    private static final String JNDI_NAME = "java:/TransactionSynchronizationRegistry";
-   private TxRegistry registry;
-   private ConcurrentMap<Long, TxEnv> txe;
+   private transient TxRegistry registry;
+   private transient ConcurrentMap<Long, TxEnv> txe;
 
    /**
     * Constructor
@@ -220,7 +220,7 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
    /**
     * Transaction environment
     */
-   static class TxEnv implements Serializable
+   static class TxEnv
    {
       private static final long serialVersionUID = 1L;
       private Map<Object, Object> envs;

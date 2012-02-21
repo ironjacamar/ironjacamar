@@ -363,8 +363,6 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
          }
       }
 
-      mc = null;
-
       // The managed connection for recovery is now gone
       recoverMC = null;
    }

@@ -25,6 +25,9 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,7 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PoolStatisticsImpl implements PoolStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
@@ -60,11 +64,11 @@ public class PoolStatisticsImpl implements PoolStatistics
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
 
    private int maxPoolSize;
-   private ConcurrentMap<Object, ManagedConnectionPool> mcpPools;
-   private Set<String> names;
-   private Map<String, Class> types;
-   private AtomicBoolean enabled;
-   private Map<Locale, ResourceBundle> rbs;
+   private transient ConcurrentMap<Object, ManagedConnectionPool> mcpPools;
+   private transient Set<String> names;
+   private transient Map<String, Class> types;
+   private transient AtomicBoolean enabled;
+   private transient Map<Locale, ResourceBundle> rbs;
 
    /**
     * Constructor
@@ -72,6 +76,16 @@ public class PoolStatisticsImpl implements PoolStatistics
     * @param mcpPools The pool map
     */
    public PoolStatisticsImpl(int maxPoolSize, ConcurrentMap<Object, ManagedConnectionPool> mcpPools)
+   {
+      init(maxPoolSize, mcpPools);
+   }
+
+   /**
+    * Init
+    * @param maxPoolSize The maximum pool size
+    * @param mcpPools The pool map
+    */
+   private void init(int maxPoolSize, ConcurrentMap<Object, ManagedConnectionPool> mcpPools)
    {
       this.maxPoolSize = maxPoolSize;
       this.mcpPools = mcpPools;
@@ -539,6 +553,16 @@ public class PoolStatisticsImpl implements PoolStatistics
       {
          mcp.getStatistics().clear();
       }
+   }
+
+   private void writeObject(ObjectOutputStream out) throws IOException
+   {
+      out.writeInt(maxPoolSize);
+   }
+
+   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+   {
+      init(in.readInt(), new ConcurrentHashMap<Object, ManagedConnectionPool>());
    }
 
    /**
