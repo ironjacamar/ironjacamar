@@ -23,6 +23,7 @@
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-core-api" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-core-impl" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-depchain" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-deployers-common" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-deployers-fungal" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-embedded-arquillian" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-embedded" rev="${version.ironjacamar}" conf="test"/>

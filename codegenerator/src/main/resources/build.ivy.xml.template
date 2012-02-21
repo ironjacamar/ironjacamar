@@ -42,7 +42,7 @@
   <!-- ================================= 
        Ivy              
        ================================= -->
-  <property name="ivy.version" value="2.2.0-rc1"/>
+  <property name="ivy.version" value="2.2.0"/>
   <property name="ivy.dir" value="${user.home}/.ivy2/cache/org.apache.ivy/jars"/>
   <property name="ivy.jar.name" value="ivy-${ivy.version}.jar"/>
   
