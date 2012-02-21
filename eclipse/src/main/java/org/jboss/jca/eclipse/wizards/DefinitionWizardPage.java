@@ -193,7 +193,16 @@ public class DefinitionWizardPage extends WizardPage
                {"Outbound", "Inbound", "Bidirectional"};
                boundCombo.setItems(newdirect);
                boundCombo.setText("Outbound");
-               annotationshButton.setEnabled(true);
+               if (combo.getText().equals("1.6"))
+               {
+                  annotationshButton.setEnabled(true);
+                  annotationshButton.setSelection(true);
+               }
+               else
+               {
+                  annotationshButton.setSelection(false);
+                  annotationshButton.setEnabled(false);
+               }
             }
          }
       });
