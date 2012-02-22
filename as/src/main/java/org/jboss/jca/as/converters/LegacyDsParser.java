@@ -213,7 +213,7 @@ public class LegacyDsParser extends AbstractParser
       String newConnectionSql = null;
       
       //String driverClass = null;
-      String driver = null;
+      String driver = "";
       
       String xaDataSourceClass = null;
 
@@ -247,7 +247,7 @@ public class LegacyDsParser extends AbstractParser
       
       TransactionIsolation transactionIsolation = TransactionIsolation.TRANSACTION_NONE;
       String securityDomain = DEFAULT_SECURITY_DOMAIN;
-      Extension reauthPlugin = null;
+      //Extension reauthPlugin = null;
       
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
@@ -279,7 +279,7 @@ public class LegacyDsParser extends AbstractParser
                         driver, transactionIsolation, xaDataSourceProperty);
                   xaDsImpl.buildTimeOut(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, 
                         allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout, queryTimeout, useTryLock);
-                  xaDsImpl.buildDsSecurity(userName, password, securityDomain, reauthPlugin);
+                  xaDsImpl.buildDsSecurity(userName, password, securityDomain, null);
                   xaDsImpl.buildStatement(sharePreparedStatements, preparedStatementsCacheSize, trackStatements);
                   xaDsImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail, 
                         validConnectionChecker, checkValidConnectionSql, validateOnMatch, staleConnectionChecker, 
@@ -488,8 +488,8 @@ public class LegacyDsParser extends AbstractParser
    {
       String connectionUrl = null;
       String driverClass = null;
-      String dataSourceClass = null;
-      String driver = null;
+      String dataSourceClass = "";
+      String driver = "";
       Map<String, String> connectionProperties = new HashMap<String, String>();
 
       String urlDelimiter = null;
@@ -517,7 +517,7 @@ public class LegacyDsParser extends AbstractParser
       Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
       Long useTryLock = null;
-      Integer xaResourceTimeout = null;
+      Integer xaResourceTimeout = 0;
       
       Long preparedStatementsCacheSize = null;
       Boolean sharePreparedStatements = Defaults.SHARE_PREPARED_STATEMENTS;
@@ -526,7 +526,7 @@ public class LegacyDsParser extends AbstractParser
       
       TransactionIsolation transactionIsolation = TransactionIsolation.TRANSACTION_NONE;
       String securityDomain = DEFAULT_SECURITY_DOMAIN;
-      Extension reauthPlugin = null;
+      //Extension reauthPlugin = null;
       
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
@@ -552,7 +552,7 @@ public class LegacyDsParser extends AbstractParser
                         driverClass, dataSourceClass, driver, transactionIsolation, connectionProperties);
                   txDsImpl.buildTimeOut(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, 
                         allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout, queryTimeout, useTryLock);
-                  txDsImpl.buildDsSecurity(userName, password, securityDomain, reauthPlugin);
+                  txDsImpl.buildDsSecurity(userName, password, securityDomain, null);
                   txDsImpl.buildStatement(sharePreparedStatements, preparedStatementsCacheSize, trackStatements);
                   txDsImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail, 
                         validConnectionChecker, checkValidConnectionSql, validateOnMatch, staleConnectionChecker, 

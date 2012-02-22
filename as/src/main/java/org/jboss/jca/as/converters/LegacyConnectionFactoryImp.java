@@ -174,7 +174,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    {
       pool = new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, Defaults.FLUSH_STRATEGY);
       this.noTxSeparatePool = noTxSeparatePool;
-      this.interleaving = interleaving;
+      this.setInterleaving(interleaving);
       return this;
    }
    
@@ -317,5 +317,23 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    public TransactionSupportEnum getTransactionSupport()
    {
       return null;
+   }
+   
+   /**
+    * setInterleaving
+    * @param interleaving interleaving
+    */
+   public void setInterleaving(Boolean interleaving)
+   {
+      this.interleaving = interleaving;
+   }
+
+   /**
+    * getInterleaving
+    * @return Boolean interleaving
+    */
+   public Boolean getInterleaving()
+   {
+      return interleaving;
    }
 }

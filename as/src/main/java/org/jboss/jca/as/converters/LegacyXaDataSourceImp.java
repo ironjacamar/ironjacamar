@@ -290,7 +290,7 @@ public class LegacyXaDataSourceImp implements XaDataSource
       this.jndiName = jndiName;
       this.spy = spy;
       this.useCcm = useCcm;
-      this.jta = jta;
+      this.setJta(jta);
       return this;
    }
    
@@ -524,5 +524,23 @@ public class LegacyXaDataSourceImp implements XaDataSource
    public Boolean isWrapXaResource()
    {
       return this.wrapXaDataSource;
+   }
+
+   /**
+    * setJta
+    * @param jta jta
+    */
+   public void setJta(Boolean jta)
+   {
+      this.jta = jta;
+   }
+
+   /**
+    * getJta
+    * @return jta Boolean 
+    */
+   public Boolean getJta()
+   {
+      return jta;
    }
 }
