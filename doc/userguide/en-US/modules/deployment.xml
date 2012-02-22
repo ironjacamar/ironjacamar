@@ -880,8 +880,9 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>driver</code></entry>
                 <entry>
-                  An unique name for the JDBC driver specified in the drivers section.
-                  Or the name of the .jar file if deployed as standalone deployment
+                  <para>An unique name for the JDBC driver specified in the drivers section.
+                  Or the name of the .jar file if deployed as standalone deployment</para>
+                  <para>This element is mandatory when deploying in JBoss Application Server</para>
                 </entry>
               </row>
               <row>
@@ -989,8 +990,9 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>driver</code></entry>
                 <entry>
-                  An unique name for the JDBC driver specified in the drivers section.
-                  Or the name of the .jar file if deployed as standalone deployment
+                  <para>An unique name for the JDBC driver specified in the drivers section.
+                  Or the name of the .jar file if deployed as standalone deployment.</para>
+                  <para>This element is mandatory when deploying in JBoss Application Server</para>
                 </entry>
               </row>
               <row>
@@ -1494,10 +1496,12 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>module</code></entry>
                 <entry>
-                  The module definition for the JDBC driver. The format of a module inside
+                  <para>The module definition for the JDBC driver. The format of a module inside
                   JBoss Application Server 7+ is <code>com.h2database.h2</code> which will
-                  map to the H2 installation under <code>modules/com/h2database/h2/main</code>.
-                  The format for IronJacamar Standalone/Embedded is the name of the .jar file
+                  map to the H2 installation under <code>modules/com/h2database/h2/main</code>. A ':'
+                  can be used to identify the slot - f.ex <code>com.h2database.h2:1.3.159</code>.</para>
+
+                  <para>The format for IronJacamar Standalone/Embedded is the name of the .jar file</para>
                 </entry>
               </row>
               <row>
