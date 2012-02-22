@@ -110,6 +110,7 @@
     <mkdir dir="${target.dir}/sjc/doc/codegenerator"/>
     <mkdir dir="${target.dir}/sjc/doc/datasources"/>
     <mkdir dir="${target.dir}/sjc/doc/validator"/>
+    <mkdir dir="${target.dir}/sjc/doc/licenses"/>
     <mkdir dir="${target.dir}/sjc/lib"/>
     <mkdir dir="${target.dir}/sjc/lib/embedded"/>
     <mkdir dir="${target.dir}/sjc/lib/embedded/arquillian"/>
@@ -265,6 +266,12 @@
     <copy todir="${target.dir}/sjc/doc/datasources" flatten="true">
       <fileset dir="../common/src/test/resources/ds/example">
         <include name="*.xml"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/doc/licenses" flatten="true">
+      <fileset dir="../doc/licenses">
+        <include name="*"/>
       </fileset>
     </copy>
 

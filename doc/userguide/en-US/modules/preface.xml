@@ -9,6 +9,9 @@
       Architecture 1.6 specification.</para>
     
     <para>The specification can be found here: <ulink url="http://www.jcp.org/en/jsr/detail?id=322">http://www.jcp.org/en/jsr/detail?id=322</ulink>.</para>
+
+    <para>The IronJacamar project is licensed under the GNU LESSER GENERAL PUBLIC LICENSE 2.1 (LGPL 2.1) license.</para>
+
   </section>
 
   <section id="whythename">
@@ -55,7 +58,7 @@
   <section id="license">
     <title>License</title>
 
-    <para>Copyright © 2011 Red Hat, Inc. and others.</para>
+    <para>Copyright © 2012 Red Hat, Inc. and others.</para>
     <para>The text of and illustrations in this document are licensed by Red Hat under
       a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA").</para>
     <para>An explanation of CC-BY-SA is available at 
