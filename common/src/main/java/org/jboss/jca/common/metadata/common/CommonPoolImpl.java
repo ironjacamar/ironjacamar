@@ -156,6 +156,13 @@ public class CommonPoolImpl implements CommonPool
       if (this.minPoolSize != null && this.minPoolSize < 0)
          throw new ValidateException(bundle.invalidNegative(Tag.MIN_POOL_SIZE.getLocalName()));
 
+      if (this.minPoolSize != null && this.maxPoolSize != null)
+      {
+         if (minPoolSize.intValue() > maxPoolSize.intValue())
+            throw new ValidateException(bundle.notValidNumber(minPoolSize.toString(),
+                                                              Tag.MIN_POOL_SIZE.getLocalName()));
+      }
+
       if (this.flushStrategy == null)
          throw new ValidateException(bundle.nullValue(Tag.FLUSH_STRATEGY.getLocalName()));
    }
