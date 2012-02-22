@@ -11,6 +11,7 @@
         <!ENTITY metadata SYSTEM "modules/metadata.xml">
         <!ENTITY deployers SYSTEM "modules/deployers.xml">
         <!ENTITY standalone SYSTEM "modules/standalone.xml">
+        <!ENTITY licenses SYSTEM "../../userguide/en-US/modules/licenses.xml">
         ]>
 <book lang="en">
    <bookinfo>
@@ -47,5 +48,7 @@
    &deployers;
 
    &standalone;
+
+   &licenses;
 
 </book>
