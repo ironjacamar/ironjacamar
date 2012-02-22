@@ -17,6 +17,7 @@
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-spec-api</artifactId>
       <version>${version.org.jboss.ironjacamar}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
@@ -124,6 +125,32 @@
           <target>1.5</target>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>**/META-INF/*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-rar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>rar</goal>
+            </goals>
+            <configuration>
+              <raXmlFile>src/main/resources/META-INF/ra.xml</raXmlFile>
+            </configuration>
+        </execution></executions>
+      </plugin>
+
     </plugins>
   </build> 
   <repositories>
