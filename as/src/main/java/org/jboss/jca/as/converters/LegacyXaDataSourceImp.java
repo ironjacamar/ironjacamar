@@ -62,15 +62,15 @@ public class LegacyXaDataSourceImp implements XaDataSource
 
    private final TransactionIsolation transactionIsolation;
 
-   private TimeOut timeOut;
+   private TimeOut timeOut = null;
 
-   private DsSecurity security;
+   private DsSecurity security = null;
 
-   private Statement statement;
+   private Statement statement = null;
 
-   private Validation validation;
+   private Validation validation = null;
 
-   private CommonXaPool xaPool;
+   private CommonXaPool xaPool = null;
 
    private String urlDelimiter;
 

@@ -63,15 +63,15 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
 
    private final TransactionIsolation transactionIsolation;
 
-   private TimeOut timeOut;
+   private TimeOut timeOut = null;
 
-   private DsSecurity security;
+   private DsSecurity security = null;
 
-   private Statement statement;
+   private Statement statement = null;
 
-   private Validation validation;
+   private Validation validation = null;
 
-   private CommonPool pool;
+   private CommonPool pool = null;
 
    private String urlDelimiter;
 

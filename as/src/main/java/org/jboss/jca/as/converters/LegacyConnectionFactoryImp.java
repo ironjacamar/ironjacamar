@@ -55,13 +55,13 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    //private String bootstrapContext;
 
 
-   private CommonTimeOutImpl timeOut;
+   private CommonTimeOutImpl timeOut = null;
    
-   private CommonSecurityImpl security;
+   private CommonSecurityImpl security = null;
    
-   private CommonValidationImpl validation;
+   private CommonValidationImpl validation = null;
 
-   private CommonPool pool;
+   private CommonPool pool = null;
 
    private String jndiName;
    private String rarName;
