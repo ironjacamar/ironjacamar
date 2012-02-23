@@ -4,9 +4,11 @@
   <bean-validation-groups>
     <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16standard303ironjacamar.FirstStep</bean-validation-group>
     <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16standard303ironjacamar.SecondStep</bean-validation-group>
+    <bean-validation-group>javax.validation.groups.Default</bean-validation-group>
   </bean-validation-groups>
   <connection-definitions>
-   <connection-definition class-name="a" jndi-name="aa">
+   <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16standard303ironjacamar.TestManagedConnectionFactory"
+                          jndi-name="java:/eis/ra16standard303ironjacamar">
       <config-property name="myStringProperty">newJCA</config-property>
    </connection-definition>
   </connection-definitions>
