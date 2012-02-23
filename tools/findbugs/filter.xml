@@ -24,6 +24,10 @@
 
   <!--  org.jboss.jca.as filter -->
   <Match>
+    <Class name="org.jboss.jca.as.converters.Main"/>
+    <Bug code="OBL"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.as.upgrader.Main"/>
     <Bug code="OS,OBL"/>
   </Match>
