@@ -62,6 +62,7 @@ public class Ra16User303IronJacamarTestCase
       String packageName = "org.jboss.jca.test.deployers.spec.rars.ra16user303ironjacamar";
       ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName, packageName);
       raa.addAsManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
+      raa.addAsManifestResource(archiveName + "/META-INF/ironjacamar.xml", "ironjacamar.xml");
 
       return raa;
    }

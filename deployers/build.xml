@@ -191,6 +191,13 @@
           includes="org/jboss/jca/test/deployers/spec/rars/multiple/*.class"/>
        <fileset dir="src/test/resources/multiple-partial.rar"/>
     </jar>
+    <jar destfile="${build.deployers.dir}/ra16standard303ironjacamar.rar">
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
+       <fileset dir="${build.deployers.dir}/test"
+          includes="org/jboss/jca/test/deployers/spec/rars/ra16standard303ironjacamar/*.class"/>
+       <fileset dir="src/test/resources/ra16standard303ironjacamar.rar"/>
+    </jar>
    
   </target>
 

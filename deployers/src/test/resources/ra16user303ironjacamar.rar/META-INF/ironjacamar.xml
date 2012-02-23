@@ -4,7 +4,18 @@
 
 <ironjacamar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="../../../../../../common/src/main/resources/schema/ironjacamar_1_0.xsd">
+
+  <bean-validation-groups>
+    <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16user303ironjacamar.CheckCase</bean-validation-group>
+    <bean-validation-group>javax.validation.groups.Default</bean-validation-group>
+  </bean-validation-groups>
   
-   <config-property name="StringRAR">XMLOVERRIDE</config-property>
+  <config-property name="MyStringProperty">XMLOVERRIDE</config-property>
    
+  <connection-definitions>
+   <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16user303ironjacamar.TestManagedConnectionFactory"
+                          jndi-name="java:/eis/ra16user303ironjacamar">
+   </connection-definition>
+  </connection-definitions>
+
 </ironjacamar>
