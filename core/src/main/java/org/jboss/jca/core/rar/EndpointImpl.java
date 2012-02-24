@@ -23,10 +23,13 @@
 package org.jboss.jca.core.rar;
 
 import org.jboss.jca.core.CoreBundle;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.bv.BeanValidationUtil;
 import org.jboss.jca.core.spi.rar.Endpoint;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.resource.ResourceException;
@@ -38,6 +41,7 @@ import javax.validation.Validator;
 import javax.validation.groups.Default;
 
 import org.jboss.logging.Messages;
+import org.jboss.logging.Logger;
 
 /**
  * An endpoint representation
@@ -48,17 +52,30 @@ public class EndpointImpl implements Endpoint
 {
    /** The reference to the resource adapter instance */
    private WeakReference<ResourceAdapter> ra;
+
+   /** Is the resource adapter a 1.6 archive */
+   private boolean is16;
+
+   /** Bean validation groups */
+   private Set<String> beanValidationGroups;
    
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, Endpoint.class.getName());
+
    /**
     * Constructor
     * @param ra The resource adapter reference
+    * @param is26 Is the resource adapter a 1.6 archive
+    * @param bvg The bean validation groups
     */
-   EndpointImpl(WeakReference<ResourceAdapter> ra)
+   EndpointImpl(WeakReference<ResourceAdapter> ra, boolean is16, Set<String> bvg)
    {
       this.ra = ra;
+      this.is16 = is16;
+      this.beanValidationGroups = bvg;
    }
 
    /**
@@ -81,12 +98,52 @@ public class EndpointImpl implements Endpoint
 
       spec.validate();
 
-      Validator validator = BeanValidationUtil.createValidator();
-      Set errors = validator.validate(spec, Default.class);
-
-      if (errors != null && errors.size() > 0)
+      if (is16)
       {
-         throw new ResourceException(bundle.validationException(), new ConstraintViolationException(errors));
+         ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
+         try
+         {
+            SecurityActions.setThreadContextClassLoader(rar.getClass().getClassLoader());
+            
+            List<Class<?>> groups = new ArrayList<Class<?>>(1);
+
+            if (beanValidationGroups != null)
+            {
+               for (String group : beanValidationGroups)
+               {
+                  try
+                  {
+                     Class<?> clz = Class.forName(group, true, rar.getClass().getClassLoader());
+                     groups.add(clz);
+                  }
+                  catch (Throwable t)
+                  {
+                     log.debug("Unable to load bean validation group: " + group, t);
+                  }
+               }
+            }
+
+            if (groups.isEmpty())
+               groups.add(Default.class);
+
+            Validator validator = BeanValidationUtil.createValidator();
+            Class[] vargs = groups.toArray(new Class[groups.size()]);
+
+            Set errors = validator.validate(spec, vargs);
+
+            if (errors != null && errors.size() > 0)
+            {
+               throw new ResourceException(bundle.validationException(), new ConstraintViolationException(errors));
+            }
+         }
+         catch (RuntimeException re)
+         {
+            throw new ResourceException(bundle.validationException(), re);
+         }
+         finally
+         {
+            SecurityActions.setThreadContextClassLoader(oldTCCL);
+         }
       }
 
       rar.endpointActivation(endpointFactory, spec);

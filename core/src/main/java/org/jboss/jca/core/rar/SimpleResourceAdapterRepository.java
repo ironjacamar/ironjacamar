@@ -22,12 +22,15 @@
 
 package org.jboss.jca.core.rar;
 
+import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
+import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
+import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
@@ -295,7 +298,11 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (ra.get() == null)
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
-      return new EndpointImpl(ra);
+      String mdrIdentifier = getMDRIdentifier(ra.get());
+      boolean is16 = is16(mdrIdentifier);
+      Set<String> beanValidationGroups = getBeanValidationGroups(mdrIdentifier);
+
+      return new EndpointImpl(ra, is16, beanValidationGroups);
    }
 
    /**
@@ -490,6 +497,98 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
 
       return result;
    }
+
+   /**
+    * Get MDR identifier
+    * @param ra The resource adapter
+    * @return The identifier
+    */
+   private String getMDRIdentifier(ResourceAdapter ra)
+   {
+      for (String id : mdr.getResourceAdapters())
+      {
+         try
+         {
+            Connector raXml = mdr.getResourceAdapter(id);
+            if (raXml != null && raXml instanceof Connector15)
+            {
+               if (raXml.getResourceadapter() != null)
+               {
+                  ResourceAdapter1516 ra1516 = (ResourceAdapter1516)raXml.getResourceadapter();
+                  if (ra1516.getResourceadapterClass() != null && !ra1516.getResourceadapterClass().equals(""))
+                  {
+                     if (ra.getClass().getName().equals(ra1516.getResourceadapterClass()))
+                        return id;
+                  }
+               }
+            }
+         }
+         catch (Throwable t)
+         {
+            log.debug("Exception while loading id: " + id, t);
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Is the resource adapter a 1.6 archive
+    * @param id The MDR identifier
+    * @return True if 1.6; otherwise false
+    */
+   private boolean is16(String id)
+   {
+      if (id == null || id.equals(""))
+         return false;
+
+      try
+      {
+         Connector raXml = mdr.getResourceAdapter(id);
+         if (raXml != null)
+         {
+            return (raXml instanceof Connector16);
+         }
+      }
+      catch (Throwable t)
+      {
+         log.debug("Exception while loading ra.xml: " + id, t);
+      }
+
+      return false;
+   }
+
+   /**
+    * Get the bean validation groups
+    * @param id The MDR identifier
+    * @return The groups; <code>null</code> if none were found
+    */
+   private Set<String> getBeanValidationGroups(String id)
+   {
+      if (id == null || id.equals(""))
+         return null;
+
+      try
+      {
+         IronJacamar ij = mdr.getIronJacamar(id);
+         if (ij != null && ij.getBeanValidationGroups() != null && ij.getBeanValidationGroups().size() > 0)
+         {
+            Set<String> groups = new HashSet<String>();
+            for (String group : ij.getBeanValidationGroups())
+            {
+               groups.add(group);
+            }
+            return groups;
+         }
+      }
+      catch (Throwable t)
+      {
+         log.debug("Exception while loading ironjacamar.xml: " + id, t);
+      }
+
+      return null;
+   }
+
 
    /**
     * String representation
