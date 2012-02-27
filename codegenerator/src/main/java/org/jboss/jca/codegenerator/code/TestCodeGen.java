@@ -247,7 +247,15 @@ public class TestCodeGen extends AbstractCodeGen
          out.write("/** Resource */");
          writeEol(out);
          writeIndent(out, indent);
-         out.write("@Resource(mappedName = \"java:/eis/" + def.getMcfDefs().get(num).getMcfClass() + "\")");
+         if (def.getMcfDefs().get(num).isUseCciConnection())
+         {
+            out.write("@Resource(mappedName = \"java:/eis/" + 
+                      def.getMcfDefs().get(num).getCciConnFactoryClass() + "\")");
+         }
+         else
+         {
+            out.write("@Resource(mappedName = \"java:/eis/" + def.getMcfDefs().get(num).getCfInterfaceClass() + "\")");
+         }
          writeEol(out);
          writeIndent(out, indent);
          if (def.getMcfDefs().get(num).isUseCciConnection())

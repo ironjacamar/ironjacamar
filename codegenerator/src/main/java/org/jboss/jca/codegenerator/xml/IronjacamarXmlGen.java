@@ -68,11 +68,22 @@ public class IronjacamarXmlGen extends AbstractXmlGen
          strMcf.append(def.getRaPackage());
          strMcf.append(".");
          strMcf.append(def.getMcfDefs().get(num).getMcfClass());
-         strMcf.append("\" enabled=\"true\" "); 
-         strMcf.append("jndi-name=\"java:/eis/");
-         strMcf.append(def.getMcfDefs().get(num).getMcfClass());
-         strMcf.append("\" use-java-context=\"true\" ");
-         strMcf.append("pool-name=\"" + def.getMcfDefs().get(num).getMcfClass());
+         strMcf.append("\" ");
+
+         if (def.getMcfDefs().get(num).isUseCciConnection())
+         {
+            strMcf.append("jndi-name=\"java:/eis/");
+            strMcf.append(def.getMcfDefs().get(num).getCciConnFactoryClass());
+            strMcf.append("\" ");
+            strMcf.append("pool-name=\"" + def.getMcfDefs().get(num).getCciConnFactoryClass());
+         }
+         else
+         {
+            strMcf.append("jndi-name=\"java:/eis/");
+            strMcf.append(def.getMcfDefs().get(num).getCfInterfaceClass());
+            strMcf.append("\" ");
+            strMcf.append("pool-name=\"" + def.getMcfDefs().get(num).getCfInterfaceClass());
+         }
          strMcf.append("\">\n");
          
          StringBuilder strMcfProps = new StringBuilder();
@@ -94,8 +105,8 @@ public class IronjacamarXmlGen extends AbstractXmlGen
             strAo.append(def.getRaPackage());
             strAo.append(".");
             strAo.append(def.getAdminObjects().get(i).getAdminObjectClass());
-            strAo.append("\" jndi-name=\"java:/");
-            strAo.append(def.getAdminObjects().get(i).getAdminObjectClass());
+            strAo.append("\" jndi-name=\"java:/eis/ao/");
+            strAo.append(def.getAdminObjects().get(i).getAdminObjectInterface());
             strAo.append("\">\n");
             getPropsString(strAo, def.getAdminObjects().get(i).getAoConfigProps(), 6);
             strAo.append("    </admin-object>\n");
