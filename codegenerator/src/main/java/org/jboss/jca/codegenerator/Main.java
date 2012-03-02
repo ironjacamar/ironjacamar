@@ -26,9 +26,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -60,7 +62,7 @@ public class Main
       String outputDir = "out"; //default output directory
       String defxml = null;
       int arg = 0;
- 
+
       if (args.length > 0)
       {
          while (args.length > arg + 1)
@@ -172,6 +174,7 @@ public class Main
    {
       BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
       Definition def = new Definition();
+      Set<String> classes = new HashSet<String>();
       
       //profile version
       String version = null;
@@ -303,6 +306,7 @@ public class Main
          System.out.print(rb.getString("ra.class.name"));
          System.out.print("[" + def.getRaClass() + "]: ");
          String raClassName = in.readLine();
+         classes.add(raClassName);
          if (raClassName != null && !raClassName.equals(""))
          {
             def.setRaClass(raClassName);
@@ -324,10 +328,15 @@ public class Main
          do
          {
             McfDef mcfdef = new McfDef(mcfID, def);
-            
-            System.out.print(rb.getString("mcf.class.name"));
-            System.out.print("[" + mcfdef.getMcfClass() + "]: ");
-            String mcfClassName = in.readLine();
+            String mcfClassName = "";
+            do
+            {
+               System.out.print(rb.getString("mcf.class.name"));
+               System.out.print("[" + mcfdef.getMcfClass() + "]: ");
+               mcfClassName = in.readLine();
+            }
+            while (classes.contains(mcfClassName) && !mcfClassName.equals(""));
+            classes.add(mcfClassName);
             if (mcfClassName != null && !mcfClassName.equals(""))
             {
                mcfdef.setMcfClass(mcfClassName);
@@ -353,9 +362,16 @@ public class Main
                }
             }
             
-            System.out.print(rb.getString("mc.class.name"));
-            System.out.print("[" + mcfdef.getMcClass() + "]: ");
-            String mcClassName = in.readLine();
+            String mcClassName = "";
+            do
+            {
+               System.out.print(rb.getString("mc.class.name"));
+               System.out.print("[" + mcfdef.getMcClass() + "]: ");
+               mcClassName = in.readLine();
+            }
+            while (classes.contains(mcClassName) && !mcClassName.equals(""));
+            classes.add(mcClassName);
+
             if (mcClassName != null && !mcClassName.equals(""))
                mcfdef.setMcClass(mcClassName);
             
@@ -373,27 +389,51 @@ public class Main
             
             if (!mcfdef.isUseCciConnection())
             {
-               System.out.print(rb.getString("cf.interface.name"));
-               System.out.print("[" + mcfdef.getCfInterfaceClass() + "]: ");
-               String cfInterfaceName = in.readLine();
+               String cfInterfaceName = "";
+               do
+               {
+                  System.out.print(rb.getString("cf.interface.name"));
+                  System.out.print("[" + mcfdef.getCfInterfaceClass() + "]: ");
+                  cfInterfaceName = in.readLine();
+               }
+               while (classes.contains(cfInterfaceName) && !cfInterfaceName.equals(""));
+               classes.add(cfInterfaceName);
                if (cfInterfaceName != null && !cfInterfaceName.equals(""))
                   mcfdef.setCfInterfaceClass(cfInterfaceName);
                
-               System.out.print(rb.getString("cf.class.name"));
-               System.out.print("[" + mcfdef.getCfClass() + "]: ");
-               String cfClassName = in.readLine();
+               String cfClassName = "";
+               do
+               {
+                  System.out.print(rb.getString("cf.class.name"));
+                  System.out.print("[" + mcfdef.getCfClass() + "]: ");
+                  cfClassName = in.readLine();
+               }
+               while (classes.contains(cfClassName) && !cfClassName.equals(""));
+               classes.add(cfClassName);
                if (cfClassName != null && !cfClassName.equals(""))
                   mcfdef.setCfClass(cfClassName);
-     
-               System.out.print(rb.getString("conn.interface.name"));
-               System.out.print("[" + mcfdef.getConnInterfaceClass() + "]: ");
-               String connInterfaceName = in.readLine();
+
+               String connInterfaceName = "";
+               do
+               {
+                  System.out.print(rb.getString("conn.interface.name"));
+                  System.out.print("[" + mcfdef.getConnInterfaceClass() + "]: ");
+                  connInterfaceName = in.readLine();
+               }
+               while (classes.contains(connInterfaceName) && !connInterfaceName.equals(""));
+               classes.add(connInterfaceName);
                if (connInterfaceName != null && !connInterfaceName.equals(""))
                   mcfdef.setConnInterfaceClass(connInterfaceName);
                
-               System.out.print(rb.getString("conn.class.name"));
-               System.out.print("[" + mcfdef.getConnImplClass() + "]: ");
-               String connImplName = in.readLine();
+               String connImplName = "";
+               do
+               {
+                  System.out.print(rb.getString("conn.class.name"));
+                  System.out.print("[" + mcfdef.getConnImplClass() + "]: ");
+                  connImplName = in.readLine();
+               }
+               while (classes.contains(connImplName) && !connImplName.equals(""));
+               classes.add(connImplName);
                if (connImplName != null && !connImplName.equals(""))
                   mcfdef.setConnImplClass(connImplName);
                
@@ -432,10 +472,16 @@ public class Main
       //inbound
       if (def.isSupportInbound())
       {
+         String mlClassName = "";
+         do
+         {
+            System.out.print(rb.getString("ml.interface.name"));
+            System.out.print("[" + def.getMlClass() + "]: ");
+            mlClassName = in.readLine();
+         }
+         while (classes.contains(mlClassName) && !mlClassName.equals(""));
+         classes.add(mlClassName);
          boolean defaultPackage = true;
-         System.out.print(rb.getString("ml.interface.name"));
-         System.out.print("[" + def.getMlClass() + "]: ");
-         String mlClassName = in.readLine();
          if (mlClassName != null && !mlClassName.equals(""))
          {
             def.setMlClass(mlClassName);
@@ -449,18 +495,30 @@ public class Main
          }
          def.setDefaultPackageInbound(defaultPackage);
 
-         System.out.print(rb.getString("as.class.name"));
-         System.out.print("[" + def.getAsClass() + "]: ");
-         String asClassName = in.readLine();
+         String asClassName = "";
+         do
+         {
+            System.out.print(rb.getString("as.class.name"));
+            System.out.print("[" + def.getAsClass() + "]: ");
+            asClassName = in.readLine();
+         }
+         while (classes.contains(asClassName) && !asClassName.equals(""));
+         classes.add(asClassName);
          if (asClassName != null && !asClassName.equals(""))
             def.setAsClass(asClassName);
          
          List<ConfigPropType> asProps = inputProperties("as", in, true);
          def.setAsConfigProps(asProps);
          
-         System.out.print(rb.getString("acti.class.name"));
-         System.out.print("[" + def.getActivationClass() + "]: ");
-         String actiClassName = in.readLine();
+         String actiClassName = "";
+         do
+         {
+            System.out.print(rb.getString("acti.class.name"));
+            System.out.print("[" + def.getActivationClass() + "]: ");
+            actiClassName = in.readLine();
+         }
+         while (classes.contains(actiClassName) && !actiClassName.equals(""));
+         classes.add(actiClassName);
          if (actiClassName != null && !actiClassName.equals(""))
             def.setActivationClass(actiClassName);
       }
@@ -497,9 +555,17 @@ public class Main
       {
          String strOrder = numOfAo > 0 ? Integer.valueOf(numOfAo).toString() : "";
          AdminObjectType aoType = new AdminObjectType();
-         System.out.print(rb.getString("adminobject.interface.name"));
-         System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectInterface]: ");
-         String aoInterfaceName = in.readLine();
+         
+         String aoInterfaceName = "";
+         do
+         {
+            System.out.print(rb.getString("adminobject.interface.name"));
+            System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectInterface]: ");
+            aoInterfaceName = in.readLine();
+         }
+         while (classes.contains(aoInterfaceName) && !aoInterfaceName.equals(""));
+         classes.add(aoInterfaceName);
+         
          if (aoInterfaceName != null && !aoInterfaceName.equals(""))
          {
             aoType.setAdminObjectInterface(aoInterfaceName);
@@ -509,9 +575,15 @@ public class Main
             aoType.setAdminObjectInterface(def.getDefaultValue() + strOrder + "AdminObjectInterface");
          }
          
-         System.out.print(rb.getString("adminobject.class.name"));
-         System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectImpl]: ");
-         String aoClassName = in.readLine();
+         String aoClassName = "";
+         do
+         {
+            System.out.print(rb.getString("adminobject.class.name"));
+            System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectImpl]: ");
+            aoClassName = in.readLine();
+         }
+         while (classes.contains(aoClassName) && !aoClassName.equals(""));
+         classes.add(aoClassName);
          if (aoClassName != null && !aoClassName.equals(""))
          {
             aoType.setAdminObjectClass(aoClassName);

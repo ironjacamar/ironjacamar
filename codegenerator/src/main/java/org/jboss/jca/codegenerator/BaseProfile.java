@@ -433,17 +433,36 @@ public class BaseProfile implements Profile
    {
       try
       {
-         outputDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
+         String resourceDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
             "main" + File.separatorChar + "resources";
-         FileWriter ijfw = Utils.createFile("ironjacamar.xml", outputDir + File.separatorChar + "META-INF");
-         IronjacamarXmlGen ijxGen = new IronjacamarXmlGen();
-         ijxGen.generate(def, ijfw);
-         ijfw.close();
+         writeIronjacamarXml(def, resourceDir);
+
+         if (def.getBuild().equals("maven"))
+         {
+            String rarDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
+               "main" + File.separatorChar + "rar";
+            writeIronjacamarXml(def, rarDir);
+         }
       }
       catch (IOException ioe)
       {
          ioe.printStackTrace();
       }
+   }
+
+
+   /**
+    * writeIronjacamarXml
+    * @param def Definition
+    * @param outputDir output directory
+    * @throws IOException output exception
+    */
+   private void writeIronjacamarXml(Definition def, String outputDir) throws IOException
+   {
+      FileWriter ijfw = Utils.createFile("ironjacamar.xml", outputDir + File.separatorChar + "META-INF");
+      IronjacamarXmlGen ijxGen = new IronjacamarXmlGen();
+      ijxGen.generate(def, ijfw);
+      ijfw.close();
    }
    
    /**
