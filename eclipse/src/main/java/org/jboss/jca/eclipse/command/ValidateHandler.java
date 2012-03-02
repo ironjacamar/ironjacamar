@@ -34,17 +34,17 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
-public class BuildHandler extends AbstractHandler
+public class ValidateHandler extends AbstractHandler
 {
    /**
     * The constructor.
     */
-   public BuildHandler()
+   public ValidateHandler()
    {
    }
 
    /**
-    * the command has been executed, so extract extract the needed information
+    * the command has been executed, so extract the needed information
     * from the application context.
     * 
     * @param event ExecutionEvent
@@ -54,7 +54,7 @@ public class BuildHandler extends AbstractHandler
    public Object execute(ExecutionEvent event) throws ExecutionException
    {
       IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-      MessageDialog.openInformation(window.getShell(), "Ironjacamar-eclipse", "Hello, Eclipse world");
+      MessageDialog.openInformation(window.getShell(), "Ironjacamar-eclipse", "Ironjacamar Validation");
       return null;
    }
 }

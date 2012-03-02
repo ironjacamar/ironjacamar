@@ -9,24 +9,39 @@
             id="ironjacamar-eclipse.commands.category">
       </category>
       <command
-            name="Build Command"
+            name="Validate Command"
             categoryId="ironjacamar-eclipse.commands.category"
-            id="ironjacamar-eclipse.commands.buildCommand">
+            id="ironjacamar-eclipse.commands.validateCommand">
+      </command>
+      <command
+            name="Deploy Command"
+            categoryId="ironjacamar-eclipse.commands.category"
+            id="ironjacamar-eclipse.commands.deployCommand">
       </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            commandId="ironjacamar-eclipse.commands.buildCommand"
-            class="org.jboss.jca.eclipse.command.BuildHandler">
+            commandId="ironjacamar-eclipse.commands.validateCommand"
+            class="org.jboss.jca.eclipse.command.ValidateHandler">
+      </handler>
+      <handler
+            commandId="ironjacamar-eclipse.commands.deployCommand"
+            class="org.jboss.jca.eclipse.command.DeployHandler">
       </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            commandId="ironjacamar-eclipse.commands.buildCommand"
+            commandId="ironjacamar-eclipse.commands.validateCommand"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+6"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            commandId="ironjacamar-eclipse.commands.deployCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+7"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
    </extension>
@@ -39,9 +54,14 @@
                mnemonic="M"
                id="ironjacamar-eclipse.menus.buildMenu">
             <command
-                  commandId="ironjacamar-eclipse.commands.buildCommand"
-                  mnemonic="S"
-                  id="ironjacamar-eclipse.menus.buildCommand">
+                  commandId="ironjacamar-eclipse.commands.validateCommand"
+                  mnemonic="V"
+                  id="ironjacamar-eclipse.menus.validateCommand">
+            </command>
+            <command
+                  commandId="ironjacamar-eclipse.commands.deployCommand"
+                  mnemonic="D"
+                  id="ironjacamar-eclipse.menus.deployCommand">
             </command>
          </menu>
       </menuContribution>
@@ -50,10 +70,16 @@
          <toolbar
                id="ironjacamar-eclipse.toolbars.buildToolbar">
             <command
-                  commandId="ironjacamar-eclipse.commands.buildCommand"
-                  icon="icons/build.png"
-                  tooltip="Say hello world"
-                  id="ironjacamar-eclipse.toolbars.buildCommand">
+                  commandId="ironjacamar-eclipse.commands.validateCommand"
+                  icon="icons/validation_icon_16px.png"
+                  tooltip="Validate Ironjacamar project"
+                  id="ironjacamar-eclipse.toolbars.validateCommand">
+            </command>
+            <command
+                  commandId="ironjacamar-eclipse.commands.deployCommand"
+                  icon="icons/deploy_icon_16px.png"
+                  tooltip="Deploy Ironjacamar project"
+                  id="ironjacamar-eclipse.toolbars.deployCommand">
             </command>
          </toolbar>
       </menuContribution>
