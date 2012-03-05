@@ -755,6 +755,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param url url
     * @param deploymentName The deployment name
     * @param activateDeployment activateDeployment
+    * @param resourceAdapter The resource adapter instance
     * @param aosRaXml Admin object definitions from -ra.xml
     * @param aosIronJacamar Admin object definitions from ironjacamar.xml
     * @param aos The resulting array of admin objects
@@ -765,7 +766,7 @@ public abstract class AbstractResourceAdapterDeployer
     */
    protected Set<Failure> initAdminObject(Connector cmd, ClassLoader cl, List<Validate> archiveValidationObjects,
       List<Object> beanValidationObjects, Set<Failure> failures,
-      URL url, String deploymentName, boolean activateDeployment,
+      URL url, String deploymentName, boolean activateDeployment, ResourceAdapter resourceAdapter,
       List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
       List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
       List<Object> aos, List<String> aoJndiNames,
@@ -845,6 +846,8 @@ public abstract class AbstractResourceAdapterDeployer
                                     }
                                  }
                               }
+
+                              associateResourceAdapter(resourceAdapter, ao);
 
                               if (trace)
                               {
@@ -2071,8 +2074,10 @@ public abstract class AbstractResourceAdapterDeployer
                                           failures, url, activateDeployment);
 
             failures = initAdminObject(cmd, cl, archiveValidationObjects, beanValidationObjects, failures, url,
-               deploymentName, activateDeployment, raxml != null ? raxml.getAdminObjects() : null, ijmd != null
-                  ? ijmd.getAdminObjects() : null, aos, aoJndiNames, activateDeployment ? mgtConnector : null);
+                                       deploymentName, activateDeployment, resourceAdapter, 
+                                       raxml != null ? raxml.getAdminObjects() : null, ijmd != null
+                                       ? ijmd.getAdminObjects() : null, aos, aoJndiNames,
+                                       activateDeployment ? mgtConnector : null);
          }
 
          // Archive validation
