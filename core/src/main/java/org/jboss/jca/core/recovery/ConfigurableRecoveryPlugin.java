@@ -175,9 +175,9 @@ public class ConfigurableRecoveryPlugin implements RecoveryPlugin
             {
                try
                {
-                  Method method = c.getClass().getMethod(closeMethod, (Class<?>)null);
+                  Method method = c.getClass().getMethod(closeMethod, (Class<?>[])null);
                   SecurityActions.setAccessible(method, true);
-                  method.invoke(c, (Object)null);
+                  method.invoke(c, (Object[])null);
                }
                catch (Throwable t)
                {
