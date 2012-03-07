@@ -70,7 +70,8 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
 
    /**
     * Default constructor
-    * @param mcf mcf
+    * @param mcf The managed connection factory
+    * @param cm The connection manager
     */
    public LazyManagedConnection(LazyManagedConnectionFactory mcf, ConnectionManager cm)
    {

@@ -44,7 +44,7 @@ public class LazyResourceAdapter implements ResourceAdapter
    private static Logger log = Logger.getLogger(LazyResourceAdapter.class);
 
    /** Enable */
-   private Boolean Enable;
+   private Boolean enable;
 
    /**
     * Default constructor
@@ -56,11 +56,11 @@ public class LazyResourceAdapter implements ResourceAdapter
 
    /** 
     * Set Enable
-    * @param Enable The value
+    * @param value The value
     */
-   public void setEnable(Boolean Enable)
+   public void setEnable(Boolean value)
    {
-      this.Enable = Enable;
+      this.enable = value;
    }
 
    /** 
@@ -69,7 +69,7 @@ public class LazyResourceAdapter implements ResourceAdapter
     */
    public Boolean getEnable()
    {
-      return Enable;
+      return enable;
    }
 
    /**
@@ -140,8 +140,8 @@ public class LazyResourceAdapter implements ResourceAdapter
    public int hashCode()
    {
       int result = 17;
-      if (Enable != null)
-         result += 31 * result + 7 * Enable.hashCode();
+      if (enable != null)
+         result += 31 * result + 7 * enable.hashCode();
       else
          result += 31 * result + 7;
       return result;
@@ -165,10 +165,10 @@ public class LazyResourceAdapter implements ResourceAdapter
       boolean result = true; 
       if (result)
       {
-         if (Enable == null)
+         if (enable == null)
             result = obj.getEnable() == null;
          else
-            result = Enable.equals(obj.getEnable());
+            result = enable.equals(obj.getEnable());
       }
       return result;
    }

@@ -40,8 +40,8 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
 
-import org.jboss.logging.Messages;
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * An endpoint representation
@@ -76,7 +76,7 @@ public class EndpointImpl implements Endpoint
    /**
     * Constructor
     * @param ra The resource adapter reference
-    * @param is26 Is the resource adapter a 1.6 archive
+    * @param is16 Is the resource adapter a 1.6 archive
     * @param bvg The bean validation groups
     */
    EndpointImpl(WeakReference<ResourceAdapter> ra, boolean is16, Set<String> bvg)

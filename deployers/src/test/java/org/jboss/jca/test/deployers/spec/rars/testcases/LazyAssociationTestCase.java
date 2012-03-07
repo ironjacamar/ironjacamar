@@ -22,7 +22,6 @@
 
 package org.jboss.jca.test.deployers.spec.rars.testcases;
 
-import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 import org.jboss.jca.test.deployers.spec.ArquillianJCATestUtils;
 import org.jboss.jca.test.deployers.spec.rars.lazy.LazyConnection;
 import org.jboss.jca.test.deployers.spec.rars.lazy.LazyConnectionFactory;
@@ -32,7 +31,6 @@ import javax.annotation.Resource;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
-import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

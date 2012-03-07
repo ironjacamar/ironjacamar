@@ -22,8 +22,8 @@
 
 package org.jboss.jca.deployers;
 
-import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Message;
+import org.jboss.logging.MessageBundle;
 
 /**
  * The deployers bundle.

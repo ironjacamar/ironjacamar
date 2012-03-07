@@ -22,8 +22,8 @@
 
 package org.jboss.jca.common;
 
-import org.jboss.logging.MessageBundle;
 import org.jboss.logging.Message;
+import org.jboss.logging.MessageBundle;
 
 /**
  * The common bundle.
