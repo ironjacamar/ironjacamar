@@ -107,7 +107,7 @@
          includes="**/jdbc/**,**/*.properties">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar JDBC Resource Adapter"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -135,7 +135,7 @@
          includes="**/mail/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Mail Resource Adapter"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -325,7 +325,7 @@
          includes="**/adapters/jdbc/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -364,7 +364,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -381,7 +381,7 @@
          includes="**/adapters/jdbc/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -396,7 +396,7 @@
          includes="**/adapters/jdbc/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -411,7 +411,7 @@
          includes="**/adapters/mail/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters Mail - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -425,7 +425,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -439,7 +439,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -477,7 +477,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters Mail - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>

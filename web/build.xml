@@ -68,7 +68,7 @@
          excludes="**/console/**,**/*.java">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Web"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -84,7 +84,7 @@
          excludes="**/*.java">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Web Console"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>

@@ -102,9 +102,9 @@ public class DefaultRecoveryPlugin implements RecoveryPlugin
          {
             try
             {
-               Method method = c.getClass().getMethod("close", (Class<?>)null);
+               Method method = c.getClass().getMethod("close", (Class<?>[])null);
                SecurityActions.setAccessible(method, true);
-               method.invoke(c, (Object)null);
+               method.invoke(c, (Object[])null);
             }
             catch (Throwable t)
             {

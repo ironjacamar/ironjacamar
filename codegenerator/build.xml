@@ -76,7 +76,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Codegenerator"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
         <attribute name="Main-Class" value="org.jboss.jca.codegenerator.Main"/>
@@ -239,7 +239,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Codegenerator - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -274,7 +274,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Codegenerator - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>

@@ -65,6 +65,14 @@ public class EndpointImpl implements Endpoint
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, Endpoint.class.getName());
 
+   /** Is bean validation for inflow enabled */
+   private static boolean bvEnabled;
+
+   static
+   {
+      bvEnabled = Boolean.valueOf(SecurityActions.getSystemProperty("ironjacamar.bv.inflow", "true"));
+   }
+
    /**
     * Constructor
     * @param ra The resource adapter reference
@@ -96,9 +104,7 @@ public class EndpointImpl implements Endpoint
       if (rar == null)
          throw new ResourceException(bundle.resourceAdapterInstanceNotActive());
 
-      spec.validate();
-
-      if (is16)
+      if (is16 && bvEnabled)
       {
          ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
          try
@@ -144,6 +150,15 @@ public class EndpointImpl implements Endpoint
          {
             SecurityActions.setThreadContextClassLoader(oldTCCL);
          }
+      }
+
+      try
+      {
+         spec.validate();
+      }
+      catch (UnsupportedOperationException uoe)
+      {
+         // Ignore
       }
 
       rar.endpointActivation(endpointFactory, spec);
