@@ -98,7 +98,7 @@
          includes="**/*.dtd,**/*.xsd,**/common/api/**">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common API"/>
-	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
 	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -113,7 +113,7 @@
          includes="**/common/spi/**">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common SPI"/>
-	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
 	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -128,7 +128,7 @@
          excludes="**/*.java, **/common/api/**, **/common/spi/**, **/papaki/**">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common Implementation"/>
-	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
 	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -145,7 +145,7 @@
          includes="**/papaki/**">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki SPI Implementation"/>
-	<attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
 	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -306,7 +306,7 @@
          includes="**/common/api/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common API - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -321,7 +321,7 @@
          includes="**/common/spi/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common SPI - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -336,7 +336,7 @@
          excludes="**/common/api/**,**/common/spi/**,**/papaki/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -376,7 +376,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common API - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -414,7 +414,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common SPI - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -454,7 +454,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -472,7 +472,7 @@
          includes="**/papaki/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -510,7 +510,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
