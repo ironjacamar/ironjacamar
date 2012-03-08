@@ -366,13 +366,14 @@
   <target name="artifacts-base">
     <!-- Common -->
     <jar destfile="${target.dir}/${name}-deployers-common-sources.jar"
-         basedir="src/main/java"
          index="true"
          indexMetaInf="true"
          update="true"
-         level="9"
-         includes="**/deployers/**"
-         excludes="**/deployers/fungal/**">
+         level="9">
+      <fileset dir="src/main/java"
+               excludes="**/deployers/fungal/**"/>
+      <fileset dir="${build.deployers.dir}/impl"
+               includes="**/*.java"/>
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers Common - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
