@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.as.upgrader;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import javax.xml.stream.XMLInputFactory;
@@ -38,8 +39,9 @@ public class MavenMetadata
     * Get the version from the specified url
     * @param url The url
     * @return The value
+    * @exception IOException Thrown if the version can't be resolved
     */
-   public static String getVersion(String url)
+   public static String getVersion(String url) throws IOException
    {
       try
       {
@@ -51,7 +53,9 @@ public class MavenMetadata
          XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
          XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(sr);
 
-         while (xmlStreamReader.hasNext())
+         String version = null;
+
+         while (version == null && xmlStreamReader.hasNext())
          {
             int eventCode = xmlStreamReader.next();
 
@@ -61,20 +65,23 @@ public class MavenMetadata
 
                   if ("value".equals(xmlStreamReader.getLocalName()))
                   {
-                     return readString(xmlStreamReader);
+                     version = readString(xmlStreamReader);
                   }
 
                   break;
                default :
             }
          }
+
+         if (version != null)
+            return version;
       }
       catch (Throwable t)
       {
-         // Nothing to do
+         throw new IOException("Unable to read: " + url, t);
       }
 
-      return null;
+      throw new IOException("Unable to read: " + url);
    }
 
    /**
