@@ -92,7 +92,7 @@
          excludes="**/fungal/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers - Common"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -110,7 +110,7 @@
          includes="**/fungal/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers - Fungal"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -375,7 +375,7 @@
          excludes="**/deployers/fungal/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers Common - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -415,7 +415,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers Common - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -433,7 +433,7 @@
          includes="**/deployers/fungal/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers Fungal - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -471,7 +471,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Deployers Fungal - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>

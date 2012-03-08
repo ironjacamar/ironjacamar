@@ -116,7 +116,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar eclipse - Sources"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
@@ -151,7 +151,7 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar eclipse - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${major}.${minor}.${patch}.${type}"/>
+        <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
