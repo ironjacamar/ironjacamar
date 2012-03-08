@@ -386,12 +386,14 @@
     </jar>
 
     <jar destfile="${target.dir}/${name}-core-impl-sources.jar"
-         basedir="src/main/java"
          index="true"
          indexMetaInf="true"
          update="true"
-         level="9"
-         excludes="**/core/api/**,**/core/spi/**">
+         level="9">
+      <fileset dir="src/main/java"
+               excludes="**/core/api/**,**/core/spi/**"/>
+      <fileset dir="${build.core.dir}/impl"
+               includes="**/*.java"/>
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core Implementation - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>

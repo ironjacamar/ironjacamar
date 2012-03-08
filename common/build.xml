@@ -328,12 +328,14 @@
     </jar>
 
     <jar destfile="${target.dir}/${name}-common-impl-sources.jar"
-         basedir="src/main/java"
          index="true"
          indexMetaInf="true"
          update="true"
-         level="9"
-         excludes="**/common/api/**,**/common/spi/**,**/papaki/**">
+         level="9">
+      <fileset dir="src/main/java"
+               excludes="**/common/api/**,**/common/spi/**,**/papaki/**"/>
+      <fileset dir="${build.common.dir}"
+               includes="**/*.java"/>
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
