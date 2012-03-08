@@ -104,8 +104,6 @@ public class EndpointImpl implements Endpoint
       if (rar == null)
          throw new ResourceException(bundle.resourceAdapterInstanceNotActive());
 
-      spec.validate();
-
       if (is16 && bvEnabled)
       {
          ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
@@ -152,6 +150,15 @@ public class EndpointImpl implements Endpoint
          {
             SecurityActions.setThreadContextClassLoader(oldTCCL);
          }
+      }
+
+      try
+      {
+         spec.validate();
+      }
+      catch (UnsupportedOperationException uoe)
+      {
+         // Ignore
       }
 
       rar.endpointActivation(endpointFactory, spec);
