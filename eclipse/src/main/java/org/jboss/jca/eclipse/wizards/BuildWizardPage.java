@@ -112,10 +112,12 @@ public class BuildWizardPage extends WizardPage
             if (combo.getText().equals("Apache Maven"))
             {
                ((CodeGenWizard) getWizard()).getDef().setBuild("maven");
-            } else if (combo.getText().equals("Apache Ant"))
+            } 
+            else if (combo.getText().equals("Apache Ant"))
             {
                ((CodeGenWizard) getWizard()).getDef().setBuild("ant");
-            } else if (combo.getText().equals("Apache Ant / Apache Ivy"))
+            } 
+            else if (combo.getText().equals("Apache Ant / Apache Ivy"))
             {
                ((CodeGenWizard) getWizard()).getDef().setBuild("ivy");
             }
