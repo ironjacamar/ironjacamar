@@ -1358,7 +1358,8 @@ public abstract class AbstractResourceAdapterDeployer
                         if (connectionDefinition != null)
                            sharable = connectionDefinition.isSharable();
 
-                        Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), sharable.booleanValue());
+                        Pool pool =
+                           pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), sharable.booleanValue());
 
                         // Add a connection manager
                         ConnectionManagerFactory cmf = new ConnectionManagerFactory();

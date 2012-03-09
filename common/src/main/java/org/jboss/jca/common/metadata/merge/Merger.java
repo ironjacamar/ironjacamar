@@ -732,7 +732,8 @@ public class Merger
                case DATASOURCECLASS : {
                   if (ds != null && ds.getDataSourceClass() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getDataSourceClass()));
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, 
+                                                                                     ds.getDataSourceClass()));
                   }
                   break;
                }

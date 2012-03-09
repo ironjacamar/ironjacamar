@@ -149,9 +149,13 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    public void validate() throws ValidateException
    {
       if (this.backgroundValidationMillis != null && this.backgroundValidationMillis < 0)
-         throw new ValidateException(bundle.invalidNegative(Validation.Tag.BACKGROUND_VALIDATION_MILLIS.getLocalName()));
+      {
+         throw new
+            ValidateException(bundle.invalidNegative(Validation.Tag.BACKGROUND_VALIDATION_MILLIS.getLocalName()));
+      }
 
       if (this.validConnectionChecker != null)
+      {
          try
          {
             this.validConnectionChecker.validate();
@@ -160,7 +164,9 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          {
             throw new ValidateException(bundle.invalidTag(Validation.Tag.VALID_CONNECTION_CHECKER.getLocalName()), ve);
          }
+      }
       if (this.exceptionSorter != null)
+      {
          try
          {
             this.exceptionSorter.validate();
@@ -169,7 +175,9 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          {
             throw new ValidateException(bundle.invalidTag(Validation.Tag.EXCEPTION_SORTER.getLocalName()), ve);
          }
+      }
       if (this.staleConnectionChecker != null)
+      {
          try
          {
             this.staleConnectionChecker.validate();
@@ -178,6 +186,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          {
             throw new ValidateException(bundle.invalidTag(Validation.Tag.STALE_CONNECTION_CHECKER.getLocalName()), ve);
          }
+      }
    }
 
    @Override
