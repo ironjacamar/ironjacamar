@@ -478,6 +478,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             for (org.jboss.jca.core.api.management.ConnectionFactory mgtCf :
                     mgtConnector.getConnectionFactories())
             {
+               String jndiName = cleanJndiName(mgtCf.getJndiName());
+               
                if (mgtCf.getManagedConnectionFactory() != null)
                {
                   org.jboss.jca.core.api.management.ManagedConnectionFactory mgtMcf = 
@@ -498,7 +500,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                         excludeAttributes.add(mgtCpName);
                   }
 
-                  String mcfName = baseName + ",type=ManagedConnectionFactory,class=" +
+                  String mcfName = baseName + ",jndi=" + jndiName +
+                     ",type=ManagedConnectionFactory,class=" +
                      getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName());
 
                   DynamicMBean mcfDMB = JMX.createMBean(mgtMcf.getManagedConnectionFactory(),
@@ -515,7 +518,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
                   if (mgtMcf.getStatistics() != null)
                   {
-                     String mcfSName = baseName + ",type=ManagedConnectionFactoryStatistics,class=" +
+                     String mcfSName = baseName + ",jndi=" + jndiName +
+                        ",type=ManagedConnectionFactoryStatistics,class=" +
                         getClassName(mgtMcf.getManagedConnectionFactory().getClass().getName());
 
                      Set<String> writeStatAttributes = new HashSet<String>();
@@ -539,7 +543,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
                if (mgtCf.getPoolConfiguration() != null)
                {
-                  String mcfPCName = baseName + ",type=ConnectionFactory,class=" +
+                  String mcfPCName = baseName + ",jndi=" + jndiName +
+                     ",type=ConnectionFactory,class=" +
                      getClassName(mgtCf.getConnectionFactory().getClass().getName()) +
                      ",subcategory=PoolConfiguration";
                   
@@ -553,7 +558,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
 
                if (mgtCf.getPool() != null)
                {
-                  String cfPName = baseName + ",type=ConnectionFactory,class=" +
+                  String cfPName = baseName + ",jndi=" + jndiName + ",type=ConnectionFactory,class=" +
                      getClassName(mgtCf.getConnectionFactory().getClass().getName()) + ",subcategory=Pool";
                   
                   DynamicMBean cfPDMB = JMX.createMBean(mgtCf.getPool(), "Pool");
@@ -565,7 +570,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   
                   if (mgtCf.getPool().getStatistics() != null)
                   {
-                     String cfPSName = baseName + ",type=ConnectionFactory,class=" +
+                     String cfPSName = baseName + ",jndi=" + jndiName + ",type=ConnectionFactory,class=" +
                         getClassName(mgtCf.getConnectionFactory().getClass().getName()) + ",subcategory=PoolStatistics";
 
                      Set<String> writeStatAttributes = new HashSet<String>();
@@ -594,6 +599,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   Set<String> writeable = new HashSet<String>();
                   Set<String> excludeAttributes = new HashSet<String>();
 
+                  String jndiName = cleanJndiName(mgtAo.getJndiName());
+
                   for (org.jboss.jca.core.api.management.ConfigProperty mgtCp : mgtAo.getConfigProperties())
                   {
                      String mgtCpName = mgtCp.getName().substring(0, 1).toUpperCase(Locale.US);
@@ -607,8 +614,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                         excludeAttributes.add(mgtCpName);
                   }
 
-                  String aoName = baseName + ",type=AdminObject,class=" +
-                     getClassName(mgtAo.getAdminObject().getClass().getName());
+                  String aoName = baseName + ",jndi=" + jndiName +
+                     ",type=AdminObject,class=" + getClassName(mgtAo.getAdminObject().getClass().getName());
 
                   DynamicMBean aoDMB = JMX.createMBean(mgtAo.getAdminObject(),
                                                        "Admin object",
@@ -624,7 +631,8 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   
                   if (mgtAo.getStatistics() != null)
                   {
-                     String aoSName = baseName + ",type=AdminObjectStatistics,class=" +
+                     String aoSName = baseName +  ",jndi=" + jndiName +
+                        ",type=AdminObjectStatistics,class=" +
                         getClassName(mgtAo.getAdminObject().getClass().getName());
 
                      Set<String> writeStatAttributes = new HashSet<String>();
@@ -670,6 +678,18 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
       }
 
       return clz;
+   }
+
+   /**
+    * Clean JNDI name for management
+    * @param jndi The JNDI name
+    * @return The value
+    */
+   private String cleanJndiName(String jndi)
+   {
+      jndi = jndi.replace(':', '!');
+
+      return jndi;
    }
 
    @Override
