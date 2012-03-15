@@ -55,6 +55,34 @@
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnection1</connection-interface>
             <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnection1Impl</connection-impl-class>
          </connection-definition>
+         <!-- Double registrations of the same MCF shouldn't trigger an error -->
+         <connection-definition>
+            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleManagedConnectionFactory1</managedconnectionfactory-class>
+            <config-property>
+               <config-property-name>Name</config-property-name>
+               <config-property-type>java.lang.String</config-property-type>
+               <config-property-value></config-property-value>
+            </config-property>
+
+            <connectionfactory-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnectionFactory1</connectionfactory-interface>
+            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnectionFactory1Impl</connectionfactory-impl-class>
+            <connection-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnection1</connection-interface>
+            <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnection1Impl</connection-impl-class>
+         </connection-definition>
+         <connection-definition>
+            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleManagedConnectionFactory2</managedconnectionfactory-class>
+            <config-property>
+               <config-property-name>Name</config-property-name>
+               <config-property-type>java.lang.String</config-property-type>
+               <config-property-value></config-property-value>
+            </config-property>
+
+            <connectionfactory-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnectionFactory2</connectionfactory-interface>
+            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnectionFactory2Impl</connectionfactory-impl-class>
+            <connection-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnection2</connection-interface>
+            <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnection2Impl</connection-impl-class>
+         </connection-definition>
+         <!-- Double registrations of the same MCF shouldn't trigger an error -->
          <connection-definition>
             <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleManagedConnectionFactory2</managedconnectionfactory-class>
             <config-property>
@@ -79,7 +107,16 @@
             <config-property-type>java.lang.String</config-property-type>
             <config-property-value></config-property-value>
          </config-property>
-
+      </adminobject>
+      <!-- Double registrations of the same AO shouldn't trigger an error -->
+      <adminobject>
+         <adminobject-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject1</adminobject-interface>
+         <adminobject-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject1Impl</adminobject-class>
+         <config-property>
+            <config-property-name>Name</config-property-name>
+            <config-property-type>java.lang.String</config-property-type>
+            <config-property-value></config-property-value>
+         </config-property>
       </adminobject>
       <adminobject>
          <adminobject-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject2</adminobject-interface>
@@ -89,7 +126,16 @@
             <config-property-type>java.lang.String</config-property-type>
             <config-property-value></config-property-value>
          </config-property>
-
+      </adminobject>
+      <!-- Double registrations of the same AO shouldn't trigger an error -->
+      <adminobject>
+         <adminobject-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject2</adminobject-interface>
+         <adminobject-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject2Impl</adminobject-class>
+         <config-property>
+            <config-property-name>Name</config-property-name>
+            <config-property-type>java.lang.String</config-property-type>
+            <config-property-value></config-property-value>
+         </config-property>
       </adminobject>
    </resourceadapter>
 </connector>

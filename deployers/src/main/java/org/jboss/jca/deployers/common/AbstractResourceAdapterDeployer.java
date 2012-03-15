@@ -390,9 +390,9 @@ public abstract class AbstractResourceAdapterDeployer
     * @param ra The metadata
     * @return The classes
     */
-   private List<String> findManagedConnectionFactories(org.jboss.jca.common.api.metadata.ra.ResourceAdapter ra)
+   private Set<String> findManagedConnectionFactories(org.jboss.jca.common.api.metadata.ra.ResourceAdapter ra)
    {
-      List<String> result = new ArrayList<String>(1);
+      Set<String> result = new HashSet<String>(1);
 
       if (ra != null)
       {
@@ -422,9 +422,9 @@ public abstract class AbstractResourceAdapterDeployer
     * @param ra The metadata
     * @return The classes
     */
-   private List<String> resolveAdminObjects(org.jboss.jca.common.api.metadata.ra.ResourceAdapter ra)
+   private Set<String> resolveAdminObjects(org.jboss.jca.common.api.metadata.ra.ResourceAdapter ra)
    {
-      List<String> result = new ArrayList<String>(1);
+      Set<String> result = new HashSet<String>(1);
 
       if (ra != null)
       {
@@ -453,7 +453,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @return The metadata; <code>null</code> if none could be found
     * @exception DeployException Thrown in case of configuration error
     */
-   protected Set<CommonConnDef> findConnectionDefinitions(String clz, List<String> mcfs, List<CommonConnDef> defs,
+   protected Set<CommonConnDef> findConnectionDefinitions(String clz, Set<String> mcfs, List<CommonConnDef> defs,
                                                           ClassLoader cl)
       throws DeployException
    {
@@ -555,7 +555,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @return The metadata; <code>null</code> if none could be found
     * @exception DeployException Thrown in case of configuration error
     */
-   protected Set<CommonAdminObject> findAdminObjects(String clz, List<String> aos, List<CommonAdminObject> defs)
+   protected Set<CommonAdminObject> findAdminObjects(String clz, Set<String> aos, List<CommonAdminObject> defs)
       throws DeployException
    {
       Set<CommonAdminObject> result = null;
@@ -782,29 +782,38 @@ public abstract class AbstractResourceAdapterDeployer
             List<AdminObject> aoMetas = ra1516.getAdminObjects();
             if (aoMetas.size() > 0)
             {
-               List<String> aosClz = resolveAdminObjects(ra1516);
+               Set<String> aosClz = resolveAdminObjects(ra1516);
+               Set<String> processedAos = new HashSet<String>();
 
                for (int i = 0; i < aoMetas.size(); i++)
                {
                   AdminObject aoMeta = aoMetas.get(i);
 
+                  log.debugf("Activating: %s", aoMeta);
+
                   if (aoMeta.getAdminobjectClass() != null && aoMeta.getAdminobjectClass().getValue() != null)
                   {
+                     String aoClz = aoMeta.getAdminobjectClass().getValue();
+
+                     if (processedAos.contains(aoClz))
+                        continue;
+
+                     processedAos.add(aoClz);
+
                      failures = validateArchive(url,
-                        Arrays.asList((Validate) new ValidateClass(Key.ADMIN_OBJECT, aoMeta.getAdminobjectClass()
-                           .getValue(), cl, aoMeta.getConfigProperties())), failures);
+                        Arrays.asList((Validate) new ValidateClass(Key.ADMIN_OBJECT, aoClz, cl,
+                                                                   aoMeta.getConfigProperties())), failures);
+
                      if (!(getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures,
                         Severity.ERROR)))
                      {
                         Set<CommonAdminObject> adminObjects = null;
 
                         if (aosRaXml != null)
-                           adminObjects = findAdminObjects(aoMeta.getAdminobjectClass().getValue(),
-                                                           aosClz, aosRaXml);
+                           adminObjects = findAdminObjects(aoClz, aosClz, aosRaXml);
 
                         if (adminObjects == null && aosIronJacamar != null)
-                           adminObjects = findAdminObjects(aoMeta.getAdminobjectClass().getValue(), 
-                                                           aosClz, aosIronJacamar);
+                           adminObjects = findAdminObjects(aoClz, aosClz, aosIronJacamar);
 
                         if (!requireExplicitJndiBindings() &&
                             aosRaXml == null && aosIronJacamar == null &&
@@ -820,8 +829,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                            for (CommonAdminObject adminObject : adminObjects)
                            {
-                              Object ao = initAndInject(aoMeta.getAdminobjectClass().getValue(),
-                                                        aoMeta.getConfigProperties(), cl);
+                              Object ao = initAndInject(aoClz, aoMeta.getConfigProperties(), cl);
 
                               if (adminObject != null &&
                                   adminObject.getConfigProperties() != null &&
@@ -906,15 +914,15 @@ public abstract class AbstractResourceAdapterDeployer
 
                                  if (!adminObjectBound)
                                  {
-                                    log.adminObjectNotBound(aoMeta.getAdminobjectClass().getValue());
-                                    log.adminObjectNotSpecCompliant(aoMeta.getAdminobjectClass().getValue());
+                                    log.adminObjectNotBound(aoClz);
+                                    log.adminObjectNotSpecCompliant(aoClz);
                                  }
                               }
                            }
                         }
                         else
                         {
-                           log.debug("No activation: " + aoMeta.getAdminobjectClass().getValue());
+                           log.debug("No activation: " + aoClz);
                         }
                      }
                   }
@@ -1201,7 +1209,7 @@ public abstract class AbstractResourceAdapterDeployer
                   }
                }
 
-               List<String> mcfs = findManagedConnectionFactories(ra10);
+               Set<String> mcfs = findManagedConnectionFactories(ra10);
 
                Set<CommonConnDef> connectionDefinitions = null;
 
@@ -1237,6 +1245,8 @@ public abstract class AbstractResourceAdapterDeployer
                {
                   for (CommonConnDef connectionDefinition : connectionDefinitions)
                   {
+                     log.debugf("Activating: %s", connectionDefinition);
+
                      if (connectionDefinition == null || connectionDefinition.isEnabled())
                      {
                         String mcfClz = ra10.getManagedConnectionFactoryClass().getValue();
@@ -1577,19 +1587,25 @@ public abstract class AbstractResourceAdapterDeployer
                   List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
                   if (cdMetas.size() > 0)
                   {
-                     List<String> mcfs = findManagedConnectionFactories(ra);
-
-                     cfs = new ArrayList<Object>();
-                     cfJndiNames = new ArrayList<String>();
+                     Set<String> mcfs = findManagedConnectionFactories(ra);
+                     Set<String> processedMcfs = new HashSet<String>();
 
                      for (int cdIndex = 0; cdIndex < cdMetas.size(); cdIndex++)
                      {
                         ConnectionDefinition cdMeta = cdMetas.get(cdIndex);
+                        String mcfClz = cdMeta.getManagedConnectionFactoryClass().getValue();
+                        
+                        if (processedMcfs.contains(mcfClz))
+                           continue;
+
+                        processedMcfs.add(mcfClz);
+
+                        log.debugf("CdMeta: %s", cdMeta);
 
                         failures = validateArchive(url,
-                           Arrays.asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, cdMeta
-                              .getManagedConnectionFactoryClass().getValue(), cl, cdMeta.getConfigProperties())),
-                           failures);
+                           Arrays.asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, mcfClz,
+                                                                      cl, cdMeta.getConfigProperties())),
+                                                   failures);
 
                         if (!(getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures,
                            Severity.ERROR)))
@@ -1603,8 +1619,7 @@ public abstract class AbstractResourceAdapterDeployer
                               if (cdDefs != null)
                               {
                                  connectionDefinitions =
-                                    findConnectionDefinitions(cdMeta.getManagedConnectionFactoryClass()
-                                                              .getValue(), mcfs, cdDefs, cl);
+                                    findConnectionDefinitions(mcfClz, mcfs, cdDefs, cl);
                               }
                            }
 
@@ -1615,8 +1630,7 @@ public abstract class AbstractResourceAdapterDeployer
                               if (cdDefs != null)
                               {
                                  connectionDefinitions = 
-                                    findConnectionDefinitions(cdMeta.getManagedConnectionFactoryClass().getValue(),
-                                                              mcfs, cdDefs, cl);
+                                    findConnectionDefinitions(mcfClz, mcfs, cdDefs, cl);
                               }
                            }
 
@@ -1628,11 +1642,14 @@ public abstract class AbstractResourceAdapterDeployer
 
                            if (activateDeployment && connectionDefinitions != null)
                            {
+                              log.debugf("ConnectionDefinitions: %s", connectionDefinitions.size());
+
                               for (CommonConnDef connectionDefinition : connectionDefinitions)
                               {
+                                 log.debugf("Activating: %s", connectionDefinition);
+
                                  if (connectionDefinition == null || connectionDefinition.isEnabled())
                                  {
-                                    String mcfClz = cdMeta.getManagedConnectionFactoryClass().getValue();
                                     Object om = initAndInject(mcfClz, cdMeta.getConfigProperties(), cl);
 
                                     if (om == null || !(om instanceof ManagedConnectionFactory))
@@ -2063,7 +2080,7 @@ public abstract class AbstractResourceAdapterDeployer
                            }
                            else
                            {
-                              log.debug("No activation: " + cdMeta.getManagedConnectionFactoryClass().getValue());
+                              log.debug("No activation: " + mcfClz);
                            }
                         }
                      }
