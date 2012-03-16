@@ -750,7 +750,12 @@ public class Main
          }
          System.out.println();
          
-         ConfigPropType config = new ConfigPropType(name, type, value, required);
+         String lowerCaseFirstLetterName = name.substring(0, 1).toLowerCase();
+         if (name.length() > 1)
+         {
+            lowerCaseFirstLetterName = lowerCaseFirstLetterName + name.substring(1);
+         }
+         ConfigPropType config = new ConfigPropType(lowerCaseFirstLetterName, type, value, required);
          props.add(config);
       }
       return props;
