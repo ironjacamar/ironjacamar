@@ -85,7 +85,11 @@ public class McCodeGen extends AbstractCodeGen
       out.write("/** Connection */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private Object connection;");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write("private " + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + " connection;");
+      else
+         out.write("private " + def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + " connection;");
+
       writeEol(out);
       writeEol(out);
       
@@ -274,6 +278,34 @@ public class McCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.finest(\"associateConnection()\");");
+      writeEol(out);
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("if (connection == null)");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("throw new ResourceException(\"Null connection handle\");");
+      writeEol(out);
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("if (!(connection instanceof ");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass());
+      else
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getConnImplClass());
+      out.write("))");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("throw new ResourceException(\"Wrong connection handle\");");
+      writeEol(out);
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("this.connection = (");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass());
+      else
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getConnImplClass());
+      out.write(")connection;");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
