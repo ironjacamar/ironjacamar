@@ -111,7 +111,14 @@ public class McfCodeGen extends PropsCodeGen
          out.write("/** The resource adapter */");
          writeEol(out);
          writeIndent(out, indent);
-         out.write("private ResourceAdapter ra;");
+         if (def.isRaSerial())
+         {
+            out.write("private ResourceAdapter ra;");
+         }
+         else
+         {
+            out.write("private transient ResourceAdapter ra;");
+         }
          writeEol(out);
          writeEol(out);
       }

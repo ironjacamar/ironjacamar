@@ -314,6 +314,18 @@ public class Main
             setDefaultValue(def, raClassName, "Ra");
          }
          
+         System.out.print(rb.getString("ra.serial") + "[Y]: ");
+         String raSerial = in.readLine();
+         if (raSerial == null)
+            def.setRaSerial(true);
+         else
+         {
+            if (raSerial.equals("N") || raSerial.equals("n") || raSerial.equals("No"))
+               def.setRaSerial(false);
+            else
+               def.setRaSerial(true);
+         }
+         
          List<ConfigPropType> raProps = inputProperties("ra", in, false);
          def.setRaConfigProps(raProps);
       }
