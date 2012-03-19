@@ -2101,7 +2101,8 @@ public abstract class AbstractResourceAdapterDeployer
          // Archive validation
          failures = validateArchive(url, archiveValidationObjects, failures);
 
-         if ((getConfiguration().getArchiveValidationFailOnWarn() && hasFailuresLevel(failures, Severity.WARNING)) ||
+         if ((getConfiguration().getArchiveValidationFailOnWarn() &&
+              (hasFailuresLevel(failures, Severity.WARNING) || hasFailuresLevel(failures, Severity.ERROR))) ||
              (getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
          {
             throw new ValidatorException(printFailuresLog(url.getPath(), new Validator(), failures, null), failures);
@@ -2204,7 +2205,8 @@ public abstract class AbstractResourceAdapterDeployer
       }
       catch (Throwable t)
       {
-         if ((getConfiguration().getArchiveValidationFailOnWarn() && hasFailuresLevel(failures, Severity.WARNING)) ||
+         if ((getConfiguration().getArchiveValidationFailOnWarn() &&
+              (hasFailuresLevel(failures, Severity.WARNING) || hasFailuresLevel(failures, Severity.ERROR))) ||
              (getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
          {
             throw new DeployException(bundle.deploymentFailed(url.toExternalForm()),
