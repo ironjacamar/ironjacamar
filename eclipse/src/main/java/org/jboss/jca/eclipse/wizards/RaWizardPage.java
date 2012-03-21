@@ -75,6 +75,8 @@ public class RaWizardPage extends WizardPage
    private Button removeButton;
 
    private Button addButton;
+   
+   private Button raSerialButton;
 
    /**
     * Constructor for SampleNewWizardPage.
@@ -115,6 +117,7 @@ public class RaWizardPage extends WizardPage
       Label label = new Label(raContainer, SWT.NULL);
       label.setText("Include a Resource Adapter:");
       final Button raButton = new Button(raContainer, SWT.CHECK);
+      
       raButton.setSelection(true);
       ((CodeGenWizard) getWizard()).getDef().setUseRa(true);
       raButton.addSelectionListener(new SelectionAdapter()
@@ -124,6 +127,7 @@ public class RaWizardPage extends WizardPage
 
             ((CodeGenWizard) getWizard()).getDef().setUseRa(raButton.getSelection());
             raText.setEnabled(raButton.getSelection());
+            raSerialButton.setEnabled(raButton.getSelection());
          }
       });
 
@@ -149,6 +153,20 @@ public class RaWizardPage extends WizardPage
          }
       });
 
+      label = new Label(raContainer, SWT.NULL);
+      label.setText("Should the Resource Adapter class be Serializable:");
+      raSerialButton = new Button(raContainer, SWT.CHECK);
+
+      raSerialButton.setSelection(true);
+      ((CodeGenWizard) getWizard()).getDef().setUseRa(true);
+      raSerialButton.addSelectionListener(new SelectionAdapter()
+      {
+         public void widgetSelected(SelectionEvent event)
+         {
+            ((CodeGenWizard) getWizard()).getDef().setRaSerial(raSerialButton.getSelection());
+         }
+      });
+      
       label = new Label(raContainer, SWT.NULL);
       label.setText("Resource Adapter properties:");
 
