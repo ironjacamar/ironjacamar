@@ -121,10 +121,9 @@
   <property name="version.jboss.common" value="2.2.17.GA"/>
   <property name="version.jboss.jaspi.api" value="1.0.0.Final"/>
   <property name="version.jboss.jms.api" value="1.0.0.Beta1"/>
-  <property name="version.jboss.logging" value="3.1.0.CR2"/>
-  <property name="version.jboss.logging-generator" value="1.0.0.CR5"/>
-  <property name="version.jboss.logging-processor" value="1.0.0.CR5"/>
-  <property name="version.jboss.logmanager" value="1.2.0.GA"/>
+  <property name="version.jboss.logging" value="3.1.0.GA"/>
+  <property name="version.jboss.logging-processor" value="1.0.1.Final"/>
+  <property name="version.jboss.logmanager" value="1.2.2.GA"/>
   <property name="version.jboss.naming" value="5.0.3.GA"/>
   <property name="version.jboss.netty" value="3.2.1.Final"/>
   <property name="version.jboss.papaki" value="1.0.0.Beta3"/>
