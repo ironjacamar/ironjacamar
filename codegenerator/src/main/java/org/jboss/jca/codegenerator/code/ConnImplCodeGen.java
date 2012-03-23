@@ -212,16 +212,23 @@ public class ConnImplCodeGen extends AbstractCodeGen
                }
                writeLeftCurlyBracket(out, indent);
                writeIndent(out, indent + 1);
-               out.write("log.finest(\"" + method.getMethodName() + "()\");");
-               writeEol(out);
+               
                if (!method.getReturnType().equals("void"))
                {
-                  writeIndent(out, indent + 1);
-                  out.write("return null;");
-                  writeEol(out);
+                  out.write("return ");
                }
+               out.write("mc." + method.getMethodName() + "(");
+               for (int i = 0; i < paramSize; i++)
+               {
+                  MethodParam param = method.getParams().get(i);
+                  out.write(param.getName());
+                  if (i + 1 < paramSize)
+                     out.write(", ");
+               }
+               out.write(");");
 
                writeRightCurlyBracket(out, indent);
+               writeEol(out);
             }
          }
       }
@@ -241,7 +248,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
          out.write("public void callMe()");
          writeLeftCurlyBracket(out, indent);
          writeIndent(out, indent + 1);
-         out.write("log.finest(\"callMe()\");");
+         out.write("mc.callMe();");
          writeRightCurlyBracket(out, indent);
       }
 

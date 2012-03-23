@@ -22,6 +22,8 @@
 package org.jboss.jca.codegenerator.code;
 
 import org.jboss.jca.codegenerator.Definition;
+import org.jboss.jca.codegenerator.MethodForConnection;
+import org.jboss.jca.codegenerator.MethodParam;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -130,6 +132,7 @@ public class McCodeGen extends AbstractCodeGen
       writeLogWriter(def, out, indent);
       writeTransaction(def, out, indent);
       writeMetaData(def, out, indent);
+      writeMethod(def, out, indent);
       
       writeRightCurlyBracket(out, 0);
    }
@@ -337,7 +340,6 @@ public class McCodeGen extends AbstractCodeGen
       
       writeIndent(out, indent);
       out.write("public void cleanup() throws ResourceException");
-      writeEol(out);
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.finest(\"cleanup()\");");
@@ -679,5 +681,113 @@ public class McCodeGen extends AbstractCodeGen
 
       writeRightCurlyBracket(out, indent);
       writeEol(out);
+   }
+   
+   /**
+    * Output methods
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeMethod(Definition def, Writer out, int indent) throws IOException
+   {
+      if (def.getMcfDefs().get(getNumOfMcf()).isDefineMethodInConnection())
+      {
+         if (def.getMcfDefs().get(getNumOfMcf()).getMethods().size() > 0)
+         {
+            for (MethodForConnection method : def.getMcfDefs().get(getNumOfMcf()).getMethods())
+            {
+               writeIndent(out, indent);
+               out.write("/**");
+               writeEol(out);
+               writeIndent(out, indent);
+               out.write(" * Call " + method.getMethodName());
+               writeEol(out);
+               
+               int paramSize = method.getParams().size();
+               for (int i = 0; i < paramSize; i++)
+               {
+                  MethodParam param = method.getParams().get(i);
+                  writeIndent(out, indent);
+                  out.write(" * @param " + param.getName() + " " + param.getType());
+                  writeEol(out);
+               }
+               int exceptionSize = method.getExceptionType().size();
+               for (int i = 0; i < exceptionSize; i++)
+               {
+                  String ex = method.getExceptionType().get(i);
+                  writeIndent(out, indent);
+                  out.write(" * @throws " + ex);
+                  writeEol(out);
+               }
+               if (!method.getReturnType().equals("void"))
+               {
+                  writeIndent(out, indent);
+                  out.write(" * @return " + method.getReturnType());
+                  writeEol(out); 
+               }
+               writeIndent(out, indent);
+               out.write(" */");
+               writeEol(out);
+               
+               writeIndent(out, indent);
+               out.write("public " + method.getReturnType() + " " +
+                  method.getMethodName() + "(");
+
+               for (int i = 0; i < paramSize; i++)
+               {
+                  MethodParam param = method.getParams().get(i);
+                  out.write(param.getType());
+                  out.write(" ");
+                  out.write(param.getName());
+                  if (i + 1 < paramSize)
+                     out.write(", ");
+               }
+               out.write(")");
+
+               for (int i = 0; i < exceptionSize; i++)
+               {
+                  if (i == 0)
+                     out.write(" throws ");
+                  String ex = method.getExceptionType().get(i);
+                  out.write(ex);
+                  if (i + 1 < exceptionSize)
+                     out.write(", ");
+               }
+               writeLeftCurlyBracket(out, indent);
+               writeIndent(out, indent + 1);
+               out.write("log.finest(\"" + method.getMethodName() + "()\");");
+
+               if (!method.getReturnType().equals("void"))
+               {
+                  writeEol(out);
+                  writeIndent(out, indent + 1);
+                  out.write("return null;");
+               }
+
+               writeRightCurlyBracket(out, indent);
+            }
+         }
+      }
+      else
+      {
+         writeIndent(out, indent);
+         out.write("/**");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" * Call me");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write(" */");
+         writeEol(out);
+         
+         writeIndent(out, indent);
+         out.write("public void callMe()");
+         writeLeftCurlyBracket(out, indent);
+         writeIndent(out, indent + 1);
+         out.write("log.finest(\"callMe()\");");
+         writeRightCurlyBracket(out, indent);
+      }
    }
 }

@@ -278,7 +278,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("return result;");
       writeRightCurlyBracket(out, indent);
-      writeEol(out);
+      //writeEol(out);
    }
 
    /**
