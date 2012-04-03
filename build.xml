@@ -362,7 +362,7 @@
   <!-- ================================= 
        Target: eclipse plugin
        ================================= -->
-  <target name="eclipse">
+  <target name="eclipse" depends="jars">
     <ant dir="eclipse" inheritRefs="true" target="jars"/>
   </target>
 
