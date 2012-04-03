@@ -47,7 +47,7 @@ public class Main
     */
    public static void main(String[] args)
    {
-      boolean quite = false;
+      boolean quiet = false;
       String outputDir = "."; //put report into current directory by default
       int arg = 0;
       String[] classpath = null;
@@ -58,9 +58,9 @@ public class Main
          {
             if (args[arg].startsWith("-"))
             {
-               if (args[arg].endsWith("quite"))
+               if (args[arg].endsWith("quiet"))
                {
-                  quite = true;
+                  quiet = true;
                }
                else if (args[arg].endsWith("output"))
                {
@@ -91,7 +91,7 @@ public class Main
          {
             int systemExitCode = Validation.validate(new File(args[arg]).toURI().toURL(), outputDir, classpath);
             
-            if (!quite)
+            if (!quiet)
             {
                if (systemExitCode == SUCCESS)
                {
@@ -132,6 +132,6 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage: validator [-quite] [-output directory] [-classpath thirdparty.jar] <file>");
+      System.out.println("Usage: validator [-quiet] [-output directory] [-classpath thirdparty.jar] <file>");
    }
 }
