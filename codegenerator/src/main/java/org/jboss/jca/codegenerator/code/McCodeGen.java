@@ -462,7 +462,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write(" */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("public void closeHandle(");
+      out.write("void closeHandle(");
       if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
          out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + " handle)");
       else
@@ -732,8 +732,7 @@ public class McCodeGen extends AbstractCodeGen
                writeEol(out);
                
                writeIndent(out, indent);
-               out.write("public " + method.getReturnType() + " " +
-                  method.getMethodName() + "(");
+               out.write(method.getReturnType() + " " + method.getMethodName() + "(");
 
                for (int i = 0; i < paramSize; i++)
                {
@@ -783,7 +782,7 @@ public class McCodeGen extends AbstractCodeGen
          writeEol(out);
          
          writeIndent(out, indent);
-         out.write("public void callMe()");
+         out.write("void callMe()");
          writeLeftCurlyBracket(out, indent);
          writeIndent(out, indent + 1);
          out.write("log.finest(\"callMe()\");");
