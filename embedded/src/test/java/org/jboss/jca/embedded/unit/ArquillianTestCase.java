@@ -1,6 +1,6 @@
-/*/*
+/*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,19 +22,13 @@
 
 package org.jboss.jca.embedded.unit;
 
-import org.jboss.jca.embedded.rars.simple.MessageListener;
-import org.jboss.jca.embedded.rars.simple.TestActivationSpec;
 import org.jboss.jca.embedded.rars.simple.TestConnection;
 import org.jboss.jca.embedded.rars.simple.TestConnectionFactory;
-import org.jboss.jca.embedded.rars.simple.TestConnectionInterface;
-import org.jboss.jca.embedded.rars.simple.TestConnectionManager;
-import org.jboss.jca.embedded.rars.simple.TestManagedConnection;
-import org.jboss.jca.embedded.rars.simple.TestManagedConnectionFactory;
-import org.jboss.jca.embedded.rars.simple.TestResourceAdapter;
 
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.resource.ResourceException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -75,10 +69,7 @@ public class ArquillianTestCase
          ShrinkWrap.create(ResourceAdapterArchive.class, deploymentName + ".rar");
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
-      ja.addClasses(MessageListener.class, TestActivationSpec.class, TestConnection.class,
-                    TestConnectionFactory.class, TestConnectionManager.class, 
-                    TestConnectionInterface.class, TestManagedConnection.class, 
-                    TestManagedConnectionFactory.class, TestResourceAdapter.class);
+      ja.addPackage(TestConnection.class.getPackage());
 
       raa.addAsLibrary(ja);
       raa.addAsManifestResource("simple.rar/META-INF/ra.xml", "ra.xml");
@@ -101,5 +92,11 @@ public class ArquillianTestCase
    public void testBasic() throws Throwable
    {
       assertNotNull(connectionFactory);
+
+      TestConnection c = connectionFactory.getConnection();
+      assertNotNull(c);
+
+      c.callMe();
+      c.close();
    }
 }

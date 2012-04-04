@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -23,74 +23,22 @@ package org.jboss.jca.embedded.rars.simple;
 
 import java.io.Serializable;
 
-import javax.naming.Reference;
 import javax.resource.Referenceable;
-import javax.resource.spi.ConnectionManager;
-
-import org.jboss.logging.Logger;
+import javax.resource.ResourceException;
 
 /**
  * TestConnectionFactory
  *
- * @author  <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
-public class TestConnectionFactory implements Serializable, Referenceable
+public interface TestConnectionFactory extends Serializable, Referenceable
 {
-   private static final long serialVersionUID = 1L;
-   private static Logger log = Logger.getLogger(TestConnectionFactory.class);
-
-   private ConnectionManager cm;
-   private Reference reference;
-
-   /**
-    * Constructor
-    * @param cm The connection manager
+   /** 
+    * Get connection from factory
+    *
+    * @return TestConnection instance
+    * @exception ResourceException Thrown if a connection can't be obtained
     */
-   public TestConnectionFactory(ConnectionManager cm)
-   {
-      this.cm = cm;
-      this.reference = null;
-   }
+   public TestConnection getConnection() throws ResourceException;
 
-   /**
-    * Get the naming reference
-    * @return The value
-    */
-   public Reference getReference()
-   {
-      return reference;
-   }
-
-   /**
-    * Set the naming reference
-    * @param reference The value
-    */
-   public void setReference(Reference reference)
-   {
-      this.reference = reference;
-   }
-
-   /**
-    * Hash code
-    * @return The hash
-    */
-   @Override
-   public int hashCode()
-   {
-      return 42;
-   }
-
-   /**
-    * Equals
-    * @param other The other object
-    * @return True if equal; otherwise false
-    */
-   public boolean equals(Object other)
-   {
-      if (other == null)
-         return false;
-
-      return getClass().equals(other.getClass());
-   }
 }

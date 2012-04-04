@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,23 +21,19 @@
  */
 package org.jboss.jca.embedded.rars.simple;
 
-import org.jboss.logging.Logger;
-
 /**
  * TestConnection
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ *
  * @version $Revision: $
  */
-public class TestConnection implements TestConnectionInterface
+public interface TestConnection
 {
-   private static Logger log = Logger.getLogger(TestConnection.class);
-
-   /** 
-    * CallMe
-    **/
-   public void callMe()
-   {
-      log.debug("call callMe");
-
-   }
+   /**
+    * Call me
+    */
+   public void callMe();
+   /**
+    * Close
+    */
+   public void close();
 }
