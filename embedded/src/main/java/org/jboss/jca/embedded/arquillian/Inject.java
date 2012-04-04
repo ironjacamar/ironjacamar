@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,19 +19,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.embedded.rars.simple;
+package org.jboss.jca.embedded.arquillian;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * MessageListener
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
- * @version $Revision: $
+ * Inject
+ *
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface MessageListener
+@Documented
+@Retention(RUNTIME)
+@Target(ElementType.FIELD)
+public @interface Inject
 {
-   /**
-    * receive message
-    *
-    * @param msg String.
-    */
-   public void onMessage(String msg);
+   /** Name of the embedded resource */
+   public String name();
 }

@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,130 +22,189 @@
 package org.jboss.jca.embedded.rars.simple;
 
 import java.io.PrintWriter;
+import java.util.Iterator;
 import java.util.Set;
+
+import java.util.logging.Logger;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.security.auth.Subject;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterAssociation;
 
-import org.jboss.logging.Logger;
+import javax.security.auth.Subject;
 
 /**
  * TestManagedConnectionFactory
  *
- * @author  <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>.
- * @author  <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>.
  * @version $Revision: $
  */
-public class TestManagedConnectionFactory implements
-      ManagedConnectionFactory
+public class TestManagedConnectionFactory implements ManagedConnectionFactory, ResourceAdapterAssociation
 {
+
+   /** The serial version UID */
    private static final long serialVersionUID = 1L;
-   private static Logger log = Logger.getLogger(TestManagedConnectionFactory.class);
+
+   /** The logger */
+   private static Logger log = Logger.getLogger("TestManagedConnectionFactory");
+
+   /** The resource adapter */
+   private ResourceAdapter ra;
+
+   /** The logwriter */
+   private PrintWriter logwriter;
+
+   /**
+    * Default constructor
+    */
+   public TestManagedConnectionFactory()
+   {
+
+   }
 
    /**
     * Creates a Connection Factory instance. 
     *
-    *  @param    cxManager    ConnectionManager to be associated with created EIS connection factory instance
-    *  @return   EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
-    *  @throws   ResourceException     Generic exception
+    * @param cxManager ConnectionManager to be associated with created EIS connection factory instance
+    * @return EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    * @throws ResourceException Generic exception
     */
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
    {
-      log.debug("call createConnectionFactory(" + cxManager + ")");
-      return new TestConnectionFactory(cxManager);
+      log.finest("createConnectionFactory()");
+      return new TestConnectionFactoryImpl(this, cxManager);
    }
 
    /**
     * Creates a Connection Factory instance. 
     *
-    *  @return   EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
-    *  @throws   ResourceException     Generic exception
+    * @return EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    * @throws ResourceException Generic exception
     */
    public Object createConnectionFactory() throws ResourceException
    {
-      log.debug("call createConnectionFactory");
-      return new TestConnectionFactory(new TestConnectionManager());
+      throw new ResourceException("This resource adapter doesn't support non-managed environments");
    }
 
-   /** 
+   /**
     * Creates a new physical connection to the underlying EIS resource manager.
     *
-    *  @param   subject        Caller's security information
-    *  @param   cxRequestInfo  Additional resource adapter specific connection request information
-    *  @throws  ResourceException     generic exception
-    *  @return  ManagedConnection instance
+    * @param subject Caller's security information
+    * @param cxRequestInfo Additional resource adapter specific connection request information
+    * @throws ResourceException generic exception
+    * @return ManagedConnection instance 
     */
    public ManagedConnection createManagedConnection(Subject subject,
          ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      log.debug("call createManagedConnection");
-      return null;
-   }
-
-   /** 
-    * Returns a matched connection from the candidate set of connections. 
-    *  @param   connectionSet   candidate connection set
-    *  @param   subject         caller's security information
-    *  @param   cxRequestInfo   additional resource adapter specific connection request information  
-    *
-    *  @throws  ResourceException     generic exception
-    *  @return  ManagedConnection     if resource adapter finds an acceptable match otherwise null
-    **/
-   public ManagedConnection matchManagedConnections(Set connectionSet,
-      Subject subject, ConnectionRequestInfo cxRequestInfo)
-      throws ResourceException
-   {
-      log.debug("call matchManagedConnections");
-      return null;
-   }
-
-   /** 
-    * Get the log writer for this ManagedConnectionFactory instance.
-    *  @return  PrintWriter
-    *  @throws  ResourceException     generic exception
-    */
-   public PrintWriter getLogWriter() throws ResourceException
-   {
-      log.debug("call getLogWriter");
-      return null;
-   }
-
-   /** 
-    * Set the log writer for this ManagedConnectionFactory instance.</p>
-    *
-    *  @param   out PrintWriter - an out stream for error logging and tracing
-    *  @throws  ResourceException     generic exception
-    */
-   public void setLogWriter(PrintWriter out) throws ResourceException
-   {
-      log.debug("call setLogWriter");
-
+      log.finest("createManagedConnection()");
+      return new TestManagedConnection(this);
    }
 
    /**
-    * Hash code
-    * @return The hash
+    * Returns a matched connection from the candidate set of connections. 
+    *
+    * @param connectionSet Candidate connection set
+    * @param subject Caller's security information
+    * @param cxRequestInfo Additional resource adapter specific connection request information
+    * @throws ResourceException generic exception
+    * @return ManagedConnection if resource adapter finds an acceptable match otherwise null 
+    */
+   public ManagedConnection matchManagedConnections(Set connectionSet,
+         Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   {
+      log.finest("matchManagedConnections()");
+      ManagedConnection result = null;
+      Iterator it = connectionSet.iterator();
+      while (result == null && it.hasNext())
+      {
+         ManagedConnection mc = (ManagedConnection)it.next();
+         if (mc instanceof TestManagedConnection)
+         {
+            result = mc;
+         }
+
+      }
+      return result;
+   }
+
+   /**
+    * Get the log writer for this ManagedConnectionFactory instance.
+    *
+    * @return PrintWriter
+    * @throws ResourceException generic exception
+    */
+   public PrintWriter getLogWriter() throws ResourceException
+   {
+      log.finest("getLogWriter()");
+      return logwriter;
+   }
+
+   /**
+    * Set the log writer for this ManagedConnectionFactory instance.
+    *
+    * @param out PrintWriter - an out stream for error logging and tracing
+    * @throws ResourceException generic exception
+    */
+   public void setLogWriter(PrintWriter out) throws ResourceException
+   {
+      log.finest("setLogWriter()");
+      logwriter = out;
+   }
+
+   /**
+    * Get the resource adapter
+    *
+    * @return The handle
+    */
+   public ResourceAdapter getResourceAdapter()
+   {
+      log.finest("getResourceAdapter()");
+      return ra;
+   }
+
+   /**
+    * Set the resource adapter
+    *
+    * @param ra The handle
+    */
+   public void setResourceAdapter(ResourceAdapter ra)
+   {
+      log.finest("setResourceAdapter()");
+      this.ra = ra;
+   }
+
+   /** 
+    * Returns a hash code value for the object.
+    * @return A hash code value for this object.
     */
    @Override
    public int hashCode()
    {
-      return 42;
+      int result = 17;
+      return result;
    }
 
-   /**
-    * Equals
-    * @param other The other object
-    * @return True if equal; otherwise false
+   /** 
+    * Indicates whether some other object is equal to this one.
+    * @param other The reference object with which to compare.
+    * @return true if this object is the same as the obj argument, false otherwise.
     */
+   @Override
    public boolean equals(Object other)
    {
       if (other == null)
          return false;
-
-      return getClass().equals(other.getClass());
+      if (other == this)
+         return true;
+      if (!(other instanceof TestManagedConnectionFactory))
+         return false;
+      TestManagedConnectionFactory obj = (TestManagedConnectionFactory)other;
+      boolean result = true; 
+      return result;
    }
+
 }

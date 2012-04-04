@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,15 +21,49 @@
  */
 package org.jboss.jca.embedded.rars.simple;
 
+import java.util.logging.Logger;
+
 /**
- * TestConnectionInterface
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * TestConnectionImpl
+ *
  * @version $Revision: $
  */
-public interface TestConnectionInterface
+public class TestConnectionImpl implements TestConnection
 {
-   /** 
-    * CallMe
-    **/
-   public void callMe();
+   /** The logger */
+   private static Logger log = Logger.getLogger("TestConnectionImpl");
+
+   /** ManagedConnection */
+   private TestManagedConnection mc;
+
+   /** ManagedConnectionFactory */
+   private TestManagedConnectionFactory mcf;
+
+   /**
+    * Default constructor
+    * @param mc TestManagedConnection
+    * @param mcf TestManagedConnectionFactory
+    */
+   public TestConnectionImpl(TestManagedConnection mc, TestManagedConnectionFactory mcf)
+   {
+      this.mc = mc;
+      this.mcf = mcf;
+   }
+
+   /**
+    * Call me
+    */
+   public void callMe()
+   {
+      mc.callMe();
+   }
+
+   /**
+    * Close
+    */
+   public void close()
+   {
+      mc.closeHandle(this);
+   }
+
 }
