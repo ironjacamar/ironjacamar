@@ -235,6 +235,9 @@ public abstract class BaseWrapperManagedConnectionFactory
    /** The statistics plugin */
    private JdbcStatisticsPlugin statisticsPlugin = new JdbcStatisticsPlugin();
 
+   /** JTA enabled */
+   private Boolean jta = Boolean.TRUE;
+
    /**
     * Constructor
     */
@@ -953,6 +956,25 @@ public abstract class BaseWrapperManagedConnectionFactory
    public JdbcStatisticsPlugin getStatistics()
    {
       return statisticsPlugin;
+   }
+
+   /**
+    * Get the JTA status
+    * @return The value
+    */
+   public Boolean isJTA()
+   {
+      return jta;
+   }
+
+   /**
+    * Set the JTA status
+    * @param v The value
+    */
+   public void setJTA(Boolean v)
+   {
+      if (v != null)
+         this.jta = v;
    }
 
    /**

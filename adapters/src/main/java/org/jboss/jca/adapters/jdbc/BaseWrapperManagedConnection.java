@@ -819,26 +819,29 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
          }
       }
 
-      if (!jdbcAutoCommit && !inLocalTransaction.getAndSet(true))
+      if (mcf.isJTA().booleanValue())
       {
-         Collection<ConnectionEventListener> copy = null;
-         synchronized (cels)
+         if (!jdbcAutoCommit && !inLocalTransaction.getAndSet(true))
          {
-            copy = new ArrayList<ConnectionEventListener>(cels);
-         }
-
-         ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_STARTED);
-
-         for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
-         {
-            ConnectionEventListener cel = i.next();
-            try
+            Collection<ConnectionEventListener> copy = null;
+            synchronized (cels)
             {
-               cel.localTransactionStarted(ce);
+               copy = new ArrayList<ConnectionEventListener>(cels);
             }
-            catch (Throwable t)
+
+            ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_STARTED);
+
+            for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
             {
-               getLog().trace("Error notifying of connection committed for listener: " + cel, t);
+               ConnectionEventListener cel = i.next();
+               try
+               {
+                  cel.localTransactionStarted(ce);
+               }
+               catch (Throwable t)
+               {
+                  getLog().trace("Error notifying of connection committed for listener: " + cel, t);
+               }
             }
          }
       }
@@ -896,26 +899,29 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
          this.jdbcAutoCommit = jdbcAutoCommit;
       }
 
-      if (jdbcAutoCommit && inLocalTransaction.getAndSet(false))
+      if (mcf.isJTA().booleanValue())
       {
-         Collection<ConnectionEventListener> copy = null;
-         synchronized (cels)
+         if (jdbcAutoCommit && inLocalTransaction.getAndSet(false))
          {
-            copy = new ArrayList<ConnectionEventListener>(cels);
-         }
-
-         ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
-
-         for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
-         {
-            ConnectionEventListener cel = i.next();
-            try
+            Collection<ConnectionEventListener> copy = null;
+            synchronized (cels)
             {
-               cel.localTransactionCommitted(ce);
+               copy = new ArrayList<ConnectionEventListener>(cels);
             }
-            catch (Throwable t)
+
+            ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
+
+            for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
             {
-               getLog().trace("Error notifying of connection committed for listener: " + cel, t);
+               ConnectionEventListener cel = i.next();
+               try
+               {
+                  cel.localTransactionCommitted(ce);
+               }
+               catch (Throwable t)
+               {
+                  getLog().trace("Error notifying of connection committed for listener: " + cel, t);
+               }
             }
          }
       }
@@ -985,26 +991,29 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       }
       con.commit();
 
-      if (inLocalTransaction.getAndSet(false))
+      if (mcf.isJTA().booleanValue())
       {
-         Collection<ConnectionEventListener> copy = null;
-         synchronized (cels)
+         if (inLocalTransaction.getAndSet(false))
          {
-            copy = new ArrayList<ConnectionEventListener>(cels);
-         }
-
-         ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
-
-         for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
-         {
-            ConnectionEventListener cel = i.next();
-            try
+            Collection<ConnectionEventListener> copy = null;
+            synchronized (cels)
             {
-               cel.localTransactionCommitted(ce);
+               copy = new ArrayList<ConnectionEventListener>(cels);
             }
-            catch (Throwable t)
+
+            ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
+
+            for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
             {
-               getLog().trace("Error notifying of connection committed for listener: " + cel, t);
+               ConnectionEventListener cel = i.next();
+               try
+               {
+                  cel.localTransactionCommitted(ce);
+               }
+               catch (Throwable t)
+               {
+                  getLog().trace("Error notifying of connection committed for listener: " + cel, t);
+               }
             }
          }
       }
@@ -1025,26 +1034,29 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       }
       con.rollback();
 
-      if (inLocalTransaction.getAndSet(false))
+      if (mcf.isJTA().booleanValue())
       {
-         Collection<ConnectionEventListener> copy = null;
-         synchronized (cels)
+         if (inLocalTransaction.getAndSet(false))
          {
-            copy = new ArrayList<ConnectionEventListener>(cels);
-         }
-
-         ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_ROLLEDBACK);
-
-         for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
-         {
-            ConnectionEventListener cel = i.next();
-            try
+            Collection<ConnectionEventListener> copy = null;
+            synchronized (cels)
             {
-               cel.localTransactionRolledback(ce);
+               copy = new ArrayList<ConnectionEventListener>(cels);
             }
-            catch (Throwable t)
+
+            ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_ROLLEDBACK);
+
+            for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
             {
-               getLog().trace("Error notifying of connection rollback for listener: " + cel, t);
+               ConnectionEventListener cel = i.next();
+               try
+               {
+                  cel.localTransactionRolledback(ce);
+               }
+               catch (Throwable t)
+               {
+                  getLog().trace("Error notifying of connection rollback for listener: " + cel, t);
+               }
             }
          }
       }

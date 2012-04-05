@@ -212,8 +212,12 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    protected void checkTransactionActive() throws SQLException
    {
+      if (!mcf.isJTA().booleanValue())
+         return;
+
       if (initialized && userTransaction == null)
          return;
+
       if (userTransaction == null)
       {
          try
