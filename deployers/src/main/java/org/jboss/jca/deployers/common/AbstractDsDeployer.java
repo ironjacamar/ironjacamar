@@ -525,6 +525,16 @@ public abstract class AbstractDsDeployer
          injectValue(mcf, "setJndiName", jndiName);
       }
 
+      // JTA
+      if (ds.isJTA())
+      {
+         injectValue(mcf, "setJTA", Boolean.TRUE);
+      }
+      else
+      {
+         injectValue(mcf, "setJTA", Boolean.FALSE);
+      }
+
       // Reauth
       if (strategy == PoolStrategy.REAUTH)
       {
