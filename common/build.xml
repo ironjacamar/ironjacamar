@@ -31,7 +31,7 @@
   <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile-papaki" unless="brew">
+  <target name="compile-papaki" unless="as">
     <javac srcdir="src/main"
            destdir="${build.common.dir}"
            classpathref="main.lib.path.id"
@@ -135,7 +135,7 @@
     </jar>
   </target>
 
-  <target name="jars" depends="compile,jars-base" unless="brew">
+  <target name="jars" depends="compile,jars-base" unless="as">
     <jar destfile="${target.dir}/${name}-common-impl-papaki.jar"
          basedir="${build.common.dir}"
          index="true"
@@ -463,7 +463,7 @@
     </jar>
   </target>
 
-  <target name="artifacts" depends="jars,artifacts-base" unless="brew">
+  <target name="artifacts" depends="jars,artifacts-base" unless="as">
 
     <jar destfile="${target.dir}/${name}-common-impl-papaki-sources.jar"
          basedir="src/main/java"

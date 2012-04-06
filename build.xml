@@ -191,8 +191,8 @@
     </fileset>
   </path>
 
-  <path id="brew.lib.path.id">
-    <fileset dir="${lib.dir}/brew">
+  <path id="as.lib.path.id">
+    <fileset dir="${lib.dir}/as">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${target.dir}">
@@ -294,7 +294,7 @@
   <!-- ================================= 
        Target: init              
        ================================= -->
-  <target name="init" depends="init-brew-path">
+  <target name="init" depends="init-as-path">
     <fail message="IronJacamar requires JDK6+" unless="HAVE_JDK_1.6"/>
   
     <ivy:settings file="${basedir}/ivy.settings.xml"/>
@@ -306,13 +306,13 @@
   <!-- ================================= 
        Target: resolve              
        ================================= -->
-  <target name="resolve-brew" if="brew">
+  <target name="resolve-as" if="as">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="brew"
+                  conf="as"
                   sync="true"/>
   </target>
 
-  <target name="resolve" depends="init,resolve-brew" unless="brew">
+  <target name="resolve" depends="init,resolve-as" unless="as">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
                   conf="common,sjc,embedded,arquillian,jetty,hornetq,mail,rhq,test,tools"
                   sync="true"/>
@@ -337,7 +337,7 @@
     <ant dir="adapters" inheritRefs="true" target="jars"/>
   </target>
 
-  <target name="jars" depends="resolve,jars-base" unless="brew">
+  <target name="jars" depends="resolve,jars-base" unless="as">
     <ant dir="embedded" inheritRefs="true" target="jars"/>
     <ant dir="web" inheritRefs="true" target="jars"/>
     <ant dir="sjc" inheritRefs="true" target="jars"/>
@@ -358,7 +358,7 @@
     <ant dir="adapters" inheritRefs="true" target="docs"/>
   </target>
 
-  <target name="docs" depends="jars,docs-base" unless="brew">
+  <target name="docs" depends="jars,docs-base" unless="as">
     <ant dir="embedded" inheritRefs="true" target="docs"/>
     <ant dir="web" inheritRefs="true" target="docs"/>
     <ant dir="sjc" inheritRefs="true" target="docs"/>
@@ -436,7 +436,7 @@
     <ant dir="adapters" inheritRefs="true" target="artifacts"/>
   </target>
 
-  <target name="artifacts" depends="resolve,artifacts-base" unless="brew">
+  <target name="artifacts" depends="resolve,artifacts-base" unless="as">
     <ant dir="embedded" inheritRefs="true" target="artifacts"/>
     <ant dir="codegenerator" inheritRefs="true" target="artifacts"/>
     <ant dir="as" inheritRefs="true" target="artifacts"/>
@@ -1338,7 +1338,7 @@ VERSION=${version}
   	
   </target>
 
-  <target name="nexus" depends="clean,artifacts,nexus-base" unless="brew">
+  <target name="nexus" depends="clean,artifacts,nexus-base" unless="as">
     <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
   
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
@@ -1559,9 +1559,9 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
 
   </target>
 
-  <target name="init-brew-path" if="brew">
+  <target name="init-as-path" if="as">
     <path id="main.lib.path.id">
-      <path refid="brew.lib.path.id"/>
+      <path refid="as.lib.path.id"/>
     </path>
   </target>
 

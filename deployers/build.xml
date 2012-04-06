@@ -31,7 +31,7 @@
   <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile-fungal" unless="brew">
+  <target name="compile-fungal" unless="as">
     <javac srcdir="src/main"
            destdir="${build.deployers.dir}/impl"
            classpathref="main.lib.path.id"
@@ -98,7 +98,7 @@
       </manifest>
     </jar>
   </target>
-  <target name="jars" depends="compile,jars-base" unless="brew">
+  <target name="jars" depends="compile,jars-base" unless="as">
 
     <!-- Fungal -->
     <jar destfile="${target.dir}/${name}-deployers-fungal.jar"
@@ -407,7 +407,7 @@
     </jar>
   </target>
 
-  <target name="artifacts" depends="jars,artifacts-base" unless="brew">
+  <target name="artifacts" depends="jars,artifacts-base" unless="as">
     <!-- Fungal -->
     <jar destfile="${target.dir}/${name}-deployers-fungal-sources.jar"
          basedir="src/main/java"

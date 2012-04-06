@@ -47,7 +47,7 @@
     </javac> 
   </target>
 
-  <target name="compile-mail" unless="brew">
+  <target name="compile-mail" unless="as">
     <javac srcdir="src/main"
            destdir="${build.adapters.dir}/impl"
            classpathref="main.lib.path.id"
@@ -114,7 +114,7 @@
     </jar>
   </target>
 
-  <target name="jars-rar" unless="brew">
+  <target name="jars-rar" unless="as">
 
     <jar destfile="${target.dir}/jdbc-local.rar">
       <filelist dir="${target.dir}" files="${name}-jdbc.jar"/> 
@@ -371,7 +371,7 @@
     </jar>
   </target>
   
-  <target name="artifacts" depends="artifacts-base" unless="brew">
+  <target name="artifacts" depends="artifacts-base" unless="as">
     <jar destfile="${target.dir}/jdbc-local-sources.jar"
          basedir="src/main/java"
          index="true"
