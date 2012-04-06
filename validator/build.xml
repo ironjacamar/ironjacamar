@@ -47,7 +47,7 @@
     </javac> 
   </target>
 
-  <target name="compile" depends="compile-base" unless="brew">
+  <target name="compile" depends="compile-base" unless="as">
     <javac srcdir="src/main"
            destdir="${build.validator.dir}/impl"
            classpathref="main.lib.path.id"
@@ -95,7 +95,7 @@
     </jar>
   </target>
 
-  <target name="jars" depends="compile,jars-base" unless="brew">
+  <target name="jars" depends="compile,jars-base" unless="as">
 
     <mkdir dir="${build.validator.dir}/jars/validator/META-INF/maven" />
     <copy todir="${build.validator.dir}/jars/validator/META-INF/maven">
@@ -358,7 +358,7 @@
     </jar>
   </target>
 
-  <target name="artifacts" depends="jars,artifacts-base" unless="brew">
+  <target name="artifacts" depends="jars,artifacts-base" unless="as">
 
     <jar destfile="${target.dir}/${name}-validator-ant-sources.jar"
          basedir="src/main/java"
