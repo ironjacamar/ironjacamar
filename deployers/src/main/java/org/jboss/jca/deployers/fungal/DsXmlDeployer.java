@@ -61,6 +61,7 @@ import org.jboss.security.SubjectFactory;
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;
 import com.github.fungal.api.util.JMX;
+import com.github.fungal.spi.deployers.Context;
 import com.github.fungal.spi.deployers.DeployException;
 import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
@@ -138,24 +139,6 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    }
 
    /**
-    * Set the kernel
-    * @param value The value
-    */
-   public void setKernel(Kernel value)
-   {
-      kernel = value;
-   }
-
-   /**
-    * Get the kernel
-    * @return The handle
-    */
-   public Kernel getKernel()
-   {
-      return kernel;
-   }
-
-   /**
     * {@inheritDoc}
     */
    protected DeployersLogger getLogger()
@@ -173,18 +156,29 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    }
 
    /**
-    * Deploy
-    * @param url The url
-    * @param parent The parent classloader
-    * @return The deployment
-    * @exception DeployException Thrown if an error occurs during deployment
+    * {@inheritDoc}
     */
-   @Override
-   public synchronized Deployment deploy(URL url, ClassLoader parent) throws DeployException
+   public boolean accepts(URL url)
    {
       if (url == null || !(url.toExternalForm().endsWith("-ds.xml")))
-         return null;
+         return false;
 
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getOrder()
+   {
+      return Constants.DSXML_DEPLOYER;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized Deployment deploy(URL url, Context context, ClassLoader parent) throws DeployException
+   {
       log.debug("Deploying: " + url.toExternalForm());
 
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
@@ -220,6 +214,8 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                uniqueJdbcXAId = urlJdbcXA.toExternalForm();
             }
          }
+
+         kernel = context.getKernel();
 
          CommonDeployment c = createObjectsAndInjectValue(url, deploymentName,
                                                           uniqueJdbcLocalId, uniqueJdbcXAId,
@@ -347,9 +343,6 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       if (mdr == null)
          throw new IllegalStateException("MetadataRepository not defined");
 
-      if (kernel == null)
-         throw new IllegalStateException("Kernel not defined");
-
       if (jdbcLocal == null)
          throw new IllegalStateException("JDBCLocal not defined");
 
@@ -366,7 +359,15 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       try
       {
          URL urlJdbc = new URL(uniqueId);
-         return kernel.getDeployment(urlJdbc).getClassLoader();
+         List<Deployment> deployments = kernel.getDeployments(urlJdbc);
+         Deployment deployment = null;
+
+         for (int i = 0; deployment == null && i < deployments.size(); i++)
+         {
+            deployment = deployments.get(i);
+         }
+
+         return deployment.getClassLoader();
       }
       catch (Throwable t)
       {

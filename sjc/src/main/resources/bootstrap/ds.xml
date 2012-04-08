@@ -14,7 +14,6 @@
     <property name="JDBCXA">jdbc-xa.rar</property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
-    <property name="Kernel"><inject bean="Kernel"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="CachedConnectionManager"><inject bean="CCM"/></property>
     <property name="DriverRegistry"><inject bean="DriverRegistry"/></property>

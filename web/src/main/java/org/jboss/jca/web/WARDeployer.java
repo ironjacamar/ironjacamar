@@ -29,6 +29,7 @@ import java.net.URL;
 import org.jboss.logging.Logger;
 
 import com.github.fungal.api.util.FileUtil;
+import com.github.fungal.spi.deployers.Context;
 import com.github.fungal.spi.deployers.DeployException;
 import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
@@ -72,17 +73,29 @@ public class WARDeployer implements Deployer
    }
 
    /**
-    * Deploy
-    * @param url The url
-    * @param parent The parent classloader
-    * @return The deployment
-    * @exception DeployException Thrown if an error occurs during deployment
+    * {@inheritDoc}
     */
-   public synchronized Deployment deploy(URL url, ClassLoader parent) throws DeployException
+   public boolean accepts(URL url)
    {
       if (url == null || !(url.toExternalForm().endsWith(".war") || url.toExternalForm().endsWith(".war/")))
-         return null;
+         return false;
 
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getOrder()
+   {
+      return Integer.MIN_VALUE;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized Deployment deploy(URL url, Context context, ClassLoader parent) throws DeployException
+   {
       log.debug("Deploying: " + url.toExternalForm());
 
       try

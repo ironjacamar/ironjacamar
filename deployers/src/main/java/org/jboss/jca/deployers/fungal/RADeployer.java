@@ -55,10 +55,9 @@ import org.jboss.logging.Logger;
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.api.util.FileUtil;
+import com.github.fungal.spi.deployers.Context;
 import com.github.fungal.spi.deployers.DeployException;
 import com.github.fungal.spi.deployers.Deployer;
-import com.github.fungal.spi.deployers.DeployerOrder;
-import com.github.fungal.spi.deployers.MultiStageDeployer;
 
 /**
  * The RA deployer for JCA/SJC
@@ -66,7 +65,7 @@ import com.github.fungal.spi.deployers.MultiStageDeployer;
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
  */
-public final class RADeployer extends AbstractFungalRADeployer implements Deployer, MultiStageDeployer, DeployerOrder
+public final class RADeployer extends AbstractFungalRADeployer implements Deployer
 {
    /** The logger */
    private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, RADeployer.class.getName());
@@ -88,29 +87,30 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
    }
 
    /**
-    * Deployer order
-    * @return The deployment
+    * {@inheritDoc}
     */
-   @Override
-   public int getOrder()
+   public boolean accepts(URL url)
    {
-      return Integer.MIN_VALUE;
+      if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
+         return false;
+
+      return true;
    }
 
    /**
-    * Deploy
-    * @param url The url
-    * @param parent The parent classloader
-    * @return The deployment
-    * @exception DeployException Thrown if an error occurs during deployment
+    * {@inheritDoc}
     */
-   @Override
-   public synchronized com.github.fungal.spi.deployers.Deployment deploy(URL url, ClassLoader parent)
+   public int getOrder()
+   {
+      return Constants.RA_DEPLOYER;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized com.github.fungal.spi.deployers.Deployment deploy(URL url, Context context, ClassLoader parent)
       throws DeployException
    {
-      if (url == null || !(url.toExternalForm().endsWith(".rar") || url.toExternalForm().endsWith(".rar/")))
-         return null;
-
       log.debug("Deploying: " + url.toExternalForm());
 
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();

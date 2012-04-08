@@ -73,7 +73,7 @@ public class Main
          kernelConfiguration = kernelConfiguration.name("iron.jacamar");
          kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
          kernelConfiguration = kernelConfiguration.management(true);
-         kernelConfiguration = kernelConfiguration.parallelDeploy(false);
+         kernelConfiguration = kernelConfiguration.parallelDeploy(true);
          kernelConfiguration = kernelConfiguration.remoteAccess(true);
          kernelConfiguration = kernelConfiguration.eventListener(new PreClassLoaderEventListener());
          kernelConfiguration = kernelConfiguration.eventListener(new PostClassLoaderEventListener());

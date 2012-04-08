@@ -48,12 +48,11 @@ import org.jboss.logging.Logger;
 
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
+import com.github.fungal.spi.deployers.Context;
 import com.github.fungal.spi.deployers.DeployException;
 import com.github.fungal.spi.deployers.Deployer;
-import com.github.fungal.spi.deployers.DeployerOrder;
 import com.github.fungal.spi.deployers.DeployerPhases;
 import com.github.fungal.spi.deployers.Deployment;
-import com.github.fungal.spi.deployers.MultiStageDeployer;
 
 /**
  * The -ra.xml deployer for JCA/SJC
@@ -62,8 +61,6 @@ import com.github.fungal.spi.deployers.MultiStageDeployer;
 public final class RaXmlDeployer extends AbstractFungalRADeployer
    implements
       Deployer,
-      MultiStageDeployer,
-      DeployerOrder,
       DeployerPhases
 {
    private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, RaXmlDeployer.class.getName());
@@ -88,13 +85,22 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
    }
 
    /**
-    * Deployer order
-    * @return The deployment
+    * {@inheritDoc}
     */
-   @Override
+   public boolean accepts(URL url)
+   {
+      if (url == null || !url.toExternalForm().endsWith("-ra.xml"))
+         return false;
+
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public int getOrder()
    {
-      return 0;
+      return Constants.RAXML_DEPLOYER;
    }
 
    /**
@@ -150,18 +156,11 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
    }
 
    /**
-    * Deploy
-    * @param url The url
-    * @param parent The parent classloader
-    * @return The deployment
-    * @exception DeployException Thrown if an error occurs during deployment
+    * {@inheritDoc}
     */
    @Override
-   public synchronized Deployment deploy(URL url, ClassLoader parent) throws DeployException
+   public synchronized Deployment deploy(URL url, Context context, ClassLoader parent) throws DeployException
    {
-      if (url == null || !(url.toExternalForm().endsWith("-ra.xml")))
-         return null;
-
       log.debug("Deploying: " + url.toExternalForm());
 
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
