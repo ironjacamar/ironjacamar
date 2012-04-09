@@ -180,7 +180,8 @@ public class Main
       String version = null;
       do
       {
-         System.out.print(rb.getString("profile.version") + "[1.6]: ");
+         System.out.print(rb.getString("profile.version") + " " + 
+            rb.getString("profile.version.values") + " [1.6]: ");
          version = in.readLine();
          if (version == null || version.equals(""))
             version = "1.6";
@@ -195,7 +196,7 @@ public class Main
       //bound
       if (!version.equals("1.0"))
       {
-         System.out.print(rb.getString("support.bound") + "[O]: ");
+         System.out.print(rb.getString("support.bound") + " " + rb.getString("support.bound.values") + " [O]: ");
          String bound = in.readLine();
          if (bound == null || bound.equals("") || bound.equals("O") || bound.equals("o") || bound.equals("Outbound"))
          {
@@ -214,14 +215,15 @@ public class Main
       }
 
       //package name
-      System.out.print(rb.getString("package.name"));
+      System.out.print(rb.getString("package.name") + ": ");
       String packageName = in.readLine();
       def.setRaPackage(packageName);
       
       //transaction
       if (def.isSupportOutbound())
       {
-         System.out.print(rb.getString("support.transaction") + "[N]: ");
+         System.out.print(rb.getString("support.transaction") + " " + 
+            rb.getString("support.transaction.values") + " [N]: ");
          String trans = in.readLine();
          if (trans == null || trans.equals(""))
             def.setSupportTransaction("NoTransaction");
@@ -242,7 +244,7 @@ public class Main
       //reauthentication
       if (def.isSupportOutbound() && !version.equals("1.0"))
       {
-         System.out.print(rb.getString("support.reauthentication") + "[N]: ");
+         System.out.print(rb.getString("support.reauthentication") + " " + rb.getString("yesno") + " [N]: ");
          String reauth = in.readLine();
          if (reauth == null || reauth.equals(""))
             def.setSupportReauthen(false);
@@ -259,7 +261,7 @@ public class Main
       //support annotation
       if (version.equals("1.6"))
       {
-         System.out.print(rb.getString("use.annotation") + "[Y]: ");
+         System.out.print(rb.getString("use.annotation") + " " + rb.getString("yesno") + " [Y]: ");
          String useAnnotation = in.readLine();
          if (useAnnotation == null)
             def.setUseAnnotation(true);
@@ -279,7 +281,7 @@ public class Main
       //use resource adapter
       if (def.isSupportOutbound() && !def.isSupportInbound() && (version.equals("1.6") || version.equals("1.5")))
       {
-         System.out.print(rb.getString("use.ra") + "[Y]: ");
+         System.out.print(rb.getString("use.ra") + " " + rb.getString("yesno") + " [Y]: ");
          String useRa = in.readLine();
          if (useRa == null)
             def.setUseRa(true);
@@ -304,7 +306,7 @@ public class Main
       if (def.isUseRa() || def.isSupportInbound())
       {
          System.out.print(rb.getString("ra.class.name"));
-         System.out.print("[" + def.getRaClass() + "]: ");
+         System.out.print(" [" + def.getRaClass() + "]: ");
          String raClassName = in.readLine();
          classes.add(raClassName);
          if (raClassName != null && !raClassName.equals(""))
@@ -314,7 +316,7 @@ public class Main
             setDefaultValue(def, raClassName, "Ra");
          }
          
-         System.out.print(rb.getString("ra.serial") + "[Y]: ");
+         System.out.print(rb.getString("ra.serial") + " " + rb.getString("yesno") + " [Y]: ");
          String raSerial = in.readLine();
          if (raSerial == null)
             def.setRaSerial(true);
@@ -344,7 +346,7 @@ public class Main
             do
             {
                System.out.print(rb.getString("mcf.class.name"));
-               System.out.print("[" + mcfdef.getMcfClass() + "]: ");
+               System.out.print(" [" + mcfdef.getMcfClass() + "]: ");
                mcfClassName = in.readLine();
             }
             while (classes.contains(mcfClassName) && !mcfClassName.equals(""));
@@ -361,7 +363,7 @@ public class Main
    
             if (def.isUseRa())
             {
-               System.out.print(rb.getString("mcf.impl.raa") + "[Y]: ");
+               System.out.print(rb.getString("mcf.impl.raa") + " " + rb.getString("yesno") + " [Y]: ");
                String raAssociation = in.readLine();
                if (raAssociation == null || raAssociation.equals(""))
                   mcfdef.setImplRaAssociation(true);
@@ -378,7 +380,7 @@ public class Main
             do
             {
                System.out.print(rb.getString("mc.class.name"));
-               System.out.print("[" + mcfdef.getMcClass() + "]: ");
+               System.out.print(" [" + mcfdef.getMcClass() + "]: ");
                mcClassName = in.readLine();
             }
             while (classes.contains(mcClassName) && !mcClassName.equals(""));
@@ -387,7 +389,7 @@ public class Main
             if (mcClassName != null && !mcClassName.equals(""))
                mcfdef.setMcClass(mcClassName);
             
-            System.out.print(rb.getString("mcf.use.cci") + "[N]: ");
+            System.out.print(rb.getString("mcf.use.cci") + " " + rb.getString("yesno") + " [N]: ");
             String useCciConnection = in.readLine();
             if (useCciConnection == null)
                mcfdef.setUseCciConnection(false);
@@ -405,7 +407,7 @@ public class Main
                do
                {
                   System.out.print(rb.getString("cf.interface.name"));
-                  System.out.print("[" + mcfdef.getCfInterfaceClass() + "]: ");
+                  System.out.print(" [" + mcfdef.getCfInterfaceClass() + "]: ");
                   cfInterfaceName = in.readLine();
                }
                while (classes.contains(cfInterfaceName) && !cfInterfaceName.equals(""));
@@ -417,7 +419,7 @@ public class Main
                do
                {
                   System.out.print(rb.getString("cf.class.name"));
-                  System.out.print("[" + mcfdef.getCfClass() + "]: ");
+                  System.out.print(" [" + mcfdef.getCfClass() + "]: ");
                   cfClassName = in.readLine();
                }
                while (classes.contains(cfClassName) && !cfClassName.equals(""));
@@ -429,7 +431,7 @@ public class Main
                do
                {
                   System.out.print(rb.getString("conn.interface.name"));
-                  System.out.print("[" + mcfdef.getConnInterfaceClass() + "]: ");
+                  System.out.print(" [" + mcfdef.getConnInterfaceClass() + "]: ");
                   connInterfaceName = in.readLine();
                }
                while (classes.contains(connInterfaceName) && !connInterfaceName.equals(""));
@@ -441,7 +443,7 @@ public class Main
                do
                {
                   System.out.print(rb.getString("conn.class.name"));
-                  System.out.print("[" + mcfdef.getConnImplClass() + "]: ");
+                  System.out.print(" [" + mcfdef.getConnImplClass() + "]: ");
                   connImplName = in.readLine();
                }
                while (classes.contains(connImplName) && !connImplName.equals(""));
@@ -449,7 +451,7 @@ public class Main
                if (connImplName != null && !connImplName.equals(""))
                   mcfdef.setConnImplClass(connImplName);
                
-               System.out.print(rb.getString("connection.method.support") + "[N]: ");
+               System.out.print(rb.getString("connection.method.support") +  " " + rb.getString("yesno") + " [N]: ");
                String supportMethod = in.readLine();
                if (supportMethod == null)
                   mcfdef.setDefineMethodInConnection(false);
@@ -471,7 +473,7 @@ public class Main
 
             if (def.getVersion().equals("1.5") || def.getVersion().equals("1.6"))
             {
-               System.out.print(rb.getString("more.mcf") + "[N]: ");
+               System.out.print(rb.getString("more.mcf") +  " " + rb.getString("yesno") + " [N]: ");
                String inputMoreMcf = in.readLine();
                if (inputMoreMcf != null && 
                   (inputMoreMcf.equals("Y") || inputMoreMcf.equals("y") || inputMoreMcf.equals("Yes")))
@@ -488,7 +490,7 @@ public class Main
          do
          {
             System.out.print(rb.getString("ml.interface.name"));
-            System.out.print("[" + def.getMlClass() + "]: ");
+            System.out.print(" [" + def.getMlClass() + "]: ");
             mlClassName = in.readLine();
          }
          while (classes.contains(mlClassName) && !mlClassName.equals(""));
@@ -511,7 +513,7 @@ public class Main
          do
          {
             System.out.print(rb.getString("as.class.name"));
-            System.out.print("[" + def.getAsClass() + "]: ");
+            System.out.print(" [" + def.getAsClass() + "]: ");
             asClassName = in.readLine();
          }
          while (classes.contains(asClassName) && !asClassName.equals(""));
@@ -526,7 +528,7 @@ public class Main
          do
          {
             System.out.print(rb.getString("acti.class.name"));
-            System.out.print("[" + def.getActivationClass() + "]: ");
+            System.out.print(" [" + def.getActivationClass() + "]: ");
             actiClassName = in.readLine();
          }
          while (classes.contains(actiClassName) && !actiClassName.equals(""));
@@ -536,7 +538,7 @@ public class Main
       }
       
       //admin object
-      System.out.print(rb.getString("gen.adminobject") + "[N]: ");
+      System.out.print(rb.getString("gen.adminobject") + " " + rb.getString("yesno") + " [N]: ");
       String genAo = in.readLine();
       if (genAo == null)
          def.setGenAdminObject(false);
@@ -550,7 +552,7 @@ public class Main
       
       if (def.isGenAdminObject())
       {
-         System.out.print(rb.getString("adminobject.raa") + "[Y]: ");
+         System.out.print(rb.getString("adminobject.raa") + " " + rb.getString("yesno") + " [Y]: ");
          String aoRaAssociation = in.readLine();
          if (aoRaAssociation == null || aoRaAssociation.equals(""))
             def.setAdminObjectImplRaAssociation(true);
@@ -572,7 +574,7 @@ public class Main
          do
          {
             System.out.print(rb.getString("adminobject.interface.name"));
-            System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectInterface]: ");
+            System.out.print(" [" + def.getDefaultValue() + strOrder + "AdminObjectInterface]: ");
             aoInterfaceName = in.readLine();
          }
          while (classes.contains(aoInterfaceName) && !aoInterfaceName.equals(""));
@@ -591,7 +593,7 @@ public class Main
          do
          {
             System.out.print(rb.getString("adminobject.class.name"));
-            System.out.print("[" + def.getDefaultValue() + strOrder + "AdminObjectImpl]: ");
+            System.out.print(" [" + def.getDefaultValue() + strOrder + "AdminObjectImpl]: ");
             aoClassName = in.readLine();
          }
          while (classes.contains(aoClassName) && !aoClassName.equals(""));
@@ -612,7 +614,7 @@ public class Main
             def.setAdminObjects(new ArrayList<AdminObjectType>());
          def.getAdminObjects().add(aoType);
          
-         System.out.print(rb.getString("gen.adminobject.other") + "[N]: ");
+         System.out.print(rb.getString("gen.adminobject.other") + " " + rb.getString("yesno") + " [N]: ");
          String genAoAgain = in.readLine();
          if (genAoAgain == null)
             numOfAo = -1;
@@ -630,7 +632,7 @@ public class Main
          !def.getMcfDefs().get(0).isUseCciConnection())
       {
          //generate mbean classes
-         System.out.print(rb.getString("gen.mbean") + "[Y]: ");
+         System.out.print(rb.getString("gen.mbean") + " " + rb.getString("yesno") + " [Y]: ");
          String genMbean = in.readLine();
          if (genMbean == null)
             def.setGenMbean(true);
@@ -644,8 +646,8 @@ public class Main
       }
       
       //build environment
-      System.out.print(rb.getString("build.env"));
-      System.out.print("[" + def.getBuild() + "]: ");
+      System.out.print(rb.getString("build.env") + " " + rb.getString("build.env.values"));
+      System.out.print(" [" + def.getBuild() + "]: ");
       String buildEnv = in.readLine();
       if (buildEnv != null && !buildEnv.equals(""))
       {
@@ -717,26 +719,28 @@ public class Main
       List<ConfigPropType> props = new ArrayList<ConfigPropType>();
       while (true)
       {
-         System.out.println(rb.getString(classname + ".config.properties"));
-         System.out.print("    " + rb.getString("config.properties.name"));
+         System.out.println(rb.getString(classname + ".config.properties") + " " + 
+            rb.getString("confirm.quit") + ": ");
+         System.out.print("    " + rb.getString("config.properties.name") + ": ");
          String name = in.readLine();
          if (name == null || name.equals(""))
             break;
-         System.out.print("    " + rb.getString("config.properties.type"));
+         System.out.print("    " + rb.getString("config.properties.type") + ": ");
          String type = in.readLine();
 
          if (!BasicType.isBasicType(type))
          {
-            System.out.print(rb.getString("config.properties.type.tip") + " [");
+            System.out.print(rb.getString("config.properties.type.tip") + ": [");
             System.out.println(BasicType.allBasicType() + "]");
             continue;
          }
-         System.out.print("    " + rb.getString("config.properties.value"));
+         System.out.print("    " + rb.getString("config.properties.value") + ": ");
          String value = in.readLine();
          boolean required = false;
          if (supportRequired)
          {
-            System.out.print("    " + rb.getString("config.properties.required") + "[N]: ");
+            System.out.print("    " + rb.getString("config.properties.required") + " " + 
+               rb.getString("yesno") + " [N]: ");
             String propRequired = in.readLine();
             if (propRequired == null)
                required = false;
@@ -773,30 +777,32 @@ public class Main
       List<MethodForConnection> methods = new ArrayList<MethodForConnection>();
       while (true)
       {
-         System.out.print("    " + rb.getString("connection.method.name"));
+         System.out.print("    " + rb.getString("connection.method.name") + " " + 
+            rb.getString("confirm.quit") + ": ");
          String methodName = in.readLine();
          if (methodName == null || methodName.equals(""))
             break;
          MethodForConnection method = new MethodForConnection();
          method.setMethodName(methodName);
-         System.out.print("    " + rb.getString("connection.method.return"));
+         System.out.print("    " + rb.getString("connection.method.return") + ": ");
          String methodReturn = in.readLine();
          if (!(methodReturn == null || methodReturn.equals("")))
             method.setReturnType(methodReturn);
          while (true)
          {
-            System.out.print("    " + rb.getString("connection.method.param.name"));
+            System.out.print("    " + rb.getString("connection.method.param.name") + " " + 
+               rb.getString("confirm.quit") + ": ");
             String paramName = in.readLine();
             if (paramName == null || paramName.equals(""))
                break;
             String paramType = null;
             while (true)
             {
-               System.out.print("    " + rb.getString("connection.method.param.type"));
+               System.out.print("    " + rb.getString("connection.method.param.type") + ": ");
                paramType = in.readLine();
                if (BasicType.isBasicType(paramType) || BasicType.isPrimitiveType(paramType))
                   break;
-               System.out.print(rb.getString("config.properties.type.tip") + " [");
+               System.out.print(rb.getString("config.properties.type.tip") + ": [");
                System.out.println(BasicType.allType() + "]");
             }
             
@@ -806,7 +812,7 @@ public class Main
          
          while (true)
          {
-            System.out.print("    " + rb.getString("connection.method.exception"));
+            System.out.print("    " + rb.getString("connection.method.exception") + ": ");
             String exceptions = in.readLine();
             if (exceptions == null || exceptions.equals(""))
                break;
