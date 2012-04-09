@@ -22,17 +22,20 @@
 package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.recovery.ValidatingManagedConnectionFactoryRecoveryPlugin;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedAction;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
@@ -116,7 +119,17 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
       this.recoverPassword = recoverPassword;
       this.recoverSecurityDomain = recoverSecurityDomain;
       this.subjectFactory = subjectFactory;
-      this.plugin = plugin;
+
+      if (plugin instanceof ValidatingManagedConnectionFactoryRecoveryPlugin &&
+          mcf instanceof ValidatingManagedConnectionFactory)
+      {
+         this.plugin = null;
+      }
+      else
+      {
+         this.plugin = plugin;
+      }
+
       this.recoverMC = null;
       this.jndiName = null;
    }
@@ -321,12 +334,41 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
     * @return The managed connection
     * @exception ResourceException Thrown in case of an error
     */
+   @SuppressWarnings("unchecked")
    private ManagedConnection open(Subject s) throws ResourceException
    {
       log.debugf("Open managed connection (%s)", s);
 
       if (recoverMC == null)
          recoverMC = mcf.createManagedConnection(s, null);
+
+      if (plugin == null)
+      {
+         try
+         {
+            ValidatingManagedConnectionFactory vmcf = (ValidatingManagedConnectionFactory)mcf;
+
+            Set connectionSet = new HashSet(1);
+            connectionSet.add(recoverMC);
+
+            Set invalid = vmcf.getInvalidConnections(connectionSet);
+
+            if (invalid != null && invalid.size() > 0)
+            {
+               log.debugf("Invalid managed connection: %s", recoverMC);
+
+               close(recoverMC);
+               recoverMC = mcf.createManagedConnection(s, null);
+            }
+         }
+         catch (ResourceException re)
+         {
+            log.debugf("Exception during invalid check", re);
+
+            close(recoverMC);
+            recoverMC = mcf.createManagedConnection(s, null);
+         }
+      }
 
       return recoverMC;
    }
@@ -376,6 +418,9 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
     */
    private Object openConnection(ManagedConnection mc, Subject s) throws ResourceException
    {
+      if (plugin == null)
+         return null;
+
       log.debugf("Open connection (%s, %s)", mc, s);
 
       return mc.getConnection(s, null);
@@ -388,6 +433,9 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
     */
    private boolean closeConnection(Object c)
    {
+      if (plugin == null)
+         return false;
+
       log.debugf("Closing connection for recovery check (%s)", c);
 
       boolean forceClose = false;
