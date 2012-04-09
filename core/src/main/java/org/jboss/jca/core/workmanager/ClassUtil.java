@@ -92,6 +92,6 @@ final class ClassUtil
       if (parameterTypes == null)
          parameterTypes = EMPTY_CLASS_ARRAY;
 
-      return clazz.getDeclaredMethod(methodName, parameterTypes);
+      return clazz.getMethod(methodName, parameterTypes);
    }
 }
