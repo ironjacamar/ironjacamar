@@ -109,7 +109,7 @@
   <property name="version.apache-log4j" value="1.2.16"/>
   <property name="version.apache-logging" value="1.1.0.jboss"/>
   <property name="version.apiviz" value="1.3.1.GA"/>
-  <property name="version.arquillian" value="1.0.0.CR7"/>
+  <property name="version.arquillian" value="1.0.0.CR8"/>
   <property name="version.dom4j" value="1.6.1"/>
   <property name="version.mockito" value="1.9.0"/>
   <property name="version.eclipse.ecj" value="3.5.1"/>
