@@ -75,7 +75,14 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                      org.jboss.tm.JBossXATerminator terminator,
                                      org.jboss.tm.XAResourceRecoveryRegistry rr)
    {
-      this.tm = tm;
+      if (tm instanceof org.jboss.tm.TransactionTimeoutConfiguration)
+      {
+         this.tm = new TransactionManagerDelegator(tm);
+      }
+      else
+      {
+         this.tm = tm;
+      }
       this.tsr = tsr;
       this.utr = utr;
       this.terminator = terminator;
