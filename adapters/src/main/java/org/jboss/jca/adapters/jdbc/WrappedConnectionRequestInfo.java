@@ -83,6 +83,10 @@ public class WrappedConnectionRequestInfo implements ConnectionRequestInfo
       {
          return false;
       }
+
+      if (other == this)
+         return true;
+
       WrappedConnectionRequestInfo cri = (WrappedConnectionRequestInfo) other;
       if (user == null)
       {
@@ -112,6 +116,23 @@ public class WrappedConnectionRequestInfo implements ConnectionRequestInfo
             return false;
          }
       }
+
       return true;
+   }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("WrappedConnectionRequestInfo@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[userName=").append(user);
+      sb.append("]");
+
+      return sb.toString();
    }
 }
