@@ -100,10 +100,26 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
       }
       out.write("public class " + getClassName(def) + " implements ResourceAdapter");
+      if (def.isRaSerial())
+      {
+         out.write(", java.io.Serializable");
+      }
       writeLeftCurlyBracket(out, 0);
       writeEol(out);
       
       int indent = 1;
+      
+      if (def.isRaSerial())
+      {
+         writeIndent(out, indent);
+         out.write("/** The serial version UID */");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("private static final long serialVersionUID = 1L;");
+         writeEol(out);
+         writeEol(out);
+      }
+      
       writeIndent(out, indent);
       out.write("/** The logger */");
       writeEol(out);

@@ -128,6 +128,10 @@ public class Definition
    @XmlElement(name = "AdminObject")
    private List<AdminObjectType> adminObjects;
    
+   /** Resource Adapter need Serialize or not  */
+   @XmlElement(name = "RaSerial")
+   private boolean raSerial = true;
+   
    /**
     * Set the version.
     * 
@@ -693,4 +697,25 @@ public class Definition
    {
       return defaultPackageInbound;
    }
+
+   /**
+    * set raSerial
+    * 
+    * @param raSerial the raSerial to set
+    */
+   public void setRaSerial(boolean raSerial)
+   {
+      this.raSerial = raSerial;
+   }
+
+   /**
+    * get raSerial
+    * 
+    * @return the raSerial
+    */
+   public boolean isRaSerial()
+   {
+      return raSerial;
+   }
+
 }
