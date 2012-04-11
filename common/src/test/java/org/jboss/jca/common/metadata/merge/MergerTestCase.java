@@ -31,7 +31,7 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
-import org.jboss.jca.common.metadata.ds.DsParser;
+import org.jboss.jca.common.metadata.ds.v11.DsParser;
 import org.jboss.jca.common.metadata.ironjacamar.IronJacamarParser;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;

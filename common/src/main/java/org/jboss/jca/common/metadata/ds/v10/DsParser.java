@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds;
+package org.jboss.jca.common.metadata.ds.v10;
 
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.Defaults;
@@ -27,7 +27,6 @@ import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.Recovery;
-import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
@@ -36,15 +35,21 @@ import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
+import org.jboss.jca.common.metadata.ds.DatasourcesImpl;
+import org.jboss.jca.common.metadata.ds.DriverImpl;
+import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
+import org.jboss.jca.common.metadata.ds.StatementImpl;
+import org.jboss.jca.common.metadata.ds.TimeOutImpl;
+import org.jboss.jca.common.metadata.ds.ValidationImpl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -67,7 +72,7 @@ import org.jboss.logging.Messages;
 public class DsParser extends AbstractParser implements MetadataParser<DataSources>
 {
    /** The bundle */
-   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
+   protected static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    @Override
    public DataSources parse(InputStream xmlInputStream) throws Exception
@@ -133,13 +138,24 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
    }
 
-   private DataSources parseDataSources(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   /**
+    * Parse datasource
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected DataSources parseDataSources(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      ArrayList<XaDataSource> xaDataSource = new ArrayList<XaDataSource>();
-      ArrayList<DataSource> datasource = new ArrayList<DataSource>();
-      HashMap<String, Driver> drivers = new HashMap<String, Driver>();
+      List<org.jboss.jca.common.api.metadata.ds.DataSource> datasource =
+         new ArrayList<org.jboss.jca.common.api.metadata.ds.DataSource>();
+      List<org.jboss.jca.common.api.metadata.ds.XaDataSource> xaDataSource =
+         new ArrayList<org.jboss.jca.common.api.metadata.ds.XaDataSource>();
+      Map<String, Driver> drivers = new HashMap<String, Driver>();
       boolean driversMatched = false;
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -147,7 +163,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (Tag.forName(reader.getLocalName()) == Tag.DATASOURCES)
                {
-
                   return new DatasourcesImpl(datasource, xaDataSource, drivers);
                }
                else
@@ -189,7 +204,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private Driver parseDriver(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   /**
+    * Parse driver
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected Driver parseDriver(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
       String driverClass = null;
@@ -275,7 +298,16 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private XaDataSource parseXADataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   /**
+    * Parse XA datasource
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected org.jboss.jca.common.api.metadata.ds.XaDataSource
+   parseXADataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
       TransactionIsolation transactionIsolation = null;
@@ -302,7 +334,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean spy = Defaults.SPY;
       Boolean useCcm = Defaults.USE_CCM;
 
-      for (XaDataSource.Attribute attribute : XaDataSource.Attribute.values())
+      for (org.jboss.jca.common.api.metadata.ds.v10.XaDataSource.Attribute attribute :
+              org.jboss.jca.common.api.metadata.ds.v10.XaDataSource.Attribute.values())
       {
          switch (attribute)
          {
@@ -352,7 +385,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                }
                else
                {
-                  if (XaDataSource.Tag.forName(reader.getLocalName()) == XaDataSource.Tag.UNKNOWN)
+                  if (org.jboss.jca.common.api.metadata.ds.v10.XaDataSource.Tag.forName(reader.getLocalName()) ==
+                      org.jboss.jca.common.api.metadata.ds.v10.XaDataSource.Tag.UNKNOWN)
                   {
                      throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
@@ -360,7 +394,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                break;
             }
             case START_ELEMENT : {
-               switch (XaDataSource.Tag.forName(reader.getLocalName()))
+               switch (org.jboss.jca.common.api.metadata.ds.v10.XaDataSource.Tag.forName(reader.getLocalName()))
                {
                   case XA_DATASOURCE_PROPERTY : {
                      xaDataSourceProperty.put(attributeAsString(reader, "name"), elementAsString(reader));
@@ -424,7 +458,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private DsSecurity parseDsSecurity(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   /**
+    * Parse security
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected DsSecurity parseDsSecurity(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
 
@@ -438,7 +480,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
+               if (org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.forName(reader.getLocalName()) ==
+                   org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.SECURITY)
                {
 
                   return new DsSecurityImpl(userName, password, securityDomain, reauthPlugin);
@@ -482,7 +525,16 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   /**
+    * Parse datasource
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected org.jboss.jca.common.api.metadata.ds.DataSource
+   parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
       String connectionUrl = null;
@@ -509,7 +561,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean useCcm = Defaults.USE_CCM;
       Boolean jta = Defaults.JTA;
 
-      for (DataSource.Attribute attribute : DataSource.Attribute.values())
+      for (org.jboss.jca.common.api.metadata.ds.v10.DataSource.Attribute attribute :
+              org.jboss.jca.common.api.metadata.ds.v10.DataSource.Attribute.values())
       {
          switch (attribute)
          {
@@ -563,7 +616,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                }
                else
                {
-                  if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.UNKNOWN)
+                  if (org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.forName(reader.getLocalName()) ==
+                      org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.UNKNOWN)
                   {
                      throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
@@ -571,7 +625,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                break;
             }
             case START_ELEMENT : {
-               switch (DataSource.Tag.forName(reader.getLocalName()))
+               switch (org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.forName(reader.getLocalName()))
                {
                   case CONNECTION_PROPERTY : {
                      connectionProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
@@ -639,7 +693,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private Validation parseValidationSetting(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   /**
+    * Parse validation
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected Validation parseValidationSetting(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
       Boolean validateOnMatch = Defaults.VALIDATE_ON_MATCH;
@@ -656,7 +718,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.VALIDATION)
+               if (org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.forName(reader.getLocalName()) ==
+                   org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.VALIDATION)
                {
 
                   return new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail,
@@ -719,7 +782,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private TimeOut parseTimeOutSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   /**
+    * Parse timeout
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected TimeOut parseTimeOutSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
 
@@ -737,7 +808,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.TIMEOUT)
+               if (org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.forName(reader.getLocalName()) ==
+                   org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.TIMEOUT)
                {
 
                   return new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
@@ -798,7 +870,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private Statement parseStatementSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   /**
+    * Parse statement
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected Statement parseStatementSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
 
@@ -811,7 +891,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.STATEMENT)
+               if (org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.forName(reader.getLocalName()) ==
+                   org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.STATEMENT)
                {
 
                   return new StatementImpl(sharePreparedStatements, preparedStatementsCacheSize, trackStatements);

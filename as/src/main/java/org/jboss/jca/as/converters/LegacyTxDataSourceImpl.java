@@ -31,11 +31,11 @@ import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
-import org.jboss.jca.common.metadata.ds.DataSourceImpl;
 import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
 import org.jboss.jca.common.metadata.ds.StatementImpl;
 import org.jboss.jca.common.metadata.ds.TimeOutImpl;
 import org.jboss.jca.common.metadata.ds.ValidationImpl;
+import org.jboss.jca.common.metadata.ds.v10.DataSourceImpl;
 
 import java.util.HashMap;
 import java.util.Map;

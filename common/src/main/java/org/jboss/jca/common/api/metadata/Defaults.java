@@ -116,6 +116,11 @@ public interface Defaults
     */
    public static final Boolean WRAP_XA_RESOURCE = Boolean.TRUE;
    
+   /**
+    * Allow multiple users
+    */
+   public static final Boolean ALLOW_MULTIPLE_USERS = Boolean.FALSE;
+   
    //Statement
    
    /**

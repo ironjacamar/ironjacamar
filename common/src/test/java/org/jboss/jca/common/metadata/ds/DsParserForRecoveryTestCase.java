@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
+import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
 import java.io.File;
 import java.io.FileInputStream;

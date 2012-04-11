@@ -36,7 +36,7 @@ import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
 import org.jboss.jca.common.metadata.ds.StatementImpl;
 import org.jboss.jca.common.metadata.ds.TimeOutImpl;
 import org.jboss.jca.common.metadata.ds.ValidationImpl;
-import org.jboss.jca.common.metadata.ds.XADataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v10.XADataSourceImpl;
 
 import java.util.HashMap;
 import java.util.Map;

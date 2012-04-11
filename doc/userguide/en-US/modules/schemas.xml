@@ -101,5 +101,16 @@
 
   </section>
 
+  <!-- Datasources 1.1 -->
+  <section id="ds11">
+    <title>Datasources 1.1</title>
+
+    <programlisting language="xml">
+      <xi:include parse="text" 
+                  href="../../../common/src/main/resources/schema/datasources_1_1.xsd"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    </programlisting>
+
+  </section>
 
 </appendix>

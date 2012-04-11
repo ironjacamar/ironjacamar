@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds;
+package org.jboss.jca.common.metadata.ds.v10;
 
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
@@ -29,8 +29,9 @@ import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.api.metadata.ds.XaDataSource;
+import org.jboss.jca.common.api.metadata.ds.v10.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
+import org.jboss.jca.common.metadata.ds.DataSourceAbstractImpl;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -367,7 +368,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @return the xaPool.
     */
    @Override
-   public final CommonXaPool getXaPool()
+   public CommonXaPool getXaPool()
    {
       return xaPool;
    }

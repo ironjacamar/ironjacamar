@@ -23,15 +23,12 @@ package org.jboss.jca.common.api.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * A DataSource.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
  */
 public interface DataSource extends CommonDataSource
 {
@@ -69,14 +66,12 @@ public interface DataSource extends CommonDataSource
     */
    public Map<String, String> getConnectionProperties();
 
-
    /**
     * Get the statement.
     *
     * @return the statement.
     */
    public Statement getStatement();
-
 
    /**
     * Get the urlDelimiter.
@@ -105,212 +100,4 @@ public interface DataSource extends CommonDataSource
     * @return the pool.
     */
    public CommonPool getPool();
-
-
-   /**
-   *
-   * A Tag.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
-   public enum Tag
-   {
-      /** always first
-       *
-       */
-      UNKNOWN(null),
-
-      /**
-       * pool tag
-       */
-      POOL("pool"),
-      /**
-       * connection-url tag
-       */
-      CONNECTION_URL("connection-url"),
-      /**
-      * driverClass tag
-      */
-      DRIVER_CLASS("driver-class"),
-      /**
-      * dataSourceClass tag
-      */
-      DATASOURCE_CLASS("datasource-class"),
-      /**
-      * module tag
-      */
-      DRIVER("driver"),
-      /**
-      * transactionIsolation tag
-      */
-      TRANSACTION_ISOLATION("transaction-isolation"),
-      /**
-      * connectionProperty tag
-      */
-      CONNECTION_PROPERTY("connection-property"),
-      /**
-      * timeOut tag
-      */
-      TIMEOUT("timeout"),
-      /**
-      * security tag
-      */
-      SECURITY("security"),
-      /**
-      * statement tag
-      */
-      STATEMENT("statement"),
-      /**
-      * validation tag
-      */
-      VALIDATION("validation"),
-      /**
-      * urlDelimiter tag
-      */
-      URL_DELIMITER("url-delimiter"),
-      /**
-      * urlSelectorStrategyClassName tag
-      */
-      URL_SELECTOR_STRATEGY_CLASS_NAME("url-selector-strategy-class-name"),
-      /**
-      * newConnectionSql tag
-      */
-      NEW_CONNECTION_SQL("new-connection-sql");
-
-      private final String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Tag(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public String toString()
-      {
-         return name;
-      }
-
-      private static final Map<String, Tag> MAP;
-
-      static
-      {
-         final Map<String, Tag> map = new HashMap<String, Tag>();
-         for (Tag element : values())
-         {
-            final String name = element.getLocalName();
-            if (name != null)
-               map.put(name, element);
-         }
-         MAP = map;
-      }
-
-      /**
-      *
-      * Static method to get enum instance given localName XsdString
-      *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
-      * @return the enum instance
-      */
-      public static Tag forName(String localName)
-      {
-         final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
-      }
-
-   }
-
-   /**
-    *
-    * A Attribute.
-    *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-    *
-    */
-   public enum Attribute
-   {
-
-      /** jndiName attribute
-       *
-       */
-      JNDI_NAME("jndi-name"),
-
-      /** jndiName attribute
-      *
-      */
-      POOL_NAME("pool-name"),
-
-      /** jndiName attribute
-      *
-      */
-      ENABLED("enabled"),
-      /** use-java-context attribute
-      *
-      */
-      USE_JAVA_CONTEXT("use-java-context"),
-
-      /** spy attribute
-      *
-      */
-      SPY("spy"),
-
-      /** use-ccm attribute
-      *
-      */
-      USE_CCM("use-ccm"),
-
-      /**
-       * jta attribute
-       */
-      JTA("jta");
-
-      private final String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Attribute(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public String toString()
-      {
-         return name;
-      }
-   }
 }
