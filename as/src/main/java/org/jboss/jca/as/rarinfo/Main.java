@@ -100,6 +100,8 @@ public class Main
    private static final String REPORT_FILE = "-report.txt";
    private static final String RAXML_FILE = "META-INF/ra.xml";
 
+   private static final String tempdir = System.getProperty("java.io.tmpdir");
+   private static final String subdir = "/jca/";
    private static Set<Class<?>> validTypes;
 
    static
@@ -194,6 +196,8 @@ public class Main
             System.exit(OTHER);
          }
 
+         URLClassLoader cl = loadClass(rarFile, cps);
+         
          out = new PrintStream(rarFile.substring(0, rarFile.length() - 4) + REPORT_FILE);
          out.println("Archive:\t" + rarFile);
          
@@ -284,7 +288,7 @@ public class Main
             }
             
             Map<String, String> introspected =
-               getIntrospectedProperties(ra1516.getResourceadapterClass(), rarFile, cps);
+               getIntrospectedProperties(ra1516.getResourceadapterClass(), cl);
 
             if (ra1516.getConfigProperties() != null)
             {
@@ -343,11 +347,34 @@ public class Main
                      needPrint = false;
                   }
                   
+                  //ValidatingManagedConnectionFactory
+                  if (needPrint)
+                  {
+                     try
+                     {
+                        Class<?> clazz = Class.forName(classname, true, cl);
+                        out.print("  Validating: ");
+
+                        if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
+                        {
+                           out.println("Yes");
+                        }
+                        else
+                        {
+                           out.println("No");
+                        }
+                     }
+                     catch (Exception e)
+                     {
+                        // Nothing we can do
+                     }
+                  }
+                  
                   Map<String, String> configProperty = null;
                   if (mcf.getConfigProperties() != null)
                      configProperty = new HashMap<String, String>();
 
-                  introspected = getIntrospectedProperties(classname, rarFile, cps);
+                  introspected = getIntrospectedProperties(classname, cl);
 
                   for (ConfigProperty cp : mcf.getConfigProperties())
                   {
@@ -426,7 +453,7 @@ public class Main
                if (ao.getConfigProperties() != null)
                   configProperty = new HashMap<String, String>();
                
-               introspected = getIntrospectedProperties(aoClassname, rarFile, cps);
+               introspected = getIntrospectedProperties(aoClassname, cl);
 
                for (ConfigProperty cp : ao.getConfigProperties())
                {
@@ -478,7 +505,7 @@ public class Main
                      line++;
                      out.println("Class: " + asClassname);
 
-                     introspected = getIntrospectedProperties(asClassname, rarFile, cps);
+                     introspected = getIntrospectedProperties(asClassname, cl);
 
                      if (ml.getActivationspec() != null && 
                          ml.getActivationspec().getRequiredConfigProperties() != null)
@@ -514,12 +541,32 @@ public class Main
             classname = ra10.getManagedConnectionFactoryClass().toString();
             transSupport = ra10.getTransactionSupport();
             
+            //ValidatingManagedConnectionFactory
+            try
+            {
+               Class<?> clazz = Class.forName(classname, true, cl);
+               out.print("  Validating: ");
+
+               if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
+               {
+                  out.println("Yes");
+               }
+               else
+               {
+                  out.println("No");
+               }
+            }
+            catch (Exception e)
+            {
+               // Nothing we can do
+            }
+            
             Map<String, String> configProperty = null;
             if (ra10.getConfigProperties() != null)
                configProperty = new HashMap<String, String>();
 
             Map<String, String> introspected =
-               getIntrospectedProperties(classname, rarFile, cps);
+               getIntrospectedProperties(classname, cl);
 
             for (ConfigProperty cp : ra10.getConfigProperties())
             {
@@ -609,108 +656,144 @@ public class Main
                // Ignore
             }
          }
+         cleanupTempFiles();
       }
    }
 
+   private static URLClassLoader loadClass(String rarFile, String[] classpath)
+   {
+
+      if (rarFile == null)
+         throw new IllegalArgumentException("Rar file name is null");
+
+      File destination = null;
+      try
+      {
+         File f = new File(rarFile);
+         File root = null;
+
+         if (f.isFile())
+         {
+            destination = new File(tempdir, subdir);
+            root = extract(f, destination);
+         }
+         else
+         {
+            root = f;
+         }
+
+         // Create classloader
+         URL[] allurls;
+         URL[] urls = getUrls(root);
+         if (classpath != null && classpath.length > 0)
+         {
+            List<URL> listUrl = new ArrayList<URL>();
+            for (URL u : urls)
+               listUrl.add(u);
+            for (String jar : classpath)
+            {
+               if (jar.endsWith(".jar"))
+                  listUrl.add(new File(jar).toURI().toURL());
+            }
+            allurls = listUrl.toArray(new URL[listUrl.size()]);
+         }
+         else
+            allurls = urls;
+         
+         URLClassLoader cl = SecurityActions.createURLCLassLoader(allurls,
+               SecurityActions.getThreadContextClassLoader());
+
+         return cl;
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+      }
+      return null;
+   }
+
+   private static void cleanupTempFiles()
+   {
+      File destination = new File(tempdir, subdir);
+      if (destination != null)
+      {
+         try
+         {
+            recursiveDelete(destination);
+         }
+         catch (IOException ioe)
+         {
+            // Ignore
+         }
+      }
+   }
+
+   
+   private static boolean hasInterface(Class<?> clazz, String interfaceName)
+   {
+      for (Class<?> iface : clazz.getInterfaces())
+      {
+         if (iface.getName().equals(interfaceName))
+         {
+            return true;
+         }
+         else
+         {
+            return hasInterface(iface, interfaceName);
+         }
+      }
+      if (clazz.getSuperclass() != null)
+      {
+         return hasInterface(clazz.getSuperclass(), interfaceName);
+      }
+      return false;
+   }
+   
    /**
     * Get the introspected properties for a class
     * @param clz The fully qualified class name
-    * @param rarFile The name of the .rar file
-    * @param classpath The classpath
+    * @param cl classloader
     * @return The properties (name, type)
     */
-   private static Map<String, String> getIntrospectedProperties(String clz, String rarFile, String[] classpath)
+   private static Map<String, String> getIntrospectedProperties(String clz, URLClassLoader cl)
    {
       Map<String, String> result = new TreeMap<String, String>();
 
-      if (clz != null && rarFile != null)
+      try
       {
-         File destination = null;
-         try
+
+         Class<?> c = Class.forName(clz, true, cl);
+         Method[] methods = c.getMethods();
+
+         if (methods != null)
          {
-            File f = new File(rarFile);
-            File root = null;
-
-            if (f.isFile())
+            for (Method m : methods)
             {
-               destination = new File(SecurityActions.getSystemProperty("java.io.tmpdir"), "/tmp/");
-               root = extract(f, destination);
-            }
-            else
-            {
-               root = f;
-            }
-
-            // Create classloader
-            URL[] allurls;
-            URL[] urls = getUrls(root);
-            if (classpath != null && classpath.length > 0)
-            {
-               List<URL> listUrl = new ArrayList<URL>();
-               for (URL u : urls)
-                  listUrl.add(u);
-               for (String jar : classpath)
+               if (m.getName().startsWith("set") && m.getParameterTypes() != null && m.getParameterTypes().length == 1
+                     && isValidType(m.getParameterTypes()[0]))
                {
-                  if (jar.endsWith(".jar"))
-                     listUrl.add(new File(jar).toURI().toURL());
-               }
-               allurls = listUrl.toArray(new URL[listUrl.size()]);
-            }
-            else
-               allurls = urls;
+                  String name = m.getName().substring(3);
 
-            URLClassLoader cl = SecurityActions.createURLCLassLoader(allurls,
-                                                                     SecurityActions.getThreadContextClassLoader());
-
-            Class<?> c = Class.forName(clz, true, cl);
-            Method[] methods = c.getMethods();
-         
-            if (methods != null)
-            {
-               for (Method m : methods)
-               {
-                  if (m.getName().startsWith("set") &&
-                      m.getParameterTypes() != null && m.getParameterTypes().length == 1 &&
-                      isValidType(m.getParameterTypes()[0]))
+                  if (name.length() == 1)
                   {
-                     String name = m.getName().substring(3);
-
-                     if (name.length() == 1)
-                     {
-                        name = name.toLowerCase(Locale.US);
-                     }
-                     else
-                     {
-                        name = name.substring(0, 1).toLowerCase(Locale.US) + name.substring(1);
-                     }
-
-                     String type = m.getParameterTypes()[0].getName();
-                     
-                     result.put(name, type);
+                     name = name.toLowerCase(Locale.US);
                   }
-               }
-            }
-         }
-         catch (Throwable t)
-         {
-            // Nothing we can do
-         }
-         finally
-         {
-            if (destination != null)
-            {
-               try
-               {
-                  recursiveDelete(destination);
-               }
-               catch (IOException ioe)
-               {
-                  // Ignore
+                  else
+                  {
+                     name = name.substring(0, 1).toLowerCase(Locale.US) + name.substring(1);
+                  }
+
+                  String type = m.getParameterTypes()[0].getName();
+
+                  result.put(name, type);
                }
             }
          }
       }
-
+      catch (Throwable t)
+      {
+         // Nothing we can do
+      }
       return result;
    }
 
