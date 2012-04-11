@@ -19,17 +19,18 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds;
+package org.jboss.jca.common.metadata.ds.v10;
 
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
+import org.jboss.jca.common.api.metadata.ds.v10.DataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
+import org.jboss.jca.common.metadata.ds.DataSourceAbstractImpl;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -237,7 +238,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @return the pool.
     */
    @Override
-   public final CommonPool getPool()
+   public CommonPool getPool()
    {
       return pool;
    }

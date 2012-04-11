@@ -34,8 +34,8 @@ import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.metadata.ds.DataSourceImpl;
-import org.jboss.jca.common.metadata.ds.XADataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v10.DataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v10.XADataSourceImpl;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
@@ -436,6 +436,15 @@ public abstract class AbstractDsDeployer
       PoolFactory pf = new PoolFactory();
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
 
+      if (ds.getPool() != null && ds.getPool() instanceof org.jboss.jca.common.api.metadata.ds.v11.DsPool)
+      {
+         org.jboss.jca.common.api.metadata.ds.v11.DsPool dsPool =
+            (org.jboss.jca.common.api.metadata.ds.v11.DsPool)ds.getPool();
+
+         if (dsPool.isAllowMultipleUsers() != null && dsPool.isAllowMultipleUsers().booleanValue())
+            strategy = PoolStrategy.POOL_BY_CRI;
+      }
+
       // Security
       String securityDomain = null;
       if (ds.getSecurity() != null)
@@ -608,6 +617,15 @@ public abstract class AbstractDsDeployer
 
       PoolFactory pf = new PoolFactory();
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
+
+      if (ds.getXaPool() != null && ds.getXaPool() instanceof org.jboss.jca.common.api.metadata.ds.v11.DsXaPool)
+      {
+         org.jboss.jca.common.api.metadata.ds.v11.DsXaPool dsXaPool =
+            (org.jboss.jca.common.api.metadata.ds.v11.DsXaPool)ds.getXaPool();
+
+         if (dsXaPool.isAllowMultipleUsers() != null && dsXaPool.isAllowMultipleUsers().booleanValue())
+            strategy = PoolStrategy.POOL_BY_CRI;
+      }
 
       // Security
       String securityDomain = null;

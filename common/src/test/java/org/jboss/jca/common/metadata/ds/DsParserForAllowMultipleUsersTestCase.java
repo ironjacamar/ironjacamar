@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,6 +22,8 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.v11.DataSource;
+import org.jboss.jca.common.api.metadata.ds.v11.DsPool;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
@@ -39,12 +41,12 @@ import static org.junit.Assert.assertThat;
 
 /**
  *
- * Test case for parsing the spy functionality parameter
+ * Test case for parsing the allow-multiple-users functionality parameter
  *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  *
  */
-public class DsParserForSpyTestCase
+public class DsParserForAllowMultipleUsersTestCase
 {
 
    private static DsParser parser;
@@ -63,23 +65,25 @@ public class DsParserForSpyTestCase
 
    /**
     *
-    * Spy enabled for a datasource
+    * allow-multiple-users enabled for a datasource
     *
     * @throws Exception in case of parser error
     */
    @Test
-   public void shouldHaveSpyEnabled() throws Exception
+   public void shouldHaveAllowMultipleUsersEnabled() throws Exception
    {
 
       //given
       File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/spy-ds.xml")
+         .getResource("ds/unit/allow-multiple-users-ds.xml")
          .toURI());
       //when
-      DataSources ds = doParse(xmlFile);
+      DataSources dses = doParse(xmlFile);
       //then
-      boolean actualSpy = ds.getDataSource().get(0).isSpy();
-      assertThat(actualSpy, is(true));
+      DataSource ds = (DataSource)dses.getDataSource().get(0);
+      DsPool dsPool = ds.getPool();
+      boolean actualAllowMultipleUsers = dsPool.isAllowMultipleUsers();
+      assertThat(actualAllowMultipleUsers, is(true));
    }
 
    private DataSources doParse(File xmlFile) 
@@ -92,7 +96,6 @@ public class DsParserForSpyTestCase
          is = new FileInputStream(xmlFile);
          //when
          return parser.parse(is);
-
       }
       finally
       {

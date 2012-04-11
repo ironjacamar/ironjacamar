@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
 import java.io.File;
 import java.io.FileInputStream;

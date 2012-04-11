@@ -29,7 +29,7 @@ import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.metadata.ds.DsParser;
+import org.jboss.jca.common.metadata.ds.v11.DsParser;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;

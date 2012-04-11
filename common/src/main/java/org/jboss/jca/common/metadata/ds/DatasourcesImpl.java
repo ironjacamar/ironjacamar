@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -44,11 +45,11 @@ public class DatasourcesImpl implements DataSources
    /** The serialVersionUID */
    private static final long serialVersionUID = 6933310057105771370L;
 
-   private final ArrayList<DataSource> datasource;
+   private final List<DataSource> datasource;
 
-   private final ArrayList<XaDataSource> xaDataSource;
+   private final List<XaDataSource> xaDataSource;
 
-   private final HashMap<String, Driver> drivers;
+   private final Map<String, Driver> drivers;
 
    /**
     * Create a new DatasourcesImpl.
@@ -58,8 +59,9 @@ public class DatasourcesImpl implements DataSources
     * @param drivers drivers
     * @throws ValidateException ValidateException
     */
-   public DatasourcesImpl(List<DataSource> datasource, List<XaDataSource> xaDataSource,
-      HashMap<String, Driver> drivers)
+   public DatasourcesImpl(List<DataSource> datasource,
+                          List<XaDataSource> xaDataSource,
+                          Map<String, Driver> drivers)
       throws ValidateException
    {
       super();

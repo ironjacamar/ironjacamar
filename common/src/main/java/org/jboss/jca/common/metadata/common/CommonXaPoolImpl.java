@@ -37,16 +37,20 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
    /** The serialVersionUID */
    private static final long serialVersionUID = 3261597366235425250L;
 
-   private final Boolean isSameRmOverride;
+   /** is-same-rm-override */
+   protected final Boolean isSameRmOverride;
 
-   private final Boolean interleaving;
+   /** interleaving */
+   protected final Boolean interleaving;
 
-   private final Boolean padXid;
+   /** pad-xid */
+   protected final Boolean padXid;
 
-   private final Boolean wrapXaResource;
+   /** wrap-xa-resource */
+   protected final Boolean wrapXaResource;
 
-   private final Boolean noTxSeparatePool;
-
+   /** no-tx-separate-pool */
+   protected final Boolean noTxSeparatePool;
 
    /**
     * Create a new XaPoolImpl.
