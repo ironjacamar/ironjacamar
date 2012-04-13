@@ -19,13 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadapter;
+package org.jboss.jca.common.metadata.resourceadapter.v10;
 
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
-import org.jboss.jca.common.metadata.common.CommonIronJacamarImpl;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
+import org.jboss.jca.common.api.metadata.resourceadapter.v10.ResourceAdapter;
+import org.jboss.jca.common.metadata.common.v10.CommonIronJacamarImpl;
 
 import java.util.Iterator;
 import java.util.List;
@@ -42,7 +42,10 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 7607776873201143875L;
-   private final String archive;
+
+   /** archive */
+   protected final String archive;
+
    /**
     *
     * Create a new ResourceAdapterImpl.

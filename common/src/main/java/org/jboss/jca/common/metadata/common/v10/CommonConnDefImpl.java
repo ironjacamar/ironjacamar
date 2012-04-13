@@ -19,15 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.common;
+package org.jboss.jca.common.metadata.common.v10;
 
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,29 +46,41 @@ public class CommonConnDefImpl implements CommonConnDef
    /** The serialVersionUID */
    private static final long serialVersionUID = -7109775624169563102L;
 
-   private final HashMap<String, String> configProperties;
+   /** config-property */
+   protected final Map<String, String> configProperties;
 
-   private final String className;
+   /** class-name */
+   protected final String className;
 
-   private final String jndiName;
+   /** jndi-name */
+   protected final String jndiName;
 
-   private final String poolName;
+   /** pool-name */
+   protected final String poolName;
 
-   private final Boolean enabled;
+   /** enable */
+   protected final Boolean enabled;
 
-   private final Boolean useJavaContext;
+   /** use-java-context */
+   protected final Boolean useJavaContext;
 
-   private final Boolean useCcm;
+   /** use-ccm */
+   protected final Boolean useCcm;
 
-   private final CommonPool pool;
+   /** pool */
+   protected final CommonPool pool;
 
-   private final CommonTimeOut timeOut;
+   /** timeout */
+   protected final CommonTimeOut timeOut;
 
-   private final CommonValidation validation;
+   /** validation */
+   protected final CommonValidation validation;
 
-   private final CommonSecurity security;
+   /** security */
+   protected final CommonSecurity security;
 
-   private final Recovery recovery;
+   /** recovery */
+   protected final Recovery recovery;
 
    /**
     * Create a new ConnectionDefinition.
@@ -87,8 +99,9 @@ public class CommonConnDefImpl implements CommonConnDef
     * @param recovery recovery
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
-      String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm, CommonPool pool, CommonTimeOut timeOut,
-      CommonValidation validation, CommonSecurity security, Recovery recovery)
+                            String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
+                            CommonPool pool, CommonTimeOut timeOut,
+                            CommonValidation validation, CommonSecurity security, Recovery recovery)
    {
       super();
       if (configProperties != null)
@@ -233,6 +246,17 @@ public class CommonConnDefImpl implements CommonConnDef
    public final CommonSecurity getSecurity()
    {
       return security;
+   }
+
+   /**
+    * Get the recovery.
+    *
+    * @return the recovery.
+    */
+   @Override
+   public final Recovery getRecovery()
+   {
+      return recovery;
    }
 
    @Override
@@ -421,16 +445,5 @@ public class CommonConnDefImpl implements CommonConnDef
       sb.append("</connection-definition>");
       
       return sb.toString();
-   }
-
-   /**
-    * Get the recovery.
-    *
-    * @return the recovery.
-    */
-   @Override
-   public final Recovery getRecovery()
-   {
-      return recovery;
    }
 }

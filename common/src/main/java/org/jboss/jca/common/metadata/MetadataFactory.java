@@ -25,7 +25,7 @@ package org.jboss.jca.common.metadata;
 import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.metadata.ironjacamar.IronJacamarParser;
+import org.jboss.jca.common.metadata.ironjacamar.v10.IronJacamarParser;
 import org.jboss.jca.common.metadata.ra.RaParser;
 
 import java.io.File;

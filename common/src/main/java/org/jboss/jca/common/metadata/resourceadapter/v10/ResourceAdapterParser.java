@@ -19,32 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadapter;
+package org.jboss.jca.common.metadata.resourceadapter.v10;
 
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.api.metadata.resourceadapter.v10.ResourceAdapter;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
-import org.jboss.jca.common.metadata.common.CommonIronJacamarParser;
+import org.jboss.jca.common.metadata.common.v10.CommonIronJacamarParser;
+import org.jboss.jca.common.metadata.resourceadapter.ResourceAdaptersImpl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.jboss.logging.Messages;
-
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -126,7 +128,8 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
    private ResourceAdapters parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      ArrayList<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>();
+      ArrayList<org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter> resourceAdapters =
+         new ArrayList<org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter>();
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -163,16 +166,18 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private ResourceAdapter parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   private org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter
+   parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      ArrayList<CommonConnDef> connectionDefinitions = null;
-      ArrayList<CommonAdminObject> adminObjects = null;
-      ArrayList<String> beanValidationGroups = null;
+      List<CommonConnDef> connectionDefinitions = null;
+      List<CommonAdminObject> adminObjects = null;
+      List<String> beanValidationGroups = null;
       String bootstrapContext = null;
       String archive = null;
       TransactionSupportEnum transactionSupport = null;
       HashMap<String, String> configProperties = null;
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())

@@ -21,22 +21,18 @@
  */
 package org.jboss.jca.common.api.metadata.common;
 
-
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- *
  * A CommonIronJacamar.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
  */
 public interface CommonIronJacamar extends JCAMetadata
 {
-
    /**
     * Get the transactionSupport.
     *

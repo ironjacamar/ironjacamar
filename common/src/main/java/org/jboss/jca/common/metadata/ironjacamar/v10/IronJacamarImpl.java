@@ -19,13 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ironjacamar;
+package org.jboss.jca.common.metadata.ironjacamar.v10;
 
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.metadata.common.CommonIronJacamarImpl;
+import org.jboss.jca.common.metadata.common.v10.CommonIronJacamarImpl;
 
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +40,6 @@ import java.util.Map;
  */
 public class IronJacamarImpl extends CommonIronJacamarImpl implements IronJacamar
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = -8994120864846088078L;
 

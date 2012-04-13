@@ -19,30 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.common;
+package org.jboss.jca.common.metadata.common.v10;
 
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.Recovery;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
+import org.jboss.jca.common.api.metadata.resourceadapter.v10.ResourceAdapter;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.AbstractParser;
 import org.jboss.jca.common.metadata.ParserException;
+import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
+import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
+import org.jboss.jca.common.metadata.common.CommonValidationImpl;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.jboss.logging.Messages;
-
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -69,7 +73,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader) throws XMLStreamException,
       ParserException, ValidateException
    {
-      HashMap<String, String> configProperties = new HashMap<String, String>();
+      Map<String, String> configProperties = new HashMap<String, String>();
       CommonSecurity security = null;
       CommonTimeOut timeOut = null;
       CommonValidation validation = null;
@@ -132,7 +136,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
 
                   return new CommonConnDefImpl(configProperties, className, jndiName, poolName, enabled,
-                                               useJavaContext, useCcm, pool, timeOut, validation, security, recovery);
+                                               useJavaContext, useCcm, pool, timeOut, validation,
+                                               security, recovery);
                }
                else
                {
@@ -189,7 +194,15 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private CommonValidation parseValidation(XMLStreamReader reader) throws XMLStreamException, ParserException
+   /**
+    * Parse validation
+    * @param reader The reader
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected CommonValidation parseValidation(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       Boolean useFastFail = Boolean.FALSE;
       Boolean backgroundValidation = Boolean.FALSE;
@@ -229,21 +242,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      useFastFail = elementAsBoolean(reader);
                      break;
                   }
-                  default : {
-                     if (reader.getLocalName().equals("background-validation-minutes"))
-                     {
-                        Integer backgroundValidationMinutes = elementAsInteger(reader);
-                        backgroundValidationMillis = backgroundValidationMinutes.intValue() * 60000L;
-                     }
-                     else if (reader.getLocalName().equals("useFastFail"))
-                     {
-                        useFastFail = elementAsBoolean(reader);
-                     }
-                     else
-                     {
-                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
-                     }
-                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
             }
@@ -252,7 +252,16 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private CommonTimeOut parseTimeOut(XMLStreamReader reader, Boolean isXa) throws XMLStreamException,
+   /**
+    * Parse timeout
+    * @param reader The reader
+    * @param isXa XA flag
+    * @return The result
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected CommonTimeOut parseTimeOut(XMLStreamReader reader, Boolean isXa) throws XMLStreamException,
       ParserException, ValidateException
    {
       Long blockingTimeoutMillis = null;
@@ -328,7 +337,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    protected CommonAdminObject parseAdminObjects(XMLStreamReader reader) throws XMLStreamException,
       ParserException
    {
-      HashMap<String, String> configProperties = new HashMap<String, String>();
+      Map<String, String> configProperties = new HashMap<String, String>();
 
       //attributes reading
       Boolean useJavaContext = Boolean.TRUE;
