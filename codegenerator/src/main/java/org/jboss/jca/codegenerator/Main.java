@@ -754,7 +754,7 @@ public class Main
          }
          System.out.println();
          
-         String lowerCaseFirstLetterName = name.substring(0, 1).toLowerCase();
+         String lowerCaseFirstLetterName = name.substring(0, 1).toLowerCase(Locale.US);
          if (name.length() > 1)
          {
             lowerCaseFirstLetterName = lowerCaseFirstLetterName + name.substring(1);

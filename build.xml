@@ -565,9 +565,6 @@
         <fileset dir="${lib.dir}/mail">
           <include name="*.jar"/>
         </fileset>
-        <fileset dir="${lib.dir}/rhq">
-          <include name="*.jar"/>
-        </fileset>
         <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
@@ -587,7 +584,6 @@
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
       <class location="${target.dir}/${name}-embedded-arquillian.jar" />
-      <class location="${target.dir}/${name}-rhq.jar" />
       <class location="${target.dir}/${name}-sjc.jar" />
       <class location="${target.dir}/${name}-spec-api.jar" />
       <class location="${target.dir}/${name}-validator.jar" />
@@ -625,9 +621,6 @@
         <fileset dir="${lib.dir}/mail">
           <include name="*.jar"/>
         </fileset>
-        <fileset dir="${lib.dir}/rhq">
-          <include name="*.jar"/>
-        </fileset>
         <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
@@ -647,7 +640,6 @@
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
       <class location="${target.dir}/${name}-embedded-arquillian.jar" />
-      <class location="${target.dir}/${name}-rhq.jar" />
       <class location="${target.dir}/${name}-sjc.jar" />
       <class location="${target.dir}/${name}-spec-api.jar" />
       <class location="${target.dir}/${name}-validator.jar" />

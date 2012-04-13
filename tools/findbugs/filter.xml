@@ -46,6 +46,34 @@
     <Bug code="Se"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.common.api.metadata.common.v10.CommonConnDef"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.common.v10.CommonIronJacamar"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ds.v10.DataSource"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ds.v10.XaDataSource"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ds.v11.DataSource"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ds.v11.XaDataSource"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.resourceadapter.v10.ResourceAdapter"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.common.metadata.merge.Merger"/>
     <Method name="mergeConnectorAndDs" />
     <Bug code="NP"/>
@@ -56,8 +84,28 @@
     <Bug code="NP"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.deployers.common.CommonDeployment"/>
-    <Bug code="PZLA"/>
+    <Class name="org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl"/>
+    <Bug code="Se"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.DatasourcesImpl"/>
+    <Bug code="Se"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v10.DsParser"/>
+    <Bug code="MS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v11.DataSourceImpl"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v11.DsParser"/>
+    <Bug code="Nm,RI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v11.XADataSourceImpl"/>
+    <Bug code="Nm"/>
   </Match>
 
   <!--  org.jboss.jca.core filter -->
@@ -157,7 +205,7 @@
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.common.CommonDeployment"/>
-    <Bug code="EI,EI2"/>
+    <Bug code="PZLA,EI,EI2"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.AbstractDsDeployer"/>
@@ -169,7 +217,7 @@
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.DsXmlDeployer"/>
-    <Bug code="IS"/>
+    <Bug code="IS,NP"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.DsXmlDeployment"/>
