@@ -362,17 +362,22 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
          List<Deployment> deployments = kernel.getDeployments(urlJdbc);
          Deployment deployment = null;
 
-         for (int i = 0; deployment == null && i < deployments.size(); i++)
+         if (deployments != null && deployments.size() > 0)
          {
-            deployment = deployments.get(i);
-         }
+            for (int i = 0; deployment == null && i < deployments.size(); i++)
+            {
+               deployment = deployments.get(i);
+            }
 
-         return deployment.getClassLoader();
+            return deployment.getClassLoader();
+         }
       }
       catch (Throwable t)
       {
          throw new RuntimeException(t.getMessage(), t);
       }
+
+      throw new RuntimeException("No classloader was found for: " + uniqueId);
    }
 
    @Override
