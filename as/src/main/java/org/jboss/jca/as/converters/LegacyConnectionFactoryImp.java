@@ -22,15 +22,15 @@
 package org.jboss.jca.as.converters;
 
 import org.jboss.jca.common.api.metadata.Defaults;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.metadata.common.CommonConnDefImpl;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
 import org.jboss.jca.common.metadata.common.CommonValidationImpl;
-import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterImpl;
+import org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl;
+import org.jboss.jca.common.metadata.resourceadapter.v10.ResourceAdapterImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -109,11 +109,11 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    {
       CommonConnDefImpl connDef = new CommonConnDefImpl(configProperty, connectionDefinition, jndiName, poolName,
                                                         Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM,
-                                                        Defaults.SHARABLE, pool, timeOut, validation, security, null);
+                                                        pool, timeOut, validation, security, null);
       connectionDefinitions = new ArrayList<CommonConnDef>();
       connectionDefinitions.add(connDef);
-      raImpl = new ResourceAdapterImpl(null, rarName, transactionSupport, connectionDefinitions, null,
-            null, null, null);
+      raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, null,
+                                       null, null, null);
    }
    
    @Override

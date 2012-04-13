@@ -22,10 +22,9 @@
 package org.jboss.jca.as.rarinfo;
 
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-
-import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterImpl;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
+import org.jboss.jca.common.metadata.resourceadapter.v10.ResourceAdapterImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class RaImpl
     */
    public void buildResourceAdapterImpl()  throws Exception
    {
-      raImpl = new ResourceAdapterImpl(null, rarName, transactionSupport, connectionDefinitions, adminObjects,
+      raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, adminObjects,
             raConfigProperties, null, null);
    }
    

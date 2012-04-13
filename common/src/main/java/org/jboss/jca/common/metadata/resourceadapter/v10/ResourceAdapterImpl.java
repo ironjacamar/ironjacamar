@@ -19,13 +19,13 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadapter;
+package org.jboss.jca.common.metadata.resourceadapter.v10;
 
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
-import org.jboss.jca.common.metadata.common.CommonIronJacamarImpl;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
+import org.jboss.jca.common.api.metadata.resourceadapter.v10.ResourceAdapter;
+import org.jboss.jca.common.metadata.common.v10.CommonIronJacamarImpl;
 
 import java.util.Iterator;
 import java.util.List;
@@ -43,14 +43,13 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
    /** The serialVersionUID */
    private static final long serialVersionUID = 7607776873201143875L;
 
-   private final String id;
-   private final String archive;
+   /** archive */
+   protected final String archive;
 
    /**
     *
     * Create a new ResourceAdapterImpl.
     *
-    * @param id The id
     * @param archive archive
     * @param transactionSupport transactionSupport
     * @param connectionDefinitions connectionDefinitions
@@ -59,25 +58,13 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
     * @param beanValidationGroups beanValidationGroups
     * @param bootstrapContext bootstrapContext
     */
-   public ResourceAdapterImpl(String id, String archive, TransactionSupportEnum transactionSupport,
+   public ResourceAdapterImpl(String archive, TransactionSupportEnum transactionSupport,
       List<CommonConnDef> connectionDefinitions, List<CommonAdminObject> adminObjects,
       Map<String, String> configProperties, List<String> beanValidationGroups, String bootstrapContext)
    {
       super(transactionSupport, configProperties, adminObjects, connectionDefinitions, beanValidationGroups,
             bootstrapContext);
-      this.id = id;
       this.archive = archive;
-   }
-
-   /**
-    * Get the id.
-    *
-    * @return the value.
-    */
-   @Override
-   public final String getId()
-   {
-      return id;
    }
 
    /**
@@ -96,7 +83,6 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((archive == null) ? 0 : archive.hashCode());
       return result;
    }
@@ -111,13 +97,6 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
       if (!(obj instanceof ResourceAdapterImpl))
          return false;
       ResourceAdapterImpl other = (ResourceAdapterImpl) obj;
-      if (id == null)
-      {
-         if (other.id != null)
-            return false;
-      }
-      else if (!id.equals(other.id))
-         return false;
       if (archive == null)
       {
          if (other.archive != null)
@@ -133,14 +112,7 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
    {
       StringBuilder sb = new StringBuilder(1024);
 
-      sb.append("<resource-adapter");
-
-      if (id != null)
-      {
-         sb.append(" ").append(ResourceAdapter.Attribute.ID).append("=\"").append(id).append("\"");
-      }
-
-      sb.append(">");
+      sb.append("<resource-adapter>");
 
       sb.append("<").append(ResourceAdapter.Tag.ARCHIVE).append(">");
       sb.append(archive);

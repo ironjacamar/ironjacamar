@@ -26,7 +26,7 @@ import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 import org.jboss.jca.common.metadata.merge.Merger;
-import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
+import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterParser;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;

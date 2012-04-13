@@ -19,12 +19,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.common;
+package org.jboss.jca.common.metadata.common.v10;
 
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v10.CommonIronJacamar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,15 +33,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * A CommonIronJacamarImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
  */
 public abstract class CommonIronJacamarImpl implements CommonIronJacamar
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = -7422976850056232511L;
 
@@ -51,22 +48,22 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
    /**
     *  configProperties
     */
-   protected final HashMap<String, String> configProperties;
+   protected final Map<String, String> configProperties;
 
    /**
     *  adminObjects
     */
-   protected final ArrayList<CommonAdminObject> adminObjects;
+   protected final List<CommonAdminObject> adminObjects;
 
    /**
     *  connectionDefinitions
     */
-   protected final ArrayList<CommonConnDef> connectionDefinitions;
+   protected final List<CommonConnDef> connectionDefinitions;
 
    /**
     *  beanValidationGroups
     */
-   protected final ArrayList<String> beanValidationGroups;
+   protected final List<String> beanValidationGroups;
 
    /** bootstrapContext **/
    protected final String bootstrapContext;
@@ -146,9 +143,20 @@ public abstract class CommonIronJacamarImpl implements CommonIronJacamar
     * @return the connectionFactories.
     */
    @Override
-   public final List<CommonConnDef> getConnectionDefinitions()
+   public final List<org.jboss.jca.common.api.metadata.common.CommonConnDef> getConnectionDefinitions()
    {
-      return connectionDefinitions == null ? null : Collections.unmodifiableList(connectionDefinitions);
+      if (connectionDefinitions == null)
+         return null;
+
+      List<org.jboss.jca.common.api.metadata.common.CommonConnDef> result =
+         new ArrayList<org.jboss.jca.common.api.metadata.common.CommonConnDef>(connectionDefinitions.size());
+
+      for (Object o : connectionDefinitions)
+      {
+         result.add((org.jboss.jca.common.api.metadata.common.CommonConnDef)o);
+      }
+
+      return Collections.unmodifiableList(result);
    }
 
    /**

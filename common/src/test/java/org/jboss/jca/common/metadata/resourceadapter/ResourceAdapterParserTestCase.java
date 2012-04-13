@@ -29,6 +29,7 @@ import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

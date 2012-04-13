@@ -32,6 +32,7 @@ import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.metadata.ParserException;
+import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

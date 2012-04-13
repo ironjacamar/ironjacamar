@@ -23,7 +23,6 @@ package org.jboss.jca.common.api.metadata.common;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,7 +34,6 @@ import java.util.Map;
  */
 public interface CommonConnDef extends JCAMetadata
 {
-
    /**
     * Get the configProperties.
     *
@@ -86,13 +84,6 @@ public interface CommonConnDef extends JCAMetadata
    public Boolean isUseCcm();
 
    /**
-    * Get the sharable
-    *
-    * @return the value
-    */
-   public Boolean isSharable();
-
-   /**
     * Get the pool.
     *
     * @return the pool.
@@ -125,7 +116,6 @@ public interface CommonConnDef extends JCAMetadata
     *
     * @return true if this connectionDefnition have defined an XaPool
     */
-
    public Boolean isXa();
 
    /**
@@ -134,212 +124,4 @@ public interface CommonConnDef extends JCAMetadata
     * @return the recovery settings.
     */
    public Recovery getRecovery();
-
-   /**
-   *
-   * A Tag.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
-   public enum Tag
-   {
-      /** always first
-       *
-       */
-      UNKNOWN(null),
-
-      /**
-       * config-property tag
-       */
-      CONFIG_PROPERTY("config-property"),
-      /**
-       * pool tag
-       */
-      XA_POOL("xa-pool"),
-      /**
-       * pool tag
-       */
-      POOL("pool"),
-      /**
-       * security tag
-       */
-      SECURITY("security"),
-      /**
-       * timeout tag
-       */
-      TIMEOUT("timeout"),
-      /**
-       * validation tag
-       */
-      VALIDATION("validation"),
-
-      /** recovery tag */
-      RECOVERY("recovery");
-
-      private final String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Tag(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public String toString()
-      {
-         return name;
-      }
-
-      private static final Map<String, Tag> MAP;
-
-      static
-      {
-         final Map<String, Tag> map = new HashMap<String, Tag>();
-         for (Tag element : values())
-         {
-            final String name = element.getLocalName();
-            if (name != null)
-               map.put(name, element);
-         }
-         MAP = map;
-      }
-
-      /**
-      *
-      * Static method to get enum instance given localName XsdString
-      *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
-      * @return the enum instance
-      */
-      public static Tag forName(String localName)
-      {
-         final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
-      }
-
-   }
-
-   /**
-   *
-   * A Attribute.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
-   public enum Attribute
-   {
-
-      /** always first
-      *
-      */
-      UNKNOWN(null),
-      /** jndiName attribute
-        *
-        */
-      JNDI_NAME("jndi-name"),
-
-      /** class-name attribute
-      *
-      */
-      CLASS_NAME("class-name"),
-
-      /** pool-name attribute
-      *
-      */
-      POOL_NAME("pool-name"),
-
-      /** enabled attribute
-      *
-      */
-      ENABLED("enabled"),
-      /** use-java-context attribute
-      *
-      */
-      USE_JAVA_CONTEXT("use-java-context"),
-      /** use-ccm attribute
-      *
-      */
-      USE_CCM("use-ccm"),
-      /** sharable attribute
-      *
-      */
-      SHARABLE("sharable");
-
-      private final String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Attribute(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public String toString()
-      {
-         return name;
-      }
-
-      private static final Map<String, Attribute> MAP;
-
-      static
-      {
-         final Map<String, Attribute> map = new HashMap<String, Attribute>();
-         for (Attribute element : values())
-         {
-            final String name = element.getLocalName();
-            if (name != null)
-               map.put(name, element);
-         }
-         MAP = map;
-      }
-
-      /**
-      *
-      * Static method to get enum instance given localName XsdString
-      *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
-      * @return the enum instance
-      */
-      public static Attribute forName(String localName)
-      {
-         final Attribute element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
-      }
-
-   }
 }

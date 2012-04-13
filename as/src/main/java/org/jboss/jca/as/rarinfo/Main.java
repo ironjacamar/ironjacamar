@@ -23,9 +23,9 @@ package org.jboss.jca.as.rarinfo;
 
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
@@ -38,10 +38,10 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
-import org.jboss.jca.common.metadata.common.CommonConnDefImpl;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
+import org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.validator.Validation;
 
@@ -412,7 +412,7 @@ public class Main
                   CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
                                                                      "java:jboss/eis/" + poolName, poolName, 
                                                                      Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
-                                                                     Defaults.USE_CCM, Defaults.SHARABLE, 
+                                                                     Defaults.USE_CCM,
                                                                      pool, null, null, secImpl, null);
                   connDefs.add(connImpl);
                }
@@ -601,7 +601,7 @@ public class Main
             CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
                                                                "java:jboss/eis/" + poolName, poolName, 
                                                                Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
-                                                               Defaults.USE_CCM, Defaults.SHARABLE, 
+                                                               Defaults.USE_CCM,
                                                                pool, null, null, secImpl, null);
             connDefs = new ArrayList<CommonConnDef>();
             connDefs.add(connImpl);

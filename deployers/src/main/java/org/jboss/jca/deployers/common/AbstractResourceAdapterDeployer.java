@@ -1365,8 +1365,13 @@ public abstract class AbstractResourceAdapterDeployer
                         }
 
                         Boolean sharable = Boolean.TRUE;
-                        if (connectionDefinition != null)
-                           sharable = connectionDefinition.isSharable();
+                        if (connectionDefinition != null &&
+                            connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
+                        {
+                           org.jboss.jca.common.api.metadata.common.v11.CommonConnDef ccd =
+                              (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)connectionDefinition;
+                           sharable = ccd.isSharable();
+                        }
 
                         Pool pool =
                            pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), sharable.booleanValue());
@@ -1764,8 +1769,15 @@ public abstract class AbstractResourceAdapterDeployer
                                     }
 
                                     Boolean sharable = Boolean.TRUE;
-                                    if (connectionDefinition != null)
-                                       sharable = connectionDefinition.isSharable();
+                                    if (connectionDefinition != null &&
+                                        connectionDefinition instanceof
+                                        org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
+                                    {
+                                       org.jboss.jca.common.api.metadata.common.v11.CommonConnDef ccd =
+                                          (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
+                                          connectionDefinition;
+                                       sharable = ccd.isSharable();
+                                    }
 
                                     Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
                                                           sharable.booleanValue());
