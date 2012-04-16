@@ -133,7 +133,7 @@ public class McfWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Management Connection Factory class name:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("mcf.class.name") + ":");
 
       mcfText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -156,7 +156,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Management Connection Factory properties:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("mcf.config.properties") + ":");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();
@@ -181,7 +181,7 @@ public class McfWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Use ResourceAdapterAssociation:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("mcf.impl.raa") + ":");
 
       final Button annoButton = new Button(mcfContainer, SWT.CHECK);
       annoButton.setSelection(true);
@@ -196,7 +196,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Management Connection:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("mc.class.name") + ":");
 
       mcText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -219,7 +219,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Use CCI:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("mcf.use.cci") + ":");
 
       final Button cciButton = new Button(mcfContainer, SWT.CHECK);
       cciButton.setSelection(false);
@@ -248,7 +248,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Connection Factory interface:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("cf.interface.name") + ":");
 
       cfText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -271,7 +271,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Management Connection:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("cf.class.name") + ":");
 
       cfImplText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -294,7 +294,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Connection interface:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("conn.interface.name") + ":");
 
       connText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -317,7 +317,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText("Connection implementation:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("conn.class.name") + ":");
 
       connImplText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);

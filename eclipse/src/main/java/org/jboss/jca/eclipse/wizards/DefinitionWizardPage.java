@@ -83,7 +83,7 @@ public class DefinitionWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(container, SWT.NULL);
-      label.setText("&Project name:");
+      label.setText("Project name:");
       projectText = new Text(container, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
@@ -104,7 +104,7 @@ public class DefinitionWizardPage extends WizardPage
       });
 
       label = new Label(container, SWT.NULL);
-      label.setText("Pac&kage name:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("package.name") + ":");
       packageText = new Text(container, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
@@ -129,7 +129,7 @@ public class DefinitionWizardPage extends WizardPage
       createTransactionGroup(container);
 
       label = new Label(container, SWT.NULL);
-      label.setText("&Reauthentication:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("support.reauthentication") + ":");
       final Button reauthButton = new Button(container, SWT.CHECK);
       reauthButton.setSelection(false);
       ((CodeGenWizard) getWizard()).getDef().setSupportReauthen(false);
@@ -142,7 +142,7 @@ public class DefinitionWizardPage extends WizardPage
       });
 
       label = new Label(container, SWT.NULL);
-      label.setText("&Annotations:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("use.annotation") + ":");
       annotationshButton = new Button(container, SWT.CHECK);
       annotationshButton.setSelection(true);
       ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(true);
@@ -165,7 +165,7 @@ public class DefinitionWizardPage extends WizardPage
    private void createProfileGroup(Composite container)
    {
       Label label = new Label(container, SWT.NULL);
-      label.setText("&Profile version:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("profile.version") + ":");
 
       final String[] items = {"1.6", "1.5", "1.0"};
       final Combo combo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -214,7 +214,7 @@ public class DefinitionWizardPage extends WizardPage
    private void createBoundTypeGroup(Composite container)
    {
       Label label = new Label(container, SWT.NULL);
-      label.setText("&Type:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("support.bound") + ":");
 
       final String[] items =
       {"Outbound", "Inbound", "Bidirectional"};
@@ -253,7 +253,7 @@ public class DefinitionWizardPage extends WizardPage
    private void createTransactionGroup(Composite container)
    {
       Label label = new Label(container, SWT.NULL);
-      label.setText("&Transaction support:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("support.transaction") + ":");
 
       final String[] items =
       {"NoTransaction", "LocalTransaction", "XATransaction"};

@@ -72,7 +72,7 @@ public class BuildWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(container, SWT.NULL);
-      label.setText("&Generate a MBean class:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("gen.mbean") + ":");
       final Button mbeanButton = new Button(container, SWT.CHECK);
       mbeanButton.setSelection(false);
       ((CodeGenWizard) getWizard()).getDef().setGenMbean(false);
@@ -96,7 +96,7 @@ public class BuildWizardPage extends WizardPage
    private void createBuildGroup(Composite container)
    {
       Label label = new Label(container, SWT.NULL);
-      label.setText("&Build environment:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("build.env") + ":");
 
       final String[] items =
       {"Apache Ant", "Apache Ant / Apache Ivy", "Apache Maven"};

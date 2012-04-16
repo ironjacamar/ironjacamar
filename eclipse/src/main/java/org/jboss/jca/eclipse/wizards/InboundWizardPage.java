@@ -120,7 +120,7 @@ public class InboundWizardPage extends WizardPage
       }
 
       Label label = new Label(inContainer, SWT.NULL);
-      label.setText("Message Listener:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("ml.interface.name") + ":");
 
       mlText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -144,7 +144,7 @@ public class InboundWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("Activation Spec:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("as.class.name") + ":");
 
       asText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -167,7 +167,7 @@ public class InboundWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("Activation Spec properties:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("as.config.properties") + ":");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();
@@ -192,7 +192,7 @@ public class InboundWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("Activation:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("acti.class.name") + ":");
 
       acText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);

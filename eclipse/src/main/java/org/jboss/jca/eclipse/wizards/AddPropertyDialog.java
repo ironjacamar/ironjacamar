@@ -88,7 +88,7 @@ public class AddPropertyDialog extends Dialog
       ((GridLayout) comp.getLayout()).numColumns = 2;
 
       nameLabel = new Label(comp, SWT.NONE);
-      nameLabel.setText("&Name");
+      nameLabel.setText("Name");
       nameLabel.setFont(comp.getFont());
 
       nameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
@@ -106,7 +106,7 @@ public class AddPropertyDialog extends Dialog
       });
 
       nameLabel = new Label(comp, SWT.NONE);
-      nameLabel.setText("&Type");
+      nameLabel.setText("Type");
       nameLabel.setFont(comp.getFont());
 
       final String[] items =
@@ -130,7 +130,7 @@ public class AddPropertyDialog extends Dialog
       });
 
       valueLabel = new Label(comp, SWT.NONE);
-      valueLabel.setText("&Value");
+      valueLabel.setText("Value");
       valueLabel.setFont(comp.getFont());
 
       valueText = new Text(comp, SWT.BORDER | SWT.SINGLE);

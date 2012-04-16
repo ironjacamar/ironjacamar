@@ -115,7 +115,7 @@ public class RaWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(raContainer, SWT.NULL);
-      label.setText("Include a Resource Adapter:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("use.ra") + ":");
       final Button raButton = new Button(raContainer, SWT.CHECK);
       
       raButton.setSelection(true);
@@ -132,7 +132,7 @@ public class RaWizardPage extends WizardPage
       });
 
       label = new Label(raContainer, SWT.NULL);
-      label.setText("Resource Adapter class name:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("ra.class.name") + ":");
       raText = new Text(raContainer, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
@@ -154,7 +154,7 @@ public class RaWizardPage extends WizardPage
       });
 
       label = new Label(raContainer, SWT.NULL);
-      label.setText("Should the Resource Adapter class be Serializable:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("ra.serial") + ":");
       raSerialButton = new Button(raContainer, SWT.CHECK);
 
       raSerialButton.setSelection(true);
@@ -168,7 +168,7 @@ public class RaWizardPage extends WizardPage
       });
       
       label = new Label(raContainer, SWT.NULL);
-      label.setText("Resource Adapter properties:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("ra.config.properties") + ":");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();

@@ -126,14 +126,14 @@ public class AoWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(inContainer, SWT.NULL);
-      label.setText("Include an admin object:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("gen.adminobject") + ":");
       final Button aoButton = new Button(inContainer, SWT.CHECK);
 
       aoButton.setSelection(true);
       ((CodeGenWizard) getWizard()).getDef().setGenAdminObject(true);
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("Use ResourceAdapterAssociation on admin object:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("adminobject.raa") + ":");
 
       final Button raaButton = new Button(inContainer, SWT.CHECK);
 
@@ -150,7 +150,7 @@ public class AoWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("Admin object interface name:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("adminobject.interface.name") + ":");
 
       aoButton.addSelectionListener(new SelectionAdapter()
       {
@@ -192,7 +192,7 @@ public class AoWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("Admin object class name:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("adminobject.class.name") + ":");
 
       aoImplText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       aoImplText.setBounds(5, 5, 600, 10);
@@ -213,7 +213,7 @@ public class AoWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText("Admin object properties:");
+      label.setText(((CodeGenWizard) getWizard()).getResourceString("adminobject.config.properties") + ":");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();

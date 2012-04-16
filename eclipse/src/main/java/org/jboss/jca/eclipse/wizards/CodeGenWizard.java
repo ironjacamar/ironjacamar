@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.PropertyResourceBundle;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
@@ -90,6 +91,9 @@ public class CodeGenWizard extends Wizard implements INewWizard
    private Definition def;
 
    private String projectName;
+   
+   /** PropertyResourceBundle to load properties of code generation */
+   private PropertyResourceBundle prb;
 
    /**
     * Constructor for CodeGenWizard.
@@ -99,6 +103,26 @@ public class CodeGenWizard extends Wizard implements INewWizard
       super();
       setNeedsProgressMonitor(true);
       def = new Definition();
+      try
+      {
+         InputStream in = CodeGenWizard.class.getClassLoader().
+            getResourceAsStream("codegenerator.properties");
+         prb = new PropertyResourceBundle(in);
+      }
+      catch (IOException e)
+      {
+         e.printStackTrace();
+      }
+   }
+   
+   /**
+    * getResourceString
+    * @param key key string
+    * @return resource
+    */
+   public String getResourceString(String key)
+   {
+      return prb.getString(key);
    }
 
    /**
