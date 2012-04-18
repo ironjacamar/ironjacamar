@@ -90,7 +90,6 @@
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-        <attribute name="Class-Path" value="jboss-logging.jar jboss-common-core.jar ${name}-spec-api.jar papaki-core.jar javassist.jar ${name}-common-api.jar ${name}-common-impl.jar"/>
       </manifest>
     </jar>
   </target>
@@ -119,7 +118,6 @@
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-        <attribute name="Class-Path" value="${name}-validator.jar"/>
       </manifest>
     </jar>
   	
@@ -135,7 +133,6 @@
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-        <attribute name="Class-Path" value="${name}-validator.jar"/>
       </manifest>
     </jar>
   	
@@ -151,7 +148,6 @@
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-        <attribute name="Class-Path" value="${name}-validator.jar"/>
       </manifest>
     </jar>
   </target>
