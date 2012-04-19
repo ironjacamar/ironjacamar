@@ -74,7 +74,7 @@ public class DsXaPoolImpl extends CommonXaPoolImpl implements DsXaPool
    @Override
    public final Boolean isAllowMultipleUsers()
    {
-      return interleaving;
+      return allowMultipleUsers;
    }
 
    @Override
