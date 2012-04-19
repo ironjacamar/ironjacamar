@@ -67,6 +67,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    private UserTransaction userTransaction;
 
    private boolean initialized = false;
+   private ConnectionRequestInfo defaultCRI;
 
    /**
     * Constructor
@@ -78,6 +79,15 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       this.mcf = mcf;
       this.cm = cm;
       this.userTransaction = null;
+      
+      if (mcf.getUserName() != null)
+      {
+         this.defaultCRI = new WrappedConnectionRequestInfo(mcf.getUserName(), mcf.getPassword());
+      }
+      else
+      {
+         this.defaultCRI = null;
+      }
    }
 
    /**
@@ -126,7 +136,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    {
       try
       {
-         WrappedConnection wc = (WrappedConnection) cm.allocateConnection(mcf, null);
+         WrappedConnection wc = (WrappedConnection) cm.allocateConnection(mcf, defaultCRI);
          wc.setDataSource(this);
          wc.setSpy(mcf.getSpy().booleanValue());
          wc.setJndiName(mcf.getJndiName());
