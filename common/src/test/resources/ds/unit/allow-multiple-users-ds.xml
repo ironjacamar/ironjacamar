@@ -15,4 +15,17 @@
       <password>sa</password>
     </security>
   </datasource>
+  <xa-datasource jndi-name="java:/H2XADS" pool-name="H2XADS">
+    <xa-datasource-class>org.h2.jdbcx.JdbcDataSource</xa-datasource-class>
+    <xa-datasource-property name="URL">jdbc:h2:mem:test</xa-datasource-property>
+    <xa-pool>
+      <min-pool-size>1</min-pool-size>
+      <max-pool-size>2</max-pool-size>
+      <allow-multiple-users/>
+    </xa-pool>
+    <security>
+      <user-name>sa</user-name>
+      <password>sa</password>
+    </security>
+  </xa-datasource>
 </datasources>

@@ -24,6 +24,8 @@ package org.jboss.jca.common.metadata.ds;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.v11.DataSource;
 import org.jboss.jca.common.api.metadata.ds.v11.DsPool;
+import org.jboss.jca.common.api.metadata.ds.v11.DsXaPool;
+import org.jboss.jca.common.api.metadata.ds.v11.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
@@ -84,6 +86,12 @@ public class DsParserForAllowMultipleUsersTestCase
       DsPool dsPool = ds.getPool();
       boolean actualAllowMultipleUsers = dsPool.isAllowMultipleUsers();
       assertThat(actualAllowMultipleUsers, is(true));
+
+      //then
+      XaDataSource xads = (XaDataSource)dses.getXaDataSource().get(0);
+      DsXaPool dsXaPool = xads.getXaPool();
+      boolean actualXaAllowMultipleUsers = dsXaPool.isAllowMultipleUsers();
+      assertThat(actualXaAllowMultipleUsers, is(true));
    }
 
    private DataSources doParse(File xmlFile) 
