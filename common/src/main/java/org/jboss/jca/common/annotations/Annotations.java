@@ -556,7 +556,12 @@ public class Annotations
 
          for (Annotation annotation : values)
          {
-            connectionDefinitions.add(attachConnectionDefinition(annotation, configProperty));
+            ConnectionDefinition cd = attachConnectionDefinition(annotation, configProperty);
+
+            if (trace)
+               log.tracef("Adding connection definition: %s", cd);
+
+            connectionDefinitions.add(cd);
          }
       }
 
@@ -595,6 +600,9 @@ public class Annotations
          ArrayList<? extends ConfigProperty> configProperties)
       throws Exception
    {
+      if (trace)
+         log.trace("Processing: " + cd);
+
       ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
       if (configProperties != null)
       {
@@ -603,20 +611,21 @@ public class Annotations
          {
             if (mcf.equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
             {
+               if (trace)
+                  log.tracef("Attaching: %s (%s)", configProperty16, mcf);
+                  
                validProperties.add(configProperty16);
             }
          }
       }
       validProperties.trimToSize();
-      if (trace)
-         log.trace("Processing: " + cd);
 
       XsdString connectionfactoryInterface = new XsdString(cd.connectionFactory().getName(), null);
       XsdString managedconnectionfactoryClass = new XsdString(mcf, null);
       XsdString connectionImplClass = new XsdString(cd.connectionImpl().getName(), null);
       XsdString connectionfactoryImplClass = new XsdString(cd.connectionFactoryImpl().getName(), null);
       XsdString connectionInterface = new XsdString(cd.connection().getName(), null);
-      return new ConnectionDefinitionImpl(managedconnectionfactoryClass, configProperties,
+      return new ConnectionDefinitionImpl(managedconnectionfactoryClass, validProperties,
                                           connectionfactoryInterface,
                                           connectionfactoryImplClass, connectionInterface, connectionImplClass, null);
    }
@@ -849,10 +858,27 @@ public class Annotations
                   }
                }
             }
+
+            ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
+            if (configProperties != null)
+            {
+               for (ConfigProperty configProperty16 : configProperties)
+               {
+                  if (aoClassName.equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+                  {
+                     if (trace)
+                        log.tracef("Attaching: %s (%s)", configProperty16, aoClassName);
+                  
+                     validProperties.add(configProperty16);
+                  }
+               }
+            }
+            validProperties.trimToSize();
+
             XsdString adminobjectInterface = new XsdString(aoName, null);
             XsdString adminobjectClass = new XsdString(aoClassName, null);
 
-            adminObjs.add(new AdminObjectImpl(adminobjectInterface, adminobjectClass, configProperties, null));
+            adminObjs.add(new AdminObjectImpl(adminobjectInterface, adminobjectClass, validProperties, null));
          }
       }
 
