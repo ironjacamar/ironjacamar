@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
+import javax.resource.spi.security.PasswordCredential;
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.Work;
@@ -281,51 +282,94 @@ public class WorkWrapper implements Runnable
          getWorkContext(javax.resource.spi.work.SecurityContext.class);
       if (securityContext != null && workManager.getCallbackSecurity() != null)
       {
+         if (trace)
+            log.tracef("Setting security context: %s", securityContext);
+
          try
          {
-            org.jboss.security.SecurityContext sc = 
-               SecurityContextFactory.createSecurityContext(workManager.getCallbackSecurity().getDomain());
-            SecurityContextAssociation.setSecurityContext(sc);
+            // Security context
+            org.jboss.security.SecurityContext sc = null;
 
             // Setup callbacks
             CallbackHandler cbh = new JASPICallbackHandler();
-            List<Callback> callbacks = new ArrayList<Callback>();
 
-            Set<String> users = workManager.getCallbackSecurity().getUsers();
+            // Subjects for execution environment
+            Subject executionSubject = null;
+            Subject serviceSubject = null;
+         
+            if (trace)
+               log.tracef("Callback security: %s", workManager.getCallbackSecurity());
 
-            if (users != null && users.size() > 0)
+            if (SecurityContextAssociation.getSecurityContext() == null ||
+                workManager.getCallbackSecurity().getDomain() != null)
             {
-               for (String user : users)
+               String scDomain = workManager.getCallbackSecurity().getDomain();
+
+               if (trace)
+                  log.tracef("Creating security context: %s", scDomain);
+
+               if (scDomain == null || scDomain.trim().equals(""))
                {
-                  Subject subject = new Subject();
-                  Principal principal = new SimplePrincipal(user);
-                  char[] cred = workManager.getCallbackSecurity().getCredential(user);
-                  String[] roles = workManager.getCallbackSecurity().getRoles(user);
-
-                  GroupPrincipalCallback gpc = new GroupPrincipalCallback(subject, roles);
-                  CallerPrincipalCallback cpc = new CallerPrincipalCallback(subject, principal);
-                  PasswordValidationCallback pvc = new PasswordValidationCallback(subject, principal.getName(), cred);
-
-                  callbacks.add(gpc);
-                  callbacks.add(cpc);
-                  callbacks.add(pvc);
+                  fireWorkContextSetupFailed(ctx);
+                  throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityDomainWasEmpty());
                }
+
+               sc = SecurityContextFactory.createSecurityContext(scDomain);
+               SecurityContextAssociation.setSecurityContext(sc);
             }
             else
             {
-               if (log.isDebugEnabled())
-                  log.debug("No users defined");
+               sc = SecurityContextAssociation.getSecurityContext();
+
+               if (trace)
+                  log.tracef("Using security context: %s", sc);
             }
 
-            Callback[] cb = new Callback[callbacks.size()];
-            cbh.handle(callbacks.toArray(cb));
+            executionSubject = sc.getSubjectInfo().getAuthenticatedSubject();
 
-            // Subjects for execution environment
-            Subject executionSubject = new Subject();
-            Subject serviceSubject = null;
-         
+            if (executionSubject == null)
+            {
+               if (trace)
+                  log.tracef("Creating empty subject");
+
+               executionSubject = new Subject();
+            }
+
             // Resource adapter callback
             securityContext.setupSecurityContext(cbh, executionSubject, serviceSubject);
+
+            List<Callback> callbacks = new ArrayList<Callback>();
+            if (workManager.getCallbackSecurity().isMappingRequired())
+            {
+               // JCA 1.6: 16.4.4
+            }
+
+            if (workManager.getCallbackSecurity().getDefaultPrincipal() != null)
+            {
+               Principal defaultPrincipal = workManager.getCallbackSecurity().getDefaultPrincipal();
+               CallerPrincipalCallback cpc =
+                  new CallerPrincipalCallback(executionSubject, defaultPrincipal);
+
+               callbacks.add(cpc);
+            }
+
+            if (workManager.getCallbackSecurity().getDefaultGroups() != null)
+            {
+               String[] defaultGroups = workManager.getCallbackSecurity().getDefaultGroups();
+               GroupPrincipalCallback gpc = 
+                  new GroupPrincipalCallback(executionSubject, defaultGroups);
+
+               callbacks.add(gpc);
+            }
+
+            if (callbacks.size() > 0)
+            {
+               Callback[] cb = new Callback[callbacks.size()];
+               cbh.handle(callbacks.toArray(cb));
+            }
+
+            if (trace)
+               log.tracef("Setting authenticated subject (%s) on security context (%s)", executionSubject, sc);
 
             // Set the authenticated subject
             sc.getSubjectInfo().setAuthenticatedSubject(executionSubject);
@@ -343,7 +387,7 @@ public class WorkWrapper implements Runnable
          fireWorkContextSetupFailed(ctx);
          throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityWasNull());
       }
-      
+   
       //Fires Context setup complete
       fireWorkContextSetupComplete(ctx);
       

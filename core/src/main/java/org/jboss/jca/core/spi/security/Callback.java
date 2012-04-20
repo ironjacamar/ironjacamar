@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -23,10 +23,10 @@
 package org.jboss.jca.core.spi.security;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.security.Principal;
 
 /**
- * This SPI interface represents the users, their passwords and roles in
+ * This SPI interface represents the security inflow contract in
  * the container environment
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
@@ -40,24 +40,36 @@ public interface Callback extends Serializable
    public String getDomain();
 
    /**
-    * Get the users
-    * @return A set of user names
+    * Is an user mapping required
+    * @return The value
     */
-   public Set<String> getUsers();
+   public boolean isMappingRequired();
 
    /**
-    * Get the credential for an user
-    * @param user The user name
-    * @return The credential; <code>null</code> if user doesn't exists
+    * Get the default principal
+    * @return The value; <code>null</code> if no default principal
     */
-   public char[] getCredential(String user);
+   public Principal getDefaultPrincipal();
 
    /**
-    * Get the roles for an user
-    * @param user The user name
-    * @return A set of roles; <code>null</code> if user doesn't exists or no roles
+    * Get the default groups
+    * @return The value; <code>null</code> if no default groups
     */
-   public String[] getRoles(String user);
+   public String[] getDefaultGroups();
+
+   /**
+    * Map a principal
+    * @param name The principal name
+    * @return The value; <code>null</code> if no mapping could be found
+    */
+   public Principal mapPrincipal(String name);
+
+   /**
+    * Map a group
+    * @param name The group name
+    * @return The value; <code>null</code> if no mapping could be found
+    */
+   public String mapGroup(String name);
 
    /**
     * Start
