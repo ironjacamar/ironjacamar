@@ -1,0 +1,52 @@
+<!--
+/*
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+-->
+
+<ironjacamar xmlns="http://www.jboss.org/ironjacamar/schema"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
+             http://www.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">
+  <config-property name="stringProperty">string</config-property>
+  <config-property name="intProperty">1</config-property>
+
+  <transaction-support>NoTransaction</transaction-support>
+  
+  <connection-definitions>
+    <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.TestManagedConnectionFactory" jndi-name="java:/eis/TestConnectionFactory" pool-name="TestConnectionFactory">
+      <config-property name="byteProperty">2</config-property>
+    </connection-definition>
+    <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.Test2ManagedConnectionFactory" jndi-name="java:/eis/Test2ConnectionFactory" pool-name="Test2ConnectionFactory">
+      <config-property name="doubleProperty">3.14</config-property>
+    </connection-definition>
+  </connection-definitions>
+
+  <admin-objects>
+    <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.TestAdminObjectImpl" jndi-name="java:/eis/ao/TestAdminObjectInterface">
+      <config-property name="floatProperty">1.1</config-property>
+    </admin-object>
+    <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.Test1AdminObjectImpl" jndi-name="java:/eis/ao/Test1AdminObjectInterface">
+      <config-property name="booleanProperty">true</config-property>
+    </admin-object>
+  </admin-objects>
+
+</ironjacamar>
