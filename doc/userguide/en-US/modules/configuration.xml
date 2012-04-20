@@ -402,38 +402,24 @@ javax.resource.spi.work.WorkContextProvider
 
         <para>interface and returning an instance of <code>javax.resource.spi.work.SecurityContext</code>.</para>
 
-        <para>There is currently support for injecting a user/roles setup based on the files</para>
+        <para>There is currently support for injecting a callback setup based on the file</para>
 
         <programlisting>
-config/users.properties
-config/roles.properties
+config/callback.properties
         </programlisting>
 
-        <para>The format of the <code>users.properties</code> file is</para>
-
-        <programlisting>
-username1=password1
-username2=password2
-        </programlisting>
-
-        <para>The format of the <code>roles.properties</code> file is</para>
-
-        <programlisting>
-username1=role1,role2
-username2=role3,role4
-        </programlisting>
+        <para>The format of the <code>callback.properties</code> file is described in the file.</para>
         
-        <para>The user/roles setup can be configured through the <code>UsersRoles</code> bean in the 
+        <para>The callback setup can be configured through the <code>Callback</code> bean in the 
           <code>config/bootstrap/jca.xml</code> file.</para>
         
         <programlisting language="xml">
           <![CDATA[
-<!-- Users / roles -->
-<bean name="UsersRoles"
+<!-- Callback -->
+<bean name="Callback"
       interface="org.jboss.jca.core.spi.security.Callback"
-      class="org.jboss.jca.core.security.UsersRoles">
-  <property name="UsersProperties">${iron.jacamar.home}/config/users.properties</property>
-  <property name="RolesProperties">${iron.jacamar.home}/config/roles.properties</property>
+      class="org.jboss.jca.core.security.DefaultCallback">
+  <property name="File">${iron.jacamar.home}/config/callback.properties</property>
 </bean>
            ]]>
         </programlisting>

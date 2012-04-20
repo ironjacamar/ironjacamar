@@ -425,6 +425,21 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 1004, value = "Error while loading roles.properties")
    public void errorWhileLoadingRolesProperties(@Cause Throwable t);
    
+   /**
+    * No callback.properties were found
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 1005, value = "No callback.properties were found")
+   public void noCallbackPropertiesFound();
+
+   /**
+    * Error while loading callback.properties
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 1006, value = "Error while loading callback.properties")
+   public void errorWhileLoadingCallbackProperties(@Cause Throwable t);
+   
    // TRANSCATION (1100)
 
    /**

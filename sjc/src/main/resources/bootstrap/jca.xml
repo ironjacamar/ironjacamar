@@ -88,12 +88,11 @@
     <destroy method="shutdown"/>
   </bean>
 
-  <!-- Users / roles -->
-  <bean name="UsersRoles"
+  <!-- Callback -->
+  <bean name="Callback"
         interface="org.jboss.jca.core.spi.security.Callback"
-        class="org.jboss.jca.core.security.UsersRoles">
-    <property name="UsersProperties">${iron.jacamar.home}/config/users.properties</property>
-    <property name="RolesProperties">${iron.jacamar.home}/config/roles.properties</property>
+        class="org.jboss.jca.core.security.DefaultCallback">
+    <property name="File">${iron.jacamar.home}/config/callback.properties</property>
   </bean>
 
   <!-- Idle remover -->
@@ -125,7 +124,7 @@
     <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
 
     <!-- The callback security module -->
-    <property name="CallbackSecurity"><inject bean="UsersRoles"/></property>
+    <property name="CallbackSecurity"><inject bean="Callback"/></property>
 
     <destroy method="shutdown"/>
   </bean>

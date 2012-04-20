@@ -144,6 +144,13 @@ public interface CoreBundle
     */
    @Message(id = 263, value = "WorkManager is shutting down")
    public String workmanagerShutdown();
+
+   /**
+    * SecurityContext setup failed since CallbackSecurity::Domain was empty
+    * @return The value
+    */
+   @Message(id = 264, value = "SecurityContext setup failed since CallbackSecurity::Domain was empty")
+   public String securityContextSetupFailedSinceCallbackSecurityDomainWasEmpty();
    
    // CONNECTION MANAGER LISTENER (300)
 

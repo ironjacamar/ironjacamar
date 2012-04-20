@@ -115,6 +115,11 @@
             <entry>WorkManager is shutting down</entry>
           </row>
           <row>
+            <entry>264</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>SecurityContext setup failed since CallbackSecurity::Domain was empty</entry>
+          </row>
+          <row>
             <entry>301</entry>
             <entry><code>INFO</code></entry>
             <entry>Registered a null handle for managed connection</entry>
@@ -468,6 +473,16 @@
             <entry>1004</entry>
             <entry><code>ERROR</code></entry>
             <entry>Error while loading roles.properties</entry>
+          </row>
+          <row>
+            <entry>1005</entry>
+            <entry><code>WARN</code></entry>
+            <entry>No callback.properties were found</entry>
+          </row>
+          <row>
+            <entry>1006</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Error while loading callback.properties</entry>
           </row>
           <row>
             <entry>1011</entry>
