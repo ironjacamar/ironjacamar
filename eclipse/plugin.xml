@@ -100,5 +100,19 @@
             project="true">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.jboss.jca.eclipse.preferences.IronJacamarPreferencePage"
+            id="org.jboss.jca.eclipse.preferences.IronJacamarPreferencePage"
+            name="IronJacamar">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.jboss.jca.eclipse.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

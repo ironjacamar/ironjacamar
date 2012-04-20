@@ -26,13 +26,18 @@ import org.jboss.jca.codegenerator.Definition;
 import org.jboss.jca.codegenerator.JCA10Profile;
 import org.jboss.jca.codegenerator.JCA15Profile;
 import org.jboss.jca.codegenerator.JCA16Profile;
+import org.jboss.jca.eclipse.Activator;
+import org.jboss.jca.eclipse.preferences.PreferenceConstants;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.PropertyResourceBundle;
 import java.util.Set;
 
@@ -57,6 +62,7 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jdt.launching.LibraryLocation;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -244,8 +250,27 @@ public class CodeGenWizard extends Wizard implements INewWizard
 
       IJavaProject javaProject = JavaCore.create(project);
 
-      String[] ijJars =
-      {"ironjacamar-spec-api.jar"};
+      IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+      String ijHome = store.getString(PreferenceConstants.JCA_HOME_PATH);
+      
+      List<String> ijJars = new ArrayList<String>();
+      ijJars.add("/ironjacamar-spec-api.jar");
+      String libDir;
+      
+      //if use ant to build, should copy all jars
+      if (def.getBuild().equals("ant") && ijHome != null && !ijHome.equals(""))
+      {
+         libDir = ijHome + "/lib";
+
+         File lib = new File(libDir);
+         expandFilePath(lib, ijJars, "");
+         ijJars.add("/../bin/ironjacamar-sjc.jar");
+         
+      }
+      else
+      {
+         libDir = "libs";
+      }
 
       Bundle bundle = Platform.getBundle("org.jboss.jca.eclipse");
 
@@ -254,13 +279,20 @@ public class CodeGenWizard extends Wizard implements INewWizard
 
       for (String ijJarName : ijJars)
       {
-         Path srcPath = new Path("libs/" + ijJarName);
          InputStream stream;
          try
          {
+            if (def.getBuild().equals("ant") &&  ijHome != null && !ijHome.equals(""))
+            {
+               stream = FileLocator.resolve(new URL("file://" + libDir + ijJarName)).openStream();
+            }
+            else
+            {
+               Path srcPath = new Path(libDir + ijJarName);
+               stream = FileLocator.openStream(bundle, srcPath, false);
+            }
 
-            stream = FileLocator.openStream(bundle, srcPath, false);
-            IFile file = project.getFile("lib/" + ijJarName);
+            IFile file = project.getFile("lib/" + ijJarName.substring(ijJarName.lastIndexOf("/")));
             if (!file.exists())
             {
                file.create(stream, true, null);
@@ -288,12 +320,36 @@ public class CodeGenWizard extends Wizard implements INewWizard
 
       for (String ijJarName : ijJars)
       {
-         entries.add(JavaCore.newLibraryEntry(new Path("/" + getProjectName() + "/lib/" + ijJarName), null, null));
+         entries.add(JavaCore.newLibraryEntry(new Path("/" + getProjectName() + "/lib/" + 
+            ijJarName.substring(ijJarName.lastIndexOf("/"))), null, null));
       }
 
       javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[entries.size()]), progressMonitor);
 
       monitor.worked(1);
+
+   }
+
+   /**
+    * @param ijJars
+    * @param lib
+    */
+   private void expandFilePath(File dir, List<String> ijJars, String path)
+   {
+      
+      File[] files = dir.listFiles();
+      for (File f: files)
+      {
+         if (f.isDirectory())
+         {
+            expandFilePath(f, ijJars, path + "/" + f.getName());
+         }
+         else
+         {
+            ijJars.add(path + "/" + f.getName());
+            //ijJars.add("ironjacamar-common-api.jar");
+         }
+      }
 
    }
 
