@@ -81,6 +81,7 @@ public class Main
          kernelConfiguration = kernelConfiguration.deploymentOrder(new DeploymentOrder(order));
          kernelConfiguration = kernelConfiguration.remoteJmxAccess(true);
          kernelConfiguration = kernelConfiguration.usePlatformMBeanServer(true);
+         kernelConfiguration = kernelConfiguration.beanManagement(true);
 
          String home = SecurityActions.getSystemProperty("iron.jacamar.home");
          if (home != null)
