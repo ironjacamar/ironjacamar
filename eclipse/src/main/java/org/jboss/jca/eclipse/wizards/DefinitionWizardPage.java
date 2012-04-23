@@ -186,6 +186,7 @@ public class DefinitionWizardPage extends WizardPage
                boundCombo.setText("Outbound");
                annotationshButton.setSelection(false);
                annotationshButton.setEnabled(false);
+               ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(false);
             }
             else
             {
@@ -197,11 +198,13 @@ public class DefinitionWizardPage extends WizardPage
                {
                   annotationshButton.setEnabled(true);
                   annotationshButton.setSelection(true);
+                  ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(true);
                }
                else
                {
                   annotationshButton.setSelection(false);
                   annotationshButton.setEnabled(false);
+                  ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(false);
                }
             }
          }
