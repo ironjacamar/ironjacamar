@@ -29,9 +29,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -161,7 +163,10 @@ public class DefaultCallback implements Callback
     */
    public String[] getDefaultGroups()
    {
-      return defaultGroups;
+      if (defaultGroups == null)
+         return null;
+
+      return Arrays.copyOf(defaultGroups, defaultGroups.length);
    }
 
    /**
@@ -170,7 +175,14 @@ public class DefaultCallback implements Callback
     */
    public void setDefaultGroups(String[] value)
    {
-      defaultGroups = value;
+      if (value != null)
+      {
+         defaultGroups = Arrays.copyOf(value, value.length);
+      }
+      else
+      {
+         defaultGroups = null;
+      }
    }
 
    /**
@@ -355,5 +367,107 @@ public class DefaultCallback implements Callback
    {
       principals.clear();
       groups.clear();
+   }
+
+   private void writeObject(ObjectOutputStream out) throws IOException
+   {
+      out.writeBoolean(mappingRequired);
+      out.writeUTF(domain);
+
+      if (defaultPrincipal != null)
+      {
+         out.writeBoolean(true);
+         out.writeUTF(defaultPrincipal.getName());
+      }
+      else
+      {
+         out.writeBoolean(false);
+      }
+
+      out.writeObject(defaultGroups);
+
+      out.writeInt(principals.size());
+      if (principals.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = principals.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+            out.writeUTF(entry.getKey());
+            out.writeUTF(entry.getValue());
+         }
+      }
+
+      out.writeInt(groups.size());
+      if (groups.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = groups.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+            out.writeUTF(entry.getKey());
+            out.writeUTF(entry.getValue());
+         }
+      }
+
+      out.writeUTF(file);
+   }
+
+   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+   {
+      mappingRequired = in.readBoolean();
+      domain = in.readUTF();
+
+      if (in.readBoolean())
+         defaultPrincipal = new SimplePrincipal(in.readUTF());
+
+      defaultGroups = (String[])in.readObject();
+
+      int i = in.readInt();
+      if (i > 0)
+      {
+         for (int j = 1; j <= i; j++)
+         {
+            String from = in.readUTF();
+            String to = in.readUTF();
+
+            principals.put(from, to);
+         }
+      }
+
+      i = in.readInt();
+      if (i > 0)
+      {
+         for (int j = 1; j <= i; j++)
+         {
+            String from = in.readUTF();
+            String to = in.readUTF();
+
+            groups.put(from, to);
+         }
+      }
+
+      file = in.readUTF();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("DefaultCallback@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[mappingRequired=").append(mappingRequired);
+      sb.append(" domain=").append(domain);
+      sb.append(" defaultPrincipal=").append(defaultPrincipal);
+      sb.append(" defaultGroups=").append(defaultGroups);
+      sb.append(" principals=").append(principals);
+      sb.append(" groups=").append(groups);
+      sb.append(" file=").append(file);
+      sb.append("]");
+
+      return sb.toString();
    }
 }

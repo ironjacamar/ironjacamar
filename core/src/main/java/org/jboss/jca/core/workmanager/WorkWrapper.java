@@ -30,10 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.security.PasswordCredential;
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.Work;
@@ -49,7 +47,6 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.security.auth.message.callback.GroupPrincipalCallback;
-import javax.security.auth.message.callback.PasswordValidationCallback;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
@@ -57,7 +54,6 @@ import org.jboss.logging.Messages;
 
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
-import org.jboss.security.SimplePrincipal;
 import org.jboss.security.auth.callback.JASPICallbackHandler;
 
 /**

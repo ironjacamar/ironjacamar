@@ -166,8 +166,8 @@
     <Bug code="Dm"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.core.security.UsersRoles"/>
-    <Bug code="Se,PZLA"/>
+    <Class name="org.jboss.jca.core.security.DefaultCallback"/>
+    <Bug code="PZLA"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.core.spi.mdr.MetadataRepository"/>
