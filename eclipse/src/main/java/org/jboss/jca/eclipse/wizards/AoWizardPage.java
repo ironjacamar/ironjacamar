@@ -175,8 +175,8 @@ public class AoWizardPage extends WizardPage
 
       aoText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       aoText.setBounds(5, 5, 600, 10);
-      aoText.setText("AcmeAdminObjectInterface");
-      aoDef.setAdminObjectInterface("AcmeAdminObjectInterface");
+      aoText.setText("AcmeAdminObject");
+      aoDef.setAdminObjectInterface("AcmeAdminObject");
       aoText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)

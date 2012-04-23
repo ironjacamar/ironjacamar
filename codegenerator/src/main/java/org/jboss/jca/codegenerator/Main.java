@@ -574,7 +574,7 @@ public class Main
          do
          {
             System.out.print(rb.getString("adminobject.interface.name"));
-            System.out.print(" [" + def.getDefaultValue() + strOrder + "AdminObjectInterface]: ");
+            System.out.print(" [" + def.getDefaultValue() + strOrder + "AdminObject]: ");
             aoInterfaceName = in.readLine();
          }
          while (classes.contains(aoInterfaceName) && !aoInterfaceName.equals(""));
@@ -586,7 +586,7 @@ public class Main
          }
          else
          {
-            aoType.setAdminObjectInterface(def.getDefaultValue() + strOrder + "AdminObjectInterface");
+            aoType.setAdminObjectInterface(def.getDefaultValue() + strOrder + "AdminObject");
          }
          
          String aoClassName = "";
