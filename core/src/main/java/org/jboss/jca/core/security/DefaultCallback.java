@@ -462,7 +462,7 @@ public class DefaultCallback implements Callback
       sb.append("[mappingRequired=").append(mappingRequired);
       sb.append(" domain=").append(domain);
       sb.append(" defaultPrincipal=").append(defaultPrincipal);
-      sb.append(" defaultGroups=").append(defaultGroups);
+      sb.append(" defaultGroups=").append(defaultGroups == null ? "null" : Arrays.toString(defaultGroups));
       sb.append(" principals=").append(principals);
       sb.append(" groups=").append(groups);
       sb.append(" file=").append(file);
