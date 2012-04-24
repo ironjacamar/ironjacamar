@@ -140,9 +140,10 @@
   <property name="version.jboss.ts" value="4.16.3.Final"/>
   <property name="version.jboss.ts.spi" value="7.0.0.CR2"/>
   <property name="version.jdepend" value="2.9.1"/>
-  <property name="version.jetty" value="7.4.0.v20110414"/>
-  <property name="version.jetty.servlet" value="6.1.14"/>
-  <property name="version.jetty.glassfish" value="2.1.v20100127"/>
+  <property name="version.jetty" value="8.1.3.v20120416"/>
+  <property name="version.jetty.servlet" value="3.0.1"/>
+  <property name="version.jetty.jsp" value="2.2.1"/>
+  <property name="version.jetty.el" value="2.2.4"/>
   <property name="version.jasper" value="glassfish_2.1.0.v201004190952"/>
   <property name="version.jpa" value="1.0"/>
   <property name="version.junit" value="4.8.2"/>
