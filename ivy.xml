@@ -106,7 +106,10 @@
     <dependency org="com.github.fungal" name="fungal-cli" rev="${version.fungal}" conf="sjc,ironjacamar-depchain"/>
     <dependency org="com.h2database" name="h2" rev="${version.h2}" conf="test"/>
     <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="jetty,tools"/>
+    <dependency org="javax.el" name="javax.el-api" rev="${version.jetty.el}" conf="jetty"/>
     <dependency org="javax.mail" name="mail" rev="${version.mail-api}" conf="mail"/>
+    <dependency org="javax.servlet" name="javax.servlet-api" rev="${version.jetty.servlet}" conf="jetty"/>
+    <dependency org="javax.servlet.jsp" name="javax.servlet.jsp-api"  rev="${version.jetty.jsp}" conf="jetty"/>
     <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="common,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,as"/>
     <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="tools"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
@@ -118,7 +121,7 @@
     <dependency org="org.eclipse.jetty" name="jetty-continuation" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-http" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-io" rev="${version.jetty}" conf="jetty"/>
-    <dependency org="org.eclipse.jetty" name="jetty-jsp-2.1" rev="${version.jetty}" conf="jetty"/>
+    <dependency org="org.eclipse.jetty" name="jetty-jsp" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-nested" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-security" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-server" rev="${version.jetty}" conf="jetty"/>
@@ -127,10 +130,10 @@
     <dependency org="org.eclipse.jetty" name="jetty-webapp" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-xml" rev="${version.jetty}" conf="jetty"/>
     <dependency org="org.hibernate" name="hibernate-validator" rev="${version.hibernate-validator}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.hornetq" name="hornetq-core" rev="${version.hornetq}" conf="hornetq,ironjacamar-depchain"/>
-    <dependency org="org.hornetq" name="hornetq-core-client" rev="${version.hornetq}" conf="hornetq,ironjacamar-depchain"/>
-    <dependency org="org.hornetq" name="hornetq-jms" rev="${version.hornetq}" conf="hornetq,ironjacamar-depchain"/>
-    <dependency org="org.hornetq" name="hornetq-jms-client" rev="${version.hornetq}" conf="hornetq,ironjacamar-depchain"/>
+    <dependency org="org.hornetq" name="hornetq-core" rev="${version.hornetq}" conf="hornetq"/>
+    <dependency org="org.hornetq" name="hornetq-core-client" rev="${version.hornetq}" conf="hornetq"/>
+    <dependency org="org.hornetq" name="hornetq-jms" rev="${version.hornetq}" conf="hornetq"/>
+    <dependency org="org.hornetq" name="hornetq-jms-client" rev="${version.hornetq}" conf="hornetq"/>
     <dependency org="org.hornetq" name="hornetq-ra" rev="${version.hornetq}" conf="hornetq">
       <artifact name="hornetq-ra" type="jar" conf="hornetq"/>
       <artifact name="hornetq-ra" type="rar" conf="hornetq"/>
@@ -159,7 +162,7 @@
     <dependency org="org.jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.netty" name="netty" rev="${version.jboss.netty}" conf="hornetq,ironjacamar-depchain"/>
+    <dependency org="org.jboss.netty" name="netty" rev="${version.jboss.netty}" conf="hornetq"/>
     <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common,ironjacamar-common-impl-papaki,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain,ironjacamar-embedded,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-api-base" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
@@ -170,14 +173,12 @@
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-impl-base" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-spi" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logmanager" rev="${version.jboss.slf4j.logmanager}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.spec.javax.jms" name="jboss-jms-api_1.1_spec" rev="${version.jboss.jms.api}" conf="hornetq,ironjacamar-depchain"/>
+    <dependency org="org.jboss.spec.javax.jms" name="jboss-jms-api_1.1_spec" rev="${version.jboss.jms.api}" conf="hornetq"/>
     <dependency org="org.jboss.spec.javax.security.auth.message" name="jboss-jaspi-api_1.0_spec" rev="${version.jboss.jaspi.api}" conf="common,ironjacamar-core-impl,ironjacamar-depchain,as"/>
     <dependency org="org.jboss.spec.javax.transaction" name="jboss-transaction-api_1.1_spec" rev="${version.transaction.api}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-spec-api,ironjacamar-jdbc,as"/>
     <dependency org="org.jboss.stdio" name="jboss-stdio" rev="${version.jboss.stdio}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.threads" name="jboss-threads" rev="${version.jboss.threads}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,as"/>
     <dependency org="org.mockito" name="mockito-all" rev="${version.mockito}" conf="test"/>
-    <dependency org="org.mortbay.jetty" name="jsp-api-2.1-glassfish"  rev="${version.jetty.glassfish}" conf="jetty"/>
-    <dependency org="org.mortbay.jetty" name="servlet-api-2.5" rev="${version.jetty.servlet}" conf="jetty"/>
     <dependency org="org.picketbox" name="picketbox" rev="${version.jboss.picketbox}" conf="common,ironjacamar-depchain,ironjacamar-core-impl,as"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
