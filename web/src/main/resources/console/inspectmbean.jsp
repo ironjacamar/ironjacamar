@@ -104,6 +104,7 @@
 <head>
    <title>IronJacamar Management Console</title>
    <link rel="stylesheet" href="jboss.css" type="text/css" />
+   <link rel="shortcut icon" href="logo.ico" />
    <meta http-equiv="cache-control" content="no-cache" />
 </head>
 
