@@ -119,9 +119,9 @@
   <property name="version.hibernate-annotations" value="3.5.1-Final"/>
   <property name="version.hibernate-validator" value="4.1.0.Final"/>
   <property name="version.hornetq" value="2.2.2.Final"/>
-  <property name="version.javassist" value="3.14.0-GA"/>
+  <property name="version.javassist" value="3.16.1-GA"/>
   <property name="version.jboss.common" value="2.2.17.GA"/>
-  <property name="version.jboss.jaspi.api" value="1.0.0.Final"/>
+  <property name="version.jboss.jaspi.api" value="1.0.1.Final"/>
   <property name="version.jboss.jms.api" value="1.0.0.Beta1"/>
   <property name="version.jboss.logging" value="3.1.0.GA"/>
   <property name="version.jboss.logging-processor" value="1.0.1.Final"/>
@@ -133,12 +133,11 @@
   <property name="version.jboss.security" value="2.1.0.20090318"/>
   <property name="version.jboss.shrinkwrap" value="1.0.0"/>
   <property name="version.jboss.shrinkwrap.descriptors" value="2.0.0-alpha-1"/>
-  <property name="version.jboss.slf4j" value="1.0.2.GA"/>
   <property name="version.jboss.slf4j.logmanager" value="1.0.0.GA"/>
   <property name="version.jboss.stdio" value="1.0.1.GA"/>
   <property name="version.jboss.threads" value="2.0.0.GA"/>
   <property name="version.jboss.ts" value="4.16.3.Final"/>
-  <property name="version.jboss.ts.spi" value="7.0.0.CR2"/>
+  <property name="version.jboss.ts.spi" value="7.0.0.Final"/>
   <property name="version.jdepend" value="2.9.1"/>
   <property name="version.jetty" value="8.1.3.v20120416"/>
   <property name="version.jetty.servlet" value="3.0.1"/>
@@ -153,7 +152,7 @@
   <property name="version.maven" value="2.2.1"/>
   <property name="version.rhq" value="4.0.0.Beta1"/>
   <property name="version.slf4j" value="1.6.1"/>
-  <property name="version.transaction.api" value="1.0.0.Final"/>
+  <property name="version.transaction.api" value="1.0.1.Final"/>
   <property name="version.validation-api" value="1.0.0.GA"/>
 
   <!-- ================================= 
