@@ -23,6 +23,7 @@ package org.jboss.jca.codegenerator;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -233,9 +234,14 @@ public class Utils
       {
          public boolean accept(File dir, String fname)
          {
-            if (dir.isDirectory())
+            if (new File(dir, fname).isDirectory())
+            {
                return true;
-            return fname.endsWith(filterName);
+            }
+            else
+            {
+               return fname.endsWith(filterName);
+            }
          }
 
       });
@@ -246,43 +252,52 @@ public class Utils
 
          if (jarFile.isFile())
          {
-            FileInputStream from = null;
-            FileOutputStream to = null;
-            try
-            {
-               from = new FileInputStream(jarFile);
-               to = new FileOutputStream(targetPath + File.separator + jarFile.getName());
-               byte[] buffer = new byte[4096];
-               int bytesRead;
-
-               while ((bytesRead = from.read(buffer)) != -1)
-                  to.write(buffer, 0, bytesRead);
-            }
-            finally
-            {
-               if (from != null)
-                  try
-                  {
-                     from.close();
-                  }
-                  catch (IOException e)
-                  {
-                     ;
-                  }
-               if (to != null)
-                  try
-                  {
-                     to.close();
-                  }
-                  catch (IOException e)
-                  {
-                     ;
-                  }
-            }
+            copyFile(jarFile, targetPath);
          }
          if (jarFile.isDirectory())
          {
             copyFolder(sourcePath + File.separator + file[i], targetPath + File.separator + file[i], filterName);
+         }
+      }
+   }
+
+   private static void copyFile(File sourceFile, String targetPath) throws FileNotFoundException, IOException
+   {
+      FileInputStream from = null;
+      FileOutputStream to = null;
+      try
+      {
+         from = new FileInputStream(sourceFile);
+         to = new FileOutputStream(targetPath + File.separator + sourceFile.getName());
+         byte[] buffer = new byte[4096];
+         int bytesRead;
+
+         while ((bytesRead = from.read(buffer)) != -1)
+            to.write(buffer, 0, bytesRead);
+      }
+      finally
+      {
+         if (from != null)
+         {
+            try
+            {
+               from.close();
+            }
+            catch (IOException e)
+            {
+               ;
+            }
+         }
+         if (to != null)
+         {
+            try
+            {
+               to.close();
+            }
+            catch (IOException e)
+            {
+               ;
+            }
          }
       }
    }
