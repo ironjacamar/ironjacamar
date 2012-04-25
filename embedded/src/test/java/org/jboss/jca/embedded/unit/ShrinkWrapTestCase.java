@@ -127,8 +127,12 @@ public class ShrinkWrapTestCase
          embedded.deploy(raa);
 
          context = new InitialContext();
-         Object o = context.lookup(JNDI_PREFIX + name);
-         assertNotNull(o);
+         TestConnectionFactory tcf = (TestConnectionFactory)context.lookup(JNDI_PREFIX + name);
+         assertNotNull(tcf);
+
+         TestConnection tc = tcf.getConnection();
+         tc.callMe();
+         tc.close();
       }
       catch (Throwable t)
       {

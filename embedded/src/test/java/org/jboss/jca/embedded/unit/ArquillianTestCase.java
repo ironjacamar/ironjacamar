@@ -28,7 +28,6 @@ import org.jboss.jca.embedded.rars.simple.TestConnectionFactory;
 import java.util.UUID;
 
 import javax.annotation.Resource;
-import javax.resource.ResourceException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

@@ -35,11 +35,9 @@
 
     <para>Stefano Maestri is a core developer on the IronJacamar project. He can be reached at stefano.maestri (at) redhat (dot) com.</para>
 
-    <para>Gurkan Erdogdu is a core developer on the IronJacamar project. He can be reached at gurkanerdogdu (at) yahoo (dot) com.</para>
-
-    <para>Yang Yong is a core developer on the IronJacamar project. He can be reached at yyang (at) redhat (dot) com.</para>
-
     <para>Lin Gao is a core developer on the IronJacamar project. He can be reached at lgao (at) redhat (dot) com.</para>
+
+    <para>Vladimir Rastseluev is a core developer on the IronJacamar project. He can be reached at vrastsel (at) redhat (dot) com.</para>
 
   </section>
 
@@ -47,10 +45,10 @@
     <title>Thanks to</title>
 
     <para>
-      Dimitris Andreadis, Adrian Brock, Carlo de Wolf, Bruno Georges, Paul Gier, Jason Green, Jonathan Halliday,
-      Søren Hilmer, Ales Justin, Vicky Kak,  Aslak Knutsen, Sacha Labourey, Mark Little, Alexey Loubyansky, 
-      Patrick MacDonald, Andrig Miller, Andrew Lee Rubinger, Heiko Rupp, Anil Saldhana,  
-      Scott Stark, Clebert Suconic, Andy Taylor and Jeremy Whiting.
+      Dimitris Andreadis, Adrian Brock, Carlo de Wolf, Gurkan Erdogdu, Bruno Georges, Paul Gier, Jason Green, Stefan Guilhen, 
+      Jonathan Halliday, Søren Hilmer, Ales Justin, Vicky Kak,  Aslak Knutsen, Sacha Labourey, Johnaton Lee, Mark Little, Alexey Loubyansky, 
+      Patrick MacDonald, Scott Marlow, Shelly McGowan, Andrig Miller, Marcus Moyses, Weston Price, Andrew Lee Rubinger, Heiko Rupp,
+      Anil Saldhana, Scott Stark, Clebert Suconic, Andy Taylor, Jeremy Whiting, Tyronne Wickramarathne and Yang Yong.
     </para>
 
   </section>

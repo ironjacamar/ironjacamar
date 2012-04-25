@@ -104,6 +104,7 @@
 <head>
    <title>IronJacamar Management Console</title>
    <link rel="stylesheet" href="jboss.css" type="text/css" />
+   <link rel="shortcut icon" href="logo.ico" />
    <meta http-equiv="cache-control" content="no-cache" />
 </head>
 
@@ -402,7 +403,7 @@ if (operationInfo.length > 0)
   <table width="100%" class="copyright">
     <tr>
       <td class="copyright">
-        Copyright &#169; 2011  <a href="http://www.jboss.org/ironjacamar" target="_blank">JBoss, by Red Hat</a>
+        Copyright &#169; 2012  <a href="http://www.jboss.org/ironjacamar" target="_blank">JBoss, by Red Hat</a>
       </td>
     </tr>
   </table>

@@ -194,7 +194,7 @@ public class DefaultCallback implements Callback
 
       if (mapping != null)
       {
-         return new SimplePrincipal(name);
+         return new SimplePrincipal(mapping);
       }
 
       return null;
