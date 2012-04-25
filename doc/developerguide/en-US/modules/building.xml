@@ -99,6 +99,10 @@ svn co https://svn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ ironjacamar
             <para>trunk</para>
             <para>The head of development targeting the next upcoming release.</para>
          </listitem>
+         <listitem>
+            <para>branches/Branch_1_0</para>
+            <para>The development targeting the IronJacamar 1.0 releases.</para>
+         </listitem>
       </itemizedlist>
     </section>
 
