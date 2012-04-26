@@ -126,9 +126,10 @@ public class InboundWizardPage extends WizardPage
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       mlText.setLayoutData(gd);
-      mlText.setText("AcmeMessageListener");
+      mlText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "MessageListener");
       ((CodeGenWizard) getWizard()).getDef().setDefaultPackageInbound(true);
-      ((CodeGenWizard) getWizard()).getDef().setMlClass("AcmeMessageListener");
+      ((CodeGenWizard) getWizard()).getDef().setMlClass(
+         ((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "MessageListener");
       mlText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -150,8 +151,9 @@ public class InboundWizardPage extends WizardPage
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       asText.setLayoutData(gd);
-      asText.setText("AcmeActivationSpec");
-      ((CodeGenWizard) getWizard()).getDef().setAsClass("AcmeActivationSpec");
+      asText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ActivationSpec");
+      ((CodeGenWizard) getWizard()).getDef().setAsClass(
+         ((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ActivationSpec");
       asText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -198,8 +200,9 @@ public class InboundWizardPage extends WizardPage
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       acText.setLayoutData(gd);
-      acText.setText("AcmeActivation");
-      ((CodeGenWizard) getWizard()).getDef().setActivationClass("AcmeActivation");
+      acText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "Activation");
+      ((CodeGenWizard) getWizard()).getDef().setActivationClass(
+         ((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "Activation");
       acText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -404,7 +407,6 @@ public class InboundWizardPage extends WizardPage
    /**
     * Tests if the current workbench selection is a suitable container to use.
     */
-
    private void initialize()
    {
 
@@ -413,7 +415,6 @@ public class InboundWizardPage extends WizardPage
    /**
     * Ensures that both text fields are set.
     */
-
    private void dialogChanged()
    {
 
@@ -433,5 +434,12 @@ public class InboundWizardPage extends WizardPage
       setErrorMessage(message);
       setPageComplete(message == null);
    }
+   
+   @Override
+   public void dispose()
+   {
+      super.dispose();
 
+      setControl(null);
+   }
 }

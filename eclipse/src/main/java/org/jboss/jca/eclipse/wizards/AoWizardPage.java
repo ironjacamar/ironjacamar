@@ -175,8 +175,8 @@ public class AoWizardPage extends WizardPage
 
       aoText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       aoText.setBounds(5, 5, 600, 10);
-      aoText.setText("AcmeAdminObject");
-      aoDef.setAdminObjectInterface("AcmeAdminObject");
+      aoText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "AdminObject");
+      aoDef.setAdminObjectInterface(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "AdminObject");
       aoText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -196,8 +196,8 @@ public class AoWizardPage extends WizardPage
 
       aoImplText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       aoImplText.setBounds(5, 5, 600, 10);
-      aoImplText.setText("AcmeAdminObjectImpl");
-      aoDef.setAdminObjectClass("AcmeAdminObjectImpl");
+      aoImplText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "AdminObjectImpl");
+      aoDef.setAdminObjectClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "AdminObjectImpl");
       aoImplText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -453,5 +453,13 @@ public class AoWizardPage extends WizardPage
    {
       setErrorMessage(message);
       setPageComplete(message == null);
+   }
+   
+   @Override
+   public void dispose()
+   {
+      super.dispose();
+
+      setControl(null);
    }
 }

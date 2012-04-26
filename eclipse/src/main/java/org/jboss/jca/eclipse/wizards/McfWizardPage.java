@@ -139,8 +139,8 @@ public class McfWizardPage extends WizardPage
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       mcfText.setLayoutData(gd);
-      mcfText.setText("AcmeManagedConnectionFactory");
-      mcfDef.setMcfClass("AcmeManagedConnectionFactory");
+      mcfText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ManagedConnectionFactory");
+      mcfDef.setMcfClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ManagedConnectionFactory");
       mcfText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -202,8 +202,8 @@ public class McfWizardPage extends WizardPage
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       mcText.setLayoutData(gd);
-      mcText.setText("AcmeManagedConnection");
-      mcfDef.setMcClass("AcmeManagedConnection");
+      mcText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ManagedConnection");
+      mcfDef.setMcClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ManagedConnection");
       mcText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -254,8 +254,8 @@ public class McfWizardPage extends WizardPage
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       cfText.setLayoutData(gd);
-      cfText.setText("AcmeConnectionFactory");
-      mcfDef.setCfInterfaceClass("AcmeConnectionFactory");
+      cfText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionFactory");
+      mcfDef.setCfInterfaceClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionFactory");
       cfText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -277,8 +277,8 @@ public class McfWizardPage extends WizardPage
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       cfImplText.setLayoutData(gd);
-      cfImplText.setText("AcmeConnectionFactoryImpl");
-      mcfDef.setCfClass("AcmeConnectionFactoryImpl");
+      cfImplText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionFactoryImpl");
+      mcfDef.setCfClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionFactoryImpl");
       cfImplText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -300,8 +300,8 @@ public class McfWizardPage extends WizardPage
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       connText.setLayoutData(gd);
-      connText.setText("AcmeConnection");
-      mcfDef.setConnInterfaceClass("AcmeConnection");
+      connText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "Connection");
+      mcfDef.setConnInterfaceClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "Connection");
       connText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -323,8 +323,8 @@ public class McfWizardPage extends WizardPage
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       connImplText.setLayoutData(gd);
-      connImplText.setText("AcmeConnectionImpl");
-      mcfDef.setConnImplClass("AcmeConnectionImpl");
+      connImplText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionImpl");
+      mcfDef.setConnImplClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionImpl");
       connImplText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -566,5 +566,13 @@ public class McfWizardPage extends WizardPage
          return ((CodeGenWizard) getWizard()).getAoPage();
       }
       return super.getNextPage();
+   }
+   
+   @Override
+   public void dispose()
+   {
+      super.dispose();
+
+      setControl(null);
    }
 }

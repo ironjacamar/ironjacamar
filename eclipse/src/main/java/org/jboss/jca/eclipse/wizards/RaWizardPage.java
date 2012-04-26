@@ -137,8 +137,9 @@ public class RaWizardPage extends WizardPage
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
       raText.setLayoutData(gd);
-      raText.setText("AcmeResourceAdapter");
-      ((CodeGenWizard) getWizard()).getDef().setRaClass("AcmeResourceAdapter");
+      raText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ResourceAdapter");
+      ((CodeGenWizard) getWizard()).getDef().setRaClass(
+         ((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ResourceAdapter");
       raText.addModifyListener(new ModifyListener()
       {
          public void modifyText(ModifyEvent e)
@@ -146,6 +147,33 @@ public class RaWizardPage extends WizardPage
             String string = raText.getText();
             if (string.length() > 0)
             {
+               boolean changeDefault = false;
+               if (string.endsWith("ResourceAdapter"))
+               {
+                  ((CodeGenWizard)getWizard()).getDef().setDefaultValue(
+                     string.substring(0, string.lastIndexOf("ResourceAdapter")));
+                  changeDefault = true;
+               }
+               if (string.endsWith("RA"))
+               {
+                  ((CodeGenWizard)getWizard()).getDef().setDefaultValue(
+                     string.substring(0, string.lastIndexOf("RA")));
+                  changeDefault = true;
+               }
+               if (changeDefault)
+               {
+                  IWizardPage page = ((CodeGenWizard)getWizard()).getMcfPage();
+                  if (page.getControl() != null)
+                     page.dispose();
+                  
+                  page = ((CodeGenWizard)getWizard()).getInboundPage();
+                  if (page.getControl() != null)
+                     page.dispose();
+
+                  page = ((CodeGenWizard)getWizard()).getAoPage();
+                  if (page.getControl() != null)
+                     page.dispose();
+               }
                ((CodeGenWizard) getWizard()).getDef().setRaClass(string);
                updateStatus(null);
             }
