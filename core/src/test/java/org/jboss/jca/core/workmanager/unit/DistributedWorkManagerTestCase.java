@@ -111,6 +111,12 @@ public class DistributedWorkManagerTestCase
 
       embedded.deploy(dwm);
 
+      // Deploy work.rar
+      URL workRar =
+         DistributedWorkManagerTestCase.class.getClassLoader().getResource("work.rar");
+
+      embedded.deploy(workRar);
+
       dwm1 = embedded.lookup("DistributedWorkManager1", DistributedWorkManager.class);
       dwm2 = embedded.lookup("DistributedWorkManager2", DistributedWorkManager.class);
    }
@@ -122,6 +128,12 @@ public class DistributedWorkManagerTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
+      // Undeploy work.rar
+      URL workRar =
+         DistributedWorkManagerTestCase.class.getClassLoader().getResource("work.rar");
+
+      embedded.undeploy(workRar);
+
       // Undeploy DistributedWorkManager
       URL dwm =
          DistributedWorkManagerTestCase.class.getClassLoader().getResource("dwm.xml");

@@ -363,6 +363,38 @@
       <fileset dir="${build.core.dir}/test/rars/inflow"/>
     </jar>
 
+    <!-- Work resource adapter -->
+    <jar destfile="${build.core.dir}/test/work.jar"
+         basedir="${build.core.dir}/test"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="**/workmanager/rars/dwm/**">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test - Work"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+    <jar destfile="${build.core.dir}/test/work.rar"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test - Work RAR"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+      <fileset dir="${build.core.dir}/test">
+        <include name="work.jar"/>
+      </fileset>
+      <fileset dir="${build.core.dir}/test/rars/dwm"/>
+    </jar>
+
   </target>
 
   <!-- ================================= 
