@@ -69,6 +69,25 @@ public abstract class AbstractParser
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
+   /** Resolve system property */
+   private boolean resolveSystemProperties = true;
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isSystemPropertiesResolved()
+   {
+      return resolveSystemProperties;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setSystemPropertiesResolved(boolean v)
+   {
+      resolveSystemProperties = v;
+   }
+
    /**
     * convert an xml element in boolean value. Empty elements results with true (tag presence is sufficient condition)
     *
@@ -507,6 +526,10 @@ public abstract class AbstractParser
    {
       if (input == null || input.trim().equals(""))
          return input;
+
+      if (!resolveSystemProperties)
+         return input;
+
       while ((input.indexOf("${")) != -1)
       {
          int from = input.indexOf("${");

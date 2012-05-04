@@ -37,6 +37,17 @@ import javax.xml.stream.XMLStreamReader;
  */
 public interface MetadataParser<T extends JCAMetadata>
 {
+   /**
+    * Are system properties resolved ?
+    * @return True if resolved (default); otherwise false
+    */
+   public boolean isSystemPropertiesResolved();
+
+   /**
+    * Set if system properties should be resolved
+    * @param v The value
+    */
+   public void setSystemPropertiesResolved(boolean v);
 
    /**
     * Parse the xml file and return the JCAMetaData for which the concrete parser is designed.
