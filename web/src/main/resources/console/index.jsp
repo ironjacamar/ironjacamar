@@ -7,6 +7,7 @@
 <html>
   <head>
     <title>IronJacamar Management Console</title>
+    <link rel="shortcut icon" href="logo.ico" />
   </head>
   <frameset>
     <frame name="ObjectNodeView" src="HtmlAdaptor?action=displayMBeans" scrolling="auto" frameborder="0"/>

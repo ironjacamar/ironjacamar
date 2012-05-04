@@ -112,6 +112,9 @@
         interface="org.jboss.jca.core.api.workmanager.WorkManager"
         class="org.jboss.jca.core.workmanager.WorkManagerImpl">
 
+    <!-- The name -->
+    <property name="Name">Default</property>
+
     <!-- The short running thread pool -->
     <property name="ShortRunningThreadPool"><inject bean="ShortRunningThreadPool"/></property>
 

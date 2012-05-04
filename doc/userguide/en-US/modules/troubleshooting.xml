@@ -7,7 +7,7 @@
 
       <para>If you think you have found a bug you should verify this by posting to our forum first.</para>
 
-      <para>Our forum is located at <ulink url="http://community.jboss.org/en/jbossas/jca">http://community.jboss.org/en/jbossas/jca</ulink></para>
+      <para>Our forum is located at <ulink url="http://community.jboss.org/en/ironjacamar">http://community.jboss.org/en/ironjacamar</ulink></para>
 
       <para>You can also search our issue tracking system located at <ulink url="http://issues.jboss.org/browse/JBJCA">http://issues.jboss.org/browse/JBJCA</ulink></para>
 
@@ -65,7 +65,7 @@ ant clean cobertura
       <para>We can't cover every single issue in this guide, so feel free to drop by our forums to see if a solution
         has already been provided. Otherwise feel free to ask your question there.</para>
 
-      <para>Our forum is located at <ulink url="http://community.jboss.org/en/jbossas/jca">http://community.jboss.org/en/jbossas/jca</ulink></para>
+      <para>Our forum is located at <ulink url="http://community.jboss.org/en/ironjacamar">http://community.jboss.org/en/ironjacamar</ulink></para>
 
    </section>
 

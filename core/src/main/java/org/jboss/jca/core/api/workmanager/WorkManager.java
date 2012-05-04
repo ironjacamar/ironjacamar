@@ -34,6 +34,24 @@ import org.jboss.threads.BlockingExecutor;
 public interface WorkManager extends javax.resource.spi.work.WorkManager, GracefulShutdown, Cloneable
 {
    /**
+    * Get the unique id of the work manager
+    * @return The value
+    */
+   public String getId();
+
+   /**
+    * Get the name of the work manager
+    * @return The value
+    */
+   public String getName();
+
+   /**
+    * Set the name of the work manager
+    * @param v The value
+    */
+   public void setName(String v);
+
+   /**
     * Retrieve the executor for short running tasks
     * @return The executor
     */
