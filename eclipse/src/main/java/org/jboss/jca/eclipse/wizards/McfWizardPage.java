@@ -148,6 +148,46 @@ public class McfWizardPage extends WizardPage
             String string = mcfText.getText();
             if (string.length() > 0)
             {
+               boolean changeDefault = false;
+               if (string.endsWith("ManagedConnectionFactory"))
+               {
+                  ((CodeGenWizard)getWizard()).getDef().setDefaultValue(
+                     string.substring(0, string.lastIndexOf("ManagedConnectionFactory")));
+                  changeDefault = true;
+               }
+               if (string.endsWith("MCF"))
+               {
+                  ((CodeGenWizard)getWizard()).getDef().setDefaultValue(
+                     string.substring(0, string.lastIndexOf("MCF")));
+                  changeDefault = true;
+               }
+               if (changeDefault)
+               {
+                  mcText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ManagedConnection");
+                  mcfDef.setMcClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ManagedConnection");
+                  
+                  cfText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionFactory");
+                  mcfDef.setCfInterfaceClass(
+                     ((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionFactory");
+                  
+                  cfImplText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionFactoryImpl");
+                  mcfDef.setCfClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionFactoryImpl");
+                  
+                  connText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "Connection");
+                  mcfDef.setConnInterfaceClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "Connection");
+                  
+                  connImplText.setText(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionImpl");
+                  mcfDef.setConnImplClass(((CodeGenWizard)getWizard()).getDef().getDefaultValue() + "ConnectionImpl");
+                  
+                  IWizardPage page = ((CodeGenWizard)getWizard()).getInboundPage();
+                  if (page.getControl() != null)
+                     page.dispose();
+
+                  page = ((CodeGenWizard)getWizard()).getAoPage();
+                  if (page.getControl() != null)
+                     page.dispose();
+               }
+               
                mcfDef.setMcfClass(string);
                updateStatus(null);
             }
