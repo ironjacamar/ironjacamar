@@ -137,6 +137,9 @@
         interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
         class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
 
+    <!-- The Name -->
+    <property name="Name">Default</property>
+
     <!-- The Transaction Synchronization Registry -->
     <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
 
@@ -201,6 +204,9 @@
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
     <property name="CachedConnectionManager"><inject bean="CCM"/></property>
+
+    <incallback method="addBootstrapContext"/>
+    <uncallback method="removeBootstrapContext"/>
   </bean>
 
   <!-- Activator configuration -->
@@ -218,6 +224,9 @@
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
     <property name="CachedConnectionManager"><inject bean="CCM"/></property>
+
+    <incallback method="addBootstrapContext"/>
+    <uncallback method="removeBootstrapContext"/>
   </bean>
 
   <!-- RA deployer -->

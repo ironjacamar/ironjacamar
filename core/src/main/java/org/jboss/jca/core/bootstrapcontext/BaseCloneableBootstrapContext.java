@@ -54,6 +54,9 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
    /** Supported contexts */
    private Set<Class> supportedContexts;
 
+   /** The name */
+   private String name;
+
    /**
     * Constructor
     */
@@ -67,6 +70,26 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
       this.supportedContexts.add(HintsContext.class);
       this.supportedContexts.add(SecurityContext.class);
       this.supportedContexts.add(TransactionContext.class);
+
+      this.name = null;
+   }
+
+   /**
+    * Get the name of the bootstrap context
+    * @return The value
+    */
+   public String getName()
+   {
+      return name;
+   }
+
+   /**
+    * Set the name of the bootstrap context
+    * @param v The value
+    */
+   public void setName(String v)
+   {
+      name = v;
    }
 
    /**
@@ -154,6 +177,7 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
       bcbc.setTransactionSynchronizationRegistry(getTransactionSynchronizationRegistry());
       bcbc.setWorkManager(getWorkManager().clone());
       bcbc.setXATerminator(getXATerminator());
+      bcbc.setName(getName());
 
       return bcbc;
    }

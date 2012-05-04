@@ -32,6 +32,7 @@ import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.deployers.common.Configuration;
 
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -244,6 +245,33 @@ public class RAConfiguration implements Configuration
    public Map<String, CloneableBootstrapContext> getBootstrapContexts()
    {
       return bootstrapContexts;
+   }
+
+   /**
+    * Add a bootstrap context
+    * @param bc The value
+    */
+   public void addBootstrapContext(CloneableBootstrapContext bc)
+   {
+      if (bc != null && bc.getName() != null)
+      {
+         if (bootstrapContexts == null)
+            bootstrapContexts = new HashMap<String, CloneableBootstrapContext>();
+
+         bootstrapContexts.put(bc.getName(), bc);
+      }
+   }
+
+   /**
+    * Remove a bootstrap context
+    * @param bc The value
+    */
+   public void removeBootstrapContext(CloneableBootstrapContext bc)
+   {
+      if (bc != null && bootstrapContexts != null && bc.getName() != null)
+      {
+         bootstrapContexts.remove(bc.getName());
+      }
    }
 
    /**

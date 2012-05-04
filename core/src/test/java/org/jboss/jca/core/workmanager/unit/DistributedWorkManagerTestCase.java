@@ -86,6 +86,9 @@ public class DistributedWorkManagerTestCase
       assertNotNull(dwm2.getPolicy());
       assertNotNull(dwm2.getSelector());
       assertNotNull(dwm2.getTransport());
+
+      assertNotNull(embedded.lookup("DistributedBootstrapContext1", Object.class));
+      assertNotNull(embedded.lookup("DistributedBootstrapContext2", Object.class));
    }
 
    // --------------------------------------------------------------------------------||

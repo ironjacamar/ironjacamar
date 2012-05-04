@@ -166,14 +166,24 @@
     <destroy method="shutdown"/>
   </bean>
   
-  <!-- Bootstrap context
-  <bean name="DefaultBootstrapContext" 
+  <!-- DistributedBootstrapContext1 -->
+  <bean name="DistributedBootstrapContext1" 
         interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
         class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
+    <property name="Name">DWM1BC</property>
     <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
-    <property name="WorkManager"><inject bean="WorkManager"/></property>
+    <property name="WorkManager"><inject bean="DistributedWorkManager1"/></property>
     <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
   </bean>
-   -->
+  
+  <!-- DistributedBootstrapContext2 -->
+  <bean name="DistributedBootstrapContext2" 
+        interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
+        class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
+    <property name="Name">DWM2BC</property>
+    <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
+    <property name="WorkManager"><inject bean="DistributedWorkManager2"/></property>
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+  </bean>
   
 </deployment>

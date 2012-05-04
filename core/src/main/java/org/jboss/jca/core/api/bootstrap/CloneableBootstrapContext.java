@@ -36,6 +36,12 @@ import javax.transaction.TransactionSynchronizationRegistry;
 public interface CloneableBootstrapContext extends Cloneable, BootstrapContext
 {
    /**
+    * Get the name of the bootstrap context
+    * @return The value
+    */
+   public String getName();
+
+   /**
     * Set the transaction synchronization registry
     * @param tsr The handle
     */
