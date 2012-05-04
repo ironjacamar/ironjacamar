@@ -84,6 +84,12 @@ public class WorkManagerImpl implements WorkManager
    private static final Set<Class<? extends WorkContext>> SUPPORTED_WORK_CONTEXT_CLASSES = 
        new HashSet<Class<? extends WorkContext>>(3); 
 
+   /** The id */
+   private String id;
+
+   /** The name */
+   private String name;
+
    /** Running in spec compliant mode */
    private boolean specCompliant;
 
@@ -121,12 +127,44 @@ public class WorkManagerImpl implements WorkManager
     */
    public WorkManagerImpl()
    {
+      id = null;
+      name = null;
       specCompliant = true;
       validatedWork = new HashSet<String>();
       shutdown = new AtomicBoolean(false);
       activeWorkWrappers = new HashSet<WorkWrapper>();
    }
    
+   /**
+    * Get the unique id of the work manager
+    * @return The value
+    */
+   public String getId()
+   {
+      if (id == null)
+         return name;
+
+      return id;
+   }
+
+   /**
+    * Get the name of the work manager
+    * @return The value
+    */
+   public String getName()
+   {
+      return name;
+   }
+
+   /**
+    * Set the name of the work manager
+    * @param v The value
+    */
+   public void setName(String v)
+   {
+      name = v;
+   }
+
    /**
     * Retrieve the executor for short running tasks
     * @return The executor
@@ -226,6 +264,7 @@ public class WorkManagerImpl implements WorkManager
    public WorkManager clone() throws CloneNotSupportedException
    {
       WorkManager wm = (WorkManager)super.clone();
+      wm.setName(getName());
       wm.setShortRunningThreadPool(getShortRunningThreadPool());
       wm.setLongRunningThreadPool(getLongRunningThreadPool());
       wm.setXATerminator(getXATerminator());
