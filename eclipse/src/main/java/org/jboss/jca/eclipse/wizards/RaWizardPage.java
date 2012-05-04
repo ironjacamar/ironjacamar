@@ -130,6 +130,15 @@ public class RaWizardPage extends WizardPage
             raSerialButton.setEnabled(raButton.getSelection());
          }
       });
+      
+      if (((CodeGenWizard) getWizard()).getDef().isSupportInbound())
+      {
+         raButton.setEnabled(false);
+      }
+      else
+      {
+         raButton.setEnabled(true);
+      }
 
       label = new Label(raContainer, SWT.NULL);
       label.setText(((CodeGenWizard) getWizard()).getResourceString("ra.class.name") + ":");
@@ -443,5 +452,13 @@ public class RaWizardPage extends WizardPage
          return ((CodeGenWizard) getWizard()).getInboundPage();
       }
       return super.getNextPage();
+   }
+   
+   @Override
+   public void dispose()
+   {
+      super.dispose();
+
+      setControl(null);
    }
 }

@@ -246,6 +246,10 @@ public class DefinitionWizardPage extends WizardPage
                ((CodeGenWizard) getWizard()).getDef().setSupportOutbound(true);
                ((CodeGenWizard) getWizard()).getDef().setSupportInbound(true);
             }
+
+            IWizardPage page = ((CodeGenWizard)getWizard()).getRaPage();
+            if (page.getControl() != null)
+               page.dispose();
          }
       });
    }
