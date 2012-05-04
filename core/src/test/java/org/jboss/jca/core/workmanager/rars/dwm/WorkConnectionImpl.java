@@ -21,13 +21,13 @@
  */
 package org.jboss.jca.core.workmanager.rars.dwm;
 
+import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
+import javax.resource.spi.work.WorkListener;
 
 /**
  * WorkConnectionImpl
- *
- * @version $Revision: $
  */
 public class WorkConnectionImpl implements WorkConnection
 {
@@ -59,6 +59,15 @@ public class WorkConnectionImpl implements WorkConnection
    /**
     * {@inheritDoc}
     */
+   public void doWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      mc.doWork(work, startTimeout, execContext, workListener);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void scheduleWork(Work work) throws WorkException
    {
       mc.scheduleWork(work);
@@ -67,9 +76,27 @@ public class WorkConnectionImpl implements WorkConnection
    /**
     * {@inheritDoc}
     */
+   public void scheduleWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      mc.scheduleWork(work, startTimeout, execContext, workListener);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long startWork(Work work) throws WorkException
    {
       return mc.startWork(work);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long startWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      return mc.startWork(work, startTimeout, execContext, workListener);
    }
 
    /**

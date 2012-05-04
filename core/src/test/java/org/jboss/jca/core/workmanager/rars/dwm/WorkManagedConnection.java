@@ -35,8 +35,10 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionMetaData;
+import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
+import javax.resource.spi.work.WorkListener;
 
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
@@ -228,6 +230,21 @@ public class WorkManagedConnection implements ManagedConnection
    }
 
    /**
+    * Call doWork
+    * @param work The instance
+    * @param startTimeout The start timeout
+    * @param execContext The execution context
+    * @param workListener The work listener
+    * @throws WorkException WorkException
+    */
+   void doWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      ((WorkResourceAdapter)mcf.getResourceAdapter()).getWorkManager().doWork(work, startTimeout,
+                                                                              execContext, workListener);
+   }
+
+   /**
     * Call scheduleWork
     * @param work The work instance
     * @throws WorkException WorkException
@@ -235,6 +252,21 @@ public class WorkManagedConnection implements ManagedConnection
    void scheduleWork(Work work) throws WorkException
    {
       ((WorkResourceAdapter)mcf.getResourceAdapter()).getWorkManager().scheduleWork(work);
+   }
+
+   /**
+    * Call scheduleWork
+    * @param work The instance
+    * @param startTimeout The start timeout
+    * @param execContext The execution context
+    * @param workListener The work listener
+    * @throws WorkException WorkException
+    */
+   void scheduleWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      ((WorkResourceAdapter)mcf.getResourceAdapter()).getWorkManager().scheduleWork(work, startTimeout,
+                                                                                    execContext, workListener);
    }
 
    /**
@@ -246,5 +278,21 @@ public class WorkManagedConnection implements ManagedConnection
    long startWork(Work work) throws WorkException
    {
       return ((WorkResourceAdapter)mcf.getResourceAdapter()).getWorkManager().startWork(work);
+   }
+
+   /**
+    * Call startWork
+    * @param work The instance
+    * @param startTimeout The start timeout
+    * @param execContext The execution context
+    * @param workListener The work listener
+    * @return Start delay
+    * @throws WorkException WorkException
+    */
+   long startWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      return ((WorkResourceAdapter)mcf.getResourceAdapter()).getWorkManager().startWork(work, startTimeout,
+                                                                                        execContext, workListener);
    }
 }

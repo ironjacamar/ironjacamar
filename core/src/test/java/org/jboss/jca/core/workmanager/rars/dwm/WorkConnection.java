@@ -21,8 +21,10 @@
  */
 package org.jboss.jca.core.workmanager.rars.dwm;
 
+import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
+import javax.resource.spi.work.WorkListener;
 
 /**
  * WorkConnection
@@ -37,11 +39,33 @@ public interface WorkConnection
    public void doWork(Work work) throws WorkException;
 
    /**
+    * doWork
+    * @param work The instance
+    * @param startTimeout The start timeout
+    * @param execContext The execution context
+    * @param workListener The work listener
+    * @throws WorkException WorkException
+    */
+   public void doWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException;
+
+   /**
     * scheduleWork
     * @param work The instance
     * @throws WorkException WorkException
     */
    public void scheduleWork(Work work) throws WorkException;
+
+   /**
+    * scheduleWork
+    * @param work The instance
+    * @param startTimeout The start timeout
+    * @param execContext The execution context
+    * @param workListener The work listener
+    * @throws WorkException WorkException
+    */
+   public void scheduleWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException;
 
    /**
     * startWork
@@ -50,6 +74,18 @@ public interface WorkConnection
     * @throws WorkException WorkException
     */
    public long startWork(Work work) throws WorkException;
+
+   /**
+    * startWork
+    * @param work The instance
+    * @param startTimeout The start timeout
+    * @param execContext The execution context
+    * @param workListener The work listener
+    * @return Start delay
+    * @throws WorkException WorkException
+    */
+   public long startWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException;
 
    /**
     * Close
