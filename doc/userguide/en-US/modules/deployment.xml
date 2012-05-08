@@ -339,13 +339,6 @@ java:/eis/ao/&lt;deploymentName&gt;
                  Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
                </entry>
              </row>
-             <row>
-               <entry><code>allow-multiple-users</code></entry>
-               <entry>
-                 Specifies if multiple users will access the datasource through the getConnection(user, password)
-                 method and hence if the internal pool type should account for that
-               </entry>
-             </row>
            </tbody>
          </tgroup>
        </table>
@@ -397,13 +390,6 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry>
                  Specifies how the pool should be flush in case of an error.
                  Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
-               </entry>
-             </row>
-             <row>
-               <entry><code>allow-multiple-users</code></entry>
-               <entry>
-                 Specifies if multiple users will access the datasource through the getConnection(user, password)
-                 method and hence if the internal pool type should account for that
                </entry>
              </row>
              <row>
@@ -1126,6 +1112,13 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                   Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
                 </entry>
               </row>
+              <row>
+                <entry><code>allow-multiple-users</code></entry>
+                <entry>
+                  Specifies if multiple users will access the datasource through the getConnection(user, password)
+                  method and hence if the internal pool type should account for that
+                </entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
@@ -1177,6 +1170,13 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry>
                   Specifies how the pool should be flush in case of an error.
                   Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
+                </entry>
+              </row>
+              <row>
+                <entry><code>allow-multiple-users</code></entry>
+                <entry>
+                  Specifies if multiple users will access the datasource through the getConnection(user, password)
+                  method and hence if the internal pool type should account for that
                 </entry>
               </row>
               <row>
