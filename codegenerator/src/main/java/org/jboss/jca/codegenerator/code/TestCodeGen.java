@@ -361,7 +361,10 @@ public class TestCodeGen extends AbstractCodeGen
             {
                MethodParam param = method.getParams().get(i);
                out.write(upcaseFirst(param.getName()));
-               out.write(param.getType());
+               String type = param.getType();
+               if (type.indexOf(".") > 0)
+                  type = type.substring(type.lastIndexOf(".") + 1);
+               out.write(type);
             }
          }
          out.write("() throws Throwable");
