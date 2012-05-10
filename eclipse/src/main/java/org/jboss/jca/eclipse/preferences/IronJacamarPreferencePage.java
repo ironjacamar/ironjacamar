@@ -57,7 +57,7 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
    {
       super(GRID);
       setPreferenceStore(Activator.getDefault().getPreferenceStore());
-      setDescription("Settings about IronJacamar");
+      setDescription("General settings for IronJacamar development:");
    }
 
    /**
@@ -111,7 +111,7 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
 
       if (!ironJacamarCoreApi.exists())
       {
-         setErrorMessage("Please check Ironjacamar home directory");
+         setErrorMessage("IronJacamar home directory not valid");
          setValid(false);
       }
       else
