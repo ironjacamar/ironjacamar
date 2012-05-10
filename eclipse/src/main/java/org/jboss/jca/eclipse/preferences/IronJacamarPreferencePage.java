@@ -23,8 +23,12 @@ package org.jboss.jca.eclipse.preferences;
 
 import org.jboss.jca.eclipse.Activator;
 
+import java.io.File;
+
 import org.eclipse.jface.preference.DirectoryFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -44,6 +48,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class IronJacamarPreferencePage extends FieldEditorPreferencePage 
    implements IWorkbenchPreferencePage
 {
+   private DirectoryFieldEditor ijHomeFieldEditor;
 
    /**
     * IronJacamarPreferencePage
@@ -63,8 +68,9 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
     */
    public void createFieldEditors()
    {
-      addField(new DirectoryFieldEditor(PreferenceConstants.JCA_HOME_PATH, "IronJacamar home:", 
-         getFieldEditorParent()));
+      ijHomeFieldEditor = new DirectoryFieldEditor(PreferenceConstants.JCA_HOME_PATH, "IronJacamar home:", 
+         getFieldEditorParent());
+      addField(ijHomeFieldEditor);
    }
 
    /** init
@@ -74,4 +80,45 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
    public void init(IWorkbench workbench)
    {
    }
+   
+   /** propertyChange
+    * @param event PropertyChangeEvent 
+    * @see org.eclipse.jface.preference.FieldEditorPreferencePage#
+    * propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+    */
+   @Override
+   public void propertyChange(PropertyChangeEvent event)
+   {
+      super.propertyChange(event);
+
+      if (event.getProperty().equals(FieldEditor.VALUE))
+      {
+         checkState();
+      }
+   }
+
+   /** checkState
+    * @see org.eclipse.jface.preference.FieldEditorPreferencePage#checkState()
+    */
+   @Override
+   protected void checkState()
+   {
+      super.checkState();
+
+      String ijHome = ijHomeFieldEditor.getStringValue();
+      File ironJacamarCoreApi = new File(ijHome + File.separator + "lib" 
+         + File.separator + "ironjacamar-core-api.jar");
+
+      if (!ironJacamarCoreApi.exists())
+      {
+         setErrorMessage("Please check Ironjacamar home directory");
+         setValid(false);
+      }
+      else
+      {
+         setErrorMessage(null);
+         setValid(true);
+      }
+   }
+
 }
