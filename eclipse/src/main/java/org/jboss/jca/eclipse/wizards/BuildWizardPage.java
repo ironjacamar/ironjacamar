@@ -21,17 +21,25 @@
  */
 package org.jboss.jca.eclipse.wizards;
 
+import org.jboss.jca.eclipse.Activator;
+import org.jboss.jca.eclipse.preferences.PreferenceConstants;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.SWT;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.dialogs.PreferencesUtil;
 
 /**
  * BuildWizardPage
@@ -73,6 +81,7 @@ public class BuildWizardPage extends WizardPage
 
       Label label = new Label(container, SWT.NULL);
       label.setText(((CodeGenWizard) getWizard()).getResourceString("gen.mbean") + ":");
+      
       final Button mbeanButton = new Button(container, SWT.CHECK);
       mbeanButton.setSelection(false);
       ((CodeGenWizard) getWizard()).getDef().setGenMbean(false);
@@ -83,8 +92,25 @@ public class BuildWizardPage extends WizardPage
             ((CodeGenWizard) getWizard()).getDef().setGenMbean(mbeanButton.getSelection());
          }
       });
+      
       createBuildGroup(container);
 
+      Link homeSettingLink = new Link(container, SWT.NULL);
+      GridData gdHomeSettingLink = new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1);
+      homeSettingLink.setLayoutData(gdHomeSettingLink);
+      homeSettingLink.setText("<a>IronJacamar home setting...</a>");
+      //homeSettingLink.setToolTipText("IronJacamar home setting:");
+      homeSettingLink.addSelectionListener(new SelectionAdapter()
+      {
+         public void widgetSelected(SelectionEvent e)
+         {
+            PreferenceDialog createPreferenceDialogOn = PreferencesUtil.createPreferenceDialogOn(null,
+                  "org.jboss.jca.eclipse.preferences.IronJacamarPreferencePage", null, null);
+            createPreferenceDialogOn.open();
+            dialogChanged();
+         }
+      });
+      
       initialize();
       dialogChanged();
       setControl(container);
@@ -139,6 +165,14 @@ public class BuildWizardPage extends WizardPage
 
    private void dialogChanged()
    {
+      IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+      String ijHome = store.getString(PreferenceConstants.JCA_HOME_PATH);
+      
+      if (((CodeGenWizard) getWizard()).getDef().getBuild().equals("ant") && ijHome.equals(""))
+      {
+         updateStatus("Ironjacamar home must be set");
+         return;
+      }
 
       updateStatus(null);
       return;
