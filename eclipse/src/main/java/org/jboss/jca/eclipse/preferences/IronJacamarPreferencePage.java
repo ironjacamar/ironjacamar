@@ -48,6 +48,28 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class IronJacamarPreferencePage extends FieldEditorPreferencePage 
    implements IWorkbenchPreferencePage
 {
+   private static String[] libs = {
+      "ironjacamar-core-api.jar",
+      "ironjacamar-core-impl.jar",
+      "ironjacamar-common-api.jar",
+      "ironjacamar-common-impl.jar",
+      "ironjacamar-common-impl-papaki.jar",
+      "ironjacamar-common-spi.jar",
+      "ironjacamar-spec-api.jar",
+      "ironjacamar-deployers-common.jar",
+      "ironjacamar-deployers-fungal.jar",
+      "ironjacamar-web.jar",
+      "ironjacamar-jdbc.jar"
+   };
+   
+   private static String[] dirs = {
+      "bin",
+      "doc",
+      "deploy",
+      "config",
+      "system"
+   };
+   
    private DirectoryFieldEditor ijHomeFieldEditor;
 
    /**
@@ -106,10 +128,30 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
       super.checkState();
 
       String ijHome = ijHomeFieldEditor.getStringValue();
-      File ironJacamarCoreApi = new File(ijHome + File.separator + "lib" 
-         + File.separator + "ironjacamar-core-api.jar");
-
-      if (!ironJacamarCoreApi.exists())
+      boolean isHome = true;
+      for (String lib : libs)
+      {
+         File ironJacamarLib = new File(ijHome + File.separator + "lib" + File.separator + lib);
+         if (!ironJacamarLib.exists())
+         {
+            isHome = false;
+            break;
+         }
+      }
+      if (isHome)
+      {
+         for (String dir : dirs)
+         {
+            File ironJacamarDir = new File(ijHome + File.separator + dir);
+            if (!ironJacamarDir.exists())
+            {
+               isHome = false;
+               break;
+            }
+         }
+      }
+      
+      if (!isHome)
       {
          setErrorMessage("IronJacamar home directory not valid");
          setValid(false);
@@ -119,6 +161,6 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
          setErrorMessage(null);
          setValid(true);
       }
+      
    }
-
 }
