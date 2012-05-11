@@ -170,7 +170,7 @@ public class BuildWizardPage extends WizardPage
       
       if (((CodeGenWizard) getWizard()).getDef().getBuild().equals("ant") && ijHome.equals(""))
       {
-         updateStatus("Ironjacamar home must be set");
+         updateStatus("IronJacamar home must be set");
          return;
       }
 
