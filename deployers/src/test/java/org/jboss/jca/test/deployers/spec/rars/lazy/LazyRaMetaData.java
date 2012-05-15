@@ -25,16 +25,19 @@ import javax.resource.cci.ResourceAdapterMetaData;
 
 /**
  * LazyRaMetaData
- *
- * @version $Revision: $
  */
 public class LazyRaMetaData implements ResourceAdapterMetaData
 {
+   /** Local transaction */
+   private boolean localTransaction;
+
    /**
-    * Default constructor
+    * Constructor
+    * @param localTransaction Support LocalTransaction
     */
-   public LazyRaMetaData()
+   public LazyRaMetaData(boolean localTransaction)
    {
+      this.localTransaction = localTransaction;
    }
 
    /**
@@ -133,6 +136,6 @@ public class LazyRaMetaData implements ResourceAdapterMetaData
    @Override
    public boolean supportsLocalTransactionDemarcation()
    {
-      return false;
+      return localTransaction;
    }
 }

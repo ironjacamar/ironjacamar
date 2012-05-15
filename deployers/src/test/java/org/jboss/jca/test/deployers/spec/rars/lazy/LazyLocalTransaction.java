@@ -1,4 +1,3 @@
-<!--
 /*
  * JBoss, Home of Professional Open Source.
  * Copyright 2012, Red Hat Middleware LLC, and individual contributors
@@ -20,26 +19,49 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
--->
+package org.jboss.jca.test.deployers.spec.rars.lazy;
 
-<ironjacamar xmlns="http://www.jboss.org/ironjacamar/schema"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
-             http://www.jboss.org/ironjacamar/schema/ironjacamar_1_1.xsd">
-  <config-property name="Enable">true</config-property>
+import javax.resource.ResourceException;
+import javax.resource.spi.LocalTransaction;
 
-  <transaction-support>NoTransaction</transaction-support>
-  
-  <connection-definitions>
-    <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.lazy.LazyManagedConnectionFactory"
-                           jndi-name="java:/eis/LazyConnectionFactory" pool-name="LazyConnectionFactory"
-                           sharable="true">
-      <pool>
-        <min-pool-size>0</min-pool-size>
-        <max-pool-size>1</max-pool-size>
-      </pool>
-    </connection-definition>
-  </connection-definitions>
+import org.jboss.logging.Logger;
 
+/**
+ * Lazy local transaction
+ */
+public class LazyLocalTransaction implements LocalTransaction
+{
+   /** The logger */
+   private static Logger log = Logger.getLogger(LazyLocalTransaction.class);
 
-</ironjacamar>
+   /**
+    * Constructor
+    */
+   public LazyLocalTransaction()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void begin() throws ResourceException
+   {
+      log.trace("begin");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void commit() throws ResourceException
+   {
+      log.trace("commit");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void rollback() throws ResourceException
+   {
+      log.trace("rollback");
+   }
+}

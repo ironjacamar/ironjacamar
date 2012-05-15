@@ -26,6 +26,8 @@ import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.transaction.LockKey;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 import org.jboss.jca.core.spi.transaction.TxUtils;
@@ -33,6 +35,7 @@ import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
@@ -43,6 +46,7 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;
@@ -322,6 +326,75 @@ public class TxConnectionListener extends AbstractConnectionListener
       }
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void dissociate() throws ResourceException
+   {
+      if (trace)
+         log.tracef("dissociate: %s", this);
+
+      try
+      {
+         TransactionManager tm = getConnectionManager().getTransactionIntegration().getTransactionManager();
+         int status = tm.getStatus();
+
+         if (trace)
+            log.tracef("dissociate: status=%s", TxUtils.getStatusAsString(status));
+
+         if (status != Status.STATUS_NO_TRANSACTION)
+         {
+            Transaction tx = tm.getTransaction();
+            boolean delistResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
+
+            if (trace)
+               log.tracef("dissociate: delistResult=%s", delistResult);
+
+            if (isTrackByTx())
+            {
+               ManagedConnectionPool mcp = (ManagedConnectionPool)getContext();
+               TransactionSynchronizationRegistry tsr =
+                  getConnectionManager().getTransactionIntegration().getTransactionSynchronizationRegistry();
+
+               Lock lock = (Lock)tsr.getResource(LockKey.INSTANCE);
+               try
+               {
+                  lock.lockInterruptibly();
+               }
+               catch (InterruptedException ie)
+               {
+                  Thread.interrupted();
+
+                  throw new ResourceException(bundle.unableObtainLock(), ie);
+               }
+
+               try
+               {
+                  tsr.putResource(mcp, null);
+               }
+               finally
+               {
+                  lock.unlock();
+               }
+            }
+         }
+
+         localTransaction.set(false);
+         setTrackByTx(false);
+      
+         if (transactionSynchronization != null)
+         {
+            transactionSynchronization.cancel();
+            transactionSynchronization = null;
+         }
+      }
+      catch (Throwable t)
+      {
+         throw new ResourceException(bundle.errorInDissociate(), t);
+      }
+   }
+
    //local will return this, xa will return one from mc.
    /**
     * Get XA resource.
@@ -516,6 +589,9 @@ public class TxConnectionListener extends AbstractConnectionListener
       /** Any error during enlistment */
       private Throwable enlistError;
 
+      /** Cancel */
+      private boolean cancel;
+
       /**
        * Create a new TransactionSynchronization.transaction
        * @param tx transaction
@@ -528,6 +604,15 @@ public class TxConnectionListener extends AbstractConnectionListener
          this.wasTrackByTx = trackByTx;
          this.enlisted = false;
          this.enlistError = null;
+         this.cancel = false;
+      }
+
+      /**
+       * Set the cancel flag
+       */
+      public void cancel()
+      {
+         cancel = true;
       }
 
       /**
@@ -638,37 +723,40 @@ public class TxConnectionListener extends AbstractConnectionListener
             return;
          }
 
-         // Are we still in the original transaction?
-         if (!this.equals(transactionSynchronization))
+         if (!cancel)
          {
-            // If we are interleaving transactions we have nothing to do
-            if (!wasTrackByTx)
+            // Are we still in the original transaction?
+            if (!this.equals(transactionSynchronization))
             {
-               return;
+               // If we are interleaving transactions we have nothing to do
+               if (!wasTrackByTx)
+               {
+                  return;
+               }
+               else
+               {
+                  // There is something wrong with the pooling
+                  String message = "afterCompletion called with wrong tx! Expected: " +
+                     this + ", actual: " + transactionSynchronization;
+                  IllegalStateException e = new IllegalStateException(message);
+                  log.somethingWrongWithPooling(e);
+               }
             }
-            else
+            // "Delist"
+            transactionSynchronization = null;
+            // This is where we close when doing track by transaction
+            if (wasTrackByTx)
             {
-               // There is something wrong with the pooling
-               String message = "afterCompletion called with wrong tx! Expected: " +
-                  this + ", actual: " + transactionSynchronization;
-               IllegalStateException e = new IllegalStateException(message);
-               log.somethingWrongWithPooling(e);
-            }
-         }
-         // "Delist"
-         transactionSynchronization = null;
-         // This is where we close when doing track by transaction
-         if (wasTrackByTx)
-         {
-            if (trace)
-            {
-               log.trace("afterCompletion(" + status + ") isTrackByTx=" + isTrackByTx() +
-                         " for " + TxConnectionListener.this);
-            }
+               if (trace)
+               {
+                  log.trace("afterCompletion(" + status + ") isTrackByTx=" + isTrackByTx() +
+                            " for " + TxConnectionListener.this);
+               }
 
-            if (wasFreed(null))
-            {
-               getConnectionManager().returnManagedConnection(TxConnectionListener.this, false);
+               if (wasFreed(null))
+               {
+                  getConnectionManager().returnManagedConnection(TxConnectionListener.this, false);
+               }
             }
          }
       }
@@ -680,10 +768,11 @@ public class TxConnectionListener extends AbstractConnectionListener
       public String toString()
       {
          StringBuffer buffer = new StringBuffer();
-         buffer.append("TxSync").append(System.identityHashCode(this));
+         buffer.append("TransactionSynchronization@").append(System.identityHashCode(this));
          buffer.append("{tx=").append(currentTx);
          buffer.append(" wasTrackByTx=").append(wasTrackByTx);
          buffer.append(" enlisted=").append(enlisted);
+         buffer.append(" cancel=").append(cancel);
          buffer.append("}");
          return buffer.toString();
       }

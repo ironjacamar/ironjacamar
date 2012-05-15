@@ -109,7 +109,12 @@ public class LazyManagedConnectionFactory implements ManagedConnectionFactory, R
          ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
       log.trace("createManagedConnection()");
-      return new LazyManagedConnection(this, cm);
+
+      LazyResourceAdapter lra = (LazyResourceAdapter)ra;
+
+      return new LazyManagedConnection(lra.getLocalTransaction().booleanValue(),
+                                       lra.getXATransaction().booleanValue(),
+                                       this, cm);
    }
 
    /**
@@ -134,7 +139,6 @@ public class LazyManagedConnectionFactory implements ManagedConnectionFactory, R
          {
             result = mc;
          }
-
       }
       return result;
    }

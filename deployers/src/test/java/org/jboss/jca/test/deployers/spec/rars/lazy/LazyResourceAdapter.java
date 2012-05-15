@@ -34,24 +34,29 @@ import org.jboss.logging.Logger;
 
 /**
  * LazyResourceAdapter
- *
- * @version $Revision: $
  */
 public class LazyResourceAdapter implements ResourceAdapter
 {
-
    /** The logger */
    private static Logger log = Logger.getLogger(LazyResourceAdapter.class);
 
    /** Enable */
    private Boolean enable;
 
+   /** Local transaction */
+   private Boolean localTransaction;
+
+   /** XA transaction */
+   private Boolean xaTransaction;
+
    /**
     * Default constructor
     */
    public LazyResourceAdapter()
    {
-
+      enable = Boolean.TRUE;
+      localTransaction = Boolean.FALSE;
+      xaTransaction = Boolean.FALSE;
    }
 
    /** 
@@ -70,6 +75,42 @@ public class LazyResourceAdapter implements ResourceAdapter
    public Boolean getEnable()
    {
       return enable;
+   }
+
+   /** 
+    * Set LocalTransaction
+    * @param value The value
+    */
+   public void setLocalTransaction(Boolean value)
+   {
+      this.localTransaction = value;
+   }
+
+   /** 
+    * Get LocalTransaction
+    * @return The value
+    */
+   public Boolean getLocalTransaction()
+   {
+      return localTransaction;
+   }
+
+   /** 
+    * Set XATransaction
+    * @param value The value
+    */
+   public void setXATransaction(Boolean value)
+   {
+      this.xaTransaction = value;
+   }
+
+   /** 
+    * Get XATransaction
+    * @return The value
+    */
+   public Boolean getXATransaction()
+   {
+      return xaTransaction;
    }
 
    /**
@@ -144,6 +185,14 @@ public class LazyResourceAdapter implements ResourceAdapter
          result += 31 * result + 7 * enable.hashCode();
       else
          result += 31 * result + 7;
+      if (localTransaction != null)
+         result += 31 * result + 7 * localTransaction.hashCode();
+      else
+         result += 31 * result + 7;
+      if (xaTransaction != null)
+         result += 31 * result + 7 * xaTransaction.hashCode();
+      else
+         result += 31 * result + 7;
       return result;
    }
 
@@ -170,8 +219,20 @@ public class LazyResourceAdapter implements ResourceAdapter
          else
             result = enable.equals(obj.getEnable());
       }
+      if (result)
+      {
+         if (localTransaction == null)
+            result = obj.getLocalTransaction() == null;
+         else
+            result = localTransaction.equals(obj.getLocalTransaction());
+      }
+      if (result)
+      {
+         if (xaTransaction == null)
+            result = obj.getXATransaction() == null;
+         else
+            result = xaTransaction.equals(obj.getXATransaction());
+      }
       return result;
    }
-
-
 }

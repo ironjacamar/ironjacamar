@@ -203,7 +203,13 @@ public interface CoreBundle
    @Message(id = 356, value = "Failed to enlist: %s tx=%s")
    public String systemExceptionWhenFailedToEnlistEqualsCurrentTx(Object throwable, Object currentTx);
    
-   
+   /**
+    * Error in dissociate
+    * @return The value
+    */
+   @Message(id = 357, value = "Error in dissociate")
+   public String errorInDissociate();
+      
    // CONNECTION MANAGER (400)
 
    /**

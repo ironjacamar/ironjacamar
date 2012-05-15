@@ -195,6 +195,11 @@
             <entry>Failed to enlist</entry>
           </row>
           <row>
+            <entry>357</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error in dissociate</entry>
+          </row>
+          <row>
             <entry>401</entry>
             <entry><code>WARN</code></entry>
             <entry>Error during tidy up connection</entry>

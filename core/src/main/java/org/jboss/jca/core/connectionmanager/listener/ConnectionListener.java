@@ -38,6 +38,12 @@ import javax.transaction.SystemException;
 public interface ConnectionListener extends org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener
 {
    /**
+    * Get number of connection handles
+    * @return The value
+    */
+   public int getNumberOfConnections();
+
+   /**
     * Retrieve the pool for this listener.
     * 
     * @return the pool
@@ -164,4 +170,10 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
     * @return True if the connection listener controls the pair, otherwise false
     */
    public boolean controls(Object connection, ManagedConnection mc);
+
+   /**
+    * Dissociate the connection listener
+    * @throws ResourceException if exception occurs
+    */
+   public void dissociate() throws ResourceException;
 }

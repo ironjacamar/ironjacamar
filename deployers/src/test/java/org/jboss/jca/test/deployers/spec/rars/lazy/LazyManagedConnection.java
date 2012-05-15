@@ -68,18 +68,43 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
    /** Connection */
    private LazyConnectionImpl connection;
 
+   /** Local transaction support */
+   private boolean localTransaction;
+
+   /** XA transaction support */
+   private boolean xaTransaction;
+
+   /** Lazy local transaction */
+   private LazyLocalTransaction lazyLocalTransaction;
+
+   /** Lazy XAResource */
+   private LazyXAResource lazyXAResource;
+
    /**
     * Default constructor
+    * @param localTransaction Support local transaction
+    * @param xaTransaction Support XA transaction
     * @param mcf The managed connection factory
     * @param cm The connection manager
     */
-   public LazyManagedConnection(LazyManagedConnectionFactory mcf, ConnectionManager cm)
+   public LazyManagedConnection(boolean localTransaction, boolean xaTransaction,
+                                LazyManagedConnectionFactory mcf, ConnectionManager cm)
    {
+      this.localTransaction = localTransaction;
+      this.xaTransaction = xaTransaction;
       this.mcf = mcf;
       this.cm = cm;
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = null;
+      this.lazyLocalTransaction = null;
+      this.lazyXAResource = null;
+
+      if (localTransaction)
+         this.lazyLocalTransaction = new LazyLocalTransaction();
+
+      if (xaTransaction)
+         this.lazyXAResource = new LazyXAResource();
    }
 
    /**
@@ -249,7 +274,14 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
     */
    public LocalTransaction getLocalTransaction() throws ResourceException
    {
-      throw new NotSupportedException("LocalTransaction not supported");
+      if (!localTransaction || xaTransaction)
+      {
+         throw new NotSupportedException("LocalTransaction not supported");
+      }
+      else
+      {
+         return lazyLocalTransaction;
+      }
    }
 
    /**
@@ -260,7 +292,14 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
     */
    public XAResource getXAResource() throws ResourceException
    {
-      throw new NotSupportedException("GetXAResource not supported not supported");
+      if (!xaTransaction || localTransaction)
+      {
+         throw new NotSupportedException("GetXAResource not supported not supported");
+      }
+      else
+      {
+         return lazyXAResource;
+      }
    }
 
    /**

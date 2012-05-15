@@ -36,7 +36,6 @@ import java.util.Collection;
 import javax.resource.ResourceException;
 import javax.resource.spi.LazyAssociatableConnectionManager;
 import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
 import javax.transaction.SystemException;
 
 import org.jboss.logging.Logger;
@@ -50,7 +49,6 @@ import org.jboss.logging.Messages;
  */
 public class NoTxConnectionManagerImpl extends AbstractConnectionManager implements NoTxConnectionManager,
                                                                                     LazyAssociatableConnectionManager
-
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, NoTxConnectionManager.class.getName());
@@ -88,47 +86,6 @@ public class NoTxConnectionManagerImpl extends AbstractConnectionManager impleme
       managedConnection.addConnectionEventListener(cli);
 
       return cli;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean dissociateManagedConnection(Object connection, ManagedConnection mc, ManagedConnectionFactory mcf)
-      throws ResourceException
-   {
-      if (connection == null || mc == null || mcf == null)
-         throw new ResourceException(bundle.unableToFindConnectionListener());
-
-      ConnectionListener cl = getPool().findConnectionListener(connection, mc);
-
-      if (cl != null)
-      {
-         if (getCachedConnectionManager() != null)
-         {
-            try
-            {
-               getCachedConnectionManager().unregisterConnection(this, connection);
-            }
-            catch (Throwable t)
-            {
-               log.debug("Throwable from unregisterConnection", t);
-            }
-         }
-
-         unregisterAssociation(cl, connection);
-      
-         if (cl.isManagedConnectionFree())
-         {
-            returnManagedConnection(cl, false);
-            return true;
-         }
-      }
-      else
-      {
-         throw new ResourceException(bundle.unableToFindConnectionListener());
-      }
-
-      return false;
    }
 
    @Override

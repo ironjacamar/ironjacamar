@@ -78,8 +78,9 @@ public class LazyConnectionImpl implements LazyConnection
 
    /**
     * Close managed connection
+    * @return boolean
     */
-   public void closeManagedConnection()
+   public boolean closeManagedConnection()
    {
       log.trace("closeManagedConnection()");
       
@@ -96,6 +97,7 @@ public class LazyConnectionImpl implements LazyConnection
                log.trace("Result=" + result);
 
                mc = null;
+               return true;
             }
          }
          catch (Throwable t)
@@ -103,26 +105,49 @@ public class LazyConnectionImpl implements LazyConnection
             log.error("CloseManagedConnection", t);
          }
       }
+
+      return false;
    }
 
    /**
     * Associate
+    * @return boolean
     */
-   public void associate()
+   public boolean associate()
    {
       log.trace("associate()");
-      if (cm instanceof LazyAssociatableConnectionManager)
+      if (mc == null)
       {
-         try
+         if (cm instanceof LazyAssociatableConnectionManager)
          {
-            LazyAssociatableConnectionManager lacm = (LazyAssociatableConnectionManager)cm;
-            lacm.associateConnection(this, mcf, cri);
+            try
+            {
+               LazyAssociatableConnectionManager lacm = (LazyAssociatableConnectionManager)cm;
+               lacm.associateConnection(this, mcf, cri);
+               return true;
+            }
+            catch (Throwable t)
+            {
+               log.error("Associate", t);
+            }
          }
-         catch (Throwable t)
+         else if (cm instanceof org.jboss.jca.core.api.connectionmanager.ConnectionManager)
          {
-            log.error("Associate", t);
+            try
+            {
+               org.jboss.jca.core.api.connectionmanager.ConnectionManager jboss =
+                  (org.jboss.jca.core.api.connectionmanager.ConnectionManager)cm;
+               mc = (LazyManagedConnection)jboss.associateManagedConnection(this, mcf, cri);
+               return mc != null;
+            }
+            catch (Throwable t)
+            {
+               log.error("Associate", t);
+            }
          }
       }
+
+      return false;
    }
 
    /**

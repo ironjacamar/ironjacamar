@@ -196,6 +196,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public void setSharable(boolean v)
    {
       this.sharable = v;
+
+      if (trace)
+         log.tracef("sharable=%s", sharable);
    }
 
    /**
@@ -570,6 +573,59 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       return cl.getManagedConnection();
    }
  
+   /**
+    * {@inheritDoc}
+    */
+   public boolean dissociateManagedConnection(Object connection, ManagedConnection mc, ManagedConnectionFactory mcf)
+      throws ResourceException
+   {
+      if (connection == null || mc == null || mcf == null)
+         throw new ResourceException(bundle.unableToFindConnectionListener());
+
+      ConnectionListener cl = getPool().findConnectionListener(connection, mc);
+
+      if (cl != null)
+      {
+         if (trace)
+            log.tracef("DissociateManagedConnection: cl=%s, connection=%s", cl, connection);
+
+         if (getCachedConnectionManager() != null)
+         {
+            try
+            {
+               getCachedConnectionManager().unregisterConnection(this, connection);
+            }
+            catch (Throwable t)
+            {
+               log.debug("Throwable from unregisterConnection", t);
+            }
+         }
+
+         unregisterAssociation(cl, connection);
+
+         if (cl.getNumberOfConnections() == 0)
+         {
+            if (trace)
+               log.tracef("DissociateManagedConnection: Returning cl=%s", cl);
+
+            cl.dissociate();
+
+            if (trace)
+               log.tracef("DissociateManagedConnection: isManagedConnectionFree=%s", cl.isManagedConnectionFree());
+
+            returnManagedConnection(cl, false);
+
+            return true;
+         }
+      }
+      else
+      {
+         throw new ResourceException(bundle.unableToFindConnectionListener());
+      }
+
+      return false;
+   }
+
    /**
     * {@inheritDoc}
     */

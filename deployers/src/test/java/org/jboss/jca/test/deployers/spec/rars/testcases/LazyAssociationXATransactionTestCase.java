@@ -28,26 +28,27 @@ import org.jboss.jca.test.deployers.spec.rars.lazy.LazyConnection;
 import org.jboss.jca.test.deployers.spec.rars.lazy.LazyConnectionFactory;
 
 import javax.annotation.Resource;
+import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
 /**
- * Test cases for deploying a lazy association resource adapter archive
+ * Test cases for deploying a lazy association resource adapter archive using XATransaction
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
-public class LazyAssociationTestCase
+public class LazyAssociationXATransactionTestCase
 {
-
    //-------------------------------------------------------------------------------------||
    //---------------------- GIVEN --------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
@@ -76,8 +77,8 @@ public class LazyAssociationTestCase
    public static Descriptor createDescriptor() throws Exception
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("lazy-notx-ra.xml", 
-                                                            cl.getResourceAsStream("lazy-notx-ra.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("lazy-xatx-ra.xml", 
+                                                            cl.getResourceAsStream("lazy-xatx-ra.xml"));
       return isd;
    }
 
@@ -87,6 +88,9 @@ public class LazyAssociationTestCase
    //
    @Resource(mappedName = "java:/eis/LazyConnectionFactory")
    private LazyConnectionFactory connectionFactory;
+
+   @Resource(mappedName = "java:/UserTransaction")
+   private UserTransaction userTransaction;
 
    //-------------------------------------------------------------------------------------||
    //---------------------- THEN  --------------------------------------------------------||
@@ -100,6 +104,10 @@ public class LazyAssociationTestCase
    public void testBasic() throws Throwable
    {
       assertNotNull(connectionFactory);
+      assertNotNull(userTransaction);
+
+      boolean status = true;
+      userTransaction.begin();
 
       LazyConnection lc = null;
       try
@@ -108,24 +116,33 @@ public class LazyAssociationTestCase
 
          assertTrue(lc.isManagedConnectionSet());
 
-         assertTrue(lc.closeManagedConnection());
+         lc.closeManagedConnection();
 
          assertFalse(lc.isManagedConnectionSet());
 
-         assertTrue(lc.associate());
+         lc.associate();
 
          assertTrue(lc.isManagedConnectionSet());
       }
       catch (Throwable t)
       {
          t.printStackTrace();
-
+         status = false;
          fail("Throwable:" + t.getMessage());
       }
       finally
       {
          if (lc != null)
             lc.close();
+
+         if (status)
+         {
+            userTransaction.commit();
+         }
+         else
+         {
+            userTransaction.rollback();
+         }
       }
    }
 
@@ -133,10 +150,14 @@ public class LazyAssociationTestCase
     * Two connections - one managed connection
     * @exception Throwable Thrown if case of an error
     */
-   @Test
+   @Ignore
    public void testTwoConnections() throws Throwable
    {
       assertNotNull(connectionFactory);
+      assertNotNull(userTransaction);
+
+      boolean status = true;
+      userTransaction.begin();
 
       LazyConnection lc1 = null;
       LazyConnection lc2 = null;
@@ -164,7 +185,7 @@ public class LazyAssociationTestCase
       catch (Throwable t)
       {
          t.printStackTrace();
-
+         status = false;
          fail("Throwable:" + t.getMessage());
       }
       finally
@@ -174,6 +195,15 @@ public class LazyAssociationTestCase
 
          if (lc2 != null)
             lc2.close();
+
+         if (status)
+         {
+            userTransaction.commit();
+         }
+         else
+         {
+            userTransaction.rollback();
+         }
       }
    }
 }

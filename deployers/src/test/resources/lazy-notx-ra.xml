@@ -1,3 +1,4 @@
+<!--
 /*
  * JBoss, Home of Professional Open Source.
  * Copyright 2012, Red Hat Middleware LLC, and individual contributors
@@ -19,35 +20,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec.rars.lazy;
+-->
 
-/**
- * LazyConnection
- *
- * @version $Revision: $
- */
-public interface LazyConnection
-{
-   /**
-    * isManagedConnectionSet
-    * @return boolean
-    */
-   public boolean isManagedConnectionSet();
+<resource-adapters>
 
-   /**
-    * Close managed connection
-    * @return boolean
-    */
-   public boolean closeManagedConnection();
+  <resource-adapter>
+    <archive>lazy.rar</archive>
+    <config-property name="Enable">true</config-property>
 
-   /**
-    * Associate
-    * @return boolean
-    */
-   public boolean associate();
+    <transaction-support>NoTransaction</transaction-support>
+  
+    <connection-definitions>
+      <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.lazy.LazyManagedConnectionFactory"
+                             jndi-name="java:/eis/LazyConnectionFactory" pool-name="LazyConnectionFactory"
+                             sharable="true">
+        <pool>
+          <min-pool-size>0</min-pool-size>
+          <max-pool-size>1</max-pool-size>
+        </pool>
+      </connection-definition>
+    </connection-definitions>
+  </resource-adapter>
 
-   /**
-    * Close
-    */
-   public void close();
-}
+</resource-adapters>

@@ -134,6 +134,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */
+   public int getNumberOfConnections()
+   {
+      return connectionHandles.size();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void delist() throws ResourceException
    {
    }
@@ -374,6 +382,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       return false;
    }
    
+   /**
+    * {@inheritDoc}
+    */
+   public void dissociate() throws ResourceException
+   {
+      // Nothing by default
+   }
+
    /**
     * {@inheritDoc}
     */   
