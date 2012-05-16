@@ -800,9 +800,19 @@ public class Main
             {
                System.out.print("    " + rb.getString("connection.method.param.type") + ": ");
                paramType = in.readLine();
-               if (paramType.indexOf(".") > 0 || BasicType.isBasicType(paramType) || 
-                  BasicType.isPrimitiveType(paramType))
-                  break;
+               if (paramType != null && !paramType.equals(""))
+               {
+                  if (paramType.indexOf(".") < 0)
+                  {
+                	  if (BasicType.isBasicType(paramType) || 
+                        BasicType.isPrimitiveType(paramType))
+                		  break;
+                  }
+                  else if (!(paramType.indexOf(".") == 0))
+                  {
+                     break;
+                  }
+               }
                System.out.print(rb.getString("config.properties.type.tip") + ": [");
                System.out.println(BasicType.allType() + "]");
             }
