@@ -804,9 +804,9 @@ public class Main
                {
                   if (paramType.indexOf(".") < 0)
                   {
-                	  if (BasicType.isBasicType(paramType) || 
+                     if (BasicType.isBasicType(paramType) || 
                         BasicType.isPrimitiveType(paramType))
-                		  break;
+                        break;
                   }
                   else if (!(paramType.indexOf(".") == 0))
                   {
