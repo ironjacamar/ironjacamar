@@ -231,12 +231,9 @@ public class RaWizardPage extends WizardPage
 
    private void addButtonsToButtonGroup(Composite parent)
    {
-      if (editButton == null)
-      {
-         addButton = createPushButton(parent, "Add");
-         editButton = createPushButton(parent, "Edit");
-         removeButton = createPushButton(parent, "Remove");
-      }
+      addButton = createPushButton(parent, "Add");
+      editButton = createPushButton(parent, "Edit");
+      removeButton = createPushButton(parent, "Remove");
    }
 
    /**
