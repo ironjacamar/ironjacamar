@@ -64,6 +64,11 @@ public interface Defaults
     */
    public static final Boolean SHARABLE = Boolean.TRUE;
    
+   /**
+    * ENLISTMENT
+    */
+   public static final Boolean ENLISTMENT = Boolean.TRUE;
+   
    // POOL
 
    /**

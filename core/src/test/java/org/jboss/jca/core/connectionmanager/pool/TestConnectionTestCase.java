@@ -63,7 +63,7 @@ public class TestConnectionTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, 
-                                    pool, null, null, false, null, true,
+                                    pool, null, null, false, null, true, true,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
@@ -107,7 +107,7 @@ public class TestConnectionTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
-                                    subjectFactory, "domain", false, null, true,
+                                    subjectFactory, "domain", false, null, true, true,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 

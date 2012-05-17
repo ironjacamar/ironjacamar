@@ -326,7 +326,37 @@ public interface CoreBundle
     */
    @Message(id = 465, value = "Connection is null")
    public String connectionIsNull();
+
+   /**
+    * Enlistment not enabled
+    * @return The value
+    */
+   @Message(id = 466, value = "Enlistment not enabled")
+   public String enlistmentNotEnabled();
       
+   /**
+    * Managed connection not lazy enlistable
+    * @param mc The managed connection
+    * @return The value
+    */
+   @Message(id = 467, value = "Managed connection not lazy enlistable: %s")
+   public String managedConnectionNotLazyEnlistable(Object mc);
+      
+   /**
+    * Connection listener already enlisted
+    * @param cl The connection listener
+    * @return The value
+    */
+   @Message(id = 468, value = "Connection listener already enlisted: %s")
+   public String connectionListenerAlreadyEnlisted(Object cl);
+
+   /**
+    * Error during enlistment
+    * @return The value
+    */
+   @Message(id = 469, value = "Error during enlistment")
+   public String errorDuringEnlistment();
+
    // TRANSACTION SYNCHRONIZER (500)
    
    // POOL MANAGER (600)

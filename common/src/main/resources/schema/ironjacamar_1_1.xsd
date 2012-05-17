@@ -360,6 +360,15 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="enlistment" type="xs:boolean" default="true" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Defines if lazy enlistment should be used if supported by the resource adapter
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
     <xs:attributeGroup ref="common-attribute"></xs:attributeGroup>
   </xs:complexType>
 

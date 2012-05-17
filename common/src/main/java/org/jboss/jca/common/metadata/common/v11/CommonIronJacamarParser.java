@@ -82,6 +82,7 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
       String poolName = null;
       Boolean useCcm = Boolean.TRUE;
       Boolean sharable = Boolean.TRUE;
+      Boolean enlistment = Boolean.TRUE;
       int attributeSize = reader.getAttributeCount();
 
       Boolean isXa = Boolean.FALSE;
@@ -119,6 +120,10 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                sharable = attributeAsBoolean(reader, attribute.getLocalName(), true);
                break;
             }
+            case ENLISTMENT : {
+               enlistment = attributeAsBoolean(reader, attribute.getLocalName(), true);
+               break;
+            }
             default :
                throw new ParserException(bundle.unexpectedAttribute(attribute.getLocalName(), reader.getLocalName()));
          }
@@ -135,7 +140,8 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                {
 
                   return new CommonConnDefImpl(configProperties, className, jndiName, poolName, enabled,
-                                               useJavaContext, useCcm, sharable, pool, timeOut, validation,
+                                               useJavaContext, useCcm, sharable, enlistment,
+                                               pool, timeOut, validation,
                                                security, recovery);
                }
                else

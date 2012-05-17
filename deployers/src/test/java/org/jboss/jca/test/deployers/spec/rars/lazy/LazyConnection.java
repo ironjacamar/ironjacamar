@@ -47,6 +47,18 @@ public interface LazyConnection
    public boolean associate();
 
    /**
+    * Is enlisted
+    * @return The value
+    */
+   public boolean isEnlisted();
+
+   /**
+    * Enlist
+    * @return boolean
+    */
+   public boolean enlist();
+
+   /**
     * Close
     */
    public void close();

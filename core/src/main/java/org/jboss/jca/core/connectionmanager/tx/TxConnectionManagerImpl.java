@@ -45,6 +45,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.LazyEnlistableManagedConnection;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 import javax.transaction.RollbackException;
@@ -243,7 +244,10 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       localTransactions = v;
 
       if (v)
+      {
+         enlistment = Boolean.FALSE;
          setInterleaving(false);
+      }
    }
 
    /**
@@ -383,7 +387,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          if (!cls.contains(cl))
          {
             cls.add(cl);
-            cl.enlist();
+            if (shouldEnlist(cl.getManagedConnection()))
+               cl.enlist();
 
             if (!isInterleaving())
             {
@@ -467,7 +472,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    {
       try
       {
-         cl.enlist();
+         if (shouldEnlist(cl.getManagedConnection()))
+            cl.enlist();
       }
       catch (Throwable t)
       {
@@ -613,6 +619,52 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    public int getTransactionTimeout() throws SystemException
    {
       throw new RuntimeException("NYI: getTransactionTimeout()");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void lazyEnlist(ManagedConnection mc) throws ResourceException
+   {
+      if (!isEnlistment())
+         throw new ResourceException(bundle.enlistmentNotEnabled());
+
+      if (mc == null || !(mc instanceof LazyEnlistableManagedConnection))
+         throw new ResourceException(bundle.managedConnectionNotLazyEnlistable(mc));
+
+      ConnectionListener cl = getPool().findConnectionListener(mc);
+      if (cl != null)
+      {
+         if (cl.isEnlisted())
+            throw new ResourceException(bundle.connectionListenerAlreadyEnlisted(cl));
+
+         try
+         {
+            cl.enlist();
+         }
+         catch (Throwable t)
+         {
+            throw new ResourceException(bundle.errorDuringEnlistment(), t);
+         }
+      }
+      else
+      {
+         throw new ResourceException(bundle.unableToFindConnectionListener());
+      }
+   }
+
+   /**
+    * Should the managed connection be enlisted
+    * @param mc The managed connection
+    * @return True if enlist, otherwise false
+    */
+   private boolean shouldEnlist(ManagedConnection mc)
+   {
+      if (isEnlistment() && mc instanceof LazyEnlistableManagedConnection)
+         return false;
+
+      return true;
    }
 
    /**

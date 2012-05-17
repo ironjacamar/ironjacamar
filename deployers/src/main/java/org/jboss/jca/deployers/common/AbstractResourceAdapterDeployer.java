@@ -1364,13 +1364,15 @@ public abstract class AbstractResourceAdapterDeployer
                            strategy = PoolStrategy.REAUTH;
                         }
 
-                        Boolean sharable = Boolean.TRUE;
+                        Boolean sharable = Defaults.SHARABLE;
+                        Boolean enlistment = Defaults.ENLISTMENT;
                         if (connectionDefinition != null &&
                             connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
                         {
                            org.jboss.jca.common.api.metadata.common.v11.CommonConnDef ccd =
                               (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)connectionDefinition;
                            sharable = ccd.isSharable();
+                           enlistment = ccd.isEnlistment();
                         }
 
                         Pool pool =
@@ -1434,6 +1436,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                            getSubjectFactory(securityDomain), securityDomain,
                                                            useCCM, getCachedConnectionManager(),
                                                            sharable,
+                                                           enlistment,
                                                            flushStrategy,
                                                            allocationRetry, allocationRetryWaitMillis);
                         }
@@ -1461,6 +1464,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                         getSubjectFactory(securityDomain), securityDomain,
                                                         useCCM, getCachedConnectionManager(),
                                                         sharable,
+                                                        enlistment,
                                                         flushStrategy,
                                                         allocationRetry, allocationRetryWaitMillis,
                                                         getTransactionIntegration(), interleaving,
@@ -1768,7 +1772,8 @@ public abstract class AbstractResourceAdapterDeployer
                                        strategy = PoolStrategy.REAUTH;
                                     }
 
-                                    Boolean sharable = Boolean.TRUE;
+                                    Boolean sharable = Defaults.SHARABLE;
+                                    Boolean enlistment = Defaults.ENLISTMENT;
                                     if (connectionDefinition != null &&
                                         connectionDefinition instanceof
                                         org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
@@ -1777,6 +1782,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
                                           connectionDefinition;
                                        sharable = ccd.isSharable();
+                                       enlistment = ccd.isEnlistment();
                                     }
 
                                     Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
@@ -1842,6 +1848,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                        securityDomain,
                                                                        useCCM, getCachedConnectionManager(),
                                                                        sharable,
+                                                                       enlistment,
                                                                        flushStrategy,
                                                                        allocationRetry, allocationRetryWaitMillis);
                                     }
@@ -1871,6 +1878,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                     getSubjectFactory(securityDomain), securityDomain,
                                                                     useCCM, getCachedConnectionManager(),
                                                                     sharable,
+                                                                    enlistment,
                                                                     flushStrategy,
                                                                     allocationRetry, allocationRetryWaitMillis,
                                                                     getTransactionIntegration(),

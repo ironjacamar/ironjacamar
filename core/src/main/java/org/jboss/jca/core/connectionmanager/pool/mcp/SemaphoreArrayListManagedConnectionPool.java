@@ -427,13 +427,21 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc)
+   public ConnectionListener findConnectionListener(ManagedConnection mc)
+   {
+      return findConnectionListener(mc, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object connection)
    {
       synchronized (cls)
       {
          for (ConnectionListener cl : checkedOut)
          {
-            if (cl.controls(connection, mc))
+            if (cl.controls(mc, connection))
                return cl;
          }
       }

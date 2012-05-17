@@ -99,6 +99,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Sharable */
    private boolean sharable;
 
+   /** Enlistment */
+   protected Boolean enlistment;
+
    /**
     * Creates a new instance of connection manager.
     */
@@ -199,6 +202,28 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (trace)
          log.tracef("sharable=%s", sharable);
+   }
+
+   /**
+    * Is enlistment
+    * @return The value
+    */
+   public boolean isEnlistment()
+   {
+      return enlistment != null ? enlistment.booleanValue() : true;
+   }
+
+   /**
+    * Set the enlistment flag
+    * @param v The value
+    */
+   public void setEnlistment(boolean v)
+   {
+      if (enlistment == null)
+         this.enlistment = Boolean.valueOf(v);
+
+      if (trace)
+         log.tracef("enlistment=%s", enlistment);
    }
 
    /**
@@ -582,7 +607,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       if (connection == null || mc == null || mcf == null)
          throw new ResourceException(bundle.unableToFindConnectionListener());
 
-      ConnectionListener cl = getPool().findConnectionListener(connection, mc);
+      ConnectionListener cl = getPool().findConnectionListener(mc, connection);
 
       if (cl != null)
       {
@@ -720,6 +745,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public void unregisterAssociation(ConnectionListener cl, Object c)
    {
       cl.unregisterConnection(c);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void lazyEnlist(ManagedConnection mc) throws ResourceException
+   {
+      // Nothing by default
    }
 
    /**

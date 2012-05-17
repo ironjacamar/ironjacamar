@@ -82,11 +82,18 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
 
    /**
     * Find a connection listener
-    * @param connection The connection
     * @param mc The managed connection
     * @return The connection listener
     */
-   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc);
+   public ConnectionListener findConnectionListener(ManagedConnection mc);
+
+   /**
+    * Find a connection listener
+    * @param mc The managed connection
+    * @param connection The connection
+    * @return The connection listener
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object connection);
 
    /**
     * Return a connection

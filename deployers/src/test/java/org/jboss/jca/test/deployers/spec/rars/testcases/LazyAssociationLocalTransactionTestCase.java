@@ -124,6 +124,10 @@ public class LazyAssociationLocalTransactionTestCase
          assertTrue(lc.associate());
 
          assertTrue(lc.isManagedConnectionSet());
+
+         assertFalse(lc.isEnlisted());
+         assertFalse(lc.enlist());
+         assertFalse(lc.isEnlisted());
       }
       catch (Throwable t)
       {

@@ -722,7 +722,7 @@ public class TxConnectionListenerTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager =
          cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool,
-                                 null, null, false, null, true, FlushStrategy.FAILING_CONNECTION_ONLY,
+                                 null, null, false, null, true, true, FlushStrategy.FAILING_CONNECTION_ONLY,
                                  null, null, ti, null, null, null, null, null);
 
       txConnectionManager = (TxConnectionManager) connectionManager;

@@ -39,6 +39,13 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
    public Boolean isSharable();
 
    /**
+    * Get the enlistment
+    *
+    * @return the value
+    */
+   public Boolean isEnlistment();
+
+   /**
     *
     * A Tag.
     *
@@ -184,7 +191,11 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
       /** sharable attribute
       *
       */
-      SHARABLE("sharable");
+      SHARABLE("sharable"),
+      /** enlistment attribute
+      *
+      */
+      ENLISTMENT("enlistment");
 
       private final String name;
 

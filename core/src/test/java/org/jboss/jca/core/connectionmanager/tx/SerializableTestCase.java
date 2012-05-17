@@ -75,7 +75,7 @@ public class SerializableTestCase
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = cmf.createTransactional(TransactionSupportLevel.XATransaction,
-                                                                    pool, null, null, false, null, true,
+                                                                    pool, null, null, false, null, true, true,
                                                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                                                     null, null, ti,
                                                                     Boolean.FALSE, null, null, null, null);

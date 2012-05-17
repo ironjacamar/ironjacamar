@@ -228,6 +228,18 @@ java:/eis/ao/&lt;deploymentName&gt;
                  Enable the cache connection manager
                </entry>
              </row>
+             <row>
+               <entry><code>sharable</code></entry>
+               <entry>
+                 Defines the connection as sharable (lazy association)
+               </entry>
+             </row>
+             <row>
+               <entry><code>enlistment</code></entry>
+               <entry>
+                 Defines if the connection should lazy enlist if supported (lazy enlistment)
+               </entry>
+             </row>
            </tbody>
          </tgroup>
        </table>

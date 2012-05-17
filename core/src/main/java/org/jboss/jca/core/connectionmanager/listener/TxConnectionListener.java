@@ -284,6 +284,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       }
 
       ourSynchronization.checkEnlisted();
+      setEnlisted(true);
    }
 
    /**
@@ -318,6 +319,8 @@ public class TxConnectionListener extends AbstractConnectionListener
                   throw new ResourceException(bundle.failureDelistResource(this));
                }
             }
+
+            setEnlisted(false);
          }
       }
       catch (Throwable t)
@@ -358,24 +361,27 @@ public class TxConnectionListener extends AbstractConnectionListener
                   getConnectionManager().getTransactionIntegration().getTransactionSynchronizationRegistry();
 
                Lock lock = (Lock)tsr.getResource(LockKey.INSTANCE);
-               try
+               if (lock != null)
                {
-                  lock.lockInterruptibly();
-               }
-               catch (InterruptedException ie)
-               {
-                  Thread.interrupted();
+                  try
+                  {
+                     lock.lockInterruptibly();
+                  }
+                  catch (InterruptedException ie)
+                  {
+                     Thread.interrupted();
+                     
+                     throw new ResourceException(bundle.unableObtainLock(), ie);
+                  }
 
-                  throw new ResourceException(bundle.unableObtainLock(), ie);
-               }
-
-               try
-               {
-                  tsr.putResource(mcp, null);
-               }
-               finally
-               {
-                  lock.unlock();
+                  try
+                  {
+                     tsr.putResource(mcp, null);
+                  }
+                  finally
+                  {
+                     lock.unlock();
+                  }
                }
             }
          }
@@ -388,6 +394,8 @@ public class TxConnectionListener extends AbstractConnectionListener
             transactionSynchronization.cancel();
             transactionSynchronization = null;
          }
+
+         setEnlisted(false);
       }
       catch (Throwable t)
       {

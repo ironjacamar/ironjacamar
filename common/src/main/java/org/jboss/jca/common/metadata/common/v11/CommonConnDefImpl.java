@@ -40,9 +40,11 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
    implements CommonConnDef
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -7109775624169563102L;
+   private static final long serialVersionUID = 2L;
 
    private final Boolean sharable;
+
+   private final Boolean enlistment;
 
    /**
     * Create a new ConnectionDefinition.
@@ -55,6 +57,7 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
     * @param useJavaContext useJavaContext
     * @param useCcm useCcm
     * @param sharable sharable
+    * @param enlistment enlistment
     * @param pool pool
     * @param timeOut timeOut
     * @param validation validation
@@ -62,7 +65,8 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
     * @param recovery recovery
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
-                            String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm, Boolean sharable,
+                            String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
+                            Boolean sharable, Boolean enlistment,
                             CommonPool pool, CommonTimeOut timeOut,
                             CommonValidation validation, CommonSecurity security, Recovery recovery)
    {
@@ -70,6 +74,7 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
             pool, timeOut, validation, security, recovery);
 
       this.sharable = sharable;
+      this.enlistment = enlistment;
    }
 
    /**
@@ -83,12 +88,24 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
       return sharable;
    }
 
+   /**
+    * Get the enlistment
+    *
+    * @return the value
+    */
+   @Override
+   public final Boolean isEnlistment()
+   {
+      return enlistment;
+   }
+
    @Override
    public int hashCode()
    {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((sharable == null) ? 0 : sharable.hashCode());
+      result = prime * result + ((enlistment == null) ? 0 : enlistment.hashCode());
       return result;
    }
 
@@ -111,6 +128,13 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
             return false;
       }
       else if (!sharable.equals(other.sharable))
+         return false;
+      if (enlistment == null)
+      {
+         if (other.enlistment != null)
+            return false;
+      }
+      else if (!enlistment.equals(other.enlistment))
          return false;
 
       return true;
@@ -146,6 +170,9 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
 
       if (sharable != null)
          sb.append(" ").append(CommonConnDef.Attribute.SHARABLE).append("=\"").append(sharable).append("\"");
+
+      if (enlistment != null)
+         sb.append(" ").append(CommonConnDef.Attribute.ENLISTMENT).append("=\"").append(enlistment).append("\"");
 
       sb.append(">");
 

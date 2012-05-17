@@ -115,6 +115,10 @@ public class LazyAssociationTestCase
          assertTrue(lc.associate());
 
          assertTrue(lc.isManagedConnectionSet());
+
+         assertFalse(lc.isEnlisted());
+         assertTrue(lc.enlist());
+         assertTrue(lc.isEnlisted());
       }
       catch (Throwable t)
       {

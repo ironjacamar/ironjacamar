@@ -295,6 +295,26 @@
             <entry>Connection is null</entry>
           </row>
           <row>
+            <entry>466</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Enlistment not enabled</entry>
+          </row>
+          <row>
+            <entry>467</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Managed connection not lazy enlistable</entry>
+          </row>
+          <row>
+            <entry>468</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Connection listener already enlisted</entry>
+          </row>
+          <row>
+            <entry>469</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error during enlistment</entry>
+          </row>
+          <row>
             <entry>501</entry>
             <entry><code>WARN</code></entry>
             <entry>Thread is not the enlisting thread</entry>

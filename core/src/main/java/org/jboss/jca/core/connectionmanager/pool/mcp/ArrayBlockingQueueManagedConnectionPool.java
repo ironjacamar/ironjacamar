@@ -399,11 +399,19 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc)
+   public ConnectionListener findConnectionListener(ManagedConnection mc)
+   {
+      return findConnectionListener(mc, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object connection)
    {
       for (ConnectionListener cl : checkedOut)
       {
-         if (cl.controls(connection, mc))
+         if (cl.controls(mc, connection))
             return cl;
       }
 

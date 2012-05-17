@@ -558,11 +558,19 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc)
+   public ConnectionListener findConnectionListener(ManagedConnection mc)
+   {
+      return findConnectionListener(mc, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object connection)
    {
       for (ManagedConnectionPool mcp : mcpPools.values())
       {
-         ConnectionListener cl = mcp.findConnectionListener(connection, mc);
+         ConnectionListener cl = mcp.findConnectionListener(mc, connection);
          if (cl != null)
             return cl;
       }

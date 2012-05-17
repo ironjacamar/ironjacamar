@@ -34,6 +34,8 @@ import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.DissociatableManagedConnection;
+import javax.resource.spi.LazyEnlistableConnectionManager;
+import javax.resource.spi.LazyEnlistableManagedConnection;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionMetaData;
@@ -48,7 +50,8 @@ import org.jboss.logging.Logger;
  *
  * @version $Revision: $
  */
-public class LazyManagedConnection implements ManagedConnection, DissociatableManagedConnection
+public class LazyManagedConnection implements ManagedConnection, DissociatableManagedConnection,
+                                              LazyEnlistableManagedConnection
 {
    /** The logger */
    private static Logger log = Logger.getLogger(LazyManagedConnection.class);
@@ -74,6 +77,9 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
    /** XA transaction support */
    private boolean xaTransaction;
 
+   /** Enlisted */
+   private boolean enlisted;
+
    /** Lazy local transaction */
    private LazyLocalTransaction lazyLocalTransaction;
 
@@ -92,6 +98,7 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
    {
       this.localTransaction = localTransaction;
       this.xaTransaction = xaTransaction;
+      this.enlisted = false;
       this.mcf = mcf;
       this.cm = cm;
       this.logwriter = null;
@@ -228,11 +235,44 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
    }
 
    /**
+    * Is enlisted
+    * @return The value
+    */
+   boolean isEnlisted()
+   {
+      return enlisted;
+   }
+
+   /**
+    * Enlist
+    * @return boolean
+    */
+   boolean enlist()
+   {
+      try
+      {
+         if (cm instanceof LazyEnlistableConnectionManager)
+         {
+            LazyEnlistableConnectionManager lecm = (LazyEnlistableConnectionManager)cm;
+            lecm.lazyEnlist(this);
+            enlisted = true;
+            return true;
+         }
+      }
+      catch (Throwable t)
+      {
+         log.error(t.getMessage(), t);
+      }
+
+      return false;
+   }
+
+   /**
     * Close handle
     *
     * @param handle The handle
     */
-   public void closeHandle(LazyConnection handle)
+   void closeHandle(LazyConnection handle)
    {
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);

@@ -65,11 +65,18 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    
    /**
     * Find a connection listener
-    * @param connection The connection
     * @param mc The managed connection
     * @return The connection listener; <code>null</code> if the connection listener doesn't belong
     */
-   public ConnectionListener findConnectionListener(Object connection, ManagedConnection mc);
+   public ConnectionListener findConnectionListener(ManagedConnection mc);
+
+   /**
+    * Find a connection listener
+    * @param mc The managed connection
+    * @param connection The connection
+    * @return The connection listener; <code>null</code> if the connection listener doesn't belong
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object connection);
 
    /**
     * Return connection to the pool.

@@ -56,6 +56,9 @@ public class NoTxConnectionListener extends AbstractConnectionListener
                                  final Pool pool, final Object context, final FlushStrategy flushStrategy)
    {
       super(cm, mc, pool, context, flushStrategy);
+
+      // Always "enlisted"
+      setEnlisted(true);
    }
    
    /**

@@ -200,7 +200,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     * @return The result
     * @exception XMLStreamException XMLStreamException
     * @exception ParserException ParserException
-    * @exception ValidateException ValidateException
     */
    protected CommonValidation parseValidation(XMLStreamReader reader) throws XMLStreamException, ParserException
    {

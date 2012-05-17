@@ -121,6 +121,12 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
    public boolean isManagedConnectionFree();
 
    /**
+    * Is enlisted
+    * @return True if enlisted, otherwise false
+    */
+   public boolean isEnlisted();
+
+   /**
     * Enlist the managed connection
     * 
     * @throws SystemException for errors
@@ -164,12 +170,12 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
    public void setLastValidatedTime(long lastValidated);
 
    /**
-    * Controls the connection / managed connection pair
-    * @param connection The connection
+    * Controls the managed connection / connection pair
     * @param mc The managed connection
+    * @param connection The connection; optional
     * @return True if the connection listener controls the pair, otherwise false
     */
-   public boolean controls(Object connection, ManagedConnection mc);
+   public boolean controls(ManagedConnection mc, Object connection);
 
    /**
     * Dissociate the connection listener

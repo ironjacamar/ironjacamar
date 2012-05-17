@@ -151,6 +151,22 @@ public class LazyConnectionImpl implements LazyConnection
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public boolean isEnlisted()
+   {
+      return mc.isEnlisted();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean enlist()
+   {
+      return mc.enlist();
+   }
+
+   /**
     * Close
     */
    public void close()

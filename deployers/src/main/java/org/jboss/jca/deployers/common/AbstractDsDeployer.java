@@ -498,7 +498,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
                                       getSubjectFactory(securityDomain), securityDomain,
                                       ds.isUseCcm(), getCachedConnectionManager(),
-                                      true,
+                                      true, true,
                                       flushStrategy,
                                       allocationRetry, allocationRetryWaitMillis,
                                       getTransactionIntegration(),
@@ -509,7 +509,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
                                          getSubjectFactory(securityDomain), securityDomain,
                                          ds.isUseCcm(), getCachedConnectionManager(),
-                                         true,
+                                         true, true,
                                          flushStrategy, allocationRetry, allocationRetryWaitMillis);
       }
 
@@ -693,7 +693,7 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  ds.isUseCcm(), getCachedConnectionManager(),
-                                 true,
+                                 true, true,
                                  flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,

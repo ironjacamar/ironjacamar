@@ -84,6 +84,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    
    /** Connection last validated time */
    private long lastValidated;
+
+   /** Enlisted */
+   private boolean enlisted;
    
    /**
     * Creates a new instance of the listener that is responsible for
@@ -105,6 +108,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
       this.lastUse = System.currentTimeMillis();
+      this.enlisted = false;
    }
 
    /**
@@ -137,6 +141,23 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    public int getNumberOfConnections()
    {
       return connectionHandles.size();
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public boolean isEnlisted()
+   {
+      return enlisted;
+   }
+
+   /**
+    * Set the enlisted flag
+    * @param v The value
+    */   
+   void setEnlisted(boolean v)
+   {
+      enlisted = v;
    }
 
    /**
@@ -371,11 +392,11 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */
-   public boolean controls(Object connection, ManagedConnection mc)
+   public boolean controls(ManagedConnection mc, Object connection)
    {
       if (managedConnection.equals(mc))
       {
-         if (connectionHandles.contains(connection))
+         if (connection == null || connectionHandles.contains(connection))
             return true;
       }
 
