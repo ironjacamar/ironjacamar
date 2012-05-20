@@ -48,6 +48,7 @@ import org.jboss.jca.validator.Validation;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -105,6 +106,8 @@ public class Main
    private static final String subdir = "/jca/";
    private static Set<Class<?>> validTypes;
 
+   private static File root = null;
+   
    static
    {
       validTypes = new HashSet<Class<?>>();
@@ -167,6 +170,7 @@ public class Main
          Connector connector = null;
 
          ArrayList<String> names = new ArrayList<String>();
+         ArrayList<String> xmls = new ArrayList<String>();
          Enumeration zipEntries = zipFile.entries();
 
          while (zipEntries.hasMoreElements())
@@ -174,6 +178,10 @@ public class Main
             ZipEntry ze = (ZipEntry) zipEntries.nextElement();
             String name = ze.getName();
             names.add(name);
+            
+            if (name.endsWith(".xml") && name.startsWith("META-INF") && !name.endsWith("pom.xml"))
+               xmls.add(name);
+               
             if (name.endsWith(".so") || name.endsWith(".a") || name.endsWith(".dll"))
                exsitNativeFile = true;
 
@@ -646,6 +654,41 @@ public class Main
 
             serializer.transform(new DOMSource(doc), new StreamResult(out));
          }
+         
+         for (String xmlfile : xmls)
+         {
+            out.println();
+            out.println(xmlfile);
+            
+            InputStream in = null;
+            try
+            {
+               in = new FileInputStream(root.getAbsolutePath() + File.separator + xmlfile);
+
+               byte[] buffer = new byte[4096];
+               for (;;)
+               {
+                  int nBytes = in.read(buffer);
+                  if (nBytes <= 0)
+                     break;
+
+                  out.write(buffer, 0, nBytes);
+               }
+               out.flush();
+            }
+            finally
+            {
+               try
+               {
+                  if (in != null)
+                     in.close();
+               }
+               catch (IOException ignore)
+               {
+                  // Ignore
+               }
+            }
+         }
 
          System.out.println("Done.");
          System.exit(SUCCESS);
@@ -683,7 +726,7 @@ public class Main
       try
       {
          File f = new File(rarFile);
-         File root = null;
+         //File root = null;
 
          if (f.isFile())
          {
