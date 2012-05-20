@@ -60,6 +60,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -165,12 +166,14 @@ public class Main
          boolean exsitNativeFile = false;
          Connector connector = null;
 
+         ArrayList<String> names = new ArrayList<String>();
          Enumeration zipEntries = zipFile.entries();
 
          while (zipEntries.hasMoreElements())
          {
             ZipEntry ze = (ZipEntry) zipEntries.nextElement();
             String name = ze.getName();
+            names.add(name);
             if (name.endsWith(".so") || name.endsWith(".a") || name.endsWith(".dll"))
                exsitNativeFile = true;
 
@@ -262,6 +265,16 @@ public class Main
             out.println("Yes");
          else
             out.println("No");
+         
+         Collections.sort(names);
+         
+         out.println();
+         out.println("Structure:");
+         out.println("----------");
+         for (String name : names)
+         {
+            out.println(name);
+         }
          
          String classname = "";
          Map<String, String> raConfigProperties = null;
