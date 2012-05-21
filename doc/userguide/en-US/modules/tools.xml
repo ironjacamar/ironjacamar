@@ -47,6 +47,9 @@
           If the resource adapter contains native libraries
         </listitem>
         <listitem>
+          The structure of the resource adapter archive
+        </listitem>
+        <listitem>
           Overview of the resource adapter class
         </listitem>
         <listitem>
@@ -57,6 +60,9 @@
         </listitem>
         <listitem>
           Overview of the activation specification classes
+        </listitem>
+        <listitem>
+          Metadata included
         </listitem>
         <listitem>
           A sample deployment descriptor
