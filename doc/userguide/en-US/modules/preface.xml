@@ -26,6 +26,89 @@
 
   </section>
 
+  <section id="versions">
+    <title>Versions</title>
+
+    <para>
+      This section contains the highlights of the IronJacamar releases. A full description of each release
+      can be found through our issue tracking system at <ulink url="http://issues.jboss.org/browse/JBJCA">http://issues.jboss.org/browse/JBJCA</ulink>.
+    </para>
+
+    <section id="versions_ironjacamar11">
+      <title>IronJacamar 1.1</title>
+
+      <para>
+        Highlights as compared to IronJacamar 1.0:
+
+        <itemizedlist>
+          <listitem>
+            Lazy connection manager (JCA chapter 7.16)
+          </listitem>
+          <listitem>
+            Distributed work manager (JCA chapter 10.3.11)
+          </listitem>
+          <listitem>
+            Enhanced Arquillian integration
+          </listitem>
+          <listitem>
+            Eclipse development plugin
+          </listitem>
+          <listitem>
+            Resource adapter information tool
+          </listitem>
+          <listitem>
+            Migration tools
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
+    <section id="versions_ironjacamar10">
+      <title>IronJacamar 1.0</title>
+
+      <para>
+        Highlights as compared to previous Java EE Connector Architecture containers inside JBoss Application Server:
+
+        <itemizedlist>
+          <listitem>
+            Java EE Connector Architecture 1.6 certified (standalone / Java EE6)
+          </listitem>
+          <listitem>
+            POJO container environment
+          </listitem>
+          <listitem>
+            New configuration schemas which focuses on usability
+          </listitem>
+          <listitem>
+            Fast XML and annotation parsing for quick deployment
+          </listitem>
+          <listitem>
+            Reauthentication support
+          </listitem>
+          <listitem>
+            Prefill support for security backed domains
+          </listitem>
+          <listitem>
+            Support for pool flushing strategies
+          </listitem>
+          <listitem>
+            Embedded environment for ease of development with Arquillian and ShrinkWrap integration
+          </listitem>
+          <listitem>
+            New management and statistics integration for components
+          </listitem>
+          <listitem>
+            Code generator for resource adapters
+          </listitem>
+          <listitem>
+            Validator tool for resource adapters
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
+  </section>
+
   <section id="theteam">
     <title>The team</title>
 
