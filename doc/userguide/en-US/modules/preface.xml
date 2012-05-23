@@ -26,6 +26,60 @@
 
   </section>
 
+  <section id="versions">
+    <title>Versions</title>
+
+    <para>
+      This section contains the highlights of the IronJacamar releases. A full description of each release
+      can be found through our issue tracking system at <ulink url="http://issues.jboss.org/browse/JBJCA">http://issues.jboss.org/browse/JBJCA</ulink>.
+    </para>
+
+    <section id="versions_ironjacamar10">
+      <title>IronJacamar 1.0</title>
+
+      <para>
+        Highlights as compared to previous Java EE Connector Architecture containers inside JBoss Application Server:
+
+        <itemizedlist>
+          <listitem>
+            Java EE Connector Architecture 1.6 certified (standalone / Java EE6)
+          </listitem>
+          <listitem>
+            POJO container environment
+          </listitem>
+          <listitem>
+            New configuration schemas which focuses on usability
+          </listitem>
+          <listitem>
+            Fast XML and annotation parsing for quick deployment
+          </listitem>
+          <listitem>
+            Reauthentication support
+          </listitem>
+          <listitem>
+            Prefill support for security backed domains
+          </listitem>
+          <listitem>
+            Support for pool flushing strategies
+          </listitem>
+          <listitem>
+            Embedded environment for ease of development with Arquillian and ShrinkWrap integration
+          </listitem>
+          <listitem>
+            New management and statistics integration for components
+          </listitem>
+          <listitem>
+            Code generator for resource adapters
+          </listitem>
+          <listitem>
+            Validator tool for resource adapters
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
+  </section>
+
   <section id="theteam">
     <title>The team</title>
 
