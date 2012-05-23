@@ -328,7 +328,6 @@
     <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="codegenerator" inheritRefs="true" target="jars"/>
     <ant dir="as" inheritRefs="true" target="jars"/>
-    <ant dir="eclipse" inheritRefs="true" target="jars"/>
   </target>
   
   <!-- ================================= 
@@ -444,6 +443,8 @@
        Target: release
        ================================= -->
   <target name="release" depends="clean,sjc">
+    <fail message="IronJacamar distribution requires eclipse.home setting" unless="eclipse.home"/>
+
     <delete dir="${build.dir}"/>
 
     <mkdir dir="${build.dir}" />
@@ -481,8 +482,22 @@
         <include name="**/*.sh"/>
       </fileset>
     </chmod>
-
     <delete dir="${build.dir}/docbook"/>
+
+    <!-- Eclipse -->
+    <mkdir dir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/eclipse" />
+    <ant dir="eclipse" inheritRefs="true" target="jars"/>
+    <copy todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/eclipse">
+      <fileset dir="${target.dir}">
+        <include name="${name}-eclipse.jar"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.dir}/${name}-${major}.${minor}.${patch}.${type}/doc/eclipse">
+      <fileset dir="eclipse/src/main/resources">
+        <include name="README.txt"/>
+      </fileset>
+    </copy>
+    <delete dir="${build.dir}/eclipse"/>
 
     <zip destfile="${name}-${major}.${minor}.${patch}.${type}.zip"
          basedir="${build.dir}"/>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="eclipse">
+  <title>Eclipse plugin</title>
+
+  <para>
+    The IronJacamar Eclipse plugin features development tools used
+    for developing resource adapter applications for the IronJacamar standalone distribution,
+    JBoss Application Server 7+ or JBoss Enterprise Application Platform 6+.
+  </para>
+
+  <para>
+    The plugin allows you to
+
+    <itemizedlist>
+      <listitem>
+        Generate a resource adapter skeleton
+      </listitem>
+    </itemizedlist>
+
+  </para>
+
+  <section id="eclipse_installation">
+    <title>Installation of the plugin</title>
+
+    <para>
+      The plugin is installed by
+    </para>
+        
+    <programlisting>
+cp ironjacamar-eclipse.jar $ECLIPSE_HOME/plugins
+    </programlisting>
+
+    <para>
+      on Un*x systems, or by
+    </para>
+
+    <programlisting>
+copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
+    </programlisting>
+
+    <para>
+      on Windows.
+    </para>
+
+  </section>
+
+  <section id="eclipse_configure">
+    <title>Configuration of the plugin</title>
+
+    <para>
+      Open Window->Preferences and go to the IronJacamar category.
+
+      You must point the IronJacamar home setting to the root directory of the IronJacamar installation, like
+    </para>
+
+    <programlisting>
+/opt/ironjacamar-1.1.0.Beta1
+    </programlisting>
+
+    <para>
+      in order to configure the plugin.
+    </para>
+
+  </section>
+
+  <section id="eclipse_project">
+    <title>New IronJacamar project</title>
+
+    <para>
+      Select File->New->Project... and go to the IronJacamar category. 
+    </para>
+
+    <para>
+      Choose "IronJacamar 1.1 project" and follow the instructions to generate your resource adapter.
+    </para>
+    
+  </section>
+
+</chapter>

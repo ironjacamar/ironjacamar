@@ -177,6 +177,7 @@
         <include name="*.jar"/>
         <exclude name="${name}-as.jar"/>
         <exclude name="${name}-codegenerator.jar"/>
+        <exclude name="${name}-eclipse.jar"/>
         <exclude name="${name}-embedded-arquillian.jar"/>
         <exclude name="${name}-embedded.jar"/>
         <exclude name="${name}-sjc.jar"/>
