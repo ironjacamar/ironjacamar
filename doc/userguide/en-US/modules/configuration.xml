@@ -141,7 +141,7 @@ config/bootstrap/jca.xml
                   <entry><code>Map&lt;String, &#x200B;org.jboss.jca.&#x200B;core.api.bootstrap.&#x200B;CloneableBootstrap&#x200B;Context&gt;</code></entry>
                   <entry>
                     Bootstrap context map (unique name to a cloneable bootstrap context) which allows
-                    developers to bind (through <code>jboss-ra.xml</code>) their resource adapter to
+                    developers to bind (through <code>ironjacamar.xml</code>) their resource adapter to
                     a specific bootstrap context instance.
                   </entry>
                 </row>
@@ -453,7 +453,8 @@ config/callback.properties
    <section id="datasources">
       <title>Datasources</title>
 
-      <para>The IronJacamar project can deploy datasources using the <code>datasources-1_0.xsd</code> schema.</para>
+      <para>The IronJacamar project can deploy datasources using the <code>datasources-1_0.xsd</code> or
+         <code>datasources-1_1.xsd</code> schemas.</para>
 
       <para>The configuration is done in the</para>
 
