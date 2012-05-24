@@ -48,13 +48,15 @@ import org.jboss.jca.validator.Validation;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -78,14 +80,19 @@ import java.util.zip.ZipFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * rar info main class
@@ -632,64 +639,10 @@ public class Main
          RaImpl raImpl = new RaImpl(rarFile, transSupport, connDefs, adminObjects, raConfigProperties);
          raImpl.buildResourceAdapterImpl();
 
-         String raString = "<resource-adapters>" + raImpl.toString() + "</resource-adapters>";
-         if (!raString.equals(""))
-         {
+         outputXmlDesc(xmls, out);
 
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new InputSource(new StringReader(raString)));
-            
-            out.println();
-            out.println("Deployment descriptor:");
-            out.println("----------------------");
-
-            TransformerFactory tfactory = TransformerFactory.newInstance();
-            Transformer serializer;
-
-            serializer = tfactory.newTransformer();
-            //Setup indenting to "pretty print"
-            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-            serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-
-            serializer.transform(new DOMSource(doc), new StreamResult(out));
-         }
+         outputRaDesc(raImpl, out);
          
-         for (String xmlfile : xmls)
-         {
-            out.println();
-            out.println(xmlfile);
-            
-            InputStream in = null;
-            try
-            {
-               in = new FileInputStream(root.getAbsolutePath() + File.separator + xmlfile);
-
-               byte[] buffer = new byte[4096];
-               for (;;)
-               {
-                  int nBytes = in.read(buffer);
-                  if (nBytes <= 0)
-                     break;
-
-                  out.write(buffer, 0, nBytes);
-               }
-               out.flush();
-            }
-            finally
-            {
-               try
-               {
-                  if (in != null)
-                     in.close();
-               }
-               catch (IOException ignore)
-               {
-                  // Ignore
-               }
-            }
-         }
-
          System.out.println("Done.");
          System.exit(SUCCESS);
       }
@@ -714,6 +667,89 @@ public class Main
          }
          cleanupTempFiles();
       }
+   }
+
+   private static void outputXmlDesc(ArrayList<String> xmls, PrintStream out) throws FileNotFoundException, IOException
+   {
+      for (String xmlfile : xmls)
+      {
+         out.println();
+         out.println(xmlfile + ":");
+         for (int i = 0; i <= xmlfile.length(); i++)
+         {
+            out.print("-");
+         }
+         out.println();
+         
+         Reader in = null;
+         try
+         {
+            in = new FileReader(root.getAbsolutePath() + File.separator + xmlfile);
+
+            char[] buffer = new char[4096];
+            for (;;)
+            {
+               int nBytes = in.read(buffer);
+               if (nBytes <= 0)
+                  break;
+
+               for (int i = 0; i < nBytes; i++)
+               {
+                  if (buffer[i] != 13)
+                     out.print(buffer[i]);
+               }
+            }
+            out.flush();
+         }
+         finally
+         {
+            try
+            {
+               if (in != null)
+                  in.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * Output Resource Adapter XML description
+    * 
+    * @param raImpl RaImpl
+    * @param out PrintStream
+    * @throws ParserConfigurationException
+    * @throws SAXException
+    * @throws IOException
+    * @throws TransformerFactoryConfigurationError
+    * @throws TransformerConfigurationException
+    * @throws TransformerException
+    */
+   private static void outputRaDesc(RaImpl raImpl, PrintStream out) throws ParserConfigurationException, SAXException,
+         IOException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException
+   {
+      String raString = "<resource-adapters>" + raImpl.toString() + "</resource-adapters>";
+
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder db = dbf.newDocumentBuilder();
+      Document doc = db.parse(new InputSource(new StringReader(raString)));
+      
+      out.println();
+      out.println("Deployment descriptor:");
+      out.println("----------------------");
+
+      TransformerFactory tfactory = TransformerFactory.newInstance();
+      Transformer serializer;
+
+      serializer = tfactory.newTransformer();
+      //Setup indenting to "pretty print"
+      serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+      serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+      serializer.transform(new DOMSource(doc), new StreamResult(out));
    }
 
    private static URLClassLoader loadClass(String rarFile, String[] classpath)
