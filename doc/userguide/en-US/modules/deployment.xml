@@ -52,11 +52,11 @@ copy example.rar ironjacamar-1.0.0.Final\deploy
      <para>on Windows.</para>
 
      <para>The resource adapter can be configured and activated through a <code>META-INF/ironjacamar.xml</code>
-       file in the archive. The format of the XML document is defined by the <code>ironjacamar_1_0.xsd</code>.</para>
+       file in the archive. The format of the XML document is defined by the <code>ironjacamar_1_0.xsd</code> schema.</para>
 
      <para>A resource adapter can also be configured and activated through deployment of a <code>-ra.xml</code>
        file in the <code>deploy/</code> directory - f.ex. <code>deploy/example-ra.xml</code>. The format of the XML 
-       document is defined by the <code>resource-adapters_1_0.xsd</code> - f.ex</para>
+       document is defined by the <code>resource-adapters_1_0.xsd</code> schema - f.ex</para>
 
      <programlisting language="xml">
 <![CDATA[
@@ -621,7 +621,7 @@ java:/eis/ao/&lt;deploymentName&gt;
        </table>
 
        <para>The deployment schemas are defined in <code>doc/ironjacamar_1_0.xsd</code> and
-       <code>doc/resource-adapters_1_0.xsd</code>.</para>
+          <code>doc/resource-adapters_1_0.xsd</code>.</para>
         
      </section>
 
@@ -772,7 +772,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
       <para>You will need to install the database JDBC driver into the <code>lib/</code> directory.</para>
       
       <para>You can find examples of datasource definitions in the <code>doc/datasources</code> directory
-      and the schema itself <code>doc/datasources_1_0.xsd</code>.</para>
+      and the schemas: <code>doc/datasources_1_0.xsd</code> and <code>doc/datasources_1_1.xsd</code>.</para>
 
       <section id="deployingds_descriptor">
         <title>Datasource descriptor</title>
@@ -1116,7 +1116,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry><code>allow-multiple-users</code></entry>
                 <entry>
                   Specifies if multiple users will access the datasource through the getConnection(user, password)
-                  method and hence if the internal pool type should account for that
+                  method and hence if the internal pool type should account for that (1.1)
                 </entry>
               </row>
             </tbody>
@@ -1176,7 +1176,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry><code>allow-multiple-users</code></entry>
                 <entry>
                   Specifies if multiple users will access the datasource through the getConnection(user, password)
-                  method and hence if the internal pool type should account for that
+                  method and hence if the internal pool type should account for that (1.1)
                 </entry>
               </row>
               <row>
@@ -1435,9 +1435,9 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry>
                   Whether to check for unclosed statements when a connection is returned 
                   to the pool and result sets are closed when a statement is closed/return 
-                  to the prepared statement cache. valid values are: false - do not track statements 
-                  and results true - track statements and result sets and warn when they are 
-                  not closed nowarn - track statements but do no warn about them being unclosed 
+                  to the prepared statement cache. valid values are: <code>false</code> - do not track statements 
+                  and results; <code>true</code> - track statements and result sets and warn when they are 
+                  not closed; <code>nowarn</code> - track statements but do no warn about them being unclosed 
                   (the default)
                 </entry>
               </row>
@@ -1568,7 +1568,8 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
           </tgroup>
         </table>
 
-        <para>The datasource deployment schema is defined in <code>doc/datasources_1_0.xsd</code>.</para>
+        <para>The datasource deployment schema is defined in <code>doc/datasources_1_0.xsd</code>
+           and <code>doc/datasources_1_1.xsd</code>.</para>
 
       </section>
 
