@@ -187,11 +187,21 @@ public class TestCodeGen extends AbstractCodeGen
             def.getMcfDefs().get(num).getMcClass() + ".class, ");
          if (def.getMcfDefs().get(num).isUseCciConnection())
          {
-            out.write(def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
-               def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
-               def.getMcfDefs().get(num).getConnMetaClass() + ".class, " + 
-               def.getRaMetaClass() + ".class, " + 
-               def.getMcfDefs().get(num).getConnSpecClass() + ".class");
+            if (def.isUseRa())
+            {
+               out.write(def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
+                  def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
+                  def.getMcfDefs().get(num).getConnMetaClass() + ".class, " + 
+                  def.getRaMetaClass() + ".class, " + 
+                  def.getMcfDefs().get(num).getConnSpecClass() + ".class");
+            }
+            else
+            {
+               out.write(def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
+                  def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
+                  def.getMcfDefs().get(num).getConnMetaClass() + ".class, " + 
+                  def.getMcfDefs().get(num).getConnSpecClass() + ".class");
+            }
          }
          else
          {

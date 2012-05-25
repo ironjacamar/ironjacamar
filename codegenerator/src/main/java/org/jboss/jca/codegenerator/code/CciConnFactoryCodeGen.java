@@ -245,7 +245,14 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
 
       writeIndent(out, indent + 1);
-      out.write("return new " + def.getRaMetaClass() + "();");
+      if (def.isUseRa())
+      {
+         out.write("return new " + def.getRaMetaClass() + "();");
+      }
+      else
+      {
+         out.write("return null;");
+      }
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
