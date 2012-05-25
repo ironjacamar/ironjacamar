@@ -354,8 +354,8 @@ public class Main
             if (mcfClassName != null && !mcfClassName.equals(""))
             {
                mcfdef.setMcfClass(mcfClassName);
-               setDefaultValue(def, mcfClassName, mcfID + "ManagedConnectionfactory");
-               setDefaultValue(def, mcfClassName, mcfID + "Mcf");
+               setDefaultValue(def, mcfClassName, "ManagedConnectionFactory");
+               setDefaultValue(def, mcfClassName, "Mcf");
             }
 
             List<ConfigPropType> mcfProps = inputProperties("mcf", in, false);
