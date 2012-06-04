@@ -20,12 +20,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.workmanager.policy;
+package org.jboss.jca.core.workmanager.selector;
 
 import org.jboss.jca.core.api.workmanager.DistributableContext;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
-import org.jboss.jca.core.spi.workmanager.policy.Policy;
+import org.jboss.jca.core.spi.workmanager.selector.Selector;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -39,11 +39,9 @@ import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkContextProvider;
 
 /**
- * The never distribute policy
- * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * Common base class for selector implementations
  */
-public abstract class AbstractPolicy implements Policy, NotificationListener
+public abstract class AbstractSelector implements Selector, NotificationListener
 {
    /** Distributed work manager instance */
    protected DistributedWorkManager dwm;
@@ -57,7 +55,7 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
    /**
     * Constructor
     */
-   public AbstractPolicy()
+   public AbstractSelector()
    {
       this.dwm = null;
       this.shortRunning = Collections.synchronizedMap(new HashMap<String, Integer>());
@@ -107,11 +105,11 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
    }
 
    /**
-    * Get should distribute override
+    * Get explicit work manager override
     * @param work The work instance
     * @return The override, if none return null
     */
-   protected Boolean getShouldDistribute(DistributableWork work)
+   protected String getWorkManager(DistributableWork work)
    {
       if (work != null && work instanceof WorkContextProvider)
       {
@@ -123,17 +121,17 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
                if (wc instanceof DistributableContext)
                {
                   DistributableContext dc = (DistributableContext)wc;
-                  return dc.getDistribute();
+                  return dc.getWorkManager();
                }
                else if (wc instanceof HintsContext)
                {
                   HintsContext hc = (HintsContext)wc;
-                  if (hc.getHints().keySet().contains(DistributableContext.DISTRIBUTE))
+                  if (hc.getHints().keySet().contains(DistributableContext.WORKMANAGER))
                   {
-                     Serializable value = hc.getHints().get(DistributableContext.DISTRIBUTE);
-                     if (value != null && value instanceof Boolean)
+                     Serializable value = hc.getHints().get(DistributableContext.WORKMANAGER);
+                     if (value != null && value instanceof String)
                      {
-                        return (Boolean)value;
+                        return (String)value;
                      }
                   }
                }
@@ -145,7 +143,66 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
    }
 
    /**
-    * {@inheritDoc}
+    * Get the data for selection
+    * @param work The work instance
+    * @return The selection map
     */
-   public abstract boolean shouldDistribute(DistributableWork work);
+   protected Map<String, Integer> getSelectionMap(DistributableWork work)
+   {
+      Map<String, Integer> sorted = null;
+      if (isLongRunning(work))
+      {
+         sorted = new HashMap<String, Integer>(longRunning);
+      }
+      else
+      {
+         sorted = new HashMap<String, Integer>(shortRunning);
+      }
+
+      return sorted;
+   }
+
+   /**
+    * Is a long running work instance
+    * @param work The work instance
+    * @return True if long running, otherwise false
+    */
+   private boolean isLongRunning(DistributableWork work)
+   {
+      if (work != null && work instanceof WorkContextProvider)
+      {
+         List<WorkContext> contexts = ((WorkContextProvider)work).getWorkContexts();
+         if (contexts != null)
+         {
+            for (WorkContext wc : contexts)
+            {
+               if (wc instanceof HintsContext)
+               {
+                  HintsContext hc = (HintsContext)wc;
+                  if (hc.getHints().keySet().contains(HintsContext.LONGRUNNING_HINT))
+                  {
+                     Serializable value = hc.getHints().get(HintsContext.LONGRUNNING_HINT);
+                     if (value != null)
+                     {
+                        if (value instanceof String)
+                        {
+                           return Boolean.valueOf((String)value);
+                        }
+                        else if (value instanceof Boolean)
+                        {
+                           return ((Boolean)value).booleanValue();
+                        }
+                     }
+                     else
+                     {
+                        return true;
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      return false;
+   }
 }

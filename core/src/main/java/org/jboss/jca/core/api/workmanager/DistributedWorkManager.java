@@ -26,6 +26,9 @@ import org.jboss.jca.core.spi.workmanager.policy.Policy;
 import org.jboss.jca.core.spi.workmanager.selector.Selector;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
 
+import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkException;
+
 /**
  * The JBoss specific distributed work manager interface
  */
@@ -66,4 +69,26 @@ public interface DistributedWorkManager extends javax.resource.spi.work.Distribu
     * @param v The value
     */
    public void setTransport(Transport v);
+
+   /**
+    * doWork locally
+    * @param work The work
+    * @exception WorkException Thrown if an error occurs
+    */
+   public void localDoWork(Work work) throws WorkException;
+
+   /**
+    * scheduleWork locally
+    * @param work The work
+    * @exception WorkException Thrown if an error occurs
+    */
+   public void localScheduleWork(Work work) throws WorkException;
+
+   /**
+    * startWork locally
+    * @param work The work
+    * @return The delay
+    * @exception WorkException Thrown if an error occurs
+    */
+   public long localStartWork(Work work) throws WorkException;
 }

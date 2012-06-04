@@ -33,14 +33,14 @@ import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
- * The first available selector
+ * The ping time selector
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class FirstAvailable extends AbstractSelector
+public class PingTime extends AbstractSelector
 {
    /** The logger */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, FirstAvailable.class.getName());
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, PingTime.class.getName());
    
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
@@ -51,7 +51,7 @@ public class FirstAvailable extends AbstractSelector
    /**
     * Constructor
     */
-   public FirstAvailable()
+   public PingTime()
    {
    }
 
@@ -65,7 +65,8 @@ public class FirstAvailable extends AbstractSelector
          return value;
 
       Map<String, Integer> selectionMap = getSelectionMap(work);
-      // No sorting needed
+      String result = null;
+      long pingTime = Long.MAX_VALUE;
 
       for (Map.Entry<String, Integer> entry : selectionMap.entrySet())
       {
@@ -74,10 +75,17 @@ public class FirstAvailable extends AbstractSelector
          {
             Integer free = entry.getValue();
             if (free != null && free.intValue() > 0)
-               return id;
+            {
+               long l = dwm.getTransport().ping(id);
+               if (l < pingTime)
+               {
+                  result = id;
+                  pingTime = l;
+               }
+            }
          }
       }
 
-      return null;
+      return result;
    }
 }

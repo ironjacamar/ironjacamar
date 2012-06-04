@@ -22,10 +22,27 @@
 
 package org.jboss.jca.core.spi.workmanager.selector;
 
+import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+
+import javax.resource.spi.work.DistributableWork;
+
 /**
  * The selector interface defines how a node is selected when a
  * work instance should be distributed
  */
 public interface Selector
 {
+   /**
+    * Set the distributed work manager
+    * @param dwm The value
+    */
+   public void setDistributedWorkManager(DistributedWorkManager dwm);
+
+   /**
+    * Select a distributed work manager
+    * @param ownId The id of the calling distributed work manager
+    * @param work The work instance
+    * @return The id of the selected distributed work manager; <code>null</code> if none could be selected
+    */
+   public String selectDistributedWorkManager(String ownId, DistributableWork work);
 }

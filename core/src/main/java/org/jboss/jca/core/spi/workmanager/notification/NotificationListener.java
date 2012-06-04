@@ -20,31 +20,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.spi.workmanager.policy;
-
-import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
-
-import javax.resource.spi.work.DistributableWork;
+package org.jboss.jca.core.spi.workmanager.notification;
 
 /**
- * The policy interface defines how the distributed work manager to
- * decide to distribute the work instance to another node.
- *
- * The work instance may contain a DistributableWorkContext which may
- * provide additional information 
+ * The notification listener gets notified about changes
  */
-public interface Policy
+public interface NotificationListener
 {
    /**
-    * Set the distributed work manager
-    * @param dwm The value
+    * A distributed work manager joined
+    * @param id The id
     */
-   public void setDistributedWorkManager(DistributedWorkManager dwm);
+   public void join(String id);
 
    /**
-    * Should a distribution of the work happen
-    * @param work The work instance
-    * @return True, if the work should be distributed; otherwise false
+    * A distributed work manager left
+    * @param id The id
     */
-   public boolean shouldDistribute(DistributableWork work);
+   public void leave(String id);
+
+   /**
+    * Update the short thread pool information for a distributed work manager
+    * @param id The work manager id
+    * @param free The number of free threads
+    */
+   public void updateShortRunningFree(String id, int free);
+
+   /**
+    * Update the long thread pool information for a distributed work manager
+    * @param id The work manager id
+    * @param free The number of free threads
+    */
+   public void updateLongRunningFree(String id, int free);
 }

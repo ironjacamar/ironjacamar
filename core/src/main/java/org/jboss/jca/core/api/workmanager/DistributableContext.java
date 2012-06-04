@@ -34,7 +34,11 @@ public class DistributableContext implements WorkContext
    /** The distribute key */
    public static final String DISTRIBUTE = "org.jboss.jca.core.api.workmanager.Distribute";
 
+   /** The workmanager key */
+   public static final String WORKMANAGER = "org.jboss.jca.core.api.workmanager.WorkManager";
+
    private Boolean distribute;
+   private String workManager;
 
    /**
     * Constructor
@@ -42,6 +46,7 @@ public class DistributableContext implements WorkContext
    public DistributableContext()
    {
       this.distribute = null;
+      this.workManager = null;
    }
 
    /**
@@ -76,5 +81,23 @@ public class DistributableContext implements WorkContext
    public Boolean getDistribute()
    {
       return distribute;
+   }
+
+   /**
+    * Set the work manager value
+    * @param v The value
+    */
+   public void setWorkManager(String v)
+   {
+      this.workManager = v;
+   }
+   
+   /**
+    * Get the work manager value
+    * @return The value
+    */
+   public String getWorkManager()
+   {
+      return workManager;
    }
 }

@@ -22,10 +22,52 @@
 
 package org.jboss.jca.core.spi.workmanager.transport;
 
+import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+
+import javax.resource.spi.work.DistributableWork;
+import javax.resource.spi.work.WorkException;
+
 /**
  * The transport interface defines the methods for the physical transport
  * of the work instances for a distributed work manager
  */
 public interface Transport
 {
+   /**
+    * Set the distributed work manager
+    * @param dwm The value
+    */
+   public void setDistributedWorkManager(DistributedWorkManager dwm);
+
+   /**
+    * Ping time to a distributed work manager
+    * @param dwm The id
+    * @return The ping time in milliseconds
+    */
+   public long ping(String dwm);
+
+   /**
+    * doWork
+    * @param id The work manager id
+    * @param work The work
+    * @exception WorkException Thrown if an error occurs
+    */
+   public void doWork(String id, DistributableWork work) throws WorkException;
+
+   /**
+    * scheduleWork
+    * @param id The work manager id
+    * @param work The work
+    * @exception WorkException Thrown if an error occurs
+    */
+   public void scheduleWork(String id, DistributableWork work) throws WorkException;
+
+   /**
+    * startWork
+    * @param id The work manager id
+    * @param work The work
+    * @return The delay
+    * @exception WorkException Thrown if an error occurs
+    */
+   public long startWork(String id, DistributableWork work) throws WorkException;
 }

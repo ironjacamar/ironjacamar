@@ -25,11 +25,17 @@ package org.jboss.jca.core.workmanager.transport.invm;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
+import org.jboss.jca.core.spi.workmanager.policy.Policy;
+import org.jboss.jca.core.spi.workmanager.selector.Selector;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.resource.spi.work.DistributableWork;
+import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
@@ -50,15 +56,89 @@ public class InVM implements Transport
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
+   /** Distributed work manager instance */
+   protected DistributedWorkManager dwm;
+
    /** The work manager */
-   private Set<DistributedWorkManager> workManagers;
+   private Map<String, DistributedWorkManager> workManagers;
 
    /**
     * Constructor
     */
    public InVM()
    {
-      this.workManagers = Collections.synchronizedSet(new HashSet<DistributedWorkManager>());
+      this.dwm = null;
+      this.workManagers = Collections.synchronizedMap(new HashMap<String, DistributedWorkManager>());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setDistributedWorkManager(DistributedWorkManager dwm)
+   {
+      this.dwm = dwm;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long ping(String dwm)
+   {
+      if (!workManagers.keySet().contains(dwm))
+         return Long.MAX_VALUE;
+
+      return 0L;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void doWork(String id, DistributableWork work) throws WorkException
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         dwm.localDoWork(work);
+      }
+      else
+      {
+         // TODO
+         throw new WorkException();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void scheduleWork(String id, DistributableWork work) throws WorkException
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         dwm.localScheduleWork(work);
+      }
+      else
+      {
+         // TODO
+         throw new WorkException();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long startWork(String id, DistributableWork work) throws WorkException
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         return dwm.localStartWork(work);
+      }
+      else
+      {
+         // TODO
+         throw new WorkException();
+      }
    }
 
    /**
@@ -70,7 +150,29 @@ public class InVM implements Transport
       if (trace)
          log.tracef("Adding distributed work manager: %s", dwm);
 
-      workManagers.add(dwm);
+      workManagers.put(dwm.getId(), dwm);
+
+      Policy policy = this.dwm.getPolicy();
+      if (policy != null && policy instanceof NotificationListener)
+      {
+         NotificationListener listener = (NotificationListener)policy;
+         listener.join(dwm.getId());
+
+         // TODO
+         listener.updateShortRunningFree(dwm.getId(), 10);
+         listener.updateLongRunningFree(dwm.getId(), 10);
+      }
+
+      Selector selector = this.dwm.getSelector();
+      if (selector != null && selector instanceof NotificationListener)
+      {
+         NotificationListener listener = (NotificationListener)selector;
+         listener.join(dwm.getId());
+
+         // TODO
+         listener.updateShortRunningFree(dwm.getId(), 10);
+         listener.updateLongRunningFree(dwm.getId(), 10);
+      }
    }
 
    /**
@@ -82,7 +184,21 @@ public class InVM implements Transport
       if (trace)
          log.tracef("Removing distributed work manager: %s", dwm);
 
-      workManagers.remove(dwm);
+      workManagers.remove(dwm.getId());
+
+      Policy policy = this.dwm.getPolicy();
+      if (policy != null && policy instanceof NotificationListener)
+      {
+         NotificationListener listener = (NotificationListener)policy;
+         listener.leave(dwm.getId());
+      }
+
+      Selector selector = this.dwm.getSelector();
+      if (selector != null && selector instanceof NotificationListener)
+      {
+         NotificationListener listener = (NotificationListener)selector;
+         listener.leave(dwm.getId());
+      }
    }
 
    /**

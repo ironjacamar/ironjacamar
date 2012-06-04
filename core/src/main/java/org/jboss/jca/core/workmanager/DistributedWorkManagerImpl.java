@@ -88,6 +88,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    public void setPolicy(Policy v)
    {
       policy = v;
+      if (policy != null)
+         policy.setDistributedWorkManager(this);
    }
 
    /**
@@ -104,6 +106,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    public void setSelector(Selector v)
    {
       selector = v;
+      if (selector != null)
+         selector.setDistributedWorkManager(this);
    }
 
    /**
@@ -120,6 +124,32 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    public void setTransport(Transport v)
    {
       transport = v;
+      if (transport != null)
+         transport.setDistributedWorkManager(this);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void localDoWork(Work work) throws WorkException
+   {
+      super.doWork(work, WorkManager.INDEFINITE, null, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void localScheduleWork(Work work) throws WorkException
+   {
+      super.scheduleWork(work, WorkManager.INDEFINITE, null, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long localStartWork(Work work) throws WorkException
+   {
+      return super.startWork(work, WorkManager.INDEFINITE, null, null);
    }
 
    /**
@@ -131,7 +161,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       if (policy == null || selector == null || transport == null ||
           work == null || !(work instanceof DistributableWork))
       {
-         super.doWork(work, WorkManager.INDEFINITE, null, null);
+         localDoWork(work);
       }
       else
       {
@@ -140,12 +170,17 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
          if (policy.shouldDistribute(dw))
          {
-            // TODO
+            String dwmId = selector.selectDistributedWorkManager(getId(), dw);
+            if (dwmId != null)
+            {
+               transport.doWork(dwmId, dw);
+               executed = true;
+            }
          }
 
          if (!executed)
          {
-            super.doWork(work, WorkManager.INDEFINITE, null, null);
+            localDoWork(work);
          }
       }
    }
@@ -159,26 +194,23 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       if (policy == null || selector == null || transport == null ||
           work == null || !(work instanceof DistributableWork))
       {
-         return super.startWork(work, WorkManager.INDEFINITE, null, null);
+         return localStartWork(work);
       }
       else
       {
          DistributableWork dw = (DistributableWork)work;
-         boolean executed = false;
 
          if (policy.shouldDistribute(dw))
          {
-            // TODO
+            String dwmId = selector.selectDistributedWorkManager(getId(), dw);
+            if (dwmId != null)
+            {
+               return transport.startWork(dwmId, dw);
+            }
          }
 
-         if (!executed)
-         {
-            return super.startWork(work, WorkManager.INDEFINITE, null, null);
-         }
+         return localStartWork(work);
       }
-
-      // TODO
-      throw new WorkException();
    }
    
    /**
@@ -190,7 +222,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       if (policy == null || selector == null || transport == null ||
           work == null || !(work instanceof DistributableWork))
       {
-         super.scheduleWork(work, WorkManager.INDEFINITE, null, null);
+         localScheduleWork(work);
       }
       else
       {
@@ -199,12 +231,17 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
          if (policy.shouldDistribute(dw))
          {
-            // TODO
+            String dwmId = selector.selectDistributedWorkManager(getId(), dw);
+            if (dwmId != null)
+            {
+               transport.scheduleWork(dwmId, dw);
+               executed = true;
+            }
          }
 
          if (!executed)
          {
-            super.scheduleWork(work, WorkManager.INDEFINITE, null, null);
+            localScheduleWork(work);
          }
       }
    }
