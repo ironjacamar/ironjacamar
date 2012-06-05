@@ -1693,9 +1693,10 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    /**
     * Check configured query timeout
     * @param ws The statement
+    * @param explicitTimeout An explicit timeout value set
     * @exception SQLException Thrown if an error occurs
     */
-   void checkConfiguredQueryTimeout(WrappedStatement ws) throws SQLException
+   void checkConfiguredQueryTimeout(WrappedStatement ws, int explicitTimeout) throws SQLException
    {
       if (mc == null || dataSource == null)
          return;
@@ -1704,10 +1705,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
       // Use the transaction timeout
       if (mc.isTransactionQueryTimeout())
+      {
          timeout = dataSource.getTimeLeftBeforeTransactionTimeout();
+         if (timeout > 0 && explicitTimeout > 0 && timeout > explicitTimeout)
+            timeout = explicitTimeout;
+      }
 
       // Look for a configured value
-      if (timeout <= 0)
+      if (timeout <= 0 && explicitTimeout <= 0)
          timeout = mc.getQueryTimeout();
 
       if (timeout > 0)
