@@ -65,6 +65,9 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
    /** Default fetch size */
    protected static Integer defaultFetchSize = null;
 
+   /** Timeout set */
+   private int timeoutSet;
+
    static
    {
       String dfs = SecurityActions.getSystemProperty("ironjacamar.jdbc.defaultfetchsize");
@@ -85,6 +88,7 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
       this.s = s;
       this.spy = spy;
       this.jndiName = jndiName;
+      this.timeoutSet = 0;
 
       if (defaultFetchSize != null)
       {
@@ -655,6 +659,7 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
                                 jndiName, Constants.SPY_LOGGER_PREFIX_STATEMENT, timeout);
          
             s.setQueryTimeout(timeout);
+            timeoutSet = timeout;
          }
          catch (Throwable t)
          {
@@ -1279,7 +1284,7 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
     */
    protected void checkConfiguredQueryTimeout() throws SQLException
    {
-      lc.checkConfiguredQueryTimeout(this);
+      lc.checkConfiguredQueryTimeout(this, timeoutSet);
    }
 
    /**
@@ -1306,6 +1311,7 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
       {
          s.close();
       }
+      timeoutSet = 0;
    }
 
    /**
