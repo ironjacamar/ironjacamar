@@ -25,6 +25,7 @@ package org.jboss.jca.core.workmanager;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.WorkManager;
+import org.jboss.jca.core.api.workmanager.WorkManagerStatistics;
 import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
@@ -114,6 +115,9 @@ public class WorkManagerImpl implements WorkManager
    /** Active work wrappers */
    private Set<WorkWrapper> activeWorkWrappers;
 
+   /** Statistics */
+   private WorkManagerStatisticsImpl statistics;
+
    /**Default supported workcontext types*/
    static
    {
@@ -133,6 +137,7 @@ public class WorkManagerImpl implements WorkManager
       validatedWork = new HashSet<String>();
       shutdown = new AtomicBoolean(false);
       activeWorkWrappers = new HashSet<WorkWrapper>();
+      statistics = new WorkManagerStatisticsImpl();
    }
    
    /**
@@ -145,6 +150,15 @@ public class WorkManagerImpl implements WorkManager
          return name;
 
       return id;
+   }
+
+   /**
+    * Set the unique id of the work manager
+    * @param v The value
+    */
+   void setId(String v)
+   {
+      id = v;
    }
 
    /**
@@ -256,6 +270,24 @@ public class WorkManagerImpl implements WorkManager
    }
 
    /**
+    * Get the statistics
+    * @return The value
+    */
+   public WorkManagerStatistics getStatistics()
+   {
+      return statistics;
+   }
+
+   /**
+    * Set the statistics
+    * @param v The value
+    */
+   void setStatistics(WorkManagerStatisticsImpl v)
+   {
+      statistics = v;
+   }
+
+   /**
     * Clone the WorkManager implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
@@ -263,13 +295,15 @@ public class WorkManagerImpl implements WorkManager
     */
    public WorkManager clone() throws CloneNotSupportedException
    {
-      WorkManager wm = (WorkManager)super.clone();
+      WorkManagerImpl wm = (WorkManagerImpl)super.clone();
+      wm.setId(getId());
       wm.setName(getName());
       wm.setShortRunningThreadPool(getShortRunningThreadPool());
       wm.setLongRunningThreadPool(getLongRunningThreadPool());
       wm.setXATerminator(getXATerminator());
       wm.setSpecCompliant(isSpecCompliant());
       wm.setCallbackSecurity(getCallbackSecurity());
+      wm.setStatistics(statistics);
       
       return wm;
    }
@@ -326,6 +360,8 @@ public class WorkManagerImpl implements WorkManager
             workListener.workAccepted(event);
          }
 
+         statistics.deltaDoWorkAccepted();
+
          BlockingExecutor executor = getExecutor(work);
 
          if (startTimeout == WorkManager.INDEFINITE)
@@ -369,6 +405,8 @@ public class WorkManagerImpl implements WorkManager
 
             if (trace)
                log.tracef("Exception %s for %s", exception, this);
+
+            statistics.deltaDoWorkRejected();
 
             throw exception;
          }
@@ -433,6 +471,8 @@ public class WorkManagerImpl implements WorkManager
             workListener.workAccepted(event);
          }
 
+         statistics.deltaStartWorkAccepted();
+
          BlockingExecutor executor = getExecutor(work);
 
          if (startTimeout == WorkManager.INDEFINITE)
@@ -478,6 +518,8 @@ public class WorkManagerImpl implements WorkManager
 
             if (trace)
                log.tracef("Exception %s for %s", exception, this);
+
+            statistics.deltaStartWorkRejected();
 
             throw exception;
          }
@@ -538,6 +580,8 @@ public class WorkManagerImpl implements WorkManager
             workListener.workAccepted(event);
          }
 
+         statistics.deltaScheduleWorkAccepted();
+
          BlockingExecutor executor = getExecutor(work);
 
          if (startTimeout == WorkManager.INDEFINITE)
@@ -579,6 +623,8 @@ public class WorkManagerImpl implements WorkManager
 
             if (trace)
                log.tracef("Exception %s for %s", exception, this);
+
+            statistics.deltaScheduleWorkRejected();
 
             throw exception;
          }
@@ -629,6 +675,7 @@ public class WorkManagerImpl implements WorkManager
       synchronized (activeWorkWrappers)
       {
          activeWorkWrappers.add(ww);
+         statistics.setWorkActive(activeWorkWrappers.size());
       }
    }
 
@@ -641,6 +688,7 @@ public class WorkManagerImpl implements WorkManager
       synchronized (activeWorkWrappers)
       {
          activeWorkWrappers.remove(ww);
+         statistics.setWorkActive(activeWorkWrappers.size());
       }
    }
 
@@ -770,8 +818,12 @@ public class WorkManagerImpl implements WorkManager
          if (trace)
             log.tracef("Exception %s for %s", wrapper.getWorkException(), this);
 
+         statistics.deltaWorkFailed();
+
          throw wrapper.getWorkException();  
       }
+
+      statistics.deltaWorkSuccessful();
    }
 
    /**

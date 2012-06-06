@@ -112,6 +112,12 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Gracef
    public void setCallbackSecurity(Callback v);
 
    /**
+    * Get the statistics
+    * @return The value
+    */
+   public WorkManagerStatistics getStatistics();
+
+   /**
     * Clone the WorkManager implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported

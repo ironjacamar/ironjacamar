@@ -23,10 +23,18 @@
 package org.jboss.jca.core.workmanager.unit;
 
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+import org.jboss.jca.core.workmanager.rars.dwm.WorkConnection;
+import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
+import org.jboss.jca.deployers.fungal.RAActivator;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
 import java.net.URL;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.resource.spi.work.DistributableWork;
+import javax.resource.spi.work.Work;
 
 import org.jboss.logging.Logger;
 
@@ -91,6 +99,98 @@ public class DistributedWorkManagerTestCase
       assertNotNull(embedded.lookup("DistributedBootstrapContext2", Object.class));
    }
 
+   /**
+    * Test that a work instance can be executed
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testExecuted() throws Throwable
+   {
+      Context context = null;
+      try
+      {
+         context = new InitialContext();
+         
+         WorkConnectionFactory wcf = (WorkConnectionFactory)context.lookup("java:/eis/WorkConnectionFactory");
+         assertNotNull(wcf);
+
+         WorkConnection wc = wcf.getConnection();
+         wc.doWork(new MyWork());
+         wc.doWork(new MyDistributableWork());
+
+         /*
+         assertEquals(1, dwm1.getStatistics().getWorkSuccessful());
+         assertEquals(1, dwm2.getStatistics().getWorkSuccessful());
+         */
+
+         wc.close();
+      }
+      finally
+      {
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (Throwable t)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   // --------------------------------------------------------------------------------||
+   // Helper classes -----------------------------------------------------------------||
+   // --------------------------------------------------------------------------------||
+   /**
+    * Work
+    */
+   public static class MyWork implements Work
+   {
+      /**
+       * {@inheritDoc}
+       */
+      public void run()
+      {
+         log.info("MyWork: run");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void release()
+      {
+         log.info("MyWork: release");
+      }
+   }
+
+   /**
+    * DistributableWork
+    */
+   public static class MyDistributableWork implements DistributableWork
+   {
+      /** Serial version uid */
+      private static final long serialVersionUID = 1L;
+
+      /**
+       * {@inheritDoc}
+       */
+      public void run()
+      {
+         log.info("MyDistributableWork: run");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void release()
+      {
+         log.info("MyDistributableWork: release");
+      }
+   }
+
    // --------------------------------------------------------------------------------||
    // Lifecycle Methods --------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
@@ -114,11 +214,24 @@ public class DistributedWorkManagerTestCase
 
       embedded.deploy(dwm);
 
+      // Disable RAActivator
+      RAActivator raa = embedded.lookup("RAActivator", RAActivator.class);
+      if (raa == null)
+         throw new IllegalStateException("RAActivator not defined");
+
+      raa.setEnabled(false);
+
       // Deploy work.rar
       URL workRar =
          DistributedWorkManagerTestCase.class.getClassLoader().getResource("work.rar");
 
       embedded.deploy(workRar);
+
+      // Deploy dwm-invm-ra.xml
+      URL dwmInVM =
+         DistributedWorkManagerTestCase.class.getClassLoader().getResource("dwm-invm-ra.xml");
+
+      embedded.deploy(dwmInVM);
 
       dwm1 = embedded.lookup("DistributedWorkManager1", DistributedWorkManager.class);
       dwm2 = embedded.lookup("DistributedWorkManager2", DistributedWorkManager.class);
@@ -131,6 +244,12 @@ public class DistributedWorkManagerTestCase
    @AfterClass
    public static void afterClass() throws Throwable
    {
+      // Undeploy dwm-invm-ra.xml
+      URL dwmInVM =
+         DistributedWorkManagerTestCase.class.getClassLoader().getResource("dwm-invm-ra.xml");
+
+      embedded.undeploy(dwmInVM);
+
       // Undeploy work.rar
       URL workRar =
          DistributedWorkManagerTestCase.class.getClassLoader().getResource("work.rar");

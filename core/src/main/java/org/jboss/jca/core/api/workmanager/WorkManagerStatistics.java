@@ -1,4 +1,3 @@
-<!--
 /*
  * JBoss, Home of Professional Open Source.
  * Copyright 2012, Red Hat Middleware LLC, and individual contributors
@@ -20,19 +19,65 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
--->
 
-<ironjacamar xmlns="http://www.jboss.org/ironjacamar/schema"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
-             http://www.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">
+package org.jboss.jca.core.api.workmanager;
 
-  <transaction-support>NoTransaction</transaction-support>
-  
-  <connection-definitions>
-    <connection-definition class-name="org.jboss.jca.core.workmanager.rars.dwm.WorkManagedConnectionFactory" jndi-name="java:/eis/WorkConnectionFactory" pool-name="WorkConnectionFactory">
-    </connection-definition>
-  </connection-definitions>
+/**
+ * The JBoss work manager statistics
+ */
+public interface WorkManagerStatistics
+{
+   /**
+    * Work: Active
+    * @return The value
+    */
+   public int getWorkActive();
 
+   /**
+    * Work: Successful
+    * @return The value
+    */
+   public int getWorkSuccessful();
 
-</ironjacamar>
+   /**
+    * Work: Failed
+    * @return The value
+    */
+   public int getWorkFailed();
+
+   /**
+    * DoWork: Accepted
+    * @return The value
+    */
+   public int getDoWorkAccepted();
+
+   /**
+    * DoWork: Rejected
+    * @return The value
+    */
+   public int getDoWorkRejected();
+
+   /**
+    * ScheduleWork: Accepted
+    * @return The value
+    */
+   public int getScheduleWorkAccepted();
+
+   /**
+    * ScheduleWork: Rejected
+    * @return The value
+    */
+   public int getScheduleWorkRejected();
+
+   /**
+    * StartWork: Accepted
+    * @return The value
+    */
+   public int getStartWorkAccepted();
+
+   /**
+    * StartWork: Rejected
+    * @return The value
+    */
+   public int getStartWorkRejected();
+}

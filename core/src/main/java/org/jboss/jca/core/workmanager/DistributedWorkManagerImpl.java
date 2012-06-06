@@ -245,4 +245,20 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
          }
       }
    }
+
+   /**
+    * Clone the WorkManager implementation
+    * @return A copy of the implementation
+    * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
+    *  
+    */
+   public org.jboss.jca.core.api.workmanager.WorkManager clone() throws CloneNotSupportedException
+   {
+      DistributedWorkManager wm = (DistributedWorkManager)super.clone();
+      wm.setPolicy(getPolicy());
+      wm.setSelector(getSelector());
+      wm.setTransport(getTransport());
+
+      return wm;
+   }
 }

@@ -119,6 +119,9 @@
         interface="org.jboss.jca.core.api.workmanager.DistributedWorkManager"
         class="org.jboss.jca.core.workmanager.DistributedWorkManagerImpl">
 
+    <!-- The name -->
+    <property name="Name">DWM1</property>
+
     <!-- The short running thread pool -->
     <property name="ShortRunningThreadPool"><inject bean="DistributedWorkManager1ShortRunningThreadPool"/></property>
 
@@ -144,6 +147,9 @@
   <bean name="DistributedWorkManager2" 
         interface="org.jboss.jca.core.api.workmanager.DistributedWorkManager"
         class="org.jboss.jca.core.workmanager.DistributedWorkManagerImpl">
+
+    <!-- The name -->
+    <property name="Name">DWM2</property>
 
     <!-- The short running thread pool -->
     <property name="ShortRunningThreadPool"><inject bean="DistributedWorkManager2ShortRunningThreadPool"/></property>
