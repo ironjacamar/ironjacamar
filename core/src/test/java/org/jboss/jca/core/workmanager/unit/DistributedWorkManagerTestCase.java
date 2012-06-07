@@ -118,10 +118,8 @@ public class DistributedWorkManagerTestCase
          wc.doWork(new MyWork());
          wc.doWork(new MyDistributableWork());
 
-         /*
          assertEquals(1, dwm1.getStatistics().getWorkSuccessful());
          assertEquals(1, dwm2.getStatistics().getWorkSuccessful());
-         */
 
          wc.close();
       }
