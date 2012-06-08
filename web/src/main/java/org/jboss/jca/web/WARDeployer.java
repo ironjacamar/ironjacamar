@@ -33,6 +33,7 @@ import com.github.fungal.spi.deployers.Context;
 import com.github.fungal.spi.deployers.DeployException;
 import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
+import org.eclipse.jetty.webapp.WebAppClassLoader;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
@@ -138,9 +139,21 @@ public class WARDeployer implements Deployer
             contextPath += path.substring(index + 1, path.lastIndexOf("."));
          }
 
+         String tmpPath = "/web";
+         // Map ROOT.war to /
+         if ("/ROOT".equalsIgnoreCase(contextPath))
+         {
+            contextPath = "/";
+            tmpPath += "/root"; 
+         }
+         else
+         {
+            tmpPath += contextPath;
+         }
+
          // Setup temporary work directory
          File tmp = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/tmp/");
-         File tmpDeployment = new File(tmp, "/web" + contextPath);
+         File tmpDeployment = new File(tmp, tmpPath);
 
          if (tmpDeployment.exists())
          {
@@ -151,22 +164,22 @@ public class WARDeployer implements Deployer
          if (!tmpDeployment.mkdirs())
             throw new IOException("Unable to create " + tmpDeployment);
 
-         // Map ROOT.war to /
-         if ("/ROOT".equalsIgnoreCase(contextPath))
-            contextPath = "/";
-
          log.debug("ContextPath=" + contextPath);
+         log.debug("TmpPath=" + tmpPath);
 
          WebAppContext webapp = new WebAppContext();
          webapp.setContextPath(contextPath);
          webapp.setWar(url.toString());
          webapp.setTempDirectory(tmpDeployment);
 
+         ClassLoader webappCL = new WARClassLoader(context.getKernel(), parent);
+         webapp.setClassLoader(new WebAppClassLoader(webappCL, webapp));
+
          webServer.addHandler(webapp);
 
          log.info("Deployed: " + url.toExternalForm());
 
-         return new WARDeployment(url, webapp, tmpDeployment, parent);
+         return new WARDeployment(url, webapp, tmpDeployment, webappCL);
       }
       catch (Throwable t)
       {

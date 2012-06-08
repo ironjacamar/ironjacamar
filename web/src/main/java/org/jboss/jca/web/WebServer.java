@@ -32,6 +32,7 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.bio.SocketConnector;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
 
 /**
@@ -187,7 +188,10 @@ public class WebServer implements DeployerPhases
       {
          try
          {
-            server.setHandler(handlers);
+            ContextHandlerCollection chc = new ContextHandlerCollection();
+            chc.setHandlers(handlers.getHandlers());
+
+            server.setHandler(chc);
       
             server.start();
          }
