@@ -34,8 +34,8 @@ import org.jboss.arquillian.container.spi.client.container.DeploymentException;
 import org.jboss.arquillian.container.spi.client.container.LifecycleException;
 import org.jboss.arquillian.container.spi.client.protocol.ProtocolDescription;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
-import org.jboss.arquillian.container.spi.context.annotation.ContainerScoped;
 import org.jboss.arquillian.core.api.InstanceProducer;
+import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -53,11 +53,11 @@ public class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCACont
    private Embedded embedded;
 
    /** Context */
-   @Inject @ContainerScoped
+   @Inject @ApplicationScoped
    private InstanceProducer<Context> contextProducer;
 
    /** Kernel */
-   @Inject @ContainerScoped
+   @Inject @ApplicationScoped
    private InstanceProducer<Embedded> embeddedProducer;
 
    /**

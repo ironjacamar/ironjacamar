@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.test.spi.TestEnricher;
+import org.jboss.logging.Logger;
 
 /**
  * Handle @Inject fields for test cases based on kernel based lookups.
@@ -37,6 +38,12 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  */
 public class EmbeddedJCAEnricher implements TestEnricher
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(EmbeddedJCAEnricher.class);
+
+   /** Trace logging */
+   private static boolean trace = log.isTraceEnabled();
+
    @org.jboss.arquillian.core.api.annotation.Inject
    private Instance<Embedded> embeddedInst;
    
@@ -47,6 +54,9 @@ public class EmbeddedJCAEnricher implements TestEnricher
    {
       if (embeddedInst.get() != null)
       {
+         if (trace)
+            log.tracef("Injecting test case: %s", testCase.getClass().getName());
+
          injectClass(testCase);
       }
    }
@@ -62,30 +72,32 @@ public class EmbeddedJCAEnricher implements TestEnricher
    @SuppressWarnings("unchecked")
    private void injectClass(Object testCase)
    {
-      try
-      {
-         List<Field> annotatedFields =
-            SecurityActions.getFieldsWithAnnotation(testCase.getClass(),
-                                                    org.jboss.jca.embedded.arquillian.Inject.class);
+      List<Field> annotatedFields =
+         SecurityActions.getFieldsWithAnnotation(testCase.getClass(),
+                                                 org.jboss.jca.embedded.arquillian.Inject.class);
+
+      if (trace)
+         log.tracef("Fields: %s", annotatedFields);
          
+      if (annotatedFields != null)
+      {
          for (Field field : annotatedFields)
          {
+            if (trace)
+               log.tracef("Injecting field: %s", field);
+
+            org.jboss.jca.embedded.arquillian.Inject annotation = null;
             try
             {
-               org.jboss.jca.embedded.arquillian.Inject annotation =
-                  field.getAnnotation(org.jboss.jca.embedded.arquillian.Inject.class);
-
+               field.setAccessible(true);
+               annotation = field.getAnnotation(org.jboss.jca.embedded.arquillian.Inject.class);
                field.set(testCase, resolveResource(field, annotation));
             }
-            catch (Throwable t)
+            catch (IllegalAccessException iae)
             {
-               // Unable to set field
+               throw new RuntimeException("Could not inject: " + annotation + " (" + field.getType() + ")", iae);
             }
          }
-      }
-      catch (Throwable t)
-      {
-         throw new RuntimeException("Could not inject fields", t);
       }
    }
 
@@ -100,7 +112,7 @@ public class EmbeddedJCAEnricher implements TestEnricher
       {
          // Nothing to do
       }
-      
-      return null;
+
+      throw new RuntimeException("Could not inject: " + annotation.name() + " (" + field.getType() + ")");
    }
 }
