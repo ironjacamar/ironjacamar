@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.embedded.arquillian;
 
+import org.jboss.jca.deployers.fungal.RAActivator;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
@@ -37,6 +38,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaD
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
@@ -45,10 +47,15 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  * Arquillian {@link DeployableContainer} adaptor for Embedded JCA
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision: $
  */
 public class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCAContainerConfiguration>
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(EmbeddedJCAContainer.class);
+
+   /** Trace logging */
+   private static boolean trace = log.isTraceEnabled();
+
    /** EmbeddedJCA */
    private Embedded embedded;
 
@@ -66,6 +73,27 @@ public class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCACont
    public EmbeddedJCAContainer()
    {
       this.embedded = null;
+   }
+
+   /**
+    * Set auto activate
+    * @param v The value
+    */
+   void setAutoActivate(boolean v)
+   {
+      try
+      {
+         RAActivator activator = embedded.lookup("RAActivator", RAActivator.class);
+
+         if (activator != null)
+         {
+            activator.setEnabled(v);
+         }
+      }
+      catch (Throwable t)
+      {
+         // Nothing
+      }
    }
 
    /**

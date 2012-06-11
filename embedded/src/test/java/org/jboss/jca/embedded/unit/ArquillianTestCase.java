@@ -22,6 +22,7 @@
 
 package org.jboss.jca.embedded.unit;
 
+import org.jboss.jca.embedded.arquillian.Configuration;
 import org.jboss.jca.embedded.rars.simple.TestConnection;
 import org.jboss.jca.embedded.rars.simple.TestConnectionFactory;
 
@@ -47,6 +48,7 @@ import static org.junit.Assert.assertNotNull;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
+@Configuration(autoActivate = true)
 public class ArquillianTestCase
 {
    // --------------------------------------------------------------------------------||

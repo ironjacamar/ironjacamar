@@ -315,6 +315,10 @@ raa.setEnabled(true);
 <xi:include parse="text" href="../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ArquillianTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
           </programlisting>
 
+          <para>The class makes use of the <code>org.jboss.jca.embedded.arquillian.Configuration</code> annotation
+             in order to specify that the deployed archive should be auto activated through the <code>RAActivator</code>
+             bean.</para>
+
           <note>Note that, the name for the <code>ResourceAdapterArchive</code> must end with the
              <code>.rar</code> extension.</note>
 

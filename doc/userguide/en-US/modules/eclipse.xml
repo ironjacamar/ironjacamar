@@ -48,7 +48,7 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
     <title>Configuration of the plugin</title>
 
     <para>
-      Open Window->Preferences and go to the IronJacamar category.
+      Open Window-&gt;Preferences and go to the IronJacamar category.
 
       You must point the IronJacamar home setting to the root directory of the IronJacamar installation, like
     </para>
@@ -67,7 +67,7 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
     <title>New IronJacamar project</title>
 
     <para>
-      Select File->New->Project... and go to the IronJacamar category. 
+      Select File-&gt;New-&gt;Project... and go to the IronJacamar category. 
     </para>
 
     <para>
@@ -75,5 +75,4 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
     </para>
     
   </section>
-
 </chapter>

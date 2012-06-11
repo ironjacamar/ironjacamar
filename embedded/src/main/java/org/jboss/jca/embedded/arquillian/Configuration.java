@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,33 +21,23 @@
  */
 package org.jboss.jca.embedded.arquillian;
 
-import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.test.spi.TestEnricher;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Arquillian {@link LoadableExtension} adaptor for Embedded JCA
+ * Configuration
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision: $
  */
-public class EmbeddedJCALoadableExtension implements LoadableExtension
+@Documented
+@Retention(RUNTIME)
+@Target(ElementType.TYPE)
+public @interface Configuration
 {
-   /**
-    * Constructor
-    */
-   public EmbeddedJCALoadableExtension()
-   {
-      
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void register(ExtensionBuilder builder)
-   {
-      builder.service(DeployableContainer.class, EmbeddedJCAContainer.class);
-      builder.service(TestEnricher.class, EmbeddedJCAEnricher.class);
-      builder.observer(EmbeddedJCAObserver.class);
-   }
+   /** Auto activate deployments */
+   public boolean autoActivate() default true;
 }
