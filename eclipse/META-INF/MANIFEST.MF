@@ -17,7 +17,6 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  libs/ironjacamar-codegenerator.jar,
  libs/ironjacamar-common-api.jar,
- libs/ironjacamar-common-impl-papaki.jar,
  libs/ironjacamar-common-impl.jar,
  libs/ironjacamar-common-spi.jar,
  libs/ironjacamar-core-api.jar,

@@ -12,7 +12,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-validator"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/papaki-core.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/validation-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal.jar"/>

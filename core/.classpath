@@ -23,12 +23,10 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-junit-core.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/commons-logging.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/hibernate-validator.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/javassist.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logmanager.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-stdio.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jcl-over-slf4j.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/log4j.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/papaki-core.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/slf4j-jboss-logmanager.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal-cli.jar"/>

@@ -18,7 +18,6 @@
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-spec-api" rev="${version.ironjacamar}" conf="compile"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-api" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-impl" rev="${version.ironjacamar}" conf="test"/>
-    <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-impl-papaki" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-spi" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-core-api" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-core-impl" rev="${version.ironjacamar}" conf="test"/>

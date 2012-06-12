@@ -53,7 +53,6 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
       "ironjacamar-core-impl.jar",
       "ironjacamar-common-api.jar",
       "ironjacamar-common-impl.jar",
-      "ironjacamar-common-impl-papaki.jar",
       "ironjacamar-common-spi.jar",
       "ironjacamar-spec-api.jar",
       "ironjacamar-deployers-common.jar",

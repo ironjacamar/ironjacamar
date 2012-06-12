@@ -8,7 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/papaki-core.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-container-test-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-junit-core.jar"/>

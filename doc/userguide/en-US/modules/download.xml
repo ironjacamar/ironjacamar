@@ -101,12 +101,6 @@ ironjacamar-1.0.0.Final.tar.gz
               </entry>
             </row>
             <row>
-              <entry><code>ironjacamar-common-impl-papaki</code></entry>
-              <entry>
-                The Papaki extension for the common module
-              </entry>
-            </row>
-            <row>
               <entry><code>ironjacamar-common-spi</code></entry>
               <entry>
                 The SPI for the common module

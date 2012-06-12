@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry exported="true" kind="lib" path="libs/ironjacamar-codegenerator.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/ironjacamar-common-api.jar"/>
-	<classpathentry exported="true" kind="lib" path="libs/ironjacamar-common-impl-papaki.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/ironjacamar-common-impl.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/ironjacamar-common-spi.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/ironjacamar-core-api.jar"/>

@@ -39,12 +39,6 @@
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
-      <artifactId>ironjacamar-common-impl-papaki</artifactId>
-      <version>${version.org.jboss.ironjacamar}</version>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-core-api</artifactId>
       <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
