@@ -260,7 +260,7 @@
   <!-- ================================= 
        Target: artifacts
        ================================= -->
-  <target name="artifacts">
+  <target name="artifacts" depends="jars">
     <jar destfile="${target.dir}/${name}-common-api-sources.jar"
          basedir="src/main/java"
          index="true"
