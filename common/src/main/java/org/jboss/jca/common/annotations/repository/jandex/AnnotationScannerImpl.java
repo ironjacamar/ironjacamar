@@ -95,9 +95,10 @@ public class AnnotationScannerImpl implements AnnotationScanner
             }
             else if (externalForm.endsWith(".jar"))
             {
+               JarFile jarFile = null;
                try
                {
-                  JarFile jarFile = new JarFile(new File(url.toURI()));
+                  jarFile = new JarFile(new File(url.toURI()));
                   Enumeration<JarEntry> entries = jarFile.entries();
                   while (entries.hasMoreElements())
                   {
@@ -134,6 +135,20 @@ public class AnnotationScannerImpl implements AnnotationScanner
                catch (Throwable t)
                {
                   log.error("Unable to process: " + externalForm, t);
+               }
+               finally
+               {
+                  if (jarFile != null)
+                  {
+                     try
+                     {
+                        jarFile.close();
+                     }
+                     catch (IOException ioe)
+                     {
+                        // Nothing
+                     }
+                  }
                }
             }
          }
