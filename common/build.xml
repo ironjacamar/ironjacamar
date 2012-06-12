@@ -29,24 +29,9 @@
   <property name="build.common.dir" value="${build.dir}/common" />
   
   <!-- ================================= 
-       Target: compile
+       compile
        ================================= -->
-  <target name="compile-papaki" unless="as">
-    <javac srcdir="src/main"
-           destdir="${build.common.dir}"
-           classpathref="main.lib.path.id"
-           debug="${javac.debug}"
-           deprecation="${javac.deprecation}"
-           includes="**/papaki/**"
-           optimize="${javac.optimize}"
-           includeAntRuntime="false">
-      <compilerarg value="-Xlint"/>
-      <compilerarg value="-AgeneratedTranslationFilesPath=${build.common.dir}"/>
-      <compilerarg value="-AtranslationFilesPath=${build.common.dir}"/>
-    </javac>
-  </target>
-
-  <target name="compile-base">
+  <target name="compile">
     <mkdir dir="${build.common.dir}" />
     
     <javac srcdir="src/main"
@@ -54,7 +39,6 @@
            classpathref="main.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
-           excludes="**/papaki/**"
            optimize="${javac.optimize}"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
@@ -81,14 +65,11 @@
     </copy>
 
   </target>
-
-  <target name="compile" depends="compile-base,compile-papaki">
-  </target>
   
   <!-- ================================= 
        Target: jars
        ================================= -->
-  <target name="jars-base">
+  <target name="jars" depends="compile">
     <jar destfile="${target.dir}/${name}-common-api.jar"
          basedir="${build.common.dir}"
          index="true"
@@ -125,26 +106,9 @@
          indexMetaInf="true"
          update="true"
          level="9"
-         excludes="**/*.java, **/common/api/**, **/common/spi/**, **/papaki/**">
+         excludes="**/*.java, **/*.dtd, **/*.xsd, **/common/api/**, **/common/spi/**">
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common Implementation"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
-	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-      </manifest>
-    </jar>
-  </target>
-
-  <target name="jars" depends="compile,jars-base" unless="as">
-    <jar destfile="${target.dir}/${name}-common-impl-papaki.jar"
-         basedir="${build.common.dir}"
-         index="true"
-         indexMetaInf="true"
-         update="true"
-         level="9"
-         includes="**/papaki/**">
-      <manifest>
-	<attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki SPI Implementation"/>
         <attribute name="Implementation-Version" value="${version}"/>
 	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
@@ -296,7 +260,7 @@
   <!-- ================================= 
        Target: artifacts
        ================================= -->
-  <target name="artifacts-base">
+  <target name="artifacts">
     <jar destfile="${target.dir}/${name}-common-api-sources.jar"
          basedir="src/main/java"
          index="true"
@@ -333,7 +297,7 @@
          update="true"
          level="9">
       <fileset dir="src/main/java"
-               excludes="**/common/api/**,**/common/spi/**,**/papaki/**"/>
+               excludes="**/common/api/**,**/common/spi/**"/>
       <fileset dir="${build.common.dir}"
                includes="**/*.java"/>
       <manifest>
@@ -439,7 +403,6 @@
       <packageset dir="src/main/java" defaultexcludes="yes">
         <exclude name="**/common/api/**"/>
         <exclude name="**/common/spi/**"/>
-        <exclude name="**/papaki/**"/>
       </packageset>
 
       <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
@@ -461,63 +424,6 @@
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
-  </target>
-
-  <target name="artifacts" depends="jars,artifacts-base" unless="as">
-
-    <jar destfile="${target.dir}/${name}-common-impl-papaki-sources.jar"
-         basedir="src/main/java"
-         index="true"
-         indexMetaInf="true"
-         update="true"
-         level="9"
-         includes="**/papaki/**">
-      <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki - Sources"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
-        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-      </manifest>
-    </jar>
-
-    <mkdir dir="${build.common.dir}/docs/papaki"/>
-    <javadoc destdir="${build.common.dir}/docs/papaki"
-             doclet="org.jboss.apiviz.APIviz"
-             docletpathref="main.lib.path.id"
-             author="true"
-             version="true"
-             windowtitle="IronJacamar Common - Implementation - Papaki"
-             doctitle="IronJacamar Common - Implementation - Papaki"
-             use="true"
-             additionalparam="-author -version"
-             classpath="${build.common.dir}"
-             classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
-
-      <packageset dir="src/main/java" defaultexcludes="yes">
-        <include name="**/papaki/**"/>
-      </packageset>
-
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
-    </javadoc>
-    <copy todir="${build.common.dir}/docs/papaki" overwrite="true">
-      <fileset dir="${tools.dir}/api"/>
-    </copy>
-
-    <jar destfile="${target.dir}/${name}-common-impl-papaki-javadoc.jar"
-         basedir="${build.common.dir}/docs/papaki"
-         index="true"
-         indexMetaInf="true"
-         update="true"
-         level="9">
-      <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Papaki - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
-        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-      </manifest>
-    </jar>
-
   </target>
   
 </project>

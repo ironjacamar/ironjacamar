@@ -23,7 +23,7 @@
 package org.jboss.jca.deployers.annotations;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerImpl;
+import org.jboss.jca.common.annotations.repository.jandex.AnnotationScannerImpl;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;

@@ -28,8 +28,8 @@ package org.jboss.jca.common.spi.annotations.repository;
  */
 public class AnnotationScannerFactory
 {
-   /** Papaki implementation */
-   private static final String PAPAKI = "org.jboss.jca.common.annotations.repository.papaki.AnnotationScannerImpl";
+   /** Jandex implementation */
+   private static final String JANDEX = "org.jboss.jca.common.annotations.repository.jandex.AnnotationScannerImpl";
 
    /** The default implementation of the annotation scanner */
    private static AnnotationScanner defaultImplementation = null;
@@ -41,7 +41,7 @@ public class AnnotationScannerFactory
    {
       try
       {
-         Class<?> clz = Class.forName(PAPAKI);
+         Class<?> clz = Class.forName(JANDEX, true, AnnotationScannerFactory.class.getClassLoader());
          defaultImplementation = (AnnotationScanner)clz.newInstance();
       }
       catch (Throwable t)
