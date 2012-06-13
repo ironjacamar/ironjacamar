@@ -397,6 +397,8 @@ public class Main
                      }
                      catch (Throwable t)
                      {
+                        // Nothing we can do
+                        t.printStackTrace(System.err);
                         out.println("Unknown");
                      }
                   }
@@ -902,6 +904,7 @@ public class Main
       catch (Throwable t)
       {
          // Nothing we can do
+         t.printStackTrace(System.err);
       }
       return result;
    }
