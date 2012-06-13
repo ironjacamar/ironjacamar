@@ -380,8 +380,8 @@ public class Main
                   {
                      try
                      {
-                        Class<?> clazz = Class.forName(classname, true, cl);
                         out.print("  Validating: ");
+                        Class<?> clazz = Class.forName(classname, true, cl);
 
                         if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
                         {
@@ -392,9 +392,9 @@ public class Main
                            out.println("No");
                         }
                      }
-                     catch (Exception e)
+                     catch (Throwable t)
                      {
-                        // Nothing we can do
+                        out.println("Unknown");
                      }
                   }
                   
