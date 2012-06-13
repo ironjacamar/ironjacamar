@@ -59,9 +59,9 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
-public class DistributedWorkManagerTestCase
+public class DistributedWorkManagerSocketTestCase
 {
-   private static Logger log = Logger.getLogger(DistributedWorkManagerTestCase.class);
+   private static Logger log = Logger.getLogger(DistributedWorkManagerSocketTestCase.class);
 
    @Resource(mappedName = "java:/eis/WorkConnectionFactory")
    private WorkConnectionFactory wcf;
@@ -90,8 +90,8 @@ public class DistributedWorkManagerTestCase
    public static InputStreamDescriptor createDistributedWorkManagerDeployment()
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm.xml",
-                                                            cl.getResourceAsStream("dwm.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-socket.xml",
+                                                            cl.getResourceAsStream("dwm-socket.xml"));
       return isd;
    }
 

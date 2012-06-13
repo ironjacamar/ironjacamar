@@ -1,0 +1,240 @@
+<deployment>
+
+  <!-- DistributedWorkManager1ThreadGroup -->
+  <bean name="DistributedWorkManager1ThreadGroup"
+        class="java.lang.ThreadGroup">
+    <constructor>
+      <parameter>dwm1</parameter>
+    </constructor>
+    <ignoreStop/>
+    <ignoreDestroy/>
+  </bean>
+
+  <!-- DistributedWorkManager2ThreadGroup -->
+  <bean name="DistributedWorkManager2ThreadGroup"
+        class="java.lang.ThreadGroup">
+    <constructor>
+      <parameter>dwm2</parameter>
+    </constructor>
+    <ignoreStop/>
+    <ignoreDestroy/>
+  </bean>
+
+  <!-- DistributedWorkManager1ThreadFactory -->
+  <bean name="DistributedWorkManager1ThreadFactory"
+        interface="java.util.concurrent.ThreadFactory"
+        class="org.jboss.threads.JBossThreadFactory">
+    <constructor>
+      <parameter><inject bean="DistributedWorkManager1ThreadGroup"/></parameter>
+      <parameter>false</parameter>
+      <parameter>5</parameter>
+      <parameter>work</parameter>
+      <parameter><null/></parameter>
+      <parameter><null/></parameter>
+    </constructor>
+  </bean>
+
+  <!-- DistributedWorkManager2ThreadFactory -->
+  <bean name="DistributedWorkManager2ThreadFactory"
+        interface="java.util.concurrent.ThreadFactory"
+        class="org.jboss.threads.JBossThreadFactory">
+    <constructor>
+      <parameter><inject bean="DistributedWorkManager2ThreadGroup"/></parameter>
+      <parameter>false</parameter>
+      <parameter>5</parameter>
+      <parameter>work</parameter>
+      <parameter><null/></parameter>
+      <parameter><null/></parameter>
+    </constructor>
+  </bean>
+
+  <!-- DistributedWorkManager1ShortRunningThreadPool -->
+  <bean name="DistributedWorkManager1ShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+    <constructor>
+      <!-- Core threads -->
+      <parameter>20</parameter>
+      <!-- Max threads -->
+      <parameter>100</parameter>
+      <!-- 60 seconds keepalive -->
+      <parameter>60</parameter>
+      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
+      <!-- Queue size -->
+      <parameter>1024</parameter>
+      <!-- Thread factory -->
+      <parameter><inject bean="DistributedWorkManager1ThreadFactory"/></parameter>
+      <!-- Blocking -->
+      <parameter>true</parameter>
+      <!-- Handoff executor -->
+      <parameter><inject bean="RejectingExecutor"/></parameter>
+    </constructor>
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- DistributedWorkManager2ShortRunningThreadPool -->
+  <bean name="DistributedWorkManager2ShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+    <constructor>
+      <!-- Core threads -->
+      <parameter>20</parameter>
+      <!-- Max threads -->
+      <parameter>100</parameter>
+      <!-- 60 seconds keepalive -->
+      <parameter>60</parameter>
+      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
+      <!-- Queue size -->
+      <parameter>1024</parameter>
+      <!-- Thread factory -->
+      <parameter><inject bean="DistributedWorkManager2ThreadFactory"/></parameter>
+      <!-- Blocking -->
+      <parameter>true</parameter>
+      <!-- Handoff executor -->
+      <parameter><inject bean="RejectingExecutor"/></parameter>
+    </constructor>
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- DistributedWorkManager1Policy -->
+  <bean name="DistributedWorkManager1Policy" class="org.jboss.jca.core.workmanager.policy.Always">
+  </bean>
+
+  <!-- DistributedWorkManager1Selector -->
+  <bean name="DistributedWorkManager1Selector" class="org.jboss.jca.core.workmanager.selector.FirstAvailable">
+  </bean>
+
+  <!-- DistributedWorkManager2Policy -->
+  <bean name="DistributedWorkManager2Policy" class="org.jboss.jca.core.workmanager.policy.Always">
+  </bean>
+
+  <!-- DistributedWorkManager2Selector -->
+  <bean name="DistributedWorkManager2Selector" class="org.jboss.jca.core.workmanager.selector.FirstAvailable">
+  </bean>
+
+  <!-- DistributedWorkManager1Transport -->
+  <bean name="DistributedWorkManager1Transport"
+          class="org.jboss.jca.core.workmanager.transport.socket.SocketTransport">
+        <!-- The executor -->
+        <property name="ExecutorService">
+            <inject bean="Kernel" property="ExecutorService"/>
+        </property>
+
+        <!-- The host -->
+        <property name="Host">127.0.0.1</property>
+
+        <!-- The port -->
+        <property name="Port">1299</property>
+
+        <!-- The work managers -->
+        <property name="WorkManagers">
+            <map>
+                <entry>
+                    <key>DWM2</key>
+                    <value>localhost:1300</value>
+                </entry>
+            </map>
+        </property>
+  </bean>
+
+
+  <!-- DistributedWorkManager2Transport -->
+  <bean name="DistributedWorkManager2Transport"
+          class="org.jboss.jca.core.workmanager.transport.socket.SocketTransport">
+        <!-- The executor -->
+        <property name="ExecutorService">
+            <inject bean="Kernel" property="ExecutorService"/>
+        </property>
+
+        <!-- The host -->
+        <property name="Host">127.0.0.1</property>
+
+        <!-- The port -->
+        <property name="Port">1300</property>
+
+        <!-- The work managers -->
+        <property name="WorkManagers">
+            <map>
+                <entry>
+                    <key>DWM1</key>
+                    <value>localhost:1299</value>
+                </entry>
+            </map>
+        </property>
+  </bean>
+
+  <!-- DistributedWorkManager1 -->
+  <bean name="DistributedWorkManager1"
+        interface="org.jboss.jca.core.api.workmanager.DistributedWorkManager"
+        class="org.jboss.jca.core.workmanager.DistributedWorkManagerImpl">
+
+    <!-- The name -->
+    <property name="Name">DWM1</property>
+
+    <!-- The short running thread pool -->
+    <property name="ShortRunningThreadPool"><inject bean="DistributedWorkManager1ShortRunningThreadPool"/></property>
+
+    <!-- The XA terminator -->
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+
+    <!-- The callback security module -->
+    <property name="CallbackSecurity"><inject bean="Callback"/></property>
+
+    <!-- The policy -->
+    <property name="Policy"><inject bean="DistributedWorkManager1Policy"/></property>
+
+    <!-- The selector -->
+    <property name="Selector"><inject bean="DistributedWorkManager1Selector"/></property>
+
+    <!-- The transport -->
+    <property name="Transport"><inject bean="DistributedWorkManager1Transport"/></property>
+
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- DistributedWorkManager2 -->
+  <bean name="DistributedWorkManager2"
+        interface="org.jboss.jca.core.api.workmanager.DistributedWorkManager"
+        class="org.jboss.jca.core.workmanager.DistributedWorkManagerImpl">
+
+    <!-- The name -->
+    <property name="Name">DWM2</property>
+
+    <!-- The short running thread pool -->
+    <property name="ShortRunningThreadPool"><inject bean="DistributedWorkManager2ShortRunningThreadPool"/></property>
+
+    <!-- The XA terminator -->
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+
+    <!-- The callback security module -->
+    <property name="CallbackSecurity"><inject bean="Callback"/></property>
+
+    <!-- The policy -->
+    <property name="Policy"><inject bean="DistributedWorkManager1Policy"/></property>
+
+    <!-- The selector -->
+    <property name="Selector"><inject bean="DistributedWorkManager1Selector"/></property>
+
+    <!-- The transport -->
+    <property name="Transport"><inject bean="DistributedWorkManager2Transport"/></property>
+
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- DistributedBootstrapContext1 -->
+  <bean name="DistributedBootstrapContext1"
+        interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
+        class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
+    <property name="Name">DWM1BC</property>
+    <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
+    <property name="WorkManager"><inject bean="DistributedWorkManager1"/></property>
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+  </bean>
+
+  <!-- DistributedBootstrapContext2 -->
+  <bean name="DistributedBootstrapContext2"
+        interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
+        class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
+    <property name="Name">DWM2BC</property>
+    <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
+    <property name="WorkManager"><inject bean="DistributedWorkManager2"/></property>
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+  </bean>
+
+</deployment>
