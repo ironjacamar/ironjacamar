@@ -110,7 +110,7 @@
 
   <!-- DistributedWorkManager1Transport -->
   <bean name="DistributedWorkManager1Transport"
-          class="org.jboss.jca.core.workmanager.transport.socket.SocketTransport">
+          class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
         <!-- The executor -->
         <property name="ExecutorService">
             <inject bean="Kernel" property="ExecutorService"/>
@@ -124,7 +124,7 @@
 
         <!-- The work managers -->
         <property name="WorkManagers">
-            <map>
+            <map keyClass="java.lang.String" valueClass="java.lang.String">
                 <entry>
                     <key>DWM2</key>
                     <value>localhost:1300</value>
@@ -136,7 +136,7 @@
 
   <!-- DistributedWorkManager2Transport -->
   <bean name="DistributedWorkManager2Transport"
-          class="org.jboss.jca.core.workmanager.transport.socket.SocketTransport">
+          class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
         <!-- The executor -->
         <property name="ExecutorService">
             <inject bean="Kernel" property="ExecutorService"/>
@@ -150,7 +150,7 @@
 
         <!-- The work managers -->
         <property name="WorkManagers">
-            <map>
+            <map keyClass="java.lang.String" valueClass="java.lang.String">
                 <entry>
                     <key>DWM1</key>
                     <value>localhost:1299</value>
