@@ -45,13 +45,13 @@ public class ProtocolMessages
    public static enum Request
    {
       /** join*/
-      JOIN(0),
+      JOIN(2, String.class, String.class),
       /** leave */
-      LEAVE(0),
+      LEAVE(1, String.class),
       /** update short running free */
-      UPDATE_SHORTRUNNING_FREE(1, Integer.class),
+      UPDATE_SHORTRUNNING_FREE(2, String.class, Integer.class),
       /** update long running free */
-      UPDATE_LONGRUNNING_FREE(1, Integer.class),
+      UPDATE_LONGRUNNING_FREE(2, String.class, Integer.class),
 
       /** PING */
       PING(0),

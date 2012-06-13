@@ -32,7 +32,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
-import java.util.Map.Entry;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
@@ -85,71 +84,58 @@ public class Communication implements Runnable
 
          Request command = Request.values()[commandOrdinalPosition];
 
-         String callerAddress = socket.getInetAddress() + ":" + socket.getPort();
-         String callerID = null;
-         for (Entry<String, String> entry : transport.getWorkManagers().entrySet())
+         switch (command)
          {
-            if (entry.getValue().equals(callerAddress))
-            {
-               callerID = entry.getKey();
+            case JOIN : {
+               String id = ois.readUTF();
+               String address = ois.readUTF();
+               transport.getWorkManagers().put(id, address);
+               ((NotificationListener) transport.getDistributedWorkManager().getSelector()).join(id);
+               response = Response.VOID_OK;
+               break;
             }
-         }
-         if (callerID != null)
-         {
-            switch (command)
-            {
-               case JOIN : {
-                  ((NotificationListener) transport.getDistributedWorkManager().getSelector()).join(callerID);
-                  response = Response.VOID_OK;
-                  break;
-               }
-               case LEAVE : {
-                  ((NotificationListener) transport.getDistributedWorkManager().getSelector()).leave(callerID);
-                  response = Response.VOID_OK;
-                  break;
-               }
-               case PING : {
-                  //do nothing, just send an answer.
-                  response = Response.VOID_OK;
-
-                  break;
-               }
-               case DO_WORK : {
-                  DistributableWork work = (DistributableWork) ois.readObject();
-                  transport.getDistributedWorkManager().doWork(work);
-                  response = Response.VOID_OK;
-
-                  break;
-               }
-               case START_WORK : {
-                  DistributableWork work = (DistributableWork) ois.readObject();
-                  returnValue = transport.getDistributedWorkManager().startWork(work);
-                  response = Response.LONG_OK;
-
-                  break;
-               }
-               case SCHEDULE_WORK : {
-                  DistributableWork work = (DistributableWork) ois.readObject();
-                  transport.getDistributedWorkManager().scheduleWork(work);
-                  response = Response.VOID_OK;
-
-                  break;
-               }
-               default :
-                  if (log.isDebugEnabled())
-                  {
-                     log.debug("Unknown command received on socket Transport");
-                  }
-                  break;
+            case LEAVE : {
+               String id = ois.readUTF();
+               ((NotificationListener) transport.getDistributedWorkManager().getSelector()).leave(id);
+               response = Response.VOID_OK;
+               break;
             }
-         }
-         else
-         {
-            if (log.isDebugEnabled())
-            {
-               log.debug("Unknown caller of received message in socket Transport");
+            case PING : {
+               //do nothing, just send an answer.
+               response = Response.VOID_OK;
+
+               break;
             }
+            case DO_WORK : {
+               DistributableWork work = (DistributableWork) ois.readObject();
+               transport.getDistributedWorkManager().localDoWork(work);
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case START_WORK : {
+               DistributableWork work = (DistributableWork) ois.readObject();
+               returnValue = transport.getDistributedWorkManager().localStartWork(work);
+               response = Response.LONG_OK;
+
+               break;
+            }
+            case SCHEDULE_WORK : {
+               DistributableWork work = (DistributableWork) ois.readObject();
+               transport.getDistributedWorkManager().localScheduleWork(work);
+               response = Response.VOID_OK;
+
+               break;
+            }
+            default :
+               if (log.isDebugEnabled())
+               {
+                  log.debug("Unknown command received on socket Transport");
+               }
+               break;
          }
+
+         sendResponse(response, returnValue);
 
       }
       catch (WorkException we)
@@ -164,7 +150,6 @@ public class Communication implements Runnable
       }
       finally
       {
-         sendResponse(response, returnValue);
          try
          {
             ois.close();

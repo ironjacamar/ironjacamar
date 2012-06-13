@@ -118,6 +118,13 @@ public class SocketTransport implements Transport, Runnable
          ss.bind(address);
 
          running.set(true);
+
+         for (Map.Entry<String, String> entry : this.getWorkManagers().entrySet())
+         {
+            sendMessage(entry.getValue(), Request.JOIN, this.getDistributedWorkManager().getId(),
+                    this.getHost() + ":" + this.getPort());
+         }
+
       }
    }
 
@@ -130,6 +137,10 @@ public class SocketTransport implements Transport, Runnable
    public void stop() throws Throwable
    {
       ss.close();
+      for (Map.Entry<String, String> entry : this.getWorkManagers().entrySet())
+      {
+         sendMessage(entry.getValue(), Request.LEAVE, this.getDistributedWorkManager().getId());
+      }
       running.set(false);
    }
 
